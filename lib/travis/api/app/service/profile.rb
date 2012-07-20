@@ -9,7 +9,7 @@ module Travis
             @user = user
           end
 
-          def element
+          def item
             user
           end
 

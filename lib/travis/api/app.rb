@@ -10,8 +10,16 @@ module Travis
     class App < Sinatra::Application
       autoload :Service, 'travis/api/app/service'
 
-      register Sinatra::Reloader
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
+
+      error ActiveRecord::RecordNotFound do
+        not_found
+      end
+
+      configure :development do
+        register Sinatra::Reloader
+        set :show_exceptions, :after_handler
+      end
 
       provides :json
 
@@ -20,8 +28,7 @@ module Travis
       end
 
       get '/repositories/:id' do
-        respond_with Service::Repos.new(params).element
-        # rescue ActiveRecord::RecordNotFound
+        respond_with Service::Repos.new(params).item
         #   raise if not params[:format] == 'png'
       end
 
@@ -30,11 +37,12 @@ module Travis
       end
 
       get '/builds/:id' do
-        respond_with Service::Builds.new(params).element
+        respond_with Service::Builds.new(params).item
       end
 
       get '/branches' do
-        respond_with Service::Repos.new(params).element, :type => :branches
+        # respond_with Service::Repos.new(params).item, :type => :branches
+        { branches: [] }.to_json
       end
 
       get '/jobs' do
@@ -42,11 +50,11 @@ module Travis
       end
 
       get '/jobs/:id' do
-        respond_with Service::Jobs.new(params).element
+        respond_with Service::Jobs.new(params).item
       end
 
       get '/artifacts/:id' do
-        respond_with Service::Artifacts.new(params).element
+        respond_with Service::Artifacts.new(params).item
       end
 
       get '/workers' do
@@ -55,7 +63,7 @@ module Travis
 
       get '/hooks' do
         authenticate_user!
-        respond_with Service::Hooks.new(user, params).element
+        respond_with Service::Hooks.new(user, params).item
         # rescue_from ActiveRecord::RecordInvalid, :with => Proc.new { head :not_acceptable }
       end
 

@@ -17,7 +17,7 @@ module Travis
             scope
           end
 
-          def element
+          def item
             Repository.find_by(params)
           end
         end

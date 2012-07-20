@@ -9,7 +9,7 @@ module Travis
             scope
           end
 
-          def element
+          def item
             one = params[:repository_id] ? repository.builds : Build
             one.includes(:commit, :matrix => [:commit, :log]).find(params[:id])
           end

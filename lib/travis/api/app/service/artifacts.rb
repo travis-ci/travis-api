@@ -3,7 +3,7 @@ module Travis
     class App
       class Service
         class Artifacts < Service
-          def element
+          def item
             Artifact.find(params[:id])
           end
         end

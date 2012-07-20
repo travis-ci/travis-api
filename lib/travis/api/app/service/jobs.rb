@@ -13,7 +13,7 @@ module Travis
             end
           end
 
-          def element
+          def item
             Job.find(params[:id])
           end
         end
