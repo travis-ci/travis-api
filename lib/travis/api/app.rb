@@ -46,11 +46,11 @@ module Travis
       end
 
       get '/jobs' do
-        respond_with Service::Jobs.new(params).collection
+        respond_with Service::Jobs.new(params).collection, :type => 'jobs'
       end
 
       get '/jobs/:id' do
-        respond_with Service::Jobs.new(params).item
+        respond_with Service::Jobs.new(params).item, :type => 'job'
       end
 
       get '/artifacts/:id' do
@@ -88,8 +88,8 @@ module Travis
           @user = User.find_by_login('svenfuchs')
         end
 
-        def respond_with(resource, params = {})
-          Travis::Api.data(resource, :params => self.params.merge(params), :version => version).to_json
+        def respond_with(resource, options = {})
+          Travis::Api.data(resource, { :params => params, :version => version }.merge(options)).to_json
         end
 
         def version

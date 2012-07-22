@@ -5,16 +5,16 @@ module Travis
         class Jobs < Service
           def collection
             if params[:ids]
-              Job.where(:id => params[:ids]).includes(:commit, :log)
+              Job::Test.where(:id => params[:ids]).includes(:commit, :log)
             else
-              jobs = Job.queued.includes(:commit, :log)
+              jobs = Job::Test.queued.includes(:commit, :log)
               jobs = jobs.where(:queue => params[:queue]) if params[:queue]
               jobs
             end
           end
 
           def item
-            Job.find(params[:id])
+            Job::Test.find(params[:id])
           end
         end
       end
