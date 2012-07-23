@@ -21,7 +21,9 @@ module Travis
         set :show_exceptions, :after_handler
       end
 
-      provides :json
+      before do
+        content_type :json
+      end
 
       get '/repositories' do
         respond_with Service::Repos.new(params).collection
