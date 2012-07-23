@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra/reloader'
+require 'travis/api/cors'
 require 'json'
 require 'travis'
 
@@ -9,8 +10,10 @@ module Travis
   module Api
     class App < Sinatra::Application
       autoload :Service, 'travis/api/app/service'
+      disable :protection
 
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
+      use Travis::API::CORS
 
       error ActiveRecord::RecordNotFound do
         not_found
