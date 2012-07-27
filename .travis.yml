@@ -1,0 +1,7 @@
+language: ruby
+rvm:
+  - 1.9.3
+before_script:
+  - 'RAILS_ENV=test rake db:create db:schema:load --trace'
+notifications:
+  irc: "irc.freenode.org#travis"

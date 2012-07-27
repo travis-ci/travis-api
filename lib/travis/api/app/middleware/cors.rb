@@ -1,10 +1,12 @@
-require 'sinatra/base'
+require 'travis/api/app'
 
-module Travis
-  module API
-    class CORS < Sinatra::Base
-      disable :protection
-
+class Travis::Api::App
+  class Middleware
+    # Implements Cross-Origin Resource Sharing. Supported by all major browsers.
+    # See http://www.w3.org/TR/cors/
+    #
+    # TODO: Be smarter about origin.
+    class Cors < Middleware
       before do
         headers['Access-Control-Allow-Origin']      = "*"
         headers['Access-Control-Allow-Credentials'] = "true"
@@ -13,7 +15,7 @@ module Travis
 
       options // do
         headers['Access-Control-Allow-Methods'] = "GET, POST, PATCH, PUT, DELETE"
-        headers['Access-Control-Allow-Headers'] = "Content-Type, Authorization"
+        headers['Access-Control-Allow-Headers'] = "Content-Type, Authorization, Accept"
       end
     end
   end

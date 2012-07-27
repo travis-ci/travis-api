@@ -1,5 +1,2 @@
-$:.unshift 'lib'
-
 require 'travis/api/app'
-
-run Travis::Api::App
+run Travis::Api::App.new

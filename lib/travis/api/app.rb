@@ -1,105 +1,64 @@
-require 'sinatra'
-require 'sinatra/reloader'
-require 'travis/api/cors'
-require 'json'
+# Make sure we set that before everything
+ENV['RACK_ENV'] ||= ENV['RAILS_ENV'] || ENV['ENV']
+ENV['RAILS_ENV']  = ENV['RACK_ENV']
+
 require 'travis'
+require 'backports'
+require 'rack'
+require 'rack/protection'
+require 'active_record'
 
-Travis::Database.connect
+# Rack class implementing the HTTP API.
+# Instances respond to #call.
+#
+#     run Travis::Api::App.new
+#
+# Requires TLS in production.
+class Travis::Api::App
+  autoload :Responder,  'travis/api/app/responder'
+  autoload :Endpoint,   'travis/api/app/endpoint'
+  autoload :Extensions, 'travis/api/app/extensions'
+  autoload :Helpers,    'travis/api/app/helpers'
+  autoload :Middleware, 'travis/api/app/middleware'
 
-module Travis
-  module Api
-    class App < Sinatra::Application
-      autoload :Service, 'travis/api/app/service'
-      disable :protection
+  Rack.autoload :SSL, 'rack/ssl'
 
-      use ActiveRecord::ConnectionAdapters::ConnectionManagement
-      use Travis::API::CORS
+  # Used to track if setup already ran.
+  def self.setup?
+    @setup ||= false
+  end
 
-      error ActiveRecord::RecordNotFound do
-        not_found
-      end
+  # Loads all endpoints and middleware and hooks them up properly.
+  # Calls #setup on any middleware and endpoint.
+  #
+  # This method is not threadsafe, but called when loading
+  # the environment, so no biggy.
+  def self.setup(options = {})
+    return if setup?
+    Travis::Database.connect
 
-      configure :development do
-        register Sinatra::Reloader
-        set :show_exceptions, :after_handler
-      end
+    Responder.set(options) if options
+    Backports.require_relative_dir 'app/middleware'
+    Backports.require_relative_dir 'app/endpoint'
+    Responder.subclasses.each(&:setup)
 
-      before do
-        content_type :json
-      end
+    @setup = true
+  end
 
-      get '/repositories' do
-        respond_with Service::Repos.new(params).collection
-      end
+  attr_accessor :app
 
-      get '/repositories/:id' do
-        respond_with Service::Repos.new(params).item
-        #   raise if not params[:format] == 'png'
-      end
-
-      get '/builds' do
-        respond_with Service::Builds.new(params).collection
-      end
-
-      get '/builds/:id' do
-        respond_with Service::Builds.new(params).item
-      end
-
-      get '/branches' do
-        # respond_with Service::Repos.new(params).item, :type => :branches
-        { branches: [] }.to_json
-      end
-
-      get '/jobs' do
-        respond_with Service::Jobs.new(params).collection, :type => 'jobs'
-      end
-
-      get '/jobs/:id' do
-        respond_with Service::Jobs.new(params).item, :type => 'job'
-      end
-
-      get '/artifacts/:id' do
-        respond_with Service::Artifacts.new(params).item
-      end
-
-      get '/workers' do
-        respond_with Service::Workers.new(params).collection
-      end
-
-      get '/hooks' do
-        authenticate_user!
-        respond_with Service::Hooks.new(user, params).item
-        # rescue_from ActiveRecord::RecordInvalid, :with => Proc.new { head :not_acceptable }
-      end
-
-      put '/hooks/:id' do
-        authenticate_user!
-        respond_with Service::Hooks.new(user, params).update
-      end
-
-      get '/profile' do
-        authenticate_user!
-        respond_with Service::Profile.new(user).update
-      end
-
-      post '/profile/sync' do
-        authenticate_user!
-        respond_with Service::Profile.new(user).sync
-      end
-
-      private
-
-        def authenticate_user!
-          @user = User.find_by_login('svenfuchs')
-        end
-
-        def respond_with(resource, options = {})
-          Travis::Api.data(resource, { :params => params, :version => version }.merge(options)).to_json
-        end
-
-        def version
-          'v2'
-        end
+  def initialize
+    Travis::Api::App.setup
+    @app = Rack::Builder.app do
+      use Rack::Protection::PathTraversal
+      use Rack::SSL if Endpoint.production?
+      Middleware.subclasses.each { |m| use(m) }
+      Endpoint.subclasses.each { |e| map(e.prefix) { run(e) } }
     end
+  end
+
+  # Rack protocol
+  def call(env)
+    app.call(env)
   end
 end
