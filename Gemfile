@@ -1,23 +1,34 @@
 source :rubygems
-
 ruby '1.9.3' rescue nil
 
-gem 'travis-core',    github: 'travis-ci/travis-core'
 gem 'travis-support', github: 'travis-ci/travis-support'
+gem 'travis-core',    github: 'travis-ci/travis-core'
+gem 'hubble',         github: 'roidrage/hubble'
 
+gem 'backports',    '~> 2.5'
+gem 'pg',           '~> 0.13.2'
+gem 'newrelic_rpm', '~> 3.3.0'
+gem 'thin',         '~> 1.4'
 gem 'sinatra'
 gem 'sinatra-contrib'
-# gem 'sinatra-cross_origin', github: 'britg/sinatra-cross_origin'
-gem 'rack-contrib',         github: 'rack/rack-contrib', require: 'rack/contrib'
+gem 'redcarpet'
 
-gem 'rake',           '~> 0.9.2.2'
-gem 'versionist',     '~> 0.2.0'
+group :production do
+  gem 'rack-ssl'
+end
 
-# db
-gem 'pg',             '~> 0.13.2'
-gem 'newrelic_rpm',   '~> 3.3.0'
-gem 'hubble',         git: 'git://github.com/roidrage/hubble'
+group :test do
+  gem 'rspec',        '~> 2.11'
+  gem 'factory_girl', '~> 2.4.0'
+end
 
-# heroku
-gem 'unicorn',        '~> 4.1.1'
+group :development do
+  gem 'yard-sinatra', github: 'rkh/yard-sinatra'
+  gem 'foreman'
+  gem 'rerun'
+end
 
+group :development, :test do
+  gem 'rake', '~> 0.9.2'
+  gem 'micro_migrations', git: 'git://gist.github.com/2087829.git'
+end
