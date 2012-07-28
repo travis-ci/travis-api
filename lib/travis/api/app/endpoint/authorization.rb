@@ -78,10 +78,8 @@ class Travis::Api::App
           data.gsub(/\s/,'').split(',') if data
         end
 
-        def generate_token
-          token  = SecureRandom.urlsafe_base64(64)
-          scopes = parse_scopes(params[:scope]) || Array(settings.default_scope)
-          token
+        def generate_token(user)
+          AccessToken.create(user: user).token
         end
 
         def acceptable?(scopes)
