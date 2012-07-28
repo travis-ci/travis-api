@@ -52,11 +52,9 @@ __END__
   <head>
     <meta charset="utf-8" />
     <title>Travis API documentation</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- we might wanna change this -->
     <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet" />
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet" />
     <link href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" rel="stylesheet" />
     <script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
     <script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"></script>
@@ -97,15 +95,15 @@ __END__
   </head>
 
   <body onload="prettyPrint()">
-    <div class="container-fluid">
-      <div class="row-fluid">
+    <div class="container">
+      <div class="row">
         <header class="span12">
           <h1>The Travis API</h1>
           <p>All the routes, just waiting for you to build something awesome.</p>
         </header>
       </div>
 
-      <div class="row-fluid">
+      <div class="row">
 
         <aside class="span3">
           <div class="page-header">
@@ -165,13 +163,18 @@ __END__
                   <a href="#<%= endpoint['name'] %>"><%= endpoint['name'] %></a>
                 </h1>
               </div>
-              <%= docs_for endpoint %>
+              <% unless endpoint['doc'].to_s.empty? %>
+                <%= docs_for endpoint %>
+                <hr>
+              <% end %>
               <% endpoint['routes'].each do |route| %>
                   <div class="route" id="<%= slug_for(route) %>">
                     <pre><h3><%= route['verb'] %> <%= route['uri'] %></h3></pre>
-                    <p>
-                      <h5>Required autorization scope: <span class="label"><%= route['scope'] %></span></h5>
-                    </p>
+                    <% if route['scope'] %>
+                      <p>
+                        <h5>Required autorization scope: <span class="label"><%= route['scope'] %></span></h5>
+                      </p>
+                    <% end %>
                     <%= docs_for route %>
                   </div>
               <% end %>

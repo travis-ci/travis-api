@@ -7,6 +7,12 @@ class Travis::Api::App
   class Responder < Sinatra::Base
     register Extensions::SmartConstants
 
+    error NotImplementedError do
+      content_type :txt
+      status 501
+      "This feature has not yet been implemented. Sorry :(\n\nPull Requests welcome!"
+    end
+
     configure do
       # We pull in certain protection middleware in App.
       # Being token based makes us invulnerable to common
