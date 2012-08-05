@@ -1,16 +1,7 @@
 language: ruby
 rvm:
   - 1.9.3
-  - jruby-19mode
-  - jruby-head
   - rbx-19mode
-matrix:
-  allow_failures:
-    - rvm: jruby-19mode
-    - rvm: jruby-head
-    - rvm: rbx-19mode
-before_install:
-  - export JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false --1.9"
 before_script:
   - 'RAILS_ENV=test rake db:create db:schema:load --trace'
 notifications:
