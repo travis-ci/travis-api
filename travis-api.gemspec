@@ -1,8 +1,92 @@
 # encoding: utf-8
 
 Gem::Specification.new do |s|
+  s.description  = 'The Travis API'
+  s.summary      = 'Code running on http://api.travis-ci.org'
   s.name         = 'travis-api'
+  s.homepage     = 'http://api.travis-ci.org'
   s.version      = '0.0.1'
   s.require_path = 'lib'
+
+  s.authors = [
+    "Konstantin Haase",
+    "Sven Fuchs",
+    "Piotr Sarnacki"
+  ]
+
+  s.email = [
+    "konstantin.mailinglists@googlemail.com",
+    "svenfuchs@artweb-design.de",
+    "drogus@gmail.com"
+  ]
+
+  s.files = [
+    "Procfile",
+    "README.md",
+    "Rakefile",
+    "config.ru",
+    "lib/travis/api/app.rb",
+    "lib/travis/api/app/access_token.rb",
+    "lib/travis/api/app/endpoint.rb",
+    "lib/travis/api/app/endpoint/artifacts.rb",
+    "lib/travis/api/app/endpoint/authorization.rb",
+    "lib/travis/api/app/endpoint/branches.rb",
+    "lib/travis/api/app/endpoint/builds.rb",
+    "lib/travis/api/app/endpoint/documentation.rb",
+    "lib/travis/api/app/endpoint/endpoints.rb",
+    "lib/travis/api/app/endpoint/home.rb",
+    "lib/travis/api/app/endpoint/hooks.rb",
+    "lib/travis/api/app/endpoint/jobs.rb",
+    "lib/travis/api/app/endpoint/profile.rb",
+    "lib/travis/api/app/endpoint/repositories.rb",
+    "lib/travis/api/app/endpoint/workers.rb",
+    "lib/travis/api/app/extensions.rb",
+    "lib/travis/api/app/extensions/smart_constants.rb",
+    "lib/travis/api/app/extensions/subclass_tracker.rb",
+    "lib/travis/api/app/helpers.rb",
+    "lib/travis/api/app/helpers/json_renderer.rb",
+    "lib/travis/api/app/middleware.rb",
+    "lib/travis/api/app/middleware/access_token.rb",
+    "lib/travis/api/app/middleware/cors.rb",
+    "lib/travis/api/app/middleware/logging.rb",
+    "lib/travis/api/app/responder.rb",
+    "script/server",
+    "spec/app_spec.rb",
+    "spec/default_spec.rb",
+    "spec/endpoint/artifacts_spec.rb",
+    "spec/endpoint/branches_spec.rb",
+    "spec/endpoint/builds_spec.rb",
+    "spec/endpoint/documentation_spec.rb",
+    "spec/endpoint/endpoints_spec.rb",
+    "spec/endpoint/hooks_spec.rb",
+    "spec/endpoint/jobs_spec.rb",
+    "spec/endpoint/profile_spec.rb",
+    "spec/endpoint/repositories_spec.rb",
+    "spec/endpoint/workers_spec.rb",
+    "spec/endpoint_spec.rb",
+    "spec/extensions/smart_constants_spec.rb",
+    "spec/extensions/subclass_tracker_spec.rb",
+    "spec/helpers/json_renderer_spec.rb",
+    "spec/middleware/access_token_spec.rb",
+    "spec/middleware/cors_spec.rb",
+    "spec/middleware/logging_spec.rb",
+    "spec/middleware_spec.rb",
+    "spec/spec_helper.rb",
+    "spec/support/factories.rb",
+    "travis-api.gemspec"
+  ]
+
+  s.add_dependency 'travis-support'
+  s.add_dependency 'travis-core'
+
+  s.add_dependency 'hubble',          '~> 0.1'
+  s.add_dependency 'backports',       '~> 2.5'
+  s.add_dependency 'pg',              '~> 0.13.2'
+  s.add_dependency 'newrelic_rpm',    '~> 3.3.0'
+  s.add_dependency 'thin',            '~> 1.4'
+  s.add_dependency 'sinatra',         '~> 1.3'
+  s.add_dependency 'sinatra-contrib', '~> 1.3'
+  s.add_dependency 'redcarpet',       '~> 2.1'
+  s.add_dependency 'rack-ssl',        '~> 1.3'
 end
 
