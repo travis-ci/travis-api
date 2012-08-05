@@ -1,0 +1,18 @@
+# This is only used for standalone_migrations. In other contexts
+# Travis.config.database will be used.
+
+defaults: &defaults
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  min_messages: warning
+  username: <%= ENV['USER'] %>
+
+development:
+  <<: *defaults
+  database: travis_development
+
+test:
+  <<: *defaults
+  database: travis_test
+
