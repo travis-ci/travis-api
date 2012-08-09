@@ -48,13 +48,15 @@ class Travis::Api::App
 
   attr_accessor :app
 
-  def initialize
+  def initialize(options = {})
     Travis::Api::App.setup
     @app = Rack::Builder.app do
       use Rack::Protection::PathTraversal
       use Rack::SSL if Endpoint.production?
       Middleware.subclasses.each { |m| use(m) }
-      Endpoint.subclasses.each { |e| map(e.prefix) { run(e) } }
+      endpoints = Endpoint.subclasses
+      endpoints -= [Endpoint::Home] if options[:disable_root_endpoint]
+      endpoints.each { |e| map(e.prefix) { run(e) } }
     end
   end
 
