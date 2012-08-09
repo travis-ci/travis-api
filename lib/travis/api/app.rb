@@ -53,6 +53,7 @@ class Travis::Api::App
     @app = Rack::Builder.app do
       use Rack::Protection::PathTraversal
       use Rack::SSL if Endpoint.production?
+      use ActiveRecord::ConnectionAdapters::ConnectionManagement
       Middleware.subclasses.each { |m| use(m) }
       endpoints = Endpoint.subclasses
       endpoints -= [Endpoint::Home] if options[:disable_root_endpoint]
