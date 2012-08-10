@@ -4,8 +4,8 @@ class Travis::Api::App
   class Endpoint
     # Generated API documentation.
     class Documentation < Endpoint
-      set prefix: '/docs'
-      enable :inline_templates
+      set prefix: '/docs', public_folder: File.expand_path('../documentation', __FILE__)
+      enable :inline_templates, :static
 
       # HTML view for [/endpoints](#/endpoints/).
       get '/' do
@@ -54,11 +54,11 @@ __END__
     <title>Travis API documentation</title>
 
     <!-- we might wanna change this -->
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet" />
-    <link href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" rel="stylesheet" />
-    <script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script>
+    <link href="<%= url('/css/bootstrap.css') %>" rel="stylesheet" />
+    <link href="<%= url('/css/prettify.css') %>" rel="stylesheet" />
+    <script src="<%= url('/js/jquery.js') %>"></script>
+    <script src="<%= url('/js/prettify.js') %>"></script>
+    <script src="<%= url('/js/bootstrap.min.js') %>"></script>
 
     <style type="text/css">
       header {
