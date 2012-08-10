@@ -10,8 +10,8 @@ class Travis::Api::App
         halt render_json(resource, options)
       end
 
-      def body(value = nil, &block)
-        value = render_json(value) if value
+      def body(value = nil, options = {}, &block)
+        value = render_json(value, options) if value
         super(value, &block)
       end
 

@@ -14,7 +14,7 @@ class Travis::Api::App
       end
 
       # TODO: Add documentation.
-      get('/:id') { Repository.find_by(params) }
+      get('/:id') { body Repository.find_by(params) }
     end
   end
 end

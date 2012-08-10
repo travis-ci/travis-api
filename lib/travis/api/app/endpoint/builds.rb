@@ -14,7 +14,7 @@ class Travis::Api::App
       # TODO: Add documentation.
       get '/:id' do
         one = params[:repository_id] ? repository.builds : Build
-        one.includes(:commit, :matrix => [:commit, :log]).find(params[:id])
+        body one.includes(:commit, :matrix => [:commit, :log]).find(params[:id])
       end
 
       private

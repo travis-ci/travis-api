@@ -5,7 +5,7 @@ class Travis::Api::App
     # TODO: Add documentation.
     class Artifacts < Endpoint
       # TODO: Add documentation.
-      get('/:id') { |id| Artifact.find(id) }
+      get('/:id') { |id| body Artifact.find(id) }
     end
   end
 end

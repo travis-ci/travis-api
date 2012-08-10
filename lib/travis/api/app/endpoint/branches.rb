@@ -4,8 +4,17 @@ class Travis::Api::App
   class Endpoint
     # TODO: Add documentation.
     class Branches < Endpoint
-      # TODO: Add better implementation and documentation.
-      get('/') {{ branches: [] }}
+      # TODO: Add documentation.
+      get('/') do
+        body repository, :type => "Branches"
+      end
+
+      private
+
+        def repository
+          pass if params.empty?
+          Repository.find_by(params) || not_found
+        end
     end
   end
 end
