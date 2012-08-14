@@ -11,6 +11,7 @@ gem 'yard-sinatra',   github: 'rkh/yard-sinatra'
 group :test do
   gem 'rspec',        '~> 2.11'
   gem 'factory_girl', '~> 2.4.0'
+  gem 'mocha',        '~> 0.12'
 end
 
 group :development do

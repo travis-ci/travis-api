@@ -7,6 +7,7 @@ require 'backports'
 require 'rack'
 require 'rack/protection'
 require 'active_record'
+require 'redis'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -15,7 +16,7 @@ require 'active_record'
 #
 # Requires TLS in production.
 class Travis::Api::App
-  autoload :AccessToken,  'travis/api/api/access_token'
+  autoload :AccessToken,  'travis/api/app/access_token'
   autoload :Responder,    'travis/api/app/responder'
   autoload :Endpoint,     'travis/api/app/endpoint'
   autoload :Extensions,   'travis/api/app/extensions'
@@ -57,7 +58,7 @@ class Travis::Api::App
       Middleware.subclasses.each { |m| use(m) }
       endpoints = Endpoint.subclasses
       endpoints -= [Endpoint::Home] if options[:disable_root_endpoint]
-      endpoints.each { |e| map(e.prefix) { run(e) } }
+      endpoints.each { |e| map(e.prefix) { run(e.new) } }
     end
   end
 

@@ -31,7 +31,7 @@ class Travis::Api::App
     # This is the recommended way for the official client. We might improve the
     # authorization flow to support third-party clients in the future, too.
     class Authorization < Endpoint
-      set prefix: '/auth', default_scope: :private
+      set prefix: '/auth'
 
       # Parameters:
       #

@@ -19,7 +19,7 @@ class Travis::Api::App
             'uri'    => (controller.prefix + route.http_path[1..-2]).gsub('//', '/'),
             'verb'   => route.http_verb,
             'doc'    => route.docstring,
-            'scope'  => /scope\W+(\w+)/.match(route.source).try(:[], 1)
+            'scope'  => /scope\W+(\w+)/.match(route.source).try(:[], 1) || controller.default_scope.to_s
           }
           endpoint   = endpoints[controller.prefix] ||= {
             'name'   => namespace.name,
