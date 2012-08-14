@@ -8,6 +8,7 @@ require 'rack'
 require 'rack/protection'
 require 'active_record'
 require 'redis'
+require 'gh'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
