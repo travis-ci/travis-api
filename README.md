@@ -1,6 +1,6 @@
 # The public Travis API
 
-This is the app (eventually) running on https://api.travis-ci.org/
+This is the app running on https://api.travis-ci.org/
 
 ## Installation
 
