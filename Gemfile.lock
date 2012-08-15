@@ -5,6 +5,18 @@ GIT
     micro_migrations (0.0.1)
 
 GIT
+  remote: git://github.com/rkh/gh.git
+  revision: 907f35326579495a54c7ee2b030b6292d2e5d9ef
+  specs:
+    gh (0.8.0)
+      addressable
+      backports (~> 2.3)
+      faraday (~> 0.8)
+      multi_json (~> 1.0)
+      net-http-persistent (>= 2.7)
+      net-http-pipeline
+
+GIT
   remote: git://github.com/rkh/yard-sinatra.git
   revision: 3b1064eef407d2d288a5b96d258178a1e67b3b80
   specs:
@@ -108,13 +120,6 @@ GEM
     ffi (1.1.0)
     foreman (0.53.0)
       thor (>= 0.13.6)
-    gh (0.7.3)
-      addressable
-      backports (~> 2.3)
-      faraday (~> 0.8)
-      multi_json (~> 1.0)
-      net-http-persistent (>= 2.7)
-      net-http-pipeline
     hashr (0.0.21)
     hike (1.2.1)
     hitimes (1.1.1)
@@ -228,6 +233,7 @@ PLATFORMS
 DEPENDENCIES
   factory_girl (~> 2.4.0)
   foreman
+  gh!
   hubble!
   micro_migrations!
   mocha (~> 0.12)

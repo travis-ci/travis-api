@@ -7,6 +7,7 @@ gem 'travis-support', github: 'travis-ci/travis-support'
 gem 'travis-core',    github: 'travis-ci/travis-core'
 gem 'hubble',         github: 'roidrage/hubble'
 gem 'yard-sinatra',   github: 'rkh/yard-sinatra'
+gem 'gh',             github: 'rkh/gh'
 
 group :test do
   gem 'rspec',        '~> 2.11'
