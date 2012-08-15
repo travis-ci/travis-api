@@ -31,7 +31,14 @@ class Travis::Api::App
           name = settings.default_scope if name == :default
           headers['X-OAuth-Scopes'] = scopes.map(&:to_s).join(',')
           headers['X-Accepted-OAuth-Scopes'] = name.to_s
-          scopes.include? name
+
+          if scopes.include? name
+            true
+          elsif logged_in?
+            halt 403, "insufficient access"
+          else
+            halt 401, "no access token supplied"
+          end
         end
       end
 
