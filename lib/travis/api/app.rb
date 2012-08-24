@@ -38,12 +38,9 @@ class Travis::Api::App
   # the environment, so no biggy.
   def self.setup
     return if setup?
-    Travis::Database.connect
-
-    Backports.require_relative_dir 'app/middleware'
-    Backports.require_relative_dir 'app/endpoint'
-    Responder.subclasses.each(&:setup)
-
+    setup_travis
+    load_endpoints
+    setup_endpoints
     @setup = true
   end
 
@@ -65,4 +62,19 @@ class Travis::Api::App
   def call(env)
     app.call(env)
   end
+
+  private
+
+    def self.setup_travis
+      Travis::Database.connect
+    end
+
+    def self.load_endpoints
+      Backports.require_relative_dir 'app/middleware'
+      Backports.require_relative_dir 'app/endpoint'
+    end
+
+    def self.setup_endpoints
+      Responder.subclasses.each(&:setup)
+    end
 end
