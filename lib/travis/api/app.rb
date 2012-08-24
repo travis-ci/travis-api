@@ -36,11 +36,10 @@ class Travis::Api::App
   #
   # This method is not threadsafe, but called when loading
   # the environment, so no biggy.
-  def self.setup(options = {})
+  def self.setup
     return if setup?
     Travis::Database.connect
 
-    Responder.set(options) if options
     Backports.require_relative_dir 'app/middleware'
     Backports.require_relative_dir 'app/endpoint'
     Responder.subclasses.each(&:setup)
@@ -51,7 +50,6 @@ class Travis::Api::App
   attr_accessor :app
 
   def initialize(options = {})
-    Travis::Api::App.setup
     @app = Rack::Builder.app do
       use Rack::Protection::PathTraversal
       use Rack::SSL if Endpoint.production?
