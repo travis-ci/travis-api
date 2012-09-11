@@ -7,6 +7,7 @@ class Travis::Api::App
 
       # Landing point. Redirects web browsers to [API documentation](#/docs/).
       get '/' do
+        pass if settings.disable_root_endpoint?
         redirect to('/docs/') if request.preferred_type('application/json', 'text/html') == 'text/html'
         { 'hello' => 'world' }
       end

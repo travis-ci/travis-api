@@ -36,25 +36,26 @@ class Travis::Api::App
   #
   # This method is not threadsafe, but called when loading
   # the environment, so no biggy.
-  def self.setup
-    return if setup?
-    setup_travis
-    load_endpoints
-    setup_endpoints
-    @setup = true
+  def self.setup(options = {})
+    setup! unless setup?
+    Endpoint.set(options)
+  end
+
+  def self.new(options = {})
+    setup(options) if options
+    super()
   end
 
   attr_accessor :app
 
-  def initialize(options = {})
+  def initialize
     @app = Rack::Builder.app do
       use Rack::Protection::PathTraversal
       use Rack::SSL if Endpoint.production?
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
+
       Middleware.subclasses.each { |m| use(m) }
-      endpoints = Endpoint.subclasses
-      endpoints -= [Endpoint::Home] if options[:disable_root_endpoint]
-      endpoints.each { |e| map(e.prefix) { run(e.new) } }
+      Endpoint.subclasses.each { |e| map(e.prefix) { run(e.new) } }
     end
   end
 
@@ -64,6 +65,13 @@ class Travis::Api::App
   end
 
   private
+
+    def self.setup!
+      setup_travis
+      load_endpoints
+      setup_endpoints
+      @setup = true
+    end
 
     def self.setup_travis
       Travis::Database.connect

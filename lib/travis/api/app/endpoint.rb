@@ -4,6 +4,7 @@ class Travis::Api::App
   # Superclass for HTTP endpoints. Takes care of prefixing.
   class Endpoint < Responder
     set(:prefix) { "/" << name[/[^:]+$/].underscore }
+    set disable_root_endpoint: false
     register :scoping
 
     before { content_type :json }
