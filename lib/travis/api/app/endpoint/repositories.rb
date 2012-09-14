@@ -6,15 +6,17 @@ class Travis::Api::App
     class Repositories < Endpoint
       # TODO: Add documentation.
       get '/' do
-        scope = Repository.timeline.recent
-        scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]
-        scope = scope.by_slug(params[:slug])             if params[:slug]
-        scope = scope.search(params[:search])            if params[:search].present?
-        scope
+        body service(:repositories).find_all(params)
       end
 
       # TODO: Add documentation.
-      get('/:id') { body Repository.find_by(params) }
+      get('/:id') do
+        body service(:repositories).find_one(params)
+      end
+
+      # TODO make sure status images and cc.xml work
+      # rescue ActiveRecord::RecordNotFound
+      #   raise unless params[:format] == 'png'
     end
   end
 end

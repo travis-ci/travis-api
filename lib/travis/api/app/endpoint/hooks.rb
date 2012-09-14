@@ -5,10 +5,14 @@ class Travis::Api::App
     # TODO: Add documentation.
     class Hooks < Endpoint
       # TODO: Add implementation and documentation.
-      get('/', scope: :private) { raise NotImplementedError }
+      get('/', scope: :private) do
+        service(:builds).find_all(params)
+      end
 
       # TODO: Add implementation and documentation.
-      put('/:id', scope: :admin) { raise NotImplementedError }
+      put('/:id', scope: :admin) do
+        respond_with service(:hooks).update(params)
+      end
     end
   end
 end

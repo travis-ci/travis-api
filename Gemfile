@@ -4,7 +4,7 @@ source :rubygems
 gemspec
 
 gem 'travis-support', github: 'travis-ci/travis-support'
-gem 'travis-core',    github: 'travis-ci/travis-core'
+gem 'travis-core',    github: 'travis-ci/travis-core', branch: 'sf-moar-services'
 gem 'hubble',         github: 'roidrage/hubble'
 gem 'yard-sinatra',   github: 'rkh/yard-sinatra'
 gem 'gh',             github: 'rkh/gh'

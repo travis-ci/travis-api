@@ -4,20 +4,14 @@ class Travis::Api::App
   class Endpoint
     # TODO: Add documentation.
     class Jobs < Endpoint
-      # TODO: Add implementation and documentation.
+      # TODO: Add documentation.
       get('/') do
-        if params[:ids]
-          Job.where(:id => params[:ids]).includes(:commit, :log)
-        else
-          jobs = Job.queued.includes(:commit, :log)
-          jobs = jobs.where(:queue => params[:queue]) if params[:queue]
-          jobs
-        end
+        service(:jobs).find_all(params)
       end
 
-      # TODO: Add implementation and documentation.
+      # TODO: Add documentation.
       get('/:id') do
-        body Job.find(params[:id])
+        service(:jobs).find_one(params)
       end
     end
   end
