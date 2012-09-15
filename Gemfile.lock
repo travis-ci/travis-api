@@ -32,7 +32,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: db8c123f2e2a35a8983f10c6524ccbab96f27ba7
+  revision: cbddb4179552344b578b20e320ac7e9d7c335b3d
   branch: sf-moar-services
   specs:
     travis-core (0.0.1)
@@ -54,7 +54,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: 27857bb4f5425b8aacc9b26e4661688dca962fb0
+  revision: b150763d253331de9adadcb5b39f7df5efccb676
   specs:
     travis-support (0.0.1)
 
