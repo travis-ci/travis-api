@@ -10,5 +10,12 @@ class Travis::Api::App
     before { content_type :json }
     error(ActiveRecord::RecordNotFound, Sinatra::NotFound) { not_found }
     not_found { content_type =~ /json/ ? { 'file' => 'not found' } : 'file not found' }
+
+    private
+
+      def service(key)
+        const = Travis.services[key] || raise("no service registered for #{key}")
+        const.new(respond_to?(:current_user) ? current_user : nil)
+      end
   end
 end

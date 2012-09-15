@@ -75,6 +75,10 @@ class Travis::Api::App
 
     def self.setup_travis
       Travis::Database.connect
+
+      Travis::Services.constants.each do |name|
+        Travis.services[name.to_s.underscore.to_sym] = Travis::Services.const_get(name) unless name == :Base
+      end
     end
 
     def self.load_endpoints
