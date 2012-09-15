@@ -15,7 +15,12 @@ class Travis::Api::App
 
       def service(key)
         const = Travis.services[key] || raise("no service registered for #{key}")
-        const.new(respond_to?(:current_user) ? current_user : nil)
+        const.new(current_user)
+      end
+
+      def current_user
+        # TODO
+        User.where(:login => 'svenfuchs').first
       end
   end
 end
