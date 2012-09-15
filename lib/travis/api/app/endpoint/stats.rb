@@ -6,12 +6,12 @@ class Travis::Api::App
     class Stats < Endpoint
       # TODO: Add documentation.
       get('/repos') do
-        { :stats => services(:stats).daily_repository_counts }
+        { :stats => service(:stats).daily_repository_counts }
       end
 
       # TODO: Add documentation.
       get('/tests') do
-        { :stats => services(:stats).daily_tests_counts }
+        { :stats => service(:stats).daily_tests_counts }
       end
     end
   end
