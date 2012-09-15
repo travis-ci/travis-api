@@ -6,12 +6,12 @@ class Travis::Api::App
     class Hooks < Endpoint
       # TODO: Add implementation and documentation.
       get('/', scope: :private) do
-        service(:builds).find_all(params)
+        body service(:builds).find_all(params)
       end
 
       # TODO: Add implementation and documentation.
       put('/:id', scope: :admin) do
-        respond_with service(:hooks).update(params)
+        body service(:hooks).update(params)
       end
     end
   end

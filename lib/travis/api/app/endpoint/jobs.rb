@@ -6,12 +6,12 @@ class Travis::Api::App
     class Jobs < Endpoint
       # TODO: Add documentation.
       get('/') do
-        service(:jobs).find_all(params)
+        body service(:jobs).find_all(params)
       end
 
       # TODO: Add documentation.
       get('/:id') do
-        service(:jobs).find_one(params)
+        body service(:jobs).find_one(params)
       end
     end
   end

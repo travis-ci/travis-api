@@ -6,7 +6,7 @@ class Travis::Api::App
     class Branches < Endpoint
       # TODO: Add documentation.
       get('/') do
-        body service(:branches).find_all(params)
+        body service(:branches).find_all(params), :type => :branches
       end
     end
   end

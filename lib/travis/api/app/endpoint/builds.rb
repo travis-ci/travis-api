@@ -6,12 +6,12 @@ class Travis::Api::App
     class Builds < Endpoint
       # TODO: Add documentation.
       get '/' do
-        service(:builds).find_all(params)
+        body service(:builds).find_all(params)
       end
 
       # TODO: Add documentation.
       get '/:id' do
-        service(:builds).find_one(params)
+        body service(:builds).find_one(params)
       end
     end
   end
