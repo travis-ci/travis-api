@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 cd "$(dirname "$0")/.."
-[ $PORT ]     || PORT=5000
+[ $PORT ]     || PORT=3000
 [ $RACK_ENV ] || RACK_ENV=development
 
 cmd="ruby -I lib -S bundle exec ruby -I lib -S thin start -p $PORT -e $RACK_ENV --threaded"

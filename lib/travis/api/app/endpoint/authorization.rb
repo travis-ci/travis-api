@@ -1,4 +1,6 @@
 require 'travis/api/app'
+require 'addressable/uri'
+require 'faraday'
 
 class Travis::Api::App
   class Endpoint
@@ -58,14 +60,31 @@ class Travis::Api::App
       #
       # * **token**: GitHub token for checking authorization (required)
       post '/github' do
-        data   = GH.with(token: params[:token].to_s) { GH['user'] }
-        scopes = parse_scopes data.headers['x-oauth-scopes']
-        user   = User.find_by_login(data['login'])
+        { 'access_token' => github_to_travis(params[:token]) }
+      end
 
-        halt 403, 'not a Travis user'   if user.nil?
-        halt 403, 'insufficient access' unless acceptable? scopes
+      get '/post_message' do
+        config   = Travis.config.oauth2
+        endpoint = Addressable::URI.parse(config.authorization_server)
+        values   = {
+          client_id:    config.client_id,
+          scope:        config.scope,
+          redirect_uri: url
+        }
 
-        { 'access_token' => generate_token(user) }
+        if params[:code]
+          endpoint.path          = config.access_token_path
+          values[:code]          = params[:code]
+          values[:state]         = params[:state] if params[:state]
+          values[:client_secret] = config.client_secret
+
+          token = github_to_travis get_token(endpoint.to_s, values)
+          { 'access_token' => token }
+        else
+          endpoint.path         = config.authorize_path
+          endpoint.query_values = values
+          redirect to(endpoint.to_s)
+        end
       end
 
       error Faraday::Error::ClientError do
@@ -73,6 +92,23 @@ class Travis::Api::App
       end
 
       private
+
+        def github_to_travis(token)
+          data   = GH.with(token: token.to_s) { GH['user'] }
+          scopes = parse_scopes data.headers['x-oauth-scopes']
+          user   = User.find_by_login(data['login'])
+
+          halt 403, 'not a Travis user'   if user.nil?
+          halt 403, 'insufficient access' unless acceptable? scopes
+
+          generate_token(user)
+        end
+
+        def get_token(endoint, value)
+          response   = Faraday.get(endoint, value)
+          parameters = Addressable::URI.form_unencode(response.body)
+          parameters.assoc("access_token").last
+        end
 
         def parse_scopes(data)
           data.gsub(/\s/,'').split(',') if data
