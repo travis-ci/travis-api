@@ -18,8 +18,9 @@ class Travis::Api::App
       #         "synced_at": "2012-08-14T22:11:21Z"
       #       }
       #     }
-      get '/', scope: :private do
-        body user
+      # , scope: :private
+      get '/' do
+        body service(:user).find_one, type: :user
       end
 
       put '/', scope: :private do
@@ -29,9 +30,10 @@ class Travis::Api::App
       end
 
       # TODO: Add implementation and documentation.
-      post '/sync', scope: :private do
-        raise NotImplementedError
-        sync_user(current_user)
+      # , scope: :private
+      post '/sync' do
+        # raise NotImplementedError
+        # sync_user(current_user)
         'ok'
       end
 
