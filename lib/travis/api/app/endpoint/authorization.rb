@@ -35,6 +35,19 @@ class Travis::Api::App
     # authorization flow to support third-party clients in the future, too.
     class Authorization < Endpoint
       set prefix: '/auth'
+      enable :inline_templates
+
+      configure :development, :test do
+        set :target_origins, ['*']
+      end
+
+      configure :production do
+        set :target_origins, %W[
+          https://#{Travis.config.domain}
+          https://staging.#{Travis.config.domain}
+          https://travis-ember.herokuapp.com
+        ]
+      end
 
       # Parameters:
       #
@@ -80,7 +93,7 @@ class Travis::Api::App
           values[:client_secret] = config.client_secret
           github_token           = get_token(endpoint.to_s, values)
           token                  = github_to_travis(github_token, app_id: 0)
-          { 'access_token' => token }
+          post_message(token: token)
         else
           values[:state]         = create_state
           endpoint.path          = config.authorize_path
@@ -134,6 +147,22 @@ class Travis::Api::App
         def acceptable?(scopes)
           scopes.include? 'public_repo' or scopes.include? 'repo'
         end
+
+        def post_message(payload)
+          content_type :html
+          erb(:post_message, locals: payload)
+        end
     end
   end
 end
+
+__END__
+
+@@ post_message
+<script>
+<% settings.target_origins.each do |target| %>
+  window.parent.postMessage(<%= token.inspect %>, <%= target.inspect %>);
+<% end %>
+</script>
+
+SENT
