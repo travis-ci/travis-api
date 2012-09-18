@@ -1,6 +1,7 @@
 require 'travis/api/app'
 require 'addressable/uri'
 require 'faraday'
+require 'securerandom'
 
 class Travis::Api::App
   class Endpoint
@@ -60,7 +61,7 @@ class Travis::Api::App
       #
       # * **token**: GitHub token for checking authorization (required)
       post '/github' do
-        { 'access_token' => github_to_travis(params[:token]) }
+        { 'access_token' => github_to_travis(params[:token], app_id: 1) }
       end
 
       get '/post_message' do
@@ -72,17 +73,18 @@ class Travis::Api::App
           redirect_uri: url
         }
 
-        if params[:code]
+        if params[:code] and state_ok?(params[:state])
           endpoint.path          = config.access_token_path
+          values[:state]         = params[:state]
           values[:code]          = params[:code]
-          values[:state]         = params[:state] if params[:state]
           values[:client_secret] = config.client_secret
-
-          token = github_to_travis get_token(endpoint.to_s, values)
+          github_token           = get_token(endpoint.to_s, values)
+          token                  = github_to_travis(github_token, app_id: 0)
           { 'access_token' => token }
         else
-          endpoint.path         = config.authorize_path
-          endpoint.query_values = values
+          values[:state]         = create_state
+          endpoint.path          = config.authorize_path
+          endpoint.query_values  = values
           redirect to(endpoint.to_s)
         end
       end
@@ -93,7 +95,18 @@ class Travis::Api::App
 
       private
 
-        def github_to_travis(token)
+        def create_state
+          state = SecureRandom.urlsafe_base64(16)
+          redis.sadd('github:states', state)
+          redis.expire('github:states', 1800)
+          state
+        end
+
+        def state_ok?(state)
+          redis.srem('github:states', state) if state
+        end
+
+        def github_to_travis(token, options = {})
           data   = GH.with(token: token.to_s) { GH['user'] }
           scopes = parse_scopes data.headers['x-oauth-scopes']
           user   = User.find_by_login(data['login'])
@@ -101,11 +114,11 @@ class Travis::Api::App
           halt 403, 'not a Travis user'   if user.nil?
           halt 403, 'insufficient access' unless acceptable? scopes
 
-          generate_token(user)
+          generate_token options.merge(user: user)
         end
 
-        def get_token(endoint, value)
-          response   = Faraday.get(endoint, value)
+        def get_token(endoint, values)
+          response   = Faraday.post(endoint, values)
           parameters = Addressable::URI.form_unencode(response.body)
           parameters.assoc("access_token").last
         end
@@ -114,8 +127,8 @@ class Travis::Api::App
           data.gsub(/\s/,'').split(',') if data
         end
 
-        def generate_token(user)
-          AccessToken.create(user: user).token
+        def generate_token(options)
+          AccessToken.create(options).token
         end
 
         def acceptable?(scopes)

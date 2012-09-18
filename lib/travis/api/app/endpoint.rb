@@ -22,5 +22,9 @@ class Travis::Api::App
         # TODO
         User.where(:login => 'svenfuchs').first
       end
+
+      def redis
+        Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
+      end
   end
 end
