@@ -4,7 +4,7 @@ require 'securerandom'
 class Travis::Api::App
   class AccessToken
     DEFAULT_SCOPES = [:public, :private]
-    attr_reader :token, :scopes, :user_id
+    attr_reader :token, :scopes, :user_id, :app_id
 
     def self.create(options = {})
       new(options).tap(&:save)
@@ -12,22 +12,25 @@ class Travis::Api::App
 
     def self.find_by_token(token)
       user_id, app_id, *scopes = redis.lrange(key(token), 0, -1)
-      new(token: token, scopes: scopes, user_id: user_id) if user_id
+      new(token: token, scopes: scopes, user_id: user_id, app_id: app_id) if user_id
     end
 
     def initialize(options = {})
       raise ArgumentError, 'must supply either user_id or user' unless options.key?(:user) ^ options.key?(:user_id)
+      raise ArgumentError, 'must supply app_id' unless options.key?(:app_id)
 
-      @token    = options[:token] || SecureRandom.urlsafe_base64(64)
+      @app_id   = Integer(options[:app_id])
       @scopes   = Array(options[:scopes] || options[:scope] || DEFAULT_SCOPES).map(&:to_sym)
       @user     = options[:user]
       @user_id  = Integer(options[:user_id] || @user.id)
+      @token    = options[:token] || reuse_token || SecureRandom.urlsafe_base64(16)
     end
 
     def save
       key = key(token)
       redis.del(key)
       redis.rpush(key, [user_id, '', *scopes].map(&:to_s))
+      redis.set(reuse_key, token)
     end
 
     def user
@@ -55,5 +58,19 @@ class Travis::Api::App
 
     include Helpers
     extend Helpers
+
+    private
+
+      def reuse_token
+        redis.get(reuse_key)
+      end
+
+      def reuse_key
+        @reuse_key ||= begin
+          keys = ["r", user_id, app_id]
+          keys.append(scopes.mpa(&:to_s).sort) if scopes != DEFAULT_SCOPES
+          keys.join(':')
+        end
+      end
   end
 end
