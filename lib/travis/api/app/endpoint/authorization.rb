@@ -139,10 +139,18 @@ class Travis::Api::App
           generate_token options.merge(user: user_for_github_token(token))
         end
 
+        def user_info(data, misc = {})
+          info = data.to_hash.slice('name', 'login', 'github_oauth_token', 'gravatar_id')
+          info.merge! misc
+          info['github_id'] ||= data['id']
+          info
+        end
+
         def user_for_github_token(token)
           data   = GH.with(token: token.to_s) { GH['user'] }
           scopes = parse_scopes data.headers['x-oauth-scopes']
           user   = User.find_by_github_id(data['id'])
+          user ||= User.create! user_info(data, github_oauth_token: token)
 
           halt 403, 'not a Travis user'   if user.nil?
           halt 403, 'insufficient access' unless acceptable? scopes
