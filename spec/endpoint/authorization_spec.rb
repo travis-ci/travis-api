@@ -10,8 +10,9 @@ describe Travis::Api::App::Endpoint::Authorization do
       end
     end
 
-    User.stubs(:find_by_login).with(user.login).returns(user)
-    User.stubs(:find).with(user.id).returns(user)
+    user.stubs(:github_id).returns(42)
+    User.stubs(:find_github_id).returns(user)
+    User.stubs(:find).returns(user)
   end
 
   describe 'GET /auth/authorize' do
@@ -24,9 +25,10 @@ describe Travis::Api::App::Endpoint::Authorization do
 
   describe 'POST /auth/github' do
     before do
-      GH.stubs(:with).with(token: 'private repos').returns stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'})
-      GH.stubs(:with).with(token: 'public repos').returns  stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'})
-      GH.stubs(:with).with(token: 'no repos').returns      stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'})
+      data = { 'id' => user.github_id, 'name' => user.name, 'login' => user.login, 'gravatar_id' => user.gravatar_id }
+      GH.stubs(:with).with(token: 'private repos').returns stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'}, :to_hash => data)
+      GH.stubs(:with).with(token: 'public repos').returns  stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'}, :to_hash => data)
+      GH.stubs(:with).with(token: 'no repos').returns      stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'}, :to_hash => data)
       GH.stubs(:with).with(token: 'invalid token').raises(Faraday::Error::ClientError, 'CLIENT ERROR!')
     end
 
@@ -42,11 +44,11 @@ describe Travis::Api::App::Endpoint::Authorization do
     end
 
     it 'accepts tokens with repo scope' do
-      user_for('private repos').should == user
+      user_for('private repos').name.should == user.name
     end
 
     it 'accepts tokens with public_repo scope' do
-      user_for('public repos').should == user
+      user_for('public repos').name.should == user.name
     end
 
     it 'rejects tokens with user scope' do

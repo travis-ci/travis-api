@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe Travis::Api::App::Endpoint::Profile do
   include Travis::Testing::Stubs
-  let(:access_token) { Travis::Api::App::AccessToken.create(user: user) }
+  let(:access_token) { Travis::Api::App::AccessToken.create(user: user, app_id: 0) }
 
   before do
-    User.stubs(:find_by_login).with(user.login).returns(user)
-    User.stubs(:find).with(user.id).returns(user)
+    User.stubs(:find_by_github_id).returns(user)
+    User.stubs(:find).returns(user)
   end
 
   it 'needs to be authenticated' do
