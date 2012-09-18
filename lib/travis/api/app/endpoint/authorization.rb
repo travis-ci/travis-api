@@ -94,7 +94,7 @@ class Travis::Api::App
           github_token           = get_token(endpoint.to_s, values)
           user                   = user_for_github_token(github_token)
           token                  = generate_token(user: user, app_id: 0)
-          rendered_user          = service(:user, user).find_one
+          rendered_user          = Travis::Api.data(service(:user, user).find_one, type: :user, version: :v2)
           post_message(token: token, user: rendered_user)
         else
           values[:state]         = create_state
