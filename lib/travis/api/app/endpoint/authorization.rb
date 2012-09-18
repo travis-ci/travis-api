@@ -77,30 +77,16 @@ class Travis::Api::App
         { 'access_token' => github_to_travis(params[:token], app_id: 1) }
       end
 
-      get '/post_message' do
-        config   = Travis.config.oauth2
-        endpoint = Addressable::URI.parse(config.authorization_server)
-        values   = {
-          client_id:    config.client_id,
-          scope:        config.scope,
-          redirect_uri: url
-        }
+      get '/handshake' do
+        handshake do |*, redirect_uri|
+          redirect redirect_uri
+        end
+      end
 
-        if params[:code] and state_ok?(params[:state])
-          endpoint.path          = config.access_token_path
-          values[:state]         = params[:state]
-          values[:code]          = params[:code]
-          values[:client_secret] = config.client_secret
-          github_token           = get_token(endpoint.to_s, values)
-          user                   = user_for_github_token(github_token)
-          token                  = generate_token(user: user, app_id: 0)
-          rendered_user          = service(:user, user).find_one
+      get '/post_message' do
+        handshake do |user, token|
+          rendered_user = service(:user, user).find_one
           post_message(token: token, user: rendered_user)
-        else
-          values[:state]         = create_state
-          endpoint.path          = config.authorize_path
-          endpoint.query_values  = values
-          redirect to(endpoint.to_s)
         end
       end
 
@@ -110,15 +96,43 @@ class Travis::Api::App
 
       private
 
+        def handshake
+          config   = Travis.config.oauth2
+          endpoint = Addressable::URI.parse(config.authorization_server)
+          values   = {
+            client_id:    config.client_id,
+            scope:        config.scope,
+            redirect_uri: url
+          }
+
+          if params[:code] and state_ok?(params[:state])
+            endpoint.path          = config.access_token_path
+            values[:state]         = params[:state]
+            values[:code]          = params[:code]
+            values[:client_secret] = config.client_secret
+            github_token           = get_token(endpoint.to_s, values)
+            user                   = user_for_github_token(github_token)
+            token                  = generate_token(user: user, app_id: 0)
+            payload                = params[:state].split(":::", 2)[1]
+            yield user, token, payload
+          else
+            values[:state]         = create_state
+            endpoint.path          = config.authorize_path
+            endpoint.query_values  = values
+            redirect to(endpoint.to_s)
+          end
+        end
+
         def create_state
           state = SecureRandom.urlsafe_base64(16)
           redis.sadd('github:states', state)
           redis.expire('github:states', 1800)
+          state << ":::" << params[:redirect_uri] if params[:redirect_uri]
           state
         end
 
         def state_ok?(state)
-          redis.srem('github:states', state) if state
+          redis.srem('github:states', state.split(":::", 1)) if state
         end
 
         def github_to_travis(token, options = {})
