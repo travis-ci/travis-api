@@ -13,14 +13,13 @@ class Travis::Api::App
 
     private
 
-      def service(key)
+      def service(key, user = current_user)
         const = Travis.services[key] || raise("no service registered for #{key}")
-        const.new(current_user)
+        const.new(user)
       end
 
       def current_user
-        # TODO
-        User.where(:login => 'svenfuchs').first
+        env['travis.access_token'].user if env['travis.access_token']
       end
 
       def redis

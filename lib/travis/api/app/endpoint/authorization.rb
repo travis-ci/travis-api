@@ -92,8 +92,10 @@ class Travis::Api::App
           values[:code]          = params[:code]
           values[:client_secret] = config.client_secret
           github_token           = get_token(endpoint.to_s, values)
-          token                  = github_to_travis(github_token, app_id: 0)
-          post_message(token: token)
+          user                   = user_for_github_token(github_token)
+          token                  = generate_token(user: user, app_id: 0)
+          rendered_user          = service(:user, user).find_one
+          post_message(token: token, user: rendered_user)
         else
           values[:state]         = create_state
           endpoint.path          = config.authorize_path
@@ -120,14 +122,17 @@ class Travis::Api::App
         end
 
         def github_to_travis(token, options = {})
+          generate_token options.merge(user: user_for_github_token(token))
+        end
+
+        def user_for_github_token(token)
           data   = GH.with(token: token.to_s) { GH['user'] }
           scopes = parse_scopes data.headers['x-oauth-scopes']
           user   = User.find_by_login(data['login'])
 
           halt 403, 'not a Travis user'   if user.nil?
           halt 403, 'insufficient access' unless acceptable? scopes
-
-          generate_token options.merge(user: user)
+          user
         end
 
         def get_token(endoint, values)
@@ -160,9 +165,9 @@ __END__
 
 @@ post_message
 <script>
+var payload = <%= render_json(user) %>;
+payload.token = <%= token.inspect %>;
 <% settings.target_origins.each do |target| %>
-  window.parent.postMessage(<%= token.inspect %>, <%= target.inspect %>);
+  window.parent.postMessage(payload, <%= target.inspect %>);
 <% end %>
 </script>
-
-SENT
