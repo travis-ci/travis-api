@@ -29,7 +29,7 @@ class Travis::Api::App
     def save
       key = key(token)
       redis.del(key)
-      redis.rpush(key, [user_id, '', *scopes].map(&:to_s))
+      redis.rpush(key, [user_id, app_id, *scopes].map(&:to_s))
       redis.set(reuse_key, token)
     end
 
