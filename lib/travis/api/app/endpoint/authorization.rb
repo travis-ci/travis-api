@@ -18,6 +18,7 @@ class Travis::Api::App
     # authorize) against GitHub.
     #
     # This is the recommended way for third-party web apps.
+    # The entry point is [/auth/authorize](#/auth/authorize).
     #
     # ## GitHub Token
     #
@@ -29,10 +30,14 @@ class Travis::Api::App
     # This is the recommended way for GitHub applications that also want Travis
     # integration.
     #
+    # The entry point is [/auth/github](#/auth/github).
+    #
     # ## Cross-Origin Window Messages
     #
     # This is the recommended way for the official client. We might improve the
     # authorization flow to support third-party clients in the future, too.
+    #
+    # The entry point is [/auth/post_message](#/auth/post_message).
     class Authorization < Endpoint
       set prefix: '/auth'
       enable :inline_templates
@@ -49,6 +54,9 @@ class Travis::Api::App
         ]
       end
 
+      # Endpoint for retrieving an authorization code, which in turn can be used
+      # to generate an access token.
+      #
       # Parameters:
       #
       # * **client_id**: your App's client id (required)
@@ -59,17 +67,21 @@ class Travis::Api::App
         raise NotImplementedError
       end
 
+      # Endpoint for generating an access token from an authorization code.
+      #
       # Parameters:
       #
       # * **client_id**: your App's client id (required)
       # * **client_secret**: your App's client secret (required)
-      # * **code**: code retrieved from redirect from [/authorize](#/authorize) (required)
+      # * **code**: code retrieved from redirect from [/auth/authorize](#/auth/authorize) (required)
       # * **redirect_uri**: URL to redirect to
-      # * **state**: same value sent to [/authorize](#/authorize)
+      # * **state**: same value sent to [/auth/authorize](#/auth/authorize)
       post '/access_token' do
         raise NotImplementedError
       end
 
+      # Endpoint for generating an access token from a GitHub access token.
+      #
       # Parameters:
       #
       # * **token**: GitHub token for checking authorization (required)
@@ -77,12 +89,41 @@ class Travis::Api::App
         { 'access_token' => github_to_travis(params[:token], app_id: 1) }
       end
 
+      # Endpoint for making sure user authorized Travis CI to access GitHub.
+      # There are no restrictions on where to redirect to after handshake.
+      # However, no information whatsoever is being sent with the redirect.
+      #
+      # Parameters:
+      #
+      # * **redirect_uri**: URI to redirect after handshake.
       get '/handshake' do
         handshake do |*, redirect_uri|
           redirect redirect_uri
         end
       end
 
+      # This endpoint is meant to be embedded in an iframe, popup window or
+      # similar. It will perform the handshake and, once done, will send an
+      # access token and user payload to the parent window via postMessage.
+      #
+      # However, the endpoint to send the payload to has to be explicitely
+      # whitelisted in production, as this is endpoint is only meant to be used
+      # with the official Travis CI client at the moment.
+      #
+      # Example usage:
+      #
+      #     window.addEventListener("message", function(event) {
+      #       alert("received token: " + event.data.token);
+      #     });
+      #
+      #     var iframe = $('<iframe />').hide();
+      #     iframe.appendTo('body');
+      #     iframe.attr('src', "https://api.travis-ci.org/auth/post_message");
+      #
+      # Note that embedding it in an iframe will only work for users that are
+      # logged in at GitHub and already authorized Travis CI. It is therefore
+      # recommended to redirect to [/auth/handshake](#/auth/handshake) if no
+      # token is being received.
       get '/post_message' do
         handshake do |user, token|
           rendered_user = Travis::Api.data(service(:user, user).find_one, type: :user, version: :v2)
