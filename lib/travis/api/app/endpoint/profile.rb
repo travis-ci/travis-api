@@ -18,8 +18,7 @@ class Travis::Api::App
       #         "synced_at": "2012-08-14T22:11:21Z"
       #       }
       #     }
-      # , scope: :private
-      get '/' do
+      get '/', scope: :private do
         body service(:user).find_one, type: :user
       end
 
