@@ -54,6 +54,10 @@ class Travis::Api::App
       use Rack::SSL if Endpoint.production?
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
 
+      use Rack::Config do |env|
+        env['travis.global_prefix'] = env['SCRIPT_NAME']
+      end
+
       Middleware.subclasses.each { |m| use(m) }
       Endpoint.subclasses.each { |e| map(e.prefix) { run(e.new) } }
     end

@@ -95,10 +95,10 @@ class Travis::Api::App
       #
       # Parameters:
       #
-      # * **redirect_uri**: URI to redirect after handshake.
+      # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake' do
         handshake do |*, redirect_uri|
-          redirect redirect_uri
+          safe_redirect redirect_uri
         end
       end
 
