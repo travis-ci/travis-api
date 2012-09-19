@@ -14,7 +14,7 @@ describe Travis::Api::App::Extensions::Scoping do
   end
 
   def with_scopes(url, *scopes)
-    token = Travis::Api::App::AccessToken.create(user: user, scopes: scopes)
+    token = Travis::Api::App::AccessToken.create(user: user, scopes: scopes, app_id: -1)
     get(url, {}, 'travis.access_token' => token)
   end
 

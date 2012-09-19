@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Travis::Api::App::Endpoint::Profile do
   include Travis::Testing::Stubs
-  let(:access_token) { Travis::Api::App::AccessToken.create(user: user, app_id: 0) }
+  let(:access_token) { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
 
   before do
     User.stubs(:find_by_github_id).returns(user)

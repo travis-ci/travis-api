@@ -68,7 +68,7 @@ class Travis::Api::App
       def reuse_key
         @reuse_key ||= begin
           keys = ["r", user_id, app_id]
-          keys.append(scopes.mpa(&:to_s).sort) if scopes != DEFAULT_SCOPES
+          keys.append(scopes.map(&:to_s).sort) if scopes != DEFAULT_SCOPES
           keys.join(':')
         end
       end
