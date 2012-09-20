@@ -6,6 +6,7 @@ require 'travis'
 require 'backports'
 require 'rack'
 require 'rack/protection'
+require 'rack/contrib'
 require 'active_record'
 require 'redis'
 require 'gh'
@@ -52,6 +53,7 @@ class Travis::Api::App
     @app = Rack::Builder.app do
       use Rack::Protection::PathTraversal
       use Rack::SSL if Endpoint.production?
+      use Rack::JSONP
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
 
       use Rack::Config do |env|

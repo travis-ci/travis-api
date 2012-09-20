@@ -126,5 +126,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'sinatra-contrib', '~> 1.3'
   s.add_dependency 'redcarpet',       '~> 2.1'
   s.add_dependency 'rack-ssl',        '~> 1.3'
+  s.add_dependency 'rack-contrib',    '~> 1.1'
 end
 
