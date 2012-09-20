@@ -40,7 +40,7 @@ describe Travis::Api::App::Middleware::Cors do
     end
 
     it 'sets Access-Control-Allow-Methods' do
-      headers['Access-Control-Allow-Methods'].should == "GET, POST, PATCH, PUT, DELETE"
+      headers['Access-Control-Allow-Methods'].should == "HEAD, GET, POST, PATCH, PUT, DELETE"
     end
 
     it 'sets Access-Control-Allow-Headers' do
