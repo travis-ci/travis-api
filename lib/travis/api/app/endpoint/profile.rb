@@ -30,9 +30,8 @@ class Travis::Api::App
 
       # TODO: Add implementation and documentation.
       post '/sync', scope: :private do
-        # raise NotImplementedError
-        # sync_user(current_user)
-        'ok'
+        sync_user(current_user)
+        204
       end
 
       private
