@@ -1,6 +1,6 @@
 # Web Clients
 
-When write an in-browsers client, you have to circumvent the browser's
+When writing an in-browsers client, you have to circumvent the browser's
 [same origin policy](http://en.wikipedia.org/wiki/Same_origin_policy).
 Generally, we offer two different approaches for this:
 [Cross-Origin Resource Sharing](http://en.wikipedia.org/wiki/Cross-origin_resource_sharing) (aka CORS)
