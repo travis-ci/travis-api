@@ -17,11 +17,6 @@ class Travis::Api::App
         erb :index, {}, endpoints: endpoints.keys.sort.map { |k| endpoints[k] }
       end
 
-      get '/x' do
-        content_type :html
-        general_docs
-      end
-
       helpers do
         def icon_for(verb)
           # GET, POST, PATCH, PUT, DELETE"
