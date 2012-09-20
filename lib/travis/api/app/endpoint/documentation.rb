@@ -38,13 +38,17 @@ class Travis::Api::App
         end
 
         def docs_for(entry)
-          markdown(entry['doc']).
-            gsub('<pre', '<pre class="prettyprint linenums lang-js pre-scrollable"').
-            gsub(/<\/?code>/, '').
-            gsub(/TODO:?/, '<span class="label label-warning">TODO</span>')
+          with_code_highlighting markdown(entry['doc'])
         end
 
         private
+
+          def with_code_highlighting(str)
+            str.
+              gsub('<pre', '<pre class="prettyprint linenums lang-js pre-scrollable"').
+              gsub(/<\/?code>/, '').
+              gsub(/TODO:?/, '<span class="label label-warning">TODO</span>')
+          end
 
           def general_docs
             @@general_docs  ||= doc_files.map do |file|
@@ -58,7 +62,7 @@ class Travis::Api::App
               end
 
               header.gsub! /^#* */, ''
-              { id: header, title: header, content: content, subheaders: subheaders }
+              { id: header, title: header, content: with_code_highlighting(content), subheaders: subheaders }
             end
           end
 

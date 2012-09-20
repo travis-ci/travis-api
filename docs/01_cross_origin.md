@@ -9,7 +9,18 @@ reason for using JSONP, we recommend you use CORS.
 
 ## Cross-Origin Resource Sharing
 
-... some general docs here ...
+All API resources set appropriate headers to allow Cross-Origin requests. Be
+aware that on Internet Explorer you might have to use a different interface to
+send these requests.
+
+    // using XMLHttpRequest or XDomainRequest to send an API request
+    var invocation = window.XDomainRequest ? new XDomainRequest() : new XMLHttpRequest();
+
+    if(invocation) {
+      invocation.open("GET", "https://api.travis-ci.org/", true);
+      invocation.onreadystatechange = function() { alert("it worked!") };
+      invocation.send();
+    }
 
 In contrast to JSONP, CORS does not lead to any execution of untrusted code.
 
