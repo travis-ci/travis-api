@@ -27,8 +27,19 @@ In contrast to JSONP, CORS does not lead to any execution of untrusted code.
 Most JavaScript frameworks, like [jQuery](http://jquery.com), take care of CORS
 requests for you under the hood, so you can just do a normal *ajax* request.
 
+    // using jQuery
+    $.get("https://api.travis-ci.org/", function() { alert("it worked!") });
+
 Our current setup allows the headers `Content-Type`, `Authorization`, `Accept` and the HTTP methods `HEAD`, `GET`, `POST`, `PATCH`, `PUT`, `DELETE`.
 
 ## JSONP
 
-... some docs here ...
+You can disable the same origin policy by treating the response as JavaScript.
+Supply a `callback` parameter to use this.
+
+    <script>
+      function jsonpCallback() { alert("it worked!") };
+    </script>
+    <script src="https://api.travis-ci.org/?callback=jsonpCallback"></script>
+
+This has the potential of code injection, use with caution.

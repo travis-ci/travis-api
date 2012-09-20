@@ -7,6 +7,9 @@ class Travis::Api::App
       set prefix: '/docs', public_folder: File.expand_path('../documentation', __FILE__)
       enable :inline_templates, :static
 
+      # Don't cache general docs in development
+      configure(:development) { before { @@general_docs = nil } }
+
       # HTML view for [/endpoints](#/endpoints/).
       get '/' do
         content_type :html
@@ -45,7 +48,7 @@ class Travis::Api::App
 
           def with_code_highlighting(str)
             str.
-              gsub('<pre', '<pre class="prettyprint linenums lang-js pre-scrollable"').
+              gsub('<pre', '<pre class="prettyprint linenums pre-scrollable"').
               gsub(/<\/?code>/, '').
               gsub(/TODO:?/, '<span class="label label-warning">TODO</span>')
           end
