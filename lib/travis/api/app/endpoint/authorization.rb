@@ -42,18 +42,6 @@ class Travis::Api::App
       set prefix: '/auth'
       enable :inline_templates
 
-      configure :development, :test do
-        set :target_origins, ['*']
-      end
-
-      configure :production do
-        set :target_origins, %W[
-          https://#{Travis.config.domain}
-          https://staging.#{Travis.config.domain}
-          https://travis-ember.herokuapp.com
-        ]
-      end
-
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
       #
@@ -125,9 +113,10 @@ class Travis::Api::App
       # recommended to redirect to [/auth/handshake](#/auth/handshake) if no
       # token is being received.
       get '/post_message' do
-        handshake do |user, token|
+        handshake do |user, token, target_origin|
+          halt 403, invalid_target(target_origin) unless target_ok? target_origin
           rendered_user = Travis::Api.data(service(:user, user).find_one, type: :user, version: :v2)
-          post_message(token: token, user: rendered_user)
+          post_message(token: token, user: rendered_user, target_origin: target_origin)
         end
       end
 
@@ -168,7 +157,8 @@ class Travis::Api::App
           state = SecureRandom.urlsafe_base64(16)
           redis.sadd('github:states', state)
           redis.expire('github:states', 1800)
-          state << ":::" << params[:redirect_uri] if params[:redirect_uri]
+          payload = params[:origin] || params[:redirect_uri]
+          state << ":::" << payload if payload
           state
         end
 
@@ -220,17 +210,32 @@ class Travis::Api::App
           content_type :html
           erb(:post_message, locals: payload)
         end
+
+        def invalid_target(target_origin)
+          content_type :html
+          erb(:invalid_target, {}, target_origin: target_origin)
+        end
+
+        def target_ok?(target_origin)
+          target_origin =~ %r{
+            ^ http://   (localhost|127\.0\.0\.1)(:\d+)? $ |
+            ^ https://  (\w+\.)?travis-ci\.(org|com)    $
+          }x
+        end
     end
   end
 end
 
 __END__
 
+@@ invalid_target
+<script>
+alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted!');
+</script>
+
 @@ post_message
 <script>
 var payload = <%= render_json(user) %>;
 payload.token = <%= token.inspect %>;
-<% settings.target_origins.each do |target| %>
-  window.parent.postMessage(payload, <%= target.inspect %>);
-<% end %>
+window.parent.postMessage(payload, <%= target_origin.inspect %>);
 </script>
