@@ -7,11 +7,14 @@ class Travis::Api::App
       set prefix: '/docs', public_folder: File.expand_path('../documentation', __FILE__)
       enable :inline_templates, :static
 
+      # Don't cache general docs in development
+      configure(:development) { before { @@general_docs = nil } }
+
       # HTML view for [/endpoints](#/endpoints/).
       get '/' do
         content_type :html
         endpoints = Endpoints.endpoints
-        erb :index, {}, :endpoints => endpoints.keys.sort.map { |k| endpoints[k] }
+        erb :index, {}, endpoints: endpoints.keys.sort.map { |k| endpoints[k] }
       end
 
       helpers do
@@ -33,11 +36,38 @@ class Travis::Api::App
         end
 
         def docs_for(entry)
-          markdown(entry['doc']).
-            gsub('<pre', '<pre class="prettyprint linenums lang-js pre-scrollable"').
-            gsub(/<\/?code>/, '').
-            gsub(/TODO:?/, '<span class="label label-warning">TODO</span>')
+          with_code_highlighting markdown(entry['doc'])
         end
+
+        private
+
+          def with_code_highlighting(str)
+            str.
+              gsub('<pre', '<pre class="prettyprint linenums pre-scrollable"').
+              gsub(/<\/?code>/, '').
+              gsub(/TODO:?/, '<span class="label label-warning">TODO</span>')
+          end
+
+          def general_docs
+            @@general_docs  ||= doc_files.map do |file|
+              header, content = File.read(file).split("\n", 2)
+              content         = markdown(content)
+              subheaders      = []
+
+              content.gsub!(/<h2>(.*)<\/h2>/) do
+                subheaders << $1
+                "<h2 id=\"#{$1}\">#{$1}</h2>"
+              end
+
+              header.gsub! /^#* */, ''
+              { id: header, title: header, content: with_code_highlighting(content), subheaders: subheaders }
+            end
+          end
+
+          def doc_files
+            pattern = File.expand_path('../../../../../../docs/*.md', __FILE__)
+            Dir[pattern].sort
+          end
       end
     end
   end
@@ -95,6 +125,13 @@ __END__
   </head>
 
   <body onload="prettyPrint()">
+
+    <a href="https://github.com/travis-ci/travis-api">
+      <img style="position: absolute; top: 0; right: 0; border: 0;"
+        src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
+        alt="Fork me on GitHub">
+    </a>
+
     <div class="container">
       <div class="row">
         <header class="span12">
@@ -111,6 +148,13 @@ __END__
           </div>
           <div class="well" style="padding: 8px 0;">
             <ul class="nav nav-list">
+              <% general_docs.each do |doc| %>
+                <li class="nav-header"><a href="#<%= doc[:id] %>"><%= doc[:title] %></a></li>
+                <% doc[:subheaders].each do |sub| %>
+                  <li><a href="#<%= sub %>"><%= sub %></a></li>
+                <% end %>
+              <% end %>
+              <li class="divider"></li>
               <% endpoints.each do |endpoint| %>
                 <li class="nav-header"><a href="#<%= endpoint['name'] %>"><%= endpoint['name'] %></a></li>
                 <% endpoint['routes'].each do |route| %>
@@ -156,29 +200,15 @@ __END__
 
         <section class="span9">
 
+          <% general_docs.each do |doc| %>
+            <%= erb :entry, locals: doc %>
+          <% end %>
+
           <% endpoints.each do |endpoint| %>
-            <div id="<%= endpoint['name'] %>">
-              <div class="page-header">
-                <h1>
-                  <a href="#<%= endpoint['name'] %>"><%= endpoint['name'] %></a>
-                </h1>
-              </div>
-              <% unless endpoint['doc'].to_s.empty? %>
-                <%= docs_for endpoint %>
-                <hr>
-              <% end %>
-              <% endpoint['routes'].each do |route| %>
-                  <div class="route" id="<%= slug_for(route) %>">
-                    <pre><h3><%= route['verb'] %> <%= route['uri'] %></h3></pre>
-                    <% if route['scope'] %>
-                      <p>
-                        <h5>Required autorization scope: <span class="label"><%= route['scope'] %></span></h5>
-                      </p>
-                    <% end %>
-                    <%= docs_for route %>
-                  </div>
-              <% end %>
-            </div>
+            <%= erb :entry, {},
+              id: endpoint['name'],
+              title: endpoint['name'],
+              content: erb(:endpoint_content, {}, endpoint: endpoint) %>
           <% end %>
 
         </section>
@@ -186,3 +216,31 @@ __END__
     </div>
   </body>
 </html>
+
+@@ endpoint_content
+<% unless endpoint['doc'].to_s.empty? %>
+  <%= docs_for endpoint %>
+  <hr>
+<% end %>
+<% endpoint['routes'].each do |route| %>
+  <div class="route" id="<%= slug_for(route) %>">
+    <pre><h3><%= route['verb'] %> <%= route['uri'] %></h3></pre>
+    <% if route['scope'] %>
+      <p>
+        <h5>Required autorization scope: <span class="label"><%= route['scope'] %></span></h5>
+      </p>
+    <% end %>
+    <%= docs_for route %>
+  </div>
+<% end %>
+
+@@ entry
+<div id="<%= id %>">
+  <div class="page-header">
+    <h1>
+      <a href="#<%= id %>"><%= title %></a>
+    </h1>
+  </div>
+  <%= content %>
+</div>
+

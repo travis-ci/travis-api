@@ -4,7 +4,7 @@ describe Travis::Api::App::Middleware::ScopeCheck do
   include Travis::Testing::Stubs
 
   let :access_token do
-    Travis::Api::App::AccessToken.create(user: user, scope: :foo)
+    Travis::Api::App::AccessToken.create(user: user, scope: :foo, app_id: -1)
   end
 
   before do

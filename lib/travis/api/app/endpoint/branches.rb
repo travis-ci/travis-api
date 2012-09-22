@@ -6,15 +6,8 @@ class Travis::Api::App
     class Branches < Endpoint
       # TODO: Add documentation.
       get('/') do
-        body repository, :type => "Branches"
+        body service(:branches).find_all(params), type: :branches
       end
-
-      private
-
-        def repository
-          pass if params.empty?
-          Repository.find_by(params) || not_found
-        end
     end
   end
 end

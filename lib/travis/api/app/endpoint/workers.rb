@@ -5,7 +5,9 @@ class Travis::Api::App
     # TODO: Add documentation.
     class Workers < Endpoint
       # TODO: Add implementation and documentation.
-      get('/') { Worker.order(:host, :name) }
+      get('/') do
+        body service(:workers).find_all(params)
+      end
     end
   end
 end

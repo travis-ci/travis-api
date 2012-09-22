@@ -6,23 +6,13 @@ class Travis::Api::App
     class Builds < Endpoint
       # TODO: Add documentation.
       get '/' do
-        scope = repository.builds.by_event_type(params[:event_type] || 'push')
-        scope = params[:after] ? scope.older_than(params[:after]) : scope.recent
-        scope
+        body service(:builds).find_all(params)
       end
 
       # TODO: Add documentation.
       get '/:id' do
-        one = params[:repository_id] ? repository.builds : Build
-        body one.includes(:commit, :matrix => [:commit, :log]).find(params[:id])
+        body service(:builds).find_one(params)
       end
-
-      private
-
-        def repository
-          pass if params.empty?
-          Repository.find_by(params) || not_found
-        end
     end
   end
 end

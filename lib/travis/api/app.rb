@@ -6,6 +6,7 @@ require 'travis'
 require 'backports'
 require 'rack'
 require 'rack/protection'
+require 'rack/contrib'
 require 'active_record'
 require 'redis'
 require 'gh'
@@ -52,7 +53,12 @@ class Travis::Api::App
     @app = Rack::Builder.app do
       use Rack::Protection::PathTraversal
       use Rack::SSL if Endpoint.production?
+      use Rack::JSONP
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
+
+      use Rack::Config do |env|
+        env['travis.global_prefix'] = env['SCRIPT_NAME']
+      end
 
       Middleware.subclasses.each { |m| use(m) }
       Endpoint.subclasses.each { |e| map(e.prefix) { run(e.new) } }
@@ -75,6 +81,10 @@ class Travis::Api::App
 
     def self.setup_travis
       Travis::Database.connect
+
+      Travis::Services.constants.each do |name|
+        Travis.services[name.to_s.underscore.to_sym] = Travis::Services.const_get(name) unless name == :Base
+      end
     end
 
     def self.load_endpoints

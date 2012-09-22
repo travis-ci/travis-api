@@ -16,9 +16,9 @@ Gem::Specification.new do |s|
 
   s.email = [
     "konstantin.mailinglists@googlemail.com",
+    "me@svenfuchs.com",
     "svenfuchs@artweb-design.de",
-    "drogus@gmail.com",
-    "me@svenfuchs.com"
+    "drogus@gmail.com"
   ]
 
   s.files = [
@@ -27,6 +27,8 @@ Gem::Specification.new do |s|
     "Rakefile",
     "config.ru",
     "config/database.yml",
+    "docs/00_overview.md",
+    "docs/01_cross_origin.md",
     "lib/travis/api/app.rb",
     "lib/travis/api/app/access_token.rb",
     "lib/travis/api/app/endpoint.rb",
@@ -124,5 +126,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'sinatra-contrib', '~> 1.3'
   s.add_dependency 'redcarpet',       '~> 2.1'
   s.add_dependency 'rack-ssl',        '~> 1.3'
+  s.add_dependency 'rack-contrib',    '~> 1.1'
 end
 
