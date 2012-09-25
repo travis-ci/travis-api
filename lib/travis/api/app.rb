@@ -12,6 +12,7 @@ require 'redis'
 require 'gh'
 require 'hubble'
 require 'hubble/middleware'
+require 'newrelic_rpm'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
