@@ -33,6 +33,9 @@ class Travis::Api::App
           headers['X-Accepted-OAuth-Scopes'] = name.to_s
 
           if scopes.include? name
+            headers['Vary'] = 'Accept'
+            headers['Vary'] << ', Authorization' if scope == :public
+            #cache_control :public, :must_revalidate if request.head? or request.get?
             true
           elsif logged_in?
             halt 403, "insufficient access"

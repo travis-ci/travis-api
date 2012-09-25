@@ -4,7 +4,7 @@ class Travis::Api::App
   class Endpoint
     # Generated API documentation.
     class Documentation < Endpoint
-      set prefix: '/docs', public_folder: File.expand_path('../documentation', __FILE__)
+      set prefix: '/docs', public_folder: File.expand_path('../documentation', __FILE__), static_cache_control: :public
       enable :inline_templates, :static
 
       # Don't cache general docs in development
@@ -12,6 +12,7 @@ class Travis::Api::App
 
       # HTML view for [/endpoints](#/endpoints/).
       get '/' do
+        cache_control :public
         content_type :html
         endpoints = Endpoints.endpoints
         erb :index, {}, endpoints: endpoints.keys.sort.map { |k| endpoints[k] }
