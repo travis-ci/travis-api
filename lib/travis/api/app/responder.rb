@@ -20,6 +20,8 @@ class Travis::Api::App
       #
       # Logging is set up by custom middleware
       disable  :protection, :logging, :setup
+      enable   :raise_errors
+      disable  :dump_errors
       register :subclass_tracker
       helpers  :json_renderer
     end

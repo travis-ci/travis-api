@@ -10,6 +10,8 @@ require 'rack/contrib'
 require 'active_record'
 require 'redis'
 require 'gh'
+require 'hubble'
+require 'hubble/middleware'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -51,6 +53,7 @@ class Travis::Api::App
 
   def initialize
     @app = Rack::Builder.app do
+      use Hubble::Rescuer, env: Travis.env, codename: ENV['CODENAME'] if Endpoint.production? && ENV['HUBBLE_ENDPOINT']
       use Rack::Protection::PathTraversal
       use Rack::SSL if Endpoint.production?
       use Rack::JSONP
