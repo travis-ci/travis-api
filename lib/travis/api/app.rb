@@ -84,6 +84,7 @@ class Travis::Api::App
     end
 
     def self.setup_travis
+      Travis::Amqp.config = Travis.config.amqp
       Travis::Database.connect
 
       Travis::Services.constants.each do |name|
