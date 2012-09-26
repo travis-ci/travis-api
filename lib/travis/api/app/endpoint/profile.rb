@@ -3,6 +3,8 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Profile < Endpoint
+      LOCALES = %w(en es fr ja eb nl pl pt-Br ru) # TODO how to figure these out
+
       # Gives information about the currently logged in user.
       #
       # Example:
@@ -23,7 +25,7 @@ class Travis::Api::App
       end
 
       put '/', scope: :private do
-        raise NotImplementedError
+p params
         update_locale if valid_locale?
         'ok'
       end
@@ -45,17 +47,18 @@ class Travis::Api::App
         end
 
         def locale
-          params[:user][:locale]
+          params[:profile][:locale].to_s
         end
 
         def valid_locale?
-          I18n.available_locales.include?(locale.to_sym) # ???
+          LOCALES.include?(locale)
         end
 
         def update_locale
-          current_user.update_attributes!(:locale => locale.to_s)
-          session[:locale] = locale # ???
+          current_user.update_attribute(:locale, locale.to_s)
+          # session[:locale] = locale # ???
         end
     end
   end
 end
+

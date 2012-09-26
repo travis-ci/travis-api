@@ -11,7 +11,7 @@ class Travis::Api::App
       end
 
       # TODO: Add implementation and documentation.
-      put('/:id', scope: :admin) do
+      put('/:id', scope: :private) do
         body service(:hooks).update(params)
       end
     end
