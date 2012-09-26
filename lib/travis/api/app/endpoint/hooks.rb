@@ -12,7 +12,7 @@ class Travis::Api::App
 
       # TODO: Add implementation and documentation.
       put('/:id', scope: :private) do
-        body service(:hooks).update(params)
+        body service(:hooks).update(params[:hook])
       end
     end
   end

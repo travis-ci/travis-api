@@ -24,8 +24,7 @@ class Travis::Api::App
         body service(:user).find_one, type: :user
       end
 
-      put '/', scope: :private do
-p params
+      put '/:id?', scope: :private do
         update_locale if valid_locale?
         'ok'
       end
