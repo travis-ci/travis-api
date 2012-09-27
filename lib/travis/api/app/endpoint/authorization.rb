@@ -180,8 +180,8 @@ class Travis::Api::App
         def user_for_github_token(token)
           data   = GH.with(token: token.to_s) { GH['user'] }
           scopes = parse_scopes data.headers['x-oauth-scopes']
-          user   = User.find_by_github_id(data['id'])
-          user ||= User.create! user_info(data, github_oauth_token: token)
+          user   = ::User.find_by_github_id(data['id'])
+          user ||= ::User.create! user_info(data, github_oauth_token: token)
 
           halt 403, 'not a Travis user'   if user.nil?
           halt 403, 'insufficient access' unless acceptable? scopes
