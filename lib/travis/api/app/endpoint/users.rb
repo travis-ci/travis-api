@@ -2,7 +2,7 @@ require 'travis/api/app'
 
 class Travis::Api::App
   class Endpoint
-    class User < Endpoint
+    class Users < Endpoint
       # Gives information about the currently logged in user.
       #
       # Example:

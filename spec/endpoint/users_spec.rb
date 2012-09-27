@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Api::App::Endpoint::Profile do
+describe Travis::Api::App::Endpoint::Users do
   include Travis::Testing::Stubs
   let(:access_token) { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
 
@@ -11,11 +11,11 @@ describe Travis::Api::App::Endpoint::Profile do
   end
 
   it 'needs to be authenticated' do
-    get('/profile').should_not be_ok
+    get('/users').should_not be_ok
   end
 
   it 'replies with the current user' do
-    get('/profile', access_token: access_token.to_s).should be_ok
+    get('/users', access_token: access_token.to_s).should be_ok
     parsed_body['user'].should == {
       'id'          => user.id,
       'login'       => user.login,
@@ -26,16 +26,5 @@ describe Travis::Api::App::Endpoint::Profile do
       'is_syncing'  => user.is_syncing,
       'synced_at'   => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ')
     }
-  end
-
-  it 'includes accounts' do
-    get('/profile', access_token: access_token.to_s).should be_ok
-    parsed_body['accounts'].should == [{
-      'id'          => user.id,
-      'login'       => user.login,
-      'name'        => user.name,
-      'type'        => 'user',
-      'reposCount'  => nil
-    }]
   end
 end
