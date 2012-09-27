@@ -115,7 +115,7 @@ class Travis::Api::App
       get '/post_message' do
         handshake do |user, token, target_origin|
           halt 403, invalid_target(target_origin) unless target_ok? target_origin
-          rendered_user = Travis::Api.data(service(:user, user).find_one, type: :user, version: :v2)
+          rendered_user = Travis::Api.data(user, version: :v2)
           post_message(token: token, user: rendered_user, target_origin: target_origin)
         end
       end

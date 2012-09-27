@@ -5,8 +5,7 @@ class Travis::Api::App
     # TODO: Add documentation.
     class Hooks < Endpoint
       # TODO: Add implementation and documentation.
-      # TODO scope: :private
-      get('/') do
+      get('/', scope: :private) do
         body service(:hooks).find_all(params), type: :hooks
       end
 
