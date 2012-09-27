@@ -126,13 +126,18 @@ class Travis::Api::App
 
       private
 
+        def oauth_endpoint
+          proxy = Travis.config.oauth2.proxy
+          proxy ? File.join(proxy, request.fullpath) : url
+        end
+
         def handshake
           config   = Travis.config.oauth2
           endpoint = Addressable::URI.parse(config.authorization_server)
           values   = {
             client_id:    config.client_id,
             scope:        config.scope,
-            redirect_uri: url
+            redirect_uri: oauth_endpoint
           }
 
           if params[:code] and state_ok?(params[:state])
