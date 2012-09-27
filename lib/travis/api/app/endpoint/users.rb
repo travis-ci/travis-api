@@ -36,7 +36,7 @@ class Travis::Api::App
       private
 
         def locale
-          params[:profile][:locale]
+          params[:user][:locale]
         end
     end
   end
