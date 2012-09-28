@@ -6,7 +6,7 @@ class Travis::Api::App
   class Endpoint < Responder
     set(:prefix) { "/" << name[/[^:]+$/].underscore }
     set disable_root_endpoint: false
-    register :scoping, :services
+    register :scoping
     helpers :services, :current_user
 
     before { content_type :json }
