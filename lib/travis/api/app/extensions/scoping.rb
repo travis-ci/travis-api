@@ -3,24 +3,6 @@ require 'travis/api/app'
 class Travis::Api::App
   module Extensions
     module Scoping
-      module Helpers
-        def access_token
-          env['travis.access_token']
-        end
-
-        def user
-          access_token.user if logged_in?
-        end
-
-        def logged_in?
-          !!access_token
-        end
-
-        def scopes
-          logged_in? ? access_token.scopes : settings.anonymous_scopes
-        end
-      end
-
       def self.registered(app)
         app.set default_scope: :public, anonymous_scopes: [:public]
         app.helpers(Helpers)
@@ -28,16 +10,16 @@ class Travis::Api::App
 
       def scope(name)
         condition do
-          name = settings.default_scope if name == :default
+          name   = settings.default_scope if name == :default
+          scopes = env['travis.access_token'].try(:scopes) || settings.anonymous_scopes
           headers['X-OAuth-Scopes'] = scopes.map(&:to_s).join(',')
           headers['X-Accepted-OAuth-Scopes'] = name.to_s
 
           if scopes.include? name
             headers['Vary'] = 'Accept'
-            headers['Vary'] << ', Authorization' if scope == :public
-            #cache_control :public, :must_revalidate if request.head? or request.get?
+            headers['Vary'] << ', Authorization' if name == :public
             true
-          elsif logged_in?
+          elsif env['travis.access_token']
             halt 403, "insufficient access"
           else
             halt 401, "no access token supplied"
