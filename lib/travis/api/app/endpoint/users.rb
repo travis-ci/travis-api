@@ -23,21 +23,14 @@ class Travis::Api::App
       end
 
       put '/:id?', scope: :private do
-        service(:user).update_locale(locale)
+        update(params[:user]).run
         204
       end
 
-      # TODO: Add implementation and documentation.
       post '/sync', scope: :private do
-        service(:user).sync
+        service(:sync).run
         204
       end
-
-      private
-
-        def locale
-          params[:user][:locale]
-        end
     end
   end
 end

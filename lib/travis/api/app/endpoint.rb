@@ -4,10 +4,12 @@ require 'addressable/uri'
 class Travis::Api::App
   # Superclass for HTTP endpoints. Takes care of prefixing.
   class Endpoint < Responder
+    include Travis::Services
+
     set(:prefix) { "/" << name[/[^:]+$/].underscore }
     set disable_root_endpoint: false
     register :scoping
-    helpers :services, :current_user
+    helpers :current_user # :services
 
     before { content_type :json }
     error(ActiveRecord::RecordNotFound, Sinatra::NotFound) { not_found }

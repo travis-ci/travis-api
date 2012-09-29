@@ -87,10 +87,7 @@ class Travis::Api::App
     def self.setup_travis
       Travis::Amqp.config = Travis.config.amqp
       Travis::Database.connect
-
-      Travis::Services.constants.each do |name|
-        Travis.services[name.to_s.underscore.to_sym] = Travis::Services.const_get(name) unless name == :Base
-      end
+      # Travis::Services.namespace = Travis::Services
     end
 
     def self.load_endpoints
