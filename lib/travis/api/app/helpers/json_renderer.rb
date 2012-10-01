@@ -6,6 +6,9 @@ class Travis::Api::App
     # convert (in addition to the return values supported by Sinatra, of
     # course). These values will be encoded in JSON.
     module JsonRenderer
+      ACCEPT_VERSION  = /vnd\.travis-ci\.(\d+)\+/
+      DEFAULT_VERSION = 'v1'
+
       def respond_with(resource, options = {})
         halt render_json(resource, options)
       end
@@ -18,7 +21,7 @@ class Travis::Api::App
       private
 
         def render_json(resource, options = {})
-          options[:version] ||= 'v2' # TODO: Content negotiation
+          options[:version] ||= api_version
           options[:params]  ||= params
 
           builder  = Travis::Api.builder(resource, options)
@@ -26,6 +29,11 @@ class Travis::Api::App
           resource = resource.to_json                                     if resource.is_a? Hash
 
           resource
+        end
+
+        def api_version
+          accept = request.env['HTTP_ACCEPT'] || ''
+          accept =~ ACCEPT_VERSION && "v#{$1}" || DEFAULT_VERSION
         end
     end
   end
