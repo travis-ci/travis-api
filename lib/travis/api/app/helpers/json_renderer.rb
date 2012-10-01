@@ -25,9 +25,9 @@ class Travis::Api::App
           options[:params]  ||= params
 
           builder  = Travis::Api.builder(resource, options)
+          # builder || raise("could not determine a builder for #{resource}, #{options}")
           resource = builder.new(resource, options[:params]).data.to_json if builder
           resource = resource.to_json                                     if resource.is_a? Hash
-
           resource
         end
 

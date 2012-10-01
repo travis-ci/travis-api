@@ -7,8 +7,8 @@ class Travis::Api::App
         body all(params).run, type: :hooks
       end
 
-      put('/:id', scope: :private) do
-        update(params[:hook]).run
+      put('/:id?', scope: :private) do
+        update(id: params[:id] || params[:hook][:id], active: params[:hook][:active]).run
         204
       end
     end

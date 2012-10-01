@@ -1,16 +1,35 @@
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 
 require 'rspec'
-require 'travis/api/app'
+require 'database_cleaner'
 require 'sinatra/test_helpers'
 require 'logger'
 require 'gh'
 require 'multi_json'
 
+require 'travis/api/app'
+require 'travis/testing/scenario'
+require 'travis/testing/factories'
+
+RSpec::Matchers.define :deliver_json_for do |resource, options = {}|
+  match do |response|
+    actual = parse(response.body)
+    expected = Travis::Api.data(resource, options)
+
+    failure_message_for_should do
+      "expected\n\n#{actual}\n\nto equal\n\n#{expected}"
+    end
+
+    actual == expected
+  end
+
+  def parse(body)
+    MultiJson.decode(body)
+  end
+end
+
 Travis.logger = Logger.new(StringIO.new)
 Travis::Api::App.setup
-
-Backports.require_relative_dir 'support'
 
 module TestHelpers
   include Sinatra::TestHelpers
@@ -31,17 +50,24 @@ module TestHelpers
   end
 end
 
-RSpec.configure do |config|
-  config.mock_framework = :mocha
-  config.expect_with :rspec, :stdlib
-  config.include TestHelpers
+RSpec.configure do |c|
+  c.mock_framework = :mocha
+  c.expect_with :rspec, :stdlib
+  c.include TestHelpers
 
-  config.before :each do
+  c.before :suite do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with :transaction
+  end
+
+  c.before :each do
+    DatabaseCleaner.start
     ::Redis.connect(url: Travis.config.redis.url).flushdb
     set_app Travis::Api::App.new
   end
 
-  config.after :each do
+  c.after :each do
+    DatabaseCleaner.clean
     custom_endpoints.each do |endpoint|
       endpoint.superclass.direct_subclasses.delete(endpoint)
     end
