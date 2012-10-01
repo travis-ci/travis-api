@@ -25,5 +25,4 @@ end
 group :development, :test do
   gem 'rake', '~> 0.9.2'
   gem 'micro_migrations', git: 'git://gist.github.com/2087829.git'
-  gem 'debugger'
 end

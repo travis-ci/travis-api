@@ -6,7 +6,6 @@ require 'sinatra/test_helpers'
 require 'logger'
 require 'gh'
 require 'multi_json'
-require 'debugger'
 
 Travis.logger = Logger.new(StringIO.new)
 Travis::Api::App.setup

@@ -117,18 +117,10 @@ GEM
     backports (2.6.4)
     builder (3.0.3)
     bunny (0.8.0)
-    columnize (0.3.6)
     daemons (1.1.9)
     data_migrations (0.0.1)
       activerecord
       rake
-    debugger (1.2.0)
-      columnize (>= 0.3.1)
-      debugger-linecache (~> 1.1.1)
-      debugger-ruby_core_source (~> 1.1.3)
-    debugger-linecache (1.1.2)
-      debugger-ruby_core_source (>= 1.1.1)
-    debugger-ruby_core_source (1.1.3)
     diff-lcs (1.1.3)
     erubis (2.7.0)
     eventmachine (1.0.0)
@@ -242,7 +234,6 @@ PLATFORMS
 
 DEPENDENCIES
   bunny
-  debugger
   factory_girl (~> 2.4.0)
   foreman
   gh!
