@@ -12,7 +12,7 @@ describe Travis::Api::App::Endpoint::Accounts do
   end
 
   it 'includes accounts' do
-    get('/accounts', access_token: access_token.to_s).should be_ok
+    get('/accounts', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01').should be_ok
     parsed_body['accounts'].should == [{
       'id'          => user.id,
       'login'       => user.login,

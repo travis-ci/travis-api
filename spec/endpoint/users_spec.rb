@@ -11,11 +11,11 @@ describe Travis::Api::App::Endpoint::Users do
   end
 
   it 'needs to be authenticated' do
-    get('/users').should_not be_ok
+    get('/users', {}, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01').should_not be_ok
   end
 
   it 'replies with the current user' do
-    get('/users', access_token: access_token.to_s).should be_ok
+    get('/users', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01').should be_ok
     parsed_body['user'].should == {
       'id'          => user.id,
       'login'       => user.login,
