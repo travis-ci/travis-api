@@ -4,7 +4,7 @@ class Travis::Api::App
   class Endpoint
     class Branches < Endpoint
       get '/' do
-        body all(params).run, type: :branches
+        respond_with all(params).run, type: :branches
       end
     end
   end

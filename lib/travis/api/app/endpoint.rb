@@ -11,7 +11,9 @@ class Travis::Api::App
     register :scoping
     helpers :current_user
 
+    # TODO hmmm?
     before { content_type :json }
+
     error(ActiveRecord::RecordNotFound, Sinatra::NotFound) { not_found }
     not_found { content_type =~ /json/ ? { 'file' => 'not found' } : 'file not found' }
 

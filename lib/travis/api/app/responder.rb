@@ -23,7 +23,7 @@ class Travis::Api::App
       enable   :raise_errors
       # disable  :dump_errors
       register :subclass_tracker
-      helpers  :json_renderer, :result_image
+      helpers  :respond_with, :mime_types
     end
 
     configure :development do

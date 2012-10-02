@@ -19,7 +19,7 @@ class Travis::Api::App
       #       }
       #     }
       get '/:id?', scope: :private do
-        body current_user
+        respond_with current_user
       end
 
       put '/:id?', scope: :private do

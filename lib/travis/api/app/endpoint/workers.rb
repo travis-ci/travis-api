@@ -4,7 +4,7 @@ class Travis::Api::App
   class Endpoint
     class Workers < Endpoint
       get '/' do
-        body all(params).run
+        respond_with all(params).run
       end
     end
   end

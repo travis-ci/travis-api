@@ -9,7 +9,7 @@ describe 'Builds' do
 
   it 'GET /builds?repository_id=1' do
     response = get '/builds', { repository_id: repo.id }, headers
-    response.should deliver_json_for(repo.builds.was_started, version: 'v1')
+    response.should deliver_json_for(repo.builds.was_started.order('id DESC'), version: 'v1')
   end
 
   it 'GET /builds/1' do

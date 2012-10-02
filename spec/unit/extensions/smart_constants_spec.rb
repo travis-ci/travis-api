@@ -7,8 +7,8 @@ describe Travis::Api::App::Extensions::SmartConstants do
 
   describe :helpers do
     it 'works' do # :)
-      some_app.helpers :json_renderer
-      some_app.ancestors.should include(Travis::Api::App::Helpers::JsonRenderer)
+      some_app.helpers :respond_with
+      some_app.ancestors.should include(Travis::Api::App::Helpers::RespondWith)
     end
   end
 

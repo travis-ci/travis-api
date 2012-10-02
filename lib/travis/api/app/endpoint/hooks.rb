@@ -4,7 +4,7 @@ class Travis::Api::App
   class Endpoint
     class Hooks < Endpoint
       get '/', scope: :private do
-        body all(params).run, type: :hooks
+        respond_with all(params).run, type: :hooks
       end
 
       put '/:id?', scope: :private do
