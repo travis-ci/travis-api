@@ -3,11 +3,12 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class ResultImage < Endpoint
-      set(:prefix) { '/' }
+      # set(:prefix) { '/' }
 
-      get '/:owner_name/:name.png' do
-        result_image service(:repositories, :one, params).run(:raise => false)
-      end
+      # get '/:owner_name/:name.png' do
+      #   pass unless params.key?('owner_name') && params.key?('name')
+      #   result_image service(:repositories, :one, params).run(:raise => false)
+      # end
     end
   end
 end

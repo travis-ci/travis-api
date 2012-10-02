@@ -34,25 +34,11 @@ describe 'Hooks' do
       Travis.config.stubs(:service_hook_url).returns('listener.travis-ci.org')
     end
 
-    it 'creates a new hook' do
+    it 'sets the hook' do
       GH.stubs(:[]).returns([])
-      GH.expects(:post).with(target, payload)
+      GH.expects(:post).with(target, payload).returns(GH.load(PAYLOADS[:github][:hook_active]))
       put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers
       repo.reload.active?.should be_true
-    end
-
-    it 'updates an existing hook to be active' do
-      GH.stubs(:[]).returns([GH.load(PAYLOADS[:github][:hook_inactive])])
-      GH.expects(:post).with(target, payload)
-      put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers
-      repo.reload.active?.should be_true
-    end
-
-    it 'updates an existing repository to be inactive' do
-      GH.stubs(:[]).returns([GH.load(PAYLOADS[:github][:hook_active])])
-      GH.expects(:post).with(target, payload.merge(:active => false))
-      put 'hooks', { hook: { id: hook.id, active: 'false' } }, headers
-      repo.reload.active?.should be_false
     end
   end
 end
