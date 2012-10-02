@@ -7,13 +7,9 @@ class Travis::Api::App
         body all(params).run
       end
 
-      get('/:id') do
+      get '/:id' do
         body one(params).run
       end
-
-      # TODO make sure status images and cc.xml work
-      # rescue ActiveRecord::RecordNotFound
-      #   raise unless params[:format] == 'png'
     end
   end
 end

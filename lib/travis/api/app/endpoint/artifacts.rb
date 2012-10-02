@@ -6,7 +6,7 @@ class Travis::Api::App
     # artifacts
     class Artifacts < Endpoint
       # Fetches an artifact by it's *id*.
-      get('/:id') do |id|
+      get '/:id' do |id|
         body one(params).run
       end
     end

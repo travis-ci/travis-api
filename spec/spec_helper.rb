@@ -28,6 +28,27 @@ RSpec::Matchers.define :deliver_json_for do |resource, options = {}|
   end
 end
 
+RSpec::Matchers.define :deliver_result_image_for do |name|
+  match do |response|
+    actual = files.detect do |(name, content)|
+      response.body.force_encoding('ascii') == content.force_encoding('ascii') # TODO ummmmmmmm?
+    end
+    actual = actual && actual[0]
+
+    failure_message_for_should do
+      "expected #{actual.inspect} to equal #{name.inspect}"
+    end
+
+    actual == name
+  end
+
+  def files
+    files = Hash[*Dir['public/images/result/*.png'].map do |file|
+      [File.basename(file, '.png'), File.read(file)]
+    end.flatten]
+  end
+end
+
 Travis.logger = Logger.new(StringIO.new)
 Travis::Api::App.setup
 
