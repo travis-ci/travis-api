@@ -46,55 +46,55 @@ describe 'Repos' do
       get('/svenfuchs/does-not-exist.png').should deliver_result_image_for('unknown')
     end
 
-    xit '"unknown" when it only has a build that is not finished' do
-      repo.builds.delete_all
-      Factory(:running_build, repository: repo)
+    xit '"unknown" when it only has one build that is not finished' do
+      repo.update_attributes!(last_build_result: nil)
       get('/svenfuchs/minimal.png').should deliver_result_image_for('unknown')
     end
 
     xit '"failing" when the last build has failed' do
-      repo.last_build.update_attributes!(:result => 1)
+      repo.update_attributes!(last_build_result: 1)
       get('/svenfuchs/minimal.png').should deliver_result_image_for('failing')
     end
 
     xit '"passing" when the last build has passed' do
-      repo.last_build.update_attributes!(:result => 0)
-      get('/svenfuchs/minimal.png').should deliver_result_image_for('failing')
-    end
-
-    # TODO what? there's not even an image for this
-    xit '"stable" when there is a running build but the previous one has passed' do
-      Factory(:running_build, repository: repo)
-      repo.last_build.update_attributes!(:result => 0)
-      get('/svenfuchs/minimal.png').should deliver_result_image_for('stable')
-    end
-  end
-
-  describe 'GET /svenfuchs/minimal.png' do
-    xit '"unknown" when the repository does not exist' do
-      get('/svenfuchs/minimal.png').should deliver_result_image_for('unknown')
-    end
-
-    xit '"unknown" when it only has a build that is not finished' do
-      repo.builds.delete_all
-      Factory(:running_build, repository: repo)
-      get('/svenfuchs/minimal.png').should deliver_result_image_for('unknown')
-    end
-
-    xit '"failing" when the last build has failed' do
-      repo.last_build.update_attributes!(:result => 1)
-      get('/svenfuchs/minimal.png').should deliver_result_image_for('failing')
-    end
-
-    xit '"passing" when the last build has passed' do
-      repo.last_build.update_attributes!(:result => 0)
+      repo.update_attributes!(last_build_result: 0)
       get('/svenfuchs/minimal.png').should deliver_result_image_for('passing')
     end
 
     xit '"passing" when there is a running build but the previous one has passed' do
-      repo.last_build.update_attributes!(:result => 0)
-      Factory(:running_build, :repository => repo)
-      get_png(repository, :branch => 'master').should serve_result_image('passing')
+      Factory(:build, repository: repo, state: :finished, result: nil, previous_result: 0)
+      repo.update_attributes!(last_build_result: nil)
+      get('/svenfuchs/minimal.png').should deliver_result_image_for('passing')
+    end
+  end
+
+  describe 'GET /svenfuchs/minimal.png' do
+    let(:commit) { Factory(:commit, branch: 'dev') }
+
+    xit '"unknown" when the repository does not exist' do
+      get('/svenfuchs/does-not-exist.png?branch=dev').should deliver_result_image_for('unknown')
+    end
+
+    xit '"unknown" when it only has a build that is not finished' do
+      Factory(:build, repository: repo, state: :started, result: nil, commit: commit)
+      get('/svenfuchs/minimal.png?branch=dev').should deliver_result_image_for('unknown')
+    end
+
+    xit '"failing" when the last build has failed' do
+      Factory(:build, repository: repo, state: :finished, result: 1, commit: commit)
+      get('/svenfuchs/minimal.png?branch=dev').should deliver_result_image_for('failing')
+    end
+
+    xit '"passing" when the last build has passed' do
+      Factory(:build, repository: repo, state: :finished, result: 0, commit: commit)
+      get('/svenfuchs/minimal.png?branch=dev').should deliver_result_image_for('passing')
+    end
+
+    xit '"passing" when there is a running build but the previous one has passed' do
+      Factory(:build, repository: repo, state: :finished, result: 0, commit: commit)
+      Factory(:build, repository: repo, state: :started, result: nil, commit: commit)
+      repo.update_attributes!(last_build_result: nil)
+      get('/svenfuchs/minimal.png?branch=dev').should deliver_result_image_for('passing')
     end
   end
 end

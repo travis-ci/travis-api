@@ -2,6 +2,7 @@ require 'travis/api/app'
 
 class Travis::Api::App
   class Endpoint
+    # TODO should this be /profile?
     class Users < Endpoint
       # Gives information about the currently logged in user.
       #

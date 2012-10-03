@@ -6,6 +6,11 @@ class Travis::Api::App
       get '/' do
         respond_with all(params).run, type: :branches
       end
+
+      # get '/:owner_name/:name/branches' do       # v1
+      # get '/repos/:owner_name/:name/branches' do # v2
+      #   respond_with all(params).run, type: :branches
+      # end
     end
   end
 end
