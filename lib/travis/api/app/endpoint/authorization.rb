@@ -240,7 +240,7 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 
 @@ post_message
 <script>
-var payload = <%= render_json(user) %>;
+var payload = <%= user.to_json %>;
 payload.token = <%= token.inspect %>;
 window.parent.postMessage(payload, <%= target_origin.inspect %>);
 </script>
