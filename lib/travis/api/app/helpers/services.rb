@@ -3,10 +3,23 @@ require 'travis/api/app'
 class Travis::Api::App
   module Helpers
     module Services
-      def service(key, user = current_user)
-        const = Travis.services[key] || raise("no service registered for #{key}")
-        const.new(user)
+      def all(params)
+        service(services_namespace, :all, params)
       end
+
+      def one(params)
+        service(services_namespace, :one, params)
+      end
+
+      def update(params)
+        service(services_namespace, :update, params)
+      end
+
+      private
+
+        def services_namespace
+          self.class.name.split('::').last
+        end
     end
   end
 end

@@ -9,7 +9,7 @@ class Travis::Api::App
     set(:prefix) { "/" << name[/[^:]+$/].underscore }
     set disable_root_endpoint: false
     register :scoping
-    helpers :current_user
+    helpers :current_user, :services
 
     # TODO hmmm?
     before { content_type :json }

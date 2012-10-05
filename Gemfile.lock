@@ -40,7 +40,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: c40cee1a6d66d0cc18034e6e5e90c335349ead97
+  revision: 6be27b79c655f49eaa1468f9156bebdafdb85e52
   branch: sf-travis-api
   specs:
     travis-core (0.0.1)
@@ -62,7 +62,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: 06844d2db558d88be775ca1cf9cfff8ec36120fb
+  revision: c51ef116f38e5192171112f347f9a2ba050fe636
   specs:
     travis-support (0.0.1)
 
@@ -137,7 +137,7 @@ GEM
     i18n (0.6.1)
     journey (1.0.4)
     json (1.7.5)
-    listen (0.5.2)
+    listen (0.5.3)
     mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -148,7 +148,7 @@ GEM
       avl_tree (~> 1.1.2)
       hitimes (~> 1.1)
     mime-types (1.19)
-    mocha (0.12.5)
+    mocha (0.12.6)
       metaclass (~> 0.0.1)
     multi_json (1.3.6)
     multipart-post (1.1.5)
@@ -157,7 +157,7 @@ GEM
     newrelic_rpm (3.3.5)
     pg (0.13.2)
     polyglot (0.3.3)
-    postmark (0.9.12)
+    postmark (0.9.13)
       json
       rake
     postmark-rails (0.4.1)

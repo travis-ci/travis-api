@@ -83,7 +83,7 @@ class Travis::Api::App
     def self.setup_travis
       Travis::Amqp.config = Travis.config.amqp
       Travis::Database.connect
-      # Travis::Services.namespace = Travis::Services
+      Travis.services = Travis::Services
     end
 
     def self.load_endpoints

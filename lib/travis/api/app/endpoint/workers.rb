@@ -6,6 +6,10 @@ class Travis::Api::App
       get '/' do
         respond_with all(params).run
       end
+
+      get '/:id' do
+        respond_with one(params).run || not_found
+      end
     end
   end
 end

@@ -8,12 +8,12 @@ class Travis::Api::App
       end
 
       get '/:id' do
-        respond_with one(params).run
+        respond_with one(params).run || not_found
       end
 
       # TODO the format constraint neither seems to work nor fail?
       get '/:id/cc.:format', format: 'xml' do # v1
-        respond_with one(params).run
+        respond_with one(params).run || not_found
       end
 
       # get '/:owner_name/:name.?:format?' do       # v1

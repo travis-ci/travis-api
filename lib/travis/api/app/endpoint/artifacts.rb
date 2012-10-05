@@ -7,7 +7,7 @@ class Travis::Api::App
     class Artifacts < Endpoint
       # Fetches an artifact by it's *id*.
       get '/:id' do |id|
-        respond_with one(params).run
+        respond_with one(params).run || not_found
       end
     end
   end
