@@ -53,6 +53,7 @@ class Travis::Api::App
       use Hubble::Rescuer, env: Travis.env, codename: ENV['CODENAME'] if Endpoint.production? && ENV['HUBBLE_ENDPOINT']
       use Rack::Protection::PathTraversal
       use Rack::SSL if Endpoint.production?
+      use Rack::Deflater
       use Rack::PostBodyContentTypeParser
       use Rack::JSONP
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
