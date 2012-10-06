@@ -2,6 +2,7 @@ require 'travis/api/app'
 
 class Travis::Api::App
   class Endpoint
+    # TODO v2 should be /repos
     class Repositories < Endpoint
       get '/' do
         respond_with all(params).run

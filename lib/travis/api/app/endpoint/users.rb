@@ -28,8 +28,12 @@ class Travis::Api::App
         204
       end
 
+      get '/:id?/permissions', scope: :private do
+        respond_with service(:users, :permissions).run
+      end
+
       post '/sync', scope: :private do
-        service(:sync).run
+        service(:users, :sync).run
         204
       end
     end
