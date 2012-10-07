@@ -19,17 +19,17 @@ class Travis::Api::App
       #         "synced_at": "2012-08-14T22:11:21Z"
       #       }
       #     }
-      get '/:id?', scope: :private do
+      get '/', scope: :private do
         respond_with current_user
+      end
+
+      get '/permissions', scope: :private do
+        respond_with service(:users, :permissions).run, type: :permissions
       end
 
       put '/:id?', scope: :private do
         update(params[:user]).run
         204
-      end
-
-      get '/:id?/permissions', scope: :private do
-        respond_with service(:users, :permissions).run
       end
 
       post '/sync', scope: :private do

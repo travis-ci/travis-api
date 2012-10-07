@@ -4,7 +4,7 @@ class Travis::Api::App
   class Endpoint
     class Requests < Endpoint
       post '/' do
-        service(:requests, :requeue).run
+        service(:requests, :requeue, params).run
         204
       end
     end
