@@ -8,6 +8,10 @@ defaults: &defaults
   min_messages: warning
   username: <%= ENV['USER'] %>
 
+production:
+  <<: *defaults
+  database: travis_development
+
 development:
   <<: *defaults
   database: travis_development
