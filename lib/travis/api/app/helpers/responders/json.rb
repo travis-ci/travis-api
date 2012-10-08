@@ -1,7 +1,7 @@
 module Travis::Api::App::Helpers::Responders
   class Json < Base
     ACCEPT_VERSION  = /vnd\.travis-ci\.(\d+)\+/
-    DEFAULT_VERSION = 'v1'
+    DEFAULT_VERSION = 'v2'
 
     def render
       options[:version] ||= version
