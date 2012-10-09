@@ -18,11 +18,12 @@ require 'newrelic_rpm'
 # Requires TLS in production.
 class Travis::Api::App
   autoload :AccessToken,  'travis/api/app/access_token'
-  autoload :Responder,    'travis/api/app/responder'
+  autoload :Base,         'travis/api/app/base'
   autoload :Endpoint,     'travis/api/app/endpoint'
   autoload :Extensions,   'travis/api/app/extensions'
   autoload :Helpers,      'travis/api/app/helpers'
   autoload :Middleware,   'travis/api/app/middleware'
+  autoload :Responders,   'travis/api/app/responders'
 
   Rack.autoload :SSL, 'rack/ssl'
 
@@ -93,6 +94,6 @@ class Travis::Api::App
     end
 
     def self.setup_endpoints
-      Responder.subclasses.each(&:setup)
+      Base.subclasses.each(&:setup)
     end
 end

@@ -4,7 +4,7 @@ require 'sinatra/base'
 class Travis::Api::App
   # Superclass for any endpoint and middleware.
   # Pulls in relevant helpers and extensions.
-  class Responder < Sinatra::Base
+  class Base < Sinatra::Base
     register Extensions::SmartConstants
 
     error NotImplementedError do

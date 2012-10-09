@@ -3,7 +3,7 @@ require 'addressable/uri'
 
 class Travis::Api::App
   # Superclass for HTTP endpoints. Takes care of prefixing.
-  class Endpoint < Responder
+  class Endpoint < Base
     include Travis::Services
 
     set(:prefix) { "/" << name[/[^:]+$/].underscore }
