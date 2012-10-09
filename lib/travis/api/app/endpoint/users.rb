@@ -24,16 +24,16 @@ class Travis::Api::App
       end
 
       get '/permissions', scope: :private do
-        respond_with service(:users, :permissions).run, type: :permissions
+        respond_with service(:users, :permissions), type: :permissions
       end
 
       put '/:id?', scope: :private do
-        update(params[:user]).run
+        update(params[:user])
         204
       end
 
       post '/sync', scope: :private do
-        service(:users, :sync).run
+        service(:users, :sync)
         204
       end
     end

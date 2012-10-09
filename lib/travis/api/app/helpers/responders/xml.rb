@@ -14,8 +14,12 @@ module Travis::Api::App::Helpers::Responders
       'finished' => 'Sleeping'
     }
 
-    def render
-      TEMPLATE % data
+    def apply?
+      options[:format] == 'xml'
+    end
+
+    def apply
+      halt TEMPLATE % data
     end
 
     private

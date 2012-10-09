@@ -4,8 +4,7 @@ class Travis::Api::App
   class Endpoint
     class Requests < Endpoint
       post '/' do
-        service(:requests, :requeue, params).run
-        204
+        respond_with service(:requests, :requeue, params)
       end
     end
   end

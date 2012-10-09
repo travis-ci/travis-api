@@ -5,7 +5,7 @@ class Travis::Api::App
     # TODO v2 should be /repos
     class Repositories < Endpoint
       get '/' do
-        respond_with all(params).run
+        respond_with all(params)
       end
 
       get '/:id' do

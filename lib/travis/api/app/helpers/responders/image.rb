@@ -2,9 +2,13 @@ module Travis::Api::App::Helpers::Responders
   class Image < Base
     NAMES = { nil => 'unknown', 0 => 'passing', 1 => 'failing' }
 
-    def render
+    def apply?
+      options[:format] == 'png'
+    end
+
+    def apply
       headers['Expires'] = Time.now.utc.httpdate
-      send_file filename(resource), type: :png, disposition: :inline
+      halt send_file(filename(resource), type: :png, disposition: :inline)
     end
 
     private

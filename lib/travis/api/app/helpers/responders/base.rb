@@ -1,12 +1,31 @@
 module Travis::Api::App::Helpers::Responders
   class Base
-    attr_reader :request, :headers, :resource, :options
+    attr_reader :endpoint, :resource, :options
 
-    def initialize(request, headers, resource, options = {})
-      @request  = request
-      @headers  = headers
+    def initialize(endpoint, resource, options = {})
+      @endpoint  = endpoint
       @resource = resource
       @options  = options
+    end
+
+    def halt(*args)
+      endpoint.halt(*args)
+    end
+
+    def flash
+      endpoint.flash
+    end
+
+    def request
+      endpoint.request
+    end
+
+    def params
+      endpoint.params
+    end
+
+    def headers
+      endpoint.headers
     end
   end
 end

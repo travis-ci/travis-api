@@ -3,22 +3,25 @@ module Travis::Api::App::Helpers::Responders
     ACCEPT_VERSION  = /vnd\.travis-ci\.(\d+)\+/
     DEFAULT_VERSION = 'v2'
 
-    def render
-      options[:version] ||= version
-      builder  = Travis::Api.builder(resource, options) || raise_undefined_builder
-      resource = builder.new(self.resource, request.params).data
-      resource = resource.to_json unless resource.is_a?(String)
-      resource
+    def apply?
+      !resource.is_a?(String) && options[:format] == 'json'
+    end
+
+    def apply
+      resource = builder.new(self.resource, request.params).data if builder
+      resource ||= self.resource || {}
+      resource.merge!(flash: flash) unless flash.empty?
+      halt resource.to_json
     end
 
     private
 
-      def version
-        request.accept.join =~ ACCEPT_VERSION && "v#{$1}" || DEFAULT_VERSION
+      def builder
+        @builder ||= Travis::Api.builder(resource, { :version => version }.merge(options))
       end
 
-      def raise_undefined_builder
-        raise("could not determine a builder for #{resource}, #{options}")
+      def version
+        request.accept.join =~ ACCEPT_VERSION && "v#{$1}" || DEFAULT_VERSION
       end
   end
 end
