@@ -12,6 +12,10 @@ module Travis::Api::App::Responders
       endpoint.halt(*args)
     end
 
+    def send_file(*args)
+      endpoint.send_file(*args)
+    end
+
     def flash
       endpoint.flash
     end

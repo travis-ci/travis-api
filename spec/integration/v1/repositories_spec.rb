@@ -1,39 +1,39 @@
 require 'spec_helper'
 
-describe 'Repos' do
+describe 'v1 repos' do
   before(:each) { Scenario.default }
 
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.1+json' } }
 
-  it 'GET /repositories' do
-    response = get '/repositories', {}, headers
+  it 'GET /repositories.json' do
+    response = get '/repositories.json', {}, headers
     response.should deliver_json_for(Repository.timeline, version: 'v1')
   end
 
-  it 'GET /repositories?owner_name=svenfuchs' do
-    response = get '/repositories', { owner_name: 'svenfuchs' }, headers
+  it 'GET /repositories.json?owner_name=svenfuchs' do
+    response = get '/repositories.json', { owner_name: 'svenfuchs' }, headers
     response.should deliver_json_for(Repository.by_owner_name('svenfuchs'), version: 'v1')
   end
 
-  it 'GET /repositories?member=svenfuchs' do
-    response = get '/repositories', { member: 'svenfuchs' }, headers
+  it 'GET /repositories.json?member=svenfuchs' do
+    response = get '/repositories.json', { member: 'svenfuchs' }, headers
     response.should deliver_json_for(Repository.by_member('svenfuchs'), version: 'v1')
   end
 
-  it 'GET /repositories?slug=svenfuchs/name=minimal' do
-    response = get '/repositories', { slug: 'svenfuchs/minimal' }, headers
+  it 'GET /repositories.json?slug=svenfuchs/name=minimal' do
+    response = get '/repositories.json', { slug: 'svenfuchs/minimal' }, headers
     response.should deliver_json_for(Repository.by_slug('svenfuchs/minimal'), version: 'v1')
   end
 
-  it 'GET /repositories/1' do
-    response = get "repositories/#{repo.id}", {}, headers
+  it 'GET /repositories/1.json' do
+    response = get "repositories/#{repo.id}.json", {}, headers
     response.should deliver_json_for(Repository.by_slug('svenfuchs/minimal').first, version: 'v1')
   end
 
-  it 'GET /svenfuchs/minimal' do
-    response = get '/svenfuchs/minimal', {}, headers
-    response.should redirect_to('/repositories/svenfuchs/minimal')
+  it 'GET /svenfuchs/minimal.json' do
+    response = get '/svenfuchs/minimal.json', {}, headers
+    response.should redirect_to('/repositories/svenfuchs/minimal.json')
   end
 
   it 'GET /svenfuchs/minimal/cc.xml' do
@@ -42,55 +42,58 @@ describe 'Repos' do
   end
 
   describe 'GET /svenfuchs/minimal.png' do
-    xit '"unknown" when the repository does not exist' do
+    it '"unknown" when the repository does not exist' do
       get('/svenfuchs/does-not-exist.png').should deliver_result_image_for('unknown')
     end
 
-    xit '"unknown" when it only has one build that is not finished' do
+    it '"unknown" when it only has one build that is not finished' do
+      Build.delete_all
+      Factory(:build, repository: repo, state: :created, result: nil)
       repo.update_attributes!(last_build_result: nil)
       get('/svenfuchs/minimal.png').should deliver_result_image_for('unknown')
     end
 
-    xit '"failing" when the last build has failed' do
+    it '"failing" when the last build has failed' do
       repo.update_attributes!(last_build_result: 1)
       get('/svenfuchs/minimal.png').should deliver_result_image_for('failing')
     end
 
-    xit '"passing" when the last build has passed' do
+    it '"passing" when the last build has passed' do
       repo.update_attributes!(last_build_result: 0)
       get('/svenfuchs/minimal.png').should deliver_result_image_for('passing')
     end
 
-    xit '"passing" when there is a running build but the previous one has passed' do
+    it '"passing" when there is a running build but the previous one has passed' do
       Factory(:build, repository: repo, state: :finished, result: nil, previous_result: 0)
       repo.update_attributes!(last_build_result: nil)
       get('/svenfuchs/minimal.png').should deliver_result_image_for('passing')
     end
   end
 
-  describe 'GET /svenfuchs/minimal.png' do
+  describe 'GET /svenfuchs/minimal.png?branch=dev' do
     let(:commit) { Factory(:commit, branch: 'dev') }
 
-    xit '"unknown" when the repository does not exist' do
+    it '"unknown" when the repository does not exist' do
       get('/svenfuchs/does-not-exist.png?branch=dev').should deliver_result_image_for('unknown')
     end
 
-    xit '"unknown" when it only has a build that is not finished' do
+    it '"unknown" when it only has a build that is not finished' do
+      Build.delete_all
       Factory(:build, repository: repo, state: :started, result: nil, commit: commit)
       get('/svenfuchs/minimal.png?branch=dev').should deliver_result_image_for('unknown')
     end
 
-    xit '"failing" when the last build has failed' do
+    it '"failing" when the last build has failed' do
       Factory(:build, repository: repo, state: :finished, result: 1, commit: commit)
       get('/svenfuchs/minimal.png?branch=dev').should deliver_result_image_for('failing')
     end
 
-    xit '"passing" when the last build has passed' do
+    it '"passing" when the last build has passed' do
       Factory(:build, repository: repo, state: :finished, result: 0, commit: commit)
       get('/svenfuchs/minimal.png?branch=dev').should deliver_result_image_for('passing')
     end
 
-    xit '"passing" when there is a running build but the previous one has passed' do
+    it '"passing" when there is a running build but the previous one has passed' do
       Factory(:build, repository: repo, state: :finished, result: 0, commit: commit)
       Factory(:build, repository: repo, state: :started, result: nil, commit: commit)
       repo.update_attributes!(last_build_result: nil)

@@ -22,13 +22,13 @@ describe 'Builds' do
     response.should deliver_json_for(build, version: 'v2')
   end
 
-  xit 'GET /svenfuchs/minimal/builds' do
-    response = get '/svenfuchs/minimal/builds', {}, headers
-    response.should deliver_json_for(repo.builds, version: 'v2')
+  it 'GET /repos/svenfuchs/minimal/builds' do
+    response = get '/repos/svenfuchs/minimal/builds', {}, headers
+    response.should deliver_json_for(repo.builds, version: 'v2', type: :builds)
   end
 
-  xit 'GET /svenfuchs/minimal/builds/1' do
-    response = get "/svenfuchs/minimal/builds/#{build.id}", {}, headers
+  it 'GET /repos/svenfuchs/minimal/builds/1' do
+    response = get "/repos/svenfuchs/minimal/builds/#{build.id}", {}, headers
     response.should deliver_json_for(build, version: 'v2')
   end
 end

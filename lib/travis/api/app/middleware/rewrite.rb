@@ -3,16 +3,41 @@ require 'travis/api/app'
 class Travis::Api::App
   class Middleware
     class Rewrite < Middleware
-      V1_REPO_URL = %r(^(/[^/]+/[^/]+(?:/builds(?:/[\d]+)?|/cc\.xml)?)$)
+      FORMAT      = %r(\.(json|xml|png)$)
+      V1_REPO_URL = %r(^(/[^/]+/[^/]+(?:/builds(?:/[\d]+)?|/cc)?)$)
+
+      helpers :accept
 
       set(:setup) { ActiveRecord::Base.logger = Travis.logger }
 
+      before do
+        extract_format
+        rewrite_v1_repo_segment if v1? || xml?
+        rewrite_v1_named_repo_image_path if png?
+      end
+
       after do
-p not_found?
-        force_redirect("/repositories#{$1}") if response.status == 404 && version == 'v1' && request.path =~ V1_REPO_URL
+        redirect_v1_named_repo_path if (v1? || xml?) && not_found?
       end
 
       private
+
+        def extract_format
+          env['PATH_INFO'].sub!(FORMAT, '')
+          env['format'] = $1 || accept_format
+        end
+
+        def rewrite_v1_repo_segment
+          env['PATH_INFO'].sub!(%r(^/repositories), '/repos')
+        end
+
+        def rewrite_v1_named_repo_image_path
+          env['PATH_INFO'].sub!(V1_REPO_URL) { "/repos#{$1}" }
+        end
+
+        def redirect_v1_named_repo_path
+          force_redirect("/repositories#{$1}.#{env['format']}") if request.path =~ V1_REPO_URL
+        end
 
         def force_redirect(path)
           response.body = ''
@@ -21,8 +46,16 @@ p not_found?
           redirect(path)
         end
 
-        def version
-          API.version(request.accept.join)
+        def png?
+          env['format'] == 'png'
+        end
+
+        def xml?
+          env['format'] == 'xml'
+        end
+
+        def v1?
+          accept_version == 'v1'
         end
     end
   end

@@ -17,13 +17,6 @@ require 'newrelic_rpm'
 #
 # Requires TLS in production.
 module Travis::Api
-  ACCEPT_VERSION  = /vnd\.travis-ci\.(\d+)\+/
-  DEFAULT_VERSION = 'v2'
-
-  def version(string)
-    string =~ ACCEPT_VERSION && "v#{$1}" || DEFAULT_VERSION
-  end
-
   class App
     autoload :AccessToken,  'travis/api/app/access_token'
     autoload :Base,         'travis/api/app/base'
