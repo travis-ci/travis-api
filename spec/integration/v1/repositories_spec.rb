@@ -31,14 +31,14 @@ describe 'Repos' do
     response.should deliver_json_for(Repository.by_slug('svenfuchs/minimal').first, version: 'v1')
   end
 
-  xit 'GET /svenfuchs/minimal' do
+  it 'GET /svenfuchs/minimal' do
     response = get '/svenfuchs/minimal', {}, headers
-    response.should deliver_json_for(Repository.by_slug('svenfuchs/minimal').first, version: 'v1')
+    response.should redirect_to('/repositories/svenfuchs/minimal')
   end
 
-  xit 'GET /svenfuchs/minimal/cc.xml' do # TODO wat.
+  it 'GET /svenfuchs/minimal/cc.xml' do
     response = get '/svenfuchs/minimal/cc.xml'
-    response.should deliver_xml_for()
+    response.should redirect_to('/repositories/svenfuchs/minimal/cc.xml')
   end
 
   describe 'GET /svenfuchs/minimal.png' do

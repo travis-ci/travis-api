@@ -1,8 +1,5 @@
 module Travis::Api::App::Responders
   class Json < Base
-    ACCEPT_VERSION  = /vnd\.travis-ci\.(\d+)\+/
-    DEFAULT_VERSION = 'v2'
-
     def apply?
       options[:format] == 'json' && !resource.is_a?(String)
     end
@@ -22,7 +19,7 @@ module Travis::Api::App::Responders
       end
 
       def version
-        request.accept.join =~ ACCEPT_VERSION && "v#{$1}" || DEFAULT_VERSION
+        API.version(request.accept.join)
       end
   end
 end

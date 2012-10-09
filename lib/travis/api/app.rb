@@ -16,84 +16,93 @@ require 'newrelic_rpm'
 #     run Travis::Api::App.new
 #
 # Requires TLS in production.
-class Travis::Api::App
-  autoload :AccessToken,  'travis/api/app/access_token'
-  autoload :Base,         'travis/api/app/base'
-  autoload :Endpoint,     'travis/api/app/endpoint'
-  autoload :Extensions,   'travis/api/app/extensions'
-  autoload :Helpers,      'travis/api/app/helpers'
-  autoload :Middleware,   'travis/api/app/middleware'
-  autoload :Responders,   'travis/api/app/responders'
+module Travis::Api
+  ACCEPT_VERSION  = /vnd\.travis-ci\.(\d+)\+/
+  DEFAULT_VERSION = 'v2'
 
-  Rack.autoload :SSL, 'rack/ssl'
-
-  # Used to track if setup already ran.
-  def self.setup?
-    @setup ||= false
+  def version(string)
+    string =~ ACCEPT_VERSION && "v#{$1}" || DEFAULT_VERSION
   end
 
-  # Loads all endpoints and middleware and hooks them up properly.
-  # Calls #setup on any middleware and endpoint.
-  #
-  # This method is not threadsafe, but called when loading
-  # the environment, so no biggy.
-  def self.setup(options = {})
-    setup! unless setup?
-    Endpoint.set(options)
-  end
+  class App
+    autoload :AccessToken,  'travis/api/app/access_token'
+    autoload :Base,         'travis/api/app/base'
+    autoload :Endpoint,     'travis/api/app/endpoint'
+    autoload :Extensions,   'travis/api/app/extensions'
+    autoload :Helpers,      'travis/api/app/helpers'
+    autoload :Middleware,   'travis/api/app/middleware'
+    autoload :Responders,   'travis/api/app/responders'
 
-  def self.new(options = {})
-    setup(options) if options
-    super()
-  end
+    Rack.autoload :SSL, 'rack/ssl'
 
-  attr_accessor :app
+    # Used to track if setup already ran.
+    def self.setup?
+      @setup ||= false
+    end
 
-  def initialize
-    @app = Rack::Builder.app do
-      use Hubble::Rescuer, env: Travis.env, codename: ENV['CODENAME'] if Endpoint.production? && ENV['HUBBLE_ENDPOINT']
-      use Rack::Protection::PathTraversal
-      use Rack::SSL if Endpoint.production?
-      use Rack::Deflater
-      use Rack::PostBodyContentTypeParser
-      use Rack::JSONP
-      use ActiveRecord::ConnectionAdapters::ConnectionManagement
+    # Loads all endpoints and middleware and hooks them up properly.
+    # Calls #setup on any middleware and endpoint.
+    #
+    # This method is not threadsafe, but called when loading
+    # the environment, so no biggy.
+    def self.setup(options = {})
+      setup! unless setup?
+      Endpoint.set(options)
+    end
 
-      use Rack::Config do |env|
-        env['travis.global_prefix'] = env['SCRIPT_NAME']
+    def self.new(options = {})
+      setup(options) if options
+      super()
+    end
+
+    attr_accessor :app
+
+    def initialize
+      @app = Rack::Builder.app do
+        use Hubble::Rescuer, env: Travis.env, codename: ENV['CODENAME'] if Endpoint.production? && ENV['HUBBLE_ENDPOINT']
+        use Rack::Protection::PathTraversal
+        use Rack::SSL if Endpoint.production?
+        use Rack::Deflater
+        use Rack::PostBodyContentTypeParser
+        use Rack::JSONP
+        use ActiveRecord::ConnectionAdapters::ConnectionManagement
+
+        use Rack::Config do |env|
+          env['travis.global_prefix'] = env['SCRIPT_NAME']
+        end
+
+        Middleware.subclasses.each { |m| use(m) }
+        Endpoint.subclasses.each { |e| map(e.prefix) { run(e.new) } }
+      end
+    end
+
+    # Rack protocol
+    def call(env)
+      app.call(env)
+    end
+
+    private
+
+      def self.setup!
+        setup_travis
+        load_endpoints
+        setup_endpoints
+        @setup = true
       end
 
-      Middleware.subclasses.each { |m| use(m) }
-      Endpoint.subclasses.each { |e| map(e.prefix) { run(e.new) } }
-    end
+      def self.setup_travis
+        Travis::Amqp.config = Travis.config.amqp
+        Travis::Database.connect
+        Travis.services = Travis::Services
+      end
+
+      def self.load_endpoints
+        Backports.require_relative_dir 'app/middleware'
+        Backports.require_relative_dir 'app/endpoint'
+      end
+
+      def self.setup_endpoints
+        Base.subclasses.each(&:setup)
+      end
   end
-
-  # Rack protocol
-  def call(env)
-    app.call(env)
-  end
-
-  private
-
-    def self.setup!
-      setup_travis
-      load_endpoints
-      setup_endpoints
-      @setup = true
-    end
-
-    def self.setup_travis
-      Travis::Amqp.config = Travis.config.amqp
-      Travis::Database.connect
-      Travis.services = Travis::Services
-    end
-
-    def self.load_endpoints
-      Backports.require_relative_dir 'app/middleware'
-      Backports.require_relative_dir 'app/endpoint'
-    end
-
-    def self.setup_endpoints
-      Base.subclasses.each(&:setup)
-    end
 end
