@@ -3,7 +3,7 @@ module Travis::Api::App::Helpers::Responders
     attr_reader :endpoint, :resource, :options
 
     def initialize(endpoint, resource, options = {})
-      @endpoint  = endpoint
+      @endpoint = endpoint
       @resource = resource
       @options  = options
     end

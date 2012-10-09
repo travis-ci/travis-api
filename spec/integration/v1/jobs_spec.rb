@@ -10,7 +10,7 @@ describe 'Jobs' do
 
   it '/jobs?queue=builds.common' do
     response = get '/jobs', { queue: 'builds.common' }, headers
-    response.should deliver_json_for(Job.queued('builds.common'), versin: 'v1')
+    response.should deliver_json_for(Job.queued('builds.common'), version: 'v1')
   end
 
   it '/jobs/:job_id' do

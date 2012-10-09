@@ -4,17 +4,18 @@ module Travis::Api::App::Helpers::Responders
     DEFAULT_VERSION = 'v2'
 
     def apply?
-      !resource.is_a?(String) && options[:format] == 'json'
+      options[:format] == 'json' && !resource.is_a?(String)
     end
 
     def apply
-      resource = builder.new(self.resource, request.params).data if builder
-      resource ||= self.resource || {}
-      resource.merge!(flash: flash) unless flash.empty?
-      halt resource.to_json
+      halt result.to_json
     end
 
     private
+
+      def result
+        builder ? builder.new(resource, request.params).data : resource
+      end
 
       def builder
         @builder ||= Travis::Api.builder(resource, { :version => version }.merge(options))

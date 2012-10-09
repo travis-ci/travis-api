@@ -28,13 +28,11 @@ class Travis::Api::App
       end
 
       put '/:id?', scope: :private do
-        update(params[:user])
-        204
+        respond_with update(params[:user])
       end
 
       post '/sync', scope: :private do
-        service(:users, :sync)
-        204
+        respond_with service(:users, :sync)
       end
     end
   end

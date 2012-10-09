@@ -7,13 +7,8 @@ class Travis::Api::App
     # course). These values will be encoded in JSON.
     module RespondWith
       def respond_with(resource, options = {})
-        options[:format] ||= format_from_content_type || params[:format] || :json
-        responders.each do |responder|
-          responder = responder.new(self, resource, options)
-          resource = responder.apply if responder.apply?
-        end
-        resource = resource.to_json unless resource.is_a?(String) # TODO when does this happen?
-        halt resource
+        options[:format] ||= format_from_content_type || params[:format] || 'json'
+        halt respond(resource, options).to_json
       end
 
       def body(value = nil, options = {}, &block)
@@ -23,8 +18,18 @@ class Travis::Api::App
 
       private
 
-        def responders
-          [Responders::Service, Responders::Json, Responders::Image, Responders::Xml]
+        def respond(resource, options)
+          responders(resource, options).each do |const|
+            responder = const.new(self, resource, options)
+            resource = responder.apply if responder.apply?
+          end
+          resource
+        end
+
+        def responders(resource, options)
+          [:Service, :Json, :Image, :Xml].map do |name|
+            Responders.const_get(name)
+          end
         end
 
         # TODO is there no support for this kind of mime types?

@@ -8,7 +8,7 @@ class Travis::Api::App
       end
 
       get '/:id' do
-        respond_with one(params).run || not_found # TODO hrmmmmmm
+        respond_with one(params).run
       end
     end
   end

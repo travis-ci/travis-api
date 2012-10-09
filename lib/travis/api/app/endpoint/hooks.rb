@@ -8,8 +8,7 @@ class Travis::Api::App
       end
 
       put '/:id?', scope: :private do
-        update(id: params[:id] || params[:hook][:id], active: params[:hook][:active])
-        204
+        respond_with update(id: params[:id] || params[:hook][:id], active: params[:hook][:active])
       end
     end
   end
