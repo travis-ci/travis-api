@@ -1,4 +1,4 @@
-module Travis::Api::App::Helpers::Responders
+module Travis::Api::App::Responders
   class Xml < Base
     TEMPLATE = File.read(__FILE__).split("__END__").last.strip
 

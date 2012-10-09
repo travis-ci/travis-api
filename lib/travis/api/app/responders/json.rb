@@ -1,4 +1,4 @@
-module Travis::Api::App::Helpers::Responders
+module Travis::Api::App::Responders
   class Json < Base
     ACCEPT_VERSION  = /vnd\.travis-ci\.(\d+)\+/
     DEFAULT_VERSION = 'v2'

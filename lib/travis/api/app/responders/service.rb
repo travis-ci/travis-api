@@ -1,4 +1,4 @@
-module Travis::Api::App::Helpers::Responders
+module Travis::Api::App::Responders
   class Service < Base
     def apply?
       resource.respond_to?(:run)

@@ -1,4 +1,4 @@
-module Travis::Api::App::Helpers::Responders
+module Travis::Api::App::Responders
   class Base
     attr_reader :endpoint, :resource, :options
 

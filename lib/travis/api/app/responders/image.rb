@@ -1,4 +1,4 @@
-module Travis::Api::App::Helpers::Responders
+module Travis::Api::App::Responders
   class Image < Base
     NAMES = { nil => 'unknown', 0 => 'passing', 1 => 'failing' }
 
