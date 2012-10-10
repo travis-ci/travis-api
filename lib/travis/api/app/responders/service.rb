@@ -7,7 +7,7 @@ module Travis::Api::App::Responders
     def apply
       # TODO add caching headers depending on the resource
       data = result
-      flash.concat(data.messages) if data && resource.respond_to?(:messages)
+      flash.concat(data.messages) if data && data.respond_to?(:messages)
       data
     end
 
