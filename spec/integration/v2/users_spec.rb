@@ -5,12 +5,21 @@ describe 'Users' do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
-  it 'GET /workers' do
-    params = {user: {id: user.id, locale: 'pl'}}
-    response = put "/users/#{user.id}", params, headers
-    response.should be_successful
-    response.should deliver_json_for(user.reload, version: 'v2')
-    user.locale.should == 'pl'
+  context 'PUT /users/:id' do
+    it 'updates user data and returns the user' do
+      params = {user: {id: user.id, locale: 'pl'}}
+      response = put "/users/#{user.id}", params, headers
+      response.should be_successful
+      response.should deliver_json_for(user.reload, version: 'v2')
+      user.locale.should == 'pl'
+    end
+  end
+
+  context 'POST /users/sync' do
+    it 'syncs current_user repos' do
+      response = post "/users/sync", {}, headers
+      response.should be_successful
+    end
   end
 end
 
