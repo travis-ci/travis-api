@@ -20,7 +20,7 @@ describe Travis::Api::App::Middleware::Cors do
     end
 
     it 'sets Access-Control-Expose-Headers' do
-      headers['Access-Control-Expose-Headers'].should == "Content-Type"
+      headers['Access-Control-Expose-Headers'].should == "Content-Type, Cache-Control, Expires, Etag, Last-Modified"
     end
   end
 
@@ -36,7 +36,7 @@ describe Travis::Api::App::Middleware::Cors do
     end
 
     it 'sets Access-Control-Expose-Headers' do
-      headers['Access-Control-Expose-Headers'].should == "Content-Type"
+      headers['Access-Control-Expose-Headers'].should == "Content-Type, Cache-Control, Expires, Etag, Last-Modified"
     end
 
     it 'sets Access-Control-Allow-Methods' do
@@ -44,7 +44,7 @@ describe Travis::Api::App::Middleware::Cors do
     end
 
     it 'sets Access-Control-Allow-Headers' do
-      headers['Access-Control-Allow-Headers'].should == "Content-Type, Authorization, Accept"
+      headers['Access-Control-Allow-Headers'].should == "Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since"
     end
   end
 end

@@ -24,7 +24,7 @@ describe 'Builds' do
 
   it 'GET /repos/svenfuchs/minimal/builds' do
     response = get '/repos/svenfuchs/minimal/builds', {}, headers
-    response.should deliver_json_for(repo.builds, version: 'v2', type: :builds)
+    response.should deliver_json_for(repo.builds.order('id DESC'), version: 'v2', type: :builds)
   end
 
   it 'GET /repos/svenfuchs/minimal/builds/1' do
