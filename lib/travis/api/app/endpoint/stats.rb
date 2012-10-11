@@ -4,11 +4,11 @@ class Travis::Api::App
   class Endpoint
     class Stats < Endpoint
       get '/repos' do
-        { :stats => service(:daily_repos) }
+        { :stats => service(:stats, :daily_repos) }
       end
 
       get '/tests' do
-        { :stats => service(:daily_tests) }
+        { :stats => service(:stats, :daily_tests) }
       end
     end
   end

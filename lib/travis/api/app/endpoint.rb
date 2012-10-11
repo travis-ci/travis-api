@@ -9,7 +9,7 @@ class Travis::Api::App
     set(:prefix) { "/" << name[/[^:]+$/].underscore }
     set disable_root_endpoint: false
     register :scoping
-    helpers :current_user, :flash, :services
+    helpers :current_user, :flash
 
     # TODO hmmm?
     before { flash.clear }
