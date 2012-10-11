@@ -8,8 +8,10 @@ gem 'travis-core',    github: 'travis-ci/travis-core', branch: 'sf-travis-api'
 gem 'hubble',         github: 'roidrage/hubble'
 gem 'yard-sinatra',   github: 'rkh/yard-sinatra'
 gem 'rack-contrib',   github: 'rack/rack-contrib'
+gem 'rack-cache',     '~> 1.2'
 gem 'gh',             github: 'rkh/gh'
 gem 'bunny'
+gem 'dalli'
 
 group :test do
   gem 'rspec',        '~> 2.11'

@@ -3,6 +3,7 @@ require 'backports'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib'
+require 'rack/cache'
 require 'active_record'
 require 'redis'
 require 'gh'
@@ -55,6 +56,14 @@ module Travis::Api
         use Hubble::Rescuer, env: Travis.env, codename: ENV['CODENAME'] if Endpoint.production? && ENV['HUBBLE_ENDPOINT']
         use Rack::Protection::PathTraversal
         use Rack::SSL if Endpoint.production?
+
+        if memcache_servers = ENV['MEMCACHE_SERVERS']
+          use Rack::Cache,
+            verbose: true,
+            metastore:   "memcached://#{memcache_servers}",
+            entitystore: "memcached://#{memcache_servers}"
+        end
+
         use Rack::Deflater
         use Rack::PostBodyContentTypeParser
         use Rack::JSONP
