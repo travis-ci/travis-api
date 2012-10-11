@@ -27,7 +27,7 @@ end
 RSpec::Matchers.define :deliver_result_image_for do |name|
   match do |response|
     actual = files.detect do |(name, content)|
-      response.body.force_encoding('ascii') == content.force_encoding('ascii') # TODO ummmmmmmm?
+      response.body.to_s.force_encoding('ascii') == content.to_s.force_encoding('ascii') # TODO ummmmmmmm?
     end
     actual = actual && actual[0]
 
