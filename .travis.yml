@@ -6,3 +6,6 @@ before_script:
   - 'RAILS_ENV=test rake db:create db:schema:load --trace'
 notifications:
   irc: "irc.freenode.org#travis"
+matrix:
+  allow_failures:
+    - rvm: rbx-19mode
