@@ -1,5 +1,6 @@
 require 'travis/api/app'
 require 'addressable/uri'
+require 'active_record/base'
 
 class Travis::Api::App
   # Superclass for HTTP endpoints. Takes care of prefixing.
