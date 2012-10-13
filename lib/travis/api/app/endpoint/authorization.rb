@@ -112,7 +112,7 @@ class Travis::Api::App
       # logged in at GitHub and already authorized Travis CI. It is therefore
       # recommended to redirect to [/auth/handshake](#/auth/handshake) if no
       # token is being received.
-      get '/post_message' do
+      get '/post_message', scope: :public do
         handshake do |user, token, target_origin|
           halt 403, invalid_target(target_origin) unless target_ok? target_origin
           rendered_user = Travis::Api.data(user, version: :v2)
