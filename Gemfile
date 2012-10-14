@@ -12,7 +12,6 @@ gem 'rack-cache',     '~> 1.2'
 gem 'gh',             github: 'rkh/gh'
 gem 'bunny'
 gem 'dalli'
-gem 'thin', '~> 1.4.0'
 
 group :test do
   gem 'rspec',        '~> 2.11'
