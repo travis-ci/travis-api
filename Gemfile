@@ -12,7 +12,7 @@ gem 'rack-cache',     '~> 1.2'
 gem 'gh',             github: 'rkh/gh'
 gem 'bunny'
 gem 'dalli'
-gem 'eventmachine', '~> 0.12.6'
+gem 'eventmachine'
 
 group :test do
   gem 'rspec',        '~> 2.11'
