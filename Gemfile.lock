@@ -40,7 +40,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 310d93a0c6dec233a15264172168fc58fb243f3b
+  revision: 56ca16046cba99cc0b4cd0c520c6bb13ace9932a
   branch: sf-travis-api
   specs:
     travis-core (0.0.1)
@@ -118,7 +118,7 @@ GEM
     builder (3.0.3)
     bunny (0.8.0)
     daemons (1.1.9)
-    dalli (2.2.1)
+    dalli (2.3.0)
     data_migrations (0.0.1)
       activerecord
       rake
@@ -229,7 +229,7 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.33)
-    yard (0.8.2.1)
+    yard (0.8.3)
 
 PLATFORMS
   ruby
