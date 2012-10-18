@@ -223,8 +223,8 @@ class Travis::Api::App
 
         def target_ok?(target_origin)
           target_origin =~ %r{
-            ^ http://   (localhost|127\.0\.0\.1)(:\d+)? $ |
-            ^ https://  (\w+\.)?travis-ci\.(org|com)    $
+            ^ http://   (localhost|127\.0\.0\.1)(:\d+)?  $ |
+            ^ https://  ([\w-_]+\.)?travis-ci\.(org|com) $
           }x
         end
     end
