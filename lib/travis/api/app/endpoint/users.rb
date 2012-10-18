@@ -27,6 +27,11 @@ class Travis::Api::App
         respond_with service(:users, :find_permissions), type: :permissions
       end
 
+      # TODO fix url/key generation in ember-data
+      # get '/broadcasts', scope: :private do
+      #   respond_with service(:users, :find_broadcasts), type: :broadcasts
+      # end
+
       put '/:id?', scope: :private do
         respond_with service(:users, :update, params[:user])
       end
