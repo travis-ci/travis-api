@@ -14,12 +14,11 @@ module Travis::Api::App::Responders
     private
 
       def cache_control
-        if final?
-          endpoint.expires 31536000, :public # 1 year
-        elsif updated_at?
-          endpoint.cache_control :public, :must_revalidate
-          endpoint.last_modified resource.updated_at
-        end
+        mode = [endpoint.public? ? :public : :private]
+        mode << :must_revalidate unless final?
+        endpoint.expires(31536000, *mode) # 1 year
+        endpoint.etag resource.cache_key           if cache_key?
+        endpoint.last_modified resource.updated_at if updated_at?
       end
 
       def final?
@@ -28,6 +27,10 @@ module Travis::Api::App::Responders
 
       def updated_at?
         resource.respond_to?(:updated_at) && resource.updated_at
+      end
+
+      def cache_key?
+        resource.respond_to?(:cache_key) && resource.cache_key
       end
 
       # Services potentially return all sorts of things
