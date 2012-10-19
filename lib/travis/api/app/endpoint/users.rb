@@ -28,6 +28,11 @@ class Travis::Api::App
       end
 
       # TODO fix url/key generation in ember-data
+      # get '/accounts', scope: :private do
+      #   respond_with service(:users, :find_accounts), type: :accounts
+      # end
+
+      # TODO fix url/key generation in ember-data
       # get '/broadcasts', scope: :private do
       #   respond_with service(:users, :find_broadcasts), type: :broadcasts
       # end
