@@ -3,6 +3,7 @@ ruby '1.9.3' rescue nil
 source :rubygems
 gemspec
 
+gem 'puma'
 gem 'travis-support', github: 'travis-ci/travis-support'
 gem 'travis-core',    github: 'travis-ci/travis-core', branch: 'sf-travis-api'
 gem 'hubble',         github: 'roidrage/hubble'
