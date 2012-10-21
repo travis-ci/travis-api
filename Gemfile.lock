@@ -62,7 +62,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: 7fb3660e0d5705305aa59b30fa74cbcc6248bbad
+  revision: 37e9ddf0cb15d142ab0bff87f8911b903003f535
   specs:
     travis-support (0.0.1)
 
@@ -187,7 +187,7 @@ GEM
     rake (0.9.2.2)
     rdoc (3.12)
       json (~> 1.4)
-    redcarpet (2.2.1)
+    redcarpet (2.2.2)
     redis (3.0.2)
     rerun (0.7.1)
       listen
