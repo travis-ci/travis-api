@@ -10,8 +10,8 @@ describe 'Users' do
       params = {user: {id: user.id, locale: 'pl'}}
       response = put "/users/#{user.id}", params, headers
       response.should be_successful
-      response.should deliver_json_for(user.reload, version: 'v2')
-      user.locale.should == 'pl'
+      response.should deliver_json_for('result' => true, 'flash' => [{ 'notice' => 'Your profile was successfully updated.' }])
+      user.reload.locale.should == 'pl'
     end
   end
 

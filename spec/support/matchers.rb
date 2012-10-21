@@ -4,7 +4,7 @@ RSpec::Matchers.define :deliver_json_for do |resource, options = {}|
   match do |response|
     if response.status == 200
       actual = parse(response.body)
-      expected = Travis::Api.data(resource, options)
+      expected = resource.is_a?(Hash) ? resource : Travis::Api.data(resource, options)
 
       failure_message_for_should do
         "expected\n\n#{actual}\n\nto equal\n\n#{expected}"
