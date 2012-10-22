@@ -41,11 +41,11 @@ module Travis::Api
     # the environment, so no biggy.
     def self.setup(options = {})
       setup! unless setup?
-      Endpoint.set(options)
+      Endpoint.set(options) if options
     end
 
     def self.new(options = {})
-      setup(options) if options
+      setup(options)
       super()
     end
 
