@@ -14,8 +14,9 @@ module Travis::Api::App::Responders
     private
 
       def cache_control
+        return unless final? # FIXME
         mode = [endpoint.public? ? :public : :private]
-        mode << :must_revalidate unless final?
+        mode << :must_revalidate #unless final?
         endpoint.expires(31536000, *mode) # 1 year
         endpoint.etag resource.cache_key           if cache_key?
         endpoint.last_modified resource.updated_at if updated_at?
