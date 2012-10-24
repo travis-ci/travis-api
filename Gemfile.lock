@@ -13,9 +13,9 @@ GIT
 
 GIT
   remote: git://github.com/rkh/gh.git
-  revision: affde20a4fecb1023f2e7031734b9386a76d22c2
+  revision: 5587a66320f5c2297963590ed68284054624c741
   specs:
-    gh (0.8.0)
+    gh (0.9.0)
       addressable
       backports (~> 2.3)
       faraday (~> 0.8)
