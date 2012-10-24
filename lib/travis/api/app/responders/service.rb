@@ -19,7 +19,7 @@ module Travis::Api::App::Responders
           endpoint.expires(31536000, mode, :must_revalidate) # 1 year
         else
           # FIXME: Chrome WTF?
-          cache_control :no_cache
+          endpoint.cache_control :no_cache
         end
 
         endpoint.etag resource.cache_key           if cache_key?
