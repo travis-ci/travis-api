@@ -40,7 +40,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: a55d84819e2f655c7b56472bc62c5037c94bbfc4
+  revision: 31f6f9771ecb01629ffafead188efbdd1b28e176
   branch: sf-travis-api
   specs:
     travis-core (0.0.1)
@@ -237,7 +237,7 @@ GEM
     treetop (1.4.11)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.33)
+    tzinfo (0.3.34)
     yard (0.8.3)
 
 PLATFORMS
