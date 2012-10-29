@@ -39,8 +39,11 @@ class Travis::Api::App
     #
     # The entry point is [/auth/post_message](#/auth/post_message).
     class Authorization < Endpoint
-      set prefix: '/auth'
       enable :inline_templates
+      set prefix: '/auth', allowed_targets: %r{
+        ^ http://   (localhost|127\.0\.0\.1)(:\d+)?  $ |
+        ^ https://  ([\w\-_]+\.)?travis-ci\.(org|com) $
+      }x
 
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
@@ -222,10 +225,7 @@ class Travis::Api::App
         end
 
         def target_ok?(target_origin)
-          target_origin =~ %r{
-            ^ http://   (localhost|127\.0\.0\.1)(:\d+)?  $ |
-            ^ https://  ([\w\-_]+\.)?travis-ci\.(org|com) $
-          }x
+          target_origin =~ settings.allowed_targets
         end
     end
   end
