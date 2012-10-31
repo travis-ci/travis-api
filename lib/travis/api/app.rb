@@ -81,6 +81,12 @@ module Travis::Api
     # Rack protocol
     def call(env)
       app.call(env)
+    rescue
+      if Endpoint.production?
+        [500, {'Content-Type' => 'text/plain'}, ['Travis encountered an error, sorry :(']]
+      else
+        raise
+      end
     end
 
     private
