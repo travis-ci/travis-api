@@ -40,7 +40,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: df19a126f574cfca7eb782e3e32ae95d4992e2b3
+  revision: 6fc990c32ea2ee48589d736bb2f9a7e254026961
   branch: sf-travis-api
   specs:
     travis-core (0.0.1)
@@ -114,7 +114,7 @@ GEM
     arel (3.0.2)
     atomic (1.0.1)
     avl_tree (1.1.3)
-    backports (2.6.4)
+    backports (2.6.5)
     builder (3.0.4)
     bunny (0.8.0)
     coderay (1.0.8)
