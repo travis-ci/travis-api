@@ -55,6 +55,7 @@ module Travis::Api
         use Hubble::Rescuer, env: Travis.env, codename: ENV['CODENAME'] if Endpoint.production? && ENV['HUBBLE_ENDPOINT']
         use Rack::Protection::PathTraversal
         use Rack::SSL if Endpoint.production?
+        use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
 
         if memcache_servers = ENV['MEMCACHE_SERVERS']
@@ -67,7 +68,6 @@ module Travis::Api
         use Rack::Deflater
         use Rack::PostBodyContentTypeParser
         use Rack::JSONP
-        use ActiveRecord::ConnectionAdapters::ConnectionManagement
 
         use Rack::Config do |env|
           env['travis.global_prefix'] = env['SCRIPT_NAME']
