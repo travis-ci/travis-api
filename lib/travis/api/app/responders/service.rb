@@ -16,7 +16,7 @@ module Travis::Api::App::Responders
       def cache_control
         if final?
           mode = endpoint.public? ? :public : :private
-          endpoint.expires(31536000, mode, :must_revalidate) # 1 year
+          endpoint.expires(31536000, mode) # 1 year
         else
           # FIXME: Chrome WTF?
           endpoint.cache_control :no_cache
