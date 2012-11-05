@@ -25,6 +25,7 @@ module Travis::Api
     autoload :Helpers,      'travis/api/app/helpers'
     autoload :Middleware,   'travis/api/app/middleware'
     autoload :Responders,   'travis/api/app/responders'
+    autoload :Cors,         'travis/api/app/cors'
 
     Rack.autoload :SSL, 'rack/ssl'
 
@@ -52,6 +53,7 @@ module Travis::Api
 
     def initialize
       @app = Rack::Builder.app do
+        use Travis::Api::App::Cors
         use Hubble::Rescuer, env: Travis.env, codename: ENV['CODENAME'] if Endpoint.production? && ENV['HUBBLE_ENDPOINT']
         use Rack::Protection::PathTraversal
         use Rack::SSL if Endpoint.production?
