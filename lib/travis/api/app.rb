@@ -106,7 +106,7 @@ module Travis::Api
         Travis::Database.connect
         Travis.services = Travis::Services
         Travis::Features.start
-        Sidekiq.client_configure do |config|
+        Sidekiq.configure_client do |config|
           config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
         end
       end
