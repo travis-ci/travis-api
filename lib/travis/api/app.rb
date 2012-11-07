@@ -9,6 +9,7 @@ require 'redis'
 require 'gh'
 require 'hubble'
 require 'hubble/middleware'
+require 'sidekiq'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -105,6 +106,9 @@ module Travis::Api
         Travis::Database.connect
         Travis.services = Travis::Services
         Travis::Features.start
+        Sidekiq.client_configure do |config|
+          config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
+        end
       end
 
       def self.load_endpoints
