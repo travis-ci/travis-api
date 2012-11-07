@@ -104,6 +104,7 @@ module Travis::Api
         Travis::Amqp.config = Travis.config.amqp
         Travis::Database.connect
         Travis.services = Travis::Services
+        Travis::Features.start
       end
 
       def self.load_endpoints
