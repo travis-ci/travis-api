@@ -7,8 +7,7 @@ require 'rack/cache'
 require 'active_record'
 require 'redis'
 require 'gh'
-require 'hubble'
-require 'hubble/middleware'
+require 'raven'
 require 'sidekiq'
 
 # Rack class implementing the HTTP API.
