@@ -55,7 +55,7 @@ module Travis::Api
     def initialize
       @app = Rack::Builder.app do
         use Travis::Api::App::Cors
-        use Hubble::Rescuer, env: Travis.env, codename: ENV['CODENAME'] if Endpoint.production? && ENV['HUBBLE_ENDPOINT']
+        use Raven::Rack if Endpoint.production?
         use Rack::Protection::PathTraversal
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
@@ -109,6 +109,10 @@ module Travis::Api
         Sidekiq.configure_client do |config|
           config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
         end
+
+        Raven.configure do |config|
+          config.dsn = Travis.config.sentry.dsn
+        end if Travis.config.sentry
       end
 
       def self.load_endpoints

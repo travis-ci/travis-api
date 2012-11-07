@@ -7,7 +7,7 @@ gem 'puma'
 gem 'travis-support', github: 'travis-ci/travis-support'
 gem 'travis-core',    github: 'travis-ci/travis-core'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil
-gem 'hubble',         github: 'roidrage/hubble'
+gem "sentry-raven",   github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',   github: 'rkh/yard-sinatra'
 gem 'rack-contrib',   github: 'rack/rack-contrib'
 gem 'rack-cache',     '~> 1.2'
