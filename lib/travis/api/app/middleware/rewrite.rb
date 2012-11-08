@@ -24,7 +24,7 @@ class Travis::Api::App
 
         def extract_format
           env['PATH_INFO'].sub!(FORMAT, '')
-          env['format'] = $1 || accept_format
+          env['travis.format'] = $1 || accept_format
         end
 
         def rewrite_v1_repo_segment
@@ -36,7 +36,7 @@ class Travis::Api::App
         end
 
         def redirect_v1_named_repo_path
-          force_redirect("/repositories#{$1}.#{env['format']}") if request.path =~ V1_REPO_URL
+          force_redirect("/repositories#{$1}.#{env['travis.format']}") if request.path =~ V1_REPO_URL
         end
 
         def force_redirect(path)
@@ -47,11 +47,11 @@ class Travis::Api::App
         end
 
         def png?
-          env['format'] == 'png'
+          env['travis.format'] == 'png'
         end
 
         def xml?
-          env['format'] == 'xml'
+          env['travis.format'] == 'xml'
         end
 
         def v1?

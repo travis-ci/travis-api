@@ -7,7 +7,7 @@ class Travis::Api::App
     # course). These values will be encoded in JSON.
     module RespondWith
       def respond_with(resource, options = {})
-        options[:format] ||= env['format']
+        options[:format] ||= env['travis.format']
         result = respond(resource, options)
         result = result ? result.to_json : 404
         halt result
