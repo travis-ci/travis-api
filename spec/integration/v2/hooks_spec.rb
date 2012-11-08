@@ -37,8 +37,9 @@ describe 'Hooks' do
     it 'sets the hook' do
       GH.stubs(:[]).returns([])
       GH.expects(:post).with(target, payload).returns(GH.load(PAYLOADS[:github][:hook_active]))
-      put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers
+      response = put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers
       repo.reload.active?.should be_true
+      response.should be_successful
     end
   end
 end

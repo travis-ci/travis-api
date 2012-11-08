@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Travis::Api::App::Middleware::Cors do
+describe Travis::Api::App::Cors do
   before do
     mock_app do
-      use Travis::Api::App::Middleware::Cors
+      use Travis::Api::App::Cors
       get('/check_cors') { 'ok' }
     end
   end
