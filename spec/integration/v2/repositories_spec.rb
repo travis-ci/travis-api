@@ -36,7 +36,7 @@ describe 'Repos' do
     response.should deliver_json_for(Repository.by_slug('svenfuchs/minimal').first, version: 'v2')
   end
 
-  xit 'GET /repos/svenfuchs/minimal/cc.xml' do
+  it 'GET /repos/svenfuchs/minimal/cc.xml' do
     response = get '/repos/svenfuchs/minimal/cc.xml', {}, headers
     response.should deliver_xml_for(Repository.by_slug('svenfuchs/minimal').first, version: 'v2')
   end
