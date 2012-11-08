@@ -45,6 +45,18 @@ RSpec::Matchers.define :deliver_result_image_for do |name|
   end
 end
 
+RSpec::Matchers.define :deliver_cc_xml_for do |repo|
+  match do |response|
+    body = response.body
+
+    failure_message_for_should do
+      "expected #{body} to be a valid cc.xml"
+    end
+
+    body.include?('<Projects>') && body.include?(%(name="#{repo.slug}"))
+  end
+end
+
 RSpec::Matchers.define :redirect_to do |expected|
   match do |response|
     actual = response.headers['location'].to_s.sub('http://example.org', '')
