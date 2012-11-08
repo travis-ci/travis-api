@@ -26,6 +26,10 @@ class Travis::Api::App
       get '/:owner_name/:name/builds/:id' do
         respond_with service(:builds, :find_one, params)
       end
+
+      get '/:owner_name/:name/cc' do
+        respond_with service(:repositories, :find_one, params.merge(schema: 'cc'))
+      end
     end
   end
 end
