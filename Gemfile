@@ -16,6 +16,7 @@ gem 'gh',              github: 'rkh/gh'
 gem 'bunny'
 gem 'dalli'
 gem 'pry'
+gem 'metriks',        '0.9.9.2'
 
 group :test do
   gem 'rspec',        '~> 2.11'

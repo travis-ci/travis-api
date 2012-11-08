@@ -284,6 +284,7 @@ DEPENDENCIES
   factory_girl (~> 2.4.0)
   foreman
   gh!
+  metriks (= 0.9.9.2)
   micro_migrations!
   mocha (~> 0.12)
   pry
