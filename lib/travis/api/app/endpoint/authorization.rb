@@ -119,7 +119,9 @@ class Travis::Api::App
         handshake do |user, token, target_origin|
           halt 403, invalid_target(target_origin) unless target_ok? target_origin
           rendered_user = Travis::Api.data(user, version: :v2)
-          post_message(token: token, user: rendered_user, target_origin: target_origin)
+          travis_token  = user.tokens.first
+          post_message(token: token, user: rendered_user, target_origin: target_origin,
+                       travis_token: travis_token ? travis_token.token : nil)
         end
       end
 
@@ -216,6 +218,7 @@ class Travis::Api::App
 
         def post_message(payload)
           content_type :html
+          p [:payload, payload]
           erb(:post_message, locals: payload)
         end
 
@@ -242,5 +245,6 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 <script>
 var payload = <%= user.to_json %>;
 payload.token = <%= token.inspect %>;
+payload.travis_token = <%= travis_token ? travis_token.inspect : null %>;
 window.parent.postMessage(payload, <%= target_origin.inspect %>);
 </script>
