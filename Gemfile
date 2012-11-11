@@ -3,15 +3,16 @@ ruby '1.9.3' rescue nil
 source :rubygems
 gemspec
 
-gem 'unicorn'
-gem 'travis-support', github: 'travis-ci/travis-support'
-gem 'travis-core',    github: 'travis-ci/travis-core'
+gem 'travis-support',  github: 'travis-ci/travis-support'
+gem 'travis-core',     github: 'travis-ci/travis-core'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil
-gem "sentry-raven",   github: 'getsentry/raven-ruby'
-gem 'yard-sinatra',   github: 'rkh/yard-sinatra'
-gem 'rack-contrib',   github: 'rack/rack-contrib'
-gem 'rack-cache',     '~> 1.2'
-gem 'gh',             github: 'rkh/gh'
+
+gem 'unicorn'
+gem "sentry-raven",    github: 'getsentry/raven-ruby'
+gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
+gem 'rack-contrib',    github: 'rack/rack-contrib'
+gem 'rack-cache',      '~> 1.2'
+gem 'gh',              github: 'rkh/gh'
 gem 'bunny'
 gem 'dalli'
 gem 'pry'

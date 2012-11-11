@@ -6,9 +6,9 @@ GIT
 
 GIT
   remote: git://github.com/getsentry/raven-ruby.git
-  revision: 5d0e0eacbee39744bdf5b775efb3734d5b4361c7
+  revision: 97bbe7211308d1eb1502df4545592c11e56908ae
   specs:
-    sentry-raven (0.3)
+    sentry-raven (0.3.1)
       faraday (~> 0.8.0.rc2)
       hashie
       multi_json (~> 1.0)
@@ -42,7 +42,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 27275b7f26023cf8e1379cca9a9760f46dc9a45c
+  revision: b2cd65706e2921b305db326b5411f3ff4a796eff
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.3)
@@ -63,7 +63,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
-  revision: 24d6afcc366979de91ee5bf2fbb4b628fc1a3d7a
+  revision: 33cf6b1ed576231c1cc5368f734171b4edd4768b
   specs:
     travis-sidekiqs (0.0.1)
       sentry-raven
@@ -71,7 +71,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: f78d9161369f574f12b9c0c0dbfe13b997766bdd
+  revision: ce25da5b53d2dbb67798084a87e91b84f5626061
   specs:
     travis-support (0.0.1)
 
