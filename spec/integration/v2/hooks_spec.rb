@@ -24,7 +24,7 @@ describe 'Hooks' do
     let :payload do
       {
         :name   => 'travis',
-        :events => ServiceHook::EVENTS,
+        :events => Travis::Services::Github::SetHook::EVENTS,
         :active => true,
         :config => { :user => user.login, :token => user.tokens.first.token, :domain => 'listener.travis-ci.org' }
       }
