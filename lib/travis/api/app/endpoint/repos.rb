@@ -3,6 +3,11 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Repos < Endpoint
+      # Endpoint for getting all repositories.
+      #
+      # You can filter the repositories by adding parameters to the request. For example, you can get all repositories
+      # owned by johndoe by adding `owner_name=johndoe`, or all repositories that johndoe has access to by adding
+      # `member=johndoe`. The parameter names correspond to the keys of the response hash.
       get '/' do
         respond_with service(:repositories, :find_all, params)
       end
