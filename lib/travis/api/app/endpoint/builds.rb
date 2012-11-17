@@ -4,11 +4,11 @@ class Travis::Api::App
   class Endpoint
     class Builds < Endpoint
       get '/' do
-        respond_with service(:builds, :find_all, params)
+        respond_with service(:find_builds, params)
       end
 
       get '/:id' do
-        respond_with service(:builds, :find_one, params)
+        respond_with service(:find_build, params)
       end
     end
   end

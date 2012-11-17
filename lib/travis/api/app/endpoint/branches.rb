@@ -4,7 +4,7 @@ class Travis::Api::App
   class Endpoint
     class Branches < Endpoint
       get '/' do
-        respond_with service(:branches, :find_all, params), type: :branches
+        respond_with service(:find_branches, params), type: :branches
       end
 
       # get '/:owner_name/:name/branches' do       # v1

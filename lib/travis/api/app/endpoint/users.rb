@@ -24,7 +24,7 @@ class Travis::Api::App
       end
 
       get '/permissions', scope: :private do
-        respond_with service(:users, :find_permissions), type: :permissions
+        respond_with service(:find_user_permissions), type: :permissions
       end
 
       # TODO fix url/key generation in ember-data
@@ -38,11 +38,11 @@ class Travis::Api::App
       # end
 
       put '/:id?', scope: :private do
-        respond_with service(:users, :update, params[:user])
+        respond_with service(:update_user, params[:user])
       end
 
       post '/sync', scope: :private do
-        respond_with service(:users, :sync)
+        respond_with service(:sync_user)
       end
     end
   end

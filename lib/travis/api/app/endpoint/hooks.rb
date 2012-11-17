@@ -4,11 +4,11 @@ class Travis::Api::App
   class Endpoint
     class Hooks < Endpoint
       get '/', scope: :private do
-        respond_with service(:hooks, :find_all, params), type: :hooks
+        respond_with service(:find_hooks, params), type: :hooks
       end
 
       put '/:id?', scope: :private do
-        respond_with service(:hooks, :update, id: params[:id] || params[:hook][:id], active: params[:hook][:active])
+        respond_with service(:update_hook, id: params[:id] || params[:hook][:id], active: params[:hook][:active])
       end
     end
   end

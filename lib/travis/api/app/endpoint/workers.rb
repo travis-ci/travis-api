@@ -4,11 +4,11 @@ class Travis::Api::App
   class Endpoint
     class Workers < Endpoint
       get '/' do
-        respond_with service(:workers, :find_all, params)
+        respond_with service(:find_workers, params)
       end
 
       get '/:id' do
-        respond_with service(:workers, :find_one, params)
+        respond_with service(:find_worker, params)
       end
     end
   end

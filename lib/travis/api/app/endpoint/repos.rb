@@ -9,31 +9,31 @@ class Travis::Api::App
       # owned by johndoe by adding `owner_name=johndoe`, or all repositories that johndoe has access to by adding
       # `member=johndoe`. The parameter names correspond to the keys of the response hash.
       get '/' do
-        respond_with service(:repositories, :find_all, params)
+        respond_with service(:find_repos, params)
       end
 
       get '/:id' do
-        respond_with service(:repositories, :find_one, params)
+        respond_with service(:find_repo, params)
       end
 
       get '/:id/cc' do
-        respond_with service(:repositories, :find_one, params.merge(schema: 'cc'))
+        respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
       get '/:owner_name/:name' do
-        respond_with service(:repositories, :find_one, params)
+        respond_with service(:find_repo, params)
       end
 
       get '/:owner_name/:name/builds' do
-        respond_with service(:builds, :find_all, params)
+        respond_with service(:find_builds, params)
       end
 
       get '/:owner_name/:name/builds/:id' do
-        respond_with service(:builds, :find_one, params)
+        respond_with service(:find_build, params)
       end
 
       get '/:owner_name/:name/cc' do
-        respond_with service(:repositories, :find_one, params.merge(schema: 'cc'))
+        respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
     end
   end
