@@ -118,7 +118,9 @@ class Travis::Api::App
       get '/post_message', scope: :public do
         content_type :html
         response.set_cookie('cookie_check', '1')
-        erb :container
+        host ="#{request.scheme}://#{request.host}"
+        host << ":#{request.port}" unless request.port == 80
+        erb :container, {}, host: host
       end
 
       get '/post_message/iframe', scope: :public do
@@ -129,6 +131,16 @@ class Travis::Api::App
           post_message(token: token, user: rendered_user, target_origin: target_origin,
                        travis_token: travis_token ? travis_token.token : nil)
         end
+      end
+
+      get '/set_cookie' do
+        blank_gif = Base64.decode64 'R0lGODlhBQAFAJH/AP///wAAAMDAwAAAACH5BAEAAAIALAAAAAAFAAUAAAIElI+pWAA7\n'
+        [200, { 'Content-Type' => 'image/gif', 'Set-Cookie' => 'foo=bar' }, blank_gif]
+      end
+
+      get '/check_cookie' do
+        third_party_cookies = (!!(env["HTTP_COOKIE"].to_s =~ /foo=bar/)).inspect
+        [200, { 'Content-Type' => 'text/javascript' }, ["cookiesCheckCallback(#{third_party_cookies})"]]
       end
 
       error Faraday::Error::ClientError do
@@ -261,15 +273,34 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 </script>
 
 @@ container
-<script>
-var url = window.location.pathname + '/iframe' + window.location.search;
-alert(document.cookie);
-if(document.cookie.indexOf('cookie_check') < 0) {
-  window.open(url, 'Signing in...', 'height=400,width=800');
-} else {
-  document.write('<iframe src="'+url+'" />');
-}
-</script>
+<!DOCTYPE html>
+<html>
+<body>
+  <script>
+  var url = window.location.pathname + '/iframe' + window.location.search;
+
+  var img = document.createElement('img');
+  img.src = "<%= host %>/auth/set_cookie";
+
+  img.onload = function() {
+    console.log('img onload');
+    var script = document.createElement('script');
+    script.src = "<%= host %>/auth/check_cookie";
+    window.document.body.appendChild(script);
+  }
+
+  window.document.body.appendChild(img);
+
+  function cookiesCheckCallback(thirdPartyCookiesEnabled) {
+    if(thirdPartyCookiesEnabled) {
+      window.open(url, 'Signing in...', 'height=400,width=800');
+    } else {
+      document.write('<iframe src="'+url+'" />');
+    }
+  }
+  </script>
+</body>
+</html>
 
 @@ post_message
 <script>
