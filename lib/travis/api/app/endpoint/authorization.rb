@@ -116,6 +116,12 @@ class Travis::Api::App
       # recommended to redirect to [/auth/handshake](#/auth/handshake) if no
       # token is being received.
       get '/post_message', scope: :public do
+        content_type :html
+        response.set_cookie('cookie_check', '1')
+        erb :container
+      end
+
+      get '/post_message/iframe', scope: :public do
         handshake do |user, token, target_origin|
           halt 403, invalid_target(target_origin) unless target_ok? target_origin
           rendered_user = Travis::Api.data(user, version: :v2)
@@ -254,20 +260,34 @@ __END__
 alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted!');
 </script>
 
+@@ container
+<script>
+var url = window.location.pathname + '/iframe' + window.location.search;
+alert(document.cookie);
+if(document.cookie.indexOf('cookie_check') < 0) {
+  window.open(url, 'Signing in...', 'height=400,width=800');
+} else {
+  document.write('<iframe src="'+url+'" />');
+}
+</script>
+
 @@ post_message
 <script>
-var receiver = window.parent === window ? window.opener : window.parent;
-var payload = <%= user.to_json %>;
-payload.token = <%= token.inspect %>;
-payload.travis_token = <%= travis_token ? travis_token.inspect : null %>;
-if(window.parent === window) {
-  if(window.opener) {
-    window.opener.postMessage(payload, <%= target_origin.inspect %>);
-    window.close();
-  } else {
-    document.write('needs to be loaded in an iframe or pop-up');
-  }
+function uberParent(win) {
+  return win.parent === win ? win : uberParent(win.parent);
+}
+
+function sendPayload(win) {
+  var payload          = <%= user.to_json %>;
+  payload.token        = <%= token.inspect %>;
+  payload.travis_token = <%= travis_token ? travis_token.inspect : null %>;
+  uberParent(win).postMessage(payload, <%= target_origin.inspect %>);
+}
+
+if(window.parent == window) {
+  sendPayload(window.opener);
+  window.close();
 } else {
-  window.parent.postMessage(payload, <%= target_origin.inspect %>);
+  sendPayload(window.parent);
 }
 </script>
