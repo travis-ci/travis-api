@@ -256,8 +256,18 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 
 @@ post_message
 <script>
+var receiver = window.parent === window ? window.opener : window.parent;
 var payload = <%= user.to_json %>;
 payload.token = <%= token.inspect %>;
 payload.travis_token = <%= travis_token ? travis_token.inspect : null %>;
-window.parent.postMessage(payload, <%= target_origin.inspect %>);
+if(window.parent === window) {
+  if(window.opener) {
+    window.opener.postMessage(payload, <%= target_origin.inspect %>);
+    window.close();
+  } else {
+    document.write('needs to be loaded in an iframe or pop-up');
+  }
+} else {
+  window.parent.postMessage(payload, <%= target_origin.inspect %>);
+}
 </script>
