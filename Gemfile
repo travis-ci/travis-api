@@ -4,7 +4,7 @@ source :rubygems
 gemspec
 
 gem 'travis-support',  github: 'travis-ci/travis-support'
-gem 'travis-core',     github: 'travis-ci/travis-core'
+gem 'travis-core',     github: 'travis-ci/travis-core', branch: 'sf-register-services'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil
 
 gem 'unicorn'
