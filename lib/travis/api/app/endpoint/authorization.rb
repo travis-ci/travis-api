@@ -116,6 +116,11 @@ class Travis::Api::App
       # recommended to redirect to [/auth/handshake](#/auth/handshake) if no
       # token is being received.
       get '/post_message', scope: :public do
+        content_type :html
+        erb :container
+      end
+
+      get '/post_message/iframe', scope: :public do
         handshake do |user, token, target_origin|
           halt 403, invalid_target(target_origin) unless target_ok? target_origin
           rendered_user = Travis::Api.data(user, version: :v2)
@@ -254,20 +259,54 @@ __END__
 alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted!');
 </script>
 
+@@ container
+<!DOCTYPE html>
+<html>
+<body>
+  <script>
+  var url = window.location.pathname + '/iframe' + window.location.search;
+
+  var img = document.createElement('img');
+  img.src = "https://third-party-cookies.herokuapp.com/set";
+
+  img.onload = function() {
+    var script = document.createElement('script');
+    script.src = "https://third-party-cookies.herokuapp.com/check";
+    window.document.body.appendChild(script);
+  }
+
+  window.document.body.appendChild(img);
+
+  function cookiesCheckCallback(thirdPartyCookiesEnabled) {
+    if(thirdPartyCookiesEnabled) {
+      var iframe = document.createElement('iframe');
+      iframe.src = url;
+      window.document.body.appendChild(iframe);
+    } else {
+      window.open(url, 'Signing in...', 'height=400,width=800');
+    }
+  }
+  </script>
+</body>
+</html>
+
 @@ post_message
 <script>
-var receiver = window.parent === window ? window.opener : window.parent;
-var payload = <%= user.to_json %>;
-payload.token = <%= token.inspect %>;
-payload.travis_token = <%= travis_token ? travis_token.inspect : null %>;
-if(window.parent === window) {
-  if(window.opener) {
-    window.opener.postMessage(payload, <%= target_origin.inspect %>);
-    window.close();
-  } else {
-    document.write('needs to be loaded in an iframe or pop-up');
-  }
+function uberParent(win) {
+  return win.parent === win ? win : uberParent(win.parent);
+}
+
+function sendPayload(win) {
+  var payload          = <%= user.to_json %>;
+  payload.token        = <%= token.inspect %>;
+  payload.travis_token = <%= travis_token ? travis_token.inspect : null %>;
+  uberParent(win).postMessage(payload, <%= target_origin.inspect %>);
+}
+
+if(window.parent == window) {
+  sendPayload(window.opener);
+  window.close();
 } else {
-  window.parent.postMessage(payload, <%= target_origin.inspect %>);
+  sendPayload(window.parent);
 }
 </script>
