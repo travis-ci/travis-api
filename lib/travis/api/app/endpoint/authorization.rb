@@ -104,7 +104,7 @@ class Travis::Api::App
       # Example usage:
       #
       #     window.addEventListener("message", function(event) {
-      #       alert("received token: " + event.data.token);
+      #       console.log("received token: " + event.data.token);
       #     });
       #
       #     var iframe = $('<iframe />').hide();
@@ -256,7 +256,7 @@ __END__
 
 @@ invalid_target
 <script>
-alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted!');
+console.log('refusing to send a token to <%= target_origin.inspect %>, not whitelisted!');
 </script>
 
 @@ container
@@ -264,9 +264,11 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 <html>
 <body>
   <script>
+  console.log('welcome to the wonderful world of authentication');
   var url = window.location.pathname + '/iframe' + window.location.search;
-
   var img = document.createElement('img');
+  var popUpWindow, timeout;
+
   img.src = "https://third-party-cookies.herokuapp.com/set";
 
   img.onload = function() {
@@ -277,15 +279,38 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 
   window.document.body.appendChild(img);
 
+  function iframe() {
+    var iframe = document.createElement('iframe');
+    iframe.src = url;
+    window.document.body.appendChild(iframe);
+  }
+
+  function popUp() {
+    popUpWindow = window.open(url, 'Signing in...', 'height=400,width=800');
+  }
+
+  window.addEventListener("message", function(event) {
+    console.log('handshake succeeded, cleaning up');
+    if(event.data === "done") {
+      if(timeout) clearTimeout(timeout);
+      if(popUpWindow && !popUpWindow.closed) popUpWindow.close();
+    }
+  });
+
   function cookiesCheckCallback(thirdPartyCookiesEnabled) {
     if(thirdPartyCookiesEnabled) {
       console.log("third party cookies enabled, creating iframe");
-      var iframe = document.createElement('iframe');
-      iframe.src = url;
-      window.document.body.appendChild(iframe);
+      iframe();
+      timeout = setTimeout(function() {
+        console.log('handshake taking too long, creating pop-up');
+        popUp();
+      }, 5000);
     } else {
       console.log("third party cookies disabled, creating pop-up");
-      window.open(url, 'Signing in...', 'height=400,width=800');
+      if(!popUp()) {
+        console.log("pop-up failed, trying iframe anyhow");
+        iframe();
+      }
     }
   }
   </script>
@@ -296,6 +321,13 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 <script>
 function uberParent(win) {
   return win.parent === win ? win : uberParent(win.parent);
+}
+
+function tellEveryone(msg, win) {
+  if(win == undefined) win = window;
+  win.postMessage(msg, '*');
+  if(win.parent != win) tellEveryone(msg, win.parent);
+  if(win.opener) tellEveryone(msg, win.opener);
 }
 
 function sendPayload(win) {
@@ -309,6 +341,7 @@ if(window.parent == window) {
   sendPayload(window.opener);
   window.close();
 } else {
+  tellEveryone('done');
   sendPayload(window.parent);
 }
 </script>
