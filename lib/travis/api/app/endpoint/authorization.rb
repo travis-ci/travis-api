@@ -44,6 +44,7 @@ class Travis::Api::App
         ^ http://   (localhost|127\.0\.0\.1)(:\d+)?  $ |
         ^ https://  ([\w\-_]+\.)?travis-ci\.(org|com) $
       }x
+      set blank_gif: Base64.decode64('R0lGODlhBQAFAJH/AP///wAAAMDAwAAAACH5BAEAAAIALAAAAAAFAAUAAAIElI+pWAA7\n')
 
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
@@ -117,10 +118,7 @@ class Travis::Api::App
       # token is being received.
       get '/post_message', scope: :public do
         content_type :html
-        response.set_cookie('cookie_check', '1')
-        host ="#{request.scheme}://#{request.host}"
-        host << ":#{request.port}" unless request.port == 80
-        erb :container, {}, host: host
+        erb :container
       end
 
       get '/post_message/iframe', scope: :public do
@@ -134,13 +132,14 @@ class Travis::Api::App
       end
 
       get '/set_cookie' do
-        blank_gif = Base64.decode64 'R0lGODlhBQAFAJH/AP///wAAAMDAwAAAACH5BAEAAAIALAAAAAAFAAUAAAIElI+pWAA7\n'
-        [200, { 'Content-Type' => 'image/gif', 'Set-Cookie' => 'foo=bar' }, blank_gif]
+        content_type :gif
+        response.set_cookie('foo', 'bar')
+        settings.blank_gif
       end
 
       get '/check_cookie' do
-        third_party_cookies = (!!(env["HTTP_COOKIE"].to_s =~ /foo=bar/)).inspect
-        [200, { 'Content-Type' => 'text/javascript' }, ["cookiesCheckCallback(#{third_party_cookies})"]]
+        content_type :js
+        "cookiesCheckCallback(%p)" % request.cookie.include?('foo')
       end
 
       error Faraday::Error::ClientError do
@@ -280,7 +279,7 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
   var url = window.location.pathname + '/iframe' + window.location.search;
 
   var img = document.createElement('img');
-  img.src = "<%= host %>/auth/set_cookie";
+  img.src = "<%= url('/auth/set_cookie') %>";
 
   img.onload = function() {
     console.log('img onload');
