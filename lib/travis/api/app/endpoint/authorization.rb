@@ -44,7 +44,6 @@ class Travis::Api::App
         ^ http://   (localhost|127\.0\.0\.1)(:\d+)?  $ |
         ^ https://  ([\w\-_]+\.)?travis-ci\.(org|com) $
       }x
-      set blank_gif: Base64.decode64('R0lGODlhBQAFAJH/AP///wAAAMDAwAAAACH5BAEAAAIALAAAAAAFAAUAAAIElI+pWAA7\n')
 
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
@@ -129,18 +128,6 @@ class Travis::Api::App
           post_message(token: token, user: rendered_user, target_origin: target_origin,
                        travis_token: travis_token ? travis_token.token : nil)
         end
-      end
-
-      get '/set_cookie' do
-        content_type :gif
-        response.set_cookie('foo', 'bar')
-        settings.blank_gif
-      end
-
-      get '/check_cookie' do
-        content_type :js
-        Travis.logger.info [:cookies, request.cookies, env['HTTP_COOKIE']]
-        "cookiesCheckCallback(%p)" % request.cookies.include?('foo')
       end
 
       error Faraday::Error::ClientError do
