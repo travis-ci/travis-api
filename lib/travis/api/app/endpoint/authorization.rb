@@ -279,10 +279,12 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 
   function cookiesCheckCallback(thirdPartyCookiesEnabled) {
     if(thirdPartyCookiesEnabled) {
+      console.log("third party cookies enabled, creating iframe");
       var iframe = document.createElement('iframe');
       iframe.src = url;
       window.document.body.appendChild(iframe);
     } else {
+      console.log("third party cookies disabled, creating pop-up");
       window.open(url, 'Signing in...', 'height=400,width=800');
     }
   }
