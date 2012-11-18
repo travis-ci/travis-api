@@ -5,7 +5,7 @@ require 'active_record/base'
 class Travis::Api::App
   # Superclass for HTTP endpoints. Takes care of prefixing.
   class Endpoint < Base
-    include Travis::Services
+    include Travis::Services::Helpers
 
     set(:prefix) { "/" << name[/[^:]+$/].underscore }
     set disable_root_endpoint: false
