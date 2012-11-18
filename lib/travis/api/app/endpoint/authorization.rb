@@ -270,7 +270,6 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
   img.src = "https://third-party-cookies.herokuapp.com/set";
 
   img.onload = function() {
-    console.log('img onload');
     var script = document.createElement('script');
     script.src = "https://third-party-cookies.herokuapp.com/check";
     window.document.body.appendChild(script);
@@ -280,7 +279,9 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 
   function cookiesCheckCallback(thirdPartyCookiesEnabled) {
     if(thirdPartyCookiesEnabled) {
-      document.write('<iframe src="'+url+'" />');
+      var iframe = document.createElement('iframe');
+      iframe.src = url;
+      window.document.body.appendChild(iframe);
     } else {
       window.open(url, 'Signing in...', 'height=400,width=800');
     }
