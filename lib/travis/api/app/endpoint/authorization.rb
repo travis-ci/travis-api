@@ -139,7 +139,7 @@ class Travis::Api::App
 
       get '/check_cookie' do
         content_type :js
-        "cookiesCheckCallback(%p)" % request.cookie.include?('foo')
+        "cookiesCheckCallback(%p)" % request.cookies.include?('foo')
       end
 
       error Faraday::Error::ClientError do
