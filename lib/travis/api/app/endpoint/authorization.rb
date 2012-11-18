@@ -139,6 +139,7 @@ class Travis::Api::App
 
       get '/check_cookie' do
         content_type :js
+        Travis.logger.info [:cookies, request.cookies, env['HTTP_COOKIE']]
         "cookiesCheckCallback(%p)" % request.cookies.include?('foo')
       end
 
@@ -292,9 +293,9 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
 
   function cookiesCheckCallback(thirdPartyCookiesEnabled) {
     if(thirdPartyCookiesEnabled) {
-      window.open(url, 'Signing in...', 'height=400,width=800');
-    } else {
       document.write('<iframe src="'+url+'" />');
+    } else {
+      window.open(url, 'Signing in...', 'height=400,width=800');
     }
   }
   </script>
