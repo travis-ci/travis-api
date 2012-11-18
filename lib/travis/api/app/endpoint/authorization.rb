@@ -284,7 +284,7 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
   img.onload = function() {
     console.log('img onload');
     var script = document.createElement('script');
-    script.src = "<%= host %>/auth/check_cookie";
+    script.src = "<%= url('/auth/check_cookie') %>";
     window.document.body.appendChild(script);
   }
 
