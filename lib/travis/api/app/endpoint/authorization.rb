@@ -279,12 +279,12 @@ alert('refusing to send a token to <%= target_origin.inspect %>, not whitelisted
   var url = window.location.pathname + '/iframe' + window.location.search;
 
   var img = document.createElement('img');
-  img.src = "<%= url('/auth/set_cookie') %>";
+  img.src = "<%= url('/set_cookie') %>";
 
   img.onload = function() {
     console.log('img onload');
     var script = document.createElement('script');
-    script.src = "<%= url('/auth/check_cookie') %>";
+    script.src = "<%= url('/check_cookie') %>";
     window.document.body.appendChild(script);
   }
 
