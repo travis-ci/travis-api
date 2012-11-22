@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: git://github.com/getsentry/raven-ruby.git
-  revision: 3cd6f4746e7f111d1e835c7f4c8142aee9d7df03
+  revision: 08ccc820c811a413976ee1798fecad427be1fb70
   specs:
     sentry-raven (0.3.1)
       faraday (>= 0.7.6)
@@ -42,7 +42,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 1acce00bc7faf493e9a269b4e704e74f7c96651b
+  revision: 16be0f6cd67a8f6d5bd37c40c71c18122dead9db
   branch: sf-register-services
   specs:
     travis-core (0.0.1)
@@ -64,7 +64,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
-  revision: 33cf6b1ed576231c1cc5368f734171b4edd4768b
+  revision: 9bc6c0f948b518b372bb239046bbd3fe6b4fbc97
   specs:
     travis-sidekiqs (0.0.1)
       sentry-raven
@@ -158,7 +158,7 @@ GEM
     journey (1.0.4)
     json (1.7.5)
     kgio (2.7.4)
-    listen (0.5.3)
+    listen (0.6.0)
     mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -234,7 +234,7 @@ GEM
       multi_json (~> 1)
       redis (~> 3)
       redis-namespace
-    signature (0.1.4)
+    signature (0.1.5)
     simple_states (0.1.1)
       activesupport
       hashr (~> 0.0.10)
