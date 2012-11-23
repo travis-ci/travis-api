@@ -42,7 +42,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: da35715d8941855a10b9c3a136dfff8965e19356
+  revision: 7e65f764d1ce9d6e7f0aa63e0602cc870a7dfaf9
   branch: sf-register-services
   specs:
     travis-core (0.0.1)
@@ -234,7 +234,7 @@ GEM
       multi_json (~> 1)
       redis (~> 3)
       redis-namespace
-    signature (0.1.5)
+    signature (0.1.6)
     simple_states (0.1.1)
       activesupport
       hashr (~> 0.0.10)
