@@ -61,10 +61,11 @@ module Travis::Api
         use ActiveRecord::QueryCache
 
         if memcache_servers = ENV['MEMCACHE_SERVERS']
+          namespace = File.read('.deploy-sha')[0..7]
           use Rack::Cache,
             verbose: true,
-            metastore:   "memcached://#{memcache_servers}",
-            entitystore: "memcached://#{memcache_servers}"
+            metastore:   "memcached://#{memcache_servers}/#{namespace}",
+            entitystore: "memcached://#{memcache_servers}/#{namespace}"
         end
 
         use Rack::Deflater
