@@ -6,7 +6,7 @@ require 'travis/api/app'
 require 'pry'
 
 class Travis::Console
-  include Travis::Services
+  include Travis::Services::Helpers
   attr_reader :current_user
 
   def set_user(user)
