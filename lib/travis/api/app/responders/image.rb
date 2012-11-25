@@ -1,7 +1,5 @@
 module Travis::Api::App::Responders
   class Image < Base
-    NAMES = { nil => 'unknown', 0 => 'passing', 1 => 'failing' }
-
     def apply?
       options[:format] == 'png'
     end
@@ -18,7 +16,7 @@ module Travis::Api::App::Responders
       end
 
       def result
-        NAMES[resource.try(:last_build_result_on, branch: params[:branch])]
+        Repository::StatusImage.new(resource, params[:branch]).result
       end
 
       def root
