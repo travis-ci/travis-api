@@ -20,6 +20,10 @@ class Travis::Api::App
         respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
+      get '/:id/key' do
+        respond_with service(:find_repo_key, params)
+      end
+
       get '/:owner_name/:name' do
         respond_with service(:find_repo, params)
       end
@@ -34,6 +38,10 @@ class Travis::Api::App
 
       get '/:owner_name/:name/cc' do
         respond_with service(:find_repo, params.merge(schema: 'cc'))
+      end
+
+      get '/:owner_name/:name/key' do
+        respond_with service(:find_repo_key, params)
       end
     end
   end
