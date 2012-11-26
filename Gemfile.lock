@@ -42,8 +42,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: b9edfcd3de6a1cfcbe24747cbf2b0ee62847a4ab
-  branch: regenerate-repo-key
+  revision: 2e3072e862709c5a1a3daf51abb13adc518e3f14
+  branch: sf-rich-states
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.3)
@@ -64,7 +64,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
-  revision: af303f1d5e6454231668611451e7c67d52998026
+  revision: cde9741f8e6811fe3929bdd0dd653b87289c5eef
+  ref: cde9741
   specs:
     travis-sidekiqs (0.0.1)
       sidekiq (~> 2.5.0)
@@ -169,7 +170,7 @@ GEM
       avl_tree (~> 1.1.2)
       hitimes (~> 1.1)
     mime-types (1.19)
-    mocha (0.13.0)
+    mocha (0.13.1)
       metaclass (~> 0.0.1)
     multi_json (1.4.0)
     multipart-post (1.1.5)
