@@ -103,7 +103,6 @@ module Travis::Api
       def self.setup_travis
         Travis::Amqp.config = Travis.config.amqp
         Travis::Database.connect
-        Travis.services = Travis::Services
         Travis::Features.start
         Sidekiq.configure_client do |config|
           config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
