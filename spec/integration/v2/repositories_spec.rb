@@ -6,6 +6,16 @@ describe 'Repos' do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  it 'GET /repos/:id/key' do
+    response = get "/repos/#{repo.id}/key", {}, headers
+    response.should deliver_json_for(repo.key, version: 'v2')
+  end
+
+  it 'GET /repos/:slug/key' do
+    response = get "/repos/#{repo.slug}/key", {}, headers
+    response.should deliver_json_for(repo.key, version: 'v2')
+  end
+
   it 'GET /repos' do
     response = get '/repos', {}, headers
     response.should deliver_json_for(Repository.timeline, version: 'v2')
