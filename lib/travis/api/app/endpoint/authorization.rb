@@ -48,6 +48,8 @@ class Travis::Api::App
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
       #
+      # NOTE: This endpoint is not yet implemented.
+      #
       # Parameters:
       #
       # * **client_id**: your App's client id (required)
@@ -59,6 +61,8 @@ class Travis::Api::App
       end
 
       # Endpoint for generating an access token from an authorization code.
+      #
+      # NOTE: This endpoint is not yet implemented.
       #
       # Parameters:
       #
