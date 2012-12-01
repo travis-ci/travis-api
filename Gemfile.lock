@@ -42,7 +42,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 6d3159598ece0bfe82cc0c4897e4c0ebb60b3c7f
+  revision: d199425dba6b352be76b366245e6f3d46226c2c1
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.3)
@@ -63,14 +63,14 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
-  revision: cde9741f8e6811fe3929bdd0dd653b87289c5eef
+  revision: 7dc0d120bbea6823626a49aabcd1bff1a75dc05f
   specs:
     travis-sidekiqs (0.0.1)
       sidekiq (~> 2.5.0)
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: f78d9161369f574f12b9c0c0dbfe13b997766bdd
+  revision: 3df452650a4c0ae01ed28bea2b81ce15fde5b712
   specs:
     travis-support (0.0.1)
 
@@ -139,7 +139,7 @@ GEM
     diff-lcs (1.1.3)
     erubis (2.7.0)
     eventmachine (1.0.0)
-    facter (1.6.14)
+    facter (1.6.16)
     factory_girl (2.4.2)
       activesupport
     faraday (0.8.4)
@@ -170,7 +170,7 @@ GEM
     mime-types (1.19)
     mocha (0.13.0)
       metaclass (~> 0.0.1)
-    multi_json (1.3.7)
+    multi_json (1.4.0)
     multipart-post (1.1.5)
     net-http-persistent (2.8)
     net-http-pipeline (1.0.1)
@@ -248,7 +248,7 @@ GEM
       sinatra (~> 1.3.0)
       tilt (~> 1.3)
     slop (3.3.3)
-    sprockets (2.2.1)
+    sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
