@@ -21,7 +21,7 @@ class Travis::Api::App
       end
 
       get '/:id/key', scope: :private do
-        respond_with service(:find_repo_key, params)
+        respond_with service(:find_repo_key, params), version: :v2
       end
 
       get '/:owner_name/:name' do
@@ -41,7 +41,7 @@ class Travis::Api::App
       end
 
       get '/:owner_name/:name/key', scope: :private do
-        respond_with service(:find_repo_key, params)
+        respond_with service(:find_repo_key, params), version: :v2
       end
     end
   end
