@@ -63,7 +63,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
-  revision: 7dc0d120bbea6823626a49aabcd1bff1a75dc05f
+  revision: cde9741f8e6811fe3929bdd0dd653b87289c5eef
+  ref: cde9741
   specs:
     travis-sidekiqs (0.0.1)
       sidekiq (~> 2.5.0)
@@ -222,7 +223,7 @@ GEM
       rspec-core (~> 2.12.0)
       rspec-expectations (~> 2.12.0)
       rspec-mocks (~> 2.12.0)
-    rspec-core (2.12.0)
+    rspec-core (2.12.1)
     rspec-expectations (2.12.0)
       diff-lcs (~> 1.1.3)
     rspec-mocks (2.12.0)
