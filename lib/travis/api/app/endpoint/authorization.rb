@@ -272,6 +272,7 @@ console.log('refusing to send a token to <%= target_origin.inspect %>, not white
   var url = window.location.pathname + '/iframe' + window.location.search;
   var img = document.createElement('img');
   var popUpWindow, timeout;
+  var handshake = location.protocol + "//" + location.host + "/auth/handshake?redirect_uri=";
 
   img.src = "https://third-party-cookies.herokuapp.com/set";
 
@@ -291,6 +292,16 @@ console.log('refusing to send a token to <%= target_origin.inspect %>, not white
 
   function popUp() {
     popUpWindow = window.open(url, 'Signing in...', 'height=400,width=800');
+    return (!popUpWindow || popUpWindow.closed || typeof popUpWindow.closed == 'undefined');
+  }
+
+  function uberParent(win) {
+    return win.parent === win ? win : uberParent(win.parent);
+  }
+
+  function redirect() {
+    win = uberParent(window);
+    win.location = handshake + win.location;
   }
 
   window.addEventListener("message", function(event) {
@@ -307,13 +318,20 @@ console.log('refusing to send a token to <%= target_origin.inspect %>, not white
       iframe();
       timeout = setTimeout(function() {
         console.log('handshake taking too long, creating pop-up');
-        popUp();
+        if(!popUp()) {
+          console.log("pop-up failed, redirecting");
+          redirect();
+        }
       }, 5000);
     } else {
       console.log("third party cookies disabled, creating pop-up");
       if(!popUp()) {
         console.log("pop-up failed, trying iframe anyhow");
         iframe();
+        timeout = setTimeout(function() {
+          console.log('handshake taking too long, redirecting');
+          if(!popUp()) { redirect(); }
+        }, 5000);
       }
     }
   }
