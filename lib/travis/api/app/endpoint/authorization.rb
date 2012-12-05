@@ -263,93 +263,156 @@ __END__
 console.log('refusing to send a token to <%= target_origin.inspect %>, not whitelisted!');
 </script>
 
-@@ container
-<!DOCTYPE html>
-<html>
-<body>
-  <script>
-  console.log('welcome to the wonderful world of authentication');
-  var url = window.location.pathname + '/iframe' + window.location.search;
-  var img = document.createElement('img');
-  var popUpWindow, timeout;
-  var handshake = location.protocol + "//" + location.host + "/auth/handshake?redirect_uri=";
-
-  img.src = "https://third-party-cookies.herokuapp.com/set";
-
-  img.onload = function() {
-    var script = document.createElement('script');
-    script.src = "https://third-party-cookies.herokuapp.com/check";
-    window.document.body.appendChild(script);
-  }
-
-  window.document.body.appendChild(img);
-
-  function iframe() {
-    var iframe = document.createElement('iframe');
-    iframe.src = url;
-    window.document.body.appendChild(iframe);
-  }
-
-  function popUp() {
-    popUpWindow = window.open(url, 'Signing in...', 'height=400,width=800');
-    return (!popUpWindow || popUpWindow.closed || typeof popUpWindow.closed == 'undefined');
-  }
-
-  function uberParent(win) {
-    return win.parent === win ? win : uberParent(win.parent);
-  }
-
-  function redirect() {
-    win = uberParent(window);
-    win.location = handshake + win.location;
-  }
-
-  window.addEventListener("message", function(event) {
-    console.log('handshake succeeded, cleaning up');
-    if(event.data === "done") {
-      if(timeout) clearTimeout(timeout);
-      if(popUpWindow && !popUpWindow.closed) popUpWindow.close();
-    }
-  });
-
-  function cookiesCheckCallback(thirdPartyCookiesEnabled) {
-    if(thirdPartyCookiesEnabled) {
-      console.log("third party cookies enabled, creating iframe");
-      iframe();
-      timeout = setTimeout(function() {
-        console.log('handshake taking too long, creating pop-up');
-        if(!popUp()) {
-          console.log("pop-up failed, redirecting");
-          redirect();
-        }
-      }, 5000);
-    } else {
-      console.log("third party cookies disabled, creating pop-up");
-      if(!popUp()) {
-        console.log("pop-up failed, trying iframe anyhow");
-        iframe();
-        timeout = setTimeout(function() {
-          console.log('handshake taking too long, redirecting');
-          if(!popUp()) { redirect(); }
-        }, 5000);
-      }
-    }
-  }
-  </script>
-</body>
-</html>
-
-@@ post_message
-<script>
-function uberParent(win) {
-  return win.parent === win ? win : uberParent(win.parent);
-}
-
+@@ common
 function tellEveryone(msg, win) {
   if(win == undefined) win = window;
   win.postMessage(msg, '*');
   if(win.parent != win) tellEveryone(msg, win.parent);
   if(win.opener) tellEveryone(msg, win.opener);
+}
+
+@@ container
+<!DOCTYPE html>
+<html><body><script>
+// === THE FLOW ===
+
+// every serious program has a main function
+function main() {
+  doYouHave(thirdPartyCookies,
+    yesIndeed("third party cookies enabled, creating iframe",
+      doYouHave(iframe(after(5)),
+        yesIndeed("iframe succeeded", done),
+        nopeSorry("iframe taking too long, creating pop-up",
+          doYouHave(popup(after(5)),
+            yesIndeed("pop-up succeeded", done),
+            nopeSorry("pop-up failed, redirecting", redirect))))),
+    nopeSorry("third party cookies disabled, creating pop-up",
+      doYouHave(popup(after(8)),
+        yesIndeed("popup succeeded", done),
+        nopeSorry("popup failed", redirect))))();
+}
+
+// === THE LOGIC ===
+var url = window.location.pathname + '/iframe' + window.location.search;
+
+function thirdPartyCookies(yes, no) {
+  window.cookiesCheckCallback = function(enabled) { enabled ? yes() : no() };
+  var img      = document.createElement('img');
+  img.src      = "https://third-party-cookies.herokuapp.com/set";
+  img.onload   = function() {
+    var script = document.createElement('script');
+    script.src = "https://third-party-cookies.herokuapp.com/check";
+    window.document.body.appendChild(script);
+  }
+}
+
+function iframe(time) {
+  return function(yes, no) {
+    var iframe = document.createElement('iframe');
+    iframe.src = url;
+    timeout(time, yes, no);
+    window.document.body.appendChild(iframe);
+  }
+}
+
+function popup(time) {
+  return function(yes, no) {
+    if(popupWindow) {
+      timeout(time, yes, function() {
+        if(popupWindow.closed || popupHidden) {
+          no()
+        } else {
+          try {
+            popupWindow.focus();
+            popupWindow.resizeTo(900, 500);
+          } catch(err) {
+            no()
+          }
+        }
+      });
+    } else {
+      no()
+    }
+  }
+}
+
+function done() {
+  if(popupWindow && !popupWindow.closed) popupWindow.close();
+}
+
+function redirect() {
+  tellEveryone('redirect');
+}
+
+function createPopup() {
+  if(!popupWindow) {
+    popupWindow = window.open(url, 'Signing in...', 'height=50,width=50');
+    popupWindow.onload = function() {
+      try {
+        popupHidden = popupWindow.innerHeight > 0;
+        maybe(function() { popupWindow.focus() });
+      } catch(err) {
+        popupHidden = false;
+      }
+    }
+  }
+}
+
+// === THE PLUMBING ===
+<%= erb :common %>
+
+function timeout(time, yes, no) {
+  var timeout = setTimeout(time, no);
+  onSuccess(function() {
+    clearTimeout(timeout);
+    yes()
+  });
+}
+
+function onSuccess(callback) {
+  succeeded ? callback() : callbacks.push(callback)
+}
+
+function doYouHave(feature, yes, no) {
+  return function() { feature(yes, no) };
+}
+
+function yesIndeed(msg, callback) {
+  if(console && console.log) console.log(msg);
+  return callback;
+}
+
+function after(value) {
+  return value*1000;
+}
+
+var nopeSorry = yesIndeed;
+var timeoutes = [];
+var callbacks = [];
+var seconds   = 1000;
+var succeeded = false;
+var popupWindow, popupHidden;
+
+window.addEventListener("message", function(event) {
+  if(event.data === "done") {
+    succeeded = true
+    for(var i = 0; i < callbacks.length; i++) {
+      (callbacks[i])();
+    }
+  }
+});
+
+// === READY? GO! ===
+main();
+</script>
+</body>
+</html>
+
+@@ post_message
+<script>
+<%= erb :common %>
+function uberParent(win) {
+  return win.parent === win ? win : uberParent(win.parent);
 }
 
 function sendPayload(win) {
