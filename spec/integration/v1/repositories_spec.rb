@@ -49,23 +49,23 @@ describe 'v1 repos' do
     it '"unknown" when it only has one build that is not finished' do
       Build.delete_all
       Factory(:build, repository: repo, state: :created, result: nil)
-      repo.update_attributes!(last_build_result: nil)
+      repo.update_attributes!(last_build_state: nil)
       get('/svenfuchs/minimal.png').should deliver_result_image_for('unknown')
     end
 
     it '"failing" when the last build has failed' do
-      repo.update_attributes!(last_build_result: 1)
+      repo.update_attributes!(last_build_state: 'failed')
       get('/svenfuchs/minimal.png').should deliver_result_image_for('failing')
     end
 
     it '"passing" when the last build has passed' do
-      repo.update_attributes!(last_build_result: 0)
+      repo.update_attributes!(last_build_state: 'passed')
       get('/svenfuchs/minimal.png').should deliver_result_image_for('passing')
     end
 
     it '"passing" when there is a running build but the previous one has passed' do
       Factory(:build, repository: repo, state: :finished, result: nil, previous_result: 0)
-      repo.update_attributes!(last_build_result: nil)
+      repo.update_attributes!(last_build_state: 'started')
       get('/svenfuchs/minimal.png').should deliver_result_image_for('passing')
     end
   end
@@ -80,28 +80,28 @@ describe 'v1 repos' do
 
     it '"unknown" when it only has unfinished builds on the relevant branches' do
       Build.delete_all
-      Factory(:build, repository: repo, state: :started, result: nil, commit: on_foo)
-      Factory(:build, repository: repo, state: :started, result: nil, commit: on_bar)
+      Factory(:build, repository: repo, state: :started, commit: on_foo)
+      Factory(:build, repository: repo, state: :started, commit: on_bar)
       get('/svenfuchs/minimal.png?branch=foo,bar').should deliver_result_image_for('unknown')
     end
 
     it '"failing" when the last build has failed' do
-      Factory(:build, repository: repo, state: :finished, result: 1, commit: on_foo)
-      Factory(:build, repository: repo, state: :finished, result: 1, commit: on_bar)
+      Factory(:build, repository: repo, state: :failed, commit: on_foo)
+      Factory(:build, repository: repo, state: :failed, commit: on_bar)
       get('/svenfuchs/minimal.png?branch=foo,bar').should deliver_result_image_for('failing')
     end
 
     it '"passing" when the last build has passed' do
-      Factory(:build, repository: repo, state: :finished, result: 1, commit: on_foo)
-      Factory(:build, repository: repo, state: :finished, result: 0, commit: on_bar)
+      Factory(:build, repository: repo, state: :failed, commit: on_foo)
+      Factory(:build, repository: repo, state: :passed, commit: on_bar)
       get('/svenfuchs/minimal.png?branch=foo,bar').should deliver_result_image_for('passing')
     end
 
     it '"passing" when there is a running build but the previous one has passed' do
-      Factory(:build, repository: repo, state: :finished, result: 0, commit: on_foo)
-      Factory(:build, repository: repo, state: :finished, result: 0, commit: on_bar)
-      Factory(:build, repository: repo, state: :started, result: nil, commit: on_bar)
-      repo.update_attributes!(last_build_result: nil)
+      Factory(:build, repository: repo, state: :passed, commit: on_foo)
+      Factory(:build, repository: repo, state: :passed, commit: on_bar)
+      Factory(:build, repository: repo, state: :started, commit: on_bar)
+      repo.update_attributes!(last_build_state: 'started')
       get('/svenfuchs/minimal.png?branch=foo,bar').should deliver_result_image_for('passing')
     end
   end
