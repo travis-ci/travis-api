@@ -62,7 +62,8 @@ module Travis::Api
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
 
-        if memcache_servers = ENV['MEMCACHE_SERVERS']
+        memcache_servers = ENV['MEMCACHE_SERVERS']
+        if Travis::Features.feature_active?(:use_rack_cache) && memcache_server
           namespace = File.read('.deploy-sha')[0..7]
           use Rack::Cache,
             verbose: true,
