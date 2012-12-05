@@ -319,7 +319,7 @@ function popup(time) {
   return function(yes, no) {
     if(popupWindow) {
       timeout(time, yes, function() {
-        if(popupWindow.closed || popupHidden) {
+        if(popupWindow.closed || popupWindow.innerHeight < 1) {
           no()
         } else {
           try {
@@ -345,17 +345,7 @@ function redirect() {
 }
 
 function createPopup() {
-  if(!popupWindow) {
-    popupWindow = window.open(url, 'Signing in...', 'height=50,width=50');
-    popupWindow.onload = function() {
-      try {
-        popupHidden = popupWindow.innerHeight > 0;
-        maybe(function() { popupWindow.focus() });
-      } catch(err) {
-        popupHidden = false;
-      }
-    }
-  }
+  if(!popupWindow) popupWindow = window.open(url, 'Signing in...', 'height=50,width=50');
 }
 
 // === THE PLUMBING ===
@@ -391,7 +381,7 @@ var timeoutes = [];
 var callbacks = [];
 var seconds   = 1000;
 var succeeded = false;
-var popupWindow, popupHidden;
+var popupWindow;
 
 window.addEventListener("message", function(event) {
   if(event.data === "done") {
