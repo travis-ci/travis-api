@@ -42,7 +42,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 2e3072e862709c5a1a3daf51abb13adc518e3f14
+  revision: 3d9b40dd4bdf3a4f7c825faddd2ca88269092a03
   branch: sf-rich-states
   specs:
     travis-core (0.0.1)
