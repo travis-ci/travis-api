@@ -360,7 +360,7 @@ function createPopup() {
 <%= erb :common %>
 
 function timeout(time, yes, no) {
-  var timeout = setTimeout(time, no);
+  var timeout = setTimeout(no, time);
   onSuccess(function() {
     clearTimeout(timeout);
     yes()
