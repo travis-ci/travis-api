@@ -9,6 +9,8 @@ require 'redis'
 require 'gh'
 require 'raven'
 require 'sidekiq'
+require 'metriks/reporter/logger'
+require 'travis/support/log_subscriber/active_record_metrics'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -112,6 +114,9 @@ module Travis::Api
         Raven.configure do |config|
           config.dsn = Travis.config.sentry.dsn
         end if Travis.config.sentry
+        
+        Travis::LogSubscriber::ActiveRecordMetrics.attach
+        $metriks_reporter = Metriks::Reporter::Logger.new
       end
 
       def self.load_endpoints

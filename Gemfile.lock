@@ -42,7 +42,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: e1034dc248883d30e21518a4a65665abe4523fe8
+  revision: b9edfcd3de6a1cfcbe24747cbf2b0ee62847a4ab
+  branch: regenerate-repo-key
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.3)
@@ -63,8 +64,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
-  revision: cde9741f8e6811fe3929bdd0dd653b87289c5eef
-  ref: cde9741
+  revision: af303f1d5e6454231668611451e7c67d52998026
   specs:
     travis-sidekiqs (0.0.1)
       sidekiq (~> 2.5.0)
@@ -283,6 +283,7 @@ DEPENDENCIES
   factory_girl (~> 2.4.0)
   foreman
   gh!
+  metriks (= 0.9.9.2)
   micro_migrations!
   mocha (~> 0.12)
   pry

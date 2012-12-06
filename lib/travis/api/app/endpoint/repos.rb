@@ -24,6 +24,10 @@ class Travis::Api::App
         respond_with service(:find_repo_key, params), version: :v2
       end
 
+      post '/:id/key' do
+        respond_with service(:regenerate_repo_key, params), version: :v2
+      end
+
       get '/:owner_name/:name' do
         respond_with service(:find_repo, params)
       end
@@ -42,6 +46,10 @@ class Travis::Api::App
 
       get '/:owner_name/:name/key' do
         respond_with service(:find_repo_key, params), version: :v2
+      end
+
+      post '/:owner_name/:name/key' do
+        respond_with service(:regenerate_repo_key, params), version: :v2
       end
     end
   end
