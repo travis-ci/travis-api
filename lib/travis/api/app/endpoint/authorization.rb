@@ -431,7 +431,7 @@ if(window.parent == window) {
 
 @@ post_payload
 <body onload='document.forms[0].submit()'>
-  <form>
+  <form action="<%= uri %>" method='post'>
     <input type='hidden' name='token'   value='<%= token.inspect %>'>
     <input type='hidden' name='user'    value='<%= user.to_json %>'>
     <input type='hidden' name='storage' value='sessionStorage'>
