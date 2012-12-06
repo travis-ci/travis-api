@@ -40,10 +40,7 @@ class Travis::Api::App
     # The entry point is [/auth/post_message](#/auth/post_message).
     class Authorization < Endpoint
       enable :inline_templates
-      set prefix: '/auth', allowed_targets: %r{
-        ^ http://   (localhost|127\.0\.0\.1)(:\d+)?  $ |
-        ^ https://  ([\w\-_]+\.)?travis-ci\.(org|com) $
-      }x
+      set prefix: '/auth'
 
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
@@ -92,8 +89,14 @@ class Travis::Api::App
       #
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake' do
-        handshake do |*, redirect_uri|
-          safe_redirect redirect_uri
+        handshake do |user, token, redirect_uri|
+          if target_ok? redirect_uri
+            content_type :html
+            data = { user: user, token: token, uri: redirect_uri }
+            erb(:post_payload, locals: data)
+          else
+            safe_redirect redirect_uri
+          end
         end
       end
 
@@ -250,7 +253,12 @@ class Travis::Api::App
         end
 
         def target_ok?(target_origin)
-          target_origin =~ settings.allowed_targets
+          return unless uri = Addressable::URI.parse(target_origin)
+          if uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
+            uri.scheme == 'https'
+          elsif uri == 'localhost' or uri == '127.0.0.1'
+            uri.port > 1023
+          end
         end
     end
   end
@@ -263,75 +271,146 @@ __END__
 console.log('refusing to send a token to <%= target_origin.inspect %>, not whitelisted!');
 </script>
 
-@@ container
-<!DOCTYPE html>
-<html>
-<body>
-  <script>
-  console.log('welcome to the wonderful world of authentication');
-  var url = window.location.pathname + '/iframe' + window.location.search;
-  var img = document.createElement('img');
-  var popUpWindow, timeout;
-
-  img.src = "https://third-party-cookies.herokuapp.com/set";
-
-  img.onload = function() {
-    var script = document.createElement('script');
-    script.src = "https://third-party-cookies.herokuapp.com/check";
-    window.document.body.appendChild(script);
-  }
-
-  window.document.body.appendChild(img);
-
-  function iframe() {
-    var iframe = document.createElement('iframe');
-    iframe.src = url;
-    window.document.body.appendChild(iframe);
-  }
-
-  function popUp() {
-    popUpWindow = window.open(url, 'Signing in...', 'height=400,width=800');
-  }
-
-  window.addEventListener("message", function(event) {
-    console.log('handshake succeeded, cleaning up');
-    if(event.data === "done") {
-      if(timeout) clearTimeout(timeout);
-      if(popUpWindow && !popUpWindow.closed) popUpWindow.close();
-    }
-  });
-
-  function cookiesCheckCallback(thirdPartyCookiesEnabled) {
-    if(thirdPartyCookiesEnabled) {
-      console.log("third party cookies enabled, creating iframe");
-      iframe();
-      timeout = setTimeout(function() {
-        console.log('handshake taking too long, creating pop-up');
-        popUp();
-      }, 5000);
-    } else {
-      console.log("third party cookies disabled, creating pop-up");
-      if(!popUp()) {
-        console.log("pop-up failed, trying iframe anyhow");
-        iframe();
-      }
-    }
-  }
-  </script>
-</body>
-</html>
-
-@@ post_message
-<script>
-function uberParent(win) {
-  return win.parent === win ? win : uberParent(win.parent);
-}
-
+@@ common
 function tellEveryone(msg, win) {
   if(win == undefined) win = window;
   win.postMessage(msg, '*');
   if(win.parent != win) tellEveryone(msg, win.parent);
   if(win.opener) tellEveryone(msg, win.opener);
+}
+
+@@ container
+<!DOCTYPE html>
+<html><body><script>
+// === THE FLOW ===
+
+// every serious program has a main function
+function main() {
+  doYouHave(thirdPartyCookies,
+    yesIndeed("third party cookies enabled, creating iframe",
+      doYouHave(iframe(after(5)),
+        yesIndeed("iframe succeeded", done),
+        nopeSorry("iframe taking too long, creating pop-up",
+          doYouHave(popup(after(5)),
+            yesIndeed("pop-up succeeded", done),
+            nopeSorry("pop-up failed, redirecting", redirect))))),
+    nopeSorry("third party cookies disabled, creating pop-up",
+      doYouHave(popup(after(8)),
+        yesIndeed("popup succeeded", done),
+        nopeSorry("popup failed", redirect))))();
+}
+
+// === THE LOGIC ===
+var url = window.location.pathname + '/iframe' + window.location.search;
+
+function thirdPartyCookies(yes, no) {
+  window.cookiesCheckCallback = function(enabled) { enabled ? yes() : no() };
+  var img      = document.createElement('img');
+  img.src      = "https://third-party-cookies.herokuapp.com/set";
+  img.onload   = function() {
+    var script = document.createElement('script');
+    script.src = "https://third-party-cookies.herokuapp.com/check";
+    window.document.body.appendChild(script);
+  }
+}
+
+function iframe(time) {
+  return function(yes, no) {
+    var iframe = document.createElement('iframe');
+    iframe.src = url;
+    timeout(time, yes, no);
+    window.document.body.appendChild(iframe);
+  }
+}
+
+function popup(time) {
+  return function(yes, no) {
+    if(popupWindow) {
+      timeout(time, yes, function() {
+        if(popupWindow.closed || popupWindow.innerHeight < 1) {
+          no()
+        } else {
+          try {
+            popupWindow.focus();
+            popupWindow.resizeTo(900, 500);
+          } catch(err) {
+            no()
+          }
+        }
+      });
+    } else {
+      no()
+    }
+  }
+}
+
+function done() {
+  if(popupWindow && !popupWindow.closed) popupWindow.close();
+}
+
+function redirect() {
+  tellEveryone('redirect');
+}
+
+function createPopup() {
+  if(!popupWindow) popupWindow = window.open(url, 'Signing in...', 'height=50,width=50');
+}
+
+// === THE PLUMBING ===
+<%= erb :common %>
+
+function timeout(time, yes, no) {
+  var timeout = setTimeout(no, time);
+  onSuccess(function() {
+    clearTimeout(timeout);
+    yes()
+  });
+}
+
+function onSuccess(callback) {
+  succeeded ? callback() : callbacks.push(callback)
+}
+
+function doYouHave(feature, yes, no) {
+  return function() { feature(yes, no) };
+}
+
+function yesIndeed(msg, callback) {
+  if(console && console.log) console.log(msg);
+  return callback;
+}
+
+function after(value) {
+  return value*1000;
+}
+
+var nopeSorry = yesIndeed;
+var timeoutes = [];
+var callbacks = [];
+var seconds   = 1000;
+var succeeded = false;
+var popupWindow;
+
+window.addEventListener("message", function(event) {
+  if(event.data === "done") {
+    succeeded = true
+    for(var i = 0; i < callbacks.length; i++) {
+      (callbacks[i])();
+    }
+  }
+});
+
+// === READY? GO! ===
+main();
+</script>
+</body>
+</html>
+
+@@ post_message
+<script>
+<%= erb :common %>
+function uberParent(win) {
+  return win.parent === win ? win : uberParent(win.parent);
 }
 
 function sendPayload(win) {
@@ -349,3 +428,12 @@ if(window.parent == window) {
   sendPayload(window.parent);
 }
 </script>
+
+@@ post_payload
+<body onload='document.forms[0].submit()'>
+  <form action="<%= uri %>" method='post'>
+    <input type='hidden' name='token'   value='<%= token %>'>
+    <input type='hidden' name='user'    value="<%= user.to_json.gsub('"', '&quot;') %>">
+    <input type='hidden' name='storage' value='sessionStorage'>
+  </form>
+</body>
