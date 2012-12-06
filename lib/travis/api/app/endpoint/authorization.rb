@@ -253,7 +253,7 @@ class Travis::Api::App
 
         def target_ok?(target_origin)
           uri = Addressable::URI.parse(target_origin)
-          if uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\E/
+          if uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
             uri.scheme == 'https'
           elsif uri == 'localhost' or uri == '127.0.0.1'
             uri.port > 1023
