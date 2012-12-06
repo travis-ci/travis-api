@@ -92,7 +92,7 @@ class Travis::Api::App
         handshake do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
-            data = { user: user, token: token, uri: redirect_uri }
+            data = { user: user['user'], token: token, uri: redirect_uri }
             erb(:post_payload, locals: data)
           else
             safe_redirect redirect_uri
