@@ -433,7 +433,7 @@ if(window.parent == window) {
 <body onload='document.forms[0].submit()'>
   <form action="<%= uri %>" method='post'>
     <input type='hidden' name='token'   value='<%= token %>'>
-    <input type='hidden' name='user'    value='<%= user.to_json %>'>
+    <input type='hidden' name='user'    value="<%= user.to_json.gsub('"', '&quot;') %>">
     <input type='hidden' name='storage' value='sessionStorage'>
   </form>
 </body>
