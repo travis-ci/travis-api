@@ -40,10 +40,7 @@ class Travis::Api::App
     # The entry point is [/auth/post_message](#/auth/post_message).
     class Authorization < Endpoint
       enable :inline_templates
-      set prefix: '/auth', allowed_targets: %r{
-        ^ http://   (localhost|127\.0\.0\.1)(:\d+)?  $ |
-        ^ https://  ([\w\-_]+\.)?travis-ci\.(org|com) $
-      }x
+      set prefix: '/auth'
 
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
@@ -92,8 +89,13 @@ class Travis::Api::App
       #
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake' do
-        handshake do |*, redirect_uri|
-          safe_redirect redirect_uri
+        handshake do |user, token, redirect_uri|
+          if target_ok? redirect_uri
+            data = { user: user, token: token, uri: redirect_uri }
+            erb(:post_payload, locals: data)
+          else
+            safe_redirect redirect_uri
+          end
         end
       end
 
@@ -250,7 +252,12 @@ class Travis::Api::App
         end
 
         def target_ok?(target_origin)
-          target_origin =~ settings.allowed_targets
+          uri = Addressable::URI.parse(target_origin)
+          if uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\E/
+            uri.scheme == 'https'
+          elsif uri == 'localhost' or uri == '127.0.0.1'
+            uri.port > 1023
+          end
         end
     end
   end
@@ -420,3 +427,12 @@ if(window.parent == window) {
   sendPayload(window.parent);
 }
 </script>
+
+@@ post_payload
+<body onload='document.forms[0].submit()'>
+  <form>
+    <input type='hidden' name='token'   value='<%= token.inspect %>'>
+    <input type='hidden' name='user'    value='<%= user.to_json %>'>
+    <input type='hidden' name='storage' value='sessionStorage'>
+  </form>
+</body>
