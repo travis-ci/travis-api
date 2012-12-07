@@ -71,7 +71,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: 3df452650a4c0ae01ed28bea2b81ce15fde5b712
+  revision: 124b8b6f6f1cff468b678a38583191a18f9db922
   specs:
     travis-support (0.0.1)
 
