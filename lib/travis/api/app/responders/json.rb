@@ -8,7 +8,7 @@ class Travis::Api::App
       end
 
       def apply
-        halt result.to_json
+        halt result.to_json if result
       end
 
       private
@@ -21,11 +21,15 @@ class Travis::Api::App
         end
 
         def result
-          builder ? builder.new(resource, params).data : resource
+          builder ? builder.new(resource, params).data : basic_type_resource
         end
 
         def builder
-          @builder ||= Travis::Api.builder(resource, { :version => version }.merge(options))
+          if defined?(@builder)
+           @builder
+          else
+           @builder = Travis::Api.builder(resource, { :version => version }.merge(options))
+          end
         end
 
         def accept_params
@@ -38,6 +42,10 @@ class Travis::Api::App
 
         def params
           (request.params || {}).merge(accept_params)
+        end
+
+        def basic_type_resource
+          resource if resource.is_a?(Hash)
         end
     end
   end
