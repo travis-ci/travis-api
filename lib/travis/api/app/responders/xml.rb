@@ -3,15 +3,16 @@ module Travis::Api::App::Responders
     TEMPLATE = File.read(__FILE__).split("__END__").last.strip
 
     STATUS = {
-      nil => 'Unknown',
-      0 => 'Success',
-      1 => 'Failure'
+      default: 'Unknown',
+      passed:  'Success',
+      failed:  'Failure',
+      errored: 'Error',
+      canceld: 'Canceled',
     }
 
     ACTIVITY = {
-      nil => 'Sleeping',
-      'started' => 'Building',
-      'finished' => 'Sleeping'
+      default: 'Sleeping',
+      started: 'Building'
     }
 
     def apply?
@@ -28,11 +29,19 @@ module Travis::Api::App::Responders
         {
           name:     resource.slug,
           url:      [Travis.config.domain, resource.slug].join('/'),
-          activity: ACTIVITY[last_build.try(:state)],
+          activity: activity,
           label:    last_build.try(:number),
-          status:   STATUS[resource.last_build_result_on(request.params)],
+          status:   status,
           time:     last_build.finished_at.try(:strftime, '%Y-%m-%dT%H:%M:%S.%L%z')
         }
+      end
+
+      def status
+        STATUS[last_build.state.to_sym] || STATUS[:default]
+      end
+
+      def activity
+        ACTIVITY[last_build.state.to_sym] || ACTIVITY[:default]
       end
 
       def last_build

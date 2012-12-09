@@ -49,17 +49,17 @@ describe 'v1 repos' do
     it '"unknown" when it only has one build that is not finished' do
       Build.delete_all
       Factory(:build, repository: repo, state: :created, result: nil)
-      repo.update_attributes!(last_build_state: nil)
+      repo.builds.update_all(state: 'started')
       get('/svenfuchs/minimal.png').should deliver_result_image_for('unknown')
     end
 
     it '"failing" when the last build has failed' do
-      repo.update_attributes!(last_build_state: 'failed')
+      repo.builds.update_all(state: 'failed')
       get('/svenfuchs/minimal.png').should deliver_result_image_for('failing')
     end
 
     it '"passing" when the last build has passed' do
-      repo.update_attributes!(last_build_state: 'passed')
+      repo.builds.update_all(state: 'passed')
       get('/svenfuchs/minimal.png').should deliver_result_image_for('passing')
     end
 
