@@ -41,6 +41,15 @@ GIT
       yard (~> 0.7)
 
 GIT
+  remote: git://github.com/svenfuchs/simple_states.git
+  revision: b1d45144e6a758220d7b21f83b08dc92de0d3196
+  branch: sf-set-state-early
+  specs:
+    simple_states (0.1.1)
+      activesupport
+      hashr (~> 0.0.10)
+
+GIT
   remote: git://github.com/travis-ci/travis-core.git
   revision: 714090635924650998b3a3d0f18b39d9cfd46839
   specs:
@@ -234,9 +243,6 @@ GEM
       redis (~> 3)
       redis-namespace
     signature (0.1.6)
-    simple_states (0.1.1)
-      activesupport
-      hashr (~> 0.0.10)
     sinatra (1.3.3)
       rack (~> 1.3, >= 1.3.6)
       rack-protection (~> 1.2)
@@ -293,6 +299,7 @@ DEPENDENCIES
   rerun
   rspec (~> 2.11)
   sentry-raven!
+  simple_states!
   travis-api!
   travis-core!
   travis-sidekiqs!

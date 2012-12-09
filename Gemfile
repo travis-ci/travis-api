@@ -7,6 +7,9 @@ gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-core',     github: 'travis-ci/travis-core'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: 'cde9741'
 
+# TODO need to release the gem as soon i'm certain this change makes sense
+gem 'simple_states',      github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
+
 gem 'unicorn'
 gem "sentry-raven",    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
