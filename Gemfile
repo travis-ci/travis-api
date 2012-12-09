@@ -4,7 +4,7 @@ source :rubygems
 gemspec
 
 gem 'travis-support',  github: 'travis-ci/travis-support'
-gem 'travis-core',     github: 'travis-ci/travis-core', branch: 'sf-rich-states'
+gem 'travis-core',     github: 'travis-ci/travis-core'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: 'cde9741'
 
 gem 'unicorn'
