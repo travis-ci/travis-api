@@ -51,6 +51,10 @@ module Travis::Api
       super()
     end
 
+    def self.deploy_sha
+      @deploy_sha ||= File.exist?('.deploy_sha') ? File.read('.deploy-sha')[0..7] : 'deploy-sha'
+    end
+
     attr_accessor :app
 
     def initialize
@@ -64,11 +68,10 @@ module Travis::Api
 
         memcache_servers = ENV['MEMCACHE_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_server
-          namespace = File.read('.deploy-sha')[0..7]
           use Rack::Cache,
             verbose: true,
-            metastore:   "memcached://#{memcache_servers}/#{namespace}",
-            entitystore: "memcached://#{memcache_servers}/#{namespace}"
+            metastore:   "memcached://#{memcache_servers}/#{self.class.deploy_sha}",
+            entitystore: "memcached://#{memcache_servers}/#{self.class.deploy_sha}"
         end
 
         use Rack::Deflater
@@ -115,7 +118,7 @@ module Travis::Api
         Raven.configure do |config|
           config.dsn = Travis.config.sentry.dsn
         end if Travis.config.sentry
-        
+
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         $metriks_reporter = Metriks::Reporter::Logger.new
       end
