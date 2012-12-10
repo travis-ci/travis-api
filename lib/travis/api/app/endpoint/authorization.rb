@@ -434,6 +434,6 @@ if(window.parent == window) {
   <form action="<%= uri %>" method='post'>
     <input type='hidden' name='token'   value='<%= token %>'>
     <input type='hidden' name='user'    value="<%= user.to_json.gsub('"', '&quot;') %>">
-    <input type='hidden' name='storage' value='sessionStorage'>
+    <input type='hidden' name='storage' value='localStorage'>
   </form>
 </body>
