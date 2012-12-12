@@ -26,22 +26,11 @@ end
 
 RSpec::Matchers.define :deliver_result_image_for do |name|
   match do |response|
-    actual = files.detect do |name, content|
-      response.body.to_s.force_encoding('ascii') == content.to_s.force_encoding('ascii') # TODO ummmmmmmm?
-    end
-    actual = actual && actual[0]
-
+    header = response.headers['content-disposition']
     failure_message_for_should do
-      "expected #{actual.inspect} to equal #{name.inspect}"
+      "expected #{response.env[:url].to_s} to return headers['content-disposition']  inline; filename=\"#{name}.png\" but it was: #{header.inspect}"
     end
-
-    actual == name
-  end
-
-  def files
-    files = Hash[*Dir['public/images/result/*.png'].map do |file|
-      [File.basename(file, '.png'), File.read(file)]
-    end.flatten]
+    header.to_s.should =~ /^inline; filename="#{name}\.png"$/
   end
 end
 

@@ -6,7 +6,8 @@ module Travis::Api::App::Responders
 
     def apply
       headers['Expires'] = Time.now.utc.httpdate
-      halt send_file(filename, type: :png, disposition: :inline)
+      headers['Content-Disposition'] = %(inline; filename="#{File.basename(filename)}")
+      halt send_file(filename, type: :png)
     end
 
     private
