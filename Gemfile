@@ -6,12 +6,13 @@ gemspec
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-core',     github: 'travis-ci/travis-core'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: 'cde9741'
+gem 'sinatra',         github: 'sinatra/sinatra'
+gem 'sinatra-contrib', github: 'sinatra/sinatra-contrib', require: nil
 
 # TODO need to release the gem as soon i'm certain this change makes sense
 gem 'simple_states',      github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
 
 gem 'unicorn'
-# gem 'sinatra',         github: 'sinatra/sinatra'
 gem "sentry-raven",    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
@@ -36,5 +37,5 @@ end
 
 group :development, :test do
   gem 'rake', '~> 0.9.2'
-  gem 'micro_migrations', git: 'http://gist.github.com/2087829.git'
+  gem 'micro_migrations', git: 'http://gist.github.com/4269321.git'
 end
