@@ -1,10 +1,4 @@
 GIT
-  remote: git://gist.github.com/2087829.git
-  revision: c766c06b0bdbda3bd96c3f4e376249cafcbbfaaa
-  specs:
-    micro_migrations (0.0.1)
-
-GIT
   remote: git://github.com/getsentry/raven-ruby.git
   revision: fa360a9c5919c19f11552b9de6f83302060901f0
   specs:
@@ -16,14 +10,14 @@ GIT
 
 GIT
   remote: git://github.com/rack/rack-contrib.git
-  revision: b7e7c38fd02c3b5da91aa57af78b3f571c6ebcd0
+  revision: 6f337267eae0bedb4110879f2aea6b1bb2137980
   specs:
-    rack-contrib (1.1.0)
+    rack-contrib (1.2.0)
       rack (>= 0.9.1)
 
 GIT
   remote: git://github.com/rkh/gh.git
-  revision: 5587a66320f5c2297963590ed68284054624c741
+  revision: 8f91386862f246c98057f4f628b5d7a420de6e7c
   specs:
     gh (0.9.0)
       addressable
@@ -80,9 +74,15 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: 3df452650a4c0ae01ed28bea2b81ce15fde5b712
+  revision: fe5e9013d99f8f38b9560cbd3150146914e2c138
   specs:
     travis-support (0.0.1)
+
+GIT
+  remote: http://gist.github.com/2087829.git
+  revision: c766c06b0bdbda3bd96c3f4e376249cafcbbfaaa
+  specs:
+    micro_migrations (0.0.1)
 
 PATH
   remote: .
@@ -135,7 +135,7 @@ GEM
     backports (2.6.5)
     builder (3.0.4)
     bunny (0.8.0)
-    celluloid (0.12.3)
+    celluloid (0.12.4)
       facter (>= 1.6.12)
       timers (>= 1.0.0)
     coderay (1.0.8)
@@ -180,7 +180,7 @@ GEM
     mime-types (1.19)
     mocha (0.13.1)
       metaclass (~> 0.0.1)
-    multi_json (1.4.0)
+    multi_json (1.5.0)
     multipart-post (1.1.5)
     net-http-persistent (2.8)
     net-http-pipeline (1.0.1)
@@ -204,7 +204,7 @@ GEM
     rack (1.4.1)
     rack-cache (1.2)
       rack (>= 0.4)
-    rack-protection (1.2.0)
+    rack-protection (1.3.2)
       rack
     rack-ssl (1.3.2)
       rack

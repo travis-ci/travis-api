@@ -11,6 +11,7 @@ gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: '
 gem 'simple_states',      github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
 
 gem 'unicorn'
+# gem 'sinatra',         github: 'sinatra/sinatra'
 gem "sentry-raven",    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
@@ -35,5 +36,5 @@ end
 
 group :development, :test do
   gem 'rake', '~> 0.9.2'
-  gem 'micro_migrations', git: 'git://gist.github.com/2087829.git'
+  gem 'micro_migrations', git: 'http://gist.github.com/2087829.git'
 end
