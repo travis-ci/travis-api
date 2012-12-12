@@ -76,9 +76,9 @@ class Travis::Api::App
       #
       # Parameters:
       #
-      # * **token**: GitHub token for checking authorization (required)
+      # * **github_token**: GitHub token for checking authorization (required)
       post '/github' do
-        { 'access_token' => github_to_travis(params[:token], app_id: 1) }
+        { 'access_token' => github_to_travis(params[:github_token], app_id: 1) }
       end
 
       # Endpoint for making sure user authorized Travis CI to access GitHub.

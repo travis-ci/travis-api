@@ -33,7 +33,7 @@ describe Travis::Api::App::Endpoint::Authorization do
     end
 
     def get_token(github_token)
-      post('/auth/github', token: github_token).should be_ok
+      post('/auth/github', github_token: github_token).should be_ok
       parsed_body['access_token']
     end
 
@@ -52,12 +52,12 @@ describe Travis::Api::App::Endpoint::Authorization do
     end
 
     it 'rejects tokens with user scope' do
-      post('/auth/github', token: 'no repos').should_not be_ok
+      post('/auth/github', github_token: 'no repos').should_not be_ok
       body.should_not include('access_token')
     end
 
     it 'rejects tokens with user scope' do
-      post('/auth/github', token: 'invalid token').should_not be_ok
+      post('/auth/github', github_token: 'invalid token').should_not be_ok
       body.should_not include('access_token')
     end
   end
