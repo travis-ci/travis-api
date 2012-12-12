@@ -10,7 +10,13 @@ class Travis::Api::App
       new(options).tap(&:save)
     end
 
+    def self.for_travis_token(travis_token, options = {})
+      travis_token = Token.find_by_token(travis_token) unless travis_token.respond_to? :user
+      new(scope: :travis_token, app_id: 1, user: travis_token.user).tap(&:save) if travis_token
+    end
+
     def self.find_by_token(token)
+      return token if token.is_a? self
       user_id, app_id, *scopes = redis.lrange(key(token), 0, -1)
       new(token: token, scopes: scopes, user_id: user_id, app_id: app_id) if user_id
     end

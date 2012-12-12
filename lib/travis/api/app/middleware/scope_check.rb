@@ -19,10 +19,15 @@ class Travis::Api::App
       end
 
       def token
-        @token ||= header_token || query_token
+        @token ||= header_token || query_token || travis_token
       end
 
       private
+
+        def travis_token
+          return unless token = params[:token]
+          AccessToken.for_travis_token(token) || ""
+        end
 
         def query_token
           params[:access_token] if params[:access_token] and not params[:access_token].empty?
