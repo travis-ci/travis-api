@@ -420,8 +420,10 @@ function uberParent(win) {
 }
 
 function sendPayload(win) {
-  var payload   = <%= user.to_json %>;
-  payload.token = <%= token.inspect %>;
+  var payload = {
+    'user': <%= user.to_json %>,
+    'token': <%= token.inspect %>
+  };
   uberParent(win).postMessage(payload, <%= target_origin.inspect %>);
 }
 
