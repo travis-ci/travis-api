@@ -92,6 +92,7 @@ class Travis::Api::App
         handshake do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
+            user = Travis::Api.data(user, version: :v2)
             data = { user: user, token: token, uri: redirect_uri }
             erb(:post_payload, locals: data)
           else
