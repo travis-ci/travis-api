@@ -92,7 +92,6 @@ class Travis::Api::App
         handshake do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
-            user = Travis::Api.data(user, version: :v2)
             data = { user: user, token: token, uri: redirect_uri }
             erb(:post_payload, locals: data)
           else
@@ -131,10 +130,7 @@ class Travis::Api::App
       get '/post_message/iframe', scope: :public do
         handshake do |user, token, target_origin|
           halt 403, invalid_target(target_origin) unless target_ok? target_origin
-          rendered_user = Travis::Api.data(user, version: :v2)
-          travis_token  = user.tokens.first
-          post_message(token: token, user: rendered_user, target_origin: target_origin,
-                       travis_token: travis_token ? travis_token.token : nil)
+          post_message(token: token, user: user, target_origin: target_origin)
         end
       end
 
@@ -143,6 +139,13 @@ class Travis::Api::App
       end
 
       private
+
+        def serialize_user(user)
+          rendered_user = Travis::Api.data(user, version: :v2)
+          travis_token  = user.tokens.first
+          user['token'] = travis_token.token if travis_token
+          rendered_user
+        end
 
         def oauth_endpoint
           proxy = Travis.config.oauth2.proxy
@@ -167,7 +170,7 @@ class Travis::Api::App
             user                   = user_for_github_token(github_token)
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
-            yield user, token, payload
+            yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
             endpoint.path          = config.authorize_path
@@ -417,9 +420,8 @@ function uberParent(win) {
 }
 
 function sendPayload(win) {
-  var payload          = <%= user.to_json %>;
-  payload.token        = <%= token.inspect %>;
-  payload.travis_token = <%= travis_token ? travis_token.inspect : null %>;
+  var payload   = <%= user.to_json %>;
+  payload.token = <%= token.inspect %>;
   uberParent(win).postMessage(payload, <%= target_origin.inspect %>);
 }
 
