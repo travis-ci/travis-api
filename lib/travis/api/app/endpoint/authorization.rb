@@ -434,7 +434,7 @@ if(window.parent == window) {
 
 @@ post_payload
 <body onload=''>
-  <form action="<%= document.forms[0].submit() %>" method='post'>
+  <form action="document.forms[0].submit()" method='post'>
     <input type='hidden' name='token'   value='<%= token %>'>
     <input type='hidden' name='user'    value="<%= user.to_json.gsub('"', '&quot;') %>">
     <input type='hidden' name='storage' value='localStorage'>
