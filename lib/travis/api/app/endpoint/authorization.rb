@@ -141,10 +141,8 @@ class Travis::Api::App
       private
 
         def serialize_user(user)
-          rendered_user = Travis::Api.data(user, version: :v2)
-          travis_token  = user.tokens.first
-          user['token'] = travis_token.token if travis_token
-          rendered_user
+          rendered = Travis::Api.data(user, version: :v2)
+          rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
         end
 
         def oauth_endpoint
@@ -435,8 +433,8 @@ if(window.parent == window) {
 </script>
 
 @@ post_payload
-<body onload='document.forms[0].submit()'>
-  <form action="<%= uri %>" method='post'>
+<body onload=''>
+  <form action="<%= document.forms[0].submit() %>" method='post'>
     <input type='hidden' name='token'   value='<%= token %>'>
     <input type='hidden' name='user'    value="<%= user.to_json.gsub('"', '&quot;') %>">
     <input type='hidden' name='storage' value='localStorage'>
