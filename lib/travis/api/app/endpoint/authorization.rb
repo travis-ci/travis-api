@@ -380,8 +380,10 @@ function doYouHave(feature, yes, no) {
 }
 
 function yesIndeed(msg, callback) {
-  if(console && console.log) console.log(msg);
-  return callback;
+  return function() {
+    if(console && console.log) console.log(msg);
+    return callback();
+  }
 }
 
 function after(value) {
