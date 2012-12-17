@@ -48,7 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/sinatra/sinatra.git
-  revision: 461dafaf6049597551ad261a3320f912785377be
+  revision: 49eac3a645add2d1fb1698ce4a250896ff0af1b4
   specs:
     sinatra (1.4.0)
       rack (~> 1.4)
@@ -66,7 +66,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 500daa4a822d09783f5e64dbc196275770f2570e
+  revision: 5be9c0783e469426b036b39591fedc7cbaa04208
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.3)
