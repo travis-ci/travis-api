@@ -66,11 +66,12 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 5be9c0783e469426b036b39591fedc7cbaa04208
+  revision: de93a4998c93f686be889675a87d561f99810f25
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.3)
       activerecord (~> 3.2.3)
+      coder (~> 0.3.0)
       data_migrations (~> 0.0.1)
       gh
       hashr (~> 0.0.19)
@@ -95,7 +96,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: fe5e9013d99f8f38b9560cbd3150146914e2c138
+  revision: e3e09d89fc8d86e89c4f1aeb4ff55214e00bd44b
   specs:
     travis-support (0.0.1)
 
@@ -159,6 +160,7 @@ GEM
     celluloid (0.12.4)
       facter (>= 1.6.12)
       timers (>= 1.0.0)
+    coder (0.3.0)
     coderay (1.0.8)
     columnize (0.3.6)
     connection_pool (0.9.2)
