@@ -33,7 +33,7 @@ end
 group :development do
   gem 'foreman'
   gem 'rerun'
-  gem 'debugger'
+  # gem 'debugger'
 end
 
 group :development, :test do
