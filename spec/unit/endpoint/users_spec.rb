@@ -17,14 +17,15 @@ describe Travis::Api::App::Endpoint::Users do
   it 'replies with the current user' do
     get('/users', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01').should be_ok
     parsed_body['user'].should == {
-      'id'          => user.id,
-      'login'       => user.login,
-      'name'        => user.name,
-      'email'       => user.email,
-      'gravatar_id' => user.gravatar_id,
-      'locale'      => user.locale,
-      'is_syncing'  => user.is_syncing,
-      'synced_at'   => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ')
+      'id'             => user.id,
+      'login'          => user.login,
+      'name'           => user.name,
+      'email'          => user.email,
+      'gravatar_id'    => user.gravatar_id,
+      'locale'         => user.locale,
+      'is_syncing'     => user.is_syncing,
+      'synced_at'      => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+      'correct_scopes' => true,
     }
   end
 end

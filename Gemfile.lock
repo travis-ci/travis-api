@@ -66,7 +66,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: de93a4998c93f686be889675a87d561f99810f25
+  revision: 8054047f8ea52de88012c7351530b03516af5060
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.3)
@@ -96,7 +96,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: e3e09d89fc8d86e89c4f1aeb4ff55214e00bd44b
+  revision: a214c215e1b52bdf4d3ab5d31e7e2df52fad5a0c
   specs:
     travis-support (0.0.1)
 
@@ -229,7 +229,7 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.3.1)
-    pusher (0.11.1)
+    pusher (0.11.2)
       multi_json (~> 1.0)
       signature (~> 0.1.6)
     rack (1.4.1)
