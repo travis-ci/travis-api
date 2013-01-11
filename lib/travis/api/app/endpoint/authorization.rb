@@ -78,7 +78,7 @@ class Travis::Api::App
       #
       # * **github_token**: GitHub token for checking authorization (required)
       post '/github' do
-        { 'access_token' => github_to_travis(params[:github_token], app_id: 1) }
+        { 'access_token' => github_to_travis(params[:github_token], app_id: 1, drop_token: true) }
       end
 
       # Endpoint for making sure user authorized Travis CI to access GitHub.
@@ -191,10 +191,11 @@ class Travis::Api::App
         end
 
         def github_to_travis(token, options = {})
-          generate_token options.merge(user: user_for_github_token(token))
+          drop_token = options.delete(:drop_token)
+          generate_token options.merge(user: user_for_github_token(token, drop_token))
         end
 
-        class UserManager < Struct.new(:data, :token)
+        class UserManager < Struct.new(:data, :token, :drop_token)
           def info(attributes = {})
             info = data.to_hash.slice('name', 'login', 'gravatar_id')
             info.merge! attributes.stringify_keys
@@ -204,7 +205,7 @@ class Travis::Api::App
 
           def fetch
             user   = ::User.find_by_github_id(data['id'])
-            info   = info(github_oauth_token: token)
+            info   = drop_token ? info : info(github_oauth_token: token)
 
             if user
               user.update_attributes info
@@ -216,12 +217,12 @@ class Travis::Api::App
           end
         end
 
-        def user_for_github_token(token)
+        def user_for_github_token(token, drop_token = false)
           data   = GH.with(token: token.to_s) { GH['user'] }
           scopes = parse_scopes data.headers['x-oauth-scopes']
           halt 403, 'insufficient access' unless acceptable? scopes
 
-          user   = UserManager.new(data, token).fetch
+          user   = UserManager.new(data, token, drop_token).fetch
           halt 403, 'not a Travis user' if user.nil?
           user
         end

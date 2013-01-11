@@ -40,7 +40,7 @@ describe Travis::Api::App::Endpoint::Authorization do
     def user_for(github_token)
       get '/info/login', access_token: get_token(github_token)
       last_response.status.should == 200
-      User.find_by_login(body)
+      user if user.login == body
     end
 
     it 'accepts tokens with repo scope' do
@@ -59,6 +59,10 @@ describe Travis::Api::App::Endpoint::Authorization do
     it 'rejects tokens with user scope' do
       post('/auth/github', github_token: 'invalid token').should_not be_ok
       body.should_not include('access_token')
+    end
+
+    it 'does not store the token' do
+      user_for('public repos').github_oauth_token.should_not == 'public repos'
     end
   end
 end
