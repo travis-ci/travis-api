@@ -243,7 +243,17 @@ class Travis::Api::App
         end
 
         def acceptable?(scopes)
-          scopes.include? 'public_repo' or scopes.include? 'repo'
+          User::Oauth.wanted_scopes.all? do |scope|
+            acceptable_scopes_for(scope).any? { |s| scopes.include? s }
+          end
+        end
+
+        def acceptable_scopes_for(scope)
+          case scope = scope.to_s
+          when /^(.+):/      then [$1, scope]
+          when 'public_repo' then [scope, 'repo']
+          else [scope]
+          end
         end
 
         def post_message(payload)

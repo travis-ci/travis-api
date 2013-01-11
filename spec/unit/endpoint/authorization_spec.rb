@@ -26,8 +26,8 @@ describe Travis::Api::App::Endpoint::Authorization do
   describe 'POST /auth/github' do
     before do
       data = { 'id' => user.github_id, 'name' => user.name, 'login' => user.login, 'gravatar_id' => user.gravatar_id }
-      GH.stubs(:with).with(token: 'private repos').returns stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'}, :to_hash => data)
-      GH.stubs(:with).with(token: 'public repos').returns  stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'}, :to_hash => data)
+      GH.stubs(:with).with(token: 'private repos').returns stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'user,repo'}, :to_hash => data)
+      GH.stubs(:with).with(token: 'public repos').returns  stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'user,public_repo'}, :to_hash => data)
       GH.stubs(:with).with(token: 'no repos').returns      stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'}, :to_hash => data)
       GH.stubs(:with).with(token: 'invalid token').raises(Faraday::Error::ClientError, 'CLIENT ERROR!')
     end

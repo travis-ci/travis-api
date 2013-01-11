@@ -47,6 +47,8 @@ RSpec.configure do |c|
   c.before :each do
     DatabaseCleaner.start
     ::Redis.connect(url: Travis.config.redis.url).flushdb
+    Travis.config.oauth2 ||= {}
+    Travis.config.oauth2.scope = "user:email,public_repo"
     set_app Travis::Api::App.new
   end
 
