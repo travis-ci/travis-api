@@ -220,7 +220,7 @@ class Travis::Api::App
         def user_for_github_token(token, drop_token = false)
           data   = GH.with(token: token.to_s) { GH['user'] }
           scopes = parse_scopes data.headers['x-oauth-scopes']
-          halt 403, 'insufficient access' unless acceptable? scopes
+          halt 403, 'insufficient access: %p' unless acceptable? scopes
 
           user   = UserManager.new(data, token, drop_token).fetch
           halt 403, 'not a Travis user' if user.nil?
@@ -251,6 +251,7 @@ class Travis::Api::App
 
         def acceptable_scopes_for(scope)
           case scope = scope.to_s
+          when /^user/       then ['user', scope, 'public_repo', 'repo']
           when /^(.+):/      then [$1, scope]
           when 'public_repo' then [scope, 'repo']
           else [scope]
