@@ -31,9 +31,9 @@ class Travis::Api::App
             headers['Vary'] << ', Authorization' unless public?
             true
           elsif env['travis.access_token']
-            halt 403, "insufficient access"
+            pass { halt 403, "insufficient access" }
           else
-            halt 401, "no access token supplied"
+            pass { halt 401, "no access token supplied" }
           end
         end
       end

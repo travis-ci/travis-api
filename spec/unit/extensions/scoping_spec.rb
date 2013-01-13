@@ -8,6 +8,8 @@ describe Travis::Api::App::Extensions::Scoping do
       register Travis::Api::App::Extensions::Scoping
       get('/') { 'ok' }
       get('/private', scope: :private) { 'ok' }
+      get('/pass_me', scope: :private) { 'first' }
+      get('/pass_me') { 'second' }
     end
 
     User.stubs(:find).with(user.id).returns(user)
@@ -61,5 +63,16 @@ describe Travis::Api::App::Extensions::Scoping do
     with_scopes('/private', :foo, :bar).should_not be_ok
     headers['X-Accepted-OAuth-Scopes'].should == 'private'
     headers['X-OAuth-Scopes'].should == 'foo,bar'
+  end
+
+  it 'passes on to unscoped routes' do
+    get('/pass_me').should be_ok
+    body.should == 'second'
+  end
+
+
+  it 'does not pass if scope matches' do
+    with_scopes('/pass_me', :private).should be_ok
+    body.should == 'first'
   end
 end
