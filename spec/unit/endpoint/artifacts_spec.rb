@@ -26,5 +26,19 @@ describe Travis::Api::App::Endpoint::Artifacts do
       response.body.should == artifact.content
       response.headers['Content-Disposition'].should == "attachment; filename=\"#{artifact.id}\""
     end
+
+    describe 'with deansi param' do
+      let(:content) {
+        "Fetching (0%)\rFetching (10%)\rFetching (100%)\n\e[32m"
+      }
+      let(:artifact) { Factory(:log, :content => content) }
+
+      it 'clears ansi escape control characters' do
+        response = get("/artifacts/#{id}.txt", {'deansi' => true})
+
+        response.should be_ok
+        response.body.should == "Fetching (100%)\n"
+      end
+    end
   end
 end

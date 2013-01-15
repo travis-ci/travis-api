@@ -16,7 +16,15 @@ module Travis::Api::App::Responders
       headers['Content-Disposition'] = %(#{disposition}; filename="#{filename}")
 
       endpoint.content_type 'text/plain'
-      halt resource.content
+      halt(params[:deansi] ? clear_ansi(resource.content) : resource.content)
     end
+
+    private
+
+      def clear_ansi(content)
+        content.gsub(/\r\r/, "\r")
+               .gsub(/^.*\r(?!$)/, '')
+               .gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/m, '')
+      end
   end
 end
