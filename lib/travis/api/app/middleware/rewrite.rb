@@ -3,7 +3,7 @@ require 'travis/api/app'
 class Travis::Api::App
   class Middleware
     class Rewrite < Middleware
-      FORMAT      = %r(\.(json|xml|png)$)
+      FORMAT      = %r(\.(json|xml|png|txt)$)
       V1_REPO_URL = %r(^(/[^/]+/[^/]+(?:/builds(?:/[\d]+)?|/cc)?)$)
 
       helpers :accept
