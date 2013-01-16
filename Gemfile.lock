@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/getsentry/raven-ruby.git
-  revision: 8cdccd40ddf55d3265a1ecc5e25312d49b8be44f
+  revision: a0f59d3974034b38891fb1d4a70ff45fa996e7c9
   specs:
     sentry-raven (0.4.0)
       faraday (>= 0.7.6)
@@ -36,7 +36,7 @@ GIT
 
 GIT
   remote: git://github.com/sinatra/sinatra-contrib.git
-  revision: a7a7acdcbd5c51388633a98471d6f7506cce4712
+  revision: 86c85007860bbaf596092547e7902ff5e0a07698
   specs:
     sinatra-contrib (1.4.0)
       backports (>= 2.0)
@@ -48,7 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/sinatra/sinatra.git
-  revision: 9984d0d2b3f1ea12273c6c25f8e102b2329f33e9
+  revision: eed4f71f4ff5a70f43c803fa6787920e9d01218b
   specs:
     sinatra (1.4.0)
       rack (~> 1.4)
@@ -66,7 +66,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: e80eec8bf879a0c5c28e9ca37cd17fa2dd4146cf
+  revision: 26d5cfea9fb4d7c2458d3ee90a9f818bd57e832e
+  branch: sf-restart-event
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.11)
@@ -154,7 +155,7 @@ GEM
     arel (3.0.2)
     atomic (1.0.1)
     avl_tree (1.1.3)
-    backports (2.6.5)
+    backports (2.6.7)
     builder (3.0.4)
     bunny (0.8.0)
     celluloid (0.12.4)
@@ -177,7 +178,7 @@ GEM
       activesupport
     faraday (0.8.4)
       multipart-post (~> 1.1)
-    foreman (0.60.2)
+    foreman (0.61.0)
       thor (>= 0.13.6)
     hashie (1.2.0)
     hashr (0.0.22)
@@ -189,7 +190,7 @@ GEM
     journey (1.0.4)
     json (1.7.6)
     kgio (2.7.4)
-    listen (0.7.1)
+    listen (0.7.2)
     mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -217,10 +218,10 @@ GEM
       actionmailer
       postmark (>= 0.9.0)
       rake
-    pry (0.9.10)
+    pry (0.9.11.2)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
-      slop (~> 3.3.1)
+      slop (~> 3.4)
     pusher (0.11.2)
       multi_json (~> 1.0)
       signature (~> 0.1.6)
@@ -266,7 +267,7 @@ GEM
       redis (~> 3)
       redis-namespace
     signature (0.1.6)
-    slop (3.3.3)
+    slop (3.4.3)
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
