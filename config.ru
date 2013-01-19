@@ -7,8 +7,8 @@ $stdout.sync = true
 require 'travis/api/app'
 require 'core_ext/module/load_constants'
 
-[Travis::Api, Travis, GH].each do |target|
-  target.load_constants!(:only => [/^Travis/, /^GH/], :skip => ['Travis::Memory', 'GH::ResponseWrapper'], :debug => true)
-end
+models = Travis::Model.constants.map(&:to_s)
+only = [/^(ActiveRecord|ActiveModel|Travis|GH|#{models.join('|')})/]
+Travis.load_constants! :only => only, :skip => ['Travis::Memory', 'GH::ResponseWrapper'], :debug => false
 
 run Travis::Api::App.new
