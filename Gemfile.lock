@@ -48,7 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/sinatra/sinatra.git
-  revision: eed4f71f4ff5a70f43c803fa6787920e9d01218b
+  revision: 459369eb66224836f72e21bbece58c007f3422fa
   specs:
     sinatra (1.4.0)
       rack (~> 1.4)
@@ -66,7 +66,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 4b76dfaaaf6a45d91659d6f25c924523ae507c7d
+  revision: c8cf39f7e1ad426b487239f910e6cbb4bdd69c5f
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.11)
@@ -96,7 +96,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: a214c215e1b52bdf4d3ab5d31e7e2df52fad5a0c
+  revision: cf916e10949db43ce6f2b6f86082b367f04acfcd
   specs:
     travis-support (0.0.1)
 
@@ -217,7 +217,7 @@ GEM
       actionmailer
       postmark (>= 0.9.0)
       rake
-    pry (0.9.11.3)
+    pry (0.9.11.4)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
@@ -278,7 +278,7 @@ GEM
       rack (>= 1.0.0)
     thor (0.14.6)
     tilt (1.3.3)
-    timers (1.0.2)
+    timers (1.1.0)
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
