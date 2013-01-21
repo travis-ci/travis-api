@@ -37,6 +37,11 @@ class Travis::Api::App
       #   respond_with service(:users, :find_broadcasts), type: :broadcasts
       # end
 
+      get '/:id', scope: :private do
+        pass unless current_user.id.to_s == params[:id]
+        respond_with current_user
+      end
+
       put '/:id?', scope: :private do
         respond_with service(:update_user, params[:user])
       end
