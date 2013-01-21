@@ -5,6 +5,7 @@ module Travis::Api::App::Responders
     end
 
     def apply
+      headers['Pragma'] = "no-cache"
       headers['Expires'] = Time.now.utc.httpdate
       headers['Content-Disposition'] = %(inline; filename="#{File.basename(filename)}")
       halt send_file(filename, type: :png)
