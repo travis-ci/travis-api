@@ -10,6 +10,10 @@ class Travis::Api::App
       get '/:id' do
         respond_with service(:find_job, params)
       end
+
+      get '/:job_id/log' do
+        respond_with service(:find_artifact, params)
+      end
     end
   end
 end

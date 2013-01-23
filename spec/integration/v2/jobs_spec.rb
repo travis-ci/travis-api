@@ -13,8 +13,14 @@ describe 'Jobs' do
     response.should deliver_json_for(Job.queued('builds.common'), version: 'v2')
   end
 
-  it '/jobs/:job_id' do
+  it '/jobs/:id' do
     response = get "/jobs/#{job.id}", {}, headers
     response.should deliver_json_for(job, version: 'v2')
+  end
+
+  it '/jobs/:id' do
+    job.log.update_attributes!(content: 'the log')
+    response = get "/jobs/#{job.id}/log.txt", {}, headers
+    response.should deliver_as_txt('the log', version: 'v2')
   end
 end

@@ -111,16 +111,19 @@ module Travis::Api
         Travis::Amqp.config = Travis.config.amqp
         Travis::Database.connect
         Travis::Features.start
-        Sidekiq.configure_client do |config|
-          config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
+
+        unless Travis.env == 'test'
+          Sidekiq.configure_client do |config|
+            config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
+          end
+
+          Raven.configure do |config|
+            config.dsn = Travis.config.sentry.dsn
+          end if Travis.config.sentry
+
+          Travis::LogSubscriber::ActiveRecordMetrics.attach
+          Travis::Notification.setup
         end
-
-        Raven.configure do |config|
-          config.dsn = Travis.config.sentry.dsn
-        end if Travis.config.sentry
-
-        Travis::LogSubscriber::ActiveRecordMetrics.attach
-        Travis::Notification.setup
       end
 
       def self.load_endpoints
