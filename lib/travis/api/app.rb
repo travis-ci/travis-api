@@ -120,7 +120,7 @@ module Travis::Api
         end if Travis.config.sentry
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
-        $metriks_reporter = Metriks::Reporter::Logger.new
+        Travis::Notification.setup
       end
 
       def self.load_endpoints
