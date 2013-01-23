@@ -112,7 +112,7 @@ module Travis::Api
         Travis::Database.connect
         Travis::Features.start
 
-        unless Travis.env == 'test'
+        if Travis.env == 'production'
           Sidekiq.configure_client do |config|
             config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
           end
