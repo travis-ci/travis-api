@@ -9,6 +9,10 @@ class Travis::Api::App
       get '/:id' do |id|
         respond_with service(:find_artifact, params)
       end
+
+      put '/:id' do |id|
+        respond_with service(:update_artifact, params)
+      end
     end
   end
 end

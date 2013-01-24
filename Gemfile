@@ -38,5 +38,5 @@ end
 
 group :development, :test do
   gem 'rake', '~> 0.9.2'
-  gem 'micro_migrations', git: 'http://gist.github.com/4269321.git'
+  gem 'micro_migrations', git: 'https://gist.github.com/4269321.git'
 end
