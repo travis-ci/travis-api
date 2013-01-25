@@ -18,6 +18,11 @@ class Travis::Api::App
       "This feature has not yet been implemented. Sorry :(\n\nPull Requests welcome!"
     end
 
+    # hotfix??
+    def route_missing
+      @app ? forward : halt 404
+    end
+
     def call(env)
       super
     rescue Sinatra::NotFound
