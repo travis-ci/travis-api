@@ -20,7 +20,7 @@ class Travis::Api::App
 
     # hotfix??
     def route_missing
-      @app ? forward : halt 404
+      @app ? forward : halt(404)
     end
 
     def call(env)
