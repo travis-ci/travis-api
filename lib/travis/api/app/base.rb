@@ -1,6 +1,6 @@
 require 'travis/api/app'
 require 'sinatra/base'
-require 'new_relic/agent/instrumentation/rack'
+#require 'new_relic/agent/instrumentation/rack'
 
 class Travis::Api::App
   # Superclass for any endpoint and middleware.
@@ -9,19 +9,13 @@ class Travis::Api::App
     register Extensions::SmartConstants
 
     configure :production do
-      require 'newrelic_rpm'
+      #require 'newrelic_rpm'
     end
 
     error NotImplementedError do
       content_type :txt
       status 501
       "This feature has not yet been implemented. Sorry :(\n\nPull Requests welcome!"
-    end
-
-    def call(env)
-      super
-    rescue Sinatra::NotFound
-      [404, {'Content-Type' => 'text/plain'}, ['Tell Konstantin to fix this!']]
     end
 
     configure do
