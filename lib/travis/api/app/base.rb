@@ -18,6 +18,12 @@ class Travis::Api::App
       "This feature has not yet been implemented. Sorry :(\n\nPull Requests welcome!"
     end
 
+    def call(env)
+      super
+    rescue Sinatra::NotFound
+      [404, {'Content-Type' => 'text/plain'}, ['Tell Konstantin to fix this!']]
+    end
+
     configure do
       # We pull in certain protection middleware in App.
       # Being token based makes us invulnerable to common
