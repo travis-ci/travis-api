@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Users' do
-  let(:user)    { Factory(:user, locale: 'en') }
+  let(:user)    { User.first }
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 

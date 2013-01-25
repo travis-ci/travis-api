@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe 'v1 repos' do
-  before(:each) { Scenario.default }
-
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.1+json' } }
 

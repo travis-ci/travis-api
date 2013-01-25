@@ -3,7 +3,6 @@ require 'travis/testing/payloads'
 
 describe 'Hooks' do
   before(:each) do
-    Scenario.default
     user.permissions.create repository: repo, admin: true
   end
 
