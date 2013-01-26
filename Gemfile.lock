@@ -45,7 +45,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: c5f4fb9c33d78cd984e041ba6b280191c8b5349c
+  revision: 801d0dee5bd85811afa000f705f34e29ff2c65e9
   branch: sf-archive-logs
   specs:
     travis-core (0.0.1)
@@ -60,7 +60,7 @@ GIT
       postmark-rails (~> 0.4.1)
       pusher (~> 0.11.0)
       railties (~> 3.2.11)
-      rake
+      rake (~> 0.9.2.2)
       redis (~> 3.0)
       rollout (~> 1.1.0)
       simple_states (~> 0.1.1)
@@ -76,7 +76,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: a288008629ae7eab18c529008880d364daca82ce
+  revision: ff712aca1083a588974f835a84c574e6976aeb29
   specs:
     travis-support (0.0.1)
 
@@ -144,7 +144,7 @@ GEM
     coderay (1.0.8)
     connection_pool (0.9.3)
     daemons (1.1.9)
-    dalli (2.6.0)
+    dalli (2.6.2)
     data_migrations (0.0.1)
       activerecord
       rake
@@ -221,7 +221,7 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
-    rake (0.9.6)
+    rake (0.9.2.2)
     rdoc (3.12)
       json (~> 1.4)
     redcarpet (2.2.2)
