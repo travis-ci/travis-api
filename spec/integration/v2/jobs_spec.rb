@@ -29,7 +29,7 @@ describe 'Jobs' do
       it 'redirects to archive' do
         job.log.update_attributes!(content: 'the log', archived_at: Time.now, archive_verified: true)
         response = get "/jobs/#{job.id}/log.txt", {}, headers
-        response.should redirect_to("https://archive.travis-ci.org/jobs/#{job.id}/log.txt")
+        response.should redirect_to("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
       end
     end
 
@@ -37,7 +37,7 @@ describe 'Jobs' do
       it 'redirects to archive' do
         job.log.destroy
         response = get "/jobs/#{job.id}/log.txt", {}, headers
-        response.should redirect_to("https://archive.travis-ci.org/jobs/#{job.id}/log.txt")
+        response.should redirect_to("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
       end
     end
   end

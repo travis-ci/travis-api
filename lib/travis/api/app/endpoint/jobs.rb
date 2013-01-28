@@ -21,7 +21,7 @@ class Travis::Api::App
       end
 
       def archive_url(path)
-        "https://#{hostname('archive')}#{path}"
+        "https://s3.amazonaws.com/#{hostname('archive')}#{path}"
       end
 
       def hostname(name)
