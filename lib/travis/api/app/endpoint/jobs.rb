@@ -14,7 +14,7 @@ class Travis::Api::App
       get '/:job_id/log' do
         resource = service(:find_artifact, params).run
         if !resource || resource.archived?
-          redirect archive_url("/jobs/#{params[:job_id]}/log.txt")
+          redirect archive_url("/jobs/#{params[:job_id]}/log.txt"), 307
         else
           respond_with resource
         end
