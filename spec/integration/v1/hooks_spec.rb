@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe 'Hooks' do
   before(:each) do
-    Scenario.default
     user.permissions.create repository: repo, admin: true
   end
 

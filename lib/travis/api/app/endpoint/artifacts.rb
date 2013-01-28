@@ -9,6 +9,12 @@ class Travis::Api::App
       get '/:id' do |id|
         respond_with service(:find_artifact, params)
       end
+
+      # TODO needs auth, required for live log archiving on log:aggregted in travis-tasks
+      #
+      # put '/:id' do |id|
+      #   respond_with service(:update_artifact, params)
+      # end
     end
   end
 end

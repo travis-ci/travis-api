@@ -1,22 +1,12 @@
 require 'spec_helper'
 
 describe 'Workers' do
-  before(:each) do
-    Time.stubs(:now).returns(Time.utc(2011, 11, 11, 11, 11, 11))
-    @workers = [
-      Worker.new('1', full_name: 'ruby1:ruby1.travis-ci.org'),
-      Worker.new('2', full_name: 'ruby2:ruby1.travis-ci.org')
-    ]
-  end
-
-  let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.1+json' } }
-
-  attr_reader :workers
+  let!(:workers) { [Worker.create(full_name: 'one'), Worker.create(full_name: 'two')] }
+  let(:headers)  { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.1+json' } }
 
   it 'GET /workers' do
-    Worker.stubs(all: @workers)
     response = get '/workers', {}, headers
-    response.should deliver_json_for(@workers, version: 'v1', type: 'workers')
+    response.should deliver_json_for(Worker.all, version: 'v1', type: 'workers')
   end
 end
 

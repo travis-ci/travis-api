@@ -3,8 +3,8 @@ ruby '1.9.3' rescue nil
 source :rubygems
 gemspec
 
-gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-core',     github: 'travis-ci/travis-core'
+gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: 'cde9741'
 gem 'sinatra'          #github: 'sinatra/sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
@@ -38,5 +38,5 @@ end
 
 group :development, :test do
   gem 'rake', '~> 0.9.2'
-  gem 'micro_migrations', git: 'http://gist.github.com/4269321.git'
+  gem 'micro_migrations', git: 'https://gist.github.com/4269321.git'
 end
