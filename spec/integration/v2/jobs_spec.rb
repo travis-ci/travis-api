@@ -40,5 +40,14 @@ describe 'Jobs' do
         response.should redirect_to("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
       end
     end
+
+    context 'with cors_hax param' do
+      it 'renders No Content response with location of the archived log' do
+        job.log.destroy
+        response = get "/jobs/#{job.id}/log.txt?cors_hax=true", {}, headers
+        response.status.should == 204
+        response.headers['Location'].should == "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
+      end
+    end
   end
 end
