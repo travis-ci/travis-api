@@ -46,7 +46,7 @@ describe 'Jobs' do
         job.log.destroy
         response = get "/jobs/#{job.id}/log.txt?cors_hax=true", {}, headers
         response.status.should == 204
-        response.headers['Location'].should == "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
+        response.headers['X-Log-Location'].should == "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
       end
     end
   end

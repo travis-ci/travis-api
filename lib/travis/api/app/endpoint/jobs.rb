@@ -18,8 +18,8 @@ class Travis::Api::App
 
           if params[:cors_hax]
             status 204
-            headers['Access-Control-Expose-Headers'] = 'Location'
-            headers['Location'] = archived_log_path
+            headers['Access-Control-Expose-Headers'] = 'X-Log-Location'
+            headers['X-Log-Location'] = archived_log_path
           else
             redirect archived_log_path, 307
           end
