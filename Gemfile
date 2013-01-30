@@ -34,6 +34,7 @@ group :development do
   gem 'foreman'
   gem 'rerun'
   # gem 'debugger'
+  gem 'rb-fsevent', '~> 0.9.1'
 end
 
 group :development, :test do

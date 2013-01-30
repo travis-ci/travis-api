@@ -10,11 +10,13 @@ class Travis::Api::App
         respond_with service(:find_artifact, params)
       end
 
-      # TODO needs auth, required for live log archiving on log:aggregted in travis-tasks
-      #
-      # put '/:id' do |id|
-      #   respond_with service(:update_artifact, params)
-      # end
+      put '/:id' do |id|
+        # TODO @rkh ... rather lost in the auth/scopes code.
+        token = env['HTTP_TOKEN']
+        halt 403, 'no token' unless token
+        halt 403, 'internal' unless token == Travis.config.tokens.internal
+        respond_with service(:update_artifact, params)
+      end
     end
   end
 end
