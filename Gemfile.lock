@@ -45,7 +45,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: c8a51b98b49ac69a527715d9a6f058572daf5fe8
+  revision: 7e5772be7a2837cf5631a2690c52b36dffae4d35
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.11)
@@ -75,7 +75,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: ff712aca1083a588974f835a84c574e6976aeb29
+  revision: a288008629ae7eab18c529008880d364daca82ce
   specs:
     travis-support (0.0.1)
 
@@ -94,7 +94,7 @@ PATH
       newrelic_rpm (~> 3.5.0)
       pg (~> 0.13.2)
       rack-contrib (~> 1.1)
-      rack-ssl (~> 1.3)
+      rack-ssl (~> 1.3, >= 1.3.3)
       redcarpet (~> 2.1)
       sinatra (~> 1.3)
       sinatra-contrib (~> 1.3)
