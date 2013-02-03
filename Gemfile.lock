@@ -45,7 +45,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 0dc3bcee4d3a54d057085355d731c3186c61c38d
+  revision: 2302df3b30b533d675dca8212648768058f69cd3
   branch: ps-db-encryption
   specs:
     travis-core (0.0.1)
