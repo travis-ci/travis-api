@@ -112,11 +112,13 @@ module Travis::Api
         Travis::Database.connect
         Travis::Features.start
 
-        if Travis.env == 'production'
+        if Travis.env == 'production' || Travis.env == 'staging'
           Sidekiq.configure_client do |config|
             config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
           end
+        end
 
+        if Travis.env == 'production'
           Raven.configure do |config|
             config.dsn = Travis.config.sentry.dsn
           end if Travis.config.sentry
