@@ -74,6 +74,7 @@ describe 'Repos' do
   it 'GET /repos/1/cc.xml' do
     response = get "repos/#{repo.id}/cc.xml"
     response.should deliver_cc_xml_for(Repository.by_slug('svenfuchs/minimal').first)
+    response.content_type.should eq('application/xml;charset=utf-8')
   end
 
   it 'GET /repos/svenfuchs/minimal' do
