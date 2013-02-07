@@ -8,6 +8,7 @@ class Travis::Api::App
     module RespondWith
       def respond_with(resource, options = {})
         options[:format] ||= env['travis.format']
+        content_type options[:format] unless options[:format] == :json
         result = respond(resource, options)
         result = result ? result.to_json : 404
         halt result

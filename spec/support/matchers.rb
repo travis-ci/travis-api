@@ -62,7 +62,7 @@ RSpec::Matchers.define :deliver_cc_xml_for do |repo|
       "expected #{body} to be a valid cc.xml"
     end
 
-    body.include?('<Projects>') && body.include?(%(name="#{repo.slug}"))
+    body.include?('<Projects>') && body.include?(%(name="#{repo.slug}")) && body.include?("https://www.example.com/#{repo.slug}")
   end
 end
 

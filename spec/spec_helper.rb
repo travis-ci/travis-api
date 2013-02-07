@@ -14,6 +14,7 @@ require 'support/matchers'
 
 Travis.logger = Logger.new(StringIO.new)
 Travis::Api::App.setup
+Travis.config.domain = "www.example.com"
 
 module TestHelpers
   include Sinatra::TestHelpers
