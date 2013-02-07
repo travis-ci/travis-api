@@ -28,7 +28,7 @@ module Travis::Api::App::Responders
       def data
         {
           name:     resource.slug,
-          url:      [Travis.config.domain, resource.slug].join('/'),
+          url:      File.join("http://", Travis.config.domain, resource.slug),
           activity: activity,
           label:    last_build.try(:number),
           status:   status,
