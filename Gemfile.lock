@@ -45,7 +45,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: c17052b885a90a3433407c8832fd272ea2e2a6e0
+  revision: bc4a97f3f23c5588943ceec5e6558ce5aacde3f9
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.11)
@@ -222,7 +222,7 @@ GEM
       thor (>= 0.14.6, < 2.0)
     rake (0.9.6)
     rb-fsevent (0.9.3)
-    rdoc (3.12)
+    rdoc (3.12.1)
       json (~> 1.4)
     redcarpet (2.2.2)
     redis (3.0.2)
