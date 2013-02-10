@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/getsentry/raven-ruby.git
-  revision: 0bf46f9e957b179a5d0ce1295840eaff89d8146a
+  revision: f6a97f1544480645c4dfdb4d1e9e97ede1e737a9
   specs:
-    sentry-raven (0.4.2)
+    sentry-raven (0.4.3)
       faraday (>= 0.7.6)
       hashie
       multi_json (~> 1.0)
@@ -45,7 +45,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 4d4fc4f4d18624278ad552d037a574ce8fdd77b0
+  revision: 258d823c367a13db76db87d2f42942ee7af8a041
+  branch: sf-log-models
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.11)
@@ -161,7 +162,7 @@ GEM
     hashie (1.2.0)
     hashr (0.0.22)
     hike (1.2.1)
-    hitimes (1.1.1)
+    hitimes (1.2.0)
     hubble (0.1.2)
       yajl-ruby (~> 1.1)
     i18n (0.6.1)
@@ -178,7 +179,7 @@ GEM
       atomic (~> 1.0)
       avl_tree (~> 1.1.2)
       hitimes (~> 1.1)
-    mime-types (1.20.1)
+    mime-types (1.21)
     mocha (0.13.2)
       metaclass (~> 0.0.1)
     multi_json (1.5.0)
@@ -204,7 +205,7 @@ GEM
     pusher (0.11.3)
       multi_json (~> 1.0)
       signature (~> 0.1.6)
-    rack (1.4.4)
+    rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
     rack-protection (1.3.2)
@@ -228,7 +229,7 @@ GEM
     redis (3.0.2)
     redis-namespace (1.2.1)
       redis (~> 3.0.0)
-    rerun (0.7.1)
+    rerun (0.8.0)
       listen
     rollout (1.1.0)
     rspec (2.12.0)
@@ -276,7 +277,7 @@ GEM
     tzinfo (0.3.35)
     uuidtools (2.1.3)
     yajl-ruby (1.1.0)
-    yard (0.8.3)
+    yard (0.8.4.1)
 
 PLATFORMS
   ruby

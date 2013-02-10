@@ -12,7 +12,7 @@ class Travis::Api::App
       end
 
       get '/:job_id/log' do
-        resource = service(:find_artifact, params).run
+        resource = service(:find_log, params).run
         if !resource || resource.archived?
           archived_log_path = archive_url("/jobs/#{params[:job_id]}/log.txt")
 
