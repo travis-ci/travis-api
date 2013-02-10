@@ -46,7 +46,6 @@ GIT
 GIT
   remote: git://github.com/travis-ci/travis-core.git
   revision: 258d823c367a13db76db87d2f42942ee7af8a041
-  branch: sf-log-models
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.11)
