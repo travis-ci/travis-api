@@ -45,11 +45,11 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 258d823c367a13db76db87d2f42942ee7af8a041
+  revision: 1a4970b11a2112b9216d2b8c63331b8de62049b1
   specs:
     travis-core (0.0.1)
-      actionmailer (~> 3.2.11)
-      activerecord (~> 3.2.11)
+      actionmailer (~> 3.2.12)
+      activerecord (~> 3.2.12)
       coder (~> 0.3.0)
       data_migrations (~> 0.0.1)
       gh
@@ -58,7 +58,7 @@ GIT
       multi_json
       postmark-rails (~> 0.4.1)
       pusher (~> 0.11.0)
-      railties (~> 3.2.11)
+      railties (~> 3.2.12)
       rake
       redis (~> 3.0)
       rollout (~> 1.1.0)
@@ -105,28 +105,28 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    actionmailer (3.2.11)
-      actionpack (= 3.2.11)
+    actionmailer (3.2.12)
+      actionpack (= 3.2.12)
       mail (~> 2.4.4)
-    actionpack (3.2.11)
-      activemodel (= 3.2.11)
-      activesupport (= 3.2.11)
+    actionpack (3.2.12)
+      activemodel (= 3.2.12)
+      activesupport (= 3.2.12)
       builder (~> 3.0.0)
       erubis (~> 2.7.0)
       journey (~> 1.0.4)
-      rack (~> 1.4.0)
+      rack (~> 1.4.5)
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    activemodel (3.2.11)
-      activesupport (= 3.2.11)
+    activemodel (3.2.12)
+      activesupport (= 3.2.12)
       builder (~> 3.0.0)
-    activerecord (3.2.11)
-      activemodel (= 3.2.11)
-      activesupport (= 3.2.11)
+    activerecord (3.2.12)
+      activemodel (= 3.2.12)
+      activesupport (= 3.2.12)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activesupport (3.2.11)
+    activesupport (3.2.12)
       i18n (~> 0.6)
       multi_json (~> 1.0)
     addressable (2.3.2)
@@ -166,7 +166,7 @@ GEM
       yajl-ruby (~> 1.1)
     i18n (0.6.1)
     journey (1.0.4)
-    json (1.7.6)
+    json (1.7.7)
     listen (0.7.2)
     mail (2.4.4)
       i18n (>= 0.4.0)
@@ -181,7 +181,7 @@ GEM
     mime-types (1.21)
     mocha (0.13.2)
       metaclass (~> 0.0.1)
-    multi_json (1.5.0)
+    multi_json (1.5.1)
     multipart-post (1.1.5)
     net-http-persistent (2.8)
     net-http-pipeline (1.0.1)
@@ -213,9 +213,9 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
-    railties (3.2.11)
-      actionpack (= 3.2.11)
-      activesupport (= 3.2.11)
+    railties (3.2.12)
+      actionpack (= 3.2.12)
+      activesupport (= 3.2.12)
       rack-ssl (~> 1.3.2)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
