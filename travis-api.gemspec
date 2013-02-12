@@ -163,7 +163,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'travis-support'
   s.add_dependency 'travis-core'
 
-  s.add_dependency 'hubble',          '~> 0.1'
   s.add_dependency 'backports',       '~> 2.5'
   s.add_dependency 'pg',              '~> 0.13.2'
   s.add_dependency 'newrelic_rpm',    '~> 3.5.0'
