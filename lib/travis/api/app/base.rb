@@ -1,6 +1,6 @@
 require 'travis/api/app'
 require 'sinatra/base'
-require 'new_relic/agent/instrumentation/rack'
+#require 'new_relic/agent/instrumentation/rack'
 
 class Travis::Api::App
   # Superclass for any endpoint and middleware.
@@ -8,9 +8,9 @@ class Travis::Api::App
   class Base < Sinatra::Base
     register Extensions::SmartConstants
 
-    configure :production do
-      require 'newrelic_rpm'
-    end
+    # configure :production do
+    #   require 'newrelic_rpm'
+    # end
 
     error NotImplementedError do
       content_type :txt
