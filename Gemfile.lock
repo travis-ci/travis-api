@@ -291,6 +291,7 @@ DEPENDENCIES
   metriks (= 0.9.9.2)
   micro_migrations!
   mocha (~> 0.12)
+  newrelic_rpm (~> 3.5.5)
   pry
   puma
   rack-cache (~> 1.2)
