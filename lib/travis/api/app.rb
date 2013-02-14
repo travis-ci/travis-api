@@ -100,6 +100,10 @@ module Travis::Api
 
     private
 
+      def self.console?
+        defined? Travis::Console
+      end
+
       def self.setup!
         setup_travis
         load_endpoints
@@ -118,7 +122,7 @@ module Travis::Api
           end
         end
 
-        if Travis.env == 'production'
+        if Travis.env == 'production' and not console?
           Raven.configure do |config|
             config.dsn = Travis.config.sentry.dsn
           end if Travis.config.sentry
