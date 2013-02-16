@@ -24,12 +24,14 @@ class Travis::Api::App
         def respond(resource, options)
           resource = apply_service_responder(resource, options)
 
-          acceptable_formats.find do |accept|
+          response = acceptable_formats.find do |accept|
             responders(resource, options).find do |const|
               responder = const.new(self, resource, options.dup.merge(accept: accept))
               responder.apply if responder.apply?
             end
           end
+
+          response || (resource ? error(406) : error(404))
         end
 
         def apply_service_responder(resource, options)
