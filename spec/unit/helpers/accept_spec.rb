@@ -9,7 +9,7 @@ module Travis::Api::App::Helpers
     it 'returns accept entries sorted properly' do
       accept = "text/html; q=0.2; level=1, application/vnd.travis-ci.2+json, text/*, text/html;level=2; q=0.5"
       FakeApp.new('HTTP_ACCEPT' => accept).accept_entries.map(&:to_s).should ==
-        ["application/vnd.travis-ci.2+json; q=1", "text/*; q=1", "text/html; q=0.5; level=2", "text/html; q=0.2; level=1"]
+        ["application/json; q=1", "text/*; q=1", "text/html; q=0.5; level=2", "text/html; q=0.2; level=1"]
     end
 
     it 'properly parses params, quality and version' do
@@ -24,6 +24,31 @@ module Travis::Api::App::Helpers
     it 'returns */* for empty accept header' do
       accept_entry = FakeApp.new({}).accept_entries.first
       accept_entry.mime_type.should == '*/*'
+    end
+
+    describe Accept::Entry do
+      describe 'accepts?' do
+        it 'accepts everything with */* type' do
+          entry = Accept::Entry.new('*/*')
+          entry.accepts?('application/json').should be_true
+          entry.accepts?('foo/bar').should be_true
+        end
+
+        it 'accepts every subtype with application/* type' do
+          entry = Accept::Entry.new('application/*')
+
+          entry.accepts?('application/foo').should be_true
+          entry.accepts?('application/bar').should be_true
+          entry.accepts?('text/plain').should be_false
+        end
+
+        it 'accepts when type and subtype match' do
+          entry = Accept::Entry.new('application/json')
+
+          entry.accepts?('application/json').should be_true
+          entry.accepts?('application/xml').should be_false
+        end
+      end
     end
   end
 end
