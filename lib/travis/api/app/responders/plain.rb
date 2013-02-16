@@ -1,12 +1,16 @@
 module Travis::Api::App::Responders
   class Plain < Base
+    def format
+      'txt'
+    end
+
     def apply?
       # make sure that we don't leak anything by processing only Log
       # instances here. I don't want to create entire new API builder just
       # for log's content for now.
       #
       # TODO: think how to handle other formats correctly
-      options[:format] == 'txt' && resource.is_a?(Log)
+      super && resource.is_a?(Log)
     end
 
     def apply
