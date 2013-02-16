@@ -24,4 +24,9 @@ describe 'App' do
     response = get '/foo', {}, 'HTTP_ACCEPT' => 'image/jpeg, application/json'
     response.content_type.should =~ /^application\/json/
   end
+
+  it 'responds with 406 if server can\'t use any mime type' do
+    response = get '/foo/hash', {}, 'HTTP_ACCEPT' => 'text/plain, image/jpeg'
+    response.status.should == 406
+  end
 end
