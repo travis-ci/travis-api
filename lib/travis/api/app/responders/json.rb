@@ -4,7 +4,7 @@ class Travis::Api::App
       include Helpers::Accept
 
       def apply?
-        options[:format] == 'json' && !resource.is_a?(String) && !resource.nil?
+        super && !resource.is_a?(String) && !resource.nil?
       end
 
       def apply

@@ -15,10 +15,6 @@ module Travis::Api::App::Responders
       started: 'Building'
     }
 
-    def apply?
-      options[:format] == 'xml'
-    end
-
     def apply
       halt TEMPLATE % data
     end
