@@ -24,6 +24,7 @@ class Travis::Api::App
 
         def extract_format
           env['PATH_INFO'].sub!(FORMAT, '')
+          env['travis.format_from_path'] = $1
           env['travis.format'] = $1 || accept_format
         end
 

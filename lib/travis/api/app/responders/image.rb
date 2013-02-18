@@ -1,7 +1,7 @@
 module Travis::Api::App::Responders
   class Image < Base
-    def apply?
-      options[:format] == 'png'
+    def format
+      'png'
     end
 
     def apply
