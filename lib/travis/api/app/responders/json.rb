@@ -4,7 +4,7 @@ class Travis::Api::App
       include Helpers::Accept
 
       def apply?
-        super && !resource.is_a?(String) && !resource.nil?
+        super && !resource.is_a?(String) && !resource.nil? && accepts_log?
       end
 
       def apply
@@ -13,12 +13,27 @@ class Travis::Api::App
 
       private
 
+        def accepts_log?
+          return true unless resource.is_a?(Log)
+
+          chunked = accept_params[:chunked]
+          chunked ? !resource.aggregated_at : true
+        end
+
         def result
-          builder ? builder.new(resource, request.params).data : resource
+          builder ? builder.new(resource, params).data : resource
         end
 
         def builder
           @builder ||= Travis::Api.builder(resource, { :version => accept_version }.merge(options))
+        end
+
+        def accept_params
+          (options[:accept].params || {}).symbolize_keys
+        end
+
+        def params
+          (request.params || {}).merge(accept_params)
         end
     end
   end
