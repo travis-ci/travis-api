@@ -24,6 +24,11 @@ class Travis::Api::App
           "#{type}/#{subtype}"
         end
 
+        def version
+          version = @version || params['version']
+          version ? "v#{version}" : nil
+        end
+
         def accepts?(mime_type)
           return true if self.mime_type == '*/*'
 
