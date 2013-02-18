@@ -49,5 +49,30 @@ describe 'Jobs' do
         response.headers['Location'].should == "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
       end
     end
+
+    context 'with chunked log requested' do
+      it 'responds with 406 when log is already aggregated' do
+        job.log.update_attributes(aggregated_at: Time.now)
+        headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true' }
+        response = get "/jobs/#{job.id}/log", {}, headers
+        response.status.should == 406
+      end
+
+      it 'responds with chunks instead of full log' do
+        job.log.parts << Log::Part.new(content: 'foo', number: 1, final: false)
+        job.log.parts << Log::Part.new(content: 'bar', number: 2, final: true)
+
+        headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true' }
+        response = get "/jobs/#{job.id}/log", {}, headers
+        response.should deliver_json_for(job.log, version: 'v2', params: { chunked: true})
+      end
+
+      it 'responds with full log if chunks are not available and full log is accepted' do
+        job.log.update_attributes(aggregated_at: Time.now)
+        headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true, application/vnd.travis-ci.2+json' }
+        response = get "/jobs/#{job.id}/log", {}, headers
+        response.should deliver_json_for(job.log, version: 'v2')
+      end
+    end
   end
 end
