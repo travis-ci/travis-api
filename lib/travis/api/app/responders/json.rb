@@ -25,11 +25,15 @@ class Travis::Api::App
         end
 
         def builder
-          @builder ||= Travis::Api.builder(resource, { :version => accept_version }.merge(options))
+          @builder ||= Travis::Api.builder(resource, { :version => version }.merge(options))
         end
 
         def accept_params
           (options[:accept].params || {}).symbolize_keys
+        end
+
+        def version
+          options[:accept].version || Travis::Api::App::Helpers::Accept::DEFAULT_VERSION
         end
 
         def params
