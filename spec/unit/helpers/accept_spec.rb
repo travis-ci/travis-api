@@ -18,7 +18,7 @@ module Travis::Api::App::Helpers
       accept_entry.quality.should == 0.2
       accept_entry.params.should == { 'level' => '1', 'foo' => 'bar' }
       accept_entry.mime_type.should == 'application/json'
-      accept_entry.version.should == '2'
+      accept_entry.version.should == 'v2'
     end
 
     it 'returns */* for empty accept header' do
@@ -27,6 +27,23 @@ module Travis::Api::App::Helpers
     end
 
     describe Accept::Entry do
+      describe 'version' do
+        it 'can be passed as a vendor extension' do
+          entry = Accept::Entry.new('application/vnd.travis-ci.2+json')
+          entry.version.should == 'v2'
+        end
+
+        it 'can be passed as a param' do
+          entry = Accept::Entry.new('application/json; version=2')
+          entry.version.should == 'v2'
+        end
+
+        it 'has a higher priority when in vendor extension' do
+          entry = Accept::Entry.new('application/vnd.travis-ci.1+json; version=2')
+          entry.version.should == 'v1'
+        end
+      end
+
       describe 'accepts?' do
         it 'accepts everything with */* type' do
           entry = Accept::Entry.new('*/*')
