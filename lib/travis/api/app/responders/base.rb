@@ -31,5 +31,19 @@ module Travis::Api::App::Responders
     def headers
       endpoint.headers
     end
+
+    def apply?
+      acceptable_format?
+    end
+
+    def format
+      self.class.name.split('::').last.downcase
+    end
+
+    def acceptable_format?
+      if accept = options[:accept]
+        accept.accepts?(Rack::Mime.mime_type(".#{format}"))
+      end
+    end
   end
 end
