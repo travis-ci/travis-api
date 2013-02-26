@@ -1,6 +1,6 @@
 ruby '1.9.3' rescue nil
 
-source :rubygems
+source 'https://rubygems.org'
 gemspec
 
 gem 'travis-core',     github: 'travis-ci/travis-core'
