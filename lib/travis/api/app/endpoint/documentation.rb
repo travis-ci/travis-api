@@ -190,7 +190,7 @@ __END__
                 </a>
               </li>
               <li>
-                <a href="https://github.com/travis-ci/travis-ember">
+                <a href="https://github.com/travis-ci/travis-web">
                   <i class="icon-play-circle"></i>
                   Example Client
                 </a>
