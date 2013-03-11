@@ -115,6 +115,7 @@ describe 'Repos' do
       Factory(:build, repository: repo, state: :passed, commit: on_bar)
       result = get('/repos/svenfuchs/minimal.png?branch=foo,bar', {}, headers)
       result.should deliver_result_image_for('passing')
+      result.headers['Last-Modified'].should == repo.last_build_finished_at.httpdate
     end
 
     it '"passing" when there is a running build but the previous one has passed' do

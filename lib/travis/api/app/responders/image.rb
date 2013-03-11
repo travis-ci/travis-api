@@ -8,7 +8,7 @@ module Travis::Api::App::Responders
       headers['Pragma'] = "no-cache"
       headers['Expires'] = Time.now.utc.httpdate
       headers['Content-Disposition'] = %(inline; filename="#{File.basename(filename)}")
-      halt send_file(filename, type: :png)
+      halt send_file(filename, type: :png, last_modified: resource.last_build_finished_at)
     end
 
     private
