@@ -90,11 +90,6 @@ describe 'Repos' do
     let(:on_foo) { Factory(:commit, branch: 'foo') }
     let(:on_bar) { Factory(:commit, branch: 'bar') }
 
-    it '"unknown" when the repository does not exist' do
-      result = get('/repos/svenfuchs/does-not-exist.png?branch=foo,bar', {}, headers)
-      result.should deliver_result_image_for('unknown')
-    end
-
     it '"unknown" when it only has unfinished builds on the relevant branches' do
       Build.delete_all
       Factory(:build, repository: repo, state: :started, commit: on_foo)
