@@ -33,7 +33,7 @@ module Travis::Api::App::Responders
     end
 
     def apply?
-      acceptable_format?
+      resource && acceptable_format?
     end
 
     def format

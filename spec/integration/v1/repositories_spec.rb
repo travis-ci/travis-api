@@ -40,10 +40,6 @@ describe 'v1 repos' do
   end
 
   describe 'GET /svenfuchs/minimal.png' do
-    it '"unknown" when the repository does not exist' do
-      get('/svenfuchs/does-not-exist.png').should deliver_result_image_for('unknown')
-    end
-
     it '"unknown" when it only has one build that is not finished' do
       Build.delete_all
       Factory(:build, repository: repo, state: :created, result: nil)
@@ -71,10 +67,6 @@ describe 'v1 repos' do
   describe 'GET /svenfuchs/minimal.png?branch=foo,bar' do
     let(:on_foo) { Factory(:commit, branch: 'foo') }
     let(:on_bar) { Factory(:commit, branch: 'bar') }
-
-    it '"unknown" when the repository does not exist' do
-      get('/svenfuchs/does-not-exist.png?branch=foo,bar').should deliver_result_image_for('unknown')
-    end
 
     it '"unknown" when it only has unfinished builds on the relevant branches' do
       Build.delete_all
