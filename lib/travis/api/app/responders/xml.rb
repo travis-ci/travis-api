@@ -15,6 +15,10 @@ module Travis::Api::App::Responders
       started: 'Building'
     }
 
+    def apply?
+      super && resource.is_a?(Repository)
+    end
+
     def apply
       halt TEMPLATE % data
     end

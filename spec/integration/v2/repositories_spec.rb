@@ -86,6 +86,11 @@ describe 'Repos' do
     response.should deliver_cc_xml_for(Repository.by_slug('svenfuchs/minimal').first)
   end
 
+  it 'does not respond with cc.xml for /repos list' do
+    response = get '/repos', {}, 'HTTP_ACCEPT' => 'application/xml; version=2'
+    response.status.should == 406
+  end
+
   describe 'GET /repos/svenfuchs/minimal.png?branch=foo,bar' do
     let(:on_foo) { Factory(:commit, branch: 'foo') }
     let(:on_bar) { Factory(:commit, branch: 'bar') }
