@@ -56,7 +56,7 @@ module Travis::Api
     end
 
     def self.deploy_sha_path
-      File.expand_path('../../../../.deploy_sha', __FILE__)
+      File.expand_path('../../../../.deploy-sha', __FILE__)
     end
 
     attr_accessor :app
