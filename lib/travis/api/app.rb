@@ -52,7 +52,11 @@ module Travis::Api
     end
 
     def self.deploy_sha
-      @deploy_sha ||= File.exist?('.deploy_sha') ? File.read('.deploy-sha')[0..7] : 'deploy-sha'
+      @deploy_sha ||= File.exist?(deploy_sha_path) ? File.read(deploy_sha_path)[0..7] : 'deploy-sha'
+    end
+
+    def self.deploy_sha_path
+      File.expand_path('../../../../.deploy_sha', __FILE__)
     end
 
     attr_accessor :app
@@ -70,8 +74,8 @@ module Travis::Api
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_server
           use Rack::Cache,
             verbose: true,
-            metastore:   "memcached://#{memcache_servers}/#{self.class.deploy_sha}",
-            entitystore: "memcached://#{memcache_servers}/#{self.class.deploy_sha}"
+            metastore:   "memcached://#{memcache_servers}/#{Travis::Api::App.deploy_sha}",
+            entitystore: "memcached://#{memcache_servers}/#{Travis::Api::App.deploy_sha}"
         end
 
         use Rack::Deflater
