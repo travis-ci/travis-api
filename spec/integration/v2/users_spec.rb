@@ -17,6 +17,7 @@ describe 'Users' do
 
   context 'POST /users/sync' do
     it 'syncs current_user repos' do
+      user.update_attribute :is_syncing, false
       response = post "/users/sync", {}, headers
       response.should be_successful
     end
