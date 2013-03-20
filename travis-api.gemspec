@@ -13,8 +13,12 @@ Gem::Specification.new do |s|
     "Konstantin Haase",
     "Piotr Sarnacki",
     "Mathias Meyer",
+    "Josh Kalderimis",
+    "Henrik Hodne",
+    "Erik Michaels-Ober",
     "Brian Ford",
-    "Henrik Hodne"
+    "Steve Richert",
+    "Nick Schonning"
   ]
 
   s.email = [
@@ -23,11 +27,16 @@ Gem::Specification.new do |s|
     "drogus@gmail.com",
     "meyer@paperplanes.de",
     "svenfuchs@artweb-design.de",
+    "josh.kalderimis@gmail.com",
+    "me@henrikhodne.com",
+    "sferik@gmail.com",
+    "steve.richert@gmail.com",
     "bford@engineyard.com",
-    "me@henrikhodne.com"
+    "nschonni@gmail.com"
   ]
 
   s.files = [
+    "CONTRIBUTING.md",
     "Procfile",
     "README.md",
     "Rakefile",
@@ -84,6 +93,7 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/endpoint/home.rb",
     "lib/travis/api/app/endpoint/hooks.rb",
     "lib/travis/api/app/endpoint/jobs.rb",
+    "lib/travis/api/app/endpoint/logs.rb",
     "lib/travis/api/app/endpoint/repos.rb",
     "lib/travis/api/app/endpoint/requests.rb",
     "lib/travis/api/app/endpoint/stats.rb",
@@ -107,13 +117,17 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/responders/base.rb",
     "lib/travis/api/app/responders/image.rb",
     "lib/travis/api/app/responders/json.rb",
+    "lib/travis/api/app/responders/plain.rb",
     "lib/travis/api/app/responders/service.rb",
     "lib/travis/api/app/responders/xml.rb",
+    "public/images/result/error.png",
     "public/images/result/failing.png",
     "public/images/result/passing.png",
+    "public/images/result/pending.png",
     "public/images/result/unknown.png",
     "script/console",
     "script/server",
+    "spec/integration/formats_handling_spec.rb",
     "spec/integration/routes.backup.rb",
     "spec/integration/v1/branches_spec.rb",
     "spec/integration/v1/builds_spec.rb",
@@ -130,6 +144,7 @@ Gem::Specification.new do |s|
     "spec/integration/v2/users_spec.rb",
     "spec/integration/v2/workers_spec.rb",
     "spec/integration/v2_spec.backup.rb",
+    "spec/integration/version_spec.rb",
     "spec/spec_helper.rb",
     "spec/support/matchers.rb",
     "spec/unit/app_spec.rb",
@@ -152,6 +167,7 @@ Gem::Specification.new do |s|
     "spec/unit/extensions/scoping_spec.rb",
     "spec/unit/extensions/smart_constants_spec.rb",
     "spec/unit/extensions/subclass_tracker_spec.rb",
+    "spec/unit/helpers/accept_spec.rb",
     "spec/unit/helpers/json_renderer_spec.rb",
     "spec/unit/middleware/logging_spec.rb",
     "spec/unit/middleware/scope_check_spec.rb",
