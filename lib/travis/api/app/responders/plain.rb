@@ -14,16 +14,21 @@ module Travis::Api::App::Responders
     end
 
     def apply
+      super
+
       filename    = resource.id
       disposition = params[:attachment] ? 'attachment' : 'inline'
 
       headers['Content-Disposition'] = %(#{disposition}; filename="#{filename}")
 
-      endpoint.content_type 'text/plain'
       halt(params[:deansi] ? clear_ansi(resource.content) : resource.content)
     end
 
     private
+
+      def content_type
+        'text/plain'
+      end
 
       def clear_ansi(content)
         content.gsub(/\r\r/, "\r")

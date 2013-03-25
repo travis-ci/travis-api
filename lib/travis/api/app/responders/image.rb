@@ -13,6 +13,10 @@ module Travis::Api::App::Responders
 
     private
 
+      def content_type
+        'image/png'
+      end
+
       def filename
         "#{root}/public/images/result/#{result}.png"
       end

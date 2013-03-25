@@ -8,10 +8,16 @@ class Travis::Api::App
       end
 
       def apply
+        super
+
         halt result.to_json if result
       end
 
       private
+
+        def content_type
+          'application/json;charset=utf-8'
+        end
 
         def accepts_log?
           return true unless resource.is_a?(Log)

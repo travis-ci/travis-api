@@ -6,7 +6,7 @@ module Travis::Api::App::Responders
     end
 
     let(:request)  { stub 'request', params: {} }
-    let(:endpoint) { stub 'endpoint', request: request }
+    let(:endpoint) { stub 'endpoint', request: request, content_type: nil  }
     let(:resource) { stub 'resource' }
     let(:accept)   { stub 'accept entry', version: '2', params: {} }
     let(:options)  { { :accept => accept} }

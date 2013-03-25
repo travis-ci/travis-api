@@ -32,6 +32,10 @@ module Travis::Api::App::Responders
       endpoint.headers
     end
 
+    def apply
+      endpoint.content_type content_type
+    end
+
     def apply?
       resource && acceptable_format?
     end

@@ -20,10 +20,16 @@ module Travis::Api::App::Responders
     end
 
     def apply
+      super
+
       halt TEMPLATE % data
     end
 
     private
+
+      def content_type
+        'application/xml;charset=utf-8'
+      end
 
       def data
         {
