@@ -33,3 +33,6 @@ task 'travis-api.gemspec' do
 end
 
 task default: 'travis-api.gemspec'
+
+tasks_path = File.expand_path('../lib/tasks/*.rake', __FILE__)
+Dir.glob(tasks_path).each { |r| import r }
