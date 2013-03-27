@@ -1,7 +1,11 @@
 require 'bundler/setup'
 ENV['SCHEMA'] = "#{Gem.loaded_specs['travis-core'].full_gem_path}/db/schema.rb"
 
-require 'micro_migrations'
+begin
+  require 'micro_migrations'
+rescue LoadError
+  # we can't load micro migrations on production
+end
 require 'travis'
 
 begin
