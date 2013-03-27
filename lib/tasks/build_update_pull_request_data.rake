@@ -4,7 +4,8 @@ namespace :build do
       require 'travis'
       Travis::Database.connect
 
-      Build.pull_requests.includes(:request).find_in_batches do |builds|
+      Build.pull_requests.where('pull_request_number IS NULL OR pull_request_title IS NULL').
+            includes(:request).find_in_batches do |builds|
         Build.transaction do
           builds.each do |build|
             attrs = {
