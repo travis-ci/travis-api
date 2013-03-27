@@ -4,10 +4,10 @@ namespace :build do
       require 'travis'
       Travis::Database.connect
 
-      Build.pull_requests.where('pull_request_number IS NULL OR pull_request_title IS NULL').
-            includes(:request).find_in_batches do |builds|
+      Build.pull_requests.includes(:request).order('id DESC').find_in_batches do |builds|
         Build.transaction do
           builds.each do |build|
+            next if build.pull_request_number && build.pull_request_title
             attrs = {
               :pull_request_number => build.request.pull_request_number,
               :pull_request_title  => build.request.pull_request_title
