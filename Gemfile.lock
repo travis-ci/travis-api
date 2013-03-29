@@ -45,7 +45,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 21563250c911c803e03ae6930e2eb213bd88638a
+  revision: 336c5995144005b69cd00ef5b21b7256e3daa013
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -56,7 +56,6 @@ GIT
       hashr (~> 0.0.19)
       metriks (~> 0.9.7)
       multi_json
-      postmark-rails (~> 0.4.1)
       pusher (~> 0.11.0)
       railties (~> 3.2.12)
       rake
@@ -130,7 +129,7 @@ GEM
       multi_json (~> 1.0)
     addressable (2.3.3)
     arel (3.0.2)
-    atomic (1.0.1)
+    atomic (1.0.2)
     avl_tree (1.1.3)
     backports (2.8.2)
     builder (3.0.4)
@@ -186,13 +185,6 @@ GEM
     net-http-pipeline (1.0.1)
     pg (0.13.2)
     polyglot (0.3.3)
-    postmark (0.9.19)
-      json
-      rake
-    postmark-rails (0.4.1)
-      actionmailer
-      postmark (>= 0.9.0)
-      rake
     pry (0.9.12)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
