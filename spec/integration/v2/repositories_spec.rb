@@ -92,6 +92,17 @@ describe 'Repos' do
     response.status.should == 406
   end
 
+  it 'responds with 404 when repo can\'t be found and format is png' do
+    result = get('/repos/foo/bar.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
+    result.status.should == 404
+  end
+
+  it 'responds with 404 when repo can\'t be found and format is other than png' do
+    result = get('/repos/foo/bar', {}, 'HTTP_ACCEPT' => 'application/json; version=2')
+    result.status.should == 404
+    JSON.parse(result.body).should == { 'file' => 'not found' }
+  end
+
   describe 'GET /repos/svenfuchs/minimal.png?branch=foo,bar' do
     let(:on_foo) { Factory(:commit, branch: 'foo') }
     let(:on_bar) { Factory(:commit, branch: 'bar') }
