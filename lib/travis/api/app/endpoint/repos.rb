@@ -8,10 +8,19 @@ class Travis::Api::App
       # You can filter the repositories by adding parameters to the request. For example, you can get all repositories
       # owned by johndoe by adding `owner_name=johndoe`, or all repositories that johndoe has access to by adding
       # `member=johndoe`. The parameter names correspond to the keys of the response hash.
+      #
+      # ### Response
+      #
+      # json(:repositories)
       get '/' do
         respond_with service(:find_repos, params)
       end
 
+      # Gets the repository with the given id.
+      #
+      # ### Response
+      #
+      # json(:repository)
       get '/:id' do
         respond_with service(:find_repo, params)
       end
@@ -20,6 +29,15 @@ class Travis::Api::App
         respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
+      # Get the public key for the repository with the given id.
+      #
+      # This can be used to encrypt secure variables in the build configuration. See
+      # [the encryption keys](http://about.travis-ci.org/docs/user/encryption-keys/) documentation page for more
+      # information.
+      #
+      # ### Response
+      #
+      # json(:repository_key)
       get '/:id/key' do
         respond_with service(:find_repo_key, params), version: :v2
       end
@@ -28,14 +46,29 @@ class Travis::Api::App
         respond_with service(:regenerate_repo_key, params), version: :v2
       end
 
+      # Gets the repository with the given name.
+      #
+      # ### Response
+      #
+      # json(:repository)
       get '/:owner_name/:name' do
         respond_with service(:find_repo, params)
       end
 
+      # Gets the builds for the repository with the given name.
+      #
+      # ### Response
+      #
+      # json(:builds)
       get '/:owner_name/:name/builds' do
         respond_with service(:find_builds, params)
       end
 
+      # Get a build with the given id in the repository with the given name.
+      #
+      # ### Response
+      #
+      # json(:build)
       get '/:owner_name/:name/builds/:id' do
         respond_with service(:find_build, params)
       end
@@ -44,6 +77,15 @@ class Travis::Api::App
         respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
+      # Get the public key for a given repository.
+      #
+      # This can be used to encrypt secure variables in the build configuration. See
+      # [the encryption keys](http://about.travis-ci.org/docs/user/encryption-keys/) documentation page for more
+      # information.
+      #
+      # ### Response
+      #
+      # json(:repository_key)
       get '/:owner_name/:name/key' do
         respond_with service(:find_repo_key, params), version: :v2
       end

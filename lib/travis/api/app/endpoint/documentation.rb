@@ -1,4 +1,5 @@
 require 'travis/api/app'
+require 'travis/api/app/endpoint/documentation/resources'
 
 class Travis::Api::App
   class Endpoint
@@ -44,6 +45,7 @@ class Travis::Api::App
 
           def with_code_highlighting(str)
             str.
+              gsub(/json\(:([^)]+)\)/) { "<pre>" + Resources::Helpers.json($1) + "</pre>" }.
               gsub('<pre', '<pre class="prettyprint linenums pre-scrollable"').
               gsub(/<\/?code>/, '').
               gsub(/TODO:?/, '<span class="label label-warning">TODO</span>')
