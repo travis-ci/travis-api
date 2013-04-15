@@ -9,87 +9,133 @@ class Travis::Api::App::Endpoint
     end
 
     REPOSITORY_KEY = {
-      "public_key" => "-----BEGIN RSA PUBLIC KEY-----\nMIGJAoGBAOcx131amMqIzm5+FbZz+DhIgSDbFzjKKpzaN5UWVCrLSc57z64xxTV6\nkaOTZmjCWz6WpaPkFZY+czfL7lmuZ/Y6UNm0vupvdZ6t27SytFFGd1/RJlAe89tu\nGcIrC1vtEvQu2frMLvHqFylnGd5Gy64qkQT4KRhMsfZctX4z5VzTAgMBAAE=\n-----END RSA PUBLIC KEY-----\n",
+      'public_key' => '-----BEGIN RSA PUBLIC KEY-----\nMIGJAoGBAOcx131amMqIzm5+FbZz+DhIgSDbFzjKKpzaN5UWVCrLSc57z64xxTV6\nkaOTZmjCWz6WpaPkFZY+czfL7lmuZ/Y6UNm0vupvdZ6t27SytFFGd1/RJlAe89tu\nGcIrC1vtEvQu2frMLvHqFylnGd5Gy64qkQT4KRhMsfZctX4z5VzTAgMBAAE=\n-----END RSA PUBLIC KEY-----\n',
     }
 
     REPOSITORY = {
-      "id" => 59,
-      "slug" => "travis-ci/travis-ci",
-      "description" => "A distributed build system for the open source community.",
-      "public_key" => REPOSITORY_KEY["public_key"],
-      "last_build_id" => 3373911,
-      "last_build_number" => "2188",
-      "last_build_status" => 0,
-      "last_build_result" => 0,
-      "last_build_duration" => 221,
-      "last_build_language" => nil,
-      "last_build_started_at" => "2012-11-27T01:01:28Z",
-      "last_build_finished_at" => "2012-11-27T01:05:09Z",
+      'repo' => {
+        'id' => 119756,
+        'slug' => 'travis-ci/travis-api',
+        'description' => 'The public Travis API',
+        'last_build_id' => 6347735,
+        'last_build_number' => '468',
+        'last_build_state' => 'started',
+        'last_build_duration' => nil,
+        'last_build_language' => nil,
+        'last_build_started_at' => '2013-04-15T09:45:29Z',
+        'last_build_finished_at' => nil,
+      }
     }
 
-    REPOSITORIES = [REPOSITORY]
+    REPOSITORIES = { 'repos' => [ REPOSITORY['repo'] ] }
 
     SHORT_BUILD = {
-      "id" => 3373911,
-      "repository_id" => 59,
-      "number" => "2188",
-      "state" => "finished",
-      "result" => 0,
-      "started_at" => "2012-11-27T01:01:28Z",
-      "finished_at" => "2012-11-27T01:05:09Z",
-      "duration" => 221,
-      "commit" => "a0e4dada7eb30b41817d9d3c5222b519502ef87a",
-      "branch" => "master",
-      "message" => "no need to set up services",
-      "event_type" => "push",
-    }
-
-    BUILDS = [
-      SHORT_BUILD,
-    ]
-
-    CONFIG = {
-      "language" => "ruby",
-      "rvm" => [
-        "1.9.3",
-      ],
-      "bundler_args" => "--without development",
-      "before_install" => [
-        "gem install bundler --pre",
-      ],
-      "before_script" => [
-        "cp config/database.example.yml config/database.yml"
-      ],
-      "script" => "RAILS_ENV=test bundle exec rake test:ci --trace",
-      "notifications" => {
-        "irc" => "irc.freenode.org#travis",
-        "campfire" => {
-          "secure" => "JJezWGD9KJY/LC2aznI3Zyohy31VTIhcTKX7RWR4C/C8YKbW9kZv3xV6Vn11\nSHxJTeZo6st2Bpv6tjlWZ+HCR09kyCNavIChedla3+oHOiuL0D4gSo+gkTNW\nUKYZz9mcQUd9RoQpTeyxvdvX+l7z62/7JwFA7txHOqxbTS8jrjc="
-        }
+      'id' => 6347735,
+      'repository_id' => 119756,
+      'commit_id' => 1873023,
+      'number' => '468',
+      'pull_request' => false,
+      'pull_request_title' => nil,
+      'pull_request_number' => nil,
+      'config' => {
+        'language' => 'ruby',
+        'rvm' => [
+          '1.9.3',
+          'rbx-19mode',
+          'jruby-19mode',
+        ],
+        'before_script' => [
+          'RAILS_ENV=test rake db:create db:schema:load --trace',
+        ],
+        'notifications' => {
+          'irc' => 'irc.freenode.org#travis',
+        },
+        'matrix' => {
+          'allow_failures' => [
+            {
+              'rvm' => 'rbx-19mode',
+            },
+            {
+              'rvm' => 'jruby-19mode',
+            },
+          ],
+        },
+        '.result' => 'configured',
       },
-      ".result" => "configured"
+      'state' => 'passed',
+      'started_at' => '2013-04-15T09:45:29Z',
+      'finished_at' => '2013-04-15T09:49:42Z',
+      'duration' => 489,
+      'job_ids' => [
+        6347736,
+        6347737,
+        6347738,
+      ],
     }
 
-    BUILD = SHORT_BUILD.merge({
-      "config" => CONFIG,
-      "committed_at" => "2012-11-27T01:01:06Z",
-      "author_name" => "Sven Fuchs",
-      "author_email" => "me@svenfuchs.com",
-      "committer_name" => "Sven Fuchs",
-      "committer_email" => "me@svenfuchs.com",
-      "compare_url" => "https://github.com/travis-ci/travis-ci/compare/18b6874865f2...a0e4dada7eb3",
-      "matrix" => [
-        {
-          "id" => 3373912,
-          "repository_id" => 59,
-          "number" => "2188.1",
-          "config" => CONFIG,
-          "result" => 0,
-          "started_at" => "2012-11-27T01:01:28Z",
-          "finished_at" => "2012-11-27T01:05:09Z",
-          "allow_failure" => false
-        }
+    COMMIT = {
+      'id' => 1873023,
+      'sha' => 'a18f211f6f921affd1ecd8c18691b40d9948aae5',
+      'branch' => 'master',
+      'message' => "Merge pull request #25 from henrikhodne/add-responses-to-documentation\n\nAdd responses to documentation",
+      'committed_at' => '2013-04-15T09:44:31Z',
+      'author_name' => 'Henrik Hodne',
+      'author_email' => 'me@henrikhodne.com',
+      'committer_name' => 'Henrik Hodne',
+      'committer_email' => 'me@henrikhodne.com',
+      'compare_url' => 'https://github.com/travis-ci/travis-api/compare/0f31ff4fb6aa...a18f211f6f92',
+      'pull_request_number' => nil,
+    }
+
+    BUILDS = {
+      'builds' => [
+        SHORT_BUILD
+      ],
+      'commits' => [
+        COMMIT
       ]
-    })
+    }
+
+    JOB = {
+      'id' => 6347736,
+      'repository_id' => 119756,
+      'build_id' => 6347735,
+      'commit_id' => 1873023,
+      'log_id' => 1219815,
+      'state' => 'passed',
+      'number' => '468.1',
+      'config' => {
+        'language' => 'ruby',
+        'rvm' => '1.9.3',
+        'before_script' => [
+          'RAILS_ENV=test rake db:create db:schema:load --trace',
+        ],
+        'notifications' => {
+          'irc' => 'irc.freenode.org#travis',
+        },
+        'matrix' => {
+          'allow_failures' => [
+            {
+              'rvm' => 'rbx-19mode',
+            },
+            {
+              'rvm' => 'jruby-19mode',
+            }
+          ]
+        },
+        '.result' => 'configured'
+      },
+      'started_at' => '2013-04-15T09:45:29Z',
+      'finished_at' => '2013-04-15T09:48:14Z',
+      'queue' => 'builds.linux',
+      'allow_failure' => false,
+      'tags' => '',
+    }
+
+    BUILD = {
+      'build' => SHORT_BUILD,
+      'commit' => COMMIT,
+      'jobs' => [ JOB ]
+    }
   end
 end
