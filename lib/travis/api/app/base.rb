@@ -1,7 +1,5 @@
 require 'travis/api/app'
 require 'sinatra/base'
-require 'new_relic/agent/instrumentation/rack'
-require 'newrelic_rpm'
 
 class Travis::Api::App
   # Superclass for any endpoint and middleware.
