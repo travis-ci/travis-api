@@ -12,7 +12,7 @@ gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require:
 # TODO need to release the gem as soon i'm certain this change makes sense
 gem 'simple_states',      github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
 
-gem 'puma'
+gem 'unicorn'
 gem "sentry-raven",    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
