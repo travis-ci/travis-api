@@ -182,7 +182,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'hubble',          '~> 0.1'
   s.add_dependency 'backports',       '~> 2.5'
   s.add_dependency 'pg',              '~> 0.13.2'
-  s.add_dependency 'newrelic_rpm',    '~> 3.5.5.0'
+  s.add_dependency 'newrelic_rpm',    '~> 3.6.0.83'
   s.add_dependency 'thin',            '~> 1.4'
   s.add_dependency 'sinatra',         '~> 1.3'
   s.add_dependency 'sinatra-contrib', '~> 1.3'
