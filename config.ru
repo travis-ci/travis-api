@@ -4,7 +4,6 @@ ENV['RAILS_ENV']  = ENV['RACK_ENV']
 
 $stdout.sync = true
 
-require 'newrelic_rpm'
 require 'travis/api/app'
 require 'core_ext/module/load_constants'
 
