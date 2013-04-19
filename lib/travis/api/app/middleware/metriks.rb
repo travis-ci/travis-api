@@ -6,7 +6,7 @@ class Travis::Api::App
       before do
         env['metriks.request.start'] = Time.now.utc
       end
-      
+
       after do
         if response.status < 400
           time = Time.now.utc - env['metriks.request.start']
