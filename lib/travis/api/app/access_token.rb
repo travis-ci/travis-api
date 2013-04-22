@@ -4,7 +4,7 @@ require 'securerandom'
 class Travis::Api::App
   class AccessToken
     DEFAULT_SCOPES = [:public, :private]
-    attr_reader :token, :scopes, :user_id, :app_id
+    attr_reader :token, :scopes, :user_id, :app_id, :expires_in
 
     def self.create(options = {})
       new(options).tap(&:save)
@@ -25,6 +25,12 @@ class Travis::Api::App
       raise ArgumentError, 'must supply either user_id or user' unless options.key?(:user) ^ options.key?(:user_id)
       raise ArgumentError, 'must supply app_id' unless options.key?(:app_id)
 
+      begin
+        @expires_in = Integer(options[:expires_in]) if options[:expires_in]
+      rescue ArgumentError
+        raise ArgumentError, 'expires_in must be of integer type'
+      end
+
       @app_id   = Integer(options[:app_id])
       @scopes   = Array(options[:scopes] || options[:scope] || DEFAULT_SCOPES).map(&:to_sym)
       @user     = options[:user]
@@ -37,6 +43,11 @@ class Travis::Api::App
       redis.del(key)
       redis.rpush(key, [user_id, app_id, *scopes].map(&:to_s))
       redis.set(reuse_key, token)
+
+      if expires_in
+        redis.expire(reuse_key, expires_in)
+        redis.expire(key, expires_in)
+      end
     end
 
     def user
@@ -68,7 +79,7 @@ class Travis::Api::App
     private
 
       def reuse_token
-        redis.get(reuse_key)
+        redis.get(reuse_key) unless expires_in
       end
 
       def reuse_key
