@@ -10,8 +10,8 @@ class Travis::Api::App
 
       def respond_with(resource, options = {})
         result = respond(resource, options)
-        result = result ? result.to_json : 404
-        halt result
+        result = result.to_json if result && response.content_type =~ /application\/json/
+        halt result || 404
       end
 
       def body(value = nil, options = {}, &block)
@@ -24,10 +24,18 @@ class Travis::Api::App
         def respond(resource, options)
           resource = apply_service_responder(resource, options)
 
-          response = acceptable_formats.find do |accept|
+          response = nil
+          acceptable_formats.find do |accept|
             responders(resource, options).find do |const|
               responder = const.new(self, resource, options.dup.merge(accept: accept))
-              responder.apply if responder.apply?
+              response = responder.apply if responder.apply?
+            end
+          end
+
+          if responders = options[:responders]
+            responders.each do |klass|
+              responder = klass.new(self, response, options)
+              response = responder.apply if responder.apply?
             end
           end
 

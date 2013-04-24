@@ -23,8 +23,7 @@ module Travis::Api::App::Responders
         let(:resource) { { foo: 'bar' } }
 
         it 'returns resource converted to_json' do
-          json.expects(:halt).with({ foo: 'bar' }.to_json)
-          json.apply
+          json.apply.should == { foo: 'bar' }
         end
       end
 
@@ -46,8 +45,7 @@ module Travis::Api::App::Responders
       end
 
       it 'returns proper data converted to json' do
-        json.expects(:halt).with({ foo: 'bar' }.to_json)
-        json.apply
+        json.apply.should == { foo: 'bar' }
       end
     end
   end
