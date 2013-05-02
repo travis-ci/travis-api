@@ -121,8 +121,15 @@ module Travis::Api
         Travis::Database.connect
 
         if Travis.env == 'production' || Travis.env == 'staging'
-          puts "is octopus working? #{::Octopus.enabled?}"
+          # Octopus checks for Rails.env, just hardcode enabled?
+          Octopus.instance_eval do
+            def enabled?
+              true
+            end
+          end
+
           ActiveRecord::Base.custom_octopus_connection = false
+
           ::Octopus.setup do |config|
             config.shards = { :follower => Travis.config.database_follower }
             config.environments = ['production', 'staging']
