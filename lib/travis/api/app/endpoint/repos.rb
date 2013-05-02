@@ -52,7 +52,9 @@ class Travis::Api::App
       #
       # json(:repository)
       get '/:owner_name/:name' do
-        respond_with service(:find_repo, params)
+        Octopus.using(:follower) do
+          respond_with service(:find_repo, params)
+        end
       end
 
       # Gets the builds for the repository with the given name.

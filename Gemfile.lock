@@ -44,6 +44,14 @@ GIT
       hashr (~> 0.0.10)
 
 GIT
+  remote: git://github.com/tchandy/octopus.git
+  revision: 8df2768bf37e75e6cc30816eeb9440748a2a3ae9
+  specs:
+    ar-octopus (0.5.0beta)
+      activerecord (>= 2.3.0)
+      activesupport (>= 2.3.0)
+
+GIT
   remote: git://github.com/travis-ci/travis-core.git
   revision: 75986691f25bd5533fa812dbe81638c7d1da3651
   specs:
@@ -274,6 +282,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  ar-octopus!
   bunny
   dalli
   database_cleaner (~> 0.8.0)
