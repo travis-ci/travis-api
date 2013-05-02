@@ -121,10 +121,13 @@ module Travis::Api
         Travis::Database.connect
 
         if Travis.env == 'production' || Travis.env == 'staging'
+          puts "is octopus working? #{::Octopus.enabled?}"
+          ActiveRecord::Base.custom_octopus_connection = false
           ::Octopus.setup do |config|
             config.shards = { :follower => Travis.config.database_follower }
             config.environments = ['production', 'staging']
           end
+
         end
 
         Travis::Features.start
