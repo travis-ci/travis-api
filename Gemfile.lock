@@ -184,7 +184,7 @@ GEM
     multipart-post (1.2.0)
     net-http-persistent (2.8)
     net-http-pipeline (1.0.1)
-    newrelic_rpm (3.6.1.85.beta)
+    newrelic_rpm (3.6.1.88)
     pg (0.13.2)
     polyglot (0.3.3)
     pry (0.9.12)
