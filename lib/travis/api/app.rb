@@ -120,7 +120,7 @@ module Travis::Api
         Travis::Amqp.config = Travis.config.amqp
         Travis::Database.connect
 
-        Octopus.setup do |config|
+        ::Octopus.setup do |config|
           config.shards = { :follower => Travis.config.database_follower }
           config.environments = [:production]
         end

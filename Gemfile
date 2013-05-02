@@ -21,9 +21,9 @@ gem 'gh',              github: 'rkh/gh'
 gem 'bunny'
 gem 'dalli'
 gem 'pry'
-gem 'metriks',        '0.9.9.2'
+gem 'metriks',         '0.9.9.2'
 
-gem 'ar-octopus', github: 'tchandy/octopus', require: 'octopus'
+gem 'ar-octopus',      github: 'tchandy/octopus', require: 'octopus'
 
 group :test do
   gem 'rspec',        '~> 2.11'
