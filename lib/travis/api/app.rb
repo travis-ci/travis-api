@@ -120,9 +120,10 @@ module Travis::Api
         Travis::Amqp.config = Travis.config.amqp
         Travis::Database.connect
 
-        # only used in Production by default
-        ::Octopus.setup do |config|
-          config.shards = { :follower => Travis.config.database_follower }
+        if Travis.env == 'production'
+          ::Octopus.setup do |config|
+            config.shards = { :follower => Travis.config.database_follower }
+          end
         end
 
         Travis::Features.start
