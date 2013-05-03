@@ -44,8 +44,8 @@ GIT
       hashr (~> 0.0.10)
 
 GIT
-  remote: git://github.com/tchandy/octopus.git
-  revision: 8df2768bf37e75e6cc30816eeb9440748a2a3ae9
+  remote: git://github.com/travis-ci/octopus.git
+  revision: 2d4cca475479516f47c3144971205f50c335ad35
   specs:
     ar-octopus (0.5.0beta)
       activerecord (>= 2.3.0)
