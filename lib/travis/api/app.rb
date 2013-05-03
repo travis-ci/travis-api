@@ -145,6 +145,8 @@ module Travis::Api
         return unless Travis.config.use_database_follower?
 
         if Travis.env == 'production' || Travis.env == 'staging'
+          puts "Setting up the DB follower as a read slave"
+
           # Octopus checks for Rails.env, just hardcode enabled?
           Octopus.instance_eval do
             def enabled?
