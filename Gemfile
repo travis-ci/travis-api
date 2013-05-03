@@ -12,7 +12,7 @@ gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require:
 # TODO need to release the gem as soon i'm certain this change makes sense
 gem 'simple_states',      github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
 
-gem 'puma'
+gem 'puma', '1.6.3'
 gem "sentry-raven",    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
@@ -21,9 +21,9 @@ gem 'gh',              github: 'rkh/gh'
 gem 'bunny'
 gem 'dalli'
 gem 'pry'
-gem 'metriks',        '0.9.9.2'
+gem 'metriks',         '0.9.9.2'
 
-gem 'ar-octopus', github: 'travis-ci/octopus', require: 'octopus'
+gem 'ar-octopus',      github: 'travis-ci/octopus', require: 'octopus'
 
 group :test do
   gem 'rspec',        '~> 2.11'

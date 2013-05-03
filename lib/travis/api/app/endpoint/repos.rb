@@ -52,7 +52,7 @@ class Travis::Api::App
       #
       # json(:repository)
       get '/:owner_name/:name' do
-        Octopus.using(:follower) do
+        prefer_follower do
           respond_with service(:find_repo, params)
         end
       end
