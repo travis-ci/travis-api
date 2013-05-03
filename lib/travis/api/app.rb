@@ -118,21 +118,8 @@ module Travis::Api
 
       def self.setup_travis
         Travis::Amqp.config = Travis.config.amqp
-        Travis::Database.connect
 
-        if Travis.env == 'production' || Travis.env == 'staging'
-          # Octopus checks for Rails.env, just hardcode enabled?
-          Octopus.instance_eval do
-            def enabled?
-              true
-            end
-          end
-          ActiveRecord::Base.custom_octopus_connection = false
-          ::Octopus.setup do |config|
-            config.shards = { :follower => Travis.config.database_follower }
-            config.environments = ['production', 'staging']
-          end
-        end
+        setup_database_connections
 
         Travis::Features.start
 
@@ -149,6 +136,26 @@ module Travis::Api
 
           Travis::LogSubscriber::ActiveRecordMetrics.attach
           Travis::Notification.setup
+        end
+      end
+
+      def self.setup_database_connections
+        Travis::Database.connect
+
+        return unless Travis.config.use_database_follower?
+
+        if Travis.env == 'production' || Travis.env == 'staging'
+          # Octopus checks for Rails.env, just hardcode enabled?
+          Octopus.instance_eval do
+            def enabled?
+              true
+            end
+          end
+          ActiveRecord::Base.custom_octopus_connection = false
+          ::Octopus.setup do |config|
+            config.shards = { :follower => Travis.config.database_follower }
+            config.environments = ['production', 'staging']
+          end
         end
       end
 
