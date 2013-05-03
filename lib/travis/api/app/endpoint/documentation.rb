@@ -192,7 +192,7 @@ __END__
     <h3><%= route['verb'] %> <%= route['uri'] %></h3>
     <% if route['scope'] %>
       <p>
-        <h5>Required autorization scope: <span class="label"><%= route['scope'] %></span></h5>
+        <h5>Required authorization scope: <span class="label"><%= route['scope'] %></span></h5>
       </p>
     <% end %>
     <%= docs_for route %>
