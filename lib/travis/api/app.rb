@@ -4,7 +4,6 @@ require 'rack'
 require 'rack/protection'
 require 'rack/contrib'
 require 'rack/cache'
-require 'octopus'
 require 'active_record'
 require 'redis'
 require 'gh'
@@ -143,6 +142,7 @@ module Travis::Api
         Travis::Database.connect
 
         return unless Travis.config.use_database_follower?
+        require 'octopus'
 
         if Travis.env == 'production' || Travis.env == 'staging'
           puts "Setting up the DB follower as a read slave"

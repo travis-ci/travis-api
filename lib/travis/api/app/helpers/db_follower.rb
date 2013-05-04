@@ -4,7 +4,11 @@ class Travis::Api::App
   module Helpers
     module DbFollower
       def prefer_follower
-        Octopus.using(:follower) do
+        if Travis.config.use_database_follower?
+          Octopus.using(:follower) do
+            yield
+          end
+        else
           yield
         end
       end
