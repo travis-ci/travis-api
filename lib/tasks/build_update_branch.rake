@@ -4,18 +4,20 @@ namespace :build do
       require 'travis'
       Travis::Database.connect
 
-      branches = Hash.new { |h, k| h[k] = [] }
 
-      Build.pushes.includes(:commit).find_in_batches do |builds|
+      Build.select(['id', 'commit_id']).pushes.includes(:commit).find_in_batches do |builds|
+        branches = Hash.new { |h, k| h[k] = [] }
+
         builds.each do |build|
           #next if build.branch
           branches[build.commit.branch] << build.id
         end
-      end
 
-      branches.each do |branch, ids|
-        Build.where(id: ids).update_all(branch: branch)
-      end
+        branches.each do |branch, ids|
+          Build.where(id: ids).update_all(branch: branch)
+        end
+      end; nil
+
     end
   end
 end
