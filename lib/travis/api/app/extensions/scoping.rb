@@ -18,23 +18,32 @@ class Travis::Api::App
         app.helpers(Helpers)
       end
 
-      def scope(name)
+      def scope(*names)
         condition do
-          name   = settings.default_scope if name == :default
+          names  = [settings.default_scope] if names == [:default]
           scopes = env['travis.access_token'].try(:scopes) || settings.anonymous_scopes
-          headers['X-OAuth-Scopes'] = scopes.map(&:to_s).join(',')
-          headers['X-Accepted-OAuth-Scopes'] = name.to_s
 
-          if scopes.include? name
-            env['travis.scope'] = name
-            headers['Vary'] = 'Accept'
-            headers['Vary'] << ', Authorization' unless public?
-            true
-          elsif env['travis.access_token']
-            pass { halt 403, "insufficient access" }
-          else
-            pass { halt 401, "no access token supplied" }
+          result = names.any? do |name|
+            if scopes.include? name
+              headers['X-OAuth-Scopes'] = scopes.map(&:to_s).join(',')
+              headers['X-Accepted-OAuth-Scopes'] = name.to_s
+
+              env['travis.scope'] = name
+              headers['Vary'] = 'Accept'
+              headers['Vary'] << ', Authorization' unless public?
+              true
+            end
           end
+
+          if !result
+            if env['travis.access_token']
+              pass { halt 403, "insufficient access" }
+            else
+              pass { halt 401, "no access token supplied" }
+            end
+          end
+
+          result
         end
       end
 

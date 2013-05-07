@@ -23,7 +23,7 @@ describe 'App' do
     end
   end
 
-  it '' do
+  it 'runs responder when rendering the response with respond_with' do
     response = get '/foo/hash', {}, 'HTTP_ACCEPT' => 'application/json'
     JSON.parse(response.body).should == { 'foo' => 'bar', 'extra' => 'moar!' }
   end
