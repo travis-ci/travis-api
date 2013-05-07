@@ -8,6 +8,10 @@ describe 'App' do
       get '/hash', scope: [:foo, :bar] do
         respond_with foo: 'bar'
       end
+
+      get '/:job_id/log' do
+        respond_with job_id: params[:job_id]
+      end
     end
   end
 
@@ -27,6 +31,19 @@ describe 'App' do
     token = Travis::Api::App::AccessToken.new(app_id: 1, user_id: 2, scopes: [:baz]).tap(&:save)
 
     response = get '/foo/hash', {}, 'HTTP_ACCEPT' => 'application/json', 'HTTP_AUTHORIZATION' => "token #{token.token}"
+    response.status.should == 403
+  end
+
+  it 'checks if required_params match the from the request' do
+    extra = {
+      required_params: { job_id: '10' }
+    }
+    token = Travis::Api::App::AccessToken.new(app_id: 1, user_id: 2, extra: extra).tap(&:save)
+
+    response = get '/foo/10/log', {}, 'HTTP_ACCEPT' => 'application/json', 'HTTP_AUTHORIZATION' => "token #{token.token}"
+    response.should be_successful
+
+    response = get '/foo/11/log', {}, 'HTTP_ACCEPT' => 'application/json', 'HTTP_AUTHORIZATION' => "token #{token.token}"
     response.status.should == 403
   end
 end
