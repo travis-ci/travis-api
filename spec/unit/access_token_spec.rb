@@ -29,4 +29,21 @@ describe Travis::Api::App::AccessToken do
 
     described_class.find_by_token(token.token).should be_nil
   end
+
+  it 'allows to save extra information' do
+    attrs = {
+      app_id: 1,
+      user_id: 3,
+      expires_in: 1,
+      extra: {
+        required_params: { job_id: '1' }
+      }
+    }
+
+    token = described_class.new(attrs).tap(&:save)
+    token.extra.should == attrs[:extra]
+
+    token = described_class.find_by_token(token.token)
+    token.extra.should == { 'required_params' => { 'job_id' => '1' } }
+  end
 end

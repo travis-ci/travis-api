@@ -4,7 +4,7 @@ require 'securerandom'
 class Travis::Api::App
   class AccessToken
     DEFAULT_SCOPES = [:public, :private]
-    attr_reader :token, :scopes, :user_id, :app_id, :expires_in
+    attr_reader :token, :scopes, :user_id, :app_id, :expires_in, :extra
 
     def self.create(options = {})
       new(options).tap(&:save)
@@ -18,7 +18,8 @@ class Travis::Api::App
     def self.find_by_token(token)
       return token if token.is_a? self
       user_id, app_id, *scopes = redis.lrange(key(token), 0, -1)
-      new(token: token, scopes: scopes, user_id: user_id, app_id: app_id) if user_id
+      extra = decode_json(scopes.pop) if scopes.last && scopes.last =~ /^json:/
+      new(token: token, scopes: scopes, user_id: user_id, app_id: app_id, extra: extra) if user_id
     end
 
     def initialize(options = {})
@@ -36,12 +37,15 @@ class Travis::Api::App
       @user     = options[:user]
       @user_id  = Integer(options[:user_id] || @user.id)
       @token    = options[:token] || reuse_token || SecureRandom.urlsafe_base64(16)
+      @extra    = options[:extra]
     end
 
     def save
       key = key(token)
       redis.del(key)
-      redis.rpush(key, [user_id, app_id, *scopes].map(&:to_s))
+      data = [user_id, app_id, *scopes]
+      data << encode_json(extra) if extra
+      redis.rpush(key, data.map(&:to_s))
       redis.set(reuse_key, token)
 
       if expires_in
@@ -70,6 +74,14 @@ class Travis::Api::App
 
         def key(token)
           "t:#{token}"
+        end
+
+        def encode_json(hash)
+          'json:' + Base64.encode64(hash.to_json)
+        end
+
+        def decode_json(json)
+          JSON.parse(Base64.decode64(json.gsub(/^json:/, '')))
         end
     end
 
