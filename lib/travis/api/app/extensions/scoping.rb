@@ -46,6 +46,9 @@ class Travis::Api::App
           end
 
           if !result
+            headers['X-OAuth-Scopes'] = scopes.map(&:to_s).join(',')
+            headers['X-Accepted-OAuth-Scopes'] = names.first.to_s
+
             if env['travis.access_token']
               pass { halt 403, "insufficient access" }
             else
