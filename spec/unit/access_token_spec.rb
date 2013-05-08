@@ -25,7 +25,7 @@ describe Travis::Api::App::AccessToken do
 
     described_class.find_by_token(token.token).should_not be_nil
 
-    sleep 1.5
+    sleep 2
 
     described_class.find_by_token(token.token).should be_nil
   end

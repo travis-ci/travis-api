@@ -5,7 +5,7 @@ describe 'App' do
     FactoryGirl.create(:test, :number => '3.1', :queue => 'builds.common')
 
     add_endpoint '/foo' do
-      get '/hash', scope: [:foo, :bar] do
+      get '/:id/bar', scope: [:foo, :bar] do
         respond_with foo: 'bar'
       end
 
@@ -18,20 +18,20 @@ describe 'App' do
   it 'checks if token has one of the required scopes' do
     token = Travis::Api::App::AccessToken.new(app_id: 1, user_id: 2, scopes: [:foo]).tap(&:save)
 
-    response = get '/foo/hash', {}, 'HTTP_ACCEPT' => 'application/json', 'HTTP_AUTHORIZATION' => "token #{token.token}"
+    response = get '/foo/1/bar', {}, 'HTTP_ACCEPT' => 'application/json; version=2', 'HTTP_AUTHORIZATION' => "token #{token.token}"
     response.should be_successful
     response.headers['X-Accepted-OAuth-Scopes'].should == 'foo'
 
     token = Travis::Api::App::AccessToken.new(app_id: 1, user_id: 2, scopes: [:bar]).tap(&:save)
 
-    response = get '/foo/hash', {}, 'HTTP_ACCEPT' => 'application/json', 'HTTP_AUTHORIZATION' => "token #{token.token}"
+    response = get '/foo/1/bar', {}, 'HTTP_ACCEPT' => 'application/json; version=2', 'HTTP_AUTHORIZATION' => "token #{token.token}"
     response.should be_successful
     response.headers['X-Accepted-OAuth-Scopes'].should == 'bar'
 
     token = Travis::Api::App::AccessToken.new(app_id: 1, user_id: 2, scopes: [:baz]).tap(&:save)
 
-    response = get '/foo/hash', {}, 'HTTP_ACCEPT' => 'application/json', 'HTTP_AUTHORIZATION' => "token #{token.token}"
-    response.status.should == 403
+    response = get '/foo/1/bar', {}, 'HTTP_ACCEPT' => 'application/json; version=2', 'HTTP_AUTHORIZATION' => "token #{token.token}"
+    response.status.should == 404
   end
 
   it 'checks if required_params match the from the request' do
