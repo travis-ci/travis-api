@@ -22,7 +22,7 @@ module Travis::Api::App::Responders
     def apply
       super
 
-      halt TEMPLATE % data
+      TEMPLATE % data
     end
 
     private

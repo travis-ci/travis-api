@@ -10,7 +10,7 @@ class Travis::Api::App
       def apply
         super
 
-        halt result.to_json if result
+        result
       end
 
       private
