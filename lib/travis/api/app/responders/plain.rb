@@ -21,7 +21,7 @@ module Travis::Api::App::Responders
 
       headers['Content-Disposition'] = %(#{disposition}; filename="#{filename}")
 
-      halt(params[:deansi] ? clear_ansi(resource.content) : resource.content)
+      params[:deansi] ? clear_ansi(resource.content) : resource.content
     end
 
     private
