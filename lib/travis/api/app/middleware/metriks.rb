@@ -12,9 +12,11 @@ class Travis::Api::App
       after do
         if response.status < 400
           time = Time.now.utc - env['metriks.request.start']
-          pattern = headers['X-Pattern'].gsub(/[:\/]/, ".")
-          metric = "api.request.endpoint.#{pattern}"
-          ::Metriks.timer(metric).update(time)
+          if headers['X-Pattern']
+            pattern = headers['X-Pattern'].gsub(/[:\/]/, ".")
+            metric = "api.request.endpoint.#{pattern}"
+            ::Metriks.timer(metric).update(time)
+          end
           ::Metriks.meter("api.request.#{request.request_method.downcase}").mark
         end
         ::Metriks.meter("api.request.status.#{response.status.to_s[0]}").mark
