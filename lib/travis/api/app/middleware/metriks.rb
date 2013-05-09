@@ -15,7 +15,7 @@ class Travis::Api::App
           pattern = headers['X-Pattern'].gsub(/[:\/]/, ".")
           metric = "api.request.endpoint.#{pattern}"
           ::Metriks.timer(metric).update(time)
-          ::Metriks.meter("api.request.#{request.method}").mark
+          ::Metriks.meter("api.request.#{request.request_method.downcase}").mark
         end
         ::Metriks.meter("api.request.status.#{response.status.to_s[0]}").mark
       end
