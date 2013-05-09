@@ -1,4 +1,5 @@
 require 'travis/api/app'
+require 'metriks'
 
 class Travis::Api::App
   class Middleware
