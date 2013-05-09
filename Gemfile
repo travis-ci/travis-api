@@ -1,18 +1,18 @@
 ruby '1.9.3' rescue nil
 
-source :rubygems
+source 'https://rubygems.org'
 gemspec
 
-gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-core',     github: 'travis-ci/travis-core'
+gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: 'cde9741'
-gem 'sinatra',         github: 'sinatra/sinatra'
-gem 'sinatra-contrib', github: 'sinatra/sinatra-contrib', require: nil
+gem 'sinatra'          #github: 'sinatra/sinatra'
+gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
 
 # TODO need to release the gem as soon i'm certain this change makes sense
 gem 'simple_states',      github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
 
-gem 'unicorn'
+gem 'puma', '1.6.3'
 gem "sentry-raven",    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
@@ -21,7 +21,9 @@ gem 'gh',              github: 'rkh/gh'
 gem 'bunny'
 gem 'dalli'
 gem 'pry'
-gem 'metriks',        '0.9.9.2'
+gem 'metriks',         '0.9.9.2'
+
+gem 'ar-octopus',      github: 'travis-ci/octopus', require: nil
 
 group :test do
   gem 'rspec',        '~> 2.11'
@@ -34,9 +36,10 @@ group :development do
   gem 'foreman'
   gem 'rerun'
   # gem 'debugger'
+  gem 'rb-fsevent', '~> 0.9.1'
 end
 
 group :development, :test do
   gem 'rake', '~> 0.9.2'
-  gem 'micro_migrations', git: 'http://gist.github.com/4269321.git'
+  gem 'micro_migrations', git: 'https://gist.github.com/4269321.git'
 end

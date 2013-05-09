@@ -24,6 +24,26 @@ RSpec::Matchers.define :deliver_json_for do |resource, options = {}|
   end
 end
 
+RSpec::Matchers.define :deliver_as_txt do |expected, options = {}|
+  match do |response|
+    if response.status == 200
+      failure_message_for_should do
+        "expected\n\n#{actual}\n\nto equal\n\n#{expected}"
+      end
+      response.body.to_s == expected
+    else
+      failure_message_for_should do
+        "expected the request to be successful (200) but was #{response.status}"
+      end
+      false
+    end
+  end
+
+  def parse(body)
+    MultiJson.decode(body)
+  end
+end
+
 RSpec::Matchers.define :deliver_result_image_for do |name|
   match do |response|
     header = response.headers['content-disposition']
@@ -42,7 +62,7 @@ RSpec::Matchers.define :deliver_cc_xml_for do |repo|
       "expected #{body} to be a valid cc.xml"
     end
 
-    body.include?('<Projects>') && body.include?(%(name="#{repo.slug}"))
+    body.include?('<Projects>') && body.include?(%(name="#{repo.slug}")) && body.include?("https://www.example.com/#{repo.slug}")
   end
 end
 

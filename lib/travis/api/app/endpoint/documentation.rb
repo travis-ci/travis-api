@@ -1,4 +1,5 @@
 require 'travis/api/app'
+require 'travis/api/app/endpoint/documentation/resources'
 
 class Travis::Api::App
   class Endpoint
@@ -44,6 +45,7 @@ class Travis::Api::App
 
           def with_code_highlighting(str)
             str.
+              gsub(/json\(:([^)]+)\)/) { "<pre>" + Resources::Helpers.json($1) + "</pre>" }.
               gsub('<pre', '<pre class="prettyprint linenums pre-scrollable"').
               gsub(/<\/?code>/, '').
               gsub(/TODO:?/, '<span class="label label-warning">TODO</span>')
@@ -81,154 +83,116 @@ __END__
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <title>Travis API documentation</title>
 
     <!-- we might wanna change this -->
-    <link href="<%= url('/css/bootstrap.css') %>" rel="stylesheet" />
-    <link href="<%= url('/css/prettify.css') %>" rel="stylesheet" />
-    <script src="<%= url('/js/jquery.js') %>"></script>
-    <script src="<%= url('/js/prettify.js') %>"></script>
-    <script src="<%= url('/js/bootstrap.min.js') %>"></script>
-
-    <style type="text/css">
-      header {
-        position: relative;
-        text-align: center;
-        margin-top: 36px;
-      }
-      header h1 {
-        text-shadow: 2px 2px 5px #000;
-        margin-bottom: 9px;
-        font-size: 81px;
-        font-weight: bold;
-        letter-spacing: -1px;
-        line-height: 1;
-      }
-      header p {
-        margin-bottom: 18px;
-        font-weight: 300;
-        font-size: 18px;
-      }
-      .page-header {
-        margin-top: 90px;
-      }
-      .route {
-        margin-bottom: 36px;
-      }
-      .page-header a {
-        color: black;
-      }
-      .nav-list a {
-        color: inherit !important;
-      }
-    </style>
+    <!-- <link href="<%= url('/css/bootstrap.css') %>" rel="stylesheet" /> -->
+    <!-- <link href="<%= url('/css/prettify.css') %>" rel="stylesheet" /> -->
+    <link href="<%= url('/css/style.css') %>" rel="stylesheet" />
+    <!-- <script src="<%= url('/js/jquery.js') %>"></script> -->
+    <!-- <script src="<%= url('/js/prettify.js') %>"></script> -->
+    <!-- <script src="<%= url('/js/bootstrap.min.js') %>"></script> -->
   </head>
 
   <body onload="prettyPrint()">
-
-    <a href="https://github.com/travis-ci/travis-api">
-      <img style="position: absolute; top: 0; right: 0; border: 0;"
-        src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
-        alt="Fork me on GitHub">
-    </a>
-
-    <div class="container">
-      <div class="row">
-        <header class="span12">
-          <h1>The Travis API</h1>
-          <p>All the routes, just waiting for you to build something awesome.</p>
-        </header>
+    <div id="navigation">
+      <div class="wrapper">
+        <a href="http://travis-ci.org" id="logo">travis-ci<span>.org</span></a>
+        <ul>
+          <li><a href="http://about.travis-ci.org/blog/">Blog</a></li>
+          <li><a href="http://about.travis-ci.org/docs/">User Documentation</a></li>
+        </ul>
       </div>
+    </div>
 
-      <div class="row">
+    <div id="header">
+      <div class="wrapper">
+        <h1 class="riddle"><a href="/docs" title="Travis API">The Travis API</a></h1>
+        <p>All the routes, just waiting for you to build something awesome.</p>
+      </div>
+    </div>
 
-        <aside class="span3">
-          <div class="page-header">
-            <h1>Navigation</h1>
+    <div id="content">
+      <div class="wrapper">
+        <div class="pad">
+          <div id="main">
+            <% general_docs.each do |doc| %>
+              <%= erb :entry, locals: doc %>
+            <% end %>
+
+            <% endpoints.each do |endpoint| %>
+              <%= erb :entry, {},
+                id: endpoint['name'],
+                title: endpoint['name'],
+                content: erb(:endpoint_content, {}, endpoint: endpoint) %>
+            <% end %>
           </div>
-          <div class="well" style="padding: 8px 0;">
-            <ul class="nav nav-list">
-              <% general_docs.each do |doc| %>
-                <li class="nav-header"><a href="#<%= doc[:id] %>"><%= doc[:title] %></a></li>
-                <% doc[:subheaders].each do |sub| %>
-                  <li><a href="#<%= sub %>"><%= sub %></a></li>
-                <% end %>
+          <div id="sidebar">
+            <% general_docs.each do |doc| %>
+              <h2><a href="#<%= doc[:id] %>"><%= doc[:title] %></a></h2>
+              <ul>
+              <% doc[:subheaders].each do |sub| %>
+                <li><a href="#<%= sub %>"><%= sub %></a></li>
               <% end %>
-              <li class="divider"></li>
-              <% endpoints.each do |endpoint| %>
-                <li class="nav-header"><a href="#<%= endpoint['name'] %>"><%= endpoint['name'] %></a></li>
-                <% endpoint['routes'].each do |route| %>
-                  <li>
-                    <a href="#<%= slug_for(route) %>">
-                      <i class="icon-<%= icon_for route['verb'] %>"></i>
-                      <tt><%= route['uri'] %></tt>
-                    </a>
-                  </li>
-                <% end %>
+              </ul>
+            <% end %>
+
+            <% endpoints.each do |endpoint| %>
+              <h2><a href="#<%= endpoint['name'] %>"><%= endpoint['name'] %></a></h2>
+              <ul>
+              <% endpoint['routes'].each do |route| %>
+                <li>
+                  <a href="#<%= slug_for(route) %>">
+                    <i class="icon-<%= icon_for route['verb'] %>"></i>
+                    <tt><%= route['uri'] %></tt>
+                  </a>
+                </li>
               <% end %>
-              <li class="divider"></li>
-              <li class="nav-header">
-                External Links
-              </li>
-              <li>
-                <a href="https://travis-ci.org">
-                  <i class="icon-globe"></i>
-                  Travis CI
-                </a>
-              </li>
-              <li>
-                <a href="https://github.com/travis-ci/travis-api">
-                  <i class="icon-cog"></i>
-                  Source Code
-                </a>
-              </li>
-              <li>
-                <a href="https://github.com/travis-ci/travis-api/issues">
-                  <i class="icon-list-alt"></i>
-                  API issues
-                </a>
-              </li>
-              <li>
-                <a href="https://github.com/travis-ci/travis-ember">
-                  <i class="icon-play-circle"></i>
-                  Example Client
-                </a>
-              </li>
+              </ul>
+            <% end %>
+
+            <h2>External Links</h2>
+            <ul>
+              <li><a href="https://travis-ci.org">Travis CI</a></li>
+              <li><a href="https://github.com/travis-ci/travis-api">Source Code</a></li>
+              <li><a href="https://github.com/travis-ci/travis-api/issues">API issues</a></li>
+              <li><a href="https://github.com/travis-ci/travis-web">Example Client</a></li>
             </ul>
           </div>
-        </aside>
-
-        <section class="span9">
-
-          <% general_docs.each do |doc| %>
-            <%= erb :entry, locals: doc %>
-          <% end %>
-
-          <% endpoints.each do |endpoint| %>
-            <%= erb :entry, {},
-              id: endpoint['name'],
-              title: endpoint['name'],
-              content: erb(:endpoint_content, {}, endpoint: endpoint) %>
-          <% end %>
-
-        </section>
+        </div>
+      </div>
+    </div>
+    <div id="footer">
+      <div class="wrapper">
+        <div class="box">
+          <p>This site is maintained by the <a href="http://github.com/travis-ci">Travis CI community</a>. Feel free to <a href="http://github.com/travis-ci/travis-api">contribute</a>!</p>
+        </div>
+        <div class="box">
+          <p>This design was kindly provided by the talented Ben Webster of <a href="http://www.plus2.com.au">Plus2</a>.</p>
+        </div>
+        <div class="box last">
+          <ul>
+            <li><a href="https://github.com/travis-ci" title="">Travis CI on GitHub</a></li>
+            <li><a href="https://twitter.com/travisci" title="">Travis CI on Twitter</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </body>
 </html>
 
+
 @@ endpoint_content
 <% unless endpoint['doc'].to_s.empty? %>
   <%= docs_for endpoint %>
-  <hr>
 <% end %>
 <% endpoint['routes'].each do |route| %>
   <div class="route" id="<%= slug_for(route) %>">
-    <pre><h3><%= route['verb'] %> <%= route['uri'] %></h3></pre>
+    <h3><%= route['verb'] %> <%= route['uri'] %></h3>
     <% if route['scope'] %>
       <p>
-        <h5>Required autorization scope: <span class="label"><%= route['scope'] %></span></h5>
+        <h5>Required authorization scope: <span class="label"><%= route['scope'] %></span></h5>
       </p>
     <% end %>
     <%= docs_for route %>
@@ -237,11 +201,7 @@ __END__
 
 @@ entry
 <div id="<%= id %>">
-  <div class="page-header">
-    <h1>
-      <a href="#<%= id %>"><%= title %></a>
-    </h1>
-  </div>
+  <h2><%= title %> <a class="toc-anchor" href="#<%= id %>">#</a></h2>
   <%= content %>
 </div>
 

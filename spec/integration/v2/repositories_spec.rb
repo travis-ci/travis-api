@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe 'Repos' do
-  before(:each) { Scenario.default }
-
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
@@ -76,6 +74,7 @@ describe 'Repos' do
   it 'GET /repos/1/cc.xml' do
     response = get "repos/#{repo.id}/cc.xml"
     response.should deliver_cc_xml_for(Repository.by_slug('svenfuchs/minimal').first)
+    response.content_type.should eq('application/xml;charset=utf-8')
   end
 
   it 'GET /repos/svenfuchs/minimal' do
@@ -88,14 +87,25 @@ describe 'Repos' do
     response.should deliver_cc_xml_for(Repository.by_slug('svenfuchs/minimal').first)
   end
 
+  it 'does not respond with cc.xml for /repos list' do
+    response = get '/repos', {}, 'HTTP_ACCEPT' => 'application/xml; version=2'
+    response.status.should == 406
+  end
+
+  it 'responds with 404 when repo can\'t be found and format is png' do
+    result = get('/repos/foo/bar.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
+    result.status.should == 404
+  end
+
+  it 'responds with 404 when repo can\'t be found and format is other than png' do
+    result = get('/repos/foo/bar', {}, 'HTTP_ACCEPT' => 'application/json; version=2')
+    result.status.should == 404
+    JSON.parse(result.body).should == { 'file' => 'not found' }
+  end
+
   describe 'GET /repos/svenfuchs/minimal.png?branch=foo,bar' do
     let(:on_foo) { Factory(:commit, branch: 'foo') }
     let(:on_bar) { Factory(:commit, branch: 'bar') }
-
-    it '"unknown" when the repository does not exist' do
-      result = get('/repos/svenfuchs/does-not-exist.png?branch=foo,bar', {}, headers)
-      result.should deliver_result_image_for('unknown')
-    end
 
     it '"unknown" when it only has unfinished builds on the relevant branches' do
       Build.delete_all
@@ -117,6 +127,7 @@ describe 'Repos' do
       Factory(:build, repository: repo, state: :passed, commit: on_bar)
       result = get('/repos/svenfuchs/minimal.png?branch=foo,bar', {}, headers)
       result.should deliver_result_image_for('passing')
+      result.headers['Last-Modified'].should == repo.last_build_finished_at.httpdate
     end
 
     it '"passing" when there is a running build but the previous one has passed' do

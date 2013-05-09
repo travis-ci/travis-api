@@ -24,6 +24,7 @@ class Travis::Api::App
 
         def extract_format
           env['PATH_INFO'].sub!(FORMAT, '')
+          env['travis.format_from_path'] = $1
           env['travis.format'] = $1 || accept_format
         end
 
@@ -40,6 +41,7 @@ class Travis::Api::App
         end
 
         def force_redirect(path)
+          path += "?#{request.query_string}" unless request.query_string.empty?
           response.body = ''
           response['Content-Length'] = '0'
           response['Content-Type'] = ''

@@ -1,6 +1,5 @@
 require 'travis/api/app'
 require 'sinatra/base'
-require 'new_relic/agent/instrumentation/rack'
 
 class Travis::Api::App
   # Superclass for any endpoint and middleware.
@@ -16,6 +15,17 @@ class Travis::Api::App
       content_type :txt
       status 501
       "This feature has not yet been implemented. Sorry :(\n\nPull Requests welcome!"
+    end
+
+    # hotfix??
+    def route_missing
+      @app ? forward : halt(404)
+    end
+
+    def call(env)
+      super
+    rescue Sinatra::NotFound
+      [404, {'Content-Type' => 'text/plain'}, ['Tell Konstantin to fix this!']]
     end
 
     configure do

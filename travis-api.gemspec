@@ -12,9 +12,14 @@ Gem::Specification.new do |s|
     "Sven Fuchs",
     "Konstantin Haase",
     "Piotr Sarnacki",
+    "Henrik Hodne",
     "Mathias Meyer",
+    "Josh Kalderimis",
+    "Andre Arko",
+    "Erik Michaels-Ober",
+    "Steve Richert",
     "Brian Ford",
-    "Henrik Hodne"
+    "Nick Schonning"
   ]
 
   s.email = [
@@ -22,12 +27,18 @@ Gem::Specification.new do |s|
     "konstantin.mailinglists@googlemail.com",
     "drogus@gmail.com",
     "meyer@paperplanes.de",
+    "me@henrikhodne.com",
     "svenfuchs@artweb-design.de",
+    "josh.kalderimis@gmail.com",
+    "andre@arko.net",
+    "sferik@gmail.com",
+    "steve.richert@gmail.com",
     "bford@engineyard.com",
-    "me@henrikhodne.com"
+    "nschonni@gmail.com"
   ]
 
   s.files = [
+    "CONTRIBUTING.md",
     "Procfile",
     "README.md",
     "Rakefile",
@@ -37,6 +48,7 @@ Gem::Specification.new do |s|
     "config/unicorn.rb",
     "docs/00_overview.md",
     "docs/01_cross_origin.md",
+    "lib/tasks/build_update_pull_request_data.rake",
     "lib/travis/api/app.rb",
     "lib/travis/api/app/access_token.rb",
     "lib/travis/api/app/base.rb",
@@ -54,6 +66,7 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/endpoint/documentation/css/bootstrap.css",
     "lib/travis/api/app/endpoint/documentation/css/bootstrap.min.css",
     "lib/travis/api/app/endpoint/documentation/css/prettify.css",
+    "lib/travis/api/app/endpoint/documentation/css/style.css",
     "lib/travis/api/app/endpoint/documentation/img/glyphicons-halflings-white.png",
     "lib/travis/api/app/endpoint/documentation/img/glyphicons-halflings.png",
     "lib/travis/api/app/endpoint/documentation/img/grid-18px-masked.png",
@@ -79,11 +92,13 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/endpoint/documentation/js/lang-xq.js",
     "lib/travis/api/app/endpoint/documentation/js/lang-yaml.js",
     "lib/travis/api/app/endpoint/documentation/js/prettify.js",
+    "lib/travis/api/app/endpoint/documentation/resources.rb",
     "lib/travis/api/app/endpoint/endpoints.rb",
     "lib/travis/api/app/endpoint/events.rb",
     "lib/travis/api/app/endpoint/home.rb",
     "lib/travis/api/app/endpoint/hooks.rb",
     "lib/travis/api/app/endpoint/jobs.rb",
+    "lib/travis/api/app/endpoint/logs.rb",
     "lib/travis/api/app/endpoint/repos.rb",
     "lib/travis/api/app/endpoint/requests.rb",
     "lib/travis/api/app/endpoint/stats.rb",
@@ -107,13 +122,18 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/responders/base.rb",
     "lib/travis/api/app/responders/image.rb",
     "lib/travis/api/app/responders/json.rb",
+    "lib/travis/api/app/responders/plain.rb",
     "lib/travis/api/app/responders/service.rb",
     "lib/travis/api/app/responders/xml.rb",
+    "public/favicon.ico",
+    "public/images/result/error.png",
     "public/images/result/failing.png",
     "public/images/result/passing.png",
+    "public/images/result/pending.png",
     "public/images/result/unknown.png",
     "script/console",
     "script/server",
+    "spec/integration/formats_handling_spec.rb",
     "spec/integration/routes.backup.rb",
     "spec/integration/v1/branches_spec.rb",
     "spec/integration/v1/builds_spec.rb",
@@ -130,6 +150,7 @@ Gem::Specification.new do |s|
     "spec/integration/v2/users_spec.rb",
     "spec/integration/v2/workers_spec.rb",
     "spec/integration/v2_spec.backup.rb",
+    "spec/integration/version_spec.rb",
     "spec/spec_helper.rb",
     "spec/support/matchers.rb",
     "spec/unit/app_spec.rb",
@@ -152,10 +173,12 @@ Gem::Specification.new do |s|
     "spec/unit/extensions/scoping_spec.rb",
     "spec/unit/extensions/smart_constants_spec.rb",
     "spec/unit/extensions/subclass_tracker_spec.rb",
+    "spec/unit/helpers/accept_spec.rb",
     "spec/unit/helpers/json_renderer_spec.rb",
     "spec/unit/middleware/logging_spec.rb",
     "spec/unit/middleware/scope_check_spec.rb",
     "spec/unit/middleware_spec.rb",
+    "spec/unit/responders/json_spec.rb",
     "spec/unit/responders/service_spec.rb",
     "travis-api.gemspec"
   ]
@@ -166,12 +189,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'hubble',          '~> 0.1'
   s.add_dependency 'backports',       '~> 2.5'
   s.add_dependency 'pg',              '~> 0.13.2'
-  s.add_dependency 'newrelic_rpm',    '~> 3.5.0'
+  s.add_dependency 'newrelic_rpm',    '~> 3.6.1.88'
   s.add_dependency 'thin',            '~> 1.4'
   s.add_dependency 'sinatra',         '~> 1.3'
   s.add_dependency 'sinatra-contrib', '~> 1.3'
   s.add_dependency 'redcarpet',       '~> 2.1'
-  s.add_dependency 'rack-ssl',        '~> 1.3'
+  s.add_dependency 'rack-ssl',        '~> 1.3', '>= 1.3.3'
   s.add_dependency 'rack-contrib',    '~> 1.1'
 end
 

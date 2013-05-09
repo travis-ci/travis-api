@@ -218,7 +218,7 @@ class Travis::Api::App
         end
 
         def user_for_github_token(token, drop_token = false)
-          data   = GH.with(token: token.to_s) { GH['user'] }
+          data   = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
           scopes = parse_scopes data.headers['x-oauth-scopes']
           halt 403, 'insufficient access: %p' unless acceptable? scopes
 

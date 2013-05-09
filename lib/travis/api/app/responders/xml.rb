@@ -16,19 +16,25 @@ module Travis::Api::App::Responders
     }
 
     def apply?
-      options[:format] == 'xml'
+      super && resource.is_a?(Repository)
     end
 
     def apply
-      halt TEMPLATE % data
+      super
+
+      TEMPLATE % data
     end
 
     private
 
+      def content_type
+        'application/xml;charset=utf-8'
+      end
+
       def data
         {
           name:     resource.slug,
-          url:      [Travis.config.domain, resource.slug].join('/'),
+          url:      File.join("https://", Travis.config.client_domain, resource.slug),
           activity: activity,
           label:    last_build.try(:number),
           status:   status,
