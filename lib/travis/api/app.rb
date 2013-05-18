@@ -86,7 +86,11 @@ module Travis::Api
           env['travis.global_prefix'] = env['SCRIPT_NAME']
         end
 
-        Middleware.subclasses.each { |m| use(m) }
+        use Travis::Api::App::Middleware::ScopeCheck
+        use Travis::Api::App::Middleware::Logging
+        use Travis::Api::App::Middleware::Metriks
+        use Travis::Api::App::Middleware::Rewrite
+
         Endpoint.subclasses.each { |e| map(e.prefix) { run(e.new) } }
       end
     end
