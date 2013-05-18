@@ -53,7 +53,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 9ecc95058bd63f9f70799c7f9f8ad41cbd39b16c
+  revision: 7931f7847fda40e788ab61a4b7724a41123128c2
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -176,13 +176,12 @@ GEM
       yajl-ruby (~> 1.1)
     i18n (0.6.1)
     journey (1.0.4)
-    json (1.7.7)
+    json (1.8.0)
     listen (1.0.3)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
-    mail (2.5.3)
-      i18n (>= 0.4.0)
+    mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     metaclass (0.0.1)
