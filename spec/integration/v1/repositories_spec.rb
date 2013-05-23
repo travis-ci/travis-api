@@ -42,7 +42,7 @@ describe 'v1 repos' do
   describe 'GET /svenfuchs/minimal.png' do
     it '"unknown" when it only has one build that is not finished' do
       Build.delete_all
-      Factory(:build, repository: repo, state: :created, result: nil)
+      Factory(:build, repository: repo, state: :created)
       repo.builds.update_all(state: 'started')
       get('/svenfuchs/minimal.png').should deliver_result_image_for('unknown')
     end
@@ -58,7 +58,7 @@ describe 'v1 repos' do
     end
 
     it '"passing" when there is a running build but the previous one has passed' do
-      Factory(:build, repository: repo, state: :finished, result: nil, previous_result: 0)
+      Factory(:build, repository: repo, state: :passed, previous_state: :passed)
       repo.update_attributes!(last_build_state: 'started')
       get('/svenfuchs/minimal.png').should deliver_result_image_for('passing')
     end
