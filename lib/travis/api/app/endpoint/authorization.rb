@@ -272,6 +272,8 @@ class Travis::Api::App
           return unless uri = Addressable::URI.parse(target_origin)
           if uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
             uri.scheme == 'https'
+          elsif uri.host =~ /\A(.+\.)?travis-lite\.com\Z/
+            uri.scheme == 'https'
           elsif uri.host == 'localhost' or uri.host == '127.0.0.1'
             uri.port > 1023
           end
