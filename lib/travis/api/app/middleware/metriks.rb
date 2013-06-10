@@ -4,6 +4,8 @@ require 'metriks'
 class Travis::Api::App
   class Middleware
     class Metriks < Middleware
+      include Helpers::Accept
+
       before do
         env['metriks.request.start'] = Time.now.utc
         ::Metriks.meter("api.requests").mark
@@ -20,6 +22,7 @@ class Travis::Api::App
           ::Metriks.meter("api.request.#{request.request_method.downcase}").mark
         end
         ::Metriks.meter("api.request.status.#{response.status.to_s[0]}").mark
+        ::Metriks.meter("api.request.version.#{version}").mark
       end
     end
   end
