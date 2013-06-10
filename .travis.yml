@@ -1,13 +1,8 @@
 language: ruby
 rvm:
   - 1.9.3
-  - rbx-19mode
-  - jruby-19mode
+  - 2.0.0
 before_script:
   - 'RAILS_ENV=test rake db:create db:schema:load --trace'
 notifications:
   irc: "irc.freenode.org#travis"
-matrix:
-  allow_failures:
-    - rvm: rbx-19mode
-    - rvm: jruby-19mode
