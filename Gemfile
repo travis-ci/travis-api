@@ -9,9 +9,6 @@ gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: '
 gem 'sinatra'          #github: 'sinatra/sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
 
-# TODO need to release the gem as soon i'm certain this change makes sense
-gem 'simple_states',      github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
-
 gem 'puma', '1.6.3'
 gem "sentry-raven",    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
