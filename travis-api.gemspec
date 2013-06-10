@@ -12,29 +12,32 @@ Gem::Specification.new do |s|
     "Sven Fuchs",
     "Konstantin Haase",
     "Piotr Sarnacki",
+    "Josh Kalderimis",
     "Henrik Hodne",
     "Mathias Meyer",
-    "Josh Kalderimis",
     "Andre Arko",
     "Erik Michaels-Ober",
     "Steve Richert",
     "Brian Ford",
-    "Nick Schonning"
+    "Nick Schonning",
+    "James Dennes"
   ]
 
   s.email = [
     "me@svenfuchs.com",
     "konstantin.mailinglists@googlemail.com",
     "drogus@gmail.com",
-    "meyer@paperplanes.de",
-    "me@henrikhodne.com",
-    "svenfuchs@artweb-design.de",
     "josh.kalderimis@gmail.com",
+    "me@henrikhodne.com",
+    "meyer@paperplanes.de",
+    "svenfuchs@artweb-design.de",
     "andre@arko.net",
     "sferik@gmail.com",
     "steve.richert@gmail.com",
     "bford@engineyard.com",
-    "nschonni@gmail.com"
+    "jdennes@gmail.com",
+    "nschonni@gmail.com",
+    "konstantin.haase@gmail.com"
   ]
 
   s.files = [
@@ -48,6 +51,7 @@ Gem::Specification.new do |s|
     "config/unicorn.rb",
     "docs/00_overview.md",
     "docs/01_cross_origin.md",
+    "lib/tasks/build_update_branch.rake",
     "lib/tasks/build_update_pull_request_data.rake",
     "lib/travis/api/app.rb",
     "lib/travis/api/app/access_token.rb",
@@ -111,6 +115,7 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/helpers.rb",
     "lib/travis/api/app/helpers/accept.rb",
     "lib/travis/api/app/helpers/current_user.rb",
+    "lib/travis/api/app/helpers/db_follower.rb",
     "lib/travis/api/app/helpers/flash.rb",
     "lib/travis/api/app/helpers/mime_types.rb",
     "lib/travis/api/app/helpers/respond_with.rb",
@@ -134,7 +139,9 @@ Gem::Specification.new do |s|
     "script/console",
     "script/server",
     "spec/integration/formats_handling_spec.rb",
+    "spec/integration/responders_spec.rb",
     "spec/integration/routes.backup.rb",
+    "spec/integration/scopes_spec.rb",
     "spec/integration/v1/branches_spec.rb",
     "spec/integration/v1/builds_spec.rb",
     "spec/integration/v1/hooks_spec.rb",
@@ -153,6 +160,7 @@ Gem::Specification.new do |s|
     "spec/integration/version_spec.rb",
     "spec/spec_helper.rb",
     "spec/support/matchers.rb",
+    "spec/unit/access_token_spec.rb",
     "spec/unit/app_spec.rb",
     "spec/unit/cors_spec.rb",
     "spec/unit/default_spec.rb",
@@ -186,7 +194,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'travis-support'
   s.add_dependency 'travis-core'
 
-  s.add_dependency 'hubble',          '~> 0.1'
   s.add_dependency 'backports',       '~> 2.5'
   s.add_dependency 'pg',              '~> 0.13.2'
   s.add_dependency 'newrelic_rpm',    '~> 3.6.1.88'
