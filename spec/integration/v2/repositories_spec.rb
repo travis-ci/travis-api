@@ -9,7 +9,7 @@ describe 'Repos' do
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
-    before { user.permissions.create!(:repository_id => repo.id, :push => true) }
+    before { user.permissions.create!(:repository_id => repo.id, :admin => true) }
 
     it 'POST /repos/:id/key' do
       expect {
