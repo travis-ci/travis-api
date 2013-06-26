@@ -37,7 +37,7 @@ class Travis::Api::App
       disable  :protection, :logging, :setup
       enable   :raise_errors
       # disable  :dump_errors
-      register :subclass_tracker
+      register :subclass_tracker, :expose_pattern
       helpers  :respond_with, :mime_types
     end
 
