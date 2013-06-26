@@ -8,7 +8,6 @@ class Travis::Api::App
 
       before do
         env['metriks.request.start'] = Time.now.utc
-        ::Metriks.meter("api.requests").mark
       end
 
       after do
@@ -18,6 +17,7 @@ class Travis::Api::App
             pattern = headers['X-Pattern'].gsub(/[:\/]/, ".")
             metric = "api.request.endpoint.#{pattern}"
             ::Metriks.timer(metric).update(time)
+            ::Metriks.timer('api.requests').update(time)
           end
           ::Metriks.meter("api.request.#{request.request_method.downcase}").mark
         end
