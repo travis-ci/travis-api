@@ -13,9 +13,9 @@ class Travis::Api::App
       after do
         if response.status < 400
           time = Time.now.utc - env['metriks.request.start']
-          if headers['X-Pattern']
-            pattern = headers['X-Pattern'].gsub(/[:\/]/, ".")
-            metric = "api.request.endpoint.#{pattern}"
+          if headers['X-Pattern'].present? and headers['X-Endpoint'].present?
+            name = "#{(headers['X-Endpoint'].split("::", 5).last.gsub(/::/, ".")).downcase}#{headers['X-Pattern'].gsub(/[\/]/, '.').gsub(/[:\?\*]/, "_")}"
+            metric = "api.request.endpoint.#{name}"
             ::Metriks.timer(metric).update(time)
             ::Metriks.timer('api.requests').update(time)
           end
