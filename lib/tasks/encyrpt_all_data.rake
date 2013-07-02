@@ -12,11 +12,11 @@ namespace :db do
 
     encrypted_column = Travis::Model::EncryptedColumn.new
     to_encrypt.each do |model, column_names|
-      model.find_in_batches do |records|
+      model.find_in_batches(batch_size: 10000) do |records|
         ActiveRecord::Base.transaction do
+          puts "Encrypted 10000 of #{model}##{column} (last_id: #{records.last.id})"
           records.each do |record|
             column_names.each do |column|
-              puts "Encrypting #{model}##{column} (id: #{record.id})"
 
               data = record.send(column)
               if encrypted_column.encrypt?(data)
