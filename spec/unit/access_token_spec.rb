@@ -10,7 +10,7 @@ describe Travis::Api::App::AccessToken do
   it 'allows to skip expires_in' do
     expect {
       described_class.new(app_id: 1, user_id: 2, expires_in: nil)
-    }.to_not raise_error(ArgumentError)
+    }.to_not raise_error
   end
 
   it 'does not reuse token if expires_in is set' do
