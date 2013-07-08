@@ -6,26 +6,26 @@ gemspec
 gem 'travis-core',     github: 'travis-ci/travis-core'
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: 'cde9741'
-gem 'sinatra'          #github: 'sinatra/sinatra'
+gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
 
-gem 'puma', '1.6.3'
-gem "sentry-raven",    github: 'getsentry/raven-ruby'
+gem 'puma',            '2.3.1'
+gem 'sentry-raven',    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
 gem 'rack-cache',      '~> 1.2'
-gem 'gh',              github: 'rkh/gh'
+gem 'gh'
 gem 'bunny'
 gem 'dalli'
 gem 'pry'
-gem 'metriks',         '0.9.9.2'
+gem 'metriks',         '0.9.9.5'
 
 gem 'ar-octopus',      github: 'travis-ci/octopus', require: nil
 
 group :test do
-  gem 'rspec',        '~> 2.11'
-  gem 'factory_girl', '~> 2.4.0'
-  gem 'mocha',        '~> 0.12'
+  gem 'rspec',         '~> 2.11'
+  gem 'factory_girl',  '~> 2.4.0'
+  gem 'mocha',         '~> 0.12'
   gem 'database_cleaner', '~> 0.8.0'
 end
 
