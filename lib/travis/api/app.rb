@@ -64,6 +64,16 @@ module Travis::Api
 
     def initialize
       @app = Rack::Builder.app do
+        Rack::Utils::HTTP_STATUS_CODES[420] = "Enhance Your Calm"
+        use Rack::Attack
+        Rack::Attack.blacklist('block client requesting ruby builds') do |req|
+          req.ip == "130.15.4.210"
+        end
+
+        Rack::Attack.blacklisted_response = lambda do |env|
+          [ 420, {}, ['Enhance Your Calm']]
+        end
+
         use Travis::Api::App::Cors
         use Raven::Rack if Endpoint.production?
         use Rack::Protection::PathTraversal
@@ -85,12 +95,6 @@ module Travis::Api
 
         use Rack::Config do |env|
           env['travis.global_prefix'] = env['SCRIPT_NAME']
-        end
-
-        use Rack::Attack
-
-        Rack::Attack.blacklist('block client requesting ruby builds') do |req|
-          req.ip == "130.15.4.210"
         end
 
         use Travis::Api::App::Middleware::ScopeCheck
