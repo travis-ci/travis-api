@@ -196,6 +196,8 @@ class Travis::Api::App
         end
 
         class UserManager < Struct.new(:data, :token, :drop_token)
+          include User::Renaming
+
           def info(attributes = {})
             info = data.to_hash.slice('name', 'login', 'gravatar_id')
             info.merge! attributes.stringify_keys
@@ -207,10 +209,15 @@ class Travis::Api::App
             user   = ::User.find_by_github_id(data['id'])
             info   = drop_token ? info : info(github_oauth_token: token)
 
-            if user
-              user.update_attributes info
-            else
-              user = ::User.create! info
+            ActiveRecord::Base.transaction do
+              if user
+                rename_repos_owner(user.login, info['login'])
+                user.update_attributes info
+              else
+                user = ::User.create! info
+              end
+
+              nullify_logins(user.github_id, user.login)
             end
 
             user
