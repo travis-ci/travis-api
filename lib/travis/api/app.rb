@@ -4,6 +4,7 @@ require 'rack'
 require 'rack/protection'
 require 'rack/contrib'
 require 'rack/cache'
+require 'rack/attack'
 require 'active_record'
 require 'redis'
 require 'gh'
@@ -84,6 +85,12 @@ module Travis::Api
 
         use Rack::Config do |env|
           env['travis.global_prefix'] = env['SCRIPT_NAME']
+        end
+
+        use Rack::Attack
+
+        Rack::Attack.blacklist('block client requesting ruby builds') do |req|
+          req.ip == "130.15.4.210"
         end
 
         use Travis::Api::App::Middleware::ScopeCheck
