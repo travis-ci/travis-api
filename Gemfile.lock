@@ -32,7 +32,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 95a2c894431665ca8ef3326d9504debbbc0f4f4a
+  revision: dc8f1b1199078fb82d3c9ef55f55f6c16a6f7edf
+  branch: hh-update-user-when-renamed
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
