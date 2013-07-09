@@ -25,6 +25,18 @@ describe 'Builds' do
     response.should deliver_json_for(repo.builds.order('id DESC'), version: 'v2', type: :builds)
   end
 
+  it 'GET /repos/svenfuchs/minimal/builds?ids=1,2' do
+    ids = repo.builds.map(&:id).sort.join(',')
+    response = get "/repos/svenfuchs/minimal/builds?ids=#{ids}", {}, headers
+    response.should deliver_json_for(repo.builds.order('id ASC'), version: 'v2')
+  end
+
+  it 'GET /builds?ids=1,2' do
+    ids = repo.builds.map(&:id).sort.join(',')
+    response = get "/builds?ids=#{ids}", {}, headers
+    response.should deliver_json_for(repo.builds.order('id ASC'), version: 'v2')
+  end
+
   it 'GET /repos/svenfuchs/minimal/builds/1' do
     response = get "/repos/svenfuchs/minimal/builds/#{build.id}", {}, headers
     response.should deliver_json_for(build, version: 'v2')

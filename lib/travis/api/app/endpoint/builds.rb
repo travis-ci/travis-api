@@ -5,6 +5,7 @@ class Travis::Api::App
     class Builds < Endpoint
       get '/' do
         name = params[:branches] ? :find_branches : :find_builds
+        params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
         respond_with service(name, params)
       end
 

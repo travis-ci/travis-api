@@ -63,6 +63,8 @@ class Travis::Api::App
       #
       # json(:builds)
       get '/:owner_name/:name/builds' do
+        name = params[:branches] ? :find_branches : :find_builds
+        params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
         respond_with service(:find_builds, params)
       end
 
