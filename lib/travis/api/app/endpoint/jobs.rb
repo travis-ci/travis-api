@@ -28,6 +28,10 @@ class Travis::Api::App
         end
       end
 
+      get "/:job_id/metadata" do
+        respond_with service(:find_metadata, params)
+      end
+
       def archive_url(path)
         "https://s3.amazonaws.com/#{hostname('archive')}#{path}"
       end

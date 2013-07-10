@@ -75,4 +75,11 @@ describe 'Jobs' do
       end
     end
   end
+
+  it "/jobs/:id/metadata" do
+    metadata_provider = Factory(:metadata_provider)
+    metadata = metadata_provider.metadata.create(job_id: job.id, description: "Foobar")
+    response = get "/jobs/#{job.id}/metadata", {}, headers
+    response.should deliver_json_for(Metadata.where(id: metadata.id), version: 'v2')
+  end
 end
