@@ -28,15 +28,15 @@ class Travis::Api::App
         end
       end
 
-      get "/:job_id/metadata" do
-        respond_with service(:find_metadata, params)
+      get "/:job_id/annotations" do
+        respond_with service(:find_annotations, params)
       end
 
-      put "/:job_id/metadata" do
+      post "/:job_id/annotations" do
         if params[:description]
-          metadata = service(:update_metadata, params).run
+          annotation = service(:update_annotation, params).run
 
-          status metadata ? 204 : 401
+          status annotation ? 204 : 401
         else
           status 422
 
