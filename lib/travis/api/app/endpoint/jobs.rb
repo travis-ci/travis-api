@@ -32,6 +32,18 @@ class Travis::Api::App
         respond_with service(:find_metadata, params)
       end
 
+      put "/:job_id/metadata" do
+        if params[:description]
+          metadata = service(:update_metadata, params).run
+
+          status metadata ? 204 : 401
+        else
+          status 422
+
+          { "error" => "Must include a description" }
+        end
+      end
+
       def archive_url(path)
         "https://s3.amazonaws.com/#{hostname('archive')}#{path}"
       end

@@ -76,10 +76,35 @@ describe 'Jobs' do
     end
   end
 
-  it "/jobs/:id/metadata" do
+  it "GET /jobs/:id/metadata" do
     metadata_provider = Factory(:metadata_provider)
     metadata = metadata_provider.metadata.create(job_id: job.id, description: "Foobar")
     response = get "/jobs/#{job.id}/metadata", {}, headers
     response.should deliver_json_for(Metadata.where(id: metadata.id), version: 'v2')
+  end
+
+  describe "PUT /jobs/:id/metadata" do
+    context "with valid credentials" do
+      it "responds with a 204" do
+        metadata_provider = Factory(:metadata_provider)
+        response = put "/jobs/#{job.id}/metadata", { username: metadata_provider.api_username, key: metadata_provider.api_key, description: "Foobar" }, headers
+        response.status.should eq(204)
+      end
+    end
+
+    context "without a description" do
+      it "responds with a 422" do
+        metadata_provider = Factory(:metadata_provider)
+        response = put "/jobs/#{job.id}/metadata", { username: metadata_provider.api_username, key: metadata_provider.api_key }, headers
+        response.status.should eq(422)
+      end
+    end
+
+    context "with invalid credentials" do
+      it "responds with a 401" do
+        response = put "/jobs/#{job.id}/metadata", { username: "invalid-username", key: "invalid-key", description: "Foobar" }, headers
+        response.status.should eq(401)
+      end
+    end
   end
 end
