@@ -24,7 +24,7 @@ gem 'metriks',         '0.9.9.5'
 gem 'ar-octopus',      github: 'travis-ci/octopus', require: nil
 
 group :test do
-  gem 'rspec',         '~> 2.13.0'
+  gem 'rspec',         '~> 2.13'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
   gem 'database_cleaner', '~> 0.8.0'
