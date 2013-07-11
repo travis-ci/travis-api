@@ -64,6 +64,8 @@ module Travis::Api
 
     def initialize
       @app = Rack::Builder.app do
+        use(Rack::Config) { |env| env["HTTP_X_MIDDLEWARE_START"] ||= "t=#{(Time.now.to_f * 1000000).to_i}" }
+
         Rack::Utils::HTTP_STATUS_CODES[420] = "Enhance Your Calm"
         use Rack::Attack
         Rack::Attack.blacklist('block client requesting ruby builds') do |req|
