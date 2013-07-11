@@ -11,7 +11,7 @@ class Travis::Api::App
       end
 
       after do
-        if queue_start = time(env['HTTP_X_QUEUE_START'])
+        if queue_start = time(env['HTTP_X_QUEUE_START']) || time(env['HTTP_X_REQUEST_START'])
           time = env['metriks.request.start'] - queue_start
           ::Metriks.timer('api.request_queue').update(time)
         end
@@ -35,7 +35,7 @@ class Travis::Api::App
         value = value.to_f
         start = env['metriks.request.start'].to_f
         value /= 1000 while value > start
-        value if value > 946684800
+        Time.at(value) if value > 946684800
       end
     end
   end
