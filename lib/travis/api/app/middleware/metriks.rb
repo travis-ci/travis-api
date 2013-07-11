@@ -11,7 +11,7 @@ class Travis::Api::App
       end
 
       after do
-        if queue_start = time(env['HTTP_X_QUEUE_START'])
+        if queue_start = time(env['HTTP_X_QUEUE_START']) || time(env['HTTP_X_REQUEST_START'])
           time = env['metriks.request.start'] - queue_start
           ::Metriks.timer('api.request_queue').update(time)
         end
