@@ -64,7 +64,7 @@ module Travis::Api
 
     def initialize
       @app = Rack::Builder.app do
-        use(Rack::Config) { |env| env["HTTP_X_MIDDLEWARE_START"] ||= "t=#{(Time.now.to_f * 1000000).to_i}" }
+        use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
         Rack::Utils::HTTP_STATUS_CODES[420] = "Enhance Your Calm"
         use Rack::Attack
