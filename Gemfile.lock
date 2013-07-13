@@ -1,11 +1,10 @@
 GIT
   remote: git://github.com/getsentry/raven-ruby.git
-  revision: 299f326b420f9d80cfeea9d4e7bfd66ac93f5ad2
+  revision: eb1a0072af1132594c574cc6a64618cf900e4810
   specs:
     sentry-raven (0.5.0)
       faraday (>= 0.7.6)
       hashie (>= 1.1.0)
-      multi_json (~> 1.0)
       uuidtools
 
 GIT
@@ -32,7 +31,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 70f0cd27822662d713edef2855a9a3aaa217f311
+  revision: f8f12caaed106f7447ec723e21d837253025e971
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -137,7 +136,7 @@ GEM
     dotenv (0.8.0)
     erubis (2.7.0)
     eventmachine (1.0.3)
-    facter (1.7.1)
+    facter (1.7.2)
     factory_girl (2.4.2)
       activesupport
     faraday (0.8.7)
@@ -279,7 +278,7 @@ PLATFORMS
 
 DEPENDENCIES
   ar-octopus!
-  bunny
+  bunny (~> 0.8.0)
   dalli
   database_cleaner (~> 0.8.0)
   factory_girl (~> 2.4.0)
