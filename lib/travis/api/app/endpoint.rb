@@ -14,7 +14,7 @@ class Travis::Api::App
 
     # TODO hmmm?
     before { flash.clear }
-    before { content_type :json }
+    after { content_type :json unless content_type }
 
     error(ActiveRecord::RecordNotFound, Sinatra::NotFound) { not_found }
     not_found { content_type =~ /json/ ? { 'file' => 'not found' } : 'file not found' }
