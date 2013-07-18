@@ -32,7 +32,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 4f702e91b7a792b20082f470029c357f9ecda67d
+  revision: 44a9d7780e3f7bd298b667c885f6c96b822aa2fb
   branch: hh-update-user-when-renamed
   specs:
     travis-core (0.0.1)
