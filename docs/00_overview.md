@@ -19,4 +19,5 @@ Official, maintained by the Travis CI team:
 
 Unofficial:
 
-* **[Travis Node.js](https://github.com/pwmckenna/node-travis-ci)**: Node.js Travis CI client.
+* **[Travis Node.js](https://github.com/pwmckenna/node-travis-ci)**: Node.js client library.
+* **[PHP Travis Client](https://github.com/l3l0/php-travis-client)**: PHP client library
