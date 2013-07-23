@@ -14,11 +14,13 @@ The API is currently [JSON](http://en.wikipedia.org/wiki/JSON) only.
 
 Official, maintained by the Travis CI team:
 
-* **[Travis Web](https://github.com/travis-ci/travis-web)**: Web interface and JavaScript library, using [Ember.js](http://emberjs.com/).
-* **[travis](https://github.com/travis-ci/travis)**: Command line client and Ruby library.
+* **[Travis Web](https://github.com/travis-ci/travis-web)**: Web interface and JavaScript library, using [Ember.js](http://emberjs.com/)
+* **[travis](https://github.com/travis-ci/travis)**: Command line client and Ruby library
 
 Unofficial:
 
-* **[Travis Node.js](https://github.com/pwmckenna/node-travis-ci)**: Node.js client library.
 * **[PHP Travis Client](https://github.com/l3l0/php-travis-client)**: PHP client library
+* **[Travis Node.js](https://github.com/pwmckenna/node-travis-ci)**: Node.js client library
 * **[travis-api-wrapper](https://github.com/cmaujean/travis-api-wrapper)**: Asynchronous Node.js wrapper
+* **[travis-ci](https://github.com/mmalecki/node-travis-ci)**: Thin Node.js wrapper
+* **[TravisMiner](https://github.com/smcintosh/travisminer)**: Ruby library for mining the Travis API
