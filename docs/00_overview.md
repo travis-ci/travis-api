@@ -13,3 +13,4 @@ The API is currently [JSON](http://en.wikipedia.org/wiki/JSON) only.
 ## Clients and Libraries
 
 * **[Travis Web](https://github.com/travis-ci/travis-web)**: The official Travis CI client, using [Ember.js](http://emberjs.com/).
+* **[Travis Node.js](https://github.com/pwmckenna/node-travis-ci)**: The un-official Node.js Travis CI client.
