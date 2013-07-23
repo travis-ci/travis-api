@@ -15,6 +15,7 @@ The API is currently [JSON](http://en.wikipedia.org/wiki/JSON) only.
 Official, maintained by the Travis CI team:
 
 * **[Travis Web](https://github.com/travis-ci/travis-web)**: Web interface and JavaScript library, using [Ember.js](http://emberjs.com/).
+* **[travis](https://github.com/travis-ci/travis)**: Command line client and Ruby library.
 
 Unofficial:
 
