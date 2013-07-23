@@ -21,3 +21,4 @@ Unofficial:
 
 * **[Travis Node.js](https://github.com/pwmckenna/node-travis-ci)**: Node.js client library.
 * **[PHP Travis Client](https://github.com/l3l0/php-travis-client)**: PHP client library
+* **[travis-api-wrapper](https://github.com/cmaujean/travis-api-wrapper)**: Asynchronous Node.js wrapper
