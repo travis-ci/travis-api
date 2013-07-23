@@ -1,6 +1,6 @@
 # Overview
 
-**This documentation is for the v2 API. However, this endpoint does also serve the [v1 API](http://about.travis-ci.org/docs/dev/api/).**
+**This documentation is for the v2 API. However, this endpoint does also serve the v1 API (undocumented).**
 
 Welcome to the Travis API documentation. This is the API used by the official
 [Travis CI](https://next.travis-ci.org) web interface, so everything the web
