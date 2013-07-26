@@ -207,7 +207,7 @@ class Travis::Api::App
 
           def fetch
             user   = ::User.find_by_github_id(data['id'])
-            info   = drop_token ? info : info(github_oauth_token: token)
+            info   = drop_token ? self.info : self.info(github_oauth_token: token)
 
             ActiveRecord::Base.transaction do
               if user
