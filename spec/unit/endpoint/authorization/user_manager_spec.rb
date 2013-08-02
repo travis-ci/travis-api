@@ -29,6 +29,19 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
       { login: 'drogus', id: 456 }.stringify_keys
     }
 
+    it 'drops the token when drop_token is set to true' do
+      manager = described_class.new(data, 'abc123', true)
+
+      user = stub('user', login: 'drogus', github_id: 456)
+      User.expects(:find_by_github_id).with(456).returns(user)
+
+      attributes = { login: 'drogus', github_id: 456 }.stringify_keys
+
+      user.expects(:update_attributes).with(attributes)
+
+      manager.fetch.should == user
+    end
+
     context 'with existing user' do
       it 'updates user data' do
         user = stub('user', login: 'drogus', github_id: 456)
