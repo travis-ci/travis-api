@@ -113,7 +113,7 @@ module Travis::Api
       app.call(env)
     rescue
       if Endpoint.production?
-        [500, {'Content-Type' => 'text/plain'}, ['Travis encountered an error, sorry :(']]
+        [500, {'Content-Type' => 'application/json'}, ["{'error': 'Travis encountered an error, sorry :('}"]]
       else
         raise
       end
