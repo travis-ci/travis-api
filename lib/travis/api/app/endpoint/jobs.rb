@@ -36,5 +36,26 @@ class Travis::Api::App
         "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
       end
     end
+
+    post '/:id/cancel' do
+      service = self.service(:cancel_job, params)
+      if !service.authorized?
+        json = { error: {
+          message: "You don't have access to cancel job(#{params[:id]})"
+        } }
+        status 403
+        respond_with json
+      elsif !service.can_cancel?
+        json = { error: {
+          message: "The job(#{params[:id]}) can't be canceled",
+          code: 'cant_cancel'
+        } }
+        status 422
+        respond_with json
+      else
+        service.run
+        status 204
+      end
+    end
   end
 end
