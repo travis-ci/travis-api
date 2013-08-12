@@ -31,7 +31,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 3f81ddd5400708b17a9f911097d2a2b92cf6a574
+  revision: b9dbba258ce9dc295bca141f84b7b77f9ac2325d
   branch: ps-cancel
   specs:
     travis-core (0.0.1)
@@ -176,7 +176,7 @@ GEM
     mime-types (1.23)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.7.8)
+    multi_json (1.7.9)
     multipart-post (1.2.0)
     net-http-persistent (2.9)
     net-http-pipeline (1.0.1)
