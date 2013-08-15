@@ -4,7 +4,6 @@ namespace :db do
     Travis::Database.connect
 
     to_encrypt = {
-      Request => [:token],
       SslKey  => [:private_key],
       Token   => [:token],
       User    => [:github_oauth_token]
@@ -12,9 +11,9 @@ namespace :db do
 
     encrypted_column = Travis::Model::EncryptedColumn.new
     to_encrypt.each do |model, column_names|
-      model.find_in_batches(batch_size: 10000) do |records|
+      model.find_in_batches(batch_size: 500) do |records|
         ActiveRecord::Base.transaction do
-          puts "Encrypted 10000 of #{model} (last_id: #{records.last.id})"
+          puts "Encrypted 500 of #{model} (last_id: #{records.last.id})"
           records.each do |record|
             column_names.each do |column|
 
@@ -25,6 +24,8 @@ namespace :db do
             end
           end
         end
+
+        sleep 10
       end
     end
   end
