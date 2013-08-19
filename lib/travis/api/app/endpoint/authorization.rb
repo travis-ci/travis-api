@@ -324,13 +324,19 @@ class Travis::Api::App
 
         def target_ok?(target_origin)
           return unless uri = Addressable::URI.parse(target_origin)
-          if uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
+          if allowed_https_targets.include?(uri.host)
+            uri.scheme == 'https'
+          elsif uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
             uri.scheme == 'https'
           elsif uri.host =~ /\A(.+\.)?travis-lite\.com\Z/
             uri.scheme == 'https'
           elsif uri.host == 'localhost' or uri.host == '127.0.0.1'
             uri.port > 1023
           end
+        end
+
+        def allowed_https_targets
+          @allowed_https_targets ||= Travis.config.auth.api.target_origin.split(',')
         end
     end
   end
