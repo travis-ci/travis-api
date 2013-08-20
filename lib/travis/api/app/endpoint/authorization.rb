@@ -336,7 +336,7 @@ class Travis::Api::App
         end
 
         def allowed_https_targets
-          @allowed_https_targets ||= Travis.config.auth.api.target_origin.split(',')
+          @allowed_https_targets ||= Travis.config.auth.target_origin.to_s.split(',')
         end
     end
   end
