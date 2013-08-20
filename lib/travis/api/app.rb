@@ -180,7 +180,7 @@ module Travis::Api
       def self.setup_monitoring
         Raven.configure do |config|
           config.dsn = Travis.config.sentry.dsn
-        end if Travis.config.sentry
+        end if Travis.config.sentry.dsn
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         Travis::Notification.setup(instrumentation: false)
