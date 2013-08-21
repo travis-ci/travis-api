@@ -38,6 +38,8 @@ class Travis::Api::App
     end
 
     post '/:id/cancel' do
+      Metriks.meter("api.request.cancel_job").mark
+
       service = self.service(:cancel_job, params)
       if !service.authorized?
         json = { error: {
@@ -62,8 +64,6 @@ class Travis::Api::App
         Metriks.meter("api.request.cancel_job.success").mark
         status 204
       end
-
-      Metriks.meter("api.request.cancel_job").mark
     end
   end
 end
