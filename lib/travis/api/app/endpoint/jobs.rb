@@ -43,6 +43,8 @@ class Travis::Api::App
         json = { error: {
           message: "You don't have access to cancel job(#{params[:id]})"
         } }
+
+        Metriks.meter("api.request.cancel_job.unauthorized").mark
         status 403
         respond_with json
       elsif !service.can_cancel?
@@ -50,12 +52,18 @@ class Travis::Api::App
           message: "The job(#{params[:id]}) can't be canceled",
           code: 'cant_cancel'
         } }
+
+        Metriks.meter("api.request.cancel_job.cant_cancel").mark
         status 422
         respond_with json
       else
         service.run
+
+        Metriks.meter("api.request.cancel_job.success").mark
         status 204
       end
+
+      Metriks.meter("api.request.cancel_job").mark
     end
   end
 end
