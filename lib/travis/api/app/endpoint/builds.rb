@@ -14,8 +14,6 @@ class Travis::Api::App
         end
       end
 
-      end
-
       post '/:id/cancel' do
         Metriks.meter("api.request.cancel_build").mark
 
