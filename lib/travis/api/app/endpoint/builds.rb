@@ -4,19 +4,16 @@ class Travis::Api::App
   class Endpoint
     class Builds < Endpoint
       get '/' do
-        if params[:branches]
-          params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-          respond_with service(:find_branches, params)
+        name = params[:branches] ? :find_branches : :find_builds
+        params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
+
+        if params['ids'].empty?
+          respond_with({})
         else
-          respond_with {}
+          respond_with service(name, params)
         end
-        # name = params[:branches] ? :find_branches : :find_builds
-        # params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-        # respond_with service(name, params)
       end
 
-      get '/:id' do
-        respond_with service(:find_build, params)
       end
 
       post '/:id/cancel' do
