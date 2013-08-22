@@ -7,10 +7,6 @@ class Travis::Api::App
   class Base < Sinatra::Base
     register Extensions::SmartConstants
 
-    configure :production do
-      require 'newrelic_rpm'
-    end
-
     error NotImplementedError do
       content_type :txt
       status 501
