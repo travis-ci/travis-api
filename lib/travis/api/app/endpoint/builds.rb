@@ -7,7 +7,7 @@ class Travis::Api::App
         name = params[:branches] ? :find_branches : :find_builds
         params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
 
-        if params['ids'].empty?
+        if params['ids'].blank?
           respond_with({})
         else
           respond_with service(name, params)
