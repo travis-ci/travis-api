@@ -4,9 +4,15 @@ class Travis::Api::App
   class Endpoint
     class Builds < Endpoint
       get '/' do
-        name = params[:branches] ? :find_branches : :find_builds
-        params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-        respond_with service(name, params)
+        if params[:branches]
+          params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
+          respond_with service(:find_branches, params)
+        else
+          respond_with {}
+        end
+        # name = params[:branches] ? :find_branches : :find_builds
+        # params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
+        # respond_with service(name, params)
       end
 
       get '/:id' do
