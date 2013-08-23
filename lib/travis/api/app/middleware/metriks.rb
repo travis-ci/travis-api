@@ -24,7 +24,7 @@ class Travis::Api::App
             ::Metriks.timer(metric).update(time)
             ::Metriks.timer('api.requests').update(time)
           end
-          if content_type
+          if content_type.present?
             type = content_type.split(';', 2).first.to_s.gsub(/\s/,'').gsub(/[^A-z\/]+/, '_').gsub('/', '.')
             ::Metriks.timer("api.request.content_type.#{type}").update(time)
           else
