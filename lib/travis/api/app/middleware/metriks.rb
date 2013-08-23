@@ -24,8 +24,12 @@ class Travis::Api::App
             ::Metriks.timer(metric).update(time)
             ::Metriks.timer('api.requests').update(time)
           end
-          type = content_type.split(';', 2).first.to_s.gsub(/\s/,'').gsub(/[^A-z\/]+/, '_').gsub('/', '.')
-          ::Metriks.timer("api.request.content_type.#{type}").update(time)
+          if content_type
+            type = content_type.split(';', 2).first.to_s.gsub(/\s/,'').gsub(/[^A-z\/]+/, '_').gsub('/', '.')
+            ::Metriks.timer("api.request.content_type.#{type}").update(time)
+          else
+            ::Metriks.timer("api.request.content_type.none").update(time)
+          end
           ::Metriks.meter("api.request.#{request.request_method.downcase}").mark
         end
 
