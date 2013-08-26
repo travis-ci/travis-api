@@ -7,8 +7,8 @@ class Travis::Api::App
         begin
           ActiveRecord::Base.connection.execute('select 1')
           [200, "OK"]
-        rescue => e
-          [500, "Error: #{e.message}"]
+        rescue Exception => e
+          return [500, "Error: #{e.message}"]
         end
       end
     end
