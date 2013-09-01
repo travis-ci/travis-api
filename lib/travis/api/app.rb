@@ -12,6 +12,7 @@ require 'raven'
 require 'sidekiq'
 require 'metriks/reporter/logger'
 require 'travis/support/log_subscriber/active_record_metrics'
+require 'fileutils'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -45,6 +46,7 @@ module Travis::Api
     def self.setup(options = {})
       setup! unless setup?
       Endpoint.set(options) if options
+      FileUtils.touch('/tmp/app-initialized')
     end
 
     def self.new(options = {})
