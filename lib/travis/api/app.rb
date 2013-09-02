@@ -85,7 +85,7 @@ module Travis::Api
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
 
-        memcache_servers = ENV['MEMCACHE_SERVERS']
+        memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
           use Rack::Cache,
             verbose: true,
