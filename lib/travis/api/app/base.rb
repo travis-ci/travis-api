@@ -9,6 +9,8 @@ class Travis::Api::App
 
     configure :production do
       require 'newrelic_rpm'
+      ::NewRelic::Agent.manual_start()
+      ::NewRelic::Agent.after_fork(:force_reconnect => true)
     end
 
     error NotImplementedError do
