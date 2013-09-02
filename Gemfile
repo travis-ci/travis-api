@@ -9,7 +9,7 @@ gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: '
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
 
-gem 'puma',            '2.3.1'
+gem 'unicorn'
 gem 'sentry-raven',    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
 gem 'rack-contrib',    github: 'rack/rack-contrib'

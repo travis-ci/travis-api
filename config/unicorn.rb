@@ -2,3 +2,10 @@
 
 worker_processes 4 # amount of unicorn workers to spin up
 timeout 30         # restarts workers that hang for 15 seconds
+
+listen '/tmp/nginx.socket', backlog: 1024
+
+require 'fileutils'
+before_fork do |server,worker|
+  FileUtils.touch('/tmp/app-initialized')
+end
