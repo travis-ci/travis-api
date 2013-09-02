@@ -3,6 +3,7 @@ require 'backports'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib'
+require 'dalli'
 require 'rack/cache'
 require 'rack/attack'
 require 'active_record'
@@ -89,8 +90,8 @@ module Travis::Api
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
           use Rack::Cache,
             verbose: true,
-            metastore:   "memcached://#{memcache_servers}/#{Travis::Api::App.deploy_sha}",
-            entitystore: "memcached://#{memcache_servers}/#{Travis::Api::App.deploy_sha}"
+            metastore:   "memcached://#{memcache_servers}/meta-#{Travis::Api::App.deploy_sha}",
+            entitystore: "memcached://#{memcache_servers}/body-#{Travis::Api::App.deploy_sha}"
         end
 
         use Rack::Deflater
