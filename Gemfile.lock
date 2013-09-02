@@ -167,6 +167,7 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    memcachier (0.0.2)
     metaclass (0.0.1)
     method_source (0.8.1)
     metriks (0.9.9.5)
@@ -288,6 +289,7 @@ DEPENDENCIES
   factory_girl (~> 2.4.0)
   foreman
   gh
+  memcachier
   metriks (= 0.9.9.5)
   micro_migrations!
   mocha (~> 0.12)

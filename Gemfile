@@ -18,6 +18,7 @@ gem 'rack-attack'
 gem 'gh'
 gem 'bunny',           '~> 0.8.0'
 gem 'dalli'
+gem 'memcachier'
 gem 'pry'
 gem 'metriks',         '0.9.9.5'
 
