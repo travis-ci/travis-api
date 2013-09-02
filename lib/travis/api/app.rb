@@ -86,7 +86,7 @@ module Travis::Api
         use ActiveRecord::QueryCache
 
         memcache_servers = ENV['MEMCACHE_SERVERS']
-        if Travis::Features.feature_active?(:use_rack_cache) && memcache_server
+        if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
           use Rack::Cache,
             verbose: true,
             metastore:   "memcached://#{memcache_servers}/#{Travis::Api::App.deploy_sha}",
