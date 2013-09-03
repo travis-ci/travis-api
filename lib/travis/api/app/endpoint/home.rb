@@ -3,13 +3,12 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Home < Endpoint
-      unless Travis.config.client_domain or test?
-        fail "Travis.config.client_domain is not set"
-      end
+      host = Travis.config.client_domain || Travis.config.host
+      fail "Travis.config.client_domain is not set" unless host or test?
 
       set :prefix, '/'
       set :client_config,
-        host: Travis.config.client_domain,
+        host: host,
         shorten_host: Travis.config.shorten_host,
         assets: Travis.config.assets,
         pusher: (Travis.config.pusher || {}).to_hash.slice(:host, :port, :scheme, :key),
