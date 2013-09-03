@@ -12,7 +12,7 @@ class Travis::Api::App
         host: Travis.config.client_domain,
         shorten_host: Travis.config.shorten_host,
         assets: Travis.config.assets,
-        pusher: { key: Travis.config.pusher.try(:key) },
+        pusher: (Travis.config.pusher || {}).to_hash.slice(:host, :port, :scheme, :key),
         github: { api_url: GH.current.api_host.to_s, scopes: Travis.config.oauth2.try(:scope).to_s.split(?,) }
 
       # Landing point. Redirects web browsers to [API documentation](#/docs/).
