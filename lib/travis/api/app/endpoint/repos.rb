@@ -13,7 +13,9 @@ class Travis::Api::App
       #
       # json(:repositories)
       get '/' do
-        respond_with service(:find_repos, params)
+        prefer_follower do
+          respond_with service(:find_repos, params)
+        end
       end
 
       # Gets the repository with the given id.
@@ -22,7 +24,9 @@ class Travis::Api::App
       #
       # json(:repository)
       get '/:id' do
-        respond_with service(:find_repo, params)
+        prefer_follower do
+          respond_with service(:find_repo, params)
+        end
       end
 
       get '/:id/cc' do
