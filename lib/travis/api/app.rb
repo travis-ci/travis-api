@@ -159,26 +159,8 @@ module Travis::Api
 
       def self.setup_database_connections
         Travis::Database.connect
-
-        return unless Travis.config.use_database_follower?
-        require 'octopus'
-
-        if Travis.env == 'production' || Travis.env == 'staging'
-          puts "Setting up the DB follower as a read slave"
-
-          # Octopus checks for Rails.env, just hardcode enabled?
-          Octopus.instance_eval do
-            def enabled?
-              true
-            end
-          end
-
-          ActiveRecord::Base.custom_octopus_connection = false
-
-          ::Octopus.setup do |config|
-            config.shards = { :follower => Travis.config.database_follower }
-            config.environments = ['production', 'staging']
-          end
+        if Travis.config.database_follower
+          Travis::Model.establish_follower_connection(Travis.config.database_follower)
         end
       end
 

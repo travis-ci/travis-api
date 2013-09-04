@@ -22,14 +22,6 @@ GIT
       yard (~> 0.7)
 
 GIT
-  remote: git://github.com/travis-ci/octopus.git
-  revision: 6e68a6c112df4de4a8495a1058be3d7cdd7f9f3d
-  specs:
-    ar-octopus (0.6.0)
-      activerecord (>= 3.0.0, < 4.0)
-      activesupport (>= 3.0.0, < 4.0)
-
-GIT
   remote: git://github.com/travis-ci/travis-core.git
   revision: f3c2b689fd8ff1986501259f270eba2bc705a9ad
   specs:
@@ -282,7 +274,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ar-octopus!
   bunny (~> 0.8.0)
   dalli
   database_cleaner (~> 0.8.0)
