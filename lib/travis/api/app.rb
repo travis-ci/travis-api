@@ -95,6 +95,7 @@ module Travis::Api
             entitystore: "memcached://#{memcache_servers}/body-#{Travis::Api::App.deploy_sha}"
         end
 
+        use Rack::Deflater
         use Rack::PostBodyContentTypeParser
         use Rack::JSONP
 
