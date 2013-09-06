@@ -4,7 +4,7 @@ class Travis::Api::App
   module Helpers
     module DbFollower
       def prefer_follower
-        if Travis::Features.feature_active?(:api_use_db_follower)
+        if Travis.config.database_follower
           Travis::Model.using_follower do
             yield
           end
