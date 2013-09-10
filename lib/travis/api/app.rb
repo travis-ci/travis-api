@@ -157,9 +157,6 @@ module Travis::Api
 
       def self.setup_database_connections
         Travis::Database.connect
-        if Travis.config.database_follower
-          Travis::Model.establish_follower_connection(Travis.config.database_follower)
-        end
       end
 
       def self.load_endpoints
