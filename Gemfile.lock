@@ -67,6 +67,7 @@ PATH
   specs:
     travis-api (0.0.1)
       backports (~> 2.5)
+      memcachier
       newrelic_rpm (~> 3.6.6)
       pg (~> 0.13.2)
       rack-contrib (~> 1.1)
@@ -173,7 +174,7 @@ GEM
     multipart-post (1.2.0)
     net-http-persistent (2.9)
     net-http-pipeline (1.0.1)
-    newrelic_rpm (3.6.6.147)
+    newrelic_rpm (3.6.7.152)
     pg (0.13.2)
     polyglot (0.3.3)
     pry (0.9.12.2)
@@ -280,7 +281,6 @@ DEPENDENCIES
   factory_girl (~> 2.4.0)
   foreman
   gh
-  memcachier
   metriks (= 0.9.9.5)
   micro_migrations!
   mocha (~> 0.12)
