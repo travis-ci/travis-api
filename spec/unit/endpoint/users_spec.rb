@@ -24,6 +24,7 @@ describe Travis::Api::App::Endpoint::Users do
       'gravatar_id'    => user.gravatar_id,
       'locale'         => user.locale,
       'is_syncing'     => user.is_syncing,
+      'created_at'     => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'synced_at'      => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'correct_scopes' => true,
     }
