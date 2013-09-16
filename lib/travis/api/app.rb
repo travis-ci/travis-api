@@ -185,6 +185,8 @@ module Travis::Api
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         Travis::Notification.setup(instrumentation: false)
 
+        # Travis::Metrics.setup from sf-te, does this conflict with the setup below?
+
         if Travis.config.librato
           email, token, source = Travis.config.librato.email,
                                          Travis.config.librato.token,

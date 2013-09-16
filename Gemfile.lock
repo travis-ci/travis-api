@@ -37,7 +37,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 35f690bfb12bb0bef90297783e7c7ab15048dfc0
+  revision: 89b65f97ef0ffd00dd36ba38645034c8bcc0e250
+  branch: sf-te
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -48,8 +49,8 @@ GIT
       hashr (~> 0.0.19)
       metriks (~> 0.9.7)
       multi_json
-      pusher (~> 0.11.0)
-      railties (~> 3.2.19)
+      pusher (~> 0.12.0)
+      railties (~> 3.2.12)
       rake
       redis (~> 3.0)
       rollout (~> 1.1.0)
@@ -68,8 +69,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: a3af474254c8d2a5c829ce4be11ca53941361974
-  ref: master-2014-10-06
+  revision: 243147664e49a168b0c2d3c40c04a786bf664f37
+  branch: sf-te
   specs:
     travis-support (0.0.1)
 
@@ -183,9 +184,9 @@ GEM
     hashie (3.1.0)
     hashr (0.0.22)
     hike (1.2.3)
-    hitimes (1.2.2)
-    i18n (0.6.11)
-    ice_nine (0.11.0)
+    hitimes (1.2.1)
+    httpclient (2.3.4.1)
+    i18n (0.6.5)
     journey (1.0.4)
     json (1.8.1)
     kgio (2.9.2)
@@ -206,9 +207,9 @@ GEM
     mime-types (1.25.1)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.10.1)
-    multipart-post (2.0.0)
-    net-http-persistent (2.9.4)
+    multi_json (1.8.0)
+    multipart-post (1.2.0)
+    net-http-persistent (2.9)
     net-http-pipeline (1.0.1)
     pg (0.13.2)
     polyglot (0.3.5)
@@ -217,7 +218,10 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    pusher (0.11.3)
+    puma (2.3.1)
+      rack (>= 1.1, < 2.0)
+    pusher (0.12.0)
+      httpclient (~> 2.3.0)
       multi_json (~> 1.0)
       signature (~> 0.1.6)
     rack (1.4.5)
