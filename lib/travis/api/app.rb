@@ -31,6 +31,7 @@ module Travis::Api
     autoload :Helpers,      'travis/api/app/helpers'
     autoload :Middleware,   'travis/api/app/middleware'
     autoload :Responders,   'travis/api/app/responders'
+    autoload :Cors,         'travis/api/app/cors'
 
     Rack.autoload :SSL, 'rack/ssl'
 
@@ -79,6 +80,7 @@ module Travis::Api
           [ 420, {}, ['Enhance Your Calm']]
         end
 
+        use Travis::Api::App::Cors unless Endpoint.production?
         use Raven::Rack if Endpoint.production?
         use Rack::Protection::PathTraversal
         use Rack::SSL if Endpoint.production?
