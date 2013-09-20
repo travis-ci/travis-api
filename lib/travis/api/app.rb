@@ -80,7 +80,7 @@ module Travis::Api
           [ 420, {}, ['Enhance Your Calm']]
         end
 
-        use Travis::Api::App::Cors unless Endpoint.production?
+        use Travis::Api::App::Cors if Travis.env == 'development'
         use Raven::Rack if Endpoint.production?
         use Rack::Protection::PathTraversal
         use Rack::SSL if Endpoint.production?
