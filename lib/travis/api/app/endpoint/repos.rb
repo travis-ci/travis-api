@@ -41,6 +41,30 @@ class Travis::Api::App
         respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
+      # Get settings for a given repository
+      #
+      get '/:id/settings' do
+        settings = service(:find_repo_settings, params).run
+        if settings
+          respond_with({ settings: settings.obfuscated }, version: :v2)
+        else
+          status 404
+        end
+      end
+
+      put '/:id/settings' do
+        settings = service(:find_repo_settings, params).run
+        if settings
+          settings.merge(params[:settings])
+          # TODO: I would like to have better API here, but leaving this
+          # for testing to not waste too much time before I can play with it
+          settings.repository.save
+          respond_with({ settings: settings.obfuscated }, version: :v2)
+        else
+          status 404
+        end
+      end
+
       # Get the public key for the repository with the given id.
       #
       # This can be used to encrypt secure variables in the build configuration. See
