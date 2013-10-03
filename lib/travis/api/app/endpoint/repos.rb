@@ -51,12 +51,12 @@ class Travis::Api::App
       end
 
       # Gets list of branches
-      get '/:id/branches' do
+      get '/:repository_id/branches' do
         respond_with service(:find_branches, params), type: :branches, version: :v2
       end
 
       # Gets lastest build on a branch branches
-      get '/:id/branches/:branch' do
+      get '/:repository_id/branches/:branch' do
         respond_with service(:find_branch, params), type: :branch, version: :v2
       end
 
