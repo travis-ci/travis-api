@@ -50,6 +50,16 @@ class Travis::Api::App
         respond_with service(:regenerate_repo_key, params), version: :v2
       end
 
+      # Gets list of branches
+      get '/:id/branches' do
+        respond_with service(:find_branches, params), type: :branches, version: :v2
+      end
+
+      # Gets lastest build on a branch branches
+      get '/:id/branches/:branch' do
+        respond_with service(:find_branch, params), type: :branch, version: :v2
+      end
+
       # Gets the repository with the given name.
       #
       # ### Response
@@ -100,6 +110,16 @@ class Travis::Api::App
 
       post '/:owner_name/:name/key' do
         respond_with service(:regenerate_repo_key, params), version: :v2
+      end
+
+      # Gets list of branches
+      get '/:owner_name/:name/branches' do
+        respond_with service(:find_branches, params), type: :branches, version: :v2
+      end
+
+      # Gets lastest build on a branch branches
+      get '/:owner_name/:name/branches/:branch' do
+        respond_with service(:find_branch, params), type: :branch, version: :v2
       end
     end
   end
