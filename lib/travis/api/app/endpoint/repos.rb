@@ -18,6 +18,14 @@ class Travis::Api::App
         end
       end
 
+      # Retrieves repositories for a given owner.
+      get '/:owner_name' do
+        pass if params[:owner_name] =~ /^\d+$/ # so we don't capture '/:id'
+        prefer_follower do
+          respond_with service(:find_repos, params)
+        end
+      end
+
       # Gets the repository with the given id.
       #
       # ### Response
