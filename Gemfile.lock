@@ -23,7 +23,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: e46364c38f57ae08d66aa2e00b0e76104712e35c
+  revision: f1b763875c5b6008b3fad1af90ff7fbe460f9ee9
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -170,7 +170,7 @@ GEM
     mime-types (1.25)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.8.0)
+    multi_json (1.8.2)
     multipart-post (1.2.0)
     net-http-persistent (2.9)
     net-http-pipeline (1.0.1)
@@ -212,7 +212,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     redcarpet (2.3.0)
-    redis (3.0.4)
+    redis (3.0.5)
     redis-namespace (1.3.0)
       redis (~> 3.0.0)
     rerun (0.8.1)
@@ -263,7 +263,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.37)
+    tzinfo (0.3.38)
     unicorn (4.6.3)
       kgio (~> 2.6)
       rack
