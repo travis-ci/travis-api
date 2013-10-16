@@ -42,7 +42,7 @@ class Travis::Api::App
     post '/:id/cancel' do
       Metriks.meter("api.request.cancel_job").mark
 
-      service = self.service(:cancel_job, params)
+      service = self.service(:cancel_job, params.merge(source: 'api'))
       if !service.authorized?
         json = { error: {
           message: "You don't have access to cancel job(#{params[:id]})"
