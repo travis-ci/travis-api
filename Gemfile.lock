@@ -52,7 +52,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: df798c71815d09c3422f29fd90ad4a73deec0f44
+  revision: f6d8589412dbdf6dae18a5a928c8a8de229ca65a
   specs:
     travis-support (0.0.1)
 
