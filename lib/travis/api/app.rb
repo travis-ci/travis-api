@@ -106,6 +106,7 @@ module Travis::Api
         use Rack::JSONP
 
         use Rack::Config do |env|
+          env['SCRIPT_NAME'] = env['HTTP_X_SCRIPT_NAME'].to_s + env['SCRIPT_NAME'].to_s
           env['travis.global_prefix'] = env['SCRIPT_NAME']
         end
 
