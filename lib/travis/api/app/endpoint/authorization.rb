@@ -78,6 +78,10 @@ class Travis::Api::App
       #
       # * **github_token**: GitHub token for checking authorization (required)
       post '/github' do
+        unless params[:github_token]
+          halt 422, { "error" => "Must pass 'github_token' parameter" }
+        end
+
         { 'access_token' => github_to_travis(params[:github_token], app_id: 1, drop_token: true) }
       end
 

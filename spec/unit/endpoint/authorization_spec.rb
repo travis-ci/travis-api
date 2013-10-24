@@ -64,5 +64,11 @@ describe Travis::Api::App::Endpoint::Authorization do
     it 'does not store the token' do
       user_for('public repos').github_oauth_token.should_not == 'public repos'
     end
+
+    it "errors if no token is given" do
+      post("/auth/github").should_not be_ok
+      last_response.status.should == 422
+      body.should_not include("access_token")
+    end
   end
 end
