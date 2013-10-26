@@ -19,6 +19,11 @@ class Travis::Api::App
       "This feature has not yet been implemented. Sorry :(\n\nPull Requests welcome!"
     end
 
+    error JSON::ParserError do
+      status 400
+      "Invalid JSON in request body"
+    end
+
     # hotfix??
     def route_missing
       @app ? forward : halt(404)
