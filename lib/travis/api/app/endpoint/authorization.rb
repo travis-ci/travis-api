@@ -210,6 +210,7 @@ class Travis::Api::App
           end
 
           def fetch
+            retried ||= false
             user   = ::User.find_by_github_id(data['id'])
             info   = drop_token ? self.info : self.info(github_oauth_token: token)
 
@@ -225,6 +226,11 @@ class Travis::Api::App
             end
 
             user
+          rescue ActiveRecord::RecordNotUnique
+            unless retried
+              retried = true
+              retry
+            end
           end
         end
 
