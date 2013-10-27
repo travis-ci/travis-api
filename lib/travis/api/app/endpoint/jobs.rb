@@ -30,41 +30,41 @@ class Travis::Api::App
         end
       end
 
+      post '/:id/cancel' do
+        Metriks.meter("api.request.cancel_job").mark
+
+        service = self.service(:cancel_job, params.merge(source: 'api'))
+        if !service.authorized?
+          json = { error: {
+            message: "You don't have access to cancel job(#{params[:id]})"
+          } }
+
+          Metriks.meter("api.request.cancel_job.unauthorized").mark
+          status 403
+          respond_with json
+        elsif !service.can_cancel?
+          json = { error: {
+            message: "The job(#{params[:id]}) can't be canceled",
+              code: 'cant_cancel'
+          } }
+
+          Metriks.meter("api.request.cancel_job.cant_cancel").mark
+          status 422
+          respond_with json
+        else
+          service.run
+
+          Metriks.meter("api.request.cancel_job.success").mark
+          status 204
+        end
+      end
+
       def archive_url(path)
         "https://s3.amazonaws.com/#{hostname('archive')}#{path}"
       end
 
       def hostname(name)
         "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
-      end
-    end
-
-    post '/:id/cancel' do
-      Metriks.meter("api.request.cancel_job").mark
-
-      service = self.service(:cancel_job, params.merge(source: 'api'))
-      if !service.authorized?
-        json = { error: {
-          message: "You don't have access to cancel job(#{params[:id]})"
-        } }
-
-        Metriks.meter("api.request.cancel_job.unauthorized").mark
-        status 403
-        respond_with json
-      elsif !service.can_cancel?
-        json = { error: {
-          message: "The job(#{params[:id]}) can't be canceled",
-          code: 'cant_cancel'
-        } }
-
-        Metriks.meter("api.request.cancel_job.cant_cancel").mark
-        status 422
-        respond_with json
-      else
-        service.run
-
-        Metriks.meter("api.request.cancel_job.success").mark
-        status 204
       end
     end
   end
