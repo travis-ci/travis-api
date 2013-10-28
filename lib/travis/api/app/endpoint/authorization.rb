@@ -202,6 +202,14 @@ class Travis::Api::App
         class UserManager < Struct.new(:data, :token, :drop_token)
           include User::Renaming
 
+          attr_accessor :user
+
+          def initialize(*)
+            super
+
+            @user = ::User.find_by_github_id(data['id'])
+          end
+
           def info(attributes = {})
             info = data.to_hash.slice('name', 'login', 'gravatar_id')
             info.merge! attributes.stringify_keys
@@ -209,9 +217,12 @@ class Travis::Api::App
             info
           end
 
+          def user_exists?
+            user
+          end
+
           def fetch
             retried ||= false
-            user   = ::User.find_by_github_id(data['id'])
             info   = drop_token ? self.info : self.info(github_oauth_token: token)
 
             ActiveRecord::Base.transaction do
@@ -219,7 +230,7 @@ class Travis::Api::App
                 rename_repos_owner(user.login, info['login'])
                 user.update_attributes info
               else
-                user = ::User.create! info
+                self.user = ::User.create! info
               end
 
               nullify_logins(user.github_id, user.login)
@@ -235,11 +246,20 @@ class Travis::Api::App
         end
 
         def user_for_github_token(token, drop_token = false)
-          data   = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
-          scopes = parse_scopes data.headers['x-oauth-scopes']
-          halt 403, 'insufficient access: %p' unless acceptable? scopes
+          data    = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
+          scopes  = parse_scopes data.headers['x-oauth-scopes']
+          manager = UserManager.new(data, token, drop_token)
 
-          user   = UserManager.new(data, token, drop_token).fetch
+          unless acceptable? scopes
+            # TODO: we should probably only redirect if this is a web
+            #      oauth request, are there any other possibilities to
+            #      consider?
+            url =  Travis.config.oauth2.insufficient_access_redirect_url
+            url += "#existing-user" if manager.user_exists?
+            redirect to(url)
+          end
+
+          user   = manager.fetch
           halt 403, 'not a Travis user' if user.nil?
           user
         end
