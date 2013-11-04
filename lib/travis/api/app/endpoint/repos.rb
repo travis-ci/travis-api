@@ -68,6 +68,16 @@ class Travis::Api::App
         respond_with service(:find_branch, params), type: :branch, version: :v2
       end
 
+      # List caches for a given repo. Can be filtered with `branch` and `match` query parameter.
+      get '/:repository_id/caches', scope: :private do
+        respond_with service(:find_caches, params), type: :caches, version: :v2
+      end
+
+      # Delete caches for a given repo. Can be filtered with `branch` and `match` query parameter.
+      delete '/:repository_id/caches', scope: :private do
+        respond_with service(:delete_caches, params), type: :caches, version: :v2
+      end
+
       # Gets the repository with the given name.
       #
       # ### Response
@@ -128,6 +138,16 @@ class Travis::Api::App
       # Gets lastest build on a branch branches
       get '/:owner_name/:name/branches/:branch' do
         respond_with service(:find_branch, params), type: :branch, version: :v2
+      end
+
+      # List caches for a given repo. Can be filtered with `branch` and `match` query parameter.
+      get '/:owner_name/:name/caches', scope: :private do
+        respond_with service(:find_caches, params), type: :caches, version: :v2
+      end
+
+      # Delete caches for a given repo. Can be filtered with `branch` and `match` query parameter.
+      delete '/:owner_name/:name/caches', scope: :private do
+        respond_with service(:delete_caches, params), type: :caches, version: :v2
       end
     end
   end

@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.authors = [
-    "Sven Fuchs",
-    "Konstantin Haase",
     "Piotr Sarnacki",
+    "Konstantin Haase",
+    "Sven Fuchs",
     "Josh Kalderimis",
     "Mathias Meyer",
     "Henrik Hodne",
@@ -20,24 +20,29 @@ Gem::Specification.new do |s|
     "Steve Richert",
     "Brian Ford",
     "Nick Schonning",
-    "James Dennes"
+    "Patrick Williams",
+    "James Dennes",
+    "Tim Carey-Smith"
   ]
 
   s.email = [
+    "drogus@gmail.com",
     "konstantin.mailinglists@googlemail.com",
     "me@svenfuchs.com",
-    "drogus@gmail.com",
     "josh.kalderimis@gmail.com",
     "meyer@paperplanes.de",
     "me@henrikhodne.com",
-    "svenfuchs@artweb-design.de",
+    "henrik@hodne.io",
+    "konstantin.haase@gmail.com",
     "andre@arko.net",
+    "svenfuchs@artweb-design.de",
     "sferik@gmail.com",
     "steve.richert@gmail.com",
     "bford@engineyard.com",
-    "jdennes@gmail.com",
     "nschonni@gmail.com",
-    "konstantin.haase@gmail.com"
+    "jdennes@gmail.com",
+    "tim@spork.in",
+    "patrick@bittorrent.com"
   ]
 
   s.files = [
@@ -48,6 +53,8 @@ Gem::Specification.new do |s|
     "config.ru",
     "config/database.yml",
     "config/newrelic.yml",
+    "config/nginx.conf.erb",
+    "config/puma-config.rb",
     "config/unicorn.rb",
     "docs/00_overview.md",
     "docs/01_cross_origin.md",
@@ -107,6 +114,7 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/endpoint/repos.rb",
     "lib/travis/api/app/endpoint/requests.rb",
     "lib/travis/api/app/endpoint/stats.rb",
+    "lib/travis/api/app/endpoint/uptime.rb",
     "lib/travis/api/app/endpoint/users.rb",
     "lib/travis/api/app/endpoint/workers.rb",
     "lib/travis/api/app/extensions.rb",
@@ -145,6 +153,7 @@ Gem::Specification.new do |s|
     "spec/integration/responders_spec.rb",
     "spec/integration/routes.backup.rb",
     "spec/integration/scopes_spec.rb",
+    "spec/integration/uptime_spec.rb",
     "spec/integration/v1/branches_spec.rb",
     "spec/integration/v1/builds_spec.rb",
     "spec/integration/v1/hooks_spec.rb",
