@@ -23,7 +23,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 6a5b230b06e927cf953a1b7bb20dcf7fd45ee978
+  revision: 12e52ccefa2b54e2dfdef1350c28df01397e1104
   branch: repository-settings
   specs:
     travis-core (0.0.1)
@@ -154,8 +154,8 @@ GEM
     i18n (0.6.5)
     journey (1.0.4)
     json (1.8.1)
-    kgio (2.8.1)
-    listen (1.0.3)
+    kgio (2.8.0)
+    listen (1.2.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
@@ -215,11 +215,19 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     redcarpet (2.3.0)
+<<<<<<< HEAD
     redis (3.0.6)
     redis-namespace (1.3.2)
       redis (~> 3.0.4)
     rerun (0.8.2)
       listen (~> 1.0.3)
+=======
+    redis (3.0.5)
+    redis-namespace (1.3.0)
+      redis (~> 3.0.0)
+    rerun (0.8.1)
+      listen (>= 1.0.3)
+>>>>>>> Bump travis-core
     rollout (1.1.0)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
@@ -269,7 +277,11 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.38)
+<<<<<<< HEAD
     unicorn (4.7.0)
+=======
+    unicorn (4.6.3)
+>>>>>>> Bump travis-core
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
