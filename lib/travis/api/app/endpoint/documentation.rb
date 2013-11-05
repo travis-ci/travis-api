@@ -85,31 +85,19 @@ __END__
   <head>
     <meta charset="utf-8">
     <title>Travis API documentation</title>
-
-    <!-- we might wanna change this -->
-    <!-- <link href="<%= url('/css/bootstrap.css') %>" rel="stylesheet" /> -->
-    <!-- <link href="<%= url('/css/prettify.css') %>" rel="stylesheet" /> -->
-    <link href="<%= url('/css/style.css') %>" rel="stylesheet" />
-    <!-- <script src="<%= url('/js/jquery.js') %>"></script> -->
-    <!-- <script src="<%= url('/js/prettify.js') %>"></script> -->
-    <!-- <script src="<%= url('/js/bootstrap.min.js') %>"></script> -->
+    <link rel="stylesheet" href="<%= url('/css/style.css') %>" media="screen">
+    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,800" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
   </head>
 
-  <body onload="prettyPrint()">
+  <body>
     <div id="navigation">
       <div class="wrapper">
-        <a href="http://travis-ci.org" id="logo">travis-ci<span>.org</span></a>
+        <a href="http://travis-ci.org/" class="logo-home"><img src="http://about.travis-ci.org/images/travisci-small.png" alt="Travis Logo"></a>
         <ul>
           <li><a href="http://about.travis-ci.org/blog/">Blog</a></li>
-          <li><a href="http://about.travis-ci.org/docs/">User Documentation</a></li>
+          <li><a href="http://about.travis-ci.org/docs/">Documentation</a></li>
         </ul>
-      </div>
-    </div>
-
-    <div id="header">
-      <div class="wrapper">
-        <h1 class="riddle"><a href="/docs" title="Travis API">The Travis API</a></h1>
-        <p>All the routes, just waiting for you to build something awesome.</p>
       </div>
     </div>
 
@@ -117,6 +105,8 @@ __END__
       <div class="wrapper">
         <div class="pad">
           <div id="main">
+            <h2 class="title">The Travis API</h2>
+
             <% general_docs.each do |doc| %>
               <%= erb :entry, locals: doc %>
             <% end %>
@@ -163,22 +153,33 @@ __END__
         </div>
       </div>
     </div>
-    <div id="footer">
+    <footer>
       <div class="wrapper">
-        <div class="box">
-          <p>This site is maintained by the <a href="http://github.com/travis-ci">Travis CI community</a>. Feel free to <a href="http://github.com/travis-ci/travis-api">contribute</a>!</p>
+        <div class="large-6 columns left">
+          <div id="travis-logo">
+            <img src="http://about.travis-ci.org/images/travis-mascot-200px.png" id="travis-mascot">
+          </div>
+          <div id="travis-address">
+            <p>© 2013 Travis CI GmbH,<br>Prinzessinnenstr. 20, 10969 berlin, Germany</p>
+          </div>
         </div>
-        <div class="box">
-          <p>This design was kindly provided by the talented Ben Webster of <a href="http://www.plus2.com.au">Plus2</a>.</p>
-        </div>
-        <div class="box last">
-          <ul>
-            <li><a href="https://github.com/travis-ci" title="">Travis CI on GitHub</a></li>
-            <li><a href="https://twitter.com/travisci" title="">Travis CI on Twitter</a></li>
-          </ul>
+
+        <div class="large-6 columns right">
+          <div id="footer-nav">
+            <ul class="left">
+              <li><a href="mailto:contact@travis-ci.com">Email</a></li>
+              <li><a href="http://chat.travis-ci.com">Live Chat</a></li>
+              <li><a href="http://about.travis-ci.org/docs">Docs</a></li>
+              <li><a href="http://status.travis-ci.com">Status</a></li>
+            </ul>
+          </div>
+
+          <div id="berlin-sticker">
+            <img src="http://about.travis-ci.org/images/made-in-berlin-badge.png" id="made-in-berlin">
+          </div>
         </div>
       </div>
-    </div>
+    </footer>
   </body>
 </html>
 
