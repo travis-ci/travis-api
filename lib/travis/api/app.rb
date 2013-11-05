@@ -1,4 +1,6 @@
 require 'travis'
+require 'travis/model'
+require 'travis/support/amqp'
 require 'backports'
 require 'rack'
 require 'rack/protection'
