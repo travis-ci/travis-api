@@ -24,12 +24,23 @@ describe 'Repos' do
       }.to change { repo.reload.key.private_key }
     end
 
+    it 'allows to update settings' do
+      json = { 'settings' => { 'a-new-setting' => 'value' } }.to_json
+      response = patch "repos/#{repo.id}/settings", json, headers
+
+      repo.reload.settings['a-new-setting'].should == 'value'
+
+      body = JSON.parse(response.body)
+      body['settings']['a-new-setting'].should == 'value'
+    end
+
     it 'allows to get settings' do
       repo.settings.replace('foo' => { 'type' => 'password', 'value' => 'abc123' })
       repo.save
 
       response = get "repos/#{repo.id}/settings", {}, headers
-      JSON.parse(response.body).should == { 'settings' => { 'foo' => { 'type' => 'password', 'value' => '∗∗∗∗∗∗' } } }
+      settings = Repository::Settings.defaults.deep_merge({ 'foo' => { 'type' => 'password', 'value' => '∗∗∗∗∗∗' } })
+      JSON.parse(response.body).should == { 'settings' => settings }
     end
   end
 

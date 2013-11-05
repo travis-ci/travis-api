@@ -52,10 +52,16 @@ class Travis::Api::App
         end
       end
 
-      put '/:id/settings' do
+      patch '/:id/settings' do
+        payload = JSON.parse request.body.read
+
+        if payload['settings'].blank? || !payload['settings'].is_a?(Hash)
+          halt 422, { "error" => "Settings must be passed with a request" }
+        end
+
         settings = service(:find_repo_settings, params).run
         if settings
-          settings.merge(params[:settings])
+          settings.merge(payload['settings'])
           # TODO: I would like to have better API here, but leaving this
           # for testing to not waste too much time before I can play with it
           settings.repository.save
