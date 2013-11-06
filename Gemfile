@@ -1,4 +1,4 @@
-ruby '1.9.3' rescue nil
+ruby '2.0.0'
 
 source 'https://rubygems.org'
 gemspec
