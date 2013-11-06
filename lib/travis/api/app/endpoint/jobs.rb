@@ -59,6 +59,11 @@ class Travis::Api::App
         end
       end
 
+      post '/:id/restart' do
+        Metriks.meter("api.request.restart_job").mark
+        respond_with service(:reset_model, job_id: params[:id])
+      end
+
       def archive_url(path)
         "https://s3.amazonaws.com/#{hostname('archive')}#{path}"
       end
