@@ -43,6 +43,11 @@ class Travis::Api::App
           status 204
         end
       end
+
+      post '/:id/restart' do
+        Metriks.meter("api.request.restart_build").mark
+        respond_with service(:reset_model, build_id: params[:id])
+      end
     end
   end
 end
