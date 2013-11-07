@@ -3,7 +3,7 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Uptime < Endpoint
-      get '/' do
+      get '/', scope: :hidden do
         begin
           ActiveRecord::Base.connection.execute('select 1')
           [200, "OK"]
