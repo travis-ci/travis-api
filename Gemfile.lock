@@ -23,7 +23,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: a912cd9077ecae58488957c2b431713914afe93e
+  revision: 1906a181bb723695fa44a613ac7aa513e6e73ea4
   branch: repository-settings
   specs:
     travis-core (0.0.1)
@@ -54,7 +54,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: f1cbac986f09ee4045b3d381b6519adb95ab5695
+  revision: bd497bc60f75374956be24437dae5cad96374f6b
   specs:
     travis-support (0.0.1)
 
@@ -180,8 +180,8 @@ GEM
     pg (0.13.2)
     polyglot (0.3.3)
     proxies (0.2.1)
-    pry (0.9.12.3)
-      coderay (~> 1.0)
+    pry (0.9.12.2)
+      coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
     pusher (0.11.3)
