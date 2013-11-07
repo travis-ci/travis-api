@@ -132,6 +132,7 @@ __END__
               <h2><a href="#<%= endpoint['name'] %>"><%= endpoint['name'] %></a></h2>
               <ul>
               <% endpoint['routes'].each do |route| %>
+                <% next if route['scope'] == 'hidden' %>
                 <li>
                   <a href="#<%= slug_for(route) %>">
                     <i class="icon-<%= icon_for route['verb'] %>"></i>
@@ -189,6 +190,7 @@ __END__
   <%= docs_for endpoint %>
 <% end %>
 <% endpoint['routes'].each do |route| %>
+  <% next if route['scope'] == 'hidden' %>
   <div class="route" id="<%= slug_for(route) %>">
     <h3><%= route['verb'] %> <%= route['uri'] %></h3>
     <% if route['scope'] %>
