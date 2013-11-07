@@ -84,7 +84,7 @@ __END__
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Travis API documentation</title>
+    <title>Travis CI API documentation</title>
     <link rel="stylesheet" href="<%= url('/css/style.css') %>" media="screen">
     <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,800" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -105,7 +105,7 @@ __END__
       <div class="wrapper">
         <div class="pad">
           <div id="main">
-            <h2 class="title">The Travis API</h2>
+            <h2 class="title">The Travis CI API</h2>
 
             <% general_docs.each do |doc| %>
               <%= erb :entry, locals: doc %>
