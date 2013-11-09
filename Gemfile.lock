@@ -23,7 +23,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 00580d7f38d65bc71bcb78eb93bfc53654d4394c
+  revision: a377a86350de3bb6dc7870766c60bde982a91176
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -53,7 +53,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: e5294f7d1f04243ea7315de27c36f2feeccec5da
+  revision: bd497bc60f75374956be24437dae5cad96374f6b
   specs:
     travis-support (0.0.1)
 
@@ -214,7 +214,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     redcarpet (2.3.0)
-    redis (3.0.5)
+    redis (3.0.6)
     redis-namespace (1.3.0)
       redis (~> 3.0.0)
     rerun (0.8.1)

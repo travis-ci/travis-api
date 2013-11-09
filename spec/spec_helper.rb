@@ -8,6 +8,7 @@ require 'gh'
 require 'multi_json'
 
 require 'travis/api/app'
+require 'travis/testing'
 require 'travis/testing/scenario'
 require 'travis/testing/factories'
 require 'support/matchers'
