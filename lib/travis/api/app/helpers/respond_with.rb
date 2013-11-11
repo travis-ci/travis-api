@@ -49,7 +49,7 @@ class Travis::Api::App
         end
 
         def responders(resource, options)
-          [:Atom, :Json, :Image, :Xml, :Plain].map do |name|
+          [:Json, :Atom, :Image, :Xml, :Plain].map do |name|
             Responders.const_get(name)
           end
         end
