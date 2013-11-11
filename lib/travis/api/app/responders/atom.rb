@@ -16,7 +16,7 @@ module Travis::Api::App::Responders
   <% @builds.each do |build| %>
   <entry>
     <title><%= build.repository.slug %> Build #<%= build.number %></title>
-    <link href="<%= endpoint.url %>" />
+    <link href="<%= File.join("https://", Travis.config.host, build.repository.slug, "builds", build.id.to_s) %>" />
     <id>urn:uuid:<%= SecureRandom.uuid %></id>
     <updated><%= build.finished_at || build.started_at %></updated>
     <summary type="html">
