@@ -18,6 +18,10 @@ class Travis::Api::App
       def png?
         request.accept =~ %r(image/png)
       end
+
+      def atom?
+        request.accept =~ %r(application/atom+xml)
+      end
     end
   end
 end

@@ -102,5 +102,13 @@ describe 'v1 repos' do
       response = get '/repositories/svenfuchs/minimal/builds', {}, headers
       response.content_type.should =~ /^application\/atom\+xml/
     end
-  end  
+  end
+
+  context 'with .atom extension and "Accept: */*" header' do
+    let(:headers) { { 'HTTP_ACCEPT' => '*/*' } }
+    it 'GET /repositories/svenfuchs/minimal/builds.atom' do
+      response = get '/repositories/svenfuchs/minimal/builds.atom', {}, headers
+      response.content_type.should =~ /^application\/atom\+xml/
+    end
+  end
 end
