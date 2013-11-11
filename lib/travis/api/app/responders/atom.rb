@@ -9,7 +9,7 @@ module Travis::Api::App::Responders
  
   <title><%= resource.first.repository.slug %> Builds</title>
   <link href="<%= endpoint.url %>" type="application/atom+xml" rel = "self" />
-  <id>urn:uuid:<%= SecureRandom.uuid %></id>
+  <id>repo:<%= resource.first.repository.id %></id>
   <rights>Copyright (c) <%= DateTime.now.strftime("%Y") %> Travis CI GmbH</rights>
   <updated><%= DateTime.now.rfc3339 %></updated>
  
@@ -17,7 +17,7 @@ module Travis::Api::App::Responders
   <entry>
     <title><%= build.repository.slug %> Build #<%= build.number %></title>
     <link href="<%= File.join("https://", Travis.config.host, build.repository.slug, "builds", build.id.to_s) %>" />
-    <id>urn:uuid:<%= SecureRandom.uuid %></id>
+    <id>repo:<%= build.repository.id %>:build:<%= build.id %></id>
     <updated><%= ::DateTime.parse(build.updated_at.to_s).rfc3339 %></updated>
     <summary type="html">
     &lt;p&gt;
