@@ -21,7 +21,7 @@ module Travis::Api::App::Responders
     <updated><%= ::DateTime.parse(build.updated_at.to_s).rfc3339 %></updated>
     <summary type="html">
     &lt;p&gt;
-      <%= build.commit.message %> (<%= build.commit.committer_name %>)
+      <%= build.commit.message.encode(:xml => :text) %> (<%= build.commit.committer_name %>)
       &lt;br/&gt;&lt;br/&gt;
       State: <%= build.state %>
       &lt;br/&gt;
