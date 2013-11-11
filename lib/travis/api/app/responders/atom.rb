@@ -1,5 +1,5 @@
 module Travis::Api::App::Responders
-  require 'securerandom'
+  require 'date'
 
   class Atom < Base
     ATOM_FEED_ERB = ERB.new <<-EOF
@@ -18,7 +18,7 @@ module Travis::Api::App::Responders
     <title><%= build.repository.slug %> Build #<%= build.number %></title>
     <link href="<%= File.join("https://", Travis.config.host, build.repository.slug, "builds", build.id.to_s) %>" />
     <id>urn:uuid:<%= SecureRandom.uuid %></id>
-    <updated><%= build.finished_at || build.started_at %></updated>
+    <updated><%= ::DateTime.parse(build.updated_at.to_s).rfc3339 %></updated>
     <summary type="html">
     &lt;p&gt;
       <%= build.commit.message %> (<%= build.commit.committer_name %>)
