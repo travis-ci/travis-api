@@ -7,13 +7,13 @@ module Travis::Api::App::Responders
  
 <feed xmlns="http://www.w3.org/2005/Atom">
  
-  <title><%= @builds.first.repository.slug %> Builds</title>
+  <title><%= resource.first.repository.slug %> Builds</title>
   <link href="<%= endpoint.url %>" type="application/atom+xml" rel = "self" />
   <id>urn:uuid:<%= SecureRandom.uuid %></id>
   <rights>Copyright (c) <%= DateTime.now.strftime("%Y") %> Travis CI GmbH</rights>
   <updated><%= DateTime.now.strftime %></updated>
  
-  <% @builds.each do |build| %>
+  <% resource.each do |build| %>
   <entry>
     <title><%= build.repository.slug %> Build #<%= build.number %></title>
     <link href="<%= File.join("https://", Travis.config.host, build.repository.slug, "builds", build.id.to_s) %>" />
@@ -41,10 +41,7 @@ module Travis::Api::App::Responders
     EOF
 
     def apply?
-      if resource.is_a?(ActiveRecord::Relation) && resource.first.is_a?(Build)
-        @builds = resource
-      end
-      super && @builds
+      super && resource.is_a?(ActiveRecord::Relation) && resource.first.is_a?(Build)
     end
 
     def apply
