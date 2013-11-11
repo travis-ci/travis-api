@@ -11,7 +11,7 @@ module Travis::Api::App::Responders
   <link href="<%= endpoint.url %>" type="application/atom+xml" rel = "self" />
   <id>urn:uuid:<%= SecureRandom.uuid %></id>
   <rights>Copyright (c) <%= DateTime.now.strftime("%Y") %> Travis CI GmbH</rights>
-  <updated><%= DateTime.now.strftime %></updated>
+  <updated><%= DateTime.now.rfc3339 %></updated>
  
   <% resource.each do |build| %>
   <entry>
