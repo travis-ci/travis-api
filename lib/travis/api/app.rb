@@ -164,6 +164,11 @@ module Travis::Api
 
       def self.setup_database_connections
         Travis::Database.connect
+
+        if Travis.config.logs_database
+          Log.establish_connection 'logs_database'
+          Log::Part.establish_connection 'logs_database'
+        end
       end
 
       def self.load_endpoints
