@@ -22,7 +22,8 @@ Gem::Specification.new do |s|
     "Nick Schonning",
     "Patrick Williams",
     "James Dennes",
-    "Tim Carey-Smith"
+    "Tim Carey-Smith",
+    "Hiro Asari"
   ]
 
   s.email = [
@@ -135,6 +136,7 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/middleware/rewrite.rb",
     "lib/travis/api/app/middleware/scope_check.rb",
     "lib/travis/api/app/responders.rb",
+    "lib/travis/api/app/responders/atom.rb",
     "lib/travis/api/app/responders/base.rb",
     "lib/travis/api/app/responders/image.rb",
     "lib/travis/api/app/responders/json.rb",
