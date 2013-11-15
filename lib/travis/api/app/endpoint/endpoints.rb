@@ -16,7 +16,7 @@ class Travis::Api::App
           namespace  = route.namespace
           controller = namespace.to_s.constantize
           route_info = {
-            'uri'    => (controller.prefix + route.http_path[1..-2]).gsub('//', '/'),
+            'uri'    => (controller.prefix + '/' + route.http_path[1..-1]).gsub('//', '/'),
             'verb'   => route.http_verb,
             'doc'    => route.docstring,
             'scope'  => /scope\W+(\w+)/.match(route.source).try(:[], 1) || controller.default_scope.to_s
