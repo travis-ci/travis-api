@@ -11,10 +11,10 @@ class Travis::Api::App
       def respond_with(resource, options = {})
         result = respond(resource, options)
         if result && response.content_type =~ /application\/json/
-          if params[:pretty].downcase == 'true' || params[:pretty].to_i > 0
-            JSON.pretty_generate(result)
+          if !params[:pretty].nil? && (params[:pretty].downcase == 'true' || params[:pretty].to_i > 0)
+            result = JSON.pretty_generate(result)
           else
-            result.to_json
+            result = result.to_json
           end
         end
         halt result || 404
