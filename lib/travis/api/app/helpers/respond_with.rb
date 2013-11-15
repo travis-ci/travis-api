@@ -10,7 +10,7 @@ class Travis::Api::App
 
       def respond_with(resource, options = {})
         result = respond(resource, options)
-        result = result.to_json if result && response.content_type =~ /application\/json/
+        result = JSON.pretty_generate(result) if result && response.content_type =~ /application\/json/
         halt result || 404
       end
 
