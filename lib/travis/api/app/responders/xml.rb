@@ -49,7 +49,7 @@ module Travis::Api::App::Responders
       end
 
       def single_repo?(resource)
-        resource.is_a?(Repository) && (@last_build || resource.last_build)
+        resource.is_a?(Repository) && resource.last_build
       end
 
       def repo_collection?(resource)
