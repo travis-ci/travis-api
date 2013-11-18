@@ -54,13 +54,16 @@ RSpec::Matchers.define :deliver_result_image_for do |name|
   end
 end
 
-RSpec::Matchers.define :deliver_cc_xml_for do |repo|
+RSpec::Matchers.define :deliver_cc_xml_for do |obj|
   match do |response|
     body = response.body
 
     failure_message_for_should do
       "expected #{body} to be a valid cc.xml"
     end
+
+    # obj can be a collection of Repositories
+    repo = obj.is_a?(ActiveRecord::Relation) ? obj.first : obj
 
     body.include?('<Projects>') && body.include?(%(name="#{repo.slug}")) && body.include?("https://www.example.com/#{repo.slug}")
   end
