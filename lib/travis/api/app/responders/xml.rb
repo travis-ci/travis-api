@@ -32,13 +32,13 @@ module Travis::Api::App::Responders
     }
 
     def apply?
-      super && (single_repo?(resource) || repo_collection?(resource))
+      @resource = Array(resource)
+      super && @resource.first.is_a?(Repository)
     end
 
     def apply
       super
 
-      @resource = resource.is_a?(Repository) ? [resource] : resource
       TEMPLATE_ERB.result(binding)
     end
 
@@ -46,14 +46,6 @@ module Travis::Api::App::Responders
 
       def content_type
         'application/xml;charset=utf-8'
-      end
-
-      def single_repo?(resource)
-        resource.is_a?(Repository) && resource.last_build
-      end
-
-      def repo_collection?(resource)
-        resource.is_a?(ActiveRecord::Relation) && resource.first.is_a?(Repository)
       end
   end
 end
