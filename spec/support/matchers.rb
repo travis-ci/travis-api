@@ -62,8 +62,7 @@ RSpec::Matchers.define :deliver_cc_xml_for do |obj|
       "expected #{body} to be a valid cc.xml"
     end
 
-    # obj can be a collection of Repositories
-    repo = obj.is_a?(ActiveRecord::Relation) ? obj.first : obj
+    repo = Array(obj).first
 
     body.include?('<Projects>') && body.include?(%(name="#{repo.slug}")) && body.include?("https://www.example.com/#{repo.slug}")
   end
