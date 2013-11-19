@@ -1,8 +1,8 @@
 module Travis::Api::App::Responders
-# This XML responder is used if the resource is a Repository, or a collection
-# of Repositories.
-# It returns XML data conforming to Multiple Project Summary Reporting Standard,
-# as explained in http://confluence.public.thoughtworks.org/display/CI/Multiple+Project+Summary+Reporting+Standard
+  # This XML responder is used if the resource is a Repository, or a collection
+  # of Repositories.
+  # It returns XML data conforming to Multiple Project Summary Reporting Standard,
+  # as explained in http://confluence.public.thoughtworks.org/display/CI/Multiple+Project+Summary+Reporting+Standard
   class Xml < Base
     TEMPLATE_ERB = ERB.new <<-EOF
 <Projects>
