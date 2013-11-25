@@ -9,3 +9,5 @@ before_script:
   - 'RAILS_ENV=test rake db:create db:schema:load --trace'
 notifications:
   irc: "irc.freenode.org#travis"
+services:
+  - redis
