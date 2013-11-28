@@ -86,7 +86,7 @@ __END__
     <meta charset="utf-8">
     <title>Travis CI API documentation</title>
     <link rel="stylesheet" href="<%= url('/css/style.css') %>" media="screen">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,800" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,800" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
   </head>
 
