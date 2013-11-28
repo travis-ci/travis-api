@@ -53,7 +53,7 @@ describe 'Builds' do
 
     before {
       headers.merge! 'HTTP_AUTHORIZATION' => "token #{token}"
-      user.permissions.create!(repository_id: build.repository.id, :push => true)
+      user.permissions.create!(repository_id: build.repository.id, :pull => true, :push => true)
     }
 
     context 'when user does not have rights to cancel the build' do

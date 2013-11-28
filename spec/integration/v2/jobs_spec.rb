@@ -82,7 +82,7 @@ describe 'Jobs' do
 
     before {
       headers.merge! 'HTTP_AUTHORIZATION' => "token #{token}"
-      user.permissions.create!(repository_id: job.repository.id, :push => true)
+      user.permissions.create!(repository_id: job.repository.id, :push => true, :pull => true)
     }
 
     context 'when user does not have rights to cancel the job' do
