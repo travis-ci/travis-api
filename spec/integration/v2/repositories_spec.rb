@@ -87,7 +87,7 @@ describe 'Repos' do
     response.should deliver_cc_xml_for(Repository.by_slug('svenfuchs/minimal').first)
   end
 
-  it 'respond with cc.xml for /repos list' do
+  it 'responds with cc.xml for /repos list' do
     response = get '/repos', {}, 'HTTP_ACCEPT' => 'application/xml; version=2'
     response.should deliver_cc_xml_for(Repository.timeline)
   end
