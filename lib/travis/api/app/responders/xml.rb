@@ -14,6 +14,7 @@ module Travis::Api::App::Responders
     lastBuildLabel="<%= r.last_build.try(:number) %>"
     lastBuildTime="<%= r.last_build.finished_at.try(:strftime, '%Y-%m-%dT%H:%M:%S.%L%z') %>"
     webUrl="https://<%= Travis.config.client_domain %>/<%= r.slug %>"
+  </Project>
 <% end %>
 </Projects>
     EOF
