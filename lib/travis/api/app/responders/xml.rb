@@ -13,8 +13,7 @@ module Travis::Api::App::Responders
     lastBuildStatus="<%= STATUS[r.last_build.state.to_sym] || STATUS[:default]  %>"
     lastBuildLabel="<%= r.last_build.try(:number) %>"
     lastBuildTime="<%= r.last_build.finished_at.try(:strftime, '%Y-%m-%dT%H:%M:%S.%L%z') %>"
-    webUrl="https://<%= Travis.config.client_domain %>/<%= r.slug %>"
-  </Project>
+    webUrl="https://<%= Travis.config.client_domain %>/<%= r.slug %>" />
 <% end %>
 </Projects>
     EOF
