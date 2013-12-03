@@ -128,7 +128,8 @@ class Travis::Api::App
       # token is being received.
       get '/post_message', scope: :public do
         content_type :html
-        erb :container
+        data = { check_third_party_cookies: !Travis.config.auth.disable_third_party_cookies_check }
+        erb(:container, locals: data)
       end
 
       get '/post_message/iframe', scope: :public do
@@ -382,6 +383,7 @@ function main() {
 var url = window.location.pathname + '/iframe' + window.location.search;
 
 function thirdPartyCookies(yes, no) {
+  <%= "return no();" unless check_third_party_cookies %>
   window.cookiesCheckCallback = function(enabled) { enabled ? yes() : no() };
   var img      = document.createElement('img');
   img.src      = "https://third-party-cookies.herokuapp.com/set";
