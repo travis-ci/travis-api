@@ -23,8 +23,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: a9729b78fc5bdb3a360d571a21dd345442eb2da5
-  branch: repository-settings
+  revision: 2ffe799f934754c6c79a097b1be93e40543db4f9
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -84,12 +83,12 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    actionmailer (3.2.15)
-      actionpack (= 3.2.15)
+    actionmailer (3.2.16)
+      actionpack (= 3.2.16)
       mail (~> 2.5.4)
-    actionpack (3.2.15)
-      activemodel (= 3.2.15)
-      activesupport (= 3.2.15)
+    actionpack (3.2.16)
+      activemodel (= 3.2.16)
+      activesupport (= 3.2.16)
       builder (~> 3.0.0)
       erubis (~> 2.7.0)
       journey (~> 1.0.4)
@@ -97,15 +96,15 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    activemodel (3.2.15)
-      activesupport (= 3.2.15)
+    activemodel (3.2.16)
+      activesupport (= 3.2.16)
       builder (~> 3.0.0)
-    activerecord (3.2.15)
-      activemodel (= 3.2.15)
-      activesupport (= 3.2.15)
+    activerecord (3.2.16)
+      activemodel (= 3.2.16)
+      activesupport (= 3.2.16)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activesupport (3.2.15)
+    activesupport (3.2.16)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
     addressable (2.3.5)
@@ -151,7 +150,7 @@ GEM
     hashr (0.0.22)
     hike (1.2.3)
     hitimes (1.2.1)
-    i18n (0.6.5)
+    i18n (0.6.9)
     journey (1.0.4)
     json (1.8.1)
     kgio (2.8.0)
@@ -198,9 +197,9 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
-    railties (3.2.15)
-      actionpack (= 3.2.15)
-      activesupport (= 3.2.15)
+    railties (3.2.16)
+      actionpack (= 3.2.16)
+      activesupport (= 3.2.16)
       rack-ssl (~> 1.3.2)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
