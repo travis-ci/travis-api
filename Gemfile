@@ -3,7 +3,7 @@ ruby '2.0.0'
 source 'https://rubygems.org'
 gemspec
 
-gem 'travis-core',     github: 'travis-ci/travis-core'
+gem 'travis-core',     github: 'travis-ci/travis-core', branch: 'ps-tags-and-branches'
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: 'cde9741'
 gem 'sinatra'

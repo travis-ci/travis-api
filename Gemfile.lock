@@ -23,7 +23,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 2ffe799f934754c6c79a097b1be93e40543db4f9
+  revision: 115da54dca0b452261294631e306f33516d515f9
+  branch: ps-tags-and-branches
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -133,7 +134,7 @@ GEM
     facter (1.7.3)
     factory_girl (2.4.2)
       activesupport
-    faraday (0.8.8)
+    faraday (0.8.9)
       multipart-post (~> 1.2.0)
     ffi (1.9.3)
     foreman (0.63.0)
@@ -171,7 +172,7 @@ GEM
     mime-types (1.25.1)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.8.2)
+    multi_json (1.8.4)
     multipart-post (1.2.0)
     net-http-persistent (2.9)
     net-http-pipeline (1.0.1)
@@ -228,7 +229,7 @@ GEM
     rspec-expectations (2.14.4)
       diff-lcs (>= 1.1.3, < 2.0)
     rspec-mocks (2.14.4)
-    s3 (0.3.17)
+    s3 (0.3.18)
       proxies (~> 0.2.0)
     sidekiq (2.5.4)
       celluloid (~> 0.12.0)
