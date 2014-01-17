@@ -78,6 +78,10 @@ class Travis::Api::App
       #
       # * **github_token**: GitHub token for checking authorization (required)
       post '/github' do
+        unless params[:github_token]
+          halt 422, { "error" => "Must pass 'github_token' parameter" }
+        end
+
         { 'access_token' => github_to_travis(params[:github_token], app_id: 1, drop_token: true) }
       end
 
@@ -196,6 +200,16 @@ class Travis::Api::App
         end
 
         class UserManager < Struct.new(:data, :token, :drop_token)
+          include User::Renaming
+
+          attr_accessor :user
+
+          def initialize(*)
+            super
+
+            @user = ::User.find_by_github_id(data['id'])
+          end
+
           def info(attributes = {})
             info = data.to_hash.slice('name', 'login', 'gravatar_id')
             info.merge! attributes.stringify_keys
@@ -203,26 +217,49 @@ class Travis::Api::App
             info
           end
 
-          def fetch
-            user   = ::User.find_by_github_id(data['id'])
-            info   = drop_token ? info : info(github_oauth_token: token)
+          def user_exists?
+            user
+          end
 
-            if user
-              user.update_attributes info
-            else
-              user = ::User.create! info
+          def fetch
+            retried ||= false
+            info   = drop_token ? self.info : self.info(github_oauth_token: token)
+
+            ActiveRecord::Base.transaction do
+              if user
+                rename_repos_owner(user.login, info['login'])
+                user.update_attributes info
+              else
+                self.user = ::User.create! info
+              end
+
+              nullify_logins(user.github_id, user.login)
             end
 
             user
+          rescue ActiveRecord::RecordNotUnique
+            unless retried
+              retried = true
+              retry
+            end
           end
         end
 
         def user_for_github_token(token, drop_token = false)
-          data   = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
-          scopes = parse_scopes data.headers['x-oauth-scopes']
-          halt 403, 'insufficient access: %p' unless acceptable? scopes
+          data    = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
+          scopes  = parse_scopes data.headers['x-oauth-scopes']
+          manager = UserManager.new(data, token, drop_token)
 
-          user   = UserManager.new(data, token, drop_token).fetch
+          unless acceptable? scopes
+            # TODO: we should probably only redirect if this is a web
+            #      oauth request, are there any other possibilities to
+            #      consider?
+            url =  Travis.config.oauth2.insufficient_access_redirect_url
+            url += "#existing-user" if manager.user_exists?
+            redirect to(url)
+          end
+
+          user   = manager.fetch
           halt 403, 'not a Travis user' if user.nil?
           user
         end

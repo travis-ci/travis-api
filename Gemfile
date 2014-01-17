@@ -1,4 +1,4 @@
-ruby '1.9.3' rescue nil
+ruby '2.0.0'
 
 source 'https://rubygems.org'
 gemspec
@@ -9,22 +9,20 @@ gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: '
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
 
-gem 'puma',            '2.3.1'
+gem 'unicorn'
 gem 'sentry-raven',    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
 gem 'rack-cache',      '~> 1.2'
 gem 'rack-attack'
 gem 'gh'
-gem 'bunny'
+gem 'bunny',           '~> 0.8.0'
 gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.5'
 
-gem 'ar-octopus',      github: 'travis-ci/octopus', require: nil
-
 group :test do
-  gem 'rspec',         '~> 2.13.0'
+  gem 'rspec',         '~> 2.13'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
   gem 'database_cleaner', '~> 0.8.0'

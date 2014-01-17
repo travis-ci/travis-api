@@ -16,7 +16,7 @@ module Travis::Api::App::Responders
     }
 
     def apply?
-      super && resource.is_a?(Repository)
+      super && resource.is_a?(Repository) && last_build
     end
 
     def apply

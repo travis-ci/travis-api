@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 
 describe 'Repos' do
@@ -9,7 +10,7 @@ describe 'Repos' do
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
-    before { user.permissions.create!(:repository_id => repo.id, :admin => true) }
+    before { user.permissions.create!(:repository_id => repo.id, :admin => true, :push => true) }
 
     it 'POST /repos/:id/key' do
       expect {
@@ -21,6 +22,25 @@ describe 'Repos' do
       expect {
         response = post "/repos/#{repo.slug}/key", {}, headers
       }.to change { repo.reload.key.private_key }
+    end
+
+    it 'allows to update settings' do
+      json = { 'settings' => { 'a-new-setting' => 'value' } }.to_json
+      response = patch "repos/#{repo.id}/settings", json, headers
+
+      repo.reload.settings['a-new-setting'].should == 'value'
+
+      body = JSON.parse(response.body)
+      body['settings']['a-new-setting'].should == 'value'
+    end
+
+    it 'allows to get settings' do
+      repo.settings.replace('foo' => { 'type' => 'password', 'value' => 'abc123' })
+      repo.save
+
+      response = get "repos/#{repo.id}/settings", {}, headers
+      settings = Repository::Settings.defaults.deep_merge({ 'foo' => { 'type' => 'password', 'value' => '∗∗∗∗∗∗' } })
+      JSON.parse(response.body).should == { 'settings' => settings }
     end
   end
 
@@ -137,6 +157,22 @@ describe 'Repos' do
       repo.update_attributes!(last_build_state: nil)
       result = get('/repos/svenfuchs/minimal.png?branch=foo,bar', {}, headers)
       result.should deliver_result_image_for('passing')
+    end
+  end
+
+  context 'with "Accept: application/atom+xml" header' do
+    let(:headers) { { 'HTTP_ACCEPT' => 'application/atom+xml' } }
+    it 'GET /repositories/svenfuchs/minimal/builds' do
+      response = get '/repositories/svenfuchs/minimal/builds', {}, headers
+      response.content_type.should =~ /^application\/atom\+xml/
+    end
+  end
+
+  context 'with .atom extension' do
+    let(:headers) { { 'HTTP_ACCEPT' => '*/*' } }
+    it 'GET /repositories/svenfuchs/minimal/builds.atom' do
+      response = get '/repositories/svenfuchs/minimal/builds.atom', {}, headers
+      response.content_type.should =~ /^application\/atom\+xml/
     end
   end
 end

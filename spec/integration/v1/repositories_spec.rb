@@ -95,4 +95,20 @@ describe 'v1 repos' do
       get('/svenfuchs/minimal.png?branch=foo,bar').should deliver_result_image_for('passing')
     end
   end
+
+  context 'with "Accept: application/atom+xml" header' do
+    let(:headers) { { 'HTTP_ACCEPT' => 'application/atom+xml' } }
+    it 'GET /repositories/svenfuchs/minimal/builds' do
+      response = get '/repositories/svenfuchs/minimal/builds', {}, headers
+      response.content_type.should =~ /^application\/atom\+xml/
+    end
+  end
+
+  context 'with .atom extension and "Accept: */*" header' do
+    let(:headers) { { 'HTTP_ACCEPT' => '*/*' } }
+    it 'GET /repositories/svenfuchs/minimal/builds.atom' do
+      response = get '/repositories/svenfuchs/minimal/builds.atom', {}, headers
+      response.content_type.should =~ /^application\/atom\+xml/
+    end
+  end
 end

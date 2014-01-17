@@ -31,7 +31,7 @@ describe 'App' do
     token = Travis::Api::App::AccessToken.new(app_id: 1, user_id: 2, scopes: [:baz]).tap(&:save)
 
     response = get '/foo/1/bar', {}, 'HTTP_ACCEPT' => 'application/json; version=2', 'HTTP_AUTHORIZATION' => "token #{token.token}"
-    response.status.should == 404
+    response.status.should == 403
   end
 
   it 'checks if required_params match the from the request' do

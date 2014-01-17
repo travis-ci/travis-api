@@ -10,12 +10,12 @@ Setup:
 
 Run tests:
 
-    $ RAILS_ENV=test rake db:create db:schema:load
+    $ RAILS_ENV=test rake db:create db:structure:load
     $ rake spec
 
 Run the server:
 
-    $ rake db:create db:schema:load
+    $ rake db:create db:structure:load
     $ foreman start
 
 ## Contributing

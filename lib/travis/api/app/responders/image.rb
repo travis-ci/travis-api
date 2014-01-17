@@ -11,6 +11,10 @@ module Travis::Api::App::Responders
       send_file(filename, type: :png, last_modified: last_modified)
     end
 
+    def apply?
+      super && resource.is_a?(Repository)
+    end
+
     private
 
       def content_type

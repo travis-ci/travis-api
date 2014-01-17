@@ -107,4 +107,46 @@ describe 'Jobs' do
       end
     end
   end
+
+  describe 'POST /jobs/:id/cancel' do
+    let(:user)    { User.where(login: 'svenfuchs').first }
+    let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
+
+    before {
+      headers.merge! 'HTTP_AUTHORIZATION' => "token #{token}"
+      user.permissions.create!(repository_id: job.repository.id, :push => true, :pull => true)
+    }
+
+    context 'when user does not have rights to cancel the job' do
+      before { user.permissions.destroy_all }
+
+      it 'responds with 403' do
+        response = post "/jobs/#{job.id}/cancel", {}, headers
+        response.status.should == 403
+      end
+    end
+
+    context 'when job is not cancelable' do
+      before { job.update_attribute(:state, 'passed') }
+
+      it 'responds with 422' do
+        response = post "/jobs/#{job.id}/cancel", {}, headers
+        response.status.should == 422
+      end
+    end
+
+    context 'when job can be canceled' do
+      it 'cancels the job and responds with 204' do
+        job.update_attribute(:state, 'created')
+
+        response = nil
+        expect {
+          response = post "/jobs/#{job.id}/cancel", {}, headers
+        }.to change { job.reload.state }
+        response.status.should == 204
+
+        job.state.should == 'canceled'
+      end
+    end
+  end
 end

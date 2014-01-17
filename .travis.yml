@@ -1,7 +1,15 @@
 language: ruby
+env:
+  global:
+    - RUBY_GC_MALLOC_LIMIT=90000000
+    - RUBY_FREE_MIN=200000
 rvm:
-  - 1.9.3
+  - 2.0.0
+addons:
+  postgresql: 9.3
 before_script:
-  - 'RAILS_ENV=test rake db:create db:schema:load --trace'
+  - 'RAILS_ENV=test bundle exec rake db:create db:structure:load --trace'
 notifications:
   irc: "irc.freenode.org#travis"
+services:
+  - redis

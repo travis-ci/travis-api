@@ -10,7 +10,13 @@ class Travis::Api::App
 
       def respond_with(resource, options = {})
         result = respond(resource, options)
-        result = result.to_json if result && response.content_type =~ /application\/json/
+        if result && response.content_type =~ /application\/json/
+          if !params[:pretty].nil? && (params[:pretty].downcase == 'true' || params[:pretty].to_i > 0)
+            result = JSON.pretty_generate(result)
+          else
+            result = result.to_json
+          end
+        end
         halt result || 404
       end
 
@@ -49,7 +55,7 @@ class Travis::Api::App
         end
 
         def responders(resource, options)
-          [:Json, :Image, :Xml, :Plain].map do |name|
+          [:Json, :Atom, :Image, :Xml, :Plain].map do |name|
             Responders.const_get(name)
           end
         end

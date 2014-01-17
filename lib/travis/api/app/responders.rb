@@ -2,6 +2,7 @@ require 'travis/api/app'
 
 class Travis::Api::App
   module Responders
+    autoload :Atom,    'travis/api/app/responders/atom'
     autoload :Base,    'travis/api/app/responders/base'
     autoload :Image,   'travis/api/app/responders/image'
     autoload :Json,    'travis/api/app/responders/json'

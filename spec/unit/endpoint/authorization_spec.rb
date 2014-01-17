@@ -23,6 +23,62 @@ describe Travis::Api::App::Endpoint::Authorization do
     pending "not yet implemented"
   end
 
+  describe "GET /auth/handshake" do
+    describe 'with insufficient oauth permissions' do
+      before do
+        # TODO: this is a first try of writing tests for authorization, it does not look pretty
+        #       but I wanted to have something to start with, later on I would like to extract
+        #       this flow to a class, which would be easier to test.
+        @original_config = Travis.config.oauth2
+        Travis.config.oauth2 = {
+          authorization_server: 'https://foobar.com',
+          access_token_path: '/access_token_path',
+          client_id: 'client-id',
+          client_secret: 'client-secret',
+          scope: 'public_repo,user:email,new_scope',
+          insufficient_access_redirect_url: 'https://travis-ci.org/insufficient_access'
+        }
+        Travis.redis.sadd('github:states', 'github-state')
+
+        response = mock('response')
+        response.expects(:body).returns('access_token=foobarbaz-token')
+        Faraday.expects(:post).with('https://foobar.com/access_token_path',
+                                    client_id: 'client-id',
+                                    client_secret: 'client-secret',
+                                    scope: 'public_repo,user:email,new_scope',
+                                    redirect_uri: 'http://example.org/auth/handshake',
+                                    state: 'github-state',
+                                    code: 'oauth-code').returns(response)
+
+        data = { 'id' => 111 }
+        data.expects(:headers).returns('x-oauth-scopes' => 'public_repo,user:email')
+        GH.expects(:with).with(token: 'foobarbaz-token', client_id: nil).returns(data)
+      end
+
+      after do
+        Travis.config.oauth2 = @original_config
+        Travis.redis.srem('github:states', 'github-state')
+        # this is cached after first run, so if we change scopes, it will stay
+        # like that for the rest of the run
+        User::Oauth.instance_variable_set("@wanted_scopes", nil)
+      end
+
+      it 'redirects to insufficient access page' do
+        response = get '/auth/handshake?state=github-state&code=oauth-code'
+        response.should redirect_to('https://travis-ci.org/insufficient_access')
+      end
+
+      it 'redirects to insufficient access page for existing user' do
+        user = mock('user')
+        User.expects(:find_by_github_id).with(111).returns(user)
+        expect {
+          response = get '/auth/handshake?state=github-state&code=oauth-code'
+          response.should redirect_to('https://travis-ci.org/insufficient_access#existing-user')
+        }.to_not change { User.count }
+      end
+    end
+  end
+
   describe 'POST /auth/github' do
     before do
       data = { 'id' => user.github_id, 'name' => user.name, 'login' => user.login, 'gravatar_id' => user.gravatar_id }
@@ -63,6 +119,12 @@ describe Travis::Api::App::Endpoint::Authorization do
 
     it 'does not store the token' do
       user_for('public repos').github_oauth_token.should_not == 'public repos'
+    end
+
+    it "errors if no token is given" do
+      post("/auth/github").should_not be_ok
+      last_response.status.should == 422
+      body.should_not include("access_token")
     end
   end
 end

@@ -4,11 +4,47 @@ class Travis::Api::App
   class Endpoint
     class Jobs < Endpoint
       get '/' do
-        respond_with service(:find_jobs, params)
+        prefer_follower do
+          respond_with service(:find_jobs, params)
+        end
       end
 
       get '/:id' do
         respond_with service(:find_job, params)
+      end
+
+      post '/:id/cancel' do
+        Metriks.meter("api.request.cancel_job").mark
+
+        service = self.service(:cancel_job, params.merge(source: 'api'))
+        if !service.authorized?
+          json = { error: {
+            message: "You don't have access to cancel job(#{params[:id]})"
+          } }
+
+          Metriks.meter("api.request.cancel_job.unauthorized").mark
+          status 403
+          respond_with json
+        elsif !service.can_cancel?
+          json = { error: {
+            message: "The job(#{params[:id]}) can't be canceled",
+              code: 'cant_cancel'
+          } }
+
+          Metriks.meter("api.request.cancel_job.cant_cancel").mark
+          status 422
+          respond_with json
+        else
+          service.run
+
+          Metriks.meter("api.request.cancel_job.success").mark
+          status 204
+        end
+      end
+
+      post '/:id/restart' do
+        Metriks.meter("api.request.restart_job").mark
+        respond_with service(:reset_model, job_id: params[:id])
       end
 
       get '/:job_id/log' do

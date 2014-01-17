@@ -1,8 +1,13 @@
 require 'travis'
+require 'travis/model'
+require 'travis/support/amqp'
+require 'travis/states_cache'
 require 'backports'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib'
+require 'dalli'
+require 'memcachier'
 require 'rack/cache'
 require 'rack/attack'
 require 'active_record'
@@ -12,6 +17,7 @@ require 'raven'
 require 'sidekiq'
 require 'metriks/reporter/logger'
 require 'travis/support/log_subscriber/active_record_metrics'
+require 'fileutils'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -32,6 +38,8 @@ module Travis::Api
 
     Rack.autoload :SSL, 'rack/ssl'
 
+    ERROR_RESPONSE = JSON.generate(error: 'Travis encountered an error, sorry :(')
+
     # Used to track if setup already ran.
     def self.setup?
       @setup ||= false
@@ -45,6 +53,7 @@ module Travis::Api
     def self.setup(options = {})
       setup! unless setup?
       Endpoint.set(options) if options
+      FileUtils.touch('/tmp/app-initialized')
     end
 
     def self.new(options = {})
@@ -64,6 +73,8 @@ module Travis::Api
 
     def initialize
       @app = Rack::Builder.app do
+        use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
+
         Rack::Utils::HTTP_STATUS_CODES[420] = "Enhance Your Calm"
         use Rack::Attack
         Rack::Attack.blacklist('block client requesting ruby builds') do |req|
@@ -74,19 +85,19 @@ module Travis::Api
           [ 420, {}, ['Enhance Your Calm']]
         end
 
-        use Travis::Api::App::Cors
+        use Travis::Api::App::Cors if Travis.env == 'development'
         use Raven::Rack if Endpoint.production?
         use Rack::Protection::PathTraversal
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
 
-        memcache_servers = ENV['MEMCACHE_SERVERS']
-        if Travis::Features.feature_active?(:use_rack_cache) && memcache_server
+        memcache_servers = ENV['MEMCACHIER_SERVERS']
+        if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
           use Rack::Cache,
             verbose: true,
-            metastore:   "memcached://#{memcache_servers}/#{Travis::Api::App.deploy_sha}",
-            entitystore: "memcached://#{memcache_servers}/#{Travis::Api::App.deploy_sha}"
+            metastore:   "memcached://#{memcache_servers}/meta-#{Travis::Api::App.deploy_sha}",
+            entitystore: "memcached://#{memcache_servers}/body-#{Travis::Api::App.deploy_sha}"
         end
 
         use Rack::Deflater
@@ -111,7 +122,7 @@ module Travis::Api
       app.call(env)
     rescue
       if Endpoint.production?
-        [500, {'Content-Type' => 'text/plain'}, ['Travis encountered an error, sorry :(']]
+        [500, {'Content-Type' => 'application/json'}, [ERROR_RESPONSE]]
       else
         raise
       end
@@ -135,8 +146,6 @@ module Travis::Api
 
         setup_database_connections
 
-        Travis::Features.start
-
         if Travis.env == 'production' || Travis.env == 'staging'
           Sidekiq.configure_client do |config|
             config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
@@ -156,25 +165,9 @@ module Travis::Api
       def self.setup_database_connections
         Travis::Database.connect
 
-        return unless Travis.config.use_database_follower?
-        require 'octopus'
-
-        if Travis.env == 'production' || Travis.env == 'staging'
-          puts "Setting up the DB follower as a read slave"
-
-          # Octopus checks for Rails.env, just hardcode enabled?
-          Octopus.instance_eval do
-            def enabled?
-              true
-            end
-          end
-
-          ActiveRecord::Base.custom_octopus_connection = false
-
-          ::Octopus.setup do |config|
-            config.shards = { :follower => Travis.config.database_follower }
-            config.environments = ['production', 'staging']
-          end
+        if Travis.config.logs_database
+          Log.establish_connection 'logs_database'
+          Log::Part.establish_connection 'logs_database'
         end
       end
 

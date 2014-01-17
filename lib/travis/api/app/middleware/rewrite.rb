@@ -3,7 +3,7 @@ require 'travis/api/app'
 class Travis::Api::App
   class Middleware
     class Rewrite < Middleware
-      FORMAT      = %r(\.(json|xml|png|txt)$)
+      FORMAT      = %r(\.(json|xml|png|txt|atom)$)
       V1_REPO_URL = %r(^(/[^/]+/[^/]+(?:/builds(?:/[\d]+)?|/cc)?)$)
 
       helpers :accept
@@ -54,6 +54,10 @@ class Travis::Api::App
 
         def xml?
           env['travis.format'] == 'xml'
+        end
+
+        def atom?
+          env['travis.format'] == 'atom'
         end
 
         def v1?
