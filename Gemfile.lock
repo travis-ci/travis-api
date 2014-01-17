@@ -23,8 +23,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 115da54dca0b452261294631e306f33516d515f9
-  branch: ps-tags-and-branches
+  revision: ae4d4017e85ca146f2c35ed12a092f002a8159f3
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
