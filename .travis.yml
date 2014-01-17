@@ -8,7 +8,7 @@ rvm:
 addons:
   postgresql: 9.3
 before_script:
-  - 'RAILS_ENV=test rake db:create db:structure:load --trace'
+  - 'RAILS_ENV=test bundle exec rake db:create db:structure:load --trace'
 notifications:
   irc: "irc.freenode.org#travis"
 services:
