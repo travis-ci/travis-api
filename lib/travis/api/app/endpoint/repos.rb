@@ -74,7 +74,7 @@ class Travis::Api::App
       # Get the public key for the repository with the given id.
       #
       # This can be used to encrypt secure variables in the build configuration. See
-      # [the encryption keys](http://about.travis-ci.org/docs/user/encryption-keys/) documentation page for more
+      # [the encryption keys](http://docs.travis-ci.com/user/encryption-keys/) documentation page for more
       # information.
       #
       # ### Response
@@ -146,7 +146,7 @@ class Travis::Api::App
       # Get the public key for a given repository.
       #
       # This can be used to encrypt secure variables in the build configuration. See
-      # [the encryption keys](http://about.travis-ci.org/docs/user/encryption-keys/) documentation page for more
+      # [the encryption keys](http://docs.travis-ci.com/user/encryption-keys/) documentation page for more
       # information.
       #
       # ### Response

@@ -93,10 +93,10 @@ __END__
   <body>
     <div id="navigation">
       <div class="wrapper">
-        <a href="http://travis-ci.org/" class="logo-home"><img src="http://about.travis-ci.org/images/travisci-small.png" alt="Travis Logo"></a>
+        <a href="http://travis-ci.org/" class="logo-home"><img src="http://docs.travis-ci.com/images/travisci-small.png" alt="Travis Logo"></a>
         <ul>
-          <li><a href="http://about.travis-ci.org/blog/">Blog</a></li>
-          <li><a href="http://about.travis-ci.org/docs/">Documentation</a></li>
+          <li><a href="http://blog.travis-ci.com/">Blog</a></li>
+          <li><a href="http://docs.travis-ci.com/">Documentation</a></li>
         </ul>
       </div>
     </div>
@@ -157,7 +157,7 @@ __END__
       <div class="wrapper">
         <div class="large-6 columns left">
           <div id="travis-logo">
-            <img src="http://about.travis-ci.org/images/travis-mascot-200px.png" id="travis-mascot">
+            <img src="http://docs.travis-ci.com/images/travis-mascot-200px.png" id="travis-mascot">
           </div>
           <div id="travis-address">
             <p>© 2013 Travis CI GmbH,<br>Prinzessinnenstr. 20, 10969 berlin, Germany</p>
@@ -169,13 +169,13 @@ __END__
             <ul class="left">
               <li><a href="mailto:contact@travis-ci.com">Email</a></li>
               <li><a href="http://chat.travis-ci.com">Live Chat</a></li>
-              <li><a href="http://about.travis-ci.org/docs">Docs</a></li>
+              <li><a href="http://docs.travis-ci.com">Docs</a></li>
               <li><a href="http://status.travis-ci.com">Status</a></li>
             </ul>
           </div>
 
           <div id="berlin-sticker">
-            <img src="http://about.travis-ci.org/images/made-in-berlin-badge.png" id="made-in-berlin">
+            <img src="http://docs.trais-ci.com/images/made-in-berlin-badge.png" id="made-in-berlin">
           </div>
         </div>
       </div>
