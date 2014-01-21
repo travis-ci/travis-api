@@ -1,6 +1,22 @@
 module Travis::Api::App::Responders
+  # This XML responder is used if the resource is a Repository, or a collection
+  # of Repositories.
+  # It returns XML data conforming to Multiple Project Summary Reporting Standard,
+  # as explained in http://confluence.public.thoughtworks.org/display/CI/Multiple+Project+Summary+Reporting+Standard
   class Xml < Base
-    TEMPLATE = File.read(__FILE__).split("__END__").last.strip
+    TEMPLATE_ERB = ERB.new <<-EOF
+<Projects>
+<% @resource.each do |r| %>
+  <Project
+    name="<%= r.slug %>"
+    activity="<%= ACTIVITY[r.last_build.state.to_sym] || ACTIVITY[:default] %>"
+    lastBuildStatus="<%= STATUS[r.last_build.state.to_sym] || STATUS[:default]  %>"
+    lastBuildLabel="<%= r.last_build.try(:number) %>"
+    lastBuildTime="<%= r.last_build.finished_at.try(:strftime, '%Y-%m-%dT%H:%M:%S.%L%z') %>"
+    webUrl="https://<%= Travis.config.client_domain %>/<%= r.slug %>" />
+<% end %>
+</Projects>
+    EOF
 
     STATUS = {
       default: 'Unknown',
@@ -16,13 +32,14 @@ module Travis::Api::App::Responders
     }
 
     def apply?
-      super && resource.is_a?(Repository) && last_build
+      @resource = Array(resource)
+      super && @resource.first.is_a?(Repository)
     end
 
     def apply
       super
 
-      TEMPLATE % data
+      TEMPLATE_ERB.result(binding)
     end
 
     private
@@ -30,40 +47,5 @@ module Travis::Api::App::Responders
       def content_type
         'application/xml;charset=utf-8'
       end
-
-      def data
-        {
-          name:     resource.slug,
-          url:      File.join("https://", Travis.config.client_domain, resource.slug),
-          activity: activity,
-          label:    last_build.try(:number),
-          status:   status,
-          time:     last_build.finished_at.try(:strftime, '%Y-%m-%dT%H:%M:%S.%L%z')
-        }
-      end
-
-      def status
-        STATUS[last_build.state.to_sym] || STATUS[:default]
-      end
-
-      def activity
-        ACTIVITY[last_build.state.to_sym] || ACTIVITY[:default]
-      end
-
-      def last_build
-        @last_build ||= resource.last_build
-      end
   end
 end
-
-__END__
-
-<Projects>
-  <Project
-    name="%{name}"
-    activity="%{activity}"
-    lastBuildStatus="%{status}"
-    lastBuildLabel="%{label}"
-    lastBuildTime="%{time}"
-    webUrl="%{url}" />
-</Projects>
