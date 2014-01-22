@@ -9,6 +9,6 @@ describe Travis::Api::App::Endpoint::Jobs do
   end
 
   it "POST /jobs/:id/annotations" do
-    response = post("/jobs/#{job.id}/annotations", { "username" => provider.api_username, "key" => provider.api_key, "description" => "Foobar" }, "HTTP_ACCEPT" => "application/vnd.travis-ci.2+json, */*; q=0.01").should be_successful
+    response = post("/jobs/#{job.id}/annotations", { "username" => provider.api_username, "key" => provider.api_key, "status" => "passed", "description" => "Foobar" }, "HTTP_ACCEPT" => "application/vnd.travis-ci.2+json, */*; q=0.01").should be_successful
   end
 end

@@ -78,7 +78,7 @@ describe 'Jobs' do
 
   it "GET /jobs/:id/annotations" do
     annotation_provider = Factory(:annotation_provider)
-    annotation = annotation_provider.annotations.create(job_id: job.id, description: "Foobar")
+    annotation = annotation_provider.annotations.create(job_id: job.id, status: "passed", description: "Foobar")
     response = get "/jobs/#{job.id}/annotations", {}, headers
     response.should deliver_json_for(Annotation.where(id: annotation.id), version: 'v2')
   end
@@ -87,7 +87,7 @@ describe 'Jobs' do
     context "with valid credentials" do
       it "responds with a 204" do
         annotation_provider = Factory(:annotation_provider)
-        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, description: "Foobar" }, headers
+        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, status: "passed", description: "Foobar" }, headers
         response.status.should eq(204)
       end
     end
@@ -95,14 +95,22 @@ describe 'Jobs' do
     context "without a description" do
       it "responds with a 422" do
         annotation_provider = Factory(:annotation_provider)
-        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key }, headers
+        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, status: "errored" }, headers
+        response.status.should eq(422)
+      end
+    end
+
+    context "without a status" do
+      it "responds with a 422" do
+        annotation_provider = Factory(:annotation_provider)
+        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, description: "Foobar" }, headers
         response.status.should eq(422)
       end
     end
 
     context "with invalid credentials" do
       it "responds with a 401" do
-        response = post "/jobs/#{job.id}/annotations", { username: "invalid-username", key: "invalid-key", description: "Foobar" }, headers
+        response = post "/jobs/#{job.id}/annotations", { username: "invalid-username", key: "invalid-key", status: "passed", description: "Foobar" }, headers
         response.status.should eq(401)
       end
     end

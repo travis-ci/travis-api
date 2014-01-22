@@ -69,14 +69,14 @@ class Travis::Api::App
       end
 
       post "/:job_id/annotations" do
-        if params[:description]
+        if params[:status] && params[:description]
           annotation = service(:update_annotation, params).run
 
           status annotation ? 204 : 401
         else
           status 422
 
-          { "error" => "Must include a description" }
+          { "error" => "Must include status and description" }
         end
       end
 
