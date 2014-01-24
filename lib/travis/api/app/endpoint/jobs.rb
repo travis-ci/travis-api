@@ -13,23 +13,6 @@ class Travis::Api::App
         respond_with service(:find_job, params)
       end
 
-      get '/:job_id/log' do
-        resource = service(:find_log, params).run
-        if !resource || resource.archived?
-          archived_log_path = archive_url("/jobs/#{params[:job_id]}/log.txt")
-
-          if params[:cors_hax]
-            status 204
-            headers['Access-Control-Expose-Headers'] = 'Location'
-            headers['Location'] = archived_log_path
-          else
-            redirect archived_log_path, 307
-          end
-        else
-          respond_with resource
-        end
-      end
-
       post '/:id/cancel' do
         Metriks.meter("api.request.cancel_job").mark
 
@@ -62,6 +45,39 @@ class Travis::Api::App
       post '/:id/restart' do
         Metriks.meter("api.request.restart_job").mark
         respond_with service(:reset_model, job_id: params[:id])
+      end
+
+      get '/:job_id/log' do
+        resource = service(:find_log, params).run
+        if !resource || resource.archived?
+          archived_log_path = archive_url("/jobs/#{params[:job_id]}/log.txt")
+
+          if params[:cors_hax]
+            status 204
+            headers['Access-Control-Expose-Headers'] = 'Location'
+            headers['Location'] = archived_log_path
+          else
+            redirect archived_log_path, 307
+          end
+        else
+          respond_with resource
+        end
+      end
+
+      get "/:job_id/annotations" do
+        respond_with service(:find_annotations, params)
+      end
+
+      post "/:job_id/annotations" do
+        if params[:status] && params[:description]
+          annotation = service(:update_annotation, params).run
+
+          status annotation ? 204 : 401
+        else
+          status 422
+
+          { "error" => "Must include status and description" }
+        end
       end
 
       def archive_url(path)

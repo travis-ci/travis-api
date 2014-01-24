@@ -76,6 +76,46 @@ describe 'Jobs' do
     end
   end
 
+  it "GET /jobs/:id/annotations" do
+    annotation_provider = Factory(:annotation_provider)
+    annotation = annotation_provider.annotations.create(job_id: job.id, status: "passed", description: "Foobar")
+    response = get "/jobs/#{job.id}/annotations", {}, headers
+    response.should deliver_json_for(Annotation.where(id: annotation.id), version: 'v2')
+  end
+
+  describe "POST /jobs/:id/annotations" do
+    context "with valid credentials" do
+      it "responds with a 204" do
+        annotation_provider = Factory(:annotation_provider)
+        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, status: "passed", description: "Foobar" }, headers
+        response.status.should eq(204)
+      end
+    end
+
+    context "without a description" do
+      it "responds with a 422" do
+        annotation_provider = Factory(:annotation_provider)
+        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, status: "errored" }, headers
+        response.status.should eq(422)
+      end
+    end
+
+    context "without a status" do
+      it "responds with a 422" do
+        annotation_provider = Factory(:annotation_provider)
+        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, description: "Foobar" }, headers
+        response.status.should eq(422)
+      end
+    end
+
+    context "with invalid credentials" do
+      it "responds with a 401" do
+        response = post "/jobs/#{job.id}/annotations", { username: "invalid-username", key: "invalid-key", status: "passed", description: "Foobar" }, headers
+        response.status.should eq(401)
+      end
+    end
+  end
+
   describe 'POST /jobs/:id/cancel' do
     let(:user)    { User.where(login: 'svenfuchs').first }
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
