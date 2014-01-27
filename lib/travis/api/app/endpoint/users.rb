@@ -47,7 +47,12 @@ class Travis::Api::App
       end
 
       post '/sync', scope: :private do
-        respond_with service(:sync_user)
+        if current_user.syncing?
+          status 409
+          { 'message' => "Sync already in progress. Try again later." }
+        else
+          respond_with service(:sync_user)
+        end
       end
     end
   end
