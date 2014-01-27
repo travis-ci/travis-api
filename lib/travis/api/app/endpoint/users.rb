@@ -48,8 +48,7 @@ class Travis::Api::App
 
       post '/sync', scope: :private do
         if current_user.syncing?
-          status 202
-          body "Accepted"
+          status 429
         else
           respond_with service(:sync_user)
         end
