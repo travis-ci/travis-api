@@ -30,7 +30,7 @@ describe Travis::Api::App::Endpoint::Users do
     }
   end
 
-  context 'when responding to POST for /usres/sync' do
+  context 'when responding to POST for /users/sync' do
     context 'when sync is in progress' do
       before :each do
         user.stubs(:syncing?).returns(true)
