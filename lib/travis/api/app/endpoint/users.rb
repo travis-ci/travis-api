@@ -49,7 +49,7 @@ class Travis::Api::App
       post '/sync', scope: :private do
         if current_user.syncing?
           status 429
-          body '{ message: "Sync already in progress" }'
+          { 'message' => "Sync already in progress" }
         else
           respond_with service(:sync_user)
         end
