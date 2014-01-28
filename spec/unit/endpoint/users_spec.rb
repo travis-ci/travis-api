@@ -36,10 +36,10 @@ describe Travis::Api::App::Endpoint::Users do
         user.stubs(:syncing?).returns(true)
       end
 
-      it 'returns 429' do
+      it 'returns 409' do
         response = post('/users/sync', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01')
 
-        response.status.should == 429
+        response.status.should == 409
         JSON.parse(response.body).should be_true
       end
     end
