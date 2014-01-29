@@ -86,6 +86,8 @@ describe 'Jobs' do
   describe "POST /jobs/:id/annotations" do
     context "with valid credentials" do
       it "responds with a 204" do
+        Travis::Services::UpdateAnnotation.any_instance.stubs(:annotations_enabled?).returns(true)
+
         annotation_provider = Factory(:annotation_provider)
         response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, status: "passed", description: "Foobar" }, headers
         response.status.should eq(204)
