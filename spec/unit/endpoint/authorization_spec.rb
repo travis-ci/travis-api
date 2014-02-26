@@ -13,6 +13,20 @@ describe Travis::Api::App::Endpoint::Authorization do
     user.stubs(:github_id).returns(42)
     User.stubs(:find_github_id).returns(user)
     User.stubs(:find).returns(user)
+
+    @original_config = Travis.config.oauth2
+    Travis.config.oauth2 = {
+      authorization_server: 'https://foobar.com',
+      access_token_path: '/access_token_path',
+      client_id: 'client-id',
+      client_secret: 'client-secret',
+      scope: 'public_repo,user:email,new_scope',
+      insufficient_access_redirect_url: 'https://travis-ci.org/insufficient_access'
+    }
+  end
+
+  after do
+    Travis.config.oauth2 = @original_config
   end
 
   describe 'GET /auth/authorize' do
@@ -26,18 +40,6 @@ describe Travis::Api::App::Endpoint::Authorization do
   describe "GET /auth/handshake" do
     describe 'with insufficient oauth permissions' do
       before do
-        # TODO: this is a first try of writing tests for authorization, it does not look pretty
-        #       but I wanted to have something to start with, later on I would like to extract
-        #       this flow to a class, which would be easier to test.
-        @original_config = Travis.config.oauth2
-        Travis.config.oauth2 = {
-          authorization_server: 'https://foobar.com',
-          access_token_path: '/access_token_path',
-          client_id: 'client-id',
-          client_secret: 'client-secret',
-          scope: 'public_repo,user:email,new_scope',
-          insufficient_access_redirect_url: 'https://travis-ci.org/insufficient_access'
-        }
         Travis.redis.sadd('github:states', 'github-state')
 
         response = mock('response')
@@ -56,7 +58,6 @@ describe Travis::Api::App::Endpoint::Authorization do
       end
 
       after do
-        Travis.config.oauth2 = @original_config
         Travis.redis.srem('github:states', 'github-state')
         # this is cached after first run, so if we change scopes, it will stay
         # like that for the rest of the run

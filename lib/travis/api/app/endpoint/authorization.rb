@@ -250,7 +250,7 @@ class Travis::Api::App
           scopes  = parse_scopes data.headers['x-oauth-scopes']
           manager = UserManager.new(data, token, drop_token)
 
-          unless acceptable? scopes
+          unless acceptable?(scopes, drop_token)
             # TODO: we should probably only redirect if this is a web
             #      oauth request, are there any other possibilities to
             #      consider?
@@ -280,19 +280,25 @@ class Travis::Api::App
           AccessToken.create(options).token
         end
 
-        def acceptable?(scopes)
+        def acceptable?(scopes, lossy = false)
           User::Oauth.wanted_scopes.all? do |scope|
-            acceptable_scopes_for(scope).any? { |s| scopes.include? s }
+            acceptable_scopes_for(scope, lossy).any? { |s| scopes.include? s }
           end
         end
 
-        def acceptable_scopes_for(scope)
-          case scope = scope.to_s
-          when /^user/       then ['user', scope, 'public_repo', 'repo']
-          when /^(.+):/      then [$1, scope]
-          when 'public_repo' then [scope, 'repo']
-          else [scope]
+        def acceptable_scopes_for(scope, lossy = false)
+          scopes = case scope = scope.to_s
+                   when /^(.+):/      then [$1, scope]
+                   when 'public_repo' then [scope, 'repo']
+                   else [scope]
+                   end
+
+          if lossy
+            scopes << 'repo'
+            scopes << 'public_repo' if lossy and scope != 'repo'
           end
+
+          scopes
         end
 
         def post_message(payload)
