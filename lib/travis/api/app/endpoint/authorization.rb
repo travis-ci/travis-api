@@ -30,7 +30,7 @@ class Travis::Api::App
     # This is the recommended way for GitHub applications that also want Travis
     # integration.
     #
-    # The entry point is [/auth/github](#/auth/github).
+    # The entry point is [/auth/github](#POST /auth/github).
     #
     # ## Cross-Origin Window Messages
     #
