@@ -17,7 +17,17 @@ class Travis::Api::App
     after { content_type :json unless content_type }
 
     error(ActiveRecord::RecordNotFound, Sinatra::NotFound) { not_found }
-    not_found { content_type =~ /json/ ? { 'file' => 'not found' } : 'file not found' }
+    not_found {
+      if content_type =~ /json/
+        if body && !body.empty?
+          body
+        else
+          { 'file' => 'not found' }
+        end
+      else
+        'file not found'
+      end
+    }
 
     private
 

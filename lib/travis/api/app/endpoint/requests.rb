@@ -8,6 +8,15 @@ class Travis::Api::App
         Metriks.meter("api.request.restart").mark
         respond_with service(:reset_model, params)
       end
+
+      get '/' do
+        begin
+          respond_with(service(:find_requests, params).run)
+        rescue Travis::RepositoryNotFoundError => e
+          status 404
+          { "error" => "Repository could not be found" }
+        end
+      end
     end
   end
 end
