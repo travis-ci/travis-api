@@ -23,7 +23,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: a17a9b90adb5567c7d6ef6e5bb796018a1b371c0
+  revision: dd94b9d19ac4cc33f383f740194ba1b3c6a73d3a
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -267,7 +267,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.38)
+    tzinfo (0.3.39)
     unicorn (4.7.0)
       kgio (~> 2.6)
       rack
