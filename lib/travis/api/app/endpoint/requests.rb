@@ -17,6 +17,10 @@ class Travis::Api::App
           { "error" => "Repository could not be found" }
         end
       end
+
+      get '/:id' do
+        respond_with service(:find_request, params)
+      end
     end
   end
 end
