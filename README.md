@@ -16,7 +16,7 @@ Run tests:
 Run the server:
 
     $ rake db:create db:structure:load
-    $ foreman start
+    $ script/server
 
 ## Contributing
 
