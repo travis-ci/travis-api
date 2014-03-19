@@ -4,10 +4,14 @@ module Travis::Api::App::Responders
       'png'
     end
 
-    def apply
+    def set_headers
       headers['Pragma'] = "no-cache"
       headers['Expires'] = Time.now.utc.httpdate
       headers['Content-Disposition'] = %(inline; filename="#{File.basename(filename)}")
+    end
+
+    def apply
+      set_headers
       send_file(filename, type: :png, last_modified: last_modified)
     end
 

@@ -3,7 +3,7 @@ require 'travis/api/app'
 class Travis::Api::App
   class Middleware
     class Rewrite < Middleware
-      FORMAT      = %r(\.(json|xml|png|txt|atom)$)
+      FORMAT      = %r(\.(json|xml|png|txt|atom|svg)$)
       V1_REPO_URL = %r(^(/[^/]+/[^/]+(?:/builds(?:/[\d]+)?|/cc)?)$)
 
       helpers :accept
@@ -13,7 +13,7 @@ class Travis::Api::App
       before do
         extract_format
         rewrite_v1_repo_segment if v1? || xml?
-        rewrite_v1_named_repo_image_path if png?
+        rewrite_v1_named_repo_image_path if png? || svg?
       end
 
       after do
@@ -50,6 +50,10 @@ class Travis::Api::App
 
         def png?
           env['travis.format'] == 'png'
+        end
+
+        def svg?
+          env['travis.format'] == 'svg'
         end
 
         def xml?
