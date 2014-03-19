@@ -1,10 +1,10 @@
 # Overview
 
-**This documentation is for the v2 API. However, this endpoint does also serve the v1 API (undocumented).**
+**This documentation is for the v2 API. However, this endpoint also serves the v1 API (undocumented).**
 
 Welcome to the Travis CI API documentation. This is the API used by the official
 [Travis CI](https://travis-ci.org) web interface, so everything the web
-interface is able to do is also accomplishable via the API.
+ui is able to do can also be accomplished via the API.
 
 ## Media Types
 
