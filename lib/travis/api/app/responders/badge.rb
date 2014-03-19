@@ -10,7 +10,7 @@ module Travis::Api::App::Responders
     end
 
     def content_type
-      "image/svg"
+      "image/svg+xml"
     end
 
     def filename
