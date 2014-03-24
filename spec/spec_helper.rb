@@ -11,7 +11,9 @@ require 'travis/api/app'
 require 'travis/testing'
 require 'travis/testing/scenario'
 require 'travis/testing/factories'
+require 'travis/testing/matchers'
 require 'support/matchers'
+require 'support/formats'
 
 Travis.logger = Logger.new(StringIO.new)
 Travis::Api::App.setup
