@@ -41,15 +41,6 @@ class Travis::Api::App
         respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
-      get '/:id/settings/ssh_keys' do
-        settings = service(:find_repo_settings, params).run
-        if settings
-          respond_with({ settings: settings.obfuscated }, version: :v2)
-        else
-          status 404
-        end
-      end
-
       # Get settings for a given repository
       #
       get '/:id/settings' do
