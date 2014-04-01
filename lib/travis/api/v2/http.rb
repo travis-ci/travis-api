@@ -1,3 +1,5 @@
+require 'travis/api/serializer'
+
 module Travis
   module Api
     module V2
@@ -20,6 +22,8 @@ module Travis
         require 'travis/api/v2/http/requests'
         require 'travis/api/v2/http/request'
         require 'travis/api/v2/http/ssl_key'
+        require 'travis/api/v2/http/ssh_key'
+        require 'travis/api/v2/http/ssh_keys'
         require 'travis/api/v2/http/user'
         require 'travis/api/v2/http/validation_error'
       end
