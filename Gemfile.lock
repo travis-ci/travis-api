@@ -125,7 +125,6 @@ GEM
     coderay (1.1.0)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    columnize (0.3.6)
     connection_pool (0.9.3)
     daemons (1.1.9)
     dalli (2.6.4)
@@ -133,12 +132,6 @@ GEM
       activerecord
       rake
     database_cleaner (0.8.0)
-    debugger (1.6.2)
-      columnize (>= 0.3.1)
-      debugger-linecache (~> 1.2.0)
-      debugger-ruby_core_source (~> 1.2.3)
-    debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.2.3)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
@@ -300,7 +293,6 @@ DEPENDENCIES
   bunny (~> 0.8.0)
   dalli
   database_cleaner (~> 0.8.0)
-  debugger
   factory_girl (~> 2.4.0)
   foreman
   gh
