@@ -3,11 +3,12 @@ ruby '2.0.0'
 source 'https://rubygems.org'
 gemspec
 
-gem 'travis-core',     github: 'travis-ci/travis-core'
+gem 'travis-core',     github: 'travis-ci/travis-core', branch: 'ps-settings-encryption'
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: 'cde9741'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
+gem 'debugger'
 
 gem 'active_model_serializers'
 gem 'unicorn'
@@ -32,7 +33,6 @@ end
 group :development do
   gem 'foreman'
   gem 'rerun'
-  # gem 'debugger'
   gem 'rb-fsevent', '~> 0.9.1'
 end
 
