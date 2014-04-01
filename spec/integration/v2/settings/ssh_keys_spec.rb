@@ -25,7 +25,7 @@ describe Travis::Api::App::SettingsEndpoint do
       end
 
       it 'returns 404 if ssh_key can\'t be found' do
-        response = get '/settings/ssh_key/123', { repository_id: repo.id }, headers
+        response = get '/settings/ssh_keys/123', { repository_id: repo.id }, headers
         json = JSON.parse(response.body)
         json['error'].should == "Could not find a requested setting"
       end
