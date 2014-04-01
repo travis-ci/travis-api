@@ -96,6 +96,8 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
+    active_model_serializers (0.8.1)
+      activemodel (>= 3.0)
     activemodel (3.2.17)
       activesupport (= 3.2.17)
       builder (~> 3.0.0)
@@ -279,6 +281,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_model_serializers
   bunny (~> 0.8.0)
   dalli
   database_cleaner (~> 0.8.0)

@@ -5,6 +5,7 @@ class Travis::Api::App
     class Rewrite < Middleware
       FORMAT      = %r(\.(json|xml|png|txt|atom|svg)$)
       V1_REPO_URL = %r(^(/[^/]+/[^/]+(?:/builds(?:/[\d]+)?|/cc)?)$)
+      SETTINGS_URL = %r(^/settings)
 
       helpers :accept
 
@@ -37,7 +38,9 @@ class Travis::Api::App
         end
 
         def redirect_v1_named_repo_path
-          force_redirect("/repositories#{$1}.#{env['travis.format']}") if request.path =~ V1_REPO_URL
+          if request.path =~ V1_REPO_URL && request.path !~ SETTINGS_URL
+            force_redirect("/repositories#{$1}.#{env['travis.format']}")
+          end
         end
 
         def force_redirect(path)

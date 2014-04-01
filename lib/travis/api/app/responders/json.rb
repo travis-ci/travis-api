@@ -27,7 +27,13 @@ class Travis::Api::App
         end
 
         def result
-          builder ? builder.new(resource, params).data : basic_type_resource
+          if builder
+            p = params
+            p[:root] = options[:type] if options[:type]
+            builder.new(resource, p).data
+          else
+            basic_type_resource
+          end
         end
 
         def builder

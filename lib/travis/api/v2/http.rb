@@ -21,6 +21,7 @@ module Travis
         require 'travis/api/v2/http/request'
         require 'travis/api/v2/http/ssl_key'
         require 'travis/api/v2/http/user'
+        require 'travis/api/v2/http/validation_error'
       end
     end
   end

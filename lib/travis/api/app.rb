@@ -18,6 +18,7 @@ require 'sidekiq'
 require 'metriks/reporter/logger'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
+require 'travis/api/serializer'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -113,7 +114,11 @@ module Travis::Api
         use Travis::Api::App::Middleware::Metriks
         use Travis::Api::App::Middleware::Rewrite
 
-        Endpoint.subclasses.each { |e| map(e.prefix) { run(e.new) } }
+        Endpoint.subclasses.each do |e|
+          next if e == SettingsEndpoint # TODO: add something like abstract? method to check if
+                                        # class should be registered
+          map(e.prefix) { run(e.new) }
+        end
       end
     end
 
