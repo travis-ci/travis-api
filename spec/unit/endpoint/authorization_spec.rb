@@ -38,9 +38,20 @@ describe Travis::Api::App::Endpoint::Authorization do
   end
 
   describe "GET /auth/handshake" do
+    describe 'evil hackers messing with the state' do
+      it 'does not succeed if state cookie mismatches' do
+        Travis.redis.sadd('github:states', 'github-state')
+        response = get '/auth/handshake?state=github-state&code=oauth-code'
+        response.status.should be == 400
+        response.body.should be == "state mismatch"
+        Travis.redis.srem('github:states', 'github-state')
+      end
+    end
+
     describe 'with insufficient oauth permissions' do
       before do
         Travis.redis.sadd('github:states', 'github-state')
+        rack_mock_session.cookie_jar['travis.state'] = 'github-state'
 
         response = mock('response')
         response.expects(:body).returns('access_token=foobarbaz-token')
