@@ -10,18 +10,22 @@ module Travis::Api::App::Responders
       # for log's content for now.
       #
       # TODO: think how to handle other formats correctly
-      super && resource.is_a?(Log)
+      super && (resource.is_a?(Log) || resource.is_a?(String))
     end
 
     def apply
       super
 
-      filename    = resource.id
-      disposition = params[:attachment] ? 'attachment' : 'inline'
+      if resource.is_a?(Log)
+        filename    = resource.id
+        disposition = params[:attachment] ? 'attachment' : 'inline'
 
-      headers['Content-Disposition'] = %(#{disposition}; filename="#{filename}")
+        headers['Content-Disposition'] = %(#{disposition}; filename="#{filename}")
 
-      params[:deansi] ? clear_ansi(resource.content) : resource.content
+        params[:deansi] ? clear_ansi(resource.content) : resource.content
+      else
+        resource
+      end
     end
 
     private
