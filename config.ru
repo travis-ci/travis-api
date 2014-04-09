@@ -30,5 +30,18 @@ class RackTimer
   end
 end
 
+if ENV['SKYLIGHT_APPLICATION']
+  require 'skylight'
+  require 'logger'
+  config = Skylight::Config.load(nil, ENV['RACK_ENV'], ENV)
+  config['root'] = File.expand_path('..', __FILE__)
+  config['agent.sockfile_path'] = File.expand_path('../tmp', __FILE__)
+  config.logger = Logger.new(STDOUT)
+  config.validate!
+  Skylight.start!(config)
+
+  use Skylight::Middleware
+end
+
 use RackTimer
 run Travis::Api::App.new

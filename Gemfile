@@ -20,6 +20,7 @@ gem 'bunny',           '~> 0.8.0'
 gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.5'
+gem 'skylight'
 
 group :test do
   gem 'rspec',         '~> 2.13'
