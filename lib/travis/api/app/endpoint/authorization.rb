@@ -163,7 +163,8 @@ class Travis::Api::App
             redirect_uri: oauth_endpoint
           }
 
-          if params[:code] and state_ok?(params[:state])
+          if params[:code]
+            halt 400, 'state mismatch' unless state_ok?(params[:state])
             endpoint.path          = config.access_token_path
             values[:state]         = params[:state]
             values[:code]          = params[:code]
@@ -187,11 +188,13 @@ class Travis::Api::App
           redis.expire('github:states', 1800)
           payload = params[:origin] || params[:redirect_uri]
           state << ":::" << payload if payload
+          response.set_cookie('travis.state', state)
           state
         end
 
         def state_ok?(state)
-          redis.srem('github:states', state.split(":::", 1)) if state
+          cookie_state = request.cookies['travis.state']
+          state == cookie_state and redis.srem('github:states', state.to_s.split(":::", 1))
         end
 
         def github_to_travis(token, options = {})
