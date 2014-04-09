@@ -8,6 +8,14 @@ GIT
       uuidtools
 
 GIT
+  remote: git://github.com/henrikhodne/skylight-ruby.git
+  revision: 44904fe824e202deb6389fb9b547bd4345abdc2d
+  branch: sinatra-support
+  specs:
+    skylight (0.3.10)
+      activesupport (>= 3.0.0)
+
+GIT
   remote: git://github.com/rack/rack-contrib.git
   revision: 951760b1710634623ebbccef8d65df9139bb41c2
   specs:
@@ -53,7 +61,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: d2cce5dbbee64fb1574386b16da3768feadb372a
+  revision: d37220d766a3fb218f0f8e60ab8764034f6b376f
   specs:
     travis-support (0.0.1)
 
@@ -69,7 +77,6 @@ PATH
     travis-api (0.0.1)
       backports (~> 2.5)
       memcachier
-      newrelic_rpm (~> 3.6.6)
       pg (~> 0.13.2)
       rack-contrib (~> 1.1)
       rack-ssl (~> 1.3, >= 1.3.3)
@@ -175,7 +182,6 @@ GEM
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
-    newrelic_rpm (3.6.9.171)
     pg (0.13.2)
     polyglot (0.3.4)
     proxies (0.2.1)
@@ -299,6 +305,7 @@ DEPENDENCIES
   sentry-raven!
   sinatra
   sinatra-contrib
+  skylight!
   travis-api!
   travis-core!
   travis-sidekiqs!

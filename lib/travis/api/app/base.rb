@@ -7,10 +7,12 @@ class Travis::Api::App
   class Base < Sinatra::Base
     register Extensions::SmartConstants
 
-    configure :production do
-      require 'newrelic_rpm'
-      ::NewRelic::Agent.manual_start()
-      ::NewRelic::Agent.after_fork(:force_reconnect => true)
+    if ENV['SKYLIGHT_APPLICATION']
+      require 'skylight'
+      require 'travis/api/app/skylight/dalli_probe'
+      require 'travis/api/app/skylight/redis_probe'
+      require 'travis/api/app/skylight/service_probe'
+      register ::Skylight::Sinatra
     end
 
     error NotImplementedError do
