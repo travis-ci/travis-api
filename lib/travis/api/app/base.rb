@@ -8,7 +8,8 @@ class Travis::Api::App
     register Extensions::SmartConstants
 
     if ENV['SKYLIGHT_APPLICATION']
-      register :skylight
+      require 'skylight'
+      register Skylight::Sinatra
     end
 
     error NotImplementedError do

@@ -20,7 +20,8 @@ gem 'bunny',           '~> 0.8.0'
 gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.5'
-gem 'skylight'
+
+gem 'skylight', github: 'henrikhodne/skylight-ruby', branch: 'sinatra-support'
 
 group :test do
   gem 'rspec',         '~> 2.13'
