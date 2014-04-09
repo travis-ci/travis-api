@@ -11,6 +11,7 @@ class Travis::Api::App
       require 'skylight'
       require 'travis/api/app/skylight/dalli_probe'
       require 'travis/api/app/skylight/redis_probe'
+      require 'travis/api/app/skylight/service_probe'
       register ::Skylight::Sinatra
     end
 
