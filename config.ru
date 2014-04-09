@@ -57,6 +57,31 @@ if ENV['SKYLIGHT_APPLICATION']
   end
   Skylight::Probes.register("Dalli::Client", "dalli", DalliProbe.new)
 
+  class RedisProbe
+    def install
+      ::Redis::Client.class_eval do
+        alias call_without_sk call
+
+        def call(command_parts, &block)
+          command   = command_parts[0].upcase
+
+          opts = {
+            category: "api.redis.#{command.downcase}",
+            title:    "Redis #{command}",
+            annotations: {
+              command:   command.to_s
+            }
+          }
+
+          Skylight.instrument(opts) do
+            call_without_sk(command_parts, &block)
+          end
+        end
+      end
+    end
+  end
+  Skylight::Probes.register("Redis", "redis", RedisProbe.new)
+
   Skylight.start!(config)
 
   use Skylight::Middleware
