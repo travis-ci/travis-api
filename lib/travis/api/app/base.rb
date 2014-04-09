@@ -7,12 +7,6 @@ class Travis::Api::App
   class Base < Sinatra::Base
     register Extensions::SmartConstants
 
-    configure :production do
-      require 'newrelic_rpm'
-      ::NewRelic::Agent.manual_start()
-      ::NewRelic::Agent.after_fork(:force_reconnect => true)
-    end
-
     error NotImplementedError do
       content_type :txt
       status 501
