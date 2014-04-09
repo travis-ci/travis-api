@@ -7,6 +7,10 @@ class Travis::Api::App
   class Base < Sinatra::Base
     register Extensions::SmartConstants
 
+    if ENV['SKYLIGHT_APPLICATION']
+      register :skylight
+    end
+
     error NotImplementedError do
       content_type :txt
       status 501
@@ -38,7 +42,7 @@ class Travis::Api::App
       disable  :protection, :logging, :setup
       enable   :raise_errors
       # disable  :dump_errors
-      register :subclass_tracker, :expose_pattern, :skylight
+      register :subclass_tracker, :expose_pattern
       helpers  :respond_with, :mime_types
     end
 

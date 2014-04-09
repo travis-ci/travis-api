@@ -32,13 +32,6 @@ end
 
 if ENV['SKYLIGHT_APPLICATION']
   require 'skylight'
-  require 'skylight/probes/net_http'
-  require 'logger'
-  config = Skylight::Config.load(nil, ENV['RACK_ENV'], ENV)
-  config['root'] = File.expand_path('..', __FILE__)
-  config['agent.sockfile_path'] = File.expand_path('../tmp', __FILE__)
-  config.logger = Logger.new(STDOUT)
-  config.validate!
 
   class DalliProbe
     def install
@@ -81,10 +74,6 @@ if ENV['SKYLIGHT_APPLICATION']
     end
   end
   Skylight::Probes.register("Redis", "redis", RedisProbe.new)
-
-  Skylight.start!(config)
-
-  use Skylight::Middleware
 end
 
 use RackTimer
