@@ -9,7 +9,9 @@ class Travis::Api::App
 
     if ENV['SKYLIGHT_APPLICATION']
       require 'skylight'
-      register Skylight::Sinatra
+      require 'travis/api/app/skylight/dalli_probe'
+      require 'travis/api/app/skylight/redis_probe'
+      register ::Skylight::Sinatra
     end
 
     error NotImplementedError do

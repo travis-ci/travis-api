@@ -30,51 +30,5 @@ class RackTimer
   end
 end
 
-if ENV['SKYLIGHT_APPLICATION']
-  require 'skylight'
-
-  class DalliProbe
-    def install
-      %w[get get_multi set add incr decr delete replace append prepend].each do |method_name|
-        next unless Dalli::Client.method_defined?(method_name.to_sym)
-        Dalli::Client.class_eval <<-EOD
-          alias #{method_name}_without_sk #{method_name}
-          def #{method_name}(*args, &block)
-            Skylight.instrument(category: "api.memcache.#{method_name}", title: "Memcache #{method_name}") do
-              #{method_name}_without_sk(*args, &block)
-            end
-          end
-        EOD
-      end
-    end
-  end
-  Skylight::Probes.register("Dalli::Client", "dalli", DalliProbe.new)
-
-  class RedisProbe
-    def install
-      ::Redis::Client.class_eval do
-        alias call_without_sk call
-
-        def call(command_parts, &block)
-          command   = command_parts[0].upcase
-
-          opts = {
-            category: "api.redis.#{command.downcase}",
-            title:    "Redis #{command}",
-            annotations: {
-              command:   command.to_s
-            }
-          }
-
-          Skylight.instrument(opts) do
-            call_without_sk(command_parts, &block)
-          end
-        end
-      end
-    end
-  end
-  Skylight::Probes.register("Redis", "redis", RedisProbe.new)
-end
-
 use RackTimer
 run Travis::Api::App.new
