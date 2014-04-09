@@ -32,15 +32,15 @@ class Travis::Api::App
 
     # Rails style methods for easy overriding
     def index
-      respond_with(collection, type: name, verson: :v2)
+      respond_with(collection, type: name, version: :v2)
     end
 
     def show
-      respond_with(record, type: singular_name, verson: :v2)
+      respond_with(record, type: singular_name, version: :v2)
     end
 
     def update
-      record.update(params[singular_name])
+      record.update(JSON.parse(request.body.read)[singular_name])
       if record.valid?
         repo_settings.save
         respond_with(record, type: singular_name, version: :v2)
@@ -51,7 +51,7 @@ class Travis::Api::App
     end
 
     def create
-      record = collection.create(params[singular_name])
+      record = collection.create(JSON.parse(request.body.read)[singular_name])
       if record.valid?
         repo_settings.save
         respond_with(record, type: singular_name, version: :v2)
@@ -64,7 +64,7 @@ class Travis::Api::App
     def destroy
       record = collection.destroy(params[:id]) || record_not_found
       repo_settings.save
-      respond_with(record, type: singular_name, verson: :v2)
+      respond_with(record, type: singular_name, version: :v2)
     end
 
     def singular_name

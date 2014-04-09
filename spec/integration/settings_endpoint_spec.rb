@@ -78,8 +78,8 @@ describe Travis::Api::App::SettingsEndpoint do
 
     describe 'POST /items' do
       it 'creates a new item' do
-        params = { repository_id: repo.id, item: { name: 'foo', secret: 'TEH SECRET' } }
-        response = post '/settings/items', params, headers
+        body = { item: { name: 'foo', secret: 'TEH SECRET' } }.to_json
+        response = post "/settings/items?repository_id=#{repo.id}", body, headers
         json = JSON.parse(response.body)
         json['item']['name'].should == 'foo'
         json['item']['id'].should_not be_nil
@@ -92,8 +92,7 @@ describe Travis::Api::App::SettingsEndpoint do
       end
 
       it 'returns error message if item is invalid' do
-        params = { repository_id: repo.id }
-        response = post '/settings/items', params, headers
+        response = post "/settings/items?repository_id=#{repo.id}", '{}', headers
         response.status.should == 422
 
         json = JSON.parse(response.body)
@@ -116,8 +115,8 @@ describe Travis::Api::App::SettingsEndpoint do
         item = settings.items.create(name: 'an item', secret: 'TEH SECRET')
         settings.save
 
-        params = { repository_id: repo.id, item: { name: 'a new name', secret: 'a new secret' } }
-        response = patch '/settings/items/' + item.id, params, headers
+        body = { item: { name: 'a new name', secret: 'a new secret' } }.to_json
+        response = patch "/settings/items/#{item.id}?repository_id=#{repo.id}", body, headers
         json = JSON.parse(response.body)
         json['item']['name'].should == 'a new name'
         json['item']['id'].should == item.id
@@ -134,8 +133,8 @@ describe Travis::Api::App::SettingsEndpoint do
         item = settings.items.create(name: 'an item', secret: 'TEH SECRET')
         settings.save
 
-        params = { repository_id: repo.id, item: { name: '' } }
-        response = patch '/settings/items/' + item.id, params, headers
+        body = { item: { name: '' } }.to_json
+        response = patch "/settings/items/#{item.id}?repository_id=#{repo.id}", body, headers
         response.status.should == 422
 
         json = JSON.parse(response.body)
