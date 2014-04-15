@@ -9,6 +9,7 @@ gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: '
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
 
+gem 'active_model_serializers'
 gem 'unicorn'
 gem 'sentry-raven',    github: 'getsentry/raven-ruby'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
@@ -33,7 +34,6 @@ end
 group :development do
   gem 'foreman'
   gem 'rerun'
-  # gem 'debugger'
   gem 'rb-fsevent', '~> 0.9.1'
 end
 

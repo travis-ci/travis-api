@@ -37,7 +37,9 @@ class Travis::Api::App
         end
 
         def redirect_v1_named_repo_path
-          force_redirect("/repositories#{$1}.#{env['travis.format']}") if request.path =~ V1_REPO_URL
+          if request.path =~ V1_REPO_URL
+            force_redirect("/repositories#{$1}.#{env['travis.format']}")
+          end
         end
 
         def force_redirect(path)

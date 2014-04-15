@@ -26,6 +26,11 @@ module TestHelpers
     @custom_endpoints ||= []
   end
 
+  def add_settings_endpoint(name)
+    Travis::Api::App::SettingsEndpoint.subclass(name)
+    set_app Travis::Api::App.new
+  end
+
   def add_endpoint(prefix, &block)
     endpoint = Sinatra.new(Travis::Api::App::Endpoint, &block)
     endpoint.set(prefix: prefix)
