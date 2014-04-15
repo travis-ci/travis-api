@@ -23,8 +23,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: e9e0b02da4c63a2cc0846275df1a819944e9311a
-  branch: ps-settings-encryption
+  revision: d2a19ee99f543eb2db376390847b682caa960b7f
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
