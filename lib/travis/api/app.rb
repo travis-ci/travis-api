@@ -114,8 +114,6 @@ module Travis::Api
         use Travis::Api::App::Middleware::Metriks
         use Travis::Api::App::Middleware::Rewrite
 
-        SettingsEndpoint.subclass :ssh_keys
-
         Endpoint.subclasses.each do |e|
           next if e == SettingsEndpoint # TODO: add something like abstract? method to check if
                                         # class should be registered
