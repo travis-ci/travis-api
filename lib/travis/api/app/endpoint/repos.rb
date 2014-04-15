@@ -43,7 +43,7 @@ class Travis::Api::App
 
       # Get settings for a given repository
       #
-      get '/:id/settings' do
+      get '/:id/settings', scope: :private do
         settings = service(:find_repo_settings, params).run
         if settings
           respond_with({ settings: settings.obfuscated }, version: :v2)
@@ -52,7 +52,7 @@ class Travis::Api::App
         end
       end
 
-      patch '/:id/settings' do
+      patch '/:id/settings', scope: :private do
         payload = JSON.parse request.body.read
 
         if payload['settings'].blank? || !payload['settings'].is_a?(Hash)
