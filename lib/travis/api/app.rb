@@ -163,7 +163,13 @@ module Travis::Api
           end if Travis.config.sentry
 
           Travis::LogSubscriber::ActiveRecordMetrics.attach
-          Travis::Notification.setup
+          Travis::Notification.setup(instrumentation: false)
+
+          if Travis.config.librato
+            email, token, source, prefix = Travis.config.librato.email, Travis.config.librato.token, Travis.config.librato_source, Travis.config.librato_prefix
+            $metriks_reporter = Metriks::LibratoMetricsReporter.new(email, token, source: source, prefix: prefix)
+            $metriks_reporter.start
+          end
         end
       end
 

@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/eric/metriks-librato_metrics.git
+  revision: 0e46e7c5f4eff47c199023a184f3d8ef52da12d0
+  specs:
+    metriks-librato_metrics (0.0)
+      metriks (>= 0.9.9.6)
+
+GIT
   remote: git://github.com/getsentry/raven-ruby.git
   revision: f6c79103e1ff07abc8a1863b5d2ec43d9527e0ed
   specs:
@@ -31,7 +38,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: d2a19ee99f543eb2db376390847b682caa960b7f
+  revision: a3fad94eca3c75e225050378a855f435854eb6ef
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -178,7 +185,7 @@ GEM
     memcachier (0.0.2)
     metaclass (0.0.1)
     method_source (0.8.2)
-    metriks (0.9.9.5)
+    metriks (0.9.9.6)
       atomic (~> 1.0)
       avl_tree (~> 1.1.2)
       hitimes (~> 1.1)
@@ -300,7 +307,8 @@ DEPENDENCIES
   factory_girl (~> 2.4.0)
   foreman
   gh
-  metriks (= 0.9.9.5)
+  metriks (= 0.9.9.6)
+  metriks-librato_metrics!
   micro_migrations!
   mocha (~> 0.12)
   pry
