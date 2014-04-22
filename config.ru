@@ -15,20 +15,4 @@ skip   = ['Travis::Memory', 'GH::ResponseWrapper', 'Travis::NewRelic', 'Travis::
   target.load_constants! :only => only, :skip => skip, :debug => false
 end
 
-# https://help.heroku.com/tickets/92756
-class RackTimer
-  def initialize(app)
-    @app = app
-  end
-
-  def call(env)
-    start_request = Time.now
-    status, headers, body = @app.call(env)
-    elapsed = (Time.now - start_request) * 1000
-    $stdout.puts("request-id=#{env['HTTP_HEROKU_REQUEST_ID']} measure.rack-request=#{elapsed.round}ms")
-    [status, headers, body]
-  end
-end
-
-use RackTimer
 run Travis::Api::App.new
