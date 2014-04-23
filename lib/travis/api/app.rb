@@ -181,11 +181,11 @@ module Travis::Api
         Travis::Notification.setup(instrumentation: false)
 
         if Travis.config.librato
-          email, token, source, prefix = Travis.config.librato.email,
+          email, token, source = Travis.config.librato.email,
                                          Travis.config.librato.token,
-                                         Travis.config.librato_source,
-                                         Travis.config.librato_prefix
-          Metriks::LibratoMetricsReporter.new(email, token, source: source, prefix: prefix).start
+                                         Travis.config.librato_source
+          on_error = proc {|ex| puts ex.message}
+          Metriks::LibratoMetricsReporter.new(email, token, source: source, prefix: prefix, on_error: on_error).start
         end
       end
 
