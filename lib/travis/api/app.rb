@@ -184,7 +184,7 @@ module Travis::Api
           email, token, source = Travis.config.librato.email,
                                          Travis.config.librato.token,
                                          Travis.config.librato_source
-          on_error = proc {|ex| puts "librato error: #{ex.message} (#{ex.response})"}
+          on_error = proc {|ex| puts "librato error: #{ex.message} (#{ex.response.body})"}
           Metriks::LibratoMetricsReporter.new(email, token, source: source, on_error: on_error).start
         end
       end
