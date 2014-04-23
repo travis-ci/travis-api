@@ -112,7 +112,6 @@ module Travis::Api
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
           use Rack::Cache,
-            verbose: true,
             metastore:   "memcached://#{memcache_servers}/meta-#{Travis::Api::App.deploy_sha}",
             entitystore: "memcached://#{memcache_servers}/body-#{Travis::Api::App.deploy_sha}"
         end
