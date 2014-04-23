@@ -21,7 +21,7 @@ gem 'bunny',           '~> 0.8.0'
 gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.6'
-gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
+gem 'metriks-librato_metrics', github: 'roidrage/metriks-librato_metrics'
 
 gem 'skylight', github: 'henrikhodne/skylight-ruby', branch: 'sinatra-support'
 

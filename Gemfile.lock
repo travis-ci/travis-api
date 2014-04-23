@@ -1,11 +1,4 @@
 GIT
-  remote: git://github.com/eric/metriks-librato_metrics.git
-  revision: 0e46e7c5f4eff47c199023a184f3d8ef52da12d0
-  specs:
-    metriks-librato_metrics (0.0)
-      metriks (>= 0.9.9.6)
-
-GIT
   remote: git://github.com/getsentry/raven-ruby.git
   revision: f6c79103e1ff07abc8a1863b5d2ec43d9527e0ed
   specs:
@@ -35,6 +28,13 @@ GIT
   specs:
     yard-sinatra (1.0.0)
       yard (~> 0.7)
+
+GIT
+  remote: git://github.com/roidrage/metriks-librato_metrics.git
+  revision: ac2522dd4e0df32eeb1a6074fa54211cdc473a8e
+  specs:
+    metriks-librato_metrics (0.0)
+      metriks (>= 0.9.9.6)
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
