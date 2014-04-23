@@ -108,6 +108,7 @@ module Travis::Api
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
 
+        use ResponseInspect
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
           use Rack::Cache,
@@ -116,7 +117,6 @@ module Travis::Api
             entitystore: "memcached://#{memcache_servers}/body-#{Travis::Api::App.deploy_sha}"
         end
 
-        use ResponseInspect
         use Rack::Deflater
         use Rack::PostBodyContentTypeParser
         use Rack::JSONP
