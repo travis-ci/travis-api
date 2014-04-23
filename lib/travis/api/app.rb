@@ -27,6 +27,20 @@ require 'travis/api/v2/http'
 #     run Travis::Api::App.new
 #
 # Requires TLS in production.
+class ResponseInspect
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    status, headers, response = @app.call(env)
+    if response.nil?
+      puts "Error: nil response"
+    end
+    [status, headers, response]
+  end
+end
+
 module Travis::Api
   class App
     autoload :AccessToken,  'travis/api/app/access_token'
@@ -102,6 +116,7 @@ module Travis::Api
             entitystore: "memcached://#{memcache_servers}/body-#{Travis::Api::App.deploy_sha}"
         end
 
+        use ResponseInspect
         use Rack::Deflater
         use Rack::PostBodyContentTypeParser
         use Rack::JSONP
