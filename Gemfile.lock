@@ -31,7 +31,8 @@ GIT
 
 GIT
   remote: git://github.com/roidrage/metriks-librato_metrics.git
-  revision: ac2522dd4e0df32eeb1a6074fa54211cdc473a8e
+  revision: 52b4c6baf1f3144924210e260afccf9609c88e02
+  ref: debug
   specs:
     metriks-librato_metrics (0.0)
       metriks (>= 0.9.9.6)
