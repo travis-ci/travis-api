@@ -147,6 +147,7 @@ module Travis::Api
       end
 
       def self.setup_travis
+        Travis::Async.enabled = true
         Travis::Amqp.config = Travis.config.amqp
 
         setup_database_connections
