@@ -27,20 +27,6 @@ require 'travis/api/v2/http'
 #     run Travis::Api::App.new
 #
 # Requires TLS in production.
-class ResponseInspect
-  def initialize(app)
-    @app = app
-  end
-
-  def call(env)
-    status, headers, response = @app.call(env)
-    if response.nil?
-      puts "Error: nil response"
-    end
-    [status, headers, response]
-  end
-end
-
 module Travis::Api
   class App
     autoload :AccessToken,  'travis/api/app/access_token'
@@ -108,7 +94,6 @@ module Travis::Api
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
 
-        use ResponseInspect
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
           use Rack::Cache,
@@ -172,7 +157,7 @@ module Travis::Api
           end
         end
 
-        if Travis.env == 'production' and not console?
+        if (Travis.env == 'production' || Travis.env == 'staging') and not console?
           setup_monitoring
         end
       end
