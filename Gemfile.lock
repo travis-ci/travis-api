@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/eric/metriks-librato_metrics.git
+  revision: 6ceeb78f419d990e5815443f7627aca848aa3810
+  specs:
+    metriks-librato_metrics (0.0)
+      metriks (>= 0.9.9.6)
+
+GIT
   remote: git://github.com/getsentry/raven-ruby.git
   revision: f6c79103e1ff07abc8a1863b5d2ec43d9527e0ed
   specs:
@@ -28,14 +35,6 @@ GIT
   specs:
     yard-sinatra (1.0.0)
       yard (~> 0.7)
-
-GIT
-  remote: git://github.com/roidrage/metriks-librato_metrics.git
-  revision: 52b4c6baf1f3144924210e260afccf9609c88e02
-  ref: debug
-  specs:
-    metriks-librato_metrics (0.0)
-      metriks (>= 0.9.9.6)
 
 GIT
   remote: git://github.com/rtomayko/rack-cache.git
