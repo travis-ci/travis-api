@@ -45,7 +45,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: a3fad94eca3c75e225050378a855f435854eb6ef
+  revision: 7563a3fb4e875f1c4257bb16b86adae1f6f28ba8
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -199,7 +199,7 @@ GEM
     mime-types (1.25.1)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.9.2)
+    multi_json (1.9.3)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
