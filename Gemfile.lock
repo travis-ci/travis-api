@@ -16,10 +16,10 @@ GIT
 
 GIT
   remote: git://github.com/henrikhodne/skylight-ruby.git
-  revision: 44904fe824e202deb6389fb9b547bd4345abdc2d
-  branch: sinatra-support
+  revision: 76f66ce091dd8fd40d9a2c429e4afacb41cb1491
+  branch: master-sinatra
   specs:
-    skylight (0.3.10)
+    skylight (0.3.12)
       activesupport (>= 3.0.0)
 
 GIT
