@@ -3,7 +3,14 @@ require 'spec_helper'
 describe Travis::Api::V2::Http::Requests do
   include Travis::Testing::Stubs, Support::Formats
 
+  before do
+    request.stubs(:builds).returns([build])
+  end
+
   let(:data) {
+    request = stub_request
+    request.stubs(:builds).returns([build])
+    request.stubs(:tag_name).returns(nil)
     Travis::Api::V2::Http::Requests.new([request]).data
   }
 
@@ -25,7 +32,8 @@ describe Travis::Api::V2::Http::Requests do
         'tag' => nil,
         'pull_request' => false,
         'pull_request_title' => nil,
-        'pull_request_number' => nil
+        'pull_request_number' => nil,
+        'build_id' => build.id
       }
     ]
   end
@@ -51,6 +59,7 @@ describe Travis::Api::V2::Http::Requests do
     let(:data) {
       request = stub_request
       request.stubs(:commit).returns(nil)
+      request.stubs(:builds).returns([build])
       Travis::Api::V2::Http::Requests.new([request]).data
     }
 

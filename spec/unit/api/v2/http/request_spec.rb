@@ -4,6 +4,9 @@ describe Travis::Api::V2::Http::Request do
   include Travis::Testing::Stubs, Support::Formats
 
   let(:data) {
+    request = stub_request
+    request.stubs(:builds).returns([build])
+    request.stubs(:tag_name).returns(nil)
     Travis::Api::V2::Http::Request.new(request).data
   }
 
@@ -24,7 +27,8 @@ describe Travis::Api::V2::Http::Request do
       'tag' => nil,
       'pull_request' => false,
       'pull_request_title' => nil,
-      'pull_request_number' => nil
+      'pull_request_number' => nil,
+      'build_id' => build.id
     }
   end
 

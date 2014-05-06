@@ -25,7 +25,7 @@ module Travis
           private
 
             def request_data
-              {
+              data = {
                 'id' => request.id,
                 'repository_id' => request.repository_id,
                 'commit_id' => request.commit_id,
@@ -43,6 +43,10 @@ module Travis
                 'branch' => request.branch_name,
                 'tag' => request.tag_name
               }
+
+              data['build_id'] = request.builds.first.id if request.builds.present?
+
+              data
             end
 
             def commit_data
