@@ -64,6 +64,20 @@ class Travis::Api::App
         end
       end
 
+      patch '/:id/log', scope: :private do
+        # PATCH method for `RemoveLog` service, since we are replacing log content
+        service = self.service(:remove_log, params)
+        begin
+          respond_with service.run
+        rescue Travis::AuthorizationDenied => e
+          status 401
+          { error: { message: e.message } }
+        rescue Travis::JobUnfinished, Travis::LogAlreadyRemoved => e
+          status 409
+          { error: { message: e.message } }
+        end
+      end
+
       get "/:job_id/annotations" do
         respond_with service(:find_annotations, params)
       end
