@@ -10,7 +10,7 @@ RUBY_RUNTIME=$(cat .ruby-version)
 rvm install $RUBY_RUNTIME
 # using JRuby, migrate the 'logs' table in 'travis_test' database
 BUNDLE_GEMFILE=$PWD/Gemfile
-rvm $RUBY_RUNTIME do bundle install
+travis_retry rvm $RUBY_RUNTIME do bundle install
 psql -c "CREATE DATABASE travis_logs_test;" -U postgres
 cp $TRAVIS_BUILD_DIR/config/database.yml config/travis.yml
 rvm $RUBY_RUNTIME do bundle exec rake db:migrate
