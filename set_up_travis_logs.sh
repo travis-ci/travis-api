@@ -1,25 +1,21 @@
 #!/bin/bash
 
-function travis_retry() {
-  $Local:result = 0
-  $Local:count  = 1
-  $Local:cmd_string = $args -join ' '
-
-  while ( $count -le 3 ) {
-    if ( $result -ne 0 ) {
-      Write-Host -foregroundColor Red "`nThe command ""$cmd_string"" failed. Retrying, $count of 3.`n" 2>&1
+travis_retry() {
+  local result=0
+  local count=1
+  while [ $count -le 3 ]; do
+    [ $result -ne 0 ] && {
+      echo -e "\n${RED}The command \"$@\" failed. Retrying, $count of 3.${RESET}\n" >&2
     }
-    Invoke-Expression($cmd_string)
-    $result = $LastExitCode
-    if ( $result -eq 0 ) {
-      break
-    }
-    $count=$count + 1
+    "$@"
+    result=$?
+    [ $result -eq 0 ] && break
+    count=$(($count + 1))
     sleep 1
-  }
+  done
 
-  if ( $count -eq 3 ) {
-    Write-Host -foregroundColor Red "`nThe command ""$cmd_string"" failed 3 times.`n" 2>&1
+  [ $count -eq 3 ] && {
+    echo "\n${RED}The command \"$@\" failed 3 times.${RESET}\n" >&2
   }
 
   return $result
