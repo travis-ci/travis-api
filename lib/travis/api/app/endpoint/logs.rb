@@ -8,6 +8,24 @@ class Travis::Api::App
       get '/:id' do |id|
         respond_with service(:find_log, params)
       end
+
+      # Clears up the content of the log by the *job id*
+      # Optionally takes parameter *reason*
+      patch '/:id' do |id|
+        begin
+          result = self.service(:remove_log, params)
+          respond_with result
+        rescue Travis::AuthorizationDenied => ade
+          status 401
+          { error: { message: ade.message } }
+        rescue Travis::JobUnfinished => jue
+          status 422
+          { error: { message: "Job #{id} is not finished" } }
+        rescue => e
+          status 500
+          { error: { message: "Unexpected error occurred: #{e.message}" } }
+        end
+      end
     end
   end
 end

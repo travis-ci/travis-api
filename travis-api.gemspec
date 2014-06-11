@@ -213,6 +213,7 @@ Gem::Specification.new do |s|
     "spec/unit/endpoint/endpoints_spec.rb",
     "spec/unit/endpoint/hooks_spec.rb",
     "spec/unit/endpoint/jobs_spec.rb",
+    "spec/unit/endpoint/logs_spec.rb",
     "spec/unit/endpoint/repos_spec.rb",
     "spec/unit/endpoint/users_spec.rb",
     "spec/unit/endpoint_spec.rb",
