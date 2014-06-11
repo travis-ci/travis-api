@@ -25,12 +25,12 @@ describe Travis::Api::App::Endpoint::Logs do
     end
 
     context 'job is still running' do
-      it 'returns status 422' do
+      it 'returns status 409' do
         job.stubs(:finished?).returns false
         user.stubs(:permission?).with(:push, anything).returns true
 
         response = patch("/logs/#{job.id}")
-        response.status.should == 422
+        response.status.should == 409
         JSON.parse(response.body)['error']['message'].should =~ Regexp.new("Job .*is (not |un)finished")
       end
     end

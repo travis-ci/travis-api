@@ -64,7 +64,7 @@ class Travis::Api::App
         end
       end
 
-      patch '/:id/log', scope: :private do
+      patch '/:id/log', scope: :private do |id|
         # PATCH method for `RemoveLog` service, since we are replacing log content
         service = self.service(:remove_log, params)
         begin
@@ -72,7 +72,10 @@ class Travis::Api::App
         rescue Travis::AuthorizationDenied => e
           status 401
           { error: { message: e.message } }
-        rescue Travis::JobUnfinished, Travis::LogAlreadyRemoved => e
+        rescue Travis::JobUnfinished => jue
+          status 409
+          { error: { message: "Job #{id} is not finished" } }
+        rescue Travis::LogAlreadyRemoved => e
           status 409
           { error: { message: e.message } }
         end

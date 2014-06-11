@@ -19,8 +19,11 @@ class Travis::Api::App
           status 401
           { error: { message: ade.message } }
         rescue Travis::JobUnfinished => jue
-          status 422
+          status 409
           { error: { message: "Job #{id} is not finished" } }
+        rescue Travis::LogAlreadyRemoved => e
+          status 409
+          { error: { message: e.message } }
         rescue => e
           status 500
           { error: { message: "Unexpected error occurred: #{e.message}" } }
