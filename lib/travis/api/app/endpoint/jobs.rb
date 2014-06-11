@@ -3,6 +3,8 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Jobs < Endpoint
+      include Helpers
+
       get '/' do
         prefer_follower do
           respond_with service(:find_jobs, params)
@@ -65,17 +67,7 @@ class Travis::Api::App
       end
 
       patch '/:id/log', scope: :private do |id|
-        # PATCH method for `RemoveLog` service, since we are replacing log content
-        service = self.service(:remove_log, params)
-        begin
-          respond_with service.run
-        rescue Travis::AuthorizationDenied => e
-          status 401
-          { error: { message: e.message } }
-        rescue Travis::JobUnfinished, Travis::LogAlreadyRemoved => e
-          status 409
-          { error: { message: e.message } }
-        end
+        patch_log_for_job(id, params)
       end
 
       get "/:job_id/annotations" do
