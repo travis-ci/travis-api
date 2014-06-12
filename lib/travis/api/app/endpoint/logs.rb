@@ -12,8 +12,8 @@ class Travis::Api::App
 
       # Clears up the content of the log by the *job id*
       # Optionally takes parameter *reason*
-      patch '/:id' do |id|
-        patch_log_for_job(id, params)
+      patch '/:id' do
+        respond_with patch_log_for_job(params)
       end
     end
   end

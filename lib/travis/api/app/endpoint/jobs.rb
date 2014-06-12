@@ -67,7 +67,7 @@ class Travis::Api::App
       end
 
       patch '/:id/log', scope: :private do |id|
-        patch_log_for_job(id, params)
+        respond_with patch_log_for_job(params)
       end
 
       get "/:job_id/annotations" do

@@ -5,9 +5,8 @@ class Travis::Api::App
   module Helpers
     Backports.require_relative_dir 'helpers'
 
-    def patch_log_for_job(id, params)
-      result = self.service(:remove_log, params)
-      respond_with result
+    def patch_log_for_job(params)
+      self.service(:remove_log, params).run
     rescue Travis::AuthorizationDenied => ade
       status 401
       { error: { message: ade.message } }
