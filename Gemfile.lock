@@ -81,6 +81,12 @@ GIT
     travis-support (0.0.1)
 
 GIT
+  remote: git://github.com/travis-ci/travis-yaml.git
+  revision: 7e6e31e82240e170ffc20dfd02c0353b3bd5d33b
+  specs:
+    travis-yaml (0.1.0)
+
+GIT
   remote: https://gist.github.com/4269321.git
   revision: 8e2d21b924a69dd48191df6a18e51769f5a88614
   specs:
@@ -332,5 +338,6 @@ DEPENDENCIES
   travis-core!
   travis-sidekiqs!
   travis-support!
+  travis-yaml!
   unicorn
   yard-sinatra!
