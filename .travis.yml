@@ -8,7 +8,13 @@ rvm:
 addons:
   postgresql: 9.3
 before_script:
+  # create 'logs' table matching 'travis-logs'
+  - ./set_up_travis_logs.sh
   - 'RAILS_ENV=test bundle exec rake db:create db:structure:load --trace'
+  # replace 'logs' table in travis_test DB with that in travis_logs_test
+  - psql -c "DROP TABLE IF EXISTS logs CASCADE" -U postgres travis_test
+  - pg_dump -t logs travis_logs_test | psql -U postgres travis_test
+
 notifications:
   irc: "irc.freenode.org#travis"
 services:
