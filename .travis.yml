@@ -13,3 +13,4 @@ notifications:
   irc: "irc.freenode.org#travis"
 services:
   - redis
+cache: bundler
