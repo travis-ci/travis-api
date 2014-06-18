@@ -43,7 +43,7 @@ module Travis::Api::App::Responders
     end
 
     def branch
-      params[:branch].present? ? params[:branch] : master
+      params[:branch].present? ? params[:branch] : 'master'
     end
 
     private
