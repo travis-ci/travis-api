@@ -7,7 +7,7 @@ module Travis::Api::App::Responders
     TEMPLATE_ERB = ERB.new <<-EOF
 <Projects>
 <% @resource.each do |repository| %>
-  <% next if build(repository).nil? -%>
+  <% next if build(repository).nil? %>
   <Project
     name="<%= r.slug %>"
     activity="<%= ACTIVITY[build(repository).state.to_sym] || ACTIVITY[:default] %>"
