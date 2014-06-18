@@ -9,7 +9,7 @@ module Travis::Api::App::Responders
 <% @resource.each do |repository| %>
   <% next if build(repository).nil? %>
   <Project
-    name="<%= r.slug %>"
+    name="<%= repository.slug %>"
     activity="<%= ACTIVITY[build(repository).state.to_sym] || ACTIVITY[:default] %>"
     lastBuildStatus="<%= STATUS[build(repository).state.to_sym] || STATUS[:default]  %>"
     lastBuildLabel="<%= build(repository).try(:number) %>"
