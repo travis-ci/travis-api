@@ -34,6 +34,27 @@ http {
     keepalive_timeout 5;
 
     location / {
+      add_header 'Access-Control-Allow-Origin' '*';
+      add_header 'Access-Control-Allow-Credentials' 'true';
+      add_header 'Access-Control-Expose-Headers' 'Content-Type, Cache-Control, Expires, Etag, Last-Modified';
+
+      if ($request_method = 'OPTIONS') {
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Credentials' 'true';
+        add_header 'Access-Control-Expose-Headers' 'Content-Type, Cache-Control, Expires, Etag, Last-Modified';
+
+        # Tell browser to cache this pre-flight info for 20 days
+        add_header 'Access-Control-Max-Age' 1728000;
+
+        add_header 'Access-Control-Allow-Methods' 'HEAD, GET, POST, PATCH, PUT, DELETE, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since';
+
+        add_header 'Content-Length' 0;
+        add_header 'Content-Type' 'text/plain charset=UTF-8';
+
+        return 204;
+      }
+
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header Host $http_host;
       proxy_redirect off;
