@@ -49,7 +49,7 @@ module Travis::Api::App::Responders
 
     def build(repository)
       if branch.present?
-        repository.last_complete_build(branch)      
+        repository.last_completed_build(branch)      
       else
         repository.last_build
       end
