@@ -1,5 +1,6 @@
 require 'bundler/setup'
-ENV['DB_STRUCTURE'] = "#{Gem.loaded_specs['travis-core'].full_gem_path}/db/structure.sql"
+CORE_PATH = Gem.loaded_specs['travis-core'].full_gem_path
+ENV['DB_STRUCTURE'] = "#{CORE_PATH}/db/structure.sql"
 
 begin
   require 'micro_migrations'
@@ -14,6 +15,17 @@ begin
   task default: :spec
 rescue LoadError
   warn "could not load rspec"
+end
+
+desc "move travis-core-specific migrations to db/migrate"
+task 'mv_migrations' do
+  require 'fileutils'
+  migration_files = Dir["#{CORE_PATH}/spec/migrations/**/*.rb"]
+  migration_files.each do |f|
+    dest = 'db/migrate'
+    FileUtils.mkdir_p dest
+    FileUtils.cp f, dest
+  end
 end
 
 desc "generate gemspec"
