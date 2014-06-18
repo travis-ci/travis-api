@@ -9,10 +9,10 @@ module Travis::Api::App::Responders
 <% @resource.each do |r| %>
   <Project
     name="<%= r.slug %>"
-    activity="<%= ACTIVITY[r.last_build.state.to_sym] || ACTIVITY[:default] %>"
-    lastBuildStatus="<%= STATUS[r.last_build.state.to_sym] || STATUS[:default]  %>"
-    lastBuildLabel="<%= r.last_build.try(:number) %>"
-    lastBuildTime="<%= r.last_build.finished_at.try(:strftime, '%Y-%m-%dT%H:%M:%S.%L%z') %>"
+    activity="<%= ACTIVITY[r.last_completed_build(branch).state.to_sym] || ACTIVITY[:default] %>"
+    lastBuildStatus="<%= STATUS[r.last_completed_build(branch).state.to_sym] || STATUS[:default]  %>"
+    lastBuildLabel="<%= r.last_completed_build(branch).try(:number) %>"
+    lastBuildTime="<%= r.last_completed_build(branch).finished_at.try(:strftime, '%Y-%m-%dT%H:%M:%S.%L%z') %>"
     webUrl="https://<%= Travis.config.client_domain %>/<%= r.slug %>" />
 <% end %>
 </Projects>
@@ -23,7 +23,7 @@ module Travis::Api::App::Responders
       passed:  'Success',
       failed:  'Failure',
       errored: 'Error',
-      canceld: 'Canceled',
+      canceled: 'Canceled',
     }
 
     ACTIVITY = {
@@ -40,6 +40,10 @@ module Travis::Api::App::Responders
       super
 
       TEMPLATE_ERB.result(binding)
+    end
+
+    def branch
+      params[:branch].present? ? params[:branch] : master
     end
 
     private
