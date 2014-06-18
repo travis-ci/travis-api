@@ -34,7 +34,7 @@ module Travis::Api::App::Responders
       end
 
       def root
-        File.expand_path('.') # TODO wat.
+        File.expand_path('.')
       end
 
       def last_modified

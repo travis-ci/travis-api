@@ -6,14 +6,15 @@ module Travis::Api::App::Responders
   class Xml < Base
     TEMPLATE_ERB = ERB.new <<-EOF
 <Projects>
-<% @resource.each do |r| %>
+<% @resource.each do |repository| %>
+  <% next if build(repository).nil? %>
   <Project
-    name="<%= r.slug %>"
-    activity="<%= ACTIVITY[r.last_build.state.to_sym] || ACTIVITY[:default] %>"
-    lastBuildStatus="<%= STATUS[r.last_build.state.to_sym] || STATUS[:default]  %>"
-    lastBuildLabel="<%= r.last_build.try(:number) %>"
-    lastBuildTime="<%= r.last_build.finished_at.try(:strftime, '%Y-%m-%dT%H:%M:%S.%L%z') %>"
-    webUrl="https://<%= Travis.config.client_domain %>/<%= r.slug %>" />
+    name="<%= repository.slug %>"
+    activity="<%= ACTIVITY[build(repository).state.to_sym] || ACTIVITY[:default] %>"
+    lastBuildStatus="<%= STATUS[build(repository).state.to_sym] || STATUS[:default]  %>"
+    lastBuildLabel="<%= build(repository).try(:number) %>"
+    lastBuildTime="<%= build(repository).finished_at.try(:strftime, '%Y-%m-%dT%H:%M:%S.%L%z') %>"
+    webUrl="https://<%= Travis.config.client_domain %>/<%= repository.slug %>" />
 <% end %>
 </Projects>
     EOF
@@ -23,7 +24,7 @@ module Travis::Api::App::Responders
       passed:  'Success',
       failed:  'Failure',
       errored: 'Error',
-      canceld: 'Canceled',
+      canceled: 'Canceled',
     }
 
     ACTIVITY = {
@@ -40,6 +41,18 @@ module Travis::Api::App::Responders
       super
 
       TEMPLATE_ERB.result(binding)
+    end
+
+    def branch
+      params[:branch]
+    end
+
+    def build(repository)
+      if branch.present?
+        repository.last_completed_build(branch)      
+      else
+        repository.last_build
+      end
     end
 
     private

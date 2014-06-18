@@ -45,7 +45,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 59e96ca2fef544365d79f7d240ad2b9c3fe9691e
+  revision: ef8fb67bd56569eb55d176f824bb62bc602c8f80
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.12)
@@ -79,6 +79,12 @@ GIT
   revision: d37220d766a3fb218f0f8e60ab8764034f6b376f
   specs:
     travis-support (0.0.1)
+
+GIT
+  remote: git://github.com/travis-ci/travis-yaml.git
+  revision: 7e6e31e82240e170ffc20dfd02c0353b3bd5d33b
+  specs:
+    travis-yaml (0.1.0)
 
 GIT
   remote: https://gist.github.com/4269321.git
@@ -204,7 +210,7 @@ GEM
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
     pg (0.13.2)
-    polyglot (0.3.4)
+    polyglot (0.3.5)
     proxies (0.2.1)
     pry (0.9.12.4)
       coderay (~> 1.0)
@@ -287,7 +293,7 @@ GEM
       eventmachine (>= 1.0.0)
       rack (>= 1.0.0)
     thor (0.14.6)
-    thread_safe (0.3.3)
+    thread_safe (0.3.4)
     tilt (1.4.1)
     timers (1.1.0)
     treetop (1.4.15)
@@ -332,5 +338,6 @@ DEPENDENCIES
   travis-core!
   travis-sidekiqs!
   travis-support!
+  travis-yaml!
   unicorn
   yard-sinatra!

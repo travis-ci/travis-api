@@ -64,6 +64,21 @@ class Travis::Api::App
         end
       end
 
+      patch '/:id/log', scope: :private do |id|
+        begin
+          self.service(:remove_log, params).run
+        rescue Travis::AuthorizationDenied => ade
+          status 401
+          { error: { message: ade.message } }
+        rescue Travis::JobUnfinished, Travis::LogAlreadyRemoved => e
+          status 409
+          { error: { message: e.message } }
+        rescue => e
+          status 500
+          { error: { message: "Unexpected error occurred: #{e.message}" } }
+        end
+      end
+
       get "/:job_id/annotations" do
         respond_with service(:find_annotations, params)
       end
