@@ -1,3 +1,4 @@
 config/travis.yml
 .yardoc
 log/
+vendor
