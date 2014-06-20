@@ -55,7 +55,7 @@ module Travis::Api
     def self.setup(options = {})
       setup! unless setup?
       Endpoint.set(options) if options
-      FileUtils.touch('/tmp/app-initialized')
+      FileUtils.touch('/tmp/app-initialized') if ENV['DYNO'] # Heroku
     end
 
     def self.new(options = {})
