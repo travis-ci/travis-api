@@ -75,6 +75,8 @@ describe Travis::Api::App::Endpoint::Authorization do
         User::Oauth.instance_variable_set("@wanted_scopes", nil)
       end
 
+      # in endpoint/authorization.rb 271, get_token faraday raises the exception:
+      # hostname "foobar.com" does not match the server certificate
       it 'redirects to insufficient access page' do
         response = get '/auth/handshake?state=github-state&code=oauth-code'
         response.should redirect_to('https://travis-ci.org/insufficient_access')
