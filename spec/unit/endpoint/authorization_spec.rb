@@ -30,11 +30,11 @@ describe Travis::Api::App::Endpoint::Authorization do
   end
 
   describe 'GET /auth/authorize' do
-    pending "not yet implemented"
+    skip "not yet implemented"
   end
 
   describe 'POST /auth/access_token' do
-    pending "not yet implemented"
+    skip "not yet implemented"
   end
 
   describe "GET /auth/handshake" do

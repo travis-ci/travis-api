@@ -21,7 +21,7 @@ describe Travis::Api::App::SettingsEndpoint do
         json = JSON.parse(response.body)
         json['env_var']['name'].should == 'FOO'
         json['env_var']['id'].should == record.id
-        json['env_var']['public'].should be_false
+        json['env_var']['public'].should == false
         json['env_var']['repository_id'].should == repo.id
         json['env_var'].should_not have_key('value')
       end
@@ -47,7 +47,8 @@ describe Travis::Api::App::SettingsEndpoint do
         key['name'].should == 'FOO'
         key['id'].should == record.id
         key['repository_id'].should == repo.id
-        key['public'].should be_false
+
+        key['public'].should == false
         key.should_not have_key('value')
       end
     end
@@ -165,7 +166,7 @@ describe Travis::Api::App::SettingsEndpoint do
         json['env_var']['id'].should == env_var.id
         json['env_var'].should_not have_key('value')
 
-        repo.reload.settings.env_vars.should have(0).env_vars
+        repo.reload.settings.env_vars.length.should == 0
       end
 
       it 'returns 404 if env_var can\'t be found' do

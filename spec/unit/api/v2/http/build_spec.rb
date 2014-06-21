@@ -49,7 +49,7 @@ describe Travis::Api::V2::Http::Build do
     let(:data) { Travis::Api::V2::Http::Build.new(build).data }
 
     it 'returns pull request data' do
-      data['build']['pull_request'].should be_true
+      data['build']['pull_request'].should == true
       data['build']['pull_request_title'].should == 'A pull request'
       data['build']['pull_request_number'].should == 44
     end
