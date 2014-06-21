@@ -23,6 +23,7 @@ gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
+gem 'micro_migrations'
 
 group :test do
   gem 'rspec',         '~> 2.13'
@@ -39,5 +40,4 @@ end
 
 group :development, :test do
   gem 'rake', '~> 0.9.2'
-  gem 'micro_migrations', git: 'https://gist.github.com/4269321.git'
 end
