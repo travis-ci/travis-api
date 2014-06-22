@@ -8,8 +8,7 @@ rvm:
 addons:
   postgresql: 9.3
 before_script:
-  # create 'logs' table matching 'travis-logs'
-  - 'RAILS_ENV=test bundle exec rake db:create db:structure:load mv_migrations db:migrate --trace'
+  - 'RAILS_ENV=test bundle exec rake db:create db:migrate --trace'
 
 notifications:
   irc: "irc.freenode.org#travis"
