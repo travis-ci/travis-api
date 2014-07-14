@@ -64,7 +64,7 @@ class Travis::Api::App
           settings.merge(payload['settings'])
           # TODO: I would like to have better API here, but leaving this
           # for testing to not waste too much time before I can play with it
-          settings.repository.save
+          settings.save
           respond_with({ settings: settings.obfuscated }, version: :v2)
         else
           status 404
