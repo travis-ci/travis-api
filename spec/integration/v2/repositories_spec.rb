@@ -34,10 +34,23 @@ describe 'Repos' do
       body['settings']['build_pushes'].should == false
     end
 
+    it 'returns errors when settings are not valid' do
+       json = { 'settings' => { 'maximum_number_of_builds' => 'this is not a number' } }.to_json
+      response = patch "repos/#{repo.id}/settings", json, headers
+
+      repo.reload.settings['maximum_number_of_builds'].should == 0
+
+      body = JSON.parse(response.body)
+      body['message'].should == 'Validation failed'
+      body['errors'].should == [{
+        'field' => 'maximum_number_of_builds',
+        'code' => 'not_a_number'
+      }]
+    end
+
     it 'allows to get settings' do
       response = get "repos/#{repo.id}/settings", {}, headers
-      settings = Repository::Settings.defaults
-      JSON.parse(response.body).should == { 'settings' => settings }
+      JSON.parse(response.body)['settings'].should have_key('build_pushes')
     end
   end
 
