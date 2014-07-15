@@ -76,7 +76,7 @@ describe Travis::Api::App::SettingsEndpoint do
           'code' => 'missing_field'
         }]
 
-        repo.reload.settings.env_vars.length.should == 0
+        repo.reload.settings.env_vars.to_a.length.should == 0
       end
     end
 

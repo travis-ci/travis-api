@@ -6,8 +6,9 @@ describe Travis::Api::App::SettingsEndpoint do
 
   before do
     model_class = Class.new(Repository::Settings::Model) do
-      field :name
-      field :secret, encrypted: true
+      attribute :id, String
+      attribute :name, String
+      attribute :secret, Travis::Settings::EncryptedValue
 
       validates :name, presence: true
       validates :secret, presence: true
@@ -16,7 +17,7 @@ describe Travis::Api::App::SettingsEndpoint do
       model model_class
     end
     Repository::Settings.class_eval do
-      register :items, collection_class
+      attribute :items, collection_class
     end
     serializer_class = Class.new(Travis::Api::Serializer) do
       attributes :id, :name
@@ -105,7 +106,7 @@ describe Travis::Api::App::SettingsEndpoint do
           'code'  => 'missing_field'
         }]
 
-        repo.reload.settings.items.length.should == 0
+        repo.reload.settings.items.to_a.length.should == 0
       end
     end
 
