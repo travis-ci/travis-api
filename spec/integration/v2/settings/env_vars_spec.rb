@@ -22,6 +22,7 @@ describe Travis::Api::App::SettingsEndpoint do
         json['env_var']['name'].should == 'FOO'
         json['env_var']['id'].should == record.id
         json['env_var']['public'].should be_false
+        json['env_var']['repository_id'].should == repo.id
         json['env_var'].should_not have_key('value')
       end
 
@@ -45,6 +46,7 @@ describe Travis::Api::App::SettingsEndpoint do
         key = json['env_vars'].first
         key['name'].should == 'FOO'
         key['id'].should == record.id
+        key['repository_id'].should == repo.id
         key['public'].should be_false
         key.should_not have_key('value')
       end
