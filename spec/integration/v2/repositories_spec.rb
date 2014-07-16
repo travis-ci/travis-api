@@ -51,6 +51,7 @@ describe 'Repos' do
     it 'allows to get settings' do
       response = get "repos/#{repo.id}/settings", {}, headers
       JSON.parse(response.body)['settings'].should have_key('build_pushes')
+      JSON.parse(response.body)['settings'].should_not have_key('env_vars')
     end
   end
 

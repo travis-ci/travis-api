@@ -46,7 +46,7 @@ class Travis::Api::App
       get '/:id/settings', scope: :private do
         settings = service(:find_repo_settings, params).run
         if settings
-          respond_with({ settings: settings.obfuscated }, version: :v2)
+          respond_with({ settings: settings.simple_attributes }, version: :v2)
         else
           status 404
         end
