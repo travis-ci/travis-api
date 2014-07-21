@@ -26,8 +26,12 @@ module TestHelpers
     @custom_endpoints ||= []
   end
 
-  def add_settings_endpoint(name)
-    Travis::Api::App::SettingsEndpoint.subclass(name)
+  def add_settings_endpoint(name, options = {})
+    if options[:singleton]
+      Travis::Api::App::SingletonSettingsEndpoint.subclass(name)
+    else
+      Travis::Api::App::SettingsEndpoint.subclass(name)
+    end
     set_app Travis::Api::App.new
   end
 
