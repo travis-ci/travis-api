@@ -7,9 +7,9 @@ class Travis::Api::App
       def create_settings_class(name)
         klass = Class.new(self) do
           define_method(:name) { name }
-          get("/", scope: :private) do show end
-          patch("/", scope: :private) do update end
-          delete("/", scope: :private) do destroy end
+          get("/:repository_id", scope: :private) do show end
+          patch("/:repository_id", scope: :private) do update end
+          delete("/:repository_id", scope: :private) do destroy end
         end
       end
     end

@@ -41,14 +41,14 @@ describe Travis::Api::App::SettingsEndpoint do
         item = settings.create(:item, name: 'an item', secret: 'TEH SECRET')
         settings.save
 
-        response = get '/settings/item', { repository_id: repo.id }, headers
+        response = get "/settings/item/#{repo.id}", {}, headers
         json = JSON.parse(response.body)
         json['item']['name'].should == 'an item'
         json['item'].should_not have_key('secret')
       end
 
       it 'returns 404 if item can\'t be found' do
-        response = get '/settings/item', { repository_id: repo.id }, headers
+        response = get "/settings/item/#{repo.id}", {}, headers
         json = JSON.parse(response.body)
         json['error'].should == "Could not find a requested setting"
       end
@@ -61,7 +61,7 @@ describe Travis::Api::App::SettingsEndpoint do
         settings.save
 
         body = { item: { name: 'a new name', secret: 'a new secret' } }.to_json
-        response = patch "/settings/item?repository_id=#{repo.id}", body, headers
+        response = patch "/settings/item/#{repo.id}", body, headers
         json = JSON.parse(response.body)
         json['item']['name'].should == 'a new name'
         json['item'].should_not have_key('secret')
@@ -75,7 +75,7 @@ describe Travis::Api::App::SettingsEndpoint do
         repo.settings.item.should be_nil
 
         body = { item: { name: 'a name', secret: 'a secret' } }.to_json
-        response = patch "/settings/item?repository_id=#{repo.id}", body, headers
+        response = patch "/settings/item/#{repo.id}", body, headers
         json = JSON.parse(response.body)
         json['item']['name'].should == 'a name'
         json['item'].should_not have_key('secret')
@@ -87,7 +87,7 @@ describe Travis::Api::App::SettingsEndpoint do
 
       it 'returns an error message if item is invalid' do
         body = { item: { name: '' } }.to_json
-        response = patch "/settings/item?repository_id=#{repo.id}", body, headers
+        response = patch "/settings/item/#{repo.id}", body, headers
         response.status.should == 422
 
         json = JSON.parse(response.body)
@@ -110,8 +110,7 @@ describe Travis::Api::App::SettingsEndpoint do
         item = settings.create(:item, name: 'an item')
         settings.save
 
-        params = { repository_id: repo.id }
-        response = delete '/settings/item', params, headers
+        response = delete "/settings/item/#{repo.id}", {}, headers
         json = JSON.parse(response.body)
         json['item']['name'].should == 'an item'
         json['item'].should_not have_key('secret')
