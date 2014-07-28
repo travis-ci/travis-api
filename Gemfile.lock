@@ -45,7 +45,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 95a7609e30222f0f9600eed27b4df273868a3448
+  revision: 8452c83d62dd7bf94c32e6176fc508af76bc1f4d
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -314,11 +314,11 @@ GEM
       rack
       raindrops (~> 0.7)
     uuidtools (2.1.4)
-    virtus (1.0.2)
+    virtus (1.0.3)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
-      descendants_tracker (~> 0.0.3)
-      equalizer (~> 0.0.9)
+      descendants_tracker (~> 0.0, >= 0.0.3)
+      equalizer (~> 0.0, >= 0.0.9)
     yard (0.8.7.4)
 
 PLATFORMS
