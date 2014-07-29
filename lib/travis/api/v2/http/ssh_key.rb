@@ -1,4 +1,5 @@
 require 'openssl'
+require 'travis/private_key'
 
 module Travis
   module Api
@@ -14,9 +15,7 @@ module Travis
           def fingerprint
             value = object.value.decrypt
             return unless value
-            key = OpenSSL::PKey::RSA.new(value)
-            ssh_rsa = "\x00\x00\x00\x07ssh-rsa" + key.e.to_s(0) + key.n.to_s(0)
-            OpenSSL::Digest::MD5.new(ssh_rsa).hexdigest.scan(/../).join(':')
+            PrivateKey.new(value).fingerprint
           rescue OpenSSL::PKey::RSAError
             nil
           end

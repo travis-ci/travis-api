@@ -9,9 +9,14 @@ module Travis
             @key = key
           end
 
+          def fingerprint
+            PrivateKey.new(key.private_key).fingerprint
+          end
+
           def data
             {
-              'key' => key.public_key
+              'key' => key.public_key,
+              'fingerprint' => fingerprint
             }
           end
         end
