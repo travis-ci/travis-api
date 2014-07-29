@@ -26,6 +26,7 @@ module Travis
         require 'travis/api/v2/http/env_vars'
         require 'travis/api/v2/http/user'
         require 'travis/api/v2/http/validation_error'
+        require 'travis/api/v2/http/ssh_key'
       end
     end
   end

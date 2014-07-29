@@ -115,6 +115,9 @@ module Travis::Api
         use Travis::Api::App::Middleware::Rewrite
 
         SettingsEndpoint.subclass :env_vars
+        if Travis.config.endpoints.ssh_key
+          SingletonSettingsEndpoint.subclass :ssh_key
+        end
 
         Endpoint.subclasses.each do |e|
           next if e == SettingsEndpoint # TODO: add something like abstract? method to check if
