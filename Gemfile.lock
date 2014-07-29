@@ -15,14 +15,6 @@ GIT
       uuidtools
 
 GIT
-  remote: git://github.com/henrikhodne/skylight-ruby.git
-  revision: 76f66ce091dd8fd40d9a2c429e4afacb41cb1491
-  branch: master-sinatra
-  specs:
-    skylight (0.3.12)
-      activesupport (>= 3.0.0)
-
-GIT
   remote: git://github.com/rack/rack-contrib.git
   revision: 5c12ace4ba2b9e4802e4d948a8ee0114da18760b
   specs:
@@ -347,7 +339,6 @@ DEPENDENCIES
   sentry-raven!
   sinatra
   sinatra-contrib
-  skylight!
   travis-api!
   travis-core!
   travis-sidekiqs!

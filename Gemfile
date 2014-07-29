@@ -24,8 +24,6 @@ gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
 
-gem 'skylight', github: 'henrikhodne/skylight-ruby', branch: 'master-sinatra'
-
 group :test do
   gem 'rspec',         '~> 2.13'
   gem 'factory_girl',  '~> 2.4.0'
