@@ -65,7 +65,7 @@ class Travis::Api::App
           # TODO: I would like to have better API here, but leaving this
           # for testing to not waste too much time before I can play with it
           if settings.save
-            respond_with({ settings: settings.obfuscated }, version: :v2)
+            respond_with({ settings: settings.simple_attributes }, version: :v2)
           else
             status 422
             respond_with(settings, type: :validation_error, version: :v2)
