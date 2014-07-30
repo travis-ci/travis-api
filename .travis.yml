@@ -16,3 +16,4 @@ notifications:
 services:
   - redis
 cache: bundler
+sudo: false
