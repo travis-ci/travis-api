@@ -3,6 +3,8 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Repos < Endpoint
+       set :pattern, capture: { id: /\d+/ }
+
       # Endpoint for getting all repositories.
       #
       # You can filter the repositories by adding parameters to the request. For example, you can get all repositories
@@ -18,14 +20,6 @@ class Travis::Api::App
         end
       end
 
-      # Retrieves repositories for a given owner.
-      get '/:owner_name' do
-        pass if params[:owner_name] =~ /^\d+$/ # so we don't capture '/:id'
-        prefer_follower do
-          respond_with service(:find_repos, params)
-        end
-      end
-
       # Gets the repository with the given id.
       #
       # ### Response
@@ -34,6 +28,13 @@ class Travis::Api::App
       get '/:id' do
         prefer_follower do
           respond_with service(:find_repo, params)
+        end
+      end
+
+      # Retrieves repositories for a given owner.
+      get '/:owner_name' do
+        prefer_follower do
+          respond_with service(:find_repos, params)
         end
       end
 
