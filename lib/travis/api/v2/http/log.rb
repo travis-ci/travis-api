@@ -37,13 +37,21 @@ module Travis
             end
 
             def log_parts
-              log.parts.sort_by(&:number).map do |part|
+              parts = log.parts
+              parts = parts.where(number: part_numbers) if part_numbers
+              parts.sort_by(&:number).map do |part|
                 {
                   'id' => part.id,
                   'number' => part.number,
                   'content' => part.content,
                   'final' => part.final
                 }
+              end
+            end
+
+            def part_numbers
+              if numbers = options[:part_numbers]
+                numbers.is_a?(String) ? numbers.split(',').map(&:to_i) : numbers
               end
             end
         end

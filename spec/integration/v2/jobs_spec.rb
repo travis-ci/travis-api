@@ -51,6 +51,16 @@ describe 'Jobs' do
     end
 
     context 'with chunked log requested' do
+      it 'responds with only selected chunks if part_numbers are requested' do
+        job.log.parts << Log::Part.new(content: 'foo', number: 1, final: false)
+        job.log.parts << Log::Part.new(content: 'bar', number: 2, final: true)
+        job.log.parts << Log::Part.new(content: 'bar', number: 3, final: true)
+
+        headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true' }
+        response = get "/jobs/#{job.id}/log", { part_numbers: '1,3,4' }, headers
+        response.should deliver_json_for(job.log, version: 'v2', params: { chunked: true})
+      end
+
       it 'responds with 406 when log is already aggregated' do
         job.log.update_attributes(aggregated_at: Time.now)
         headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true' }
