@@ -37,7 +37,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 0c4922f7cbf644ccc97677643bb09f26a919e64c
+  revision: 8f2b4add4581f2897ce14edca26aff99cc60f280
+  branch: ps-education-sync
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
