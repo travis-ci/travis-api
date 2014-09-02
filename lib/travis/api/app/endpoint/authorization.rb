@@ -216,12 +216,20 @@ class Travis::Api::App
           def info(attributes = {})
             info = data.to_hash.slice('name', 'login', 'gravatar_id')
             info.merge! attributes.stringify_keys
+            if Travis::Features.feature_active?(:education_data_sync) ||
+              (user && Travis::Features.owner_active?(:education_data_sync, user))
+              info['education'] = education
+            end
             info['github_id'] ||= data['id']
             info
           end
 
           def user_exists?
             user
+          end
+
+          def education
+            Travis::Github::Education.new(token.to_s).student?
           end
 
           def fetch
