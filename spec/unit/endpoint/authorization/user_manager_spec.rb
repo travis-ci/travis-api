@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Travis::Api::App::Endpoint::Authorization::UserManager do
   let(:manager) { described_class.new(data, 'abc123') }
 
+  before do
+    Travis::Features.enable_for_all(:education_data_sync)
+  end
+
   describe '#info' do
     let(:data) {
       {
