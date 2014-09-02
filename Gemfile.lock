@@ -37,7 +37,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 8f2b4add4581f2897ce14edca26aff99cc60f280
+  revision: 2115edc5994422748071c73561514703fe708e0c
   branch: ps-education-sync
   specs:
     travis-core (0.0.1)
