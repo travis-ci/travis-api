@@ -9,11 +9,11 @@ class Travis::Api::App
       # a new SettingsEndpoint subclass, which will be then used as an endpoint
       def subclass(name)
         class_name = name.to_s.camelize
-        if Travis::Api::App.const_defined?(class_name)
-          Travis::Api::App.const_get(class_name)
+        if Travis::Api::App::Endpoint.const_defined?(class_name)
+          Travis::Api::App::Endpoint.const_get(class_name)
         else
           klass = create_settings_class(name)
-          Travis::Api::App.const_set(class_name, klass)
+          Travis::Api::App::Endpoint.const_set(class_name, klass)
           klass
         end
       end
