@@ -21,12 +21,16 @@ class Travis::Api::App
       def create_settings_class(name)
         klass = Class.new(self) do
           define_method(:name) { name }
-          get("/", scope: :private) do index end
-          get("/:id", scope: :private) do show end
-          post("/", scope: :private) do create end
-          patch("/:id", scope: :private) do update end
-          delete("/:id", scope: :private) do destroy end
+          define_routes!
         end
+      end
+
+      def define_routes!
+        get("/", scope: :private) do index end
+        get("/:id", scope: :private) do show end
+        post("/", scope: :private) do create end
+        patch("/:id", scope: :private) do update end
+        delete("/:id", scope: :private) do destroy end
       end
     end
 
