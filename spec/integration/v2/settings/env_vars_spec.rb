@@ -83,6 +83,20 @@ describe Travis::Api::App::SettingsEndpoint do
     end
 
     describe 'PATCH /settings/env_vars/:id' do
+      it 'resets value if private key is made public unless new value is provided' do
+        settings = repo.settings
+        env_var = settings.env_vars.create(name: 'FOO', value: 'bar')
+        settings.save
+
+        body = { env_var: { public: true, value: 'a new value' } }.to_json
+        response = patch "/settings/env_vars/#{env_var.id}?repository_id=#{repo.id}", body, headers
+        json = JSON.parse(response.body)
+        json['env_var']['value'].should == 'a new value'
+
+        updated_env_var = repo.reload.settings.env_vars.find(env_var.id)
+        updated_env_var.value.decrypt.should == 'a new value'
+      end
+
       it 'resets value if private key is made public' do
         settings = repo.settings
         env_var = settings.env_vars.create(name: 'FOO', value: 'bar')

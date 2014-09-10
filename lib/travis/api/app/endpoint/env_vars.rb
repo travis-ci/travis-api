@@ -13,7 +13,7 @@ class Travis::Api::App
         record.update(data)
 
         # if we update from private to public reset value
-        if !previously_public && record.public?
+        if !previously_public && record.public? && data['value'].nil?
           record.value = nil
         end
 
