@@ -51,6 +51,18 @@ describe 'Jobs' do
     end
 
     context 'with chunked log requested' do
+      it 'responds with only selected chunks if after is specified' do
+        job.log.parts << Log::Part.new(content: 'foo', number: 1, final: false)
+        job.log.parts << Log::Part.new(content: 'bar', number: 2, final: true)
+        job.log.parts << Log::Part.new(content: 'bar', number: 3, final: true)
+
+        headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true' }
+        response = get "/jobs/#{job.id}/log", { after: 1 }, headers
+        body = JSON.parse(response.body)
+
+        body['log']['parts'].map { |p| p['number'] }.sort.should == [2, 3]
+      end
+
       it 'responds with only selected chunks if part_numbers are requested' do
         job.log.parts << Log::Part.new(content: 'foo', number: 1, final: false)
         job.log.parts << Log::Part.new(content: 'bar', number: 2, final: true)
