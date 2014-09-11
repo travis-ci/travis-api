@@ -31,7 +31,7 @@ describe Travis::Api::V2::Http::Log do
     end
 
     describe "with parts numbers specified" do
-      let(:data) { described_class.new(log, part_numbers: "1,3", chunked: true).data }
+      let(:data) { described_class.new(log, 'part_numbers' => "1,3", chunked: true).data }
       it 'returns only requested parts' do
         parts = log.parts.find_all { |p| p.number == 1 }
         log.parts.expects(:where).with(number: [1, 3]).returns(parts)
