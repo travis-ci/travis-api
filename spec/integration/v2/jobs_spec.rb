@@ -28,6 +28,7 @@ describe 'Jobs' do
     context 'when log is archived' do
       it 'redirects to archive' do
         job.log.update_attributes!(content: 'the log', archived_at: Time.now, archive_verified: true)
+        headers = { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         response = get "/jobs/#{job.id}/log.txt", {}, headers
         response.should redirect_to("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
       end
@@ -36,6 +37,7 @@ describe 'Jobs' do
     context 'when log is missing' do
       it 'redirects to archive' do
         job.log.destroy
+        headers = { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         response = get "/jobs/#{job.id}/log.txt", {}, headers
         response.should redirect_to("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
       end
@@ -44,6 +46,7 @@ describe 'Jobs' do
     context 'with cors_hax param' do
       it 'renders No Content response with location of the archived log' do
         job.log.destroy
+        headers = { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         response = get "/jobs/#{job.id}/log.txt?cors_hax=true", {}, headers
         response.status.should == 204
         response.headers['Location'].should == "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
@@ -76,8 +79,10 @@ describe 'Jobs' do
       end
 
       it 'responds with 406 when log is already aggregated' do
-        job.log.update_attributes(aggregated_at: Time.now)
-        headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true' }
+        job.log.update_attributes(aggregated_at: Time.now, archived_at: Time.now, archive_verified: true)
+        job.log.should be_archived
+
+        headers = { 'HTTP_ACCEPT' => 'application/json; version=2; chunked=true' }
         response = get "/jobs/#{job.id}/log", {}, headers
         response.status.should == 406
       end

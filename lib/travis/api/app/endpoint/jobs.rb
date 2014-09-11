@@ -3,6 +3,8 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Jobs < Endpoint
+      include Helpers::Accept
+
       get '/' do
         prefer_follower do
           respond_with service(:find_jobs, params)
@@ -49,15 +51,21 @@ class Travis::Api::App
 
       get '/:job_id/log' do
         resource = service(:find_log, params).run
-        if !resource || resource.archived?
-          archived_log_path = archive_url("/jobs/#{params[:job_id]}/log.txt")
+        if (!resource || resource.archived?)
+          # the way we use responders makes it hard to validate proper format
+          # automatically here, so we need to check it explicitly
+          if accepts?('text/plain')
+            archived_log_path = archive_url("/jobs/#{params[:job_id]}/log.txt")
 
-          if params[:cors_hax]
-            status 204
-            headers['Access-Control-Expose-Headers'] = 'Location'
-            headers['Location'] = archived_log_path
+            if params[:cors_hax]
+              status 204
+              headers['Access-Control-Expose-Headers'] = 'Location'
+              headers['Location'] = archived_log_path
+            else
+              redirect archived_log_path, 307
+            end
           else
-            redirect archived_log_path, 307
+            status 406
           end
         else
           respond_with resource
