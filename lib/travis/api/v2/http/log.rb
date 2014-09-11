@@ -50,7 +50,7 @@ module Travis
             end
 
             def part_numbers
-              if numbers = options[:part_numbers]
+              if numbers = options['part_numbers']
                 numbers.is_a?(String) ? numbers.split(',').map(&:to_i) : numbers
               end
             end

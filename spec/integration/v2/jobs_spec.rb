@@ -58,7 +58,9 @@ describe 'Jobs' do
 
         headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true' }
         response = get "/jobs/#{job.id}/log", { part_numbers: '1,3,4' }, headers
-        response.should deliver_json_for(job.log, version: 'v2', params: { chunked: true})
+        body = JSON.parse(response.body)
+
+        body['log']['parts'].map { |p| p['number'] }.sort.should == [1, 3]
       end
 
       it 'responds with 406 when log is already aggregated' do
