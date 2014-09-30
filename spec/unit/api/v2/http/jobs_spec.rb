@@ -30,6 +30,7 @@ describe Travis::Api::V2::Http::Jobs do
       'sha' => '62aae5f70ceee39123ef',
       'message' => 'the commit message',
       'branch' => 'master',
+      'tag' => nil,
       'message' => 'the commit message',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
       'committer_name' => 'Sven Fuchs',
