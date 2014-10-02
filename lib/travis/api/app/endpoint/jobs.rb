@@ -12,7 +12,14 @@ class Travis::Api::App
       end
 
       get '/:id' do
-        respond_with service(:find_job, params)
+        job = service(:find_job, params).run
+        if job && job.repository
+          respond_with job
+        else
+          json = { error: { message: "The job(#{params[:id]}) couldn't be found" } }
+          status 404
+          respond_with json
+        end
       end
 
       post '/:id/cancel' do
