@@ -28,7 +28,6 @@ describe Travis::Api::V2::Http::Build do
       'id' => 1,
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
-      'tag' => nil,
       'message' => 'the commit message',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
@@ -49,7 +48,7 @@ describe Travis::Api::V2::Http::Build do
     let(:data) { Travis::Api::V2::Http::Build.new(build).data }
 
     it 'returns pull request data' do
-      data['build']['pull_request'].should be_true
+      data['build']['pull_request'].should == true
       data['build']['pull_request_title'].should == 'A pull request'
       data['build']['pull_request_number'].should == 44
     end

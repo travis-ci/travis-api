@@ -40,7 +40,7 @@ describe Travis::Api::App::Endpoint::Users do
         response = post('/users/sync', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01')
 
         response.status.should == 409
-        JSON.parse(response.body).should be_true
+        JSON.parse(response.body).should == { 'message' => 'Sync already in progress. Try again later.' }
       end
     end
   end

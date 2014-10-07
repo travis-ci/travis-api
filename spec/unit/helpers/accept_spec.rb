@@ -47,23 +47,23 @@ module Travis::Api::App::Helpers
       describe 'accepts?' do
         it 'accepts everything with */* type' do
           entry = Accept::Entry.new('*/*')
-          entry.accepts?('application/json').should be_true
-          entry.accepts?('foo/bar').should be_true
+          entry.accepts?('application/json').should == true
+          entry.accepts?('foo/bar').should == true
         end
 
         it 'accepts every subtype with application/* type' do
           entry = Accept::Entry.new('application/*')
 
-          entry.accepts?('application/foo').should be_true
-          entry.accepts?('application/bar').should be_true
-          entry.accepts?('text/plain').should be_false
+          entry.accepts?('application/foo').should == true
+          entry.accepts?('application/bar').should == true
+          entry.accepts?('text/plain').should == false
         end
 
         it 'accepts when type and subtype match' do
           entry = Accept::Entry.new('application/json')
 
-          entry.accepts?('application/json').should be_true
-          entry.accepts?('application/xml').should be_false
+          entry.accepts?('application/json').should == true
+          entry.accepts?('application/xml').should == false
         end
       end
     end
