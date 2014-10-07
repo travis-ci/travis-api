@@ -77,12 +77,14 @@ describe Travis::Api::App::Endpoint::Authorization do
 
       # in endpoint/authorization.rb 271, get_token faraday raises the exception:
       # hostname "foobar.com" does not match the server certificate
-      it 'redirects to insufficient access page' do
+      # TODO disabling this as per @rkh's advice
+      xit 'redirects to insufficient access page' do
         response = get '/auth/handshake?state=github-state&code=oauth-code'
         response.should redirect_to('https://travis-ci.org/insufficient_access')
       end
 
-      it 'redirects to insufficient access page for existing user' do
+      # TODO disabling this as per @rkh's advice
+      xit 'redirects to insufficient access page for existing user' do
         user = mock('user')
         User.expects(:find_by_github_id).with(111).returns(user)
         expect {
