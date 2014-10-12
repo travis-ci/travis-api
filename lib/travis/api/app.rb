@@ -185,16 +185,7 @@ module Travis::Api
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         Travis::Notification.setup(instrumentation: false)
-
-        # Travis::Metrics.setup from sf-te, does this conflict with the setup below?
-
-        if Travis.config.librato
-          email, token, source = Travis.config.librato.email,
-                                         Travis.config.librato.token,
-                                         Travis.config.librato_source
-          on_error = proc {|ex| puts "librato error: #{ex.message} (#{ex.response.body})"}
-          Metriks::LibratoMetricsReporter.new(email, token, source: source, on_error: on_error).start
-        end
+        Travis::Metrics.setup
       end
 
       def self.load_endpoints
