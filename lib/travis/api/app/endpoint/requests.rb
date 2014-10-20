@@ -1,12 +1,17 @@
 require 'travis/api/app'
+require 'travis/api/app/services/schedule_request'
 
 class Travis::Api::App
   class Endpoint
     class Requests < Endpoint
-      # DEPRECATED: this will be removed by 1st of December
-      post '/' do
-        Metriks.meter("api.request.restart").mark
-        respond_with service(:reset_model, params)
+      post '/', scope: :private do
+        if params[:request] && params[:request][:repository]
+          respond_with service(:schedule_request, params[:request])
+        else
+          # DEPRECATED: this will be removed by 1st of December
+          Metriks.meter("api.request.restart").mark
+          respond_with service(:reset_model, params)
+        end
       end
 
       get '/' do
