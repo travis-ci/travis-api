@@ -21,12 +21,12 @@ class Travis::Api::App
           Metriks.meter('api.request.create').mark
           Travis::Sidekiq::BuildRequest.perform_async(type: 'api', payload: payload, credentials: {})
           messages << { notice: 'Build request scheduled.' }
-          true
+          :success
         end
 
         def not_found
           messages << { error: "Repository #{slug} not found." }
-          false
+          :not_found
         end
 
         def active?

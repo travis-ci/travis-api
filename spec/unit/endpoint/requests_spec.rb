@@ -25,7 +25,7 @@ describe Travis::Api::App::Endpoint::Requests do
       end
 
       it 'includes a notice' do
-        expect(response.body).to eq '{"result":false,"flash":[{"error":"Repository owner/name not found."}]}'
+        expect(response.body).to eq '{"result":"not_found","flash":[{"error":"Repository owner/name not found."}]}'
       end
     end
 
@@ -41,7 +41,7 @@ describe Travis::Api::App::Endpoint::Requests do
       end
 
       it 'includes a notice' do
-        expect(response.body).to eq '{"result":true,"flash":[{"notice":"Build request scheduled."}]}'
+        expect(response.body).to eq '{"result":"success","flash":[{"notice":"Build request scheduled."}]}'
       end
 
       it 'schedules the build request' do

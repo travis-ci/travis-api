@@ -56,7 +56,7 @@ module Travis::Api
           # If it's nil we also pass it but yield not_found.
           def normalize(result)
             case result
-            when String, true, false
+            when Symbol, String, true, false
               { result: result }
             else
               result
