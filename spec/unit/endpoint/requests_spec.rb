@@ -45,8 +45,9 @@ describe Travis::Api::App::Endpoint::Requests do
       end
 
       it 'schedules the build request' do
-        payload = MultiJson.encode(data[:request].merge(user: { id: user.id }))
-        Travis::Sidekiq::BuildRequest.expects(:perform_async).with(type: 'api', payload: payload, credentials: {})
+        payload = data[:request].merge(user: { id: user.id })
+        payload[:repository][:id] = repo.github_id
+        Travis::Sidekiq::BuildRequest.expects(:perform_async).with(type: 'api', payload: MultiJson.encode(payload), credentials: {})
         response
       end
     end

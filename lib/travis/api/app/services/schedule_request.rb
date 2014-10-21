@@ -34,7 +34,9 @@ class Travis::Api::App
         end
 
         def payload
-          MultiJson.encode(params.merge(user: { id: current_user.id }))
+          data = params.merge(user: { id: current_user.id })
+          data[:repository][:id] = repo.github_id
+          MultiJson.encode(data)
         end
 
         def repo
