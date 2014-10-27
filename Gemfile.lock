@@ -36,7 +36,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 0f7a43a373cd3a7236ed4b5d3ca4a312a4e4c656
+  revision: 0f487381ecf7f06f759116b60a1e9e8544784286
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -74,7 +74,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-yaml.git
-  revision: e899680992e31b25ddc0aad33d2189a7e588cc1f
+  revision: 121678eba7280b8269a73c56953cafd20e884bdc
   specs:
     travis-yaml (0.1.0)
 
@@ -321,7 +321,6 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
-    useragent (0.10.0)
     uuidtools (2.1.5)
     virtus (1.0.3)
       axiom-types (~> 0.1)
@@ -363,5 +362,4 @@ DEPENDENCIES
   travis-support!
   travis-yaml!
   unicorn
-  useragent
   yard-sinatra!

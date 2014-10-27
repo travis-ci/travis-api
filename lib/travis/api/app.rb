@@ -114,7 +114,6 @@ module Travis::Api
         use Travis::Api::App::Middleware::Logging
         use Travis::Api::App::Middleware::Metriks
         use Travis::Api::App::Middleware::Rewrite
-        use Travis::Api::App::Middleware::UserAgentTracker
 
         SettingsEndpoint.subclass :env_vars
         if Travis.config.endpoints.ssh_key
