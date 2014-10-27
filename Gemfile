@@ -25,6 +25,7 @@ gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
 gem 'micro_migrations'
+gem 'useragent'
 
 group :test do
   gem 'rspec',         '~> 2.13'

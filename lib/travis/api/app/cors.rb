@@ -14,7 +14,7 @@ class Travis::Api::App
 
     options // do
       headers['Access-Control-Allow-Methods'] = "HEAD, GET, POST, PATCH, PUT, DELETE"
-      headers['Access-Control-Allow-Headers'] = "Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since"
+      headers['Access-Control-Allow-Headers'] = "Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent"
     end
   end
 end
