@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: git://github.com/getsentry/raven-ruby.git
-  revision: 1e12d8d5c288e97fd2fd64d28c2ffb7cad439eb2
+  revision: 84392e5db701f0b5c66802aab9cc82ef9a5ad830
   specs:
     sentry-raven (0.10.1)
       faraday (>= 0.7.6)
@@ -36,7 +36,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 791d0e8224f2ce322ff20f9098ebd74953bcd236
+  revision: 624dd8f5e476d05ae86dc422035691516cd3d750
   branch: sf-hiro-bugfix
   specs:
     travis-core (0.0.1)
