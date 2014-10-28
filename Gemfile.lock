@@ -36,7 +36,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 86268a941ccf27c13ecd55935b7fad358f294427
+  revision: f29e6bb0271aea3662017db29d6706a419cc3605
   branch: sf-hiro-bugfix
   specs:
     travis-core (0.0.1)
