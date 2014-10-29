@@ -36,8 +36,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 2bbd75226593cd1dbd6fd52abe5f22bf70cea819
-  branch: sf-hiro-bugfix
+  revision: b4c4ae9beb6ba8d813491273dc75fa582ee719b0
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
