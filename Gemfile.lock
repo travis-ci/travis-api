@@ -321,6 +321,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    useragent (0.10.0)
     uuidtools (2.1.5)
     virtus (1.0.3)
       axiom-types (~> 0.1)
@@ -362,4 +363,5 @@ DEPENDENCIES
   travis-support!
   travis-yaml!
   unicorn
+  useragent
   yard-sinatra!
