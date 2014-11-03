@@ -93,6 +93,7 @@ PATH
       thin (~> 1.4)
       travis-core
       travis-support
+      useragent
 
 GEM
   remote: https://rubygems.org/
@@ -363,5 +364,4 @@ DEPENDENCIES
   travis-support!
   travis-yaml!
   unicorn
-  useragent
   yard-sinatra!
