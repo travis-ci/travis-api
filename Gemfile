@@ -1,5 +1,3 @@
-ruby '2.1.2' if ENV.key?('DYNO')
-
 source 'https://rubygems.org'
 gemspec
 
