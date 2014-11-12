@@ -151,6 +151,13 @@ describe 'Repos' do
     body['branch']['id'].should == mybuild.id
   end
 
+  it 'GET /repos/svenfuchs/minimal/branches/my/branch' do
+    mybuild = Factory(:build, repository: repo, state: :started, commit: Factory(:commit, branch: 'my/branch'), request: Factory(:request, event_type: 'push'))
+    response = get "/repos/svenfuchs/minimal/branches/my/branch", {}, headers
+    body = JSON.parse(response.body)
+    body['branch']['id'].should == mybuild.id
+  end
+
   describe 'GET /repos/svenfuchs/minimal.png?branch=foo,bar' do
     let(:on_foo) { Factory(:commit, branch: 'foo') }
     let(:on_bar) { Factory(:commit, branch: 'bar') }

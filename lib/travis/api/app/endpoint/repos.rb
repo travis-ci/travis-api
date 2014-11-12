@@ -97,8 +97,9 @@ class Travis::Api::App
         respond_with service(:find_branches, params), type: :branches, version: :v2
       end
 
-      # Gets lastest build on a branch branches
-      get '/:repository_id/branches/:branch' do
+      # Gets latest build on a branch
+      get '/:repository_id/branches/*' do
+        params[:branch] = params[:splat]
         respond_with service(:find_branch, params), type: :branch, version: :v2
       end
 
@@ -169,8 +170,9 @@ class Travis::Api::App
         respond_with service(:find_branches, params), type: :branches, version: :v2
       end
 
-      # Gets lastest build on a branch branches
-      get '/:owner_name/:name/branches/:branch' do
+      # Gets latest build on a branch
+      get '/:owner_name/:name/branches/*' do
+        params[:branch] = params[:splat]
         respond_with service(:find_branch, params), type: :branch, version: :v2
       end
 
