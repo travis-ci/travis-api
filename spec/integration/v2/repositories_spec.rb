@@ -144,6 +144,13 @@ describe 'Repos' do
     response.should deliver_json_for(repo.last_finished_builds_by_branches, version: 'v2', type: 'branches')
   end
 
+  it 'GET /repos/svenfuchs/minimal/branches/mybranch' do
+    mybuild = Factory(:build, repository: repo, state: :started, commit: Factory(:commit, branch: 'mybranch'), request: Factory(:request, event_type: 'push'))
+    response = get "/repos/svenfuchs/minimal/branches/mybranch", {}, headers
+    body = JSON.parse(response.body)
+    body['branch']['id'].should == mybuild.id
+  end
+
   describe 'GET /repos/svenfuchs/minimal.png?branch=foo,bar' do
     let(:on_foo) { Factory(:commit, branch: 'foo') }
     let(:on_bar) { Factory(:commit, branch: 'bar') }
