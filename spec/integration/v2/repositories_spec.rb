@@ -134,6 +134,16 @@ describe 'Repos' do
     JSON.parse(result.body).should == { 'file' => 'not found' }
   end
 
+  it 'GET /repos/svenfuchs/minimal/branches' do
+    response = get '/repos/svenfuchs/minimal/branches', {}, headers
+    response.should deliver_json_for(repo.last_finished_builds_by_branches, version: 'v2', type: 'branches')
+  end
+
+  it 'GET /repos/1/branches' do
+    response = get "/repos/#{repo.id}/branches", {}, headers
+    response.should deliver_json_for(repo.last_finished_builds_by_branches, version: 'v2', type: 'branches')
+  end
+
   describe 'GET /repos/svenfuchs/minimal.png?branch=foo,bar' do
     let(:on_foo) { Factory(:commit, branch: 'foo') }
     let(:on_bar) { Factory(:commit, branch: 'bar') }
