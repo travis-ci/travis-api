@@ -3,12 +3,15 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Home < Endpoint
+      host = Travis.config.client_domain || Travis.config.host
+      fail "Travis.config.client_domain is not set" unless host or test?
+
       set :prefix, '/'
       set :client_config,
-        host: Travis.config.client_domain,
+        host: host,
         shorten_host: Travis.config.shorten_host,
         assets: Travis.config.assets,
-        pusher: { key: Travis.config.pusher.try(:key) },
+        pusher: (Travis.config.pusher_ws || Travis.config.pusher || {}).to_hash.slice(:scheme, :host, :port, :path, :key),
         github: { api_url: GH.current.api_host.to_s, scopes: Travis.config.oauth2.try(:scope).to_s.split(?,) }
 
       # Landing point. Redirects web browsers to [API documentation](#/docs/).

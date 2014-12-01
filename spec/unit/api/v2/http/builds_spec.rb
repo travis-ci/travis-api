@@ -55,7 +55,7 @@ describe Travis::Api::V2::Http::Builds do
     end
 
     it 'returns pull request data' do
-      data['builds'].first['pull_request'].should be_true
+      data['builds'].first['pull_request'].should == true
       data['builds'].first['pull_request_number'].should == 44
     end
   end
@@ -71,7 +71,7 @@ describe 'Travis::Api::V2::Http::Builds using Travis::Services::Builds::FindAll'
   end
 
   it 'queries' do
-    lambda { data }.should issue_queries(3)
+    lambda { data }.should issue_queries(9)
   end
 end
 

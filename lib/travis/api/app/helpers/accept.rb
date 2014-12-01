@@ -64,6 +64,10 @@ class Travis::Api::App
         end
       end
 
+      def accepts?(mime_type)
+        accept_entries.any? { |e| e.accepts?(mime_type) }
+      end
+
       def accept_entries
         entries = env['HTTP_ACCEPT'].to_s.delete(' ').to_s.split(',').map { |e| Entry.new(e) }
         entries.empty? ? [Entry.new('*/*')] : entries.sort

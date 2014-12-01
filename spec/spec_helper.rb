@@ -50,7 +50,7 @@ end
 
 RSpec.configure do |c|
   c.mock_framework = :mocha
-  c.expect_with :rspec, :stdlib
+  c.expect_with :rspec, :test_unit
   c.include TestHelpers
 
   c.before :suite do

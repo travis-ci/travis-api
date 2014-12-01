@@ -28,6 +28,7 @@ describe 'Jobs' do
     context 'when log is archived' do
       it 'redirects to archive' do
         job.log.update_attributes!(content: 'the log', archived_at: Time.now, archive_verified: true)
+        headers = { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         response = get "/jobs/#{job.id}/log.txt", {}, headers
         response.should redirect_to("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
       end
@@ -36,6 +37,7 @@ describe 'Jobs' do
     context 'when log is missing' do
       it 'redirects to archive' do
         job.log.destroy
+        headers = { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         response = get "/jobs/#{job.id}/log.txt", {}, headers
         response.should redirect_to("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
       end
@@ -44,6 +46,7 @@ describe 'Jobs' do
     context 'with cors_hax param' do
       it 'renders No Content response with location of the archived log' do
         job.log.destroy
+        headers = { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         response = get "/jobs/#{job.id}/log.txt?cors_hax=true", {}, headers
         response.status.should == 204
         response.headers['Location'].should == "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
@@ -51,9 +54,35 @@ describe 'Jobs' do
     end
 
     context 'with chunked log requested' do
-      it 'responds with 406 when log is already aggregated' do
-        job.log.update_attributes(aggregated_at: Time.now)
+      it 'responds with only selected chunks if after is specified' do
+        job.log.parts << Log::Part.new(content: 'foo', number: 1, final: false)
+        job.log.parts << Log::Part.new(content: 'bar', number: 2, final: true)
+        job.log.parts << Log::Part.new(content: 'bar', number: 3, final: true)
+
         headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true' }
+        response = get "/jobs/#{job.id}/log", { after: 1 }, headers
+        body = JSON.parse(response.body)
+
+        body['log']['parts'].map { |p| p['number'] }.sort.should == [2, 3]
+      end
+
+      it 'responds with only selected chunks if part_numbers are requested' do
+        job.log.parts << Log::Part.new(content: 'foo', number: 1, final: false)
+        job.log.parts << Log::Part.new(content: 'bar', number: 2, final: true)
+        job.log.parts << Log::Part.new(content: 'bar', number: 3, final: true)
+
+        headers = { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json; chunked=true' }
+        response = get "/jobs/#{job.id}/log", { part_numbers: '1,3,4' }, headers
+        body = JSON.parse(response.body)
+
+        body['log']['parts'].map { |p| p['number'] }.sort.should == [1, 3]
+      end
+
+      it 'responds with 406 when log is already aggregated' do
+        job.log.update_attributes(aggregated_at: Time.now, archived_at: Time.now, archive_verified: true)
+        job.log.should be_archived
+
+        headers = { 'HTTP_ACCEPT' => 'application/json; version=2; chunked=true' }
         response = get "/jobs/#{job.id}/log", {}, headers
         response.status.should == 406
       end

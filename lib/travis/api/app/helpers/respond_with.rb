@@ -8,14 +8,16 @@ class Travis::Api::App
     module RespondWith
       include Accept
 
+      STATUS = {
+        success: 200,
+        not_found: 404
+      }
+
       def respond_with(resource, options = {})
         result = respond(resource, options)
         if result && response.content_type =~ /application\/json/
-          if !params[:pretty].nil? && (params[:pretty].downcase == 'true' || params[:pretty].to_i > 0)
-            result = JSON.pretty_generate(result)
-          else
-            result = result.to_json
-          end
+          status STATUS[result[:result]] if result.is_a?(Hash) && result[:result].is_a?(Symbol)
+          result = prettify_result? ? JSON.pretty_generate(result) : result.to_json
         end
         halt result || 404
       end
@@ -46,6 +48,10 @@ class Travis::Api::App
           end
 
           response || (resource ? error(406) : error(404))
+        end
+
+        def prettify_result?
+          !params[:pretty].nil? && (params[:pretty].downcase == 'true' || params[:pretty].to_i > 0)
         end
 
         def apply_service_responder(resource, options)

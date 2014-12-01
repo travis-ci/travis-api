@@ -24,7 +24,7 @@ describe Travis::Api::App::SettingsEndpoint do
   end
 
   after do
-    Travis::Api::App.send :remove_const, :Item
+    Travis::Api::App::Endpoint.send :remove_const, :Item
     Travis::Api::V2::Http.send :remove_const, :Item
   end
 

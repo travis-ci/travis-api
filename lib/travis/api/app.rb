@@ -55,7 +55,7 @@ module Travis::Api
     def self.setup(options = {})
       setup! unless setup?
       Endpoint.set(options) if options
-      FileUtils.touch('/tmp/app-initialized')
+      FileUtils.touch('/tmp/app-initialized') if ENV['DYNO'] # Heroku
     end
 
     def self.new(options = {})
@@ -87,8 +87,8 @@ module Travis::Api
           [ 420, {}, ['Enhance Your Calm']]
         end
 
-        use Travis::Api::App::Cors
-        use Raven::Rack if Endpoint.production?
+        use Travis::Api::App::Cors # if Travis.env == 'development' ???
+        use Raven::Rack if Endpoint.production? && Travis.config.sentry.dsn
         use Rack::Protection::PathTraversal
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
@@ -106,6 +106,7 @@ module Travis::Api
         use Rack::JSONP
 
         use Rack::Config do |env|
+          env['SCRIPT_NAME'] = env['HTTP_X_SCRIPT_NAME'].to_s + env['SCRIPT_NAME'].to_s
           env['travis.global_prefix'] = env['SCRIPT_NAME']
         end
 
@@ -113,6 +114,7 @@ module Travis::Api
         use Travis::Api::App::Middleware::Logging
         use Travis::Api::App::Middleware::Metriks
         use Travis::Api::App::Middleware::Rewrite
+        use Travis::Api::App::Middleware::UserAgentTracker
 
         SettingsEndpoint.subclass :env_vars
         if Travis.config.endpoints.ssh_key
@@ -180,18 +182,11 @@ module Travis::Api
       def self.setup_monitoring
         Raven.configure do |config|
           config.dsn = Travis.config.sentry.dsn
-        end if Travis.config.sentry
+        end if Travis.config.sentry.dsn
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         Travis::Notification.setup(instrumentation: false)
-
-        if Travis.config.librato
-          email, token, source = Travis.config.librato.email,
-                                         Travis.config.librato.token,
-                                         Travis.config.librato_source
-          on_error = proc {|ex| puts "librato error: #{ex.message} (#{ex.response.body})"}
-          Metriks::LibratoMetricsReporter.new(email, token, source: source, on_error: on_error).start
-        end
+        Travis::Metrics.setup
       end
 
       def self.load_endpoints
