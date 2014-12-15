@@ -1,10 +1,9 @@
-ruby '2.1.2'
-
 source 'https://rubygems.org'
 gemspec
 
 gem 'travis-core',     github: 'travis-ci/travis-core'
 gem 'travis-support',  github: 'travis-ci/travis-support'
+gem 'travis-config',   '~> 0.1.0'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil, ref: 'cde9741'
 gem 'travis-yaml',     github: 'travis-ci/travis-yaml'
 gem 'sinatra'
@@ -23,6 +22,7 @@ gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
+gem 'micro_migrations'
 
 group :test do
   gem 'rspec',         '~> 2.13'
@@ -39,5 +39,4 @@ end
 
 group :development, :test do
   gem 'rake', '~> 0.9.2'
-  gem 'micro_migrations', git: 'https://gist.github.com/4269321.git'
 end

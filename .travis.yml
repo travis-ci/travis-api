@@ -1,19 +1,17 @@
 language: ruby
+sudo: false
+rvm:
+- 2.1.4
 env:
   global:
-    - RUBY_GC_MALLOC_LIMIT=90000000
-    - RUBY_FREE_MIN=200000
-rvm:
-  - 2.1.2
+  - RUBY_GC_MALLOC_LIMIT=90000000
+  - RUBY_GC_HEAP_FREE_SLOTS=200000
+cache: bundler
 addons:
   postgresql: 9.3
+services:
+- redis
 before_script:
-  # create 'logs' table matching 'travis-logs'
-  - 'RAILS_ENV=test bundle exec rake db:create db:structure:load mv_migrations db:migrate --trace'
-
+- 'RAILS_ENV=test bundle exec rake db:create db:migrate --trace'
 notifications:
   irc: "irc.freenode.org#travis"
-services:
-  - redis
-cache: bundler
-sudo: false

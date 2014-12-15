@@ -14,7 +14,7 @@ module Travis::Api::App::Responders
 
     context 'with resource not associated with Api data class' do
       it 'returns nil result' do
-        json.apply.should be_false
+        json.apply.should be_nil
       end
     end
 
@@ -31,8 +31,8 @@ module Travis::Api::App::Responders
         let(:resource) { nil }
 
         it 'responds with 404' do
-          json.apply?.should be_false
-          json.apply.should be_false
+          json.apply?.should be_falsey
+          json.apply.should be_falsey
         end
       end
     end

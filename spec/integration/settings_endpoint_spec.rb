@@ -69,7 +69,7 @@ describe Travis::Api::App::SettingsEndpoint do
 
         response = get '/settings/items', { repository_id: repo.id }, headers
         json = JSON.parse(response.body)
-        json['items'].should have(1).items
+        json['items'].length.should == 1
         item = json['items'].first
         item['name'].should == 'an item'
         item['id'].should_not be_nil
@@ -165,7 +165,7 @@ describe Travis::Api::App::SettingsEndpoint do
         json['item']['id'].should == item.id
         json['item'].should_not have_key('secret')
 
-        repo.reload.settings.items.should have(0).items
+        repo.reload.settings.items.length.should == 0
       end
 
       it 'returns 404 if item can\'t be found' do

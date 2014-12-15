@@ -128,7 +128,8 @@ class Travis::Api::App
       # token is being received.
       get '/post_message', scope: :public do
         content_type :html
-        erb :container
+        data = { check_third_party_cookies: !Travis.config.auth.disable_third_party_cookies_check }
+        erb(:container, locals: data)
       end
 
       get '/post_message/iframe', scope: :public do
@@ -275,8 +276,8 @@ class Travis::Api::App
           user
         end
 
-        def get_token(endoint, values)
-          response   = Faraday.post(endoint, values)
+        def get_token(endpoint, values)
+          response   = Faraday.new(ssl: Travis.config.github.ssl).post(endpoint, values)
           parameters = Addressable::URI.form_unencode(response.body)
           token_info = parameters.assoc("access_token")
           halt 401, 'could not resolve github token' unless token_info
@@ -324,13 +325,19 @@ class Travis::Api::App
 
         def target_ok?(target_origin)
           return unless uri = Addressable::URI.parse(target_origin)
-          if uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
+          if allowed_https_targets.include?(uri.host)
+            uri.scheme == 'https'
+          elsif uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
             uri.scheme == 'https'
           elsif uri.host =~ /\A(.+\.)?travis-lite\.com\Z/
             uri.scheme == 'https'
           elsif uri.host == 'localhost' or uri.host == '127.0.0.1'
             uri.port > 1023
           end
+        end
+
+        def allowed_https_targets
+          @allowed_https_targets ||= Travis.config.auth.target_origin.to_s.split(',')
         end
     end
   end
@@ -376,6 +383,7 @@ function main() {
 var url = window.location.pathname + '/iframe' + window.location.search;
 
 function thirdPartyCookies(yes, no) {
+  <%= "return no();" unless check_third_party_cookies %>
   window.cookiesCheckCallback = function(enabled) { enabled ? yes() : no() };
   var img      = document.createElement('img');
   img.src      = "https://third-party-cookies.herokuapp.com/set";
