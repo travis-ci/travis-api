@@ -59,7 +59,7 @@ class Travis::Api::App
       get '/:job_id/log' do
         resource = service(:find_log, params).run
         if (resource && resource.removed_at) && accepts?('application/json')
-          respond_with resource, type: 'removed_log', root: 'log'
+          respond_with resource
         elsif (!resource || resource.archived?)
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
