@@ -16,6 +16,7 @@ module Travis
         require 'travis/api/v2/http/job'
         require 'travis/api/v2/http/jobs'
         require 'travis/api/v2/http/log'
+        require 'travis/api/v2/http/removed_log'
         require 'travis/api/v2/http/permissions'
         require 'travis/api/v2/http/repositories'
         require 'travis/api/v2/http/repository'

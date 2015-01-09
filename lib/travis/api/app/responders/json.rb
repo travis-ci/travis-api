@@ -23,13 +23,18 @@ class Travis::Api::App
           return true unless resource.is_a?(Log)
 
           chunked = accept_params[:chunked]
-          chunked ? !resource.aggregated_at : true
+          if resource.removed_at
+            true
+          else
+            chunked ? !resource.aggregated_at : true
+          end
         end
 
         def result
           if builder
             p = params
-            p[:root] = options[:type] if options[:type]
+            p[:root] = options[:root] if options[:root]
+            p[:root] = options[:type] if options[:type] && !p[:root]
             builder.new(resource, p).data
           else
             basic_type_resource
