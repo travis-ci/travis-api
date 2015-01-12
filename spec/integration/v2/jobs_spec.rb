@@ -105,7 +105,7 @@ describe 'Jobs' do
     end
 
     it 'adds removed info if the log is removed' do
-      time = Time.new(2015, 1, 9, 12, 57, 31)
+      time = Time.new(2015, 1, 9, 12, 57, 31).utc
       job.log.update_attributes(removed_at: time, removed_by: User.first)
       headers = { 'HTTP_ACCEPT' => 'application/json; chunked=true; version=2' }
       response = get "/jobs/#{job.id}/log", {}, headers
