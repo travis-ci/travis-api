@@ -105,14 +105,14 @@ describe 'Jobs' do
     end
 
     it 'adds removed info if the log is removed' do
-      time = Time.new(2015, 1, 9, 12, 57, 31).utc
+      time = Time.utc(2015, 1, 9, 12, 57, 31)
       job.log.update_attributes(removed_at: time, removed_by: User.first)
       headers = { 'HTTP_ACCEPT' => 'application/json; chunked=true; version=2' }
       response = get "/jobs/#{job.id}/log", {}, headers
       body = JSON.parse(response.body)
 
       body['log']['removed_by'].should == 'Sven Fuchs'
-      body['log']['removed_at'].should == "2015-01-09T11:57:31Z"
+      body['log']['removed_at'].should == "2015-01-09T12:57:31Z"
       body['log']['id'].should == job.log.id
 
       # make sure we return parts as chunked=true
