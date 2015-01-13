@@ -14,7 +14,7 @@ module Travis
             log_hash = options[:chunked] ? chunked_log_data : log_data
             if log.removed_at
               log_hash['removed_at'] = log.removed_at
-              log_hash['removed_by'] = log.removed_by.name || object.removed_by.login
+              log_hash['removed_by'] = log.removed_by.name || log.removed_by.login
             end
 
             {
