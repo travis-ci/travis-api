@@ -68,15 +68,15 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: 40365216662f639d36fc3a0463c4e189ee1563dd
+  revision: 4fdd220ed7b06a12951e5d74a763c05a80eb0d20
   specs:
     travis-support (0.0.1)
 
 GIT
   remote: git://github.com/travis-ci/travis-yaml.git
-  revision: 08ec0c4d0cf3366cd971d4acd9aadbc0db68f85d
+  revision: f3aa306016a08b66a487f966eb8aa3a60ee9b319
   specs:
-    travis-yaml (0.1.0)
+    travis-yaml (0.2.0)
 
 PATH
   remote: .

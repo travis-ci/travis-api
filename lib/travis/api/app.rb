@@ -20,6 +20,7 @@ require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'travis/api/v2/http'
+require 'travis/api/v3'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -110,11 +111,17 @@ module Travis::Api
           env['travis.global_prefix'] = env['SCRIPT_NAME']
         end
 
-        use Travis::Api::App::Middleware::ScopeCheck
+
         use Travis::Api::App::Middleware::Logging
-        use Travis::Api::App::Middleware::Metriks
-        use Travis::Api::App::Middleware::Rewrite
+        use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
+        use Travis::Api::App::Middleware::Metriks
+
+        # if this is a v3 API request, ignore everything after
+        use Travis::API::V3::OptIn
+
+        # rewrite should come after V3 hook
+        use Travis::Api::App::Middleware::Rewrite
 
         SettingsEndpoint.subclass :env_vars
         if Travis.config.endpoints.ssh_key
