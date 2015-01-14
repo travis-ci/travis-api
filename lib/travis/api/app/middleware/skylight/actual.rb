@@ -10,7 +10,7 @@ class Travis::Api::App
       use ::Skylight::Middleware
 
       after do
-        instrumenter   = Skylight::Instrumenter.instance
+        instrumenter   = ::Skylight::Instrumenter.instance
         trace          = instrumenter.current_trace if instrumenter
         trace.endpoint = endpoint if trace and endpoint
       end
