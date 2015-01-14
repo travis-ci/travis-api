@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-ruby "2.1.5"
+ruby '2.1.2' if ENV.key?('DYNO')
 
 gem 's3',              github: 'travis-ci/s3'
 
