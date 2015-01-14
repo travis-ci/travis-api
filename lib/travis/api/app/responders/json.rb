@@ -7,6 +7,7 @@ class Travis::Api::App
         super && !resource.is_a?(String) && !resource.nil? && accepts_log?
       end
 
+      instrument_method
       def apply
         super
 

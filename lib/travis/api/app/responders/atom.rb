@@ -44,6 +44,7 @@ module Travis::Api::App::Responders
       super && resource.is_a?(ActiveRecord::Relation) && resource.first.is_a?(Build)
     end
 
+    instrument_method
     def apply
       super
 
