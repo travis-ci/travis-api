@@ -1,3 +1,4 @@
+require 'skylight'
 require 'travis'
 require 'travis/model'
 require 'travis/support/amqp'
@@ -19,7 +20,6 @@ require 'metriks/reporter/logger'
 require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
-require 'travis/api/instruments'
 require 'travis/api/v2/http'
 require 'travis/api/app/stack_instrumentation'
 
