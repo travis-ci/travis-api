@@ -10,7 +10,6 @@ module Travis::Api::App::Responders
       headers['Content-Disposition'] = %(inline; filename="#{File.basename(filename)}")
     end
 
-    instrument_method
     def apply
       set_headers
       send_file(filename, type: :png, last_modified: last_modified)

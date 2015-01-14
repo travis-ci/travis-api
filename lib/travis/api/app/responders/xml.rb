@@ -37,7 +37,6 @@ module Travis::Api::App::Responders
       super && @resource.first.is_a?(Repository)
     end
 
-    instrument_method
     def apply
       super
 
