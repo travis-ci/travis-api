@@ -22,7 +22,7 @@ class Travis::Api::App
       end
     end
 
-    def self.title_for(verb, object)
+    def self.title_for(object, verb)
       object &&=  case object
                   when ::Sinatra::Wrapper then object.settings.inspect
                   when Class, Module      then object.inspect
