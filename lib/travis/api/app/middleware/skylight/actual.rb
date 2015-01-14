@@ -19,7 +19,6 @@ class Travis::Api::App
         return @endpoint if defined? @endpoint and @endpoint
         return unless headers['X-Pattern'].present? and headers['X-Endpoint'].present?
         @endpoint = Object.const_get(headers['X-Endpoint']) + headers['X-Pattern']
-      rescue NameError
       end
     end
   end
