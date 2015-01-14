@@ -20,7 +20,6 @@ require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'travis/api/v2/http'
-require 'travis/api/conditional_skylight'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
