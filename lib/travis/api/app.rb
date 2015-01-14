@@ -1,3 +1,4 @@
+require 'skylight'
 require 'travis'
 require 'travis/model'
 require 'travis/support/amqp'
