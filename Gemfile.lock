@@ -22,7 +22,7 @@ GIT
 
 GIT
   remote: git://github.com/rkh/skylight-ruby.git
-  revision: 8dbe7270188fd1e0df9497835728c5200cf883dc
+  revision: 287673533ee47e10fd75adb78bae1e732b8f3c30
   branch: rkh-script-name-sinatra
   specs:
     skylight (0.6.0.beta.1)
