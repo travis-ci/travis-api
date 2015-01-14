@@ -14,7 +14,7 @@ class Travis::Api::App
 
       def instrument(&block)
         return yield unless instrument?
-        ::Skylight.instrument(title: title, &block)
+        ::Skylight.instrument(title: @title, &block)
       end
 
       def instrument?
