@@ -20,7 +20,7 @@ require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'travis/api/v2/http'
-require 'travis/api/stack_instrumentation'
+require 'travis/api/app/stack_instrumentation'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
