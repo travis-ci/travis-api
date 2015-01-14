@@ -12,7 +12,8 @@ class Travis::Api::App
       after do
         instrumenter   = ::Skylight::Instrumenter.instance
         trace          = instrumenter.current_trace if instrumenter
-        p trace.endpoint = "#{request.request_method} #{endpoint}" || "unknown" if trace
+        x = trace.endpoint = "#{request.request_method} #{endpoint}" || "unknown" if trace
+        puts env.inspect unless x
       end
 
       def endpoint
