@@ -77,6 +77,7 @@ module Travis::Api
     def initialize
       @app = Rack::Builder.app do
         extend StackInstrumentation
+        use Travis::Api::App::Middleware::Skylight
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
         Rack::Utils::HTTP_STATUS_CODES[420] = "Enhance Your Calm"
@@ -114,7 +115,6 @@ module Travis::Api
 
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::Logging
-        use Travis::Api::App::Middleware::Skylight
         use Travis::Api::App::Middleware::Metriks
         use Travis::Api::App::Middleware::Rewrite
         use Travis::Api::App::Middleware::UserAgentTracker
