@@ -21,14 +21,6 @@ GIT
       rack (>= 0.9.1)
 
 GIT
-  remote: git://github.com/rkh/skylight-ruby.git
-  revision: 287673533ee47e10fd75adb78bae1e732b8f3c30
-  branch: rkh-script-name-sinatra
-  specs:
-    skylight (0.6.0.beta.1)
-      activesupport (>= 3.0.0)
-
-GIT
   remote: git://github.com/rkh/yard-sinatra.git
   revision: 00774d355123617ff0faa7e0ebd54c4cdcfcdf93
   specs:
@@ -310,6 +302,8 @@ GEM
       rack-test
       sinatra (~> 1.4.0)
       tilt (~> 1.3)
+    skylight (0.6.0.beta.1)
+      activesupport (>= 3.0.0)
     slop (3.6.0)
     sprockets (2.2.3)
       hike (~> 1.2)
@@ -375,7 +369,7 @@ DEPENDENCIES
   sentry-raven!
   sinatra
   sinatra-contrib
-  skylight!
+  skylight
   travis-api!
   travis-config (~> 0.1.0)
   travis-core!

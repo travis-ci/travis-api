@@ -113,6 +113,7 @@ module Travis::Api
 
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::Logging
+        use Travis::Api::App::Middleware::Skylight
         use Travis::Api::App::Middleware::Metriks
         use Travis::Api::App::Middleware::Rewrite
         use Travis::Api::App::Middleware::UserAgentTracker
