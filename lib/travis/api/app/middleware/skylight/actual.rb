@@ -18,7 +18,7 @@ class Travis::Api::App
       def endpoint
         return @endpoint if defined? @endpoint and @endpoint
         return unless headers['X-Pattern'].present? and headers['X-Endpoint'].present?
-        @endpoint = Object.const_get(headers['X-Endpoint']) + headers['X-Pattern']
+        @endpoint = Object.const_get(headers['X-Endpoint']).prefix + headers['X-Pattern']
       end
     end
   end
