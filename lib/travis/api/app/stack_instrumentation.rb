@@ -5,7 +5,7 @@ class Travis::Api::App
     class Middleware
       def initialize(app, title = nil)
         @app   = app
-        @title = title || "Rack: use #{app.class.name}"
+        @title = title || StackInstrumentation.title_for(app, :use)
       end
 
       def call(env)
@@ -22,18 +22,28 @@ class Travis::Api::App
       end
     end
 
+    def self.title_for(verb, object)
+      object &&=  case object
+                  when ::Sinatra::Wrapper then object.settings.inspect
+                  when Class, Module      then object.inspect
+                  when String             then object
+                  else object.class.inspect
+                  end
+      "Rack: #{verb} #{object}"
+    end
+
     def use(*)
       super(Middleware)
       super
     end
 
     def run(app)
-      super Middleware.new(app, "Rack: run %p" % app.class)
+      super Middleware.new(app, StackInstrumentation.title_for(app, :run))
     end
 
     def map(path, &block)
       super(path) do
-        use(Middleware, "Rack: map %p" % path)
+        use(Middleware, StackInstrumentation.title_for(path, :map))
         extend StackInstrumentation
         instance_eval(&block)
       end
