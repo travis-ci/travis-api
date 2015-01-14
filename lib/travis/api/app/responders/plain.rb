@@ -13,6 +13,7 @@ module Travis::Api::App::Responders
       super && (resource.is_a?(Log) || resource.is_a?(String))
     end
 
+    instrument_method
     def apply
       super
 
