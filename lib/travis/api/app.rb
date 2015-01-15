@@ -19,7 +19,9 @@ require 'metriks/reporter/logger'
 require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
+require 'travis/api/instruments'
 require 'travis/api/v2/http'
+require 'travis/api/app/stack_instrumentation'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -75,6 +77,8 @@ module Travis::Api
 
     def initialize
       @app = Rack::Builder.app do
+        extend StackInstrumentation
+        use Travis::Api::App::Middleware::Skylight
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
         Rack::Utils::HTTP_STATUS_CODES[420] = "Enhance Your Calm"

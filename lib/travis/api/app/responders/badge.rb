@@ -4,6 +4,7 @@ module Travis::Api::App::Responders
       'svg'
     end
 
+    instrument_method
     def apply
       set_headers
       send_file(filename, type: :svg, last_modified: last_modified)

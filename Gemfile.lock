@@ -81,7 +81,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-yaml.git
-  revision: f3aa306016a08b66a487f966eb8aa3a60ee9b319
+  revision: 1630d576d221aea2340615e87f402df7889b5176
   specs:
     travis-yaml (0.2.0)
 
@@ -302,6 +302,8 @@ GEM
       rack-test
       sinatra (~> 1.4.0)
       tilt (~> 1.3)
+    skylight (0.6.0.beta.1)
+      activesupport (>= 3.0.0)
     slop (3.6.0)
     sprockets (2.2.3)
       hike (~> 1.2)
@@ -367,6 +369,7 @@ DEPENDENCIES
   sentry-raven!
   sinatra
   sinatra-contrib
+  skylight
   travis-api!
   travis-config (~> 0.1.0)
   travis-core!

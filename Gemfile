@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-ruby "2.1.5"
+ruby '2.1.2' if ENV.key?('DYNO')
 
 gem 's3',              github: 'travis-ci/s3'
 
@@ -27,6 +27,7 @@ gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
 gem 'micro_migrations'
+gem 'skylight'
 
 group :test do
   gem 'rspec',         '~> 2.13'
