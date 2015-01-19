@@ -4,6 +4,7 @@ module Travis::API::V3
     extend DSL
 
     resource :repository do
+      route '/repo/:id'
       get :find_repository
     end
   end

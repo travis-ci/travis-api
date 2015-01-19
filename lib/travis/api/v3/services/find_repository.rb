@@ -4,7 +4,7 @@ module Travis::API::V3
 
     def run
       raise NotFound unless repository and access_control.visible? repository
-      Result.new(repository)
+      Result.new(:repository, repository)
     end
 
     def repository
