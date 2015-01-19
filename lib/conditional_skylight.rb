@@ -30,11 +30,6 @@ module ConditionalSkylight
       return true
     end
 
-    unless ENV['DYNO_COUNT'.freeze]
-      warn "[ConditionalSkylight] $DYNO_COUNT not set, skipping lucky dyno check"
-      return true
-    end
-
     dyno = Integer ENV['DYNO'.freeze][/\d+/]
 
     if dyno % 5 == 1
