@@ -17,10 +17,11 @@ Gem::Specification.new do |s|
     "Josh Kalderimis",
     "Henrik Hodne",
     "Andre Arko",
-    "Erik Michaels-Ober",
     "Dan Buch",
+    "Erik Michaels-Ober",
     "Steve Richert",
     "Brian Ford",
+    "Patrick Williams",
     "Bryan Goldstein",
     "Puneeth Chaganti",
     "Thais Camilo and Konstantin Haase",
@@ -29,8 +30,7 @@ Gem::Specification.new do |s|
     "James Dennes",
     "rainsun",
     "Dan Rice",
-    "Nick Schonning",
-    "Patrick Williams"
+    "Nick Schonning"
   ]
 
   s.email = [
@@ -45,21 +45,22 @@ Gem::Specification.new do |s|
     "konstantin.haase@gmail.com",
     "andre@arko.net",
     "svenfuchs@artweb-design.de",
-    "sferik@gmail.com",
     "dan@travis-ci.org",
+    "sferik@gmail.com",
     "steve.richert@gmail.com",
     "bford@engineyard.com",
     "henrik@travis-ci.com",
-    "punchagan@muse-amuse.in",
+    "brysgo@gmail.com",
+    "jdennes@gmail.com",
     "rainsuner@gmail.com",
     "dev+narwen+rkh@rkh.im",
     "tim@spork.in",
     "e@zzak.io",
-    "jdennes@gmail.com",
+    "punchagan@muse-amuse.in",
     "dan@zoombody.com",
+    "dan@meatballhat.com",
     "nschonni@gmail.com",
-    "patrick@bittorrent.com",
-    "brysgo@gmail.com"
+    "patrick@bittorrent.com"
   ]
 
   s.files = [
@@ -116,6 +117,9 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/middleware/metriks.rb",
     "lib/travis/api/app/middleware/rewrite.rb",
     "lib/travis/api/app/middleware/scope_check.rb",
+    "lib/travis/api/app/middleware/skylight.rb",
+    "lib/travis/api/app/middleware/skylight/actual.rb",
+    "lib/travis/api/app/middleware/skylight/dummy.rb",
     "lib/travis/api/app/middleware/user_agent_tracker.rb",
     "lib/travis/api/app/responders.rb",
     "lib/travis/api/app/responders/atom.rb",
@@ -127,6 +131,8 @@ Gem::Specification.new do |s|
     "lib/travis/api/app/responders/service.rb",
     "lib/travis/api/app/responders/xml.rb",
     "lib/travis/api/app/services/schedule_request.rb",
+    "lib/travis/api/app/stack_instrumentation.rb",
+    "lib/travis/api/instruments.rb",
     "lib/travis/api/serializer.rb",
     "lib/travis/api/v2.rb",
     "lib/travis/api/v2/http.rb",

@@ -1,6 +1,8 @@
-require 'skylight'
+require 'conditional_skylight'
 
-Travis.services.send(:services).each_value do |service|
-  service.send(:include, Skylight::Helpers)
-  service.send(:instrument_method, :run)
+if ConditionalSkylight.enabled?
+  Travis.services.send(:services).each_value do |service|
+    service.send(:include, ConditionalSkylight::Mixin)
+    service.send(:instrument_method, :run)
+  end
 end

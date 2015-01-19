@@ -3,7 +3,7 @@ require 'securerandom'
 
 class Travis::Api::App
   class AccessToken
-    include Skylight::Helpers
+    include ConditionalSkylight::Mixin
 
     DEFAULT_SCOPES = [:public, :private]
     attr_reader :token, :scopes, :user_id, :app_id, :expires_in, :extra

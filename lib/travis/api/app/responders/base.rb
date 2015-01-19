@@ -1,6 +1,6 @@
 module Travis::Api::App::Responders
   class Base
-    include Skylight::Helpers
+    include ConditionalSkylight::Mixin
     attr_reader :endpoint, :resource, :options
 
     def initialize(endpoint, resource, options = {})
