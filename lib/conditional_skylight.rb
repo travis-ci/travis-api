@@ -20,12 +20,29 @@ module ConditionalSkylight
   end
 
   def lucky_dyno?
-    return @lucky_dyno if instance_variable_defined? :@lucky_dyno
-    if ENV['DYNO'.freeze] and ENV['DYNO_COUNT'.freeze]
-      dyno        = Integer ENV['DYNO'.freeze][/\d+/]
-      @lucky_dyno = dyno % 5 == 1
+    @lucky_dyno = detect_lucy_dyno unless instance_variable_defined? :@lucky_dyno
+    @lucky_dyno
+  end
+
+  def detect_lucy_dyno
+    unless ENV['DYNO'.freeze]
+      warn "[ConditionalSkylight] $DYNO not set, skipping lucky dyno check"
+      return true
+    end
+
+    unless ENV['DYNO_COUNT'.freeze]
+      warn "[ConditionalSkylight] $DYNO_COUNT not set, skipping lucky dyno check"
+      return true
+    end
+
+    dyno = Integer ENV['DYNO'.freeze][/\d+/]
+
+    if dyno % 5 == 1
+      warn "[ConditionalSkylight] lucky dyno, enabling Skylight"
+      true
     else
-      @lucky_dyno = true
+      warn "[ConditionalSkylight] not a lucky dyno, disabling Skylight"
+      false
     end
   end
 
