@@ -15,6 +15,10 @@ module Travis::API::V3
       self
     end
 
+    def render
+      Renderer[type].render(resource)
+    end
+
     def method_missing(method, *args)
       return super unless method.to_sym == type.to_sym
       raise ArgumentError, 'wrong number of arguments (1 for 0)'.freeze if args.any?

@@ -31,7 +31,7 @@ module Travis::API::V3
     end
 
     def public_api?
-      Travis.config.public_api
+      !Travis.config.private_api
     end
 
     def unrestricted_api?
@@ -42,7 +42,7 @@ module Travis::API::V3
 
     def dispatch(object, method = caller_locations.first.base_label)
       method = object.class.name.underscore + ?_.freeze + method
-      public_send(method) if respond_to?(method)
+      send(method, object) if respond_to?(method, true)
     end
   end
 end

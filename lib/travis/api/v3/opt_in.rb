@@ -2,7 +2,7 @@ module Travis::API::V3
   class OptIn
     attr_reader :legacy_stack, :prefix, :router, :accept, :version_header
 
-    def initialize(legacy_stack, prefix: '/v3/', router: Router.new, accept: 'application/vnd.travis-ci.3+', version_header: 'Travis-API-Version')
+    def initialize(legacy_stack, prefix: '/v3', router: Router.new, accept: 'application/vnd.travis-ci.3+', version_header: 'Travis-API-Version')
       @legacy_stack   = legacy_stack
       @prefix         = prefix
       @router         = router
@@ -29,11 +29,11 @@ module Travis::API::V3
     end
 
     def redirect?(env)
-      env['PATH_INFO'.freeze] + ?/.freeze == prefix
+      env['PATH_INFO'.freeze] == prefix
     end
 
     def redirect(env)
-      [307, {'Location'.freeze => env['SCRIPT_NAME'.freeze] + prefix, 'Conent-Type'.freeze => 'text/plain'.freeze}, []]
+      [307, {'Location'.freeze => env['SCRIPT_NAME'.freeze] + prefix + ?/.freeze, 'Conent-Type'.freeze => 'text/plain'.freeze}, []]
     end
 
     def cascade?(status, headers, body)
@@ -46,7 +46,7 @@ module Travis::API::V3
     end
 
     def from_prefix(env)
-      return unless prefix and env['PATH_INFO'.freeze].start_with?(prefix)
+      return unless prefix and env['PATH_INFO'.freeze].start_with?(prefix + ?/.freeze)
       env.merge({
         'SCRIPT_NAME'.freeze => env['SCRIPT_NAME'.freeze] + prefix,
         'PATH_INFO'.freeze   => env['PATH_INFO'.freeze][prefix.size..-1]
