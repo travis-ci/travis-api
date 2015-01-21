@@ -37,7 +37,9 @@ class Travis::Api::App
           status 422
           respond_with json
         else
-          service.run
+          #service.run
+          #check syntax of line below
+          Travis::Sidekiq::BuildCancellation.perform_async(params.merge(source: 'api'))
 
           Metriks.meter("api.request.cancel_build.success").mark
           status 204
