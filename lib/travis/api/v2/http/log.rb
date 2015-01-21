@@ -11,8 +11,14 @@ module Travis
           end
 
           def data
+            log_hash = options[:chunked] ? chunked_log_data : log_data
+            if log.removed_at
+              log_hash['removed_at'] = log.removed_at
+              log_hash['removed_by'] = log.removed_by.name || log.removed_by.login
+            end
+
             {
-              'log' => options[:chunked] ? chunked_log_data : log_data,
+              'log' => log_hash,
             }
           end
 
@@ -37,16 +43,21 @@ module Travis
             end
 
             def log_parts
-              parts = log.parts
-              parts = parts.where(number: part_numbers) if part_numbers
-              parts = parts.where(["number > ?", after]) if after
-              parts.sort_by(&:number).map do |part|
-                {
-                  'id' => part.id,
-                  'number' => part.number,
-                  'content' => part.content,
-                  'final' => part.final
-                }
+              if log.removed_at
+                # if log is removed we don't have actual parts
+                parts = [{ 'number' => 1, 'content' => log.content, 'final' => true }]
+              else
+                parts = log.parts
+                parts = parts.where(number: part_numbers) if part_numbers
+                parts = parts.where(["number > ?", after]) if after
+                parts.sort_by(&:number).map do |part|
+                  {
+                    'id' => part.id,
+                    'number' => part.number,
+                    'content' => part.content,
+                    'final' => part.final
+                  }
+                end
               end
             end
 

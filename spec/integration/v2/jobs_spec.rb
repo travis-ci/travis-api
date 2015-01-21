@@ -103,6 +103,21 @@ describe 'Jobs' do
         response.should deliver_json_for(job.log, version: 'v2')
       end
     end
+
+    it 'adds removed info if the log is removed' do
+      time = Time.utc(2015, 1, 9, 12, 57, 31)
+      job.log.update_attributes(removed_at: time, removed_by: User.first)
+      headers = { 'HTTP_ACCEPT' => 'application/json; chunked=true; version=2' }
+      response = get "/jobs/#{job.id}/log", {}, headers
+      body = JSON.parse(response.body)
+
+      body['log']['removed_by'].should == 'Sven Fuchs'
+      body['log']['removed_at'].should == "2015-01-09T12:57:31Z"
+      body['log']['id'].should == job.log.id
+
+      # make sure we return parts as chunked=true
+      body['log']['parts'].length.should == 1
+    end
   end
 
   describe 'PATCH /jobs/:job_id/log' do

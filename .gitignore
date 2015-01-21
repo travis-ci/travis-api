@@ -2,3 +2,6 @@ config/travis.yml
 .yardoc
 log/
 vendor
+config/skylight.yml
+.coverage
+.coverage/

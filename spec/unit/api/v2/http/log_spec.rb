@@ -3,6 +3,9 @@ require 'spec_helper'
 describe Travis::Api::V2::Http::Log do
   include Travis::Testing::Stubs
 
+  let(:log) {
+    stub_log(removed_at: false)
+  }
   let(:data) { described_class.new(log).data }
 
   it 'log' do
@@ -19,7 +22,7 @@ describe Travis::Api::V2::Http::Log do
       stub_log(parts: [
         stub_log_part(id: 2, number: 2, content: 'bar', final: true),
         stub_log_part(id: 1, number: 1, content: 'foo')
-      ])
+      ], removed_at: false)
     end
     let(:data) { described_class.new(log, chunked: true).data }
 

@@ -10,6 +10,7 @@ module Travis::Api
           resource.respond_to?(:run)
         end
 
+        instrument_method
         def apply
           cache_control
           result = normalize(resource.run)

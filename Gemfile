@@ -1,6 +1,10 @@
 source 'https://rubygems.org'
 gemspec
 
+ruby '2.1.2' if ENV.key?('DYNO')
+
+gem 's3',              github: 'travis-ci/s3'
+
 gem 'travis-core',     github: 'travis-ci/travis-core'
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-config',   '~> 0.1.0'
@@ -25,6 +29,7 @@ gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
 gem 'micro_migrations'
 gem 'simplecov'
+gem 'skylight'
 
 group :test do
   gem 'rspec',         '~> 2.13'
