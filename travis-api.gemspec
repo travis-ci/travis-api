@@ -165,11 +165,15 @@ Gem::Specification.new do |s|
     "lib/travis/api/v3/access_control/signature.rb",
     "lib/travis/api/v3/access_control/user.rb",
     "lib/travis/api/v3/opt_in.rb",
+    "lib/travis/api/v3/renderer.rb",
+    "lib/travis/api/v3/renderer/repository.rb",
     "lib/travis/api/v3/result.rb",
     "lib/travis/api/v3/router.rb",
     "lib/travis/api/v3/routes.rb",
     "lib/travis/api/v3/routes/dsl.rb",
+    "lib/travis/api/v3/routes/resource.rb",
     "lib/travis/api/v3/service.rb",
+    "lib/travis/api/v3/service_index.rb",
     "lib/travis/api/v3/services.rb",
     "lib/travis/api/v3/services/find_repository.rb",
     "lib/travis/private_key.rb",
@@ -272,7 +276,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'travis-support'
   s.add_dependency 'travis-core'
 
-  s.add_dependency 'backports',       '~> 2.5'
   s.add_dependency 'pg',              '~> 0.13.2'
   s.add_dependency 'thin',            '~> 1.4'
   s.add_dependency 'sinatra',         '~> 1.3'

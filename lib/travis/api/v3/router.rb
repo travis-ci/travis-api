@@ -1,16 +1,10 @@
 module Travis::API::V3
   class Router
     include Travis::API::V3
+    attr_accessor :routes
 
-    not_found = '{"error":{"message":"not found"}}'.freeze
-    headers   = { 'Content-Type'.freeze => 'application/json'.freeze, 'X-Cascade'.freeze => 'pass'.freeze, 'Content-Length'.freeze => not_found.bytesize.to_s }
-    NOT_FOUND = [ 404, headers, [not_found] ]
-
-    attr_accessor :routes, :not_found
-
-    def initialize(routes = Routes, not_found: NOT_FOUND)
-      @routes    = routes
-      @not_found = not_found
+    def initialize(routes = Routes)
+      @routes = routes
       routes.draw_routes
     end
 
@@ -19,13 +13,15 @@ module Travis::API::V3
       access_control  = AccessControl.new(env)
       factory, params = routes.factory_for(env['REQUEST_METHOD'.freeze], env['PATH_INFO'.freeze])
       env_params      = params(env)
-      if factory
-        service       = factory.new(access_control, env_params.merge(params))
-        result        = service.run
-        render(result, env_params)
-      else
-        NOT_FOUND
-      end
+
+      raise NotFound unless factory
+
+      service         = factory.new(access_control, env_params.merge(params))
+      result          = service.run
+      render(result, env_params)
+    rescue Error => error
+      result = Result.new(:error, error)
+      V3.response(result.render, 'X-Cascade'.freeze => 'pass'.freeze, status: error.status)
     end
 
     def render(result, env_params)

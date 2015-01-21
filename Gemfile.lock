@@ -43,7 +43,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: cbfb6da8a1c6f4cc80c40b260d4d2708e3acec03
+  revision: a0aa1e2f79d45a4c59c1046a5435fe598eda2d2a
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -89,7 +89,6 @@ PATH
   remote: .
   specs:
     travis-api (0.0.1)
-      backports (~> 2.5)
       memcachier
       mustermann (~> 0.4)
       pg (~> 0.13.2)
@@ -140,7 +139,7 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    backports (2.8.2)
+    backports (3.6.4)
     builder (3.0.4)
     bunny (0.8.0)
     celluloid (0.12.0)
@@ -172,19 +171,20 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
+    docile (1.1.5)
     dotenv (0.7.0)
     equalizer (0.0.9)
     erubis (2.7.0)
-    eventmachine (1.0.3)
+    eventmachine (1.0.4)
     factory_girl (2.4.2)
       activesupport
-    faraday (0.9.0)
+    faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.6)
     foreman (0.64.0)
       dotenv (~> 0.7.0)
       thor (>= 0.13.6)
-    gh (0.13.2)
+    gh (0.13.3)
       addressable
       backports
       faraday (~> 0.8)
@@ -291,6 +291,11 @@ GEM
     simple_states (1.0.1)
       activesupport
       hashr (~> 0.0.10)
+    simplecov (0.9.1)
+      docile (~> 1.1.0)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.8.0)
+    simplecov-html (0.8.0)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -365,6 +370,7 @@ DEPENDENCIES
   rerun
   rspec (~> 2.13)
   sentry-raven!
+  simplecov
   sinatra
   sinatra-contrib
   travis-api!

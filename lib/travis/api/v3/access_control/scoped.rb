@@ -13,7 +13,7 @@ module Travis::API::V3
 
     def private_repository_visible?(repository)
       return false if name and repository.name != name
-      unscoped.private_repository_visible?(repository) if repository.owner_name == owner_name
+      unscoped.visible?(repository) if repository.owner_name == owner_name
     end
   end
 end

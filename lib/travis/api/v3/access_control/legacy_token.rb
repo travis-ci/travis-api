@@ -21,7 +21,7 @@ module Travis::API::V3
     protected
 
     def permission?(action, id)
-      super if token.scopes.include? :private
+      super if @token.scopes.include? :private
     end
   end
 end

@@ -13,12 +13,12 @@ module Travis::API::V3
     protected
 
     def private_repository_visible?(repository)
-      permissions?(:pull, repository)
+      permission?(:pull, repository)
     end
 
     def permission?(type, id)
       id = id.id if id.is_a? ::Repository
-      permissions.where(type => trye, :repository_id => id).any?
+      permissions.where(type => true, :repository_id => id).any?
     end
   end
 end

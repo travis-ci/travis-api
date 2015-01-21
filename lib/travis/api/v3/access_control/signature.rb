@@ -18,11 +18,14 @@ module Travis::API::V3
       end
 
       if application = options[?a.freeze]
-        return unless Travis.config.application and app_config = Travis.config.applications[application]
+        return unless Travis.config.applications and app_config = Travis.config.applications[application]
       end
 
-      challenge << env['REQUEST_METHOD'.freeze] << "\n".freeze                     if options[?c.freeeze].include?(?m.freeze)
-      challenge << env['SCRIPT_NAME'.freeze]    << env['PATH_INFO'.freeze] << "\n" if options[?c.freeeze].include?(?p.freeze)
+      if c = options[?c.freeze]
+        challenge << env['REQUEST_METHOD'.freeze] << "\n".freeze                     if c.include?(?m.freeze)
+        challenge << env['SCRIPT_NAME'.freeze]    << env['PATH_INFO'.freeze] << "\n" if c.include?(?p.freeze)
+      end
+
       challenge << app_config[:secret] if app_config and user
       challenge << args.join(?:.freeze)
 
@@ -35,7 +38,7 @@ module Travis::API::V3
       end
 
       if scope = options[?s.freeze]
-        control &&= Scoped.new(scope, control) 
+        control &&= AccessControl::Scoped.new(scope, control) 
       end
 
       control if secrets.any? { |secret| signed(challenge, secret) == signature }
@@ -48,7 +51,7 @@ module Travis::API::V3
       ]
     end
 
-    def signed(challenge, secret)
+    def self.signed(challenge, secret)
       OpenSSL::HMAC.hexdigest('sha256'.freeze, secret, challenge)
     end
   end

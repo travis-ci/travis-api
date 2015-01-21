@@ -2,7 +2,6 @@ require 'travis'
 require 'travis/model'
 require 'travis/support/amqp'
 require 'travis/states_cache'
-require 'backports'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib'
@@ -197,8 +196,8 @@ module Travis::Api
       end
 
       def self.load_endpoints
-        Backports.require_relative_dir 'app/middleware'
-        Backports.require_relative_dir 'app/endpoint'
+        Dir.glob("#{__dir__}/app/middleware/*.rb").each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
+        Dir.glob("#{__dir__}/app/endpoint/*.rb").each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
       end
 
       def self.setup_endpoints
