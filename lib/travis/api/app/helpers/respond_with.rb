@@ -1,4 +1,5 @@
 require 'travis/api/app'
+require 'travis/api/app/helpers/accept'
 
 class Travis::Api::App
   module Helpers

@@ -1,5 +1,7 @@
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 
+require 'support/coverage'
+
 require 'rspec'
 require 'database_cleaner'
 require 'sinatra/test_helpers'
