@@ -9,7 +9,7 @@ describe Travis::API::V3::ServiceIndex do
   describe "custom json entry point" do
     let(:expected_resources) {{
       "repository" => {
-        "find"     => [{"request-method"=>"GET", "uri-template"=>"#{path}repo/{id}"}]
+        "find"     => [{"request-method"=>"GET", "uri-template"=>"#{path}repo/{repository.id}"}]
       }
     }}
 

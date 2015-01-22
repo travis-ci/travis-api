@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Services::FindRepository < Service
-    params :id, :github_id, :slug, optional: true
+    params :id, :github_id, :slug, optional: true, prefix: :repository
 
     def run
       raise NotFound, :repository unless repository and access_control.visible? repository

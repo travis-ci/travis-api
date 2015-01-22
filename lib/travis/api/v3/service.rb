@@ -4,11 +4,12 @@ module Travis::API::V3
       @required_params ||= []
     end
 
-    def self.params(*list, optional: false)
+    def self.params(*list, optional: false, prefix: nil)
       @params ||= []
       list.each do |param|
-        param = param.to_s
-        define_method(param) { params[param] }
+        method = param = param.to_s
+        param = "#{prefix}.#{method}" if prefix
+        define_method(method) { params[param] }
         required_params << param unless optional
         @params << param
       end
