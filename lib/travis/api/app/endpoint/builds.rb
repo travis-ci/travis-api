@@ -1,4 +1,5 @@
 require 'travis/api/app'
+require 'travis/api/workers/build_cancellation'
 
 class Travis::Api::App
   class Endpoint
@@ -39,7 +40,7 @@ class Travis::Api::App
         else
           #service.run
           #check syntax of line below
-          Travis::Sidekiq::BuildCancellation.perform_async(params.merge(source: 'api'))
+          Travis::Sidekiq::BuildCancellation.perform_async(id: params[:id], source: 'api')
 
           Metriks.meter("api.request.cancel_build.success").mark
           status 204

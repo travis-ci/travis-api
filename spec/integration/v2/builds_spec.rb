@@ -75,17 +75,20 @@ describe 'Builds' do
     end
 
     context 'when build can be canceled' do
-      it 'cancels the build and responds with 204' do
+      before do
+        Travis::Sidekiq::BuildCancellation.stubs(:perform_async)
         build.matrix.each { |j| j.update_attribute(:state, 'created') }
         build.update_attribute(:state, 'created')
+      end
 
-        response = nil
-        expect {
-          response = post "/builds/#{build.id}/cancel", {}, headers
-        }.to change { build.reload.state }
+      it 'cancels the build' do
+        Travis::Sidekiq::BuildCancellation.expects(:perform_async).with(id: build.id.to_s, source: 'api')
+        post "/builds/#{build.id}/cancel", {}, headers
+      end
+
+      it 'responds with 204' do
+        response = post "/builds/#{build.id}/cancel", {}, headers
         response.status.should == 204
-
-        build.state.should == 'canceled'
       end
     end
   end
