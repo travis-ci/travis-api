@@ -82,7 +82,7 @@ describe 'Builds' do
       end
 
       it 'cancels the build' do
-        Travis::Sidekiq::BuildCancellation.expects(:perform_async).with(id: build.id.to_s, source: 'api')
+        Travis::Sidekiq::BuildCancellation.expects(:perform_async).with( id: build.id.to_s, user_id: user.id, source: 'api')
         post "/builds/#{build.id}/cancel", {}, headers
       end
 

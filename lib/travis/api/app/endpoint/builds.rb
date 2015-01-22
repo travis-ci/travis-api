@@ -40,7 +40,7 @@ class Travis::Api::App
         else
           #service.run
           #check syntax of line below
-          Travis::Sidekiq::BuildCancellation.perform_async(id: params[:id], source: 'api')
+          Travis::Sidekiq::BuildCancellation.perform_async(id: params[:id], user_id: current_user.id, source: 'api')
 
           Metriks.meter("api.request.cancel_build.success").mark
           status 204
