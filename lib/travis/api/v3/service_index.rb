@@ -27,7 +27,7 @@ module Travis::API::V3
       routes.resources.each do |resource|
         resources[resource.identifier] ||= {}
         resource.services.each do |(request_method, sub_route), service|
-          service &&= service.to_s.sub(/_#{resource.identifier}$/, ''.freeze)
+          service &&= service.to_s.sub(/^#{resource.identifier}_|_#{resource.identifier}$/, ''.freeze)
           list      = resources[resource.identifier][service] ||= []
           pattern   = sub_route ? resource.route + sub_route : resource.route
           pattern.to_templates.each do |template|

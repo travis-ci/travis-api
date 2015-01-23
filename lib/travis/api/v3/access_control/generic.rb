@@ -11,6 +11,13 @@ module Travis::API::V3
       full_access? or dispatch(object)
     end
 
+    def user
+    end
+
+    def logged_in?
+      false
+    end
+
     protected
 
     def repository_visible?(repository)
@@ -23,10 +30,6 @@ module Travis::API::V3
     end
 
     def full_access?
-      false
-    end
-
-    def logged_in?
       false
     end
 

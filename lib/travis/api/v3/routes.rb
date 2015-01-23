@@ -7,5 +7,10 @@ module Travis::API::V3
       route '/repo/{repository.id}'
       get :find_repository
     end
+
+    resource :repositories do
+      route '/repos'
+      get :repositories_for_current_user
+    end
   end
 end

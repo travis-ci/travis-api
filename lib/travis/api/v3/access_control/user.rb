@@ -10,6 +10,10 @@ module Travis::API::V3
       super()
     end
 
+    def logged_in?
+      true
+    end
+
     protected
 
     def private_repository_visible?(repository)

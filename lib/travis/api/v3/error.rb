@@ -27,7 +27,7 @@ module Travis::API::V3
 
     def initialize(message = self.class.default_message, status: self.class.status, type: self.class.type, **payload)
       if message.is_a? Symbol
-        payload[:resource_type] ||= message
+        payload[:resource_type] ||= message unless message == :resource
         message = self.class.template % message
       end
 

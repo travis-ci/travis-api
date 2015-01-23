@@ -14,7 +14,7 @@ module Travis::API::V3
     def nested_resources(repository)
       {
         owner: {
-          :@type        => repository.owner_type.downcase,
+          :@type        => repository.owner_type && repository.owner_type.downcase,
           :id           => repository.owner_id,
           :login        => repository.owner_name
         },

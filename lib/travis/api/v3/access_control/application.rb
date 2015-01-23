@@ -12,11 +12,11 @@ module Travis::API::V3
       raise ArgumentError, 'cannot use %p without a user' % application_name if config.requires_user and not user
     end
 
-    protected
-
     def logged_in?
-      !!user
+      full_access? or !!user
     end
+
+    protected
 
     def full_access?
       config.full_access

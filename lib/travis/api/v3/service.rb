@@ -30,5 +30,9 @@ module Travis::API::V3
     def required_params
       self.class.required_params
     end
+
+    def run_service(name, added_params = {})
+      Services[name].new(access_control, params: params.merge(added_params)).run
+    end
   end
 end

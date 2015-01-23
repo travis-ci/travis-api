@@ -20,7 +20,8 @@ module Travis
       ClientError      = Error        .create(status: 400)
       NotFound         = ClientError  .create(:resource, status: 404, template: '%s not found (or insufficient access)')
       EnitityMissing   = NotFound     .create(type: 'not_found')
-      WrongCredentials = ClientError  .create('access denied', status: 403)
+      WrongCredentials = ClientError  .create('access denied',  status: 403)
+      LoginRequired    = ClientError  .create('login required', status: 403)
       WrongParams      = ClientError  .create('wrong parameters')
     end
   end
