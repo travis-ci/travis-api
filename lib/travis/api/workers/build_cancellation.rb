@@ -10,11 +10,7 @@ module Travis
       sidekiq_options queue: :build_cancellations
 
       def perform(data)
-        p "#######################"
-        p data
         user = User.find(data['user_id'])
-        test = { id: data['id'], source: data['source'] }
-        p test
         Travis.service(:cancel_build, user, { id: data['id'], source: data['source'] }).run
       end
 
