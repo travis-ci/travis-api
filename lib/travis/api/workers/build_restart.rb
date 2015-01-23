@@ -3,15 +3,15 @@ require 'multi_json'
 
 module Travis
   module Sidekiq
-    class BuildCancellation
+    class BuildRestart
       class ProcessingError < StandardError; end
 
       include ::Sidekiq::Worker
-      sidekiq_options queue: :build_cancellations
+      sidekiq_options queue: :build_restart
 
       def perform(data)
         user = User.find(data['user_id'])
-        Travis.service(:cancel_build, user, { id: data['id'], source: data['source'] }).run
+        Travis.service(:reset_model, user, build_id: data['id']).run
       end
 
     end

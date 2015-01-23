@@ -1,5 +1,6 @@
 require 'travis/api/app'
 require 'travis/api/workers/build_cancellation'
+require 'travis/api/workers/build_restart'
 
 class Travis::Api::App
   class Endpoint
@@ -49,7 +50,9 @@ class Travis::Api::App
 
       post '/:id/restart' do
         Metriks.meter("api.request.restart_build").mark
-        respond_with service(:reset_model, build_id: params[:id])
+
+        Travis::Sidekiq::BuildRestart.perform_async(id: params[:id], user_id: current_user.id)
+        #respond_with service(:reset_model, build_id: params[:id])
       end
     end
   end

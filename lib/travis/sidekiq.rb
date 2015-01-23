@@ -2,6 +2,7 @@ $: << './lib'
 require 'sidekiq'
 require 'travis'
 require 'travis/api/workers/build_cancellation'
+require 'travis/api/workers/build_restart'
 require 'travis/support/amqp'
 
 Travis::Database.connect
