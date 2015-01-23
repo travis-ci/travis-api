@@ -92,4 +92,44 @@ describe 'Builds' do
       end
     end
   end
+
+  describe 'POST /builds/:id/restart' do
+    let(:user)    { User.where(login: 'svenfuchs').first }
+    let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
+
+    before {
+      headers.merge! 'HTTP_AUTHORIZATION' => "token #{token}"
+      user.permissions.create!(repository_id: build.repository.id, :pull => true, :push => true)
+    }
+
+    context 'when restart is not acceptable' do
+      before { user.permissions.destroy_all }
+
+      it 'responds with 400' do
+        response = post "/builds/#{build.id}/restart", {}, headers
+        response.status.should == 400
+      end
+    end
+
+    context 'when build passed' do
+      before do
+        Travis::Sidekiq::BuildCancellation.stubs(:perform_async)
+        build.matrix.each { |j| j.update_attribute(:state, 'passed') }
+        build.update_attribute(:state, 'passed')
+      end
+
+      it 'restarts the build' do
+        Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
+        response = post "/builds/#{build.id}/restart", {}, headers
+        response.status.should == 200
+      end
+
+      it 'sends the correct response body' do
+        Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
+        response = post "/builds/#{build.id}/restart", {}, headers
+        body = JSON.parse(response.body)
+        body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
+      end
+    end
+  end
 end

@@ -39,8 +39,6 @@ class Travis::Api::App
           status 422
           respond_with json
         else
-          #service.run
-          #check syntax of line below
           Travis::Sidekiq::BuildCancellation.perform_async(id: params[:id], user_id: current_user.id, source: 'api')
 
           Metriks.meter("api.request.cancel_build.success").mark
@@ -51,8 +49,16 @@ class Travis::Api::App
       post '/:id/restart' do
         Metriks.meter("api.request.restart_build").mark
 
-        Travis::Sidekiq::BuildRestart.perform_async(id: params[:id], user_id: current_user.id)
-        #respond_with service(:reset_model, build_id: params[:id])
+        service = self.service(:reset_model, build_id: params[:id])
+        if !service.accept?
+          status 400
+          result = false
+        else
+          Travis::Sidekiq::BuildRestart.perform_async(id: params[:id], user_id: current_user.id)
+          status 200
+          result = true
+        end
+        respond_with(result: result, flash: service.messages)
       end
     end
   end

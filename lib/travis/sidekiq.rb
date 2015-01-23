@@ -3,6 +3,8 @@ require 'sidekiq'
 require 'travis'
 require 'travis/api/workers/build_cancellation'
 require 'travis/api/workers/build_restart'
+require 'travis/api/workers/job_cancellation'
+require 'travis/api/workers/job_restart'
 require 'travis/support/amqp'
 
 Travis::Database.connect
