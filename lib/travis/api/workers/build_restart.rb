@@ -7,7 +7,7 @@ module Travis
       class ProcessingError < StandardError; end
 
       include ::Sidekiq::Worker
-      sidekiq_options queue: :build_restart
+      sidekiq_options queue: :build_restarts
 
       def perform(data)
         user = User.find(data['user_id'])
