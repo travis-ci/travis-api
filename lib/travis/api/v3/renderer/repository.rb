@@ -1,6 +1,6 @@
 module Travis::API::V3
   module Renderer::Repository
-    DIRECT_ATTRIBUTES = %i[id name slug description github_language private]
+    DIRECT_ATTRIBUTES = %i[id name slug description github_language active private]
     extend self
 
     def render(repository)

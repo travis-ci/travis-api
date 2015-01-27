@@ -21,6 +21,7 @@ describe Travis::API::V3::Services::FindRepository do
         "slug"            =>  "svenfuchs/minimal",
         "description"     => nil,
         "github_language" => nil,
+        "active"          => true,
         "private"         => true,
         "owner"           => {
           "@type"         => "user",
