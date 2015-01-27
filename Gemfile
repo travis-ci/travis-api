@@ -10,6 +10,7 @@ gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-config',   '~> 0.1.0'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'travis-yaml',     github: 'travis-ci/travis-yaml'
+gem 'mustermann',      github: 'rkh/mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
 
@@ -27,7 +28,8 @@ gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
 gem 'micro_migrations'
-gem 'skylight'
+gem 'simplecov'
+gem 'skylight', '~> 0.6.0.beta.1'
 
 group :test do
   gem 'rspec',         '~> 2.13'

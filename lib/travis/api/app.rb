@@ -3,7 +3,6 @@ require 'travis'
 require 'travis/model'
 require 'travis/support/amqp'
 require 'travis/states_cache'
-require 'backports'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib'
@@ -22,6 +21,7 @@ require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'travis/api/instruments'
 require 'travis/api/v2/http'
+require 'travis/api/v3'
 require 'travis/api/app/stack_instrumentation'
 
 # Rack class implementing the HTTP API.
@@ -115,11 +115,17 @@ module Travis::Api
           env['travis.global_prefix'] = env['SCRIPT_NAME']
         end
 
-        use Travis::Api::App::Middleware::ScopeCheck
+
         use Travis::Api::App::Middleware::Logging
-        use Travis::Api::App::Middleware::Metriks
-        use Travis::Api::App::Middleware::Rewrite
+        use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
+        use Travis::Api::App::Middleware::Metriks
+
+        # if this is a v3 API request, ignore everything after
+        use Travis::API::V3::OptIn
+
+        # rewrite should come after V3 hook
+        use Travis::Api::App::Middleware::Rewrite
 
         SettingsEndpoint.subclass :env_vars
         if Travis.config.endpoints.ssh_key
@@ -195,8 +201,8 @@ module Travis::Api
       end
 
       def self.load_endpoints
-        Backports.require_relative_dir 'app/middleware'
-        Backports.require_relative_dir 'app/endpoint'
+        Dir.glob("#{__dir__}/app/middleware/*.rb").each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
+        Dir.glob("#{__dir__}/app/endpoint/*.rb").each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
       end
 
       def self.setup_endpoints

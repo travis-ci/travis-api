@@ -73,6 +73,7 @@ Gem::Specification.new do |s|
     "config/database.yml",
     "config/puma-config.rb",
     "config/unicorn.rb",
+    "lib/conditional_skylight.rb",
     "lib/tasks/build_update_branch.rake",
     "lib/tasks/build_update_pull_request_data.rake",
     "lib/tasks/encrypt_all_data.rake",
@@ -160,6 +161,29 @@ Gem::Specification.new do |s|
     "lib/travis/api/v2/http/ssl_key.rb",
     "lib/travis/api/v2/http/user.rb",
     "lib/travis/api/v2/http/validation_error.rb",
+    "lib/travis/api/v3.rb",
+    "lib/travis/api/v3/access_control.rb",
+    "lib/travis/api/v3/access_control/anonymous.rb",
+    "lib/travis/api/v3/access_control/application.rb",
+    "lib/travis/api/v3/access_control/generic.rb",
+    "lib/travis/api/v3/access_control/legacy_token.rb",
+    "lib/travis/api/v3/access_control/scoped.rb",
+    "lib/travis/api/v3/access_control/signature.rb",
+    "lib/travis/api/v3/access_control/user.rb",
+    "lib/travis/api/v3/error.rb",
+    "lib/travis/api/v3/opt_in.rb",
+    "lib/travis/api/v3/renderer.rb",
+    "lib/travis/api/v3/renderer/error.rb",
+    "lib/travis/api/v3/renderer/repository.rb",
+    "lib/travis/api/v3/result.rb",
+    "lib/travis/api/v3/router.rb",
+    "lib/travis/api/v3/routes.rb",
+    "lib/travis/api/v3/routes/dsl.rb",
+    "lib/travis/api/v3/routes/resource.rb",
+    "lib/travis/api/v3/service.rb",
+    "lib/travis/api/v3/service_index.rb",
+    "lib/travis/api/v3/services.rb",
+    "lib/travis/api/v3/services/find_repository.rb",
     "lib/travis/private_key.rb",
     "public/favicon.ico",
     "public/images/result/canceled.png",
@@ -202,6 +226,7 @@ Gem::Specification.new do |s|
     "spec/integration/v2_spec.backup.rb",
     "spec/integration/version_spec.rb",
     "spec/spec_helper.rb",
+    "spec/support/coverage.rb",
     "spec/support/formats.rb",
     "spec/support/matchers.rb",
     "spec/unit/access_token_spec.rb",
@@ -253,6 +278,9 @@ Gem::Specification.new do |s|
     "spec/unit/middleware/user_agent_tracker_spec.rb",
     "spec/unit/responders/json_spec.rb",
     "spec/unit/responders/service_spec.rb",
+    "spec/v3/result_spec.rb",
+    "spec/v3/service_index_spec.rb",
+    "spec/v3/services/find_repository_spec.rb",
     "tmp/.gitkeep",
     "travis-api.gemspec"
   ]
@@ -260,7 +288,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'travis-support'
   s.add_dependency 'travis-core'
 
-  s.add_dependency 'backports',       '~> 2.5'
   s.add_dependency 'pg',              '~> 0.13.2'
   s.add_dependency 'thin',            '~> 1.4'
   s.add_dependency 'sinatra',         '~> 1.3'
