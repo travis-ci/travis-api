@@ -1,5 +1,5 @@
 module Travis::API::V3
-  module Services
+  module Queries
     extend ConstantResolver
   end
 end
