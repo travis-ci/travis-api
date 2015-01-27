@@ -1,4 +1,4 @@
-$: << './lib'
+#$: << './lib'
 require 'sidekiq'
 require 'travis'
 require 'travis/api/workers/build_cancellation'
