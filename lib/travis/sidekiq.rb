@@ -8,6 +8,12 @@ require 'travis/api/workers/job_restart'
 require 'travis/support/amqp'
 
 Travis::Database.connect
+
+if Travis.config.logs_database
+  Log.establish_connection 'logs_database'
+  Log::Part.establish_connection 'logs_database'
+end
+
 Travis::Async.enabled = true
 Travis::Amqp.config = Travis.config.amqp
 Travis::Metrics.setup
