@@ -15,5 +15,14 @@ module Travis::API::V3
       return false if value == 'false'.freeze
       !!value
     end
+
+    def user_condition(value)
+      case value
+      when String  then { login: value    }
+      when Integer then { id:    value    }
+      when ::User  then { id:    value.id }
+      else raise WrongParams
+      end
+    end
   end
 end

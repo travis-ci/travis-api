@@ -6,17 +6,6 @@ module Travis::API::V3
       all.joins(:users).where(users: user_condition(user))
     end
 
-    private
-
-    def user_condition(value)
-      case value
-      when String  then { login: value    }
-      when Integer then { id:    value    }
-      when ::User  then { id:    value.id }
-      else raise WrongParams
-      end
-    end
-
     def all
       @all ||= begin
         all = ::Repository

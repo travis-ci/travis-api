@@ -4,8 +4,8 @@ module Travis
       V3 = self
 
       def load_dir(dir, recursive: true)
-        Dir.glob("#{dir}/*.rb").each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
-        Dir.glob("#{dir}/*").each { |dir| load_dir(dir) } if recursive
+        Dir.glob("#{dir}/*.rb").sort.each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
+        Dir.glob("#{dir}/*").sort.each { |dir| load_dir(dir) } if recursive
       end
 
       def response(payload, headers = {}, content_type: 'application/json'.freeze, status: 200)

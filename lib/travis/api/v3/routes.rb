@@ -12,5 +12,10 @@ module Travis::API::V3
       route '/repos'
       get :repositories_for_current_user
     end
+
+    resource :organizations do
+      route '/orgs'
+      get :organizations_for_current_user
+    end
   end
 end
