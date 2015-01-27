@@ -3,7 +3,7 @@ module Travis::API::V3
     def run
       raise LoginRequired           unless access_control.logged_in?
       raise NotFound, :repositories unless access_control.user
-      repositories = ::Repository::joins(:users).where(users: { id: access_control.user.id })
+      repositories = query(:repositories).for_member(access_control.user)
       Result.new(:repositories, repositories)
     end
   end

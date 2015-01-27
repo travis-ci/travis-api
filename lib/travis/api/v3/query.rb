@@ -10,5 +10,10 @@ module Travis::API::V3
     def initialize(params)
       @params = params
     end
+
+    def bool(value)
+      return false if value == 'false'.freeze
+      !!value
+    end
   end
 end
