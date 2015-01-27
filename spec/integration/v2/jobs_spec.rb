@@ -159,9 +159,9 @@ describe 'Jobs' do
           user.permissions.create!(repository_id: finished_job.repository.id, :push => true)
         end
 
-        it 'returns status 200' do
+        it 'returns status 202' do
           response = patch "/jobs/#{finished_job.id}/log", { reason: 'Because reason!' }, headers
-          response.status.should == 200
+          response.status.should == 202
         end
 
       end
@@ -285,7 +285,7 @@ describe 'Jobs' do
       it 'restarts the job' do
         Travis::Sidekiq::JobRestart.expects(:perform_async).with(id: job.id.to_s, user_id: user.id)
         response = post "/jobs/#{job.id}/restart", {}, headers
-        response.status.should == 200
+        response.status.should == 202
       end
       it 'sends the correct response body' do
         Travis::Sidekiq::JobRestart.expects(:perform_async).with(id: job.id.to_s, user_id: user.id)

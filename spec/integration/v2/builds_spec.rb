@@ -121,7 +121,7 @@ describe 'Builds' do
       it 'restarts the build' do
         Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
         response = post "/builds/#{build.id}/restart", {}, headers
-        response.status.should == 200
+        response.status.should == 202
       end
 
       it 'sends the correct response body' do
