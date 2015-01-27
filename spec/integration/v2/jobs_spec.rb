@@ -159,9 +159,9 @@ describe 'Jobs' do
           user.permissions.create!(repository_id: finished_job.repository.id, :push => true)
         end
 
-        it 'returns status 202' do
+        it 'returns status 200' do
           response = patch "/jobs/#{finished_job.id}/log", { reason: 'Because reason!' }, headers
-          response.status.should == 202
+          response.status.should == 200
         end
 
       end
