@@ -4,3 +4,4 @@ log/
 vendor
 config/skylight.yml
 .coverage
+.coverage/

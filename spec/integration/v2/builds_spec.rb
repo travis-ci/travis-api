@@ -75,60 +75,17 @@ describe 'Builds' do
     end
 
     context 'when build can be canceled' do
-      before do
-        Travis::Sidekiq::BuildCancellation.stubs(:perform_async)
+      it 'cancels the build and responds with 204' do
         build.matrix.each { |j| j.update_attribute(:state, 'created') }
         build.update_attribute(:state, 'created')
-      end
 
-      it 'cancels the build' do
-        Travis::Sidekiq::BuildCancellation.expects(:perform_async).with( id: build.id.to_s, user_id: user.id, source: 'api')
-        post "/builds/#{build.id}/cancel", {}, headers
-      end
-
-      it 'responds with 204' do
-        response = post "/builds/#{build.id}/cancel", {}, headers
+        response = nil
+        expect {
+          response = post "/builds/#{build.id}/cancel", {}, headers
+        }.to change { build.reload.state }
         response.status.should == 204
-      end
-    end
-  end
 
-  describe 'POST /builds/:id/restart' do
-    let(:user)    { User.where(login: 'svenfuchs').first }
-    let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
-
-    before {
-      headers.merge! 'HTTP_AUTHORIZATION' => "token #{token}"
-      user.permissions.create!(repository_id: build.repository.id, :pull => true, :push => true)
-    }
-
-    context 'when restart is not acceptable' do
-      before { user.permissions.destroy_all }
-
-      it 'responds with 400' do
-        response = post "/builds/#{build.id}/restart", {}, headers
-        response.status.should == 400
-      end
-    end
-
-    context 'when build passed' do
-      before do
-        Travis::Sidekiq::BuildCancellation.stubs(:perform_async)
-        build.matrix.each { |j| j.update_attribute(:state, 'passed') }
-        build.update_attribute(:state, 'passed')
-      end
-
-      it 'restarts the build' do
-        Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
-        response = post "/builds/#{build.id}/restart", {}, headers
-        response.status.should == 202
-      end
-
-      it 'sends the correct response body' do
-        Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
-        response = post "/builds/#{build.id}/restart", {}, headers
-        body = JSON.parse(response.body)
-        body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
+        build.state.should == 'canceled'
       end
     end
   end

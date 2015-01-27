@@ -1,6 +1,4 @@
 require 'travis/api/app'
-require 'travis/api/workers/build_cancellation'
-require 'travis/api/workers/build_restart'
 
 class Travis::Api::App
   class Endpoint
@@ -39,7 +37,7 @@ class Travis::Api::App
           status 422
           respond_with json
         else
-          Travis::Sidekiq::BuildCancellation.perform_async(id: params[:id], user_id: current_user.id, source: 'api')
+          service.run
 
           Metriks.meter("api.request.cancel_build.success").mark
           status 204
@@ -48,17 +46,7 @@ class Travis::Api::App
 
       post '/:id/restart' do
         Metriks.meter("api.request.restart_build").mark
-
-        service = self.service(:reset_model, build_id: params[:id])
-        if !service.accept?
-          status 400
-          result = false
-        else
-          Travis::Sidekiq::BuildRestart.perform_async(id: params[:id], user_id: current_user.id)
-          status 202
-          result = true
-        end
-        respond_with(result: result, flash: service.messages)
+        respond_with service(:reset_model, build_id: params[:id])
       end
     end
   end

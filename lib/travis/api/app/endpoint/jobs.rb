@@ -1,6 +1,4 @@
 require 'travis/api/app'
-require 'travis/api/workers/job_cancellation'
-require 'travis/api/workers/job_restart'
 
 class Travis::Api::App
   class Endpoint
@@ -46,7 +44,7 @@ class Travis::Api::App
           status 422
           respond_with json
         else
-          Travis::Sidekiq::JobCancellation.perform_async(id: params[:id], user_id: current_user.id, source: 'api')
+          service.run
 
           Metriks.meter("api.request.cancel_job.success").mark
           status 204
@@ -55,17 +53,7 @@ class Travis::Api::App
 
       post '/:id/restart' do
         Metriks.meter("api.request.restart_job").mark
-
-        service = self.service(:reset_model, job_id: params[:id])
-        if !service.accept?
-          status 400
-          result = false
-        else
-          Travis::Sidekiq::JobRestart.perform_async(id: params[:id], user_id: current_user.id)
-          status 202
-          result = true
-        end
-        respond_with(result: result, flash: service.messages)
+        respond_with service(:reset_model, job_id: params[:id])
       end
 
       get '/:job_id/log' do

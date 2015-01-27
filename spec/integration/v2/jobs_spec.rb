@@ -242,56 +242,16 @@ describe 'Jobs' do
     end
 
     context 'when job can be canceled' do
-      before do
+      it 'cancels the job and responds with 204' do
         job.update_attribute(:state, 'created')
-      end
 
-      it 'cancels the job' do
-        Travis::Sidekiq::JobCancellation.expects(:perform_async).with( id: job.id.to_s, user_id: user.id, source: 'api')
-        post "/jobs/#{job.id}/cancel", {}, headers
-      end
-
-      it 'responds with 204' do
-        response = post "/jobs/#{job.id}/cancel", {}, headers
+        response = nil
+        expect {
+          response = post "/jobs/#{job.id}/cancel", {}, headers
+        }.to change { job.reload.state }
         response.status.should == 204
-      end
-    end
-  end
 
-  describe 'POST /jobs/:id/restart' do
-    let(:user)    { User.where(login: 'svenfuchs').first }
-    let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
-
-    before {
-      headers.merge! 'HTTP_AUTHORIZATION' => "token #{token}"
-      user.permissions.create!(repository_id: job.repository.id, :pull => true, :push => true)
-    }
-
-    context 'when restart is not acceptable' do
-      before { user.permissions.destroy_all }
-
-      it 'responds with 400' do
-        response = post "/jobs/#{job.id}/restart", {}, headers
-        response.status.should == 400
-      end
-    end
-
-    context 'when job passed' do
-      before do
-        Travis::Sidekiq::JobCancellation.stubs(:perform_async)
-        job.update_attribute(:state, 'passed')
-      end
-
-      it 'restarts the job' do
-        Travis::Sidekiq::JobRestart.expects(:perform_async).with(id: job.id.to_s, user_id: user.id)
-        response = post "/jobs/#{job.id}/restart", {}, headers
-        response.status.should == 202
-      end
-      it 'sends the correct response body' do
-        Travis::Sidekiq::JobRestart.expects(:perform_async).with(id: job.id.to_s, user_id: user.id)
-        response = post "/jobs/#{job.id}/restart", {}, headers
-        body = JSON.parse(response.body)
-        body.should == {"result"=>true, "flash"=>[{"notice"=>"The job was successfully restarted."}]}
+        job.state.should == 'canceled'
       end
     end
   end
