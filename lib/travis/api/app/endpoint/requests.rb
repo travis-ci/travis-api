@@ -5,13 +5,7 @@ class Travis::Api::App
   class Endpoint
     class Requests < Endpoint
       post '/', scope: :private do
-        if params[:request] && params[:request][:repository]
-          respond_with service(:schedule_request, params[:request])
-        else
-          # DEPRECATED: this will be removed by 1st of December
-          Metriks.meter("api.request.restart").mark
-          respond_with service(:reset_model, params)
-        end
+        respond_with service(:schedule_request, params[:request])
       end
 
       get '/' do
