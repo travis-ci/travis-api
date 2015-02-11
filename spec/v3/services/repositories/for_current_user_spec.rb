@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::FindRepository do
+describe Travis::API::V3::Services::Repositories::ForCurrentUser do
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
@@ -23,6 +23,7 @@ describe Travis::API::V3::Services::FindRepository do
         "github_language" => nil,
         "active"          => true,
         "private"         => true,
+        "default_branch"  => "master",
         "owner"           => {
           "@type"         => "user",
           "id"            => repo.owner_id,

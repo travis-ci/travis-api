@@ -1,14 +1,11 @@
 module Travis::API::V3
   module Renderer::Repository
-    DIRECT_ATTRIBUTES = %i[id name slug description github_language private]
+    DIRECT_ATTRIBUTES = %i[id name slug description github_language private active default_branch]
+    DEFAULTS          = { active: false, default_branch: 'master' }
     extend self
 
     def render(repository)
-      { :@type => 'repository'.freeze, active: !!repository.active, **direct_attributes(repository), **nested_resources(repository) }
-    end
-
-    def direct_attributes(repository)
-      DIRECT_ATTRIBUTES.map { |a| [a, repository.public_send(a)] }.to_h
+      { :@type => 'repository'.freeze, **Renderer.get_attributes(repository, *DIRECT_ATTRIBUTES, **DEFAULTS), **nested_resources(repository) }
     end
 
     def nested_resources(repository)

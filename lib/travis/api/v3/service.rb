@@ -1,7 +1,12 @@
 module Travis::API::V3
   class Service
+    def self.helpers(*list)
+      include(*list.map { |e| ServiceHelpers[e] })
+    end
+
     def self.result_type(type = nil)
-      @result_type = type if type
+      @result_type   = type if type
+      @result_type ||= parent.result_type if parent and parent.respond_to? :result_type
       raise 'result type not set' unless defined? @result_type
       @result_type
     end
@@ -28,6 +33,10 @@ module Travis::API::V3
       not_found unless result = run!
       result = Result.new(self.class.result_type, result) unless result.is_a? Result
       result
+    end
+
+    def accepted(type = self.class.result_type)
+      Result.new(:accepted, type, status: 202)
     end
   end
 end

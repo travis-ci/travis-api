@@ -1,4 +1,3 @@
-
 module Travis::API::V3
   module Renderer::Collection
     extend self

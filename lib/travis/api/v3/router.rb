@@ -25,7 +25,7 @@ module Travis::API::V3
     end
 
     def render(result, env_params)
-      V3.response(result.render)
+      V3.response(result.render, status: result.status)
     end
 
     def service_index(env)

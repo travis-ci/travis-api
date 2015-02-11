@@ -5,17 +5,23 @@ module Travis::API::V3
 
     resource :repository do
       route '/repo/{repository.id}'
-      get :find_repository
+      get :find
+
+      resource :requests do
+        route '/requests'
+        get  :find
+        post :create
+      end
     end
 
     resource :repositories do
       route '/repos'
-      get :repositories_for_current_user
+      get :for_current_user
     end
 
     resource :organizations do
       route '/orgs'
-      get :organizations_for_current_user
+      get :for_current_user
     end
   end
 end
