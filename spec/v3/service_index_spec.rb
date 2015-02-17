@@ -9,11 +9,14 @@ describe Travis::API::V3::ServiceIndex do
   describe "custom json entry point" do
     let(:expected_resources) {{
       "repository"          =>  {
-        "find"              => [{"request-method"=>"GET", "uri-template"=>"#{path}repo/{repository.id}"}] },
+        "find"              => [{"request-method"=>"GET",  "uri-template"=>"#{path}repo/{repository.id}"}] },
       "repositories"        =>  {
-        "for_current_user"  => [{"request-method"=>"GET", "uri-template"=>"#{path}repos"}] },
+        "for_current_user"  => [{"request-method"=>"GET",  "uri-template"=>"#{path}repos"}] },
       "organizations"       =>  {
-        "for_current_user"  => [{"request-method"=>"GET", "uri-template"=>"#{path}orgs"}] }
+        "for_current_user"  => [{"request-method"=>"GET",  "uri-template"=>"#{path}orgs"}] },
+      "requests"            =>  {
+        "find"              => [{"request-method"=>"GET",  "uri-template"=>"#{path}repo/{repository.id}/requests"}],
+        "create"            => [{"request-method"=>"POST", "uri-template"=>"#{path}repo/{repository.id}/requests"}]}
     }}
 
     describe 'with /v3 prefix' do

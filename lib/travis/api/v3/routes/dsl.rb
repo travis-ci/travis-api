@@ -14,6 +14,10 @@ module Travis::API::V3
       @current_resource ||= nil
     end
 
+    def prefix
+      @prefix ||= ""
+    end
+
     def resource(type, &block)
       resource = Routes::Resource.new(type)
       with_resource(resource, &block)
@@ -22,13 +26,15 @@ module Travis::API::V3
 
     def with_resource(resource)
       resource_was, @current_resource = current_resource, resource
+      prefix_was, @prefix             = @prefix, resource_was.route if resource_was
       yield
     ensure
+      @prefix           = prefix_was if resource_was
       @current_resource = resource_was
     end
 
     def route(value)
-      current_resource.route = value
+      current_resource.route = prefix + value
     end
 
     def get(*args)
@@ -45,7 +51,7 @@ module Travis::API::V3
         resource.services.each do |(request_method, sub_route), service|
           route = sub_route ? prefix + sub_route : prefix
           routes[route] ||= {}
-          routes[route][request_method] = Services[service]
+          routes[route][request_method] = Services[resource.identifier][service]
         end
       end
       self.routes.replace(routes)

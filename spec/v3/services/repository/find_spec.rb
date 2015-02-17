@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::FindRepository do
+describe Travis::API::V3::Services::Repository::Find do
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
   describe "public repository" do
@@ -15,6 +15,7 @@ describe Travis::API::V3::Services::FindRepository do
       "github_language" => nil,
       "active"          => true,
       "private"         => false,
+      "default_branch"  => "master",
       "owner"           => {
         "@type"         => "user",
         "id"            => repo.owner_id,
@@ -84,6 +85,7 @@ describe Travis::API::V3::Services::FindRepository do
       "github_language" => nil,
       "active"          => true,
       "private"         => true,
+      "default_branch"  => "master",
       "owner"           => {
         "@type"         => "user",
         "id"            => repo.owner_id,
@@ -138,6 +140,7 @@ describe Travis::API::V3::Services::FindRepository do
       "github_language" => nil,
       "active"          => true,
       "private"         => true,
+      "default_branch"  => "master",
       "owner"           => {
         "@type"         => "user",
         "id"            => repo.owner_id,
@@ -198,6 +201,7 @@ describe Travis::API::V3::Services::FindRepository do
       "github_language" => nil,
       "active"          => true,
       "private"         => true,
+      "default_branch"  => "master",
       "owner"           => {
         "@type"         => "user",
         "id"            => repo.owner_id,

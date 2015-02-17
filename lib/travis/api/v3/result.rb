@@ -1,9 +1,9 @@
 module Travis::API::V3
   class Result
-    attr_accessor :type, :resource
+    attr_accessor :type, :resource, :status
 
-    def initialize(type, resource = [])
-      @type, @resource = type, resource
+    def initialize(type, resource = [], status: 200)
+      @type, @resource, @status = type, resource, status
     end
 
     def respond_to_missing?(method, *)

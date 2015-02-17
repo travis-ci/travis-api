@@ -13,5 +13,10 @@ module Travis::API::V3
       return key unless key.is_a? Symbol
       resolver_cache[key] ||= const_get(key.to_s.camelize)
     end
+
+    def extended(base)
+      base.extend(ConstantResolver)
+      super
+    end
   end
 end

@@ -27,15 +27,14 @@ module Travis::API::V3
       routes.resources.each do |resource|
         resources[resource.identifier] ||= {}
         resource.services.each do |(request_method, sub_route), service|
-          service &&= service.to_s.sub(/^#{resource.identifier}_|_#{resource.identifier}$/, ''.freeze)
-          list      = resources[resource.identifier][service] ||= []
-          pattern   = sub_route ? resource.route + sub_route : resource.route
+          list    = resources[resource.identifier][service] ||= []
+          pattern = sub_route ? resource.route + sub_route : resource.route
           pattern.to_templates.each do |template|
             list << { 'request-method'.freeze => request_method, 'uri-template'.freeze => prefix + template }
           end
         end
       end
-      { resources: resources }
+      { :@type => 'home'.freeze, :resources => resources }
     end
 
     def render_json_home
@@ -43,9 +42,8 @@ module Travis::API::V3
 
       routes.resources.each do |resource|
         resource.services.each do |(request_method, sub_route), service|
-          service  &&= service.to_s.sub(/_#{resource.identifier}$/, ''.freeze)
-          pattern    = sub_route ? resource.route + sub_route : resource.route
-          relation   = "http://schema.travis-ci.com/rel/#{resource.identifier}/#{service}"
+          pattern  = sub_route ? resource.route + sub_route : resource.route
+          relation = "http://schema.travis-ci.com/rel/#{resource.identifier}/#{service}"
           pattern.to_templates.each do |template|
             relations[relation]           ||= {}
             relations[relation][template] ||= { allow: [], vars: template.scan(/{\+?([^}]+)}/).flatten }

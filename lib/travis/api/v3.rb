@@ -17,12 +17,15 @@ module Travis
       extend self
       load_dir("#{__dir__}/v3")
 
-      ClientError      = Error        .create(status: 400)
-      NotFound         = ClientError  .create(:resource, status: 404, template: '%s not found (or insufficient access)')
-      EnitityMissing   = NotFound     .create(type: 'not_found')
-      WrongCredentials = ClientError  .create('access denied',  status: 403)
-      LoginRequired    = ClientError  .create('login required', status: 403)
-      WrongParams      = ClientError  .create('wrong parameters')
+      ClientError        = Error        .create(status: 400)
+      NotFound           = ClientError  .create(:resource, status: 404, template: '%s not found (or insufficient access)')
+      EntityMissing      = NotFound     .create(type: 'not_found')
+      WrongCredentials   = ClientError  .create('access denied',  status: 403)
+      LoginRequired      = ClientError  .create('login required', status: 403)
+      InsufficientAccess = ClientError  .create(status: 403)
+      WrongParams        = ClientError  .create('wrong parameters')
+      ServerError        = Error        .create(status: 500)
+      NotImplemented     = ServerError  .create('request not (yet) implemented', status: 501)
     end
   end
 end

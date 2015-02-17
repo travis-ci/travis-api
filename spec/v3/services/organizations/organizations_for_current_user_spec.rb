@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::FindRepository do
+describe Travis::API::V3::Services::Organizations::ForCurrentUser do
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
