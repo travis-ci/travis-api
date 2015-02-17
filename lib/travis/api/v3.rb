@@ -14,6 +14,12 @@ module Travis
         [status, headers, [payload] ]
       end
 
+      def location(env)
+        location = env['SCRIPT_NAME'.freeze].to_s + env['PATH_INFO'.freeze].to_s
+        location << ??.freeze << env['QUERY_STRING'.freeze] if env['QUERY_STRING'.freeze] and not env['QUERY_STRING'.freeze].empty?
+        location
+      end
+
       extend self
       load_dir("#{__dir__}/v3")
 

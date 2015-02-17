@@ -3,7 +3,7 @@ module Travis::API::V3
     DIRECT_ATTRIBUTES = %i[id login name github_id]
     extend self
 
-    def render(organization)
+    def render(organization, **)
       { :@type => 'organization'.freeze, **direct_attributes(organization) }
     end
 

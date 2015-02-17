@@ -19,6 +19,7 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser do
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
       "@type"             => "organizations",
+      "@href"             => "/v3/orgs",
       "organizations"     => [{
         "@type"           => "organization",
         "id"              => org.id,

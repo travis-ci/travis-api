@@ -2,8 +2,8 @@ module Travis::API::V3
   module Renderer::Organizations
     extend self
 
-    def render(repositories)
-      Renderer[:collection].render(:organizations, :organization, repositories)
+    def render(repositories, **options)
+      Renderer[:collection].render(:organizations, :organization, repositories, **options)
     end
   end
 end

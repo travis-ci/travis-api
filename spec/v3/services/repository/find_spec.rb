@@ -8,6 +8,7 @@ describe Travis::API::V3::Services::Repository::Find do
     example    { expect(last_response).to be_ok }
     example    { expect(JSON.load(body)).to be == {
       "@type"           => "repository",
+      "@href"           => "/v3/repo/#{repo.id}",
       "id"              =>  repo.id,
       "name"            =>  "minimal",
       "slug"            =>  "svenfuchs/minimal",
@@ -78,6 +79,7 @@ describe Travis::API::V3::Services::Repository::Find do
     example       { expect(last_response).to be_ok                                    }
     example       { expect(JSON.load(body)).to be == {
       "@type"           => "repository",
+      "@href"           => "/v3/repo/#{repo.id}",
       "id"              =>  repo.id,
       "name"            =>  "minimal",
       "slug"            =>  "svenfuchs/minimal",
@@ -133,6 +135,7 @@ describe Travis::API::V3::Services::Repository::Find do
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
       "@type"           => "repository",
+      "@href"           => "/v3/repo/#{repo.id}",
       "id"              =>  repo.id,
       "name"            =>  "minimal",
       "slug"            =>  "svenfuchs/minimal",
@@ -194,6 +197,7 @@ describe Travis::API::V3::Services::Repository::Find do
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
       "@type"           => "repository",
+      "@href"           => "/v3/repo/#{repo.id}",
       "id"              =>  repo.id,
       "name"            =>  "minimal",
       "slug"            =>  "svenfuchs/minimal",

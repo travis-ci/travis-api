@@ -4,8 +4,12 @@ module Travis::API::V3
     DEFAULTS          = { active: false, default_branch: 'master' }
     extend self
 
-    def render(repository)
-      { :@type => 'repository'.freeze, **Renderer.get_attributes(repository, *DIRECT_ATTRIBUTES, **DEFAULTS), **nested_resources(repository) }
+    def render(repository, script_name: nil, **)
+      {
+        :@type => 'repository'.freeze,
+        :@href => Renderer.href(:repository, id: repository.id, script_name: script_name),
+        **Renderer.get_attributes(repository, *DIRECT_ATTRIBUTES, **DEFAULTS), **nested_resources(repository)
+      }
     end
 
     def nested_resources(repository)

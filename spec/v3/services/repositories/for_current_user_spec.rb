@@ -14,8 +14,10 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
       "@type"             => "repositories",
+      "@href"             => "/v3/repos",
       "repositories"      => [{
         "@type"           => "repository",
+        "@href"           => "/v3/repo/#{repo.id}",
         "id"              =>  repo.id,
         "name"            =>  "minimal",
         "slug"            =>  "svenfuchs/minimal",
@@ -40,9 +42,10 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
   end
 
   describe "filter: private=false" do
-    before  { get("/v3/repos", {"repository.private" => "false"}, headers) }
-    example { expect(last_response)                   .to be_ok            }
-    example { expect(JSON.load(body)['repositories']) .to be == []         }
+    before  { get("/v3/repos", {"repository.private" => "false"}, headers)                           }
+    example { expect(last_response)                   .to be_ok                                      }
+    example { expect(JSON.load(body)['repositories']) .to be == []                                   }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?repository.private=false" }
   end
 
   describe "filter: active=false" do

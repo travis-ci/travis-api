@@ -19,15 +19,15 @@ module Travis::API::V3
 
       service         = factory.new(access_control, env_params.merge(params))
       result          = service.run
-      render(result, env_params)
+      render(result, env_params, env)
     rescue Error => error
       result  = Result.new(:error, error)
       headers = error.status == 404 ? CASCADE : {}
-      V3.response(result.render, headers, status: error.status)
+      V3.response(result.render(env_params, env), headers, status: error.status)
     end
 
-    def render(result, env_params)
-      V3.response(result.render, status: result.status)
+    def render(result, env_params, env)
+      V3.response(result.render(env_params, env), status: result.status)
     end
 
     def service_index(env)
