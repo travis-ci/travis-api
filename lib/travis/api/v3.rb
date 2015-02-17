@@ -25,7 +25,7 @@ module Travis
       InsufficientAccess = ClientError  .create(status: 403)
       WrongParams        = ClientError  .create('wrong parameters')
       ServerError        = Error        .create(status: 500)
-      NotImplemented     = ServerError  .create(status: 501, 'request not (yet) implemented')
+      NotImplemented     = ServerError  .create('request not (yet) implemented', status: 501)
     end
   end
 end
