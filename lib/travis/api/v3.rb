@@ -24,6 +24,8 @@ module Travis
       LoginRequired      = ClientError  .create('login required', status: 403)
       InsufficientAccess = ClientError  .create(status: 403)
       WrongParams        = ClientError  .create('wrong parameters')
+      ServerError        = Error        .create(status: 500)
+      NotImplemented     = ServerError  .create(status: 501, 'request not (yet) implemented')
     end
   end
 end

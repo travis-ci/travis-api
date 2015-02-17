@@ -3,6 +3,7 @@ module Travis::API::V3
     helpers :repository
 
     def run
+      not_implemented
       query.schedule_for(repository)
       accepted
     end

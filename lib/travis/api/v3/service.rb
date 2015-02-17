@@ -29,6 +29,10 @@ module Travis::API::V3
       raise(error, type || self.class.result_type)
     end
 
+    def run!
+      not_implemented
+    end
+
     def run
       not_found unless result = run!
       result = Result.new(self.class.result_type, result) unless result.is_a? Result
@@ -37,6 +41,10 @@ module Travis::API::V3
 
     def accepted(type = self.class.result_type)
       Result.new(:accepted, type, status: 202)
+    end
+
+    def not_implemented
+      raise NotImplemented
     end
   end
 end
