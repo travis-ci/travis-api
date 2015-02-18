@@ -1,18 +1,8 @@
+require 'travis/api/v3/renderer/model_renderer'
+
 module Travis::API::V3
-  module Renderer::Organization
-    DIRECT_ATTRIBUTES = %i[id login name github_id]
-    extend self
-
-    def render(organization, script_name: nil, **)
-      {
-        :@type => 'organization'.freeze,
-        :@href => Renderer.href(:organization, id: organization.id, script_name: script_name),
-        **direct_attributes(organization)
-      }
-    end
-
-    def direct_attributes(repository)
-      DIRECT_ATTRIBUTES.map { |a| [a, repository.public_send(a)] }.to_h
-    end
+  class Renderer::Organization < Renderer::ModelRenderer
+    representation(:minimal,  :id, :login)
+    representation(:standard, :id, :login, :name, :github_id)
   end
 end
