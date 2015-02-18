@@ -20,6 +20,10 @@ module Travis::API::V3
 
     protected
 
+    def build_visible?(build)
+      visible? build.repository
+    end
+
     def organization_visible?(organization)
       unrestricted_api?
     end

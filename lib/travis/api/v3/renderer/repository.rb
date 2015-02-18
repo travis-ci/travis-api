@@ -25,6 +25,7 @@ module Travis::API::V3
       return nil unless model.last_build_id
       {
         :@type        => 'build'.freeze,
+        :@href        => Renderer.href(:build, script_name: script_name, id: model.last_build_id),
         :id           => model.last_build_id,
         :number       => model.last_build_number,
         :state        => model.last_build_state.to_s,

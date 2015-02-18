@@ -19,6 +19,11 @@ module Travis::API::V3
       get :for_current_user
     end
 
+    resource :build do
+      route '/build/{build.id}'
+      get :find
+    end
+
     resource :organization do
       route '/org/{organization.id}'
       get :find

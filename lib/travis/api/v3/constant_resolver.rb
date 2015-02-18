@@ -11,7 +11,7 @@ module Travis::API::V3
 
     def [](key)
       return key unless key.is_a? Symbol
-      resolver_cache[key] ||= const_get(key.to_s.camelize)
+      resolver_cache[key] ||= const_get(key.to_s.camelize, false)
     end
 
     def extended(base)

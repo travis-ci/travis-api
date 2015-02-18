@@ -32,6 +32,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
           "login"         => "svenfuchs" },
         "last_build"      => {
           "@type"         => "build",
+          "@href"         => "/v3/build/#{repo.last_build_id}",
           "id"            => repo.last_build_id,
           "number"        => "2",
           "state"         => "passed",
