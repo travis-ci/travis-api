@@ -46,7 +46,7 @@ describe Travis::API::V3::Services::Repository::Find do
   describe "public repository, private API" do
     before  { Travis.config.private_api = true      }
     before  { get("/v3/repo/#{repo.id}")            }
-    after   { Travis.config.private_api = true      }
+    after   { Travis.config.private_api = false     }
     example { expect(last_response).to be_not_found }
     example { expect(JSON.load(body)).to be == {
       "@type"         => "error",
