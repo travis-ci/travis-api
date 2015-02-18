@@ -18,14 +18,15 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser do
     before  { get("/v3/orgs", {}, headers)     }
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
-      "@type"             => "organizations",
-      "@href"             => "/v3/orgs",
-      "organizations"     => [{
-        "@type"           => "organization",
-        "id"              => org.id,
-        "login"           => "example-org",
-        "name"            => nil,
-        "github_id"       => nil
+      "@type"         => "organizations",
+      "@href"         => "/v3/orgs",
+      "organizations" => [{
+        "@type"       => "organization",
+        "@href"       => "/v3/org/#{org.id}",
+        "id"          => org.id,
+        "login"       => "example-org",
+        "name"        => nil,
+        "github_id"   => nil
       }]
     }}
   end

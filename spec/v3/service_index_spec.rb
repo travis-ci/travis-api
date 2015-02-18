@@ -14,6 +14,8 @@ describe Travis::API::V3::ServiceIndex do
         "for_current_user"  => [{"request-method"=>"GET",  "uri-template"=>"#{path}repos"}] },
       "organizations"       =>  {
         "for_current_user"  => [{"request-method"=>"GET",  "uri-template"=>"#{path}orgs"}] },
+      "organization"        =>  {
+        "find"              => [{"request-method"=>"GET",  "uri-template"=>"#{path}org/{organization.id}"}] },
       "requests"            =>  {
         "find"              => [{"request-method"=>"GET",  "uri-template"=>"#{path}repo/{repository.id}/requests"}],
         "create"            => [{"request-method"=>"POST", "uri-template"=>"#{path}repo/{repository.id}/requests"}]}
