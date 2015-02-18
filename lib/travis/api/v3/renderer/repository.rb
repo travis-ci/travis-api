@@ -3,10 +3,15 @@ require 'travis/api/v3/renderer/model_renderer'
 module Travis::API::V3
   class Renderer::Repository < Renderer::ModelRenderer
     representation(:minimal,  :id, :slug)
-    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :default_branch, :owner, :last_build)
+    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :last_build, :default_branch)
 
     def default_branch
-      model.default_branch || 'master'.freeze
+      branch_name = model.default_branch || 'master'.freeze
+      {
+        :@type      => 'branch'.freeze,
+        :name       => branch_name,
+        :last_build => model.last_build_on(branch_name)
+      }
     end
 
     def active

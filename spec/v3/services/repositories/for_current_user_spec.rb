@@ -25,7 +25,6 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
         "github_language" => nil,
         "active"          => true,
         "private"         => true,
-        "default_branch"  => "master",
         "owner"           => {
           "@type"         => "user",
           "id"            => repo.owner_id,
@@ -38,7 +37,19 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
           "state"         => "passed",
           "duration"      => nil,
           "started_at"    => "2010-11-12T12:30:00Z",
-          "finished_at"   => "2010-11-12T12:30:20Z"}}]
+          "finished_at"   => "2010-11-12T12:30:20Z"},
+        "default_branch"  => {
+          "@type"         => "branch",
+          "name"          => "master",
+          "last_build"    => {
+            "@type"       => "build",
+            "@href"       => "/v3/build/#{repo.last_build.id}",
+            "id"          => repo.last_build.id,
+            "number"      => "3",
+            "state"       => "configured",
+            "duration"    => nil,
+            "started_at"  => "2010-11-12T13:00:00Z",
+            "finished_at" => nil}}}]
     }}
   end
 
