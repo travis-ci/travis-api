@@ -1,9 +1,5 @@
 module Travis::API::V3
   class Service
-    def self.helpers(*list)
-      include(*list.map { |e| ServiceHelpers[e] })
-    end
-
     def self.result_type(type = nil)
       @result_type   = type if type
       @result_type ||= parent.result_type if parent and parent.respond_to? :result_type
@@ -21,6 +17,12 @@ module Travis::API::V3
 
     def query(type = self.class.result_type)
       @queries[type] ||= Queries[type].new(params)
+    end
+
+    def find(type = self.class.result_type, *args)
+      not_found(true,  type) unless object = query(type).find(*args)
+      not_found(false, type) unless access_control.visible? object
+      object
     end
 
     def not_found(actually_not_found = false, type = nil)

@@ -1,9 +1,7 @@
 module Travis::API::V3
   class Services::Organization::Find < Service
-    helpers :organization
-
     def run!
-      organization
+      find
     end
   end
 end
