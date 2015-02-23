@@ -3,8 +3,8 @@ module Travis::API::V3
     params :id
 
     def find
-      return ::Organization.find_by_id(id) if id
-      raise WrongParams
+      return Models::Organization.find_by_id(id) if id
+      raise WrongParams, 'missing organization.id'.freeze
     end
   end
 end

@@ -21,6 +21,7 @@ module Travis
       end
 
       extend self
+      load_dir("#{__dir__}/v3/extensions")
       load_dir("#{__dir__}/v3")
 
       ClientError        = Error        .create(status: 400)
