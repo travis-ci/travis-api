@@ -1,5 +1,22 @@
 module Travis::API::V3
   module Extensions
+    # This is a patch to ActiveRecord to allow classes for polymorphic relations to be nested in a module without the
+    # module name being part of the type field.
+    #
+    # Example:
+    #
+    #     # Without this patch
+    #     Repository.find(2).owner.class                          # => User
+    #     Travis::API::V3::Models::Repository.find(2).owner.class # => User
+    #
+    #     # With this patch
+    #     Repository.find(2).owner.class                          # => User
+    #     Travis::API::V3::Models::Repository.find(2).owner.class # => Travis::API::V3::Models::User
+    #
+    # ActiveRecord does not support this out of the box. We accomplish this feature by tracking polymorphic relations
+    # and then adding the namespace when calling ActiveRecord::Base#[] with the foreign type key and removing it again
+    # in ActiveRecord::Base#[]=, so we don't break other code by accidentially writing the prefixed version to the
+    # database.
     module BelongsTo
       module ClassMethods
         def polymorfic_foreign_types
