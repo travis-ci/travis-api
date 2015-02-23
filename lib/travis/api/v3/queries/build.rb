@@ -3,7 +3,7 @@ module Travis::API::V3
     params :id
 
     def find
-      return ::Build.find_by_id(id) if id
+      return Models::Build.find_by_id(id) if id
       raise WrongParams
     end
   end
