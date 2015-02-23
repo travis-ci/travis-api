@@ -33,8 +33,8 @@ module Travis::API::V3
 
     def href
       return @href if defined? @href # allows setting href to nil
-      return unless self.class.type and model.respond_to? :id and model.id
-      @href = Renderer.href(self.class.type, script_name: script_name, id: model.id)
+      return unless self.class.type and model.respond_to? :attributes
+      @href = Renderer.href(self.class.type, model.attributes, script_name: script_name)
     end
 
     def render(representation)
