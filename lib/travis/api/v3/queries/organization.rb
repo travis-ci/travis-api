@@ -4,7 +4,7 @@ module Travis::API::V3
 
     def find
       return Models::Organization.find_by_id(id) if id
-      raise WrongParams
+      raise WrongParams, 'missing organization.id'.freeze
     end
   end
 end
