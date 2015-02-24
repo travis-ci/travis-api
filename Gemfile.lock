@@ -50,8 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 3adf0cd02db39c78245d5987f2efe34d336b2e70
-  branch: rkh-branches
+  revision: 3c031d6fb8dbbb415e5d2ef3b2af68a80d361933
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
