@@ -2,7 +2,8 @@ module Travis::API::V3
   class Models::Repository < Model
     has_many :commits,     dependent: :delete_all
     has_many :requests,    dependent: :delete_all
-    has_many :builds,      dependent: :delete_all
+    has_many :branches,    dependent: :delete_all, order: 'id DESC'.freeze
+    has_many :builds,      dependent: :delete_all, order: 'id DESC'.freeze
     has_many :permissions, dependent: :delete_all
     has_many :users,       through:   :permissions
 
@@ -12,12 +13,44 @@ module Travis::API::V3
       class_name: 'Travis::API::V3::Models::Build'.freeze,
       order:      'id DESC'.freeze
 
+    has_one :default_branch,
+      foreign_key: [:repository_id, :name],
+      primary_key: [:id,  :default_branch],
+      class_name:  'Travis::API::V3::Models::Branch'.freeze
+
+    after_initialize do
+      update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
+    end
+
     def slug
       @slug ||= "#{owner_name}/#{name}"
     end
 
-    def last_build_on(branch)
-      builds.order('id DESC'.freeze).where(branch: branch, event_type: 'push'.freeze).first
+    def default_branch_name
+      read_attribute(:default_branch)
+    end
+
+    def default_branch_name=(value)
+      write_attribute(:default_branch, value)
+    end
+
+    def default_branch
+      super || branch(default_branch_name, create_without_build: true)
+    end
+
+    # Creates a branch object on the fly if it doesn't exist.
+    #
+    # Will not create a branch object if we don't have any builds for it unless
+    # the create_without_build option is set to true.
+    def branch(name, create_without_build: false)
+      return nil    unless branch = branches.where(name: name).first_or_initialize
+      return branch unless branch.new_record?
+      return nil    unless create_without_build or branch.builds.any?
+      branch.last_build = branch.builds.first
+      branch.save!
+      branch
+    rescue ActiveRecord::RecordNotUnique
+      branches.where(name: name).first
     end
   end
 end

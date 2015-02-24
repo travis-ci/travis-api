@@ -12,6 +12,11 @@ module Travis::API::V3
         get  :find
         post :create
       end
+
+      resource :branch do
+        route '/branch/{branch.name}'
+        get :find
+      end
     end
 
     resource :repositories do
