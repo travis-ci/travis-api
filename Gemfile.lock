@@ -50,7 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: f39caf6da61b8a988ccf3e2d3e0272df427f59a3
+  revision: 3adf0cd02db39c78245d5987f2efe34d336b2e70
   branch: rkh-branches
   specs:
     travis-core (0.0.1)
