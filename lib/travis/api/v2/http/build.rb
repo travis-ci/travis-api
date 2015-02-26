@@ -8,6 +8,8 @@ module Travis
           attr_reader :build, :options
 
           def initialize(build, options = {})
+            puts options
+            puts caller
             options[:include_jobs] = true unless options.key?(:include_jobs)
 
             @build = build
