@@ -14,10 +14,8 @@ class Travis::Api::App
       end
 
       get '/:id' do
-        unless params['include_config'] == true || params['include_config'] == "true"
-          params['exclude_config'] = true
-        end
-        respond_with service(:find_build, params)
+        exclude_config = params['include_config'].to_s != 'true'
+        respond_with(service(:find_build, params), exclude_config: exclude_config)
       end
 
       post '/:id/cancel' do
