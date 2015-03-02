@@ -23,7 +23,7 @@ module Travis
           private
 
             def job_data(job)
-              {
+              result = {
                 'id' => job.id,
                 'repository_id' => job.repository_id,
                 'repository_slug' => job.repository.slug,
@@ -31,7 +31,6 @@ module Travis
                 'commit_id' => job.commit_id,
                 'log_id' => job.log_id,
                 'number' => job.number,
-                'config' => job.obfuscated_config.stringify_keys,
                 'state' => job.state.to_s,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
@@ -40,6 +39,8 @@ module Travis
                 'tags' => job.tags,
                 'annotation_ids' => job.annotation_ids,
               }
+              result['config'] = job.obfuscated_config.stringify_keys unless options[:exclude_config]
+              result
             end
 
             def commit_data(commit)
