@@ -6,9 +6,6 @@ module Travis::Api::App::Responders
     def initialize(endpoint, resource, options = {})
       @endpoint = endpoint
       @resource = resource
-      puts endpoint
-      puts resource
-      puts options
       @options  = options
     end
 

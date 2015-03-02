@@ -34,8 +34,9 @@ class Travis::Api::App
         def result
           if builder
             p = params
-            p[:root] = options[:root] if options[:root]
-            p[:root] = options[:type] if options[:type] && !p[:root]
+            p[:root]           = options[:root] if options[:root]
+            p[:root]           = options[:type] if options[:type] && !p[:root]
+            p[:exclude_config] = options[:exclude_config] if options.include? :exclude_config
             builder.new(resource, p).data
           else
             basic_type_resource
