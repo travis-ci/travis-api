@@ -14,9 +14,10 @@ class Travis::Api::App
       end
 
       get '/:id' do
-        job = service(:find_job, params).run
+        exclude_config = { exclude_config: params['include_config'].to_s != 'true' }
+        job = service(:find_job, params.merge(exclude_config)).run
         if job && job.repository
-          respond_with job
+          respond_with(job, exclude_config)
         else
           json = { error: { message: "The job(#{params[:id]}) couldn't be found" } }
           status 404

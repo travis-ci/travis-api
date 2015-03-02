@@ -11,12 +11,12 @@ describe 'Builds' do
   end
 
   it 'GET /builds/1.json' do
-    response = get "/builds/#{build.id}.json", {}, headers
+    response = get "/builds/#{build.id}.json", { include_config: true }, headers
     response.should deliver_json_for(build, version: 'v1')
   end
 
   it 'GET /builds/1?repository_id=1.json' do
-    response = get "/builds/#{build.id}.json", { repository_id: repo.id }, headers
+    response = get "/builds/#{build.id}.json", { repository_id: repo.id, include_config: true }, headers
     response.should deliver_json_for(build, version: 'v1')
   end
 

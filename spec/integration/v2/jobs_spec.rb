@@ -14,7 +14,7 @@ describe 'Jobs' do
   end
 
   it '/jobs/:id' do
-    response = get "/jobs/#{job.id}", {}, headers
+    response = get "/jobs/#{job.id}", { include_config: true }, headers
     response.should deliver_json_for(job, version: 'v2')
   end
 
