@@ -26,7 +26,7 @@ module Travis
           private
 
             def build_data(build)
-              {
+              result = {
                 'id' => build.id,
                 'repository_id' => build.repository_id,
                 'commit_id' => build.commit_id,
@@ -34,13 +34,14 @@ module Travis
                 'pull_request' => build.pull_request?,
                 'pull_request_title' => build.pull_request_title,
                 'pull_request_number' => build.pull_request_number,
-                'config' => options[:exclude_config] ? {} : build.obfuscated_config.stringify_keys,
                 'state' => build.state.to_s,
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
                 'job_ids' => build.matrix_ids
               }
+              result['config'] = build.obfuscated_config.stringify_keys unless options[:exclude_config]
+              result
             end
 
             def commit_data(commit)
@@ -67,7 +68,7 @@ module Travis
                 'log_id' => job.log_id,
                 'state' => job.state.to_s,
                 'number' => job.number,
-                'config' => options[:exclude_config] ? {} : job.obfuscated_config.stringify_keys,
+                'config' => job.obfuscated_config.stringify_keys,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
                 'queue' => job.queue,
