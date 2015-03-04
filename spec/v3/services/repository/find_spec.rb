@@ -88,7 +88,7 @@ describe Travis::API::V3::Services::Repository::Find do
     before        { Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { get("/v3/repo/#{repo.id}", {}, headers)                           }
-    before        { repo.update_attribute(:private, false)                            }
+    after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
     example       { expect(JSON.load(body)).to be == {
       "@type"           => "repository",

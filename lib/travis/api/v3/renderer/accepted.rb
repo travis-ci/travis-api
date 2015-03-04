@@ -1,5 +1,5 @@
 module Travis::API::V3
-  module Renderer::Error
+  module Renderer::Accepted
     extend self
 
     def render(type, **)
