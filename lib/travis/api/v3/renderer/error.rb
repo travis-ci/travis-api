@@ -7,7 +7,7 @@ module Travis::API::V3
         :@type         => 'error'.freeze,
         :error_type    => error.type,
         :error_message => error.message,
-        **error.payload
+        **Renderer.render_value(error.payload)
       }
     end
   end

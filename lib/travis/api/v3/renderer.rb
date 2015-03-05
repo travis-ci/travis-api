@@ -1,5 +1,8 @@
 module Travis::API::V3
   module Renderer
+    PRIMITIVE = [String, Symbol, Numeric, true, false, nil]
+    private_constant :PRIMITIVE
+
     EXPANDER_CACHE = Tool::ThreadLocal.new
     private_constant :EXPANDER_CACHE
 
@@ -29,6 +32,21 @@ module Travis::API::V3
       end
 
       expander.call(args)
+    end
+
+    def render_model(model, type: model.class.name[/[^:]+$/].to_sym, mode: :minimal, **options)
+      Renderer[type].render(model, mode, **options)
+    end
+
+    def render_value(value, **options)
+      case value
+      when Hash        then value.map { |k, v| [k, render_value(v)] }.to_h
+      when Array       then value.map { |v   | render_value(v)      }
+      when *PRIMITIVE  then value
+      when Time        then value.strftime('%Y-%m-%dT%H:%M:%SZ')
+      when Model       then render_model(value, **options)
+      else raise ArgumentError, 'cannot render %p (%p)' % [value.class, value]
+      end
     end
 
     private
