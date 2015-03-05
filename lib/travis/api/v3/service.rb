@@ -16,7 +16,7 @@ module Travis::API::V3
     end
 
     def query(type = self.class.result_type)
-      @queries[type] ||= Queries[type].new(params)
+      @queries[type] ||= Queries[type].new(params, self.class.result_type)
     end
 
     def find(type = self.class.result_type, *args)
@@ -39,6 +39,12 @@ module Travis::API::V3
       not_found unless result = run!
       result = Result.new(self.class.result_type, result) unless result.is_a? Result
       result
+    end
+
+    def params_for?(prefix)
+      return true if params['@type'.freeze] == prefix
+      return true if params[prefix].is_a? Hash
+      params.keys.any? { |key| key.start_with? "#{prefix}." }
     end
 
     def accepted(type = self.class.result_type)

@@ -17,6 +17,10 @@ module Travis::API::V3
 
     protected
 
+    def repository_writable?(repository)
+      permission?(:push, repository)
+    end
+
     def private_repository_visible?(repository)
       permission?(:pull, repository)
     end

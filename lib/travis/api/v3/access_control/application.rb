@@ -16,8 +16,6 @@ module Travis::API::V3
       full_access? or !!user
     end
 
-    protected
-
     def full_access?
       config.full_access
     end
