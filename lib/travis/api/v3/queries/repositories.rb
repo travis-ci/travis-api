@@ -8,9 +8,10 @@ module Travis::API::V3
 
     def all
       @all ||= begin
-        all = ::Repository
+        all = Models::Repository
         all = all.where(active:  bool(active))  unless active.nil?
         all = all.where(private: bool(private)) unless private.nil?
+        all = all.includes(:default_branch) # TODO: use includes params
         all
       end
     end

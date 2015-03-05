@@ -24,6 +24,10 @@ module Travis::API::V3
       visible? build.repository
     end
 
+    def branch_visible?(branch)
+      visible? branch.repository
+    end
+
     def organization_visible?(organization)
       unrestricted_api?
     end
@@ -52,8 +56,17 @@ module Travis::API::V3
     private
 
     def dispatch(object, method = caller_locations.first.base_label)
-      method = object.class.name.underscore + ?_.freeze + method
+      method = method_for(object.class, method)
       send(method, object) if respond_to?(method, true)
+    end
+
+    @@method_for_cache = Tool::ThreadLocal.new
+
+    def method_for(type, method)
+      @@method_for_cache[[type, method]] ||= begin
+        prefix = type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore
+        "#{prefix}_#{method}"
+      end
     end
   end
 end

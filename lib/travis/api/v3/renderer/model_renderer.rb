@@ -33,8 +33,8 @@ module Travis::API::V3
 
     def href
       return @href if defined? @href # allows setting href to nil
-      return unless self.class.type and model.respond_to? :id and model.id
-      @href = Renderer.href(self.class.type, script_name: script_name, id: model.id)
+      return unless self.class.type and model.respond_to? :attributes
+      @href = Renderer.href(self.class.type, model.attributes, script_name: script_name)
     end
 
     def render(representation)
@@ -47,17 +47,17 @@ module Travis::API::V3
       result
     end
 
-    def render_model(model, type: model.class.name.to_sym, mode: :minimal, **options)
+    def render_model(model, type: model.class.name[/[^:]+$/].to_sym, mode: :minimal, **options)
       Renderer[type].render(model, mode, script_name: script_name, **options)
     end
 
     def render_value(value)
       case value
-      when Hash          then value.map { |k, v| [k, render_value(v)] }.to_h
-      when Array         then value.map { |v   | render_value(v)      }
-      when *PRIMITIVE    then value
-      when Time          then value.strftime('%Y-%m-%dT%H:%M:%SZ')
-      when Travis::Model then render_model(value)
+      when Hash        then value.map { |k, v| [k, render_value(v)] }.to_h
+      when Array       then value.map { |v   | render_value(v)      }
+      when *PRIMITIVE  then value
+      when Time        then value.strftime('%Y-%m-%dT%H:%M:%SZ')
+      when Model       then render_model(value)
       else raise ArgumentError, 'cannot render %p (%p)' % [value.class, value]
       end
     end

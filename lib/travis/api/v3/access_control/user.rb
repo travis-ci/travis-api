@@ -5,6 +5,7 @@ module Travis::API::V3
     attr_reader :user, :permissions
 
     def initialize(user)
+      user         = Models::User.find(user.id) if user.is_a? ::User
       @user        = user
       @permissions = user.permissions.where(user_id: user.id)
       super()

@@ -5,15 +5,6 @@ module Travis::API::V3
     representation(:minimal,  :id, :slug)
     representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :last_build, :default_branch)
 
-    def default_branch
-      branch_name = model.default_branch || 'master'.freeze
-      {
-        :@type      => 'branch'.freeze,
-        :name       => branch_name,
-        :last_build => model.last_build_on(branch_name)
-      }
-    end
-
     def active
       !!model.active
     end

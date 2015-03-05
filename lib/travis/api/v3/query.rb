@@ -46,9 +46,9 @@ module Travis::API::V3
 
     def user_condition(value)
       case value
-      when String  then { login: value    }
-      when Integer then { id:    value    }
-      when ::User  then { id:    value.id }
+      when String       then { login: value    }
+      when Integer      then { id:    value    }
+      when Models::User then { id:    value.id }
       else raise WrongParams
       end
     end

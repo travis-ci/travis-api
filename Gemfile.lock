@@ -50,7 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: a82f25fb00a39c3c64b8c09c716c206e6f4c6fad
+  revision: d88d5f84eaea2996c4d325f8f4906d2fdd844125
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -61,7 +61,7 @@ GIT
       hashr (~> 0.0.19)
       metriks (~> 0.9.7)
       multi_json
-      pusher (~> 0.12.0)
+      pusher (~> 0.14.0)
       railties (~> 3.2.19)
       rake
       redis (~> 3.0)
@@ -95,6 +95,7 @@ PATH
   remote: .
   specs:
     travis-api (0.0.1)
+      composite_primary_keys (~> 5.0)
       memcachier
       mustermann (~> 0.4)
       pg (~> 0.13.2)
@@ -154,6 +155,8 @@ GEM
     coderay (1.1.0)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
+    composite_primary_keys (5.0.14)
+      activerecord (~> 3.2.0, >= 3.2.9)
     connection_pool (2.1.1)
     daemons (1.1.9)
     dalli (2.7.2)
@@ -168,7 +171,7 @@ GEM
     dotenv (0.7.0)
     equalizer (0.0.9)
     erubis (2.7.0)
-    eventmachine (1.0.4)
+    eventmachine (1.0.7)
     factory_girl (2.4.2)
       activesupport
     faraday (0.9.1)
@@ -187,9 +190,9 @@ GEM
     hashr (0.0.22)
     hike (1.2.3)
     hitimes (1.2.2)
-    httpclient (2.3.4.1)
+    httpclient (2.6.0.1)
     i18n (0.6.11)
-    ice_nine (0.11.0)
+    ice_nine (0.11.1)
     journey (1.0.4)
     json (1.8.1)
     kgio (2.9.2)
@@ -224,10 +227,10 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    pusher (0.12.0)
-      httpclient (~> 2.3.0)
+    pusher (0.14.4)
+      httpclient (~> 2.5)
       multi_json (~> 1.0)
-      signature (~> 0.1.6)
+      signature (~> 0.1.8)
     rack (1.4.5)
     rack-attack (4.2.0)
       rack
@@ -274,7 +277,7 @@ GEM
       json
       redis (>= 3.0.6)
       redis-namespace (>= 1.3.1)
-    signature (0.1.7)
+    signature (0.1.8)
     simple_states (1.0.1)
       activesupport
       hashr (~> 0.0.10)
@@ -324,7 +327,7 @@ GEM
       raindrops (~> 0.7)
     useragent (0.10.0)
     uuidtools (2.1.5)
-    virtus (1.0.3)
+    virtus (1.0.4)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)

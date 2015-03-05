@@ -40,6 +40,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
           "finished_at"   => "2010-11-12T12:30:20Z"},
         "default_branch"  => {
           "@type"         => "branch",
+          "@href"         => "/v3/repo/#{repo.id}/branch/master",
           "name"          => "master",
           "last_build"    => {
             "@type"       => "build",
