@@ -5,6 +5,7 @@ describe Travis::API::V3::Services::Requests::Create do
   let(:sidekiq_payload) { Sidekiq::Client.last['args'].last[:payload] }
 
   before do
+    Travis::Features.stubs(:owner_active?).returns(true)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []

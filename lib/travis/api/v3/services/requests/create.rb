@@ -10,6 +10,8 @@ module Travis::API::V3
       user   = find(:user) if access_control.full_access? and params_for? 'user'.freeze
       user ||= access_control.user
 
+      not_implemented unless Travis::Features.owner_active?(:request_create, repository.owner)
+
       query.schedule(repository, user)
       accepted(:request)
     end
