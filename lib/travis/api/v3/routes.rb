@@ -7,6 +7,9 @@ module Travis::API::V3
       route '/repo/{repository.id}'
       get :find
 
+      post :enable,  '/enable'
+      post :disable, '/disable'
+
       resource :requests do
         route '/requests'
         get  :find

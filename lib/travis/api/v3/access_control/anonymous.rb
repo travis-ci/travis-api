@@ -8,5 +8,9 @@ module Travis::API::V3
     def self.for_request(*)
       new
     end
+
+    def admin_for(repository)
+      raise LoginRequired
+    end
   end
 end

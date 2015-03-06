@@ -15,6 +15,10 @@ module Travis::API::V3
       full_access? or dispatch(object)
     end
 
+    def admin_for(repository)
+      raise AdminAccessRequired, repository: repository
+    end
+
     def user
     end
 
