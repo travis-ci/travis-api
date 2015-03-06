@@ -5,8 +5,9 @@ module Travis::API::V3
       raise NotFound      unless repository = find(:repository)
 
       admin = access_control.admin_for(repository)
+
       github(admin).set_hook(repository, activate)
-      repository.update_attributes(active: active)
+      repository.update_attributes(active: activate)
 
       repository
     end
