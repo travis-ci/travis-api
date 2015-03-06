@@ -27,16 +27,18 @@ module Travis::API::V3
 
     def set_hook(repository, flag)
       hooks_url = "repos/#{repository.slug}/hooks"
-
-      if hook = gh[hooks_url].detect { |hook| hook['name'.freeze] == 'travis'.freeze }
-        gh.delete(hook['_links'.freeze]['self'.freeze]['href'.freeze])
-      end
-
-      gh.post(hooks_url,
+      payload   = {
         name:   'travis'.freeze,
         events: [:push, :pull_request, :issue_comment, :public, :member],
         active: flag,
-        config: { domain: Travis.config.service_hook_url || '' })
+        config: { domain: Travis.config.service_hook_url || '' }
+      }
+
+      if hook = gh[hooks_url].detect { |hook| hook['name'.freeze] == 'travis'.freeze }
+        gh.patch(hook['_links'.freeze]['self'.freeze]['href'.freeze], payload)
+      else
+        gh.post(hooks_url, payload)
+      end
     end
   end
 end
