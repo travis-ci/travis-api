@@ -28,7 +28,7 @@ module Travis::API::V3
     def set_hook(repository, flag)
       hooks_url = "repos/#{repository.slug}/hooks"
 
-      if hook = gh.get(hooks_url).detect { |hook| hook['name'.freeze] == 'travis'.freeze }
+      if hook = gh[hooks_url].detect { |hook| hook['name'.freeze] == 'travis'.freeze }
         gh.delete(hook['_links'.freeze]['self'.freeze]['href'.freeze])
       end
 
