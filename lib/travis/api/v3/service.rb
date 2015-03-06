@@ -13,10 +13,15 @@ module Travis::API::V3
       @access_control = access_control
       @params         = params
       @queries        = {}
+      @github         = {}
     end
 
     def query(type = self.class.result_type)
       @queries[type] ||= Queries[type].new(params, self.class.result_type)
+    end
+
+    def github(user = nil)
+      @github[user] ||= GitHub.new(user)
     end
 
     def find(type = self.class.result_type, *args)

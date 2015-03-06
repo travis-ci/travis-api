@@ -15,6 +15,10 @@ module Travis::API::V3
       true
     end
 
+    def admin_for(repository)
+      permission?(:admin, repository) ? user : super
+    end
+
     protected
 
     def repository_writable?(repository)
