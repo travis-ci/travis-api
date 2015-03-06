@@ -26,18 +26,11 @@ module Travis::API::V3
     end
 
     def set_hook(repository, flag)
-      config = { domain: Travis.config.service_hook_url || '' }
-
-      if user
-        config[:user]  = user.login
-        config[:token] = user.token
-      end
-
       gh.post("repos/#{repository.slug}/hooks",
         name:   'travis'.freeze,
         events: [:push, :pull_request, :issue_comment, :public, :member],
         active: flag,
-        config: config)
+        config: { domain: Travis.config.service_hook_url || '' })
     end
   end
 end
