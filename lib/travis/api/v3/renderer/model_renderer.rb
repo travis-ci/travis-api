@@ -14,7 +14,7 @@ module Travis::API::V3
     def self.representation(name, *fields)
       fields.each do |field|
         class_eval "def #{field}; @model.#{field}; end" unless method_defined?(field)
-        available_fields << field.to_s
+        available_attributes << field.to_s
       end
       representations[name] = fields
     end
@@ -23,8 +23,8 @@ module Travis::API::V3
       @representations ||= {}
     end
 
-    def self.available_fields
-      @available_fields ||= Set.new
+    def self.available_attributes
+      @available_attributes ||= Set.new
     end
 
     def self.render(model, representation = :standard, **options)
@@ -70,7 +70,7 @@ module Travis::API::V3
       include.each do |qualified_field|
         raise WrongParams, 'illegal format for include parameter'.freeze unless /\A(?<prefix>\w+)\.(?<field>\w+)\Z$/ =~ qualified_field
         next if prefix != excepted_type
-        raise WrongParams, 'no field %p to include'.freeze % qualified_field unless self.class.available_fields.include?(field)
+        raise WrongParams, 'no field %p to include'.freeze % qualified_field unless self.class.available_attributes.include?(field)
 
         field &&= field.to_sym
         fields << field unless fields.include?(field)

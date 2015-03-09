@@ -25,16 +25,19 @@ module Travis::API::V3
     def render_json
       resources = { }
       routes.resources.each do |resource|
-        resources[resource.identifier] ||= {}
+        data = resources[resource.identifier] ||= { :@type => :resource, :actions => {} }
+        if renderer = Renderer[resource.identifier, false] and renderer.respond_to? :available_attributes
+          data[:attributes] = renderer.available_attributes
+        end
         resource.services.each do |(request_method, sub_route), service|
-          list    = resources[resource.identifier][service] ||= []
+          list    = resources[resource.identifier][:actions][service] ||= []
           pattern = sub_route ? resource.route + sub_route : resource.route
           pattern.to_templates.each do |template|
-            list << { 'request_method'.freeze => request_method, 'uri_template'.freeze => prefix + template }
+            list << { :@type => :template, :request_method => request_method, :uri_template => prefix + template }
           end
         end
       end
-      { :@type => 'home'.freeze, :resources => resources }
+      { :@type => :home, :resources => resources }
     end
 
     def render_json_home

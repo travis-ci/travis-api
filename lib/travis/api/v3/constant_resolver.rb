@@ -9,9 +9,12 @@ module Travis::API::V3
 
     attr_accessor :resolver_cache
 
-    def [](key)
+    def [](key, raise_unknown = true)
       return key unless key.is_a? Symbol
       resolver_cache[key] ||= const_get(key.to_s.camelize, false)
+    rescue NameError => e
+      raise e if raise_unknown
+      raise e unless e.message.include?(key.to_s.camelize)
     end
 
     def extended(base)
