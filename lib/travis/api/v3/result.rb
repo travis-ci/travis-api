@@ -16,9 +16,10 @@ module Travis::API::V3
     end
 
     def render(params, env)
-      href = self.href
-      href = V3.location(env) if href.nil? and env['REQUEST_METHOD'.freeze] == 'GET'.freeze
-      Renderer[type].render(resource, href: href, script_name: env['SCRIPT_NAME'.freeze])
+      href    = self.href
+      href    = V3.location(env) if href.nil? and env['REQUEST_METHOD'.freeze] == 'GET'.freeze
+      include = params['include'.freeze].to_s.split(?,.freeze)
+      Renderer[type].render(resource, href: href, script_name: env['SCRIPT_NAME'.freeze], include: include)
     end
 
     def method_missing(method, *args)

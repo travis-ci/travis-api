@@ -10,6 +10,7 @@ module Travis::API::V3
     end
 
     def owner
+      return model.owner if include? 'repository.owner'.freeze
       {
         :@type        => model.owner_type && model.owner_type.downcase,
         :id           => model.owner_id,
@@ -19,6 +20,7 @@ module Travis::API::V3
 
     def last_build
       return nil unless model.last_build_id
+      return model.last_build if include? 'repository.last_build'.freeze
       {
         :@type        => 'build'.freeze,
         :@href        => Renderer.href(:build, script_name: script_name, id: model.last_build_id),

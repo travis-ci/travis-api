@@ -1,13 +1,21 @@
+require 'set'
+
 module Travis::API::V3
   class Renderer::ModelRenderer
-    def self.type(type = nil)
-      @type = type if type
-      @type = name[/[^:]+$/].underscore.to_sym unless defined? @type # allows setting type to nil
+    REDUNDANT = Object.new
+    private_constant :REDUNDANT
+
+    def self.type(type = false)
+      @type  = type if type != false
+      @type  = name[/[^:]+$/].underscore.to_sym unless defined? @type # allows setting type to nil
       @type
     end
 
     def self.representation(name, *fields)
-      fields.each { |field| class_eval "def #{field}; @model.#{field}; end" unless method_defined?(field) }
+      fields.each do |field|
+        class_eval "def #{field}; @model.#{field}; end" unless method_defined?(field)
+        available_fields << field.to_s
+      end
       representations[name] = fields
     end
 
@@ -15,17 +23,23 @@ module Travis::API::V3
       @representations ||= {}
     end
 
+    def self.available_fields
+      @available_fields ||= Set.new
+    end
+
     def self.render(model, representation = :standard, **options)
       new(model, **options).render(representation)
     end
 
-    attr_reader :model, :options, :script_name
+    attr_reader :model, :options, :script_name, :include, :included
     attr_writer :href
 
-    def initialize(model, script_name: nil, **options)
+    def initialize(model, script_name: nil, include: [], included: [], **options)
       @model       = model
       @options     = options
       @script_name = script_name
+      @include     = include
+      @included    = included
     end
 
     def href
@@ -34,13 +48,40 @@ module Travis::API::V3
       @href = Renderer.href(self.class.type, model.attributes, script_name: script_name)
     end
 
-    def render(representation)
-      result         = {}
-      result[:@type] = self.class.type if self.class.type
-      result[:@href] = href if href
-      fields         = self.class.representations.fetch(representation)
+    def include?(field)
+      field = "#{self.class.type}.#{field}" if field.is_a? Symbol
+      include.include?(field)
+    end
 
-      fields.each { |field| result[field] = Renderer.render_value(send(field), script_name: script_name) }
+    def render(representation)
+      if included.include? model
+        return REDUNDANT unless href
+        return { :@href => href }
+      end
+
+      result          = {}
+      result[:@type]  = self.class.type if self.class.type
+      result[:@href]  = href if href
+      fields          = self.class.representations.fetch(representation)
+      nested_included = included + [model]
+      modes           = {}
+
+      excepted_type = result[:@type].to_s if include.any?
+      include.each do |qualified_field|
+        raise WrongParams, 'illegal format for include parameter'.freeze unless /\A(?<prefix>\w+)\.(?<field>\w+)\Z$/ =~ qualified_field
+        next if prefix != excepted_type
+        raise WrongParams, 'no field %p to include'.freeze % qualified_field unless self.class.available_fields.include?(field)
+
+        field &&= field.to_sym
+        fields << field unless fields.include?(field)
+        modes[field] = :standard
+      end
+  
+      fields.each do |field|
+        value         = Renderer.render_value(send(field), script_name: script_name, include: include, included: nested_included, mode: modes[field])
+        result[field] = value unless value == REDUNDANT
+      end
+
       result
     end
   end

@@ -18,7 +18,7 @@ module Travis::API::V3
 
       expander      = EXPANDER_CACHE[[type, script_name, args.keys]] ||= begin
         resource    = Routes.resources.detect { |r| r.identifier == type }
-        route       = resource.route
+        route       = resource.route if resource
         route     &&= Mustermann.new(script_name, type: :identity) + route if script_name and not script_name.empty?
         key_mapping = {}
         args.keys.each do |key|
@@ -34,8 +34,8 @@ module Travis::API::V3
       expander.call(args)
     end
 
-    def render_model(model, type: model.class.name[/[^:]+$/].to_sym, mode: :minimal, **options)
-      Renderer[type].render(model, mode, **options)
+    def render_model(model, type: model.class.name[/[^:]+$/].to_sym, mode: nil, **options)
+      Renderer[type].render(model, mode || :minimal, **options)
     end
 
     def render_value(value, **options)
