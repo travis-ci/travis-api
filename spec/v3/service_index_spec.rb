@@ -9,22 +9,22 @@ describe Travis::API::V3::ServiceIndex do
   describe "custom json entry point" do
     let(:expected_resources) {{
       "repository"          =>  {
-        "find"              => [{"request-method"=>"GET",   "uri-template"=>"#{path}repo/{repository.id}"}],
-        "enable"            => [{"request-method"=>"POST",  "uri-template"=>"#{path}repo/{repository.id}/enable"}],
-        "disable"           => [{"request-method"=>"POST",  "uri-template"=>"#{path}repo/{repository.id}/disable"}] },
+        "find"              => [{"request_method"=>"GET",   "uri_template"=>"#{path}repo/{repository.id}"}],
+        "enable"            => [{"request_method"=>"POST",  "uri_template"=>"#{path}repo/{repository.id}/enable"}],
+        "disable"           => [{"request_method"=>"POST",  "uri_template"=>"#{path}repo/{repository.id}/disable"}] },
       "repositories"        =>  {
-        "for_current_user"  => [{"request-method"=>"GET",  "uri-template"=>"#{path}repos"}] },
+        "for_current_user"  => [{"request_method"=>"GET",  "uri_template"=>"#{path}repos"}] },
       "branch"              =>  {
-        "find"              => [{"request-method"=>"GET",  "uri-template"=>"#{path}repo/{repository.id}/branch/{branch.name}"}]},
+        "find"              => [{"request_method"=>"GET",  "uri_template"=>"#{path}repo/{repository.id}/branch/{branch.name}"}]},
       "build"               =>  {
-        "find"              => [{"request-method"=>"GET",  "uri-template"=>"#{path}build/{build.id}"}] },
+        "find"              => [{"request_method"=>"GET",  "uri_template"=>"#{path}build/{build.id}"}] },
       "organizations"       =>  {
-        "for_current_user"  => [{"request-method"=>"GET",  "uri-template"=>"#{path}orgs"}] },
+        "for_current_user"  => [{"request_method"=>"GET",  "uri_template"=>"#{path}orgs"}] },
       "organization"        =>  {
-        "find"              => [{"request-method"=>"GET",  "uri-template"=>"#{path}org/{organization.id}"}] },
+        "find"              => [{"request_method"=>"GET",  "uri_template"=>"#{path}org/{organization.id}"}] },
       "requests"            =>  {
-        "find"              => [{"request-method"=>"GET",  "uri-template"=>"#{path}repo/{repository.id}/requests"}],
-        "create"            => [{"request-method"=>"POST", "uri-template"=>"#{path}repo/{repository.id}/requests"}]}
+        "find"              => [{"request_method"=>"GET",  "uri_template"=>"#{path}repo/{repository.id}/requests"}],
+        "create"            => [{"request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/requests"}]}
     }}
 
     describe 'with /v3 prefix' do

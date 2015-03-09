@@ -30,7 +30,7 @@ module Travis::API::V3
           list    = resources[resource.identifier][service] ||= []
           pattern = sub_route ? resource.route + sub_route : resource.route
           pattern.to_templates.each do |template|
-            list << { 'request-method'.freeze => request_method, 'uri-template'.freeze => prefix + template }
+            list << { 'request_method'.freeze => request_method, 'uri_template'.freeze => prefix + template }
           end
         end
       end
