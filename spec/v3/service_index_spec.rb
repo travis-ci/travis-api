@@ -18,7 +18,8 @@ describe Travis::API::V3::ServiceIndex do
            "create"=>
             [{"@type"=>"template",
               "request_method"=>"POST",
-              "uri_template"=>"#{path}repo/{repository.id}/requests"}]}},
+              "uri_template"=>"#{path}repo/{repository.id}/requests"}]},
+         "attributes"=>["requests"]},
        "branch"=>
         {"@type"=>"resource",
          "actions"=>
@@ -59,7 +60,8 @@ describe Travis::API::V3::ServiceIndex do
           {"for_current_user"=>
             [{"@type"=>"template",
               "request_method"=>"GET",
-              "uri_template"=>"#{path}repos"}]}},
+              "uri_template"=>"#{path}repos"}]},
+         "attributes"=>["repositories"]},
        "build"=>
         {"@type"=>"resource",
          "actions"=>
@@ -90,7 +92,8 @@ describe Travis::API::V3::ServiceIndex do
           {"for_current_user"=>
             [{"@type"=>"template",
               "request_method"=>"GET",
-              "uri_template"=>"#{path}orgs"}]}}}
+              "uri_template"=>"#{path}orgs"}]},
+         "attributes"=>["organizations"]}}
     }
 
     describe 'with /v3 prefix' do

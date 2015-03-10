@@ -11,7 +11,7 @@ module Travis
       def response(payload, headers = {}, content_type: 'application/json'.freeze, status: 200)
         payload = JSON.pretty_generate(payload) unless payload.is_a? String
         headers = { 'Content-Type'.freeze => content_type, 'Content-Length'.freeze => payload.bytesize.to_s }.merge!(headers)
-        [status, headers, [payload] ]
+        [status, headers, [payload]]
       end
 
       def location(env)
