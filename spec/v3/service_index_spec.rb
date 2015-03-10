@@ -98,17 +98,20 @@ describe Travis::API::V3::ServiceIndex do
 
     describe 'with /v3 prefix' do
       let(:path) { '/v3/' }
-      specify(:resources) { expect(json['resources']).to be == expected_resources }
+      specify(:resources) { expect(json['resources']) .to be == expected_resources }
+      specify(:@href)     { expect(json['@href'])     .to be == '/v3/' }
     end
 
     describe 'with Accept header' do
       let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.3+json' } }
-      specify(:resources) { expect(json['resources']).to be == expected_resources }
+      specify(:resources) { expect(json['resources']) .to be == expected_resources }
+      specify(:@href)     { expect(json['@href'])     .to be == '/' }
     end
 
     describe 'with Travis-API-Version header' do
       let(:headers) { { 'HTTP_TRAVIS_API_VERSION' => '3' } }
-      specify(:resources) { expect(json['resources']).to be == expected_resources }
+      specify(:resources) { expect(json['resources']) .to be == expected_resources }
+      specify(:@href)     { expect(json['@href'])     .to be == '/' }
     end
   end
 

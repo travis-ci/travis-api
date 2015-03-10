@@ -37,7 +37,7 @@ module Travis::API::V3
           end
         end
       end
-      { :@type => :home, :resources => resources }
+      { :@type => :home, :@href => "#{prefix}/", :resources => resources }
     end
 
     def render_json_home
