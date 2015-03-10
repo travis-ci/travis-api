@@ -40,6 +40,11 @@ module Travis::API::V3
       ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => args)
     end
 
+    def includes?(key)
+      @includes ||= @params['include'.freeze].to_s.split(?,.freeze)
+      @includes.include? key
+    end
+
     def bool(value)
       return false if value == 'false'.freeze
       !!value

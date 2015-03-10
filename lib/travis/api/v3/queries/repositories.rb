@@ -11,7 +11,9 @@ module Travis::API::V3
         all = Models::Repository
         all = all.where(active:  bool(active))  unless active.nil?
         all = all.where(private: bool(private)) unless private.nil?
-        all = all.includes(:default_branch) # TODO: use includes params
+        all = all.includes(:owner)       if includes? 'repository.owner'.freeze
+        all = all.includes(:last_build)  if includes? 'repository.last_build'.freeze
+        all = all.includes(:default_branch)
         all
       end
     end
