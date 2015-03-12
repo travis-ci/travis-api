@@ -39,7 +39,7 @@ class Travis::Api::App
       # Logging is set up by custom middleware
       disable  :protection, :logging, :setup
       enable   :raise_errors
-      # disable  :dump_errors
+      disable  :dump_errors
       register :subclass_tracker, :expose_pattern
       helpers  :respond_with, :mime_types
     end
@@ -48,6 +48,7 @@ class Travis::Api::App
       # We want error pages in development, but only
       # when we don't have an error handler specified
       set :show_exceptions, :after_handler
+      enable :dump_errors
     end
   end
 end
