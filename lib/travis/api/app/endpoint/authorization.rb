@@ -274,6 +274,9 @@ class Travis::Api::App
           user   = manager.fetch
           halt 403, 'not a Travis user' if user.nil?
           user
+        rescue GH::Error
+          # not a valid token actually, but we don't want to expose that info
+          halt 403, 'not a Travis user'
         end
 
         def get_token(endpoint, values)
