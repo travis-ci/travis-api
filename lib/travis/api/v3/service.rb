@@ -52,8 +52,9 @@ module Travis::API::V3
       params.keys.any? { |key| key.start_with? "#{prefix}." }
     end
 
-    def accepted(type = self.class.result_type)
-      Result.new(:accepted, type, status: 202)
+    def accepted(**payload)
+      payload[:resource_type] ||= self.class.result_type
+      Result.new(:accepted, payload, status: 202)
     end
 
     def not_implemented

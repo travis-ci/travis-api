@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Requests::Create do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:sidekiq_payload) { Sidekiq::Client.last['args'].last[:payload] }
+  before { repo.requests.each(&:delete) }
 
   before do
     Travis::Features.stubs(:owner_active?).returns(true)
@@ -83,8 +84,16 @@ describe Travis::API::V3::Services::Requests::Create do
 
     example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body)).to      be ==     {
-      "@type"         => "pending",
-      "resource_type" => "request"
+      "@type"              => "pending",
+      "remaining_requests" => 10,
+      "repository"         => {"@type"=>"repository", "@href"=>"/repo/#{repo.id}", "id"=>repo.id, "slug"=>"svenfuchs/minimal"},
+      "request"            => {
+        "repository"       =>  {"id"=>repo.id},
+        "user"             =>  {"id"=>repo.owner.id},
+        "message"          => nil,
+        "branch"           => "master",
+        "config"           => {}},
+      "resource_type"      => "request"
     }}
 
     example { expect(sidekiq_payload).to be == {
@@ -205,6 +214,19 @@ describe Travis::API::V3::Services::Requests::Create do
         message:    nil,
         branch:     'master',
         config:     {}
+      }}
+    end
+
+    describe "when request limit is reached" do
+      before { 10.times { repo.requests.create(event_type: 'api', result: 'accepted') } }
+      before { post("/v3/repo/#{repo.id}/requests", params, headers)                    }
+
+      example { expect(last_response.status).to be == 429 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "request_limit_reached",
+        "error_message" => "request limit reached for resource",
+        "repository"    => {"@type"=>"repository", "@href"=>"/repo/#{repo.id}", "id"=>repo.id, "slug"=>"svenfuchs/minimal" }
       }}
     end
   end
