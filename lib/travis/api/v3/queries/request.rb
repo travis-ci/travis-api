@@ -7,8 +7,8 @@ module Travis::API::V3
       raise WrongParams, 'missing user'.freeze                         unless user and user.id
 
       payload = {
-        repository: { id: repository.github_id },
-        user:       { id: user.id              },
+        repository: { id: repository.github_id, owner_name: repository.owner_name, name: repository.name },
+        user:       { id: user.id },
         message:    message,
         branch:     branch || repository.default_branch_name,
         config:     config || {}

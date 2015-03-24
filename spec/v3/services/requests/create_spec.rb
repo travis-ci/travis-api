@@ -88,7 +88,7 @@ describe Travis::API::V3::Services::Requests::Create do
       "remaining_requests" => 10,
       "repository"         => {"@type"=>"repository", "@href"=>"/repo/#{repo.id}", "id"=>repo.id, "slug"=>"svenfuchs/minimal"},
       "request"            => {
-        "repository"       =>  {"id"=>repo.id},
+        "repository"       =>  {"id"=>repo.id, "owner_name"=>"svenfuchs", "name"=>"minimal"},
         "user"             =>  {"id"=>repo.owner.id},
         "message"          => nil,
         "branch"           => "master",
@@ -97,7 +97,7 @@ describe Travis::API::V3::Services::Requests::Create do
     }}
 
     example { expect(sidekiq_payload).to be == {
-      repository: { id: repo.id },
+      repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
       user:       { id: repo.owner.id },
       message:    nil,
       branch:     'master',
@@ -110,7 +110,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "setting id has no effect" do
       let(:params) {{ id: 42 }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'master',
@@ -121,7 +121,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "setting repository has no effect" do
       let(:params) {{ repository: { id: 42 } }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'master',
@@ -132,7 +132,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "setting user has no effect" do
       let(:params) {{ user: { id: 42 } }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'master',
@@ -143,7 +143,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "overriding config" do
       let(:params) {{ config: { script: 'true' } }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'master',
@@ -154,7 +154,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "overriding message" do
       let(:params) {{ message: 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    'example',
         branch:     'master',
@@ -165,7 +165,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "overriding branch" do
       let(:params) {{ branch: 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'example',
@@ -176,7 +176,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "overriding branch (in request)" do
       let(:params) {{ request: { branch: 'example' } }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'example',
@@ -187,7 +187,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "overriding branch (with request prefix)" do
       let(:params) {{ "request.branch" => 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'example',
@@ -198,7 +198,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "overriding branch (with request type)" do
       let(:params) {{ "@type" => "request", "branch" => 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'example',
@@ -209,7 +209,7 @@ describe Travis::API::V3::Services::Requests::Create do
     describe "overriding branch (with wrong type)" do
       let(:params) {{ "@type" => "repository", "branch" => 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'master',
@@ -255,7 +255,7 @@ describe Travis::API::V3::Services::Requests::Create do
       let(:params) {{ user: { id: repo.owner.id } }}
       example { expect(last_response.status).to be == 202 }
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'master',
@@ -267,7 +267,7 @@ describe Travis::API::V3::Services::Requests::Create do
       let(:params) {{ user: { id: repo.owner.id }, branch: 'example' }}
       example { expect(last_response.status).to be == 202 }
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id },
+        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'example',
