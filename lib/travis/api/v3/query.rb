@@ -32,7 +32,7 @@ module Travis::API::V3
     end
 
     def perform_async(identifier, *args)
-      class_name, queue, client = @@sidekiq_cache[identifier] ||= [
+      class_name, queue = @@sidekiq_cache[identifier] ||= [
         "Travis::Sidekiq::#{identifier.to_s.camelcase}".freeze,
         identifier.to_s.pluralize.freeze
       ]

@@ -14,7 +14,7 @@ module Travis::API::V3
         config:     config || {}
       }
 
-      perform_async(:build_request, type: 'api'.freeze, credentials: {}, payload: payload)
+      perform_async(:build_request, type: 'api'.freeze, credentials: {}, payload: JSON.dump(payload))
       payload
     end
   end

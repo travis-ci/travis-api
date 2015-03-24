@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Travis::API::V3::Services::Requests::Create do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:sidekiq_payload) { Sidekiq::Client.last['args'].last[:payload] }
+  let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last[:payload]).deep_symbolize_keys }
   before { repo.requests.each(&:delete) }
 
   before do
@@ -147,7 +147,7 @@ describe Travis::API::V3::Services::Requests::Create do
         user:       { id: repo.owner.id },
         message:    nil,
         branch:     'master',
-        config:     { 'script' => 'true' }
+        config:     { script: 'true' }
       }}
     end
 
