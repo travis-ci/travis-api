@@ -44,6 +44,10 @@ module Travis::API::V3
       unrestricted_api?
     end
 
+    def user_visible?(user)
+      unrestricted_api?
+    end
+
     def repository_visible?(repository)
       return true if unrestricted_api? and not repository.private?
       private_repository_visible?(repository)

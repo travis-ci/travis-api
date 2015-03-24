@@ -93,7 +93,19 @@ describe Travis::API::V3::ServiceIndex do
             [{"@type"=>"template",
               "request_method"=>"GET",
               "uri_template"=>"#{path}orgs"}]},
-         "attributes"=>["organizations"]}}
+         "attributes"=>["organizations"]},
+       "user"=>
+        {"@type"=>"resource",
+         "actions"=>
+          {"current"=>
+            [{"@type"=>"template",
+              "request_method"=>"GET",
+              "uri_template"=>"#{path}user"}],
+           "find"=>
+            [{"@type"=>"template",
+              "request_method"=>"GET",
+              "uri_template"=>"#{path}user/{user.id}"}]},
+         "attributes"=>["id", "login", "name", "github_id", "is_syncing", "synced_at"]}}
     }
 
     describe 'with /v3 prefix' do

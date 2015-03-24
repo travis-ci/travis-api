@@ -32,6 +32,12 @@ module Travis::API::V3
       get :find
     end
 
+    resource :user do
+      route '/user'
+      get :current
+      get :find, '/{user.id}'
+    end
+
     resource :organization do
       route '/org/{organization.id}'
       get :find
