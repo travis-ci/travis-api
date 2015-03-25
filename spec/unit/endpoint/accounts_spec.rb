@@ -18,7 +18,8 @@ describe Travis::Api::App::Endpoint::Accounts do
       'login'       => user.login,
       'name'        => user.name,
       'type'        => 'user',
-      'repos_count' => 1
+      'repos_count' => 1,
+      'avatar_url'  => nil
     }]
   end
 end
