@@ -8,7 +8,6 @@ describe Travis::API::V3::ServiceIndex do
   let(:resources) { json.fetch('resources')  }
 
   describe "custom json entry point" do
-
     shared_examples 'service index' do
       describe "requests resource" do
         let(:resource) { resources.fetch("requests") }
