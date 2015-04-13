@@ -32,7 +32,11 @@ module Travis::API::V3
         resource.services.each do |(request_method, sub_route), service|
           list    = resources[resource.identifier][:actions][service] ||= []
           pattern = sub_route ? resource.route + sub_route : resource.route
+          factory = Services[resource.identifier][service]
           pattern.to_templates.each do |template|
+            params    = request_method == 'GET'.freeze ? factory.params : Service.params
+            params  &&= params.reject { |p| p.start_with? ?@.freeze }
+            template += "{?#{params.sort.join(?,)}}" if params and params.any?
             list << { :@type => :template, :request_method => request_method, :uri_template => prefix + template }
           end
         end

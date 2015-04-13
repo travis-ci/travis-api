@@ -1,132 +1,135 @@
 require 'spec_helper'
 
 describe Travis::API::V3::ServiceIndex do
-  let(:headers)  {{                        }}
-  let(:path)     { '/'                      }
-  let(:json)     { JSON.load(response.body) }
-  let(:response) { get(path, {}, headers)   }
+  let(:headers)   {{                        }}
+  let(:path)      { '/'                      }
+  let(:json)      { JSON.load(response.body) }
+  let(:response)  { get(path, {}, headers)   }
+  let(:resources) { json.fetch('resources')  }
 
   describe "custom json entry point" do
-    let(:expected_resources) {
-      {"requests"=>
-        {"@type"=>"resource",
-         "actions"=>
-          {"find"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}repo/{repository.id}/requests"}],
-           "create"=>
-            [{"@type"=>"template",
-              "request_method"=>"POST",
-              "uri_template"=>"#{path}repo/{repository.id}/requests"}]},
-         "attributes"=>["requests"]},
-       "branch"=>
-        {"@type"=>"resource",
-         "actions"=>
-          {"find"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}repo/{repository.id}/branch/{branch.name}"}]},
-         "attributes"=>["name", "last_build", "repository"]},
-       "repository"=>
-        {"@type"=>"resource",
-         "actions"=>
-          {"find"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}repo/{repository.id}"}],
-           "enable"=>
-            [{"@type"=>"template",
-              "request_method"=>"POST",
-              "uri_template"=>"#{path}repo/{repository.id}/enable"}],
-           "disable"=>
-            [{"@type"=>"template",
-              "request_method"=>"POST",
-              "uri_template"=>"#{path}repo/{repository.id}/disable"}]},
-         "attributes"=>
-          ["id",
-           "slug",
-           "name",
-           "description",
-           "github_language",
-           "active",
-           "private",
-           "owner",
-           "last_build",
-           "default_branch"]},
-       "repositories"=>
-        {"@type"=>"resource",
-         "actions"=>
-          {"for_current_user"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}repos"}]},
-         "attributes"=>["repositories"]},
-       "build"=>
-        {"@type"=>"resource",
-         "actions"=>
-          {"find"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}build/{build.id}"}]},
-         "attributes"=>
-          ["id",
-           "number",
-           "state",
-           "duration",
-           "started_at",
-           "finished_at",
-           "repository",
-           "branch"]},
-       "organization"=>
-        {"@type"=>"resource",
-         "actions"=>
-          {"find"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}org/{organization.id}"}]},
-         "attributes"=>["id", "login", "name", "github_id"]},
-       "account"=>
-        {"@type"=>"resource",
-         "actions"=>
-          {"find"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}account/{account.login}"},
-             {"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}account/{user.login}"},
-             {"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}account/{organization.login}"}]}},
-       "organizations"=>
-        {"@type"=>"resource",
-         "actions"=>
-          {"for_current_user"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}orgs"}]},
-         "attributes"=>["organizations"]},
-       "user"=>
-        {"@type"=>"resource",
-         "actions"=>
-          {"current"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}user"}],
-           "find"=>
-            [{"@type"=>"template",
-              "request_method"=>"GET",
-              "uri_template"=>"#{path}user/{user.id}"}]},
-         "attributes"=>["id", "login", "name", "github_id", "is_syncing", "synced_at"]}}
-    }
 
     shared_examples 'service index' do
-      describe :resources do
-        specify { expect(json['resources']).to include(expected_resources) }
-        specify { expect(json['resources'].keys.sort) .to be == expected_resources.keys.sort }
+      describe "requests resource" do
+        let(:resource) { resources.fetch("requests") }
+        specify { expect(resources)         .to include("requests") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/requests{?include}") }
+        end
+
+        describe "create action" do
+          let(:action) { resource.fetch("actions").fetch("create") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/requests{?include}") }
+        end
       end
-      specify { expect(json['@href']).to be == path }
+
+      describe "branch resource" do
+        let(:resource) { resources.fetch("branch") }
+        specify { expect(resources)         .to include("branch") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/branch/{branch.name}{?include}") }
+        end
+      end
+
+      describe "repository resource" do
+        let(:resource) { resources.fetch("repository") }
+        specify { expect(resources)         .to include("repository") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}{?include}") }
+        end
+
+        describe "enable action" do
+          let(:action) { resource.fetch("actions").fetch("enable") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/enable{?include}") }
+        end
+
+        describe "disable action" do
+          let(:action) { resource.fetch("actions").fetch("disable") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/disable{?include}") }
+        end
+      end
+
+      describe "repositories resource" do
+        let(:resource) { resources.fetch("repositories") }
+        specify { expect(resources)         .to include("repositories") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "for_current_user action" do
+          let(:action) { resource.fetch("actions").fetch("for_current_user") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repos{?active,include,private,repository.active,repository.private}") }
+        end
+      end
+
+      describe "build resource" do
+        let(:resource) { resources.fetch("build") }
+        specify { expect(resources)         .to include("build") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}build/{build.id}{?include}") }
+        end
+      end
+
+      describe "organization resource" do
+        let(:resource) { resources.fetch("organization") }
+        specify { expect(resources)         .to include("organization") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}org/{organization.id}{?include}") }
+        end
+      end
+
+      describe "account resource" do
+        let(:resource) { resources.fetch("account") }
+        specify { expect(resources)         .to include("account") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}account/{account.login}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}account/{user.login}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}account/{organization.login}{?include}") }
+        end
+      end
+
+      describe "organizations resource" do
+        let(:resource) { resources.fetch("organizations") }
+        specify { expect(resources)         .to include("organizations") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "for_current_user action" do
+          let(:action) { resource.fetch("actions").fetch("for_current_user") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}orgs{?include}") }
+        end
+      end
+
+      describe "user resource" do
+        let(:resource) { resources.fetch("user") }
+        specify { expect(resources)         .to include("user") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "current action" do
+          let(:action) { resource.fetch("actions").fetch("current") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}user{?include}") }
+        end
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}user/{user.id}{?include}") }
+        end
+      end
     end
 
     describe 'with /v3 prefix' do
