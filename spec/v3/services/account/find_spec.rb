@@ -26,17 +26,14 @@ describe Travis::API::V3::Services::Account::Find do
 
       before  { get("/v3/account/example-org?organization.id=#{other.id}") }
       example { expect(last_response).to be_ok   }
-
-      pending "param whitelisting not yet implemented" do
-        example { expect(JSON.load(body)).to be == {
-          "@type"     => "organization",
-          "@href"     => "/v3/org/#{org.id}",
-          "id"        => org.id,
-          "login"     => "example-org",
-          "name"      => nil,
-          "github_id" => nil
-        }}
-      end
+      example { expect(JSON.load(body)).to be == {
+        "@type"     => "organization",
+        "@href"     => "/v3/org/#{org.id}",
+        "id"        => org.id,
+        "login"     => "example-org",
+        "name"      => nil,
+        "github_id" => nil
+      }}
     end
   end
 
@@ -65,21 +62,18 @@ describe Travis::API::V3::Services::Account::Find do
       before      { other.save!                   }
       after       { other.delete                  }
 
-      before  { get("/v3/account/example-org?user.id=#{other.id}") }
+      before  { get("/v3/account/example-user?user.id=#{other.id}") }
       example { expect(last_response).to be_ok   }
-
-      pending "param whitelisting not yet implemented" do
-        example { expect(JSON.load(body)).to be == {
-          "@type"     => "user",
-          "@href"     => "/v3/user/#{user.id}",
-          "id"        => user.id,
-          "login"     => "example-user",
-          "name"      => nil,
-          "github_id" => nil,
-          "is_syncing"=> nil,
-          "synced_at" => nil
-        }}
-      end
+      example { expect(JSON.load(body)).to be == {
+        "@type"     => "user",
+        "@href"     => "/v3/user/#{user.id}",
+        "id"        => user.id,
+        "login"     => "example-user",
+        "name"      => nil,
+        "github_id" => nil,
+        "is_syncing"=> nil,
+        "synced_at" => nil
+      }}
     end
   end
 end

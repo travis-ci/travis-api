@@ -17,7 +17,7 @@ module Travis::API::V3
 
       raise NotFound unless factory
 
-      service         = factory.new(access_control, env_params.merge(params))
+      service         = factory.new(access_control, factory.filter_params(env_params).merge(params))
       result          = service.run
       render(result, env_params, env)
     rescue Error => error
