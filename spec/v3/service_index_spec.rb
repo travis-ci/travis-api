@@ -86,6 +86,19 @@ describe Travis::API::V3::ServiceIndex do
               "request_method"=>"GET",
               "uri_template"=>"#{path}org/{organization.id}"}]},
          "attributes"=>["id", "login", "name", "github_id"]},
+       "account"=>
+        {"@type"=>"resource",
+         "actions"=>
+          {"find"=>
+            [{"@type"=>"template",
+              "request_method"=>"GET",
+              "uri_template"=>"#{path}account/{account.login}"},
+             {"@type"=>"template",
+              "request_method"=>"GET",
+              "uri_template"=>"#{path}account/{user.login}"},
+             {"@type"=>"template",
+              "request_method"=>"GET",
+              "uri_template"=>"#{path}account/{organization.login}"}]}},
        "organizations"=>
         {"@type"=>"resource",
          "actions"=>
@@ -108,22 +121,27 @@ describe Travis::API::V3::ServiceIndex do
          "attributes"=>["id", "login", "name", "github_id", "is_syncing", "synced_at"]}}
     }
 
+    shared_examples 'service index' do
+      describe :resources do
+        specify { expect(json['resources']).to include(expected_resources) }
+        specify { expect(json['resources'].keys.sort) .to be == expected_resources.keys.sort }
+      end
+      specify { expect(json['@href']).to be == path }
+    end
+
     describe 'with /v3 prefix' do
       let(:path) { '/v3/' }
-      specify(:resources) { expect(json['resources']) .to be == expected_resources }
-      specify(:@href)     { expect(json['@href'])     .to be == '/v3/' }
+      it_behaves_like 'service index'
     end
 
     describe 'with Accept header' do
       let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.3+json' } }
-      specify(:resources) { expect(json['resources']) .to be == expected_resources }
-      specify(:@href)     { expect(json['@href'])     .to be == '/' }
+      it_behaves_like 'service index'
     end
 
     describe 'with Travis-API-Version header' do
       let(:headers) { { 'HTTP_TRAVIS_API_VERSION' => '3' } }
-      specify(:resources) { expect(json['resources']) .to be == expected_resources }
-      specify(:@href)     { expect(json['@href'])     .to be == '/' }
+      it_behaves_like 'service index'
     end
   end
 

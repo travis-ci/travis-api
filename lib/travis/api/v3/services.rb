@@ -2,6 +2,7 @@ module Travis::API::V3
   module Services
     extend ConstantResolver
 
+    Account       = Module.new { extend Services }
     Branch        = Module.new { extend Services }
     Build         = Module.new { extend Services }
     Organization  = Module.new { extend Services }

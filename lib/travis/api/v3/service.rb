@@ -16,15 +16,15 @@ module Travis::API::V3
       @github         = {}
     end
 
-    def query(type = self.class.result_type)
-      @queries[type] ||= Queries[type].new(params, self.class.result_type)
+    def query(type = result_type)
+      @queries[type] ||= Queries[type].new(params, result_type)
     end
 
     def github(user = nil)
       @github[user] ||= GitHub.new(user)
     end
 
-    def find(type = self.class.result_type, *args)
+    def find(type = result_type, *args)
       not_found(true,  type) unless object = query(type).find(*args)
       not_found(false, type) unless access_control.visible? object
       object
@@ -33,16 +33,20 @@ module Travis::API::V3
     def not_found(actually_not_found = false, type = nil)
       type, actually_not_found = actually_not_found, false if actually_not_found.is_a? Symbol
       error = actually_not_found ? EntityMissing : NotFound
-      raise(error, type || self.class.result_type)
+      raise(error, type || result_type)
     end
 
     def run!
       not_implemented
     end
 
+    def result_type
+      self.class.result_type
+    end
+
     def run
       not_found unless result = run!
-      result = Result.new(self.class.result_type, result) unless result.is_a? Result
+      result = Result.new(result_type, result) unless result.is_a? Result
       result
     end
 
@@ -53,7 +57,7 @@ module Travis::API::V3
     end
 
     def accepted(**payload)
-      payload[:resource_type] ||= self.class.result_type
+      payload[:resource_type] ||= result_type
       Result.new(:accepted, payload, status: 202)
     end
 

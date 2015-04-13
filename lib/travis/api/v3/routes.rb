@@ -3,6 +3,11 @@ module Travis::API::V3
     require 'travis/api/v3/routes/dsl'
     extend DSL
 
+    resource :account do
+      route '/account/({account.login}|{user.login}|{organization.login})'
+      get :find
+    end
+
     resource :repository do
       route '/repo/{repository.id}'
       get :find
