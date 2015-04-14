@@ -7,7 +7,6 @@ module Travis::API::V3
     has_many :repositories,  through:   :permissions
     has_many :organizations, through:   :memberships
 
-
     serialize :github_oauth_token, Extensions::EncryptedColumn.new(disable: true)
 
     def token

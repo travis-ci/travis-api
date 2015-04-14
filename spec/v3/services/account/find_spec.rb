@@ -19,6 +19,19 @@ describe Travis::API::V3::Services::Account::Find do
       }}
     end
 
+    describe 'it is not case sensitive' do
+      before  { get("/v3/account/example-ORG")   }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be == {
+        "@type"     => "organization",
+        "@href"     => "/v3/org/#{org.id}",
+        "id"        => org.id,
+        "login"     => "example-org",
+        "name"      => nil,
+        "github_id" => nil
+      }}
+    end
+
     describe "does not allow overriding org id" do
       let(:other) { Organization.new(login: 'other-org') }
       before      { other.save!                          }
@@ -44,6 +57,21 @@ describe Travis::API::V3::Services::Account::Find do
 
     describe 'existing user, public api' do
       before  { get("/v3/account/example-user")   }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be == {
+        "@type"     => "user",
+        "@href"     => "/v3/user/#{user.id}",
+        "id"        => user.id,
+        "login"     => "example-user",
+        "name"      => nil,
+        "github_id" => nil,
+        "is_syncing"=> nil,
+        "synced_at" => nil
+      }}
+    end
+
+    describe 'it is not case sensitive' do
+      before  { get("/v3/account/example-USER")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
         "@type"     => "user",
