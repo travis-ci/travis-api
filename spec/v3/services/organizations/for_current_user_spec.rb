@@ -26,7 +26,8 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser do
         "id"          => org.id,
         "login"       => "example-org",
         "name"        => nil,
-        "github_id"   => nil
+        "github_id"   => nil,
+        "avatar_url"  => nil
       }]
     }}
   end
