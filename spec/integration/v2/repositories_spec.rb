@@ -5,15 +5,22 @@ describe 'Repos' do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
-  describe 'with a list of ids' do
-    it 'returns repositories by ids' do
-      repos = Repository.all
-      ids = repos[0..1].map(&:id)
-      response = get "/repos?ids=#{ids.join(',')}", {}, headers
-      body = JSON.parse(response.body)
+  it 'returns repositories by ids with ids=1,2,3 format' do
+    repos = Repository.all
+    ids = repos[0..1].map(&:id)
+    response = get "/repos?ids=#{ids.join(',')}", {}, headers
+    body = JSON.parse(response.body)
 
-      body['repos'].map { |r| r['id'] }.should == ids
-    end
+    body['repos'].map { |r| r['id'] }.should == ids
+  end
+
+  it 'returns repositories by ids with ids[] format' do
+    repos = Repository.all
+    ids = repos[0..1].map(&:id)
+    response = get "/repos?ids[]=#{ids[0]}&ids[]=#{ids[1]}", {}, headers
+    body = JSON.parse(response.body)
+
+    body['repos'].map { |r| r['id'] }.should == ids
   end
 
   describe 'with authenticated user' do
