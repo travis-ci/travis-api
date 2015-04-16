@@ -5,6 +5,17 @@ describe 'Repos' do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  describe 'with a list of ids' do
+    it 'returns repositories by ids' do
+      repos = Repository.all
+      ids = repos[0..1].map(&:id)
+      response = get "/repos?ids=#{ids.join(',')}", {}, headers
+      body = JSON.parse(response.body)
+
+      body['repos'].map { |r| r['id'] }.should == ids
+    end
+  end
+
   describe 'with authenticated user' do
     let(:user)    { User.where(login: 'svenfuchs').first }
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
