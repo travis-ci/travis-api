@@ -1,17 +1,17 @@
 module Travis::API::V3
-  class Services::Account::Find < Service
+  class Services::Owner::Find < Service
     def result_type
       @result_type ||= super
     end
 
     def run!
-      account      = find
-      @result_type = type_for(account)
-      account
+      owner        = find
+      @result_type = type_for(owner)
+      owner
     end
 
-    def type_for(account)
-      case account
+    def type_for(owner)
+      case owner
       when Models::User         then :user
       when Models::Organization then :organization
       end

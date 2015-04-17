@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::Account::Find do
+describe Travis::API::V3::Services::Owner::Find do
   describe "organization" do
     let(:org) { Organization.new(login: 'example-org') }
     before    { org.save!                              }
     after     { org.delete                             }
 
     describe 'existing org, public api' do
-      before  { get("/v3/account/example-org")   }
+      before  { get("/v3/owner/example-org")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
         "@type"      => "organization",
@@ -21,7 +21,7 @@ describe Travis::API::V3::Services::Account::Find do
     end
 
     describe 'it is not case sensitive' do
-      before  { get("/v3/account/example-ORG")   }
+      before  { get("/v3/owner/example-ORG")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
         "@type"      => "organization",
@@ -39,7 +39,7 @@ describe Travis::API::V3::Services::Account::Find do
       before      { other.save!                          }
       after       { other.delete                         }
 
-      before  { get("/v3/account/example-org?organization.id=#{other.id}") }
+      before  { get("/v3/owner/example-org?organization.id=#{other.id}") }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
         "@type"      => "organization",
@@ -59,7 +59,7 @@ describe Travis::API::V3::Services::Account::Find do
     after      { user.delete                     }
 
     describe 'existing user, public api' do
-      before  { get("/v3/account/example-user")   }
+      before  { get("/v3/owner/example-user")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
         "@type"      => "user",
@@ -75,7 +75,7 @@ describe Travis::API::V3::Services::Account::Find do
     end
 
     describe 'it is not case sensitive' do
-      before  { get("/v3/account/example-USER")   }
+      before  { get("/v3/owner/example-USER")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
         "@type"      => "user",
@@ -95,7 +95,7 @@ describe Travis::API::V3::Services::Account::Find do
       before      { other.save!                   }
       after       { other.delete                  }
 
-      before  { get("/v3/account/example-user?user.id=#{other.id}") }
+      before  { get("/v3/owner/example-user?user.id=#{other.id}") }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
         "@type"      => "user",

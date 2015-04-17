@@ -90,16 +90,16 @@ describe Travis::API::V3::ServiceIndex do
         end
       end
 
-      describe "account resource" do
-        let(:resource) { resources.fetch("account") }
-        specify { expect(resources)         .to include("account") }
+      describe "owner resource" do
+        let(:resource) { resources.fetch("owner") }
+        specify { expect(resources)         .to include("owner") }
         specify { expect(resource["@type"]) .to be == "resource"  }
 
         describe "find action" do
           let(:action) { resource.fetch("actions").fetch("find") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}account/{account.login}{?include}") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}account/{user.login}{?include}") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}account/{organization.login}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}owner/{owner.login}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}owner/{user.login}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}owner/{organization.login}{?include}") }
         end
       end
 
