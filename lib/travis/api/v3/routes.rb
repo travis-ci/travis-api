@@ -3,6 +3,11 @@ module Travis::API::V3
     require 'travis/api/v3/routes/dsl'
     extend DSL
 
+    resource :accounts do
+      route '/accounts'
+      get :for_current_user
+    end
+
     resource :owner do
       route '/owner/({owner.login}|{user.login}|{organization.login})'
       get :find
