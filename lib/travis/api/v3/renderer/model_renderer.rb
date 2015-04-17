@@ -16,15 +16,18 @@ module Travis::API::V3
         class_eval "def #{field}; @model.#{field}; end" unless method_defined?(field)
         available_attributes << field.to_s
       end
-      representations[name] = fields
+      representations[name] ||= []
+      representations[name]  += fields
     end
 
+    @representations = {}
     def self.representations
-      @representations ||= {}
+      @representations ||= superclass.representations.dup
     end
 
+    @available_attributes = Set.new
     def self.available_attributes
-      @available_attributes ||= Set.new
+      @available_attributes ||= superclass.available_attributes.dup
     end
 
     def self.render(model, representation = :standard, **options)
