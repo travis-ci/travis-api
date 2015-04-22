@@ -4,7 +4,7 @@ module Travis
       V3 = self
 
       def load_dir(dir, recursive: true)
-        Dir.glob("#{dir}/*.rb").sort.each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
+        Dir.glob("#{dir}/*.rb").sort.each { |f| require f[%r[(?<=lib/)travis/.+(?=\.rb$)]] }
         Dir.glob("#{dir}/*").sort.each { |dir| load_dir(dir) } if recursive
       end
 
