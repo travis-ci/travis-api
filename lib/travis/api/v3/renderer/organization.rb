@@ -1,8 +1,6 @@
-require 'travis/api/v3/renderer/model_renderer'
+require 'travis/api/v3/renderer/owner'
 
 module Travis::API::V3
-  class Renderer::Organization < Renderer::ModelRenderer
-    representation(:minimal,  :id, :login)
-    representation(:standard, :id, :login, :name, :github_id)
+  class Renderer::Organization < Renderer::Owner
   end
 end

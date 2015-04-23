@@ -1,6 +1,5 @@
 require 'gh'
 
-
 module Travis::API::V3
   class GitHub
     DEFAULT_OPTIONS = {

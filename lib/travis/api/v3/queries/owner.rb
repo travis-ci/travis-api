@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Queries::Account < Query
+  class Queries::Owner < Query
     def find
       find!(:organization) || find!(:user)
     end
@@ -7,8 +7,8 @@ module Travis::API::V3
     private
 
     def query(type, main_type: self.main_type, params: self.params)
-      main_type = type if main_type == :account
-      params    = params.merge("#{type}.login" => params["account.login".freeze]) if params["account.login".freeze]
+      main_type = type if main_type == :owner
+      params    = params.merge("#{type}.login" => params["owner.login".freeze]) if params["owner.login".freeze]
       Queries[type].new(params, main_type)
     end
 
