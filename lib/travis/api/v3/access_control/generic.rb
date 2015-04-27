@@ -30,6 +30,12 @@ module Travis::API::V3
       false
     end
 
+    def visible_repositories(list)
+      # naïve implementation, replaced with smart implementation in specific subclasses
+      return list if full_access?
+      list.select { |r| visible?(r) }
+    end
+
     protected
 
     def build_visible?(build)
