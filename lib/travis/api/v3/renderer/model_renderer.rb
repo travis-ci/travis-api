@@ -86,7 +86,12 @@ module Travis::API::V3
       end
   
       fields.each do |field|
-        value         = Renderer.render_value(send(field), script_name: script_name, include: include, included: nested_included, mode: modes[field])
+        value  = Renderer.render_value(send(field),
+                   access_control: access_control,
+                   script_name:    script_name,
+                   include:        include,
+                   included:       nested_included,
+                   mode:           modes[field])
         result[field] = value unless value == REDUNDANT
       end
 
