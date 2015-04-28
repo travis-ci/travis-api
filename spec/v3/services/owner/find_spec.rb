@@ -7,7 +7,7 @@ describe Travis::API::V3::Services::Owner::Find do
     after     { org.delete                             }
 
     describe 'existing org, public api' do
-      before  { get("/v3/owner/example-org")   }
+      before  { get("/v3/owner/example-org")     }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
         "@type"      => "organization",
@@ -20,8 +20,58 @@ describe Travis::API::V3::Services::Owner::Find do
       }}
     end
 
+    describe 'eager loading repositories via organization.repositories' do
+      let(:repo) { Repository.new(name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
+
+      before { repo.save!   }
+      after  { repo.destroy }
+
+      before  { get("/v3/owner/example-org?include=organization.repositories,user.repositories") }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be == {
+        "@type"        => "organization",
+        "@href"        => "/v3/org/#{org.id}",
+        "id"           => org.id,
+        "login"        => "example-org",
+        "name"         => nil,
+        "github_id"    => nil,
+        "avatar_url"   => nil,
+        "repositories" => [{
+          "@type"      => "repository",
+          "@href"      => "/repo/#{repo.id}",
+          "id"         => repo.id,
+          "slug"       =>  "example-org/example-repo"
+        }]
+      }}
+    end
+
+    describe 'eager loading repositories via owner.repositories' do
+      let(:repo) { Repository.new(name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
+
+      before { repo.save!   }
+      after  { repo.destroy }
+
+      before  { get("/v3/owner/example-org?include=owner.repositories") }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be == {
+        "@type"        => "organization",
+        "@href"        => "/v3/org/#{org.id}",
+        "id"           => org.id,
+        "login"        => "example-org",
+        "name"         => nil,
+        "github_id"    => nil,
+        "avatar_url"   => nil,
+        "repositories" => [{
+          "@type"      => "repository",
+          "@href"      => "/repo/#{repo.id}",
+          "id"         => repo.id,
+          "slug"       =>  "example-org/example-repo"
+        }]
+      }}
+    end
+
     describe 'it is not case sensitive' do
-      before  { get("/v3/owner/example-ORG")   }
+      before  { get("/v3/owner/example-ORG")     }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
         "@type"      => "organization",

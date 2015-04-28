@@ -27,6 +27,11 @@ module Travis::API::V3
           polymorfic_foreign_types << (options[:foreign_type] || "#{field}_type") if options[:polymorphic]
           super
         end
+
+        def name
+          return super unless caller_locations.first.base_label == 'add_constraints'.freeze
+          @constraint_name ||= super.sub("#{parent}::", ''.freeze)
+        end
       end
 
       def self.included(base)

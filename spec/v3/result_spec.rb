@@ -1,11 +1,13 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Result do
-  subject(:result) { described_class.new(:example) }
+  let(:access_control) { Object.new }
+  subject(:result) { described_class.new(access_control, :example) }
 
-  example { expect(result.type)     .to be == :example  }
-  example { expect(result.resource) .to be == []        }
-  example { expect(result.example)  .to be == []        }
+  example { expect(result.type)           .to be == :example       }
+  example { expect(result.resource)       .to be == []             }
+  example { expect(result.example)        .to be == []             }
+  example { expect(result.access_control) .to be == access_control }
 
   example do
     result << 42

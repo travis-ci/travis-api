@@ -5,7 +5,19 @@ module Travis::API::V3
   class Renderer::Owner < Renderer::ModelRenderer
     include Renderer::AvatarURL
 
-    representation(:minimal,  :id, :login)
-    representation(:standard, :id, :login, :name, :github_id, :avatar_url)
+    representation(:minimal,    :id, :login)
+    representation(:standard,   :id, :login, :name, :github_id, :avatar_url)
+    representation(:additional, :repositories)
+
+    def initialize(*)
+      super
+
+      owner_includes = include.select { |i| i.start_with?('owner.'.freeze) }
+      owner_includes.each { |i| include << i.sub('owner.'.freeze, "#{self.class.type}.") }
+    end
+
+    def repositories
+      access_control.visible_repositories(@model.repositories)
+    end
   end
 end

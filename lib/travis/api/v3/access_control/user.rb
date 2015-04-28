@@ -19,6 +19,10 @@ module Travis::API::V3
       permission?(:admin, repository) ? user : super
     end
 
+    def visible_repositories(list)
+      list.where('repositories.private = false OR repositories.id IN (?)'.freeze, permissions.map(&:repository_id))
+    end
+
     protected
 
     def repository_writable?(repository)

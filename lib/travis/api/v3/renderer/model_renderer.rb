@@ -34,15 +34,16 @@ module Travis::API::V3
       new(model, **options).render(representation)
     end
 
-    attr_reader :model, :options, :script_name, :include, :included
+    attr_reader :model, :options, :script_name, :include, :included, :access_control
     attr_writer :href
 
-    def initialize(model, script_name: nil, include: [], included: [], **options)
-      @model       = model
-      @options     = options
-      @script_name = script_name
-      @include     = include
-      @included    = included
+    def initialize(model, script_name: nil, include: [], included: [], access_control: nil, **options)
+      @model          = model
+      @options        = options
+      @script_name    = script_name
+      @include        = include
+      @included       = included
+      @access_control = access_control
     end
 
     def href
@@ -69,7 +70,11 @@ module Travis::API::V3
       nested_included = included + [model]
       modes           = {}
 
-      excepted_type = result[:@type].to_s if include.any?
+      if include.any?
+        excepted_type = result[:@type].to_s
+        fields        = fields.dup
+      end
+
       include.each do |qualified_field|
         raise WrongParams, 'illegal format for include parameter'.freeze unless /\A(?<prefix>\w+)\.(?<field>\w+)\Z$/ =~ qualified_field
         next if prefix != excepted_type

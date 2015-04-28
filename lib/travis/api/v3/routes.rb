@@ -11,6 +11,7 @@ module Travis::API::V3
     resource :owner do
       route '/owner/({owner.login}|{user.login}|{organization.login})'
       get :find
+      get :repositories, '/repos'
     end
 
     resource :repository do
