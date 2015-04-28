@@ -42,8 +42,8 @@ module Travis::API::V3
 
     def render_value(value, **options)
       case value
-      when Hash                   then value.map { |k, v| [k, render_value(v)] }.to_h
-      when Array                  then value.map { |v   | render_value(v)      }
+      when Hash                   then value.map { |k, v| [k, render_value(v, **options)] }.to_h
+      when Array                  then value.map { |v   | render_value(v, **options)      }
       when *PRIMITIVE             then value
       when Time                   then value.strftime('%Y-%m-%dT%H:%M:%SZ')
       when Model                  then render_model(value, **options)

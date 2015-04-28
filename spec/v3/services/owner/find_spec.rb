@@ -29,18 +29,33 @@ describe Travis::API::V3::Services::Owner::Find do
       before  { get("/v3/owner/example-org?include=organization.repositories,user.repositories") }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"        => "organization",
-        "@href"        => "/v3/org/#{org.id}",
-        "id"           => org.id,
-        "login"        => "example-org",
-        "name"         => nil,
-        "github_id"    => nil,
-        "avatar_url"   => nil,
-        "repositories" => [{
-          "@type"      => "repository",
-          "@href"      => "/repo/#{repo.id}",
-          "id"         => repo.id,
-          "slug"       =>  "example-org/example-repo"
+        "@type"             => "organization",
+        "@href"             => "/v3/org/#{org.id}",
+        "id"                => org.id,
+        "login"             => "example-org",
+        "name"              => nil,
+        "github_id"         => nil,
+        "avatar_url"        => nil,
+        "repositories"      => [{
+          "@type"           => "repository",
+          "@href"           => "/v3/repo/#{repo.id}",
+          "id"              => repo.id,
+          "name"            => "example-repo",
+          "slug"            => "example-org/example-repo",
+          "description"     => nil,
+          "github_language" => nil,
+          "active"          => false,
+          "private"         => false,
+          "last_build"      => nil,
+          "owner"           => {
+            "@type"         => "organization",
+            "id"            => org.id,
+            "login"         => "example-org"},
+          "default_branch"  => {
+            "@type"         => "branch",
+            "@href"         => "/v3/repo/#{repo.id}/branch/master",
+            "name"          => "master",
+            "last_build"    => nil }
         }]
       }}
     end
@@ -54,18 +69,33 @@ describe Travis::API::V3::Services::Owner::Find do
       before  { get("/v3/owner/example-org?include=owner.repositories") }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"        => "organization",
-        "@href"        => "/v3/org/#{org.id}",
-        "id"           => org.id,
-        "login"        => "example-org",
-        "name"         => nil,
-        "github_id"    => nil,
-        "avatar_url"   => nil,
-        "repositories" => [{
-          "@type"      => "repository",
-          "@href"      => "/repo/#{repo.id}",
-          "id"         => repo.id,
-          "slug"       =>  "example-org/example-repo"
+        "@type"             => "organization",
+        "@href"             => "/v3/org/#{org.id}",
+        "id"                => org.id,
+        "login"             => "example-org",
+        "name"              => nil,
+        "github_id"         => nil,
+        "avatar_url"        => nil,
+        "repositories"      => [{
+          "@type"           => "repository",
+          "@href"           => "/v3/repo/#{repo.id}",
+          "id"              => repo.id,
+          "name"            => "example-repo",
+          "slug"            => "example-org/example-repo",
+          "description"     => nil,
+          "github_language" => nil,
+          "active"          => false,
+          "private"         => false,
+          "last_build"      => nil,
+          "owner"           => {
+            "@type"         => "organization",
+            "id"            => org.id,
+            "login"         => "example-org"},
+          "default_branch"  => {
+            "@type"         => "branch",
+            "@href"         => "/v3/repo/#{repo.id}/branch/master",
+            "name"          => "master",
+            "last_build"    => nil }
         }]
       }}
     end
