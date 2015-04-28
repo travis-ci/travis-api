@@ -23,8 +23,9 @@ module Travis::API::V3
     end
 
     def include_owner?
-      return true if include? 'repository.owner'.freeze
-      return true if include.any? { |i| i.start_with? owner_type or i.start_with? 'owner'.freeze }
+      return false if included_owner?
+      return true  if include? 'repository.owner'.freeze
+      return true  if include.any? { |i| i.start_with? owner_type or i.start_with? 'owner'.freeze }
     end
 
     def included_owner?
