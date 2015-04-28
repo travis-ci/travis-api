@@ -19,6 +19,7 @@ describe Travis::API::V3::Services::Repository::Find do
       "private"         => false,
       "owner"           => {
         "@type"         => "user",
+        "@href"         => "/v3/user/#{repo.owner_id}",
         "id"            => repo.owner_id,
         "login"         => "svenfuchs" },
       "last_build"      => {
@@ -103,6 +104,7 @@ describe Travis::API::V3::Services::Repository::Find do
       "private"         => true,
       "owner"           => {
         "@type"         => "user",
+        "@href"         => "/v3/user/#{repo.owner_id}",
         "id"            => repo.owner_id,
         "login"         => "svenfuchs" },
       "last_build"      => {
@@ -172,6 +174,7 @@ describe Travis::API::V3::Services::Repository::Find do
       "private"         => true,
       "owner"           => {
         "@type"         => "user",
+        "@href"         => "/v3/user/#{repo.owner_id}",
         "id"            => repo.owner_id,
         "login"         => "svenfuchs" },
       "last_build"      => {
@@ -247,6 +250,7 @@ describe Travis::API::V3::Services::Repository::Find do
       "private"         => true,
       "owner"           => {
         "@type"         => "user",
+        "@href"         => "/v3/user/#{repo.owner_id}",
         "id"            => repo.owner_id,
         "login"         => "svenfuchs" },
       "last_build"      => {

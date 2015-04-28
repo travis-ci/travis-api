@@ -49,6 +49,7 @@ describe Travis::API::V3::Services::Owner::Find do
           "last_build"      => nil,
           "owner"           => {
             "@type"         => "organization",
+            "@href"         => "/v3/org/#{org.id}",
             "id"            => org.id,
             "login"         => "example-org"},
           "default_branch"  => {
@@ -89,6 +90,7 @@ describe Travis::API::V3::Services::Owner::Find do
           "last_build"      => nil,
           "owner"           => {
             "@type"         => "organization",
+            "@href"         => "/v3/org/#{org.id}",
             "id"            => org.id,
             "login"         => "example-org"},
           "default_branch"  => {

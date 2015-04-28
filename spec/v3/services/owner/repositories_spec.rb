@@ -27,6 +27,7 @@ describe Travis::API::V3::Services::Owner::Repositories do
         "private"         => true,
         "owner"           => {
           "@type"         => "user",
+          "@href"         => "/v3/user/#{repo.owner_id}",
           "id"            => repo.owner_id,
           "login"         => "svenfuchs" },
         "last_build"      => {

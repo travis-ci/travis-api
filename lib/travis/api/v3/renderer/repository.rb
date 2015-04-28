@@ -11,8 +11,10 @@ module Travis::API::V3
 
     def owner
       return model.owner if include? 'repository.owner'.freeze
+      owner_href = Renderer.href(model.owner_type.downcase.to_sym, id: model.owner_id, script_name: script_name)
       {
         :@type        => model.owner_type && model.owner_type.downcase,
+        :@href        => owner_href,
         :id           => model.owner_id,
         :login        => model.owner_name
       }
