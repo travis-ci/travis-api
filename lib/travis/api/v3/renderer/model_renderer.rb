@@ -57,6 +57,10 @@ module Travis::API::V3
       include.include?(field)
     end
 
+    def query(type)
+      Queries[type].new({}, type, includes: include)
+    end
+
     def render(representation)
       if included.include? model
         return REDUNDANT unless href

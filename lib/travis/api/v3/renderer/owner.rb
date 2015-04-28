@@ -17,7 +17,8 @@ module Travis::API::V3
     end
 
     def repositories
-      access_control.visible_repositories(@model.repositories)
+      repositories = query(:repositories).for_owner(@model)
+      access_control.visible_repositories(repositories)
     end
   end
 end

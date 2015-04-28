@@ -26,9 +26,10 @@ module Travis::API::V3
 
     attr_reader :params, :main_type
 
-    def initialize(params, main_type)
+    def initialize(params, main_type, includes = nil)
       @params    = params
       @main_type = main_type.to_s
+      @includes  = includes
     end
 
     def perform_async(identifier, *args)
