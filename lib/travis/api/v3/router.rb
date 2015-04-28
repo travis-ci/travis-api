@@ -21,7 +21,7 @@ module Travis::API::V3
       result          = service.run
       render(result, env_params, env)
     rescue Error => error
-      result  = Result.new(:error, error)
+      result  = Result.new(access_control, :error, error)
       headers = error.status == 404 ? CASCADE : {}
       V3.response(result.render(env_params, env), headers, status: error.status)
     end

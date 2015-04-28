@@ -61,9 +61,13 @@ module Travis::API::V3
       self.class.result_type
     end
 
+    def result(*args)
+      Result.new(access_control, *args)
+    end
+
     def run
       not_found unless result = run!
-      result = Result.new(result_type, result) unless result.is_a? Result
+      result = result(result_type, result) unless result.is_a? Result
       result
     end
 
@@ -75,7 +79,7 @@ module Travis::API::V3
 
     def accepted(**payload)
       payload[:resource_type] ||= result_type
-      Result.new(:accepted, payload, status: 202)
+      result(:accepted, payload, status: 202)
     end
 
     def not_implemented
