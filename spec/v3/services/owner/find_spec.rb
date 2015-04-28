@@ -47,11 +47,7 @@ describe Travis::API::V3::Services::Owner::Find do
           "active"          => false,
           "private"         => false,
           "last_build"      => nil,
-          "owner"           => {
-            "@type"         => "organization",
-            "@href"         => "/v3/org/#{org.id}",
-            "id"            => org.id,
-            "login"         => "example-org"},
+          "owner"           => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"  => {
             "@type"         => "branch",
             "@href"         => "/v3/repo/#{repo.id}/branch/master",
@@ -88,11 +84,7 @@ describe Travis::API::V3::Services::Owner::Find do
           "active"          => false,
           "private"         => false,
           "last_build"      => nil,
-          "owner"           => {
-            "@type"         => "organization",
-            "@href"         => "/v3/org/#{org.id}",
-            "id"            => org.id,
-            "login"         => "example-org"},
+          "owner"           => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"  => {
             "@type"         => "branch",
             "@href"         => "/v3/repo/#{repo.id}/branch/master",

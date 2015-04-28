@@ -29,8 +29,11 @@ module Travis::API::V3
         end
 
         def name
-          return super unless caller_locations.first.base_label == 'add_constraints'.freeze
-          @constraint_name ||= super.sub("#{parent}::", ''.freeze)
+          caller_locations.first.base_label == 'add_constraints'.freeze ? polymorphic_name : super
+        end
+
+        def polymorphic_name
+          @polymorfic_name ||= name.sub("#{parent}::", ''.freeze)
         end
       end
 
