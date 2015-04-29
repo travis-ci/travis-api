@@ -10,13 +10,14 @@ describe Travis::API::V3::Services::Owner::Find do
       before  { get("/v3/owner/example-org")     }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"      => "organization",
-        "@href"      => "/v3/org/#{org.id}",
-        "id"         => org.id,
-        "login"      => "example-org",
-        "name"       => nil,
-        "github_id"  => nil,
-        "avatar_url" => nil
+        "@type"        => "organization",
+        "@href"        => "/v3/org/#{org.id}",
+        "@permissions" => { "read"=>true, "sync"=>false },
+        "id"           => org.id,
+        "login"        => "example-org",
+        "name"         => nil,
+        "github_id"    => nil,
+        "avatar_url"   => nil
       }}
     end
 
@@ -31,6 +32,7 @@ describe Travis::API::V3::Services::Owner::Find do
       example { expect(JSON.load(body)).to be == {
         "@type"             => "organization",
         "@href"             => "/v3/org/#{org.id}",
+        "@permissions"      => { "read"=>true, "sync"=>false },
         "id"                => org.id,
         "login"             => "example-org",
         "name"              => nil,
@@ -73,6 +75,7 @@ describe Travis::API::V3::Services::Owner::Find do
       example { expect(JSON.load(body)).to be == {
         "@type"             => "organization",
         "@href"             => "/v3/org/#{org.id}",
+        "@permissions"      => { "read"=>true, "sync"=>false },
         "id"                => org.id,
         "login"             => "example-org",
         "name"              => nil,
@@ -108,13 +111,14 @@ describe Travis::API::V3::Services::Owner::Find do
       before  { get("/v3/owner/example-ORG")     }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"      => "organization",
-        "@href"      => "/v3/org/#{org.id}",
-        "id"         => org.id,
-        "login"      => "example-org",
-        "name"       => nil,
-        "github_id"  => nil,
-        "avatar_url" => nil
+        "@type"        => "organization",
+        "@href"        => "/v3/org/#{org.id}",
+        "@permissions" => { "read"=>true, "sync"=>false },
+        "id"           => org.id,
+        "login"        => "example-org",
+        "name"         => nil,
+        "github_id"    => nil,
+        "avatar_url"   => nil
       }}
     end
 
@@ -126,13 +130,14 @@ describe Travis::API::V3::Services::Owner::Find do
       before  { get("/v3/owner/example-org?organization.id=#{other.id}") }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"      => "organization",
-        "@href"      => "/v3/org/#{org.id}",
-        "id"         => org.id,
-        "login"      => "example-org",
-        "name"       => nil,
-        "github_id"  => nil,
-        "avatar_url" => nil
+        "@type"        => "organization",
+        "@href"        => "/v3/org/#{org.id}",
+        "@permissions" => { "read"=>true, "sync"=>false },
+        "id"           => org.id,
+        "login"        => "example-org",
+        "name"         => nil,
+        "github_id"    => nil,
+        "avatar_url"   => nil
       }}
     end
   end

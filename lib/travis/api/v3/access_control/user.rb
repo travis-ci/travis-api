@@ -25,6 +25,10 @@ module Travis::API::V3
 
     protected
 
+    def organization_writable?(organization)
+      organization.members.include? user
+    end
+
     def repository_writable?(repository)
       permission?(:push, repository)
     end
