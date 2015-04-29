@@ -3,6 +3,7 @@ module Travis::API::V3
     def run!(activate = false)
       raise LoginRequired unless access_control.logged_in? or access_control.full_access?
       raise NotFound      unless repository = find(:repository)
+      check_access(repository)
 
       admin = access_control.admin_for(repository)
 
@@ -10,6 +11,10 @@ module Travis::API::V3
       repository.update_attributes(active: activate)
 
       repository
+    end
+
+    def check_access(repository)
+      access_control.permissions(repository).disable!
     end
   end
 end
