@@ -36,6 +36,11 @@ module Travis::API::V3
       list.select { |r| visible?(r) }
     end
 
+    def permissions(object)
+      return unless factory = permission_class(object.class)
+      factory.new(self, object)
+    end
+
     protected
 
     def build_visible?(build)
@@ -78,13 +83,22 @@ module Travis::API::V3
       send(method, object) if respond_to?(method, true)
     end
 
-    @@method_for_cache = Tool::ThreadLocal.new
+
+    @@unknown_permission     = Object.new
+    @@permission_class_cache = Tool::ThreadLocal.new
+    @@method_for_cache       = Tool::ThreadLocal.new
+
+    def permission_class(klass)
+      result = @@permission_class_cache[klass] ||= Permissions[normailze_type(klass), false] || @@unknown_permission
+      result unless result == @@unknown_permission
+    end
 
     def method_for(type, method)
-      @@method_for_cache[[type, method]] ||= begin
-        prefix = type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore
-        "#{prefix}_#{method}"
-      end
+      @@method_for_cache[[type, method]] ||= "#{normailze_type(type)}_#{method}"
+    end
+
+    def normailze_type(type)
+      type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore.to_sym
     end
   end
 end

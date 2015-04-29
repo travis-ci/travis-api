@@ -30,7 +30,6 @@ module Travis
       WrongCredentials    = ClientError        .create('access denied',  status: 403)
       LoginRequired       = ClientError        .create('login required', status: 403)
       InsufficientAccess  = ClientError        .create(status: 403)
-      PushAccessRequired  = InsufficientAccess .create('push access required')
       WrongParams         = ClientError        .create('wrong parameters')
       ServerError         = Error              .create(status: 500)
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
