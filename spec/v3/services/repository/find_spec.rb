@@ -10,6 +10,11 @@ describe Travis::API::V3::Services::Repository::Find do
     example    { expect(parsed_body).to be == {
       "@type"           => "repository",
       "@href"           => "/v3/repo/#{repo.id}",
+      "@permissions"    => {
+        "read"          => true,
+        "enable"        => false,
+        "disable"       => false,
+        "create_request"=> false},
       "id"              =>  repo.id,
       "name"            =>  "minimal",
       "slug"            =>  "svenfuchs/minimal",
@@ -95,6 +100,11 @@ describe Travis::API::V3::Services::Repository::Find do
     example       { expect(parsed_body).to be == {
       "@type"           => "repository",
       "@href"           => "/v3/repo/#{repo.id}",
+      "@permissions"    => {
+        "read"          => true,
+        "enable"        => false,
+        "disable"       => false,
+        "create_request"=> false},
       "id"              =>  repo.id,
       "name"            =>  "minimal",
       "slug"            =>  "svenfuchs/minimal",
@@ -165,6 +175,11 @@ describe Travis::API::V3::Services::Repository::Find do
     example { expect(parsed_body).to be == {
       "@type"           => "repository",
       "@href"           => "/v3/repo/#{repo.id}",
+      "@permissions"    => {
+        "read"          => true,
+        "enable"        => true,
+        "disable"       => true,
+        "create_request"=> true},
       "id"              =>  repo.id,
       "name"            =>  "minimal",
       "slug"            =>  "svenfuchs/minimal",
@@ -241,6 +256,11 @@ describe Travis::API::V3::Services::Repository::Find do
     example { expect(parsed_body).to be == {
       "@type"           => "repository",
       "@href"           => "/v3/repo/#{repo.id}",
+      "@permissions"    => {
+        "read"          => true,
+        "enable"        => true,
+        "disable"       => true,
+        "create_request"=> true},
       "id"              =>  repo.id,
       "name"            =>  "minimal",
       "slug"            =>  "svenfuchs/minimal",

@@ -49,8 +49,10 @@ describe Travis::API::V3::Services::Requests::Create do
     example { expect(last_response.status).to be == 403 }
     example { expect(JSON.load(body)).to      be ==     {
       "@type"         => "error",
-      "error_type"    => "push_access_required",
-      "error_message" => "push access required",
+      "error_type"    => "insufficient_access",
+      "error_message" => "operation requires create_request access to repository",
+      "resource_type" => "repository",
+      "permission"    => "create_request",
       "repository"    => {
         "@type"       => "repository",
         "@href"       => "/repo/#{repo.id}",

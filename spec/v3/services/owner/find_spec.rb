@@ -39,6 +39,11 @@ describe Travis::API::V3::Services::Owner::Find do
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
+          "@permissions"    => {
+            "read"          => true,
+            "enable"        => false,
+            "disable"       => false,
+            "create_request"=> false},
           "id"              => repo.id,
           "name"            => "example-repo",
           "slug"            => "example-org/example-repo",
@@ -76,6 +81,11 @@ describe Travis::API::V3::Services::Owner::Find do
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
+          "@permissions"    => {
+            "read"          => true,
+            "enable"        => false,
+            "disable"       => false,
+            "create_request"=> false},
           "id"              => repo.id,
           "name"            => "example-repo",
           "slug"            => "example-org/example-repo",

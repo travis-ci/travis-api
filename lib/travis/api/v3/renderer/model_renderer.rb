@@ -43,7 +43,7 @@ module Travis::API::V3
       @script_name    = script_name
       @include        = include
       @included       = included
-      @access_control = access_control
+      @access_control = access_control || AccessControl::Anonymous.new
     end
 
     def href
@@ -74,13 +74,17 @@ module Travis::API::V3
       nested_included = included + [model]
       modes           = {}
 
+      if permissions = access_control.permissions(model) and (representation != :minimal or include? :@permissions)
+        result[:@permissions] = permissions.to_h
+      end
+
       if include.any?
         excepted_type = result[:@type].to_s
         fields        = fields.dup
       end
 
       include.each do |qualified_field|
-        raise WrongParams, 'illegal format for include parameter'.freeze unless /\A(?<prefix>\w+)\.(?<field>\w+)\Z$/ =~ qualified_field
+        raise WrongParams, 'illegal format for include parameter'.freeze unless /\A(?<prefix>\w+)\.(?<field>@?\w+)\Z$/ =~ qualified_field
         next if prefix != excepted_type
         raise WrongParams, 'no field %p to include'.freeze % qualified_field unless self.class.available_attributes.include?(field)
 
