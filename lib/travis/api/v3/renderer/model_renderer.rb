@@ -86,11 +86,14 @@ module Travis::API::V3
       include.each do |qualified_field|
         raise WrongParams, 'illegal format for include parameter'.freeze unless /\A(?<prefix>\w+)\.(?<field>@?\w+)\Z$/ =~ qualified_field
         next if prefix != excepted_type
-        raise WrongParams, 'no field %p to include'.freeze % qualified_field unless self.class.available_attributes.include?(field)
 
-        field &&= field.to_sym
-        fields << field unless fields.include?(field)
-        modes[field] = :standard
+        if self.class.available_attributes.include?(field)
+          field &&= field.to_sym
+          fields << field unless fields.include?(field)
+          modes[field] = :standard
+        else
+          raise WrongParams, 'no field %p to include'.freeze % qualified_field unless result.keys.any? { |k| k.to_s == field.to_s }
+        end
       end
   
       fields.each do |field|
