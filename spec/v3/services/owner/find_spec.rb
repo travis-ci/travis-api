@@ -151,15 +151,16 @@ describe Travis::API::V3::Services::Owner::Find do
       before  { get("/v3/owner/example-user")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"      => "user",
-        "@href"      => "/v3/user/#{user.id}",
-        "id"         => user.id,
-        "login"      => "example-user",
-        "name"       => nil,
-        "github_id"  => nil,
-        "avatar_url" => nil,
-        "is_syncing" => nil,
-        "synced_at"  => nil
+        "@type"        => "user",
+        "@href"        => "/v3/user/#{user.id}",
+        "@permissions" => {"read"=>true, "sync"=>false},
+        "id"           => user.id,
+        "login"        => "example-user",
+        "name"         => nil,
+        "github_id"    => nil,
+        "avatar_url"   => nil,
+        "is_syncing"   => nil,
+        "synced_at"    => nil
       }}
     end
 
@@ -167,15 +168,16 @@ describe Travis::API::V3::Services::Owner::Find do
       before  { get("/v3/owner/example-USER")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"      => "user",
-        "@href"      => "/v3/user/#{user.id}",
-        "id"         => user.id,
-        "login"      => "example-user",
-        "name"       => nil,
-        "github_id"  => nil,
-        "avatar_url" => nil,
-        "is_syncing" => nil,
-        "synced_at"  => nil
+        "@type"        => "user",
+        "@href"        => "/v3/user/#{user.id}",
+        "@permissions" => {"read"=>true, "sync"=>false},
+        "id"           => user.id,
+        "login"        => "example-user",
+        "name"         => nil,
+        "github_id"    => nil,
+        "avatar_url"   => nil,
+        "is_syncing"   => nil,
+        "synced_at"    => nil
       }}
     end
 
@@ -187,15 +189,16 @@ describe Travis::API::V3::Services::Owner::Find do
       before  { get("/v3/owner/example-user?user.id=#{other.id}") }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"      => "user",
-        "@href"      => "/v3/user/#{user.id}",
-        "id"         => user.id,
-        "login"      => "example-user",
-        "name"       => nil,
-        "github_id"  => nil,
-        "avatar_url" => nil,
-        "is_syncing" => nil,
-        "synced_at"  => nil
+        "@type"        => "user",
+        "@href"        => "/v3/user/#{user.id}",
+        "@permissions" => {"read"=>true, "sync"=>false},
+        "id"           => user.id,
+        "login"        => "example-user",
+        "name"         => nil,
+        "github_id"    => nil,
+        "avatar_url"   => nil,
+        "is_syncing"   => nil,
+        "synced_at"    => nil
       }}
     end
   end

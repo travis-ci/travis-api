@@ -29,6 +29,10 @@ module Travis::API::V3
       organization.members.include? user
     end
 
+    def user_writable?(user)
+      user == self.user
+    end
+
     def repository_writable?(repository)
       permission?(:push, repository)
     end
