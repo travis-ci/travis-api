@@ -8,5 +8,7 @@ module Travis::API::V3
     def subscription
       super if Features.use_subscriptions?
     end
+
+    alias members users
   end
 end

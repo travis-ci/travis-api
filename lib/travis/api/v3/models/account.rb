@@ -23,6 +23,20 @@ module Travis::API::V3
       subscription.present? and subscription.active?
     end
 
+    def members
+      @members ||= if owner.respond_to? :members
+        owner.members
+      else
+        [owner]
+      end
+    end
+
+    def reload
+      @members = nil
+      owner.reload
+      self
+    end
+
     alias_method :educational, :educational?
     alias_method :subscribed,  :subscribed?
   end
