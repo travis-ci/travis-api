@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Repositories::ForCurrentUser do
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
-  let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-  let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-  before        { Permission.create(repository: repo, user: repo.owner, pull: true) }
-  before        { repo.update_attribute(:private, true)                             }
-  after         { repo.update_attribute(:private, false)                            }
+  let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)             }
+  let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                    }}
+  before        { Permission.create(repository: repo, user: repo.owner, pull: true, push: true) }
+  before        { repo.update_attribute(:private, true)                                         }
+  after         { repo.update_attribute(:private, false)                                        }
 
   describe "private repository, private API, authenticated as user with access" do
     before  { get("/v3/repos", {}, headers)    }
@@ -18,6 +18,11 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
       "repositories"      => [{
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo.id}",
+        "@permissions"    => {
+          "read"          => true,
+          "enable"        => true,
+          "disable"       => true,
+          "create_request"=> true},
         "id"              =>  repo.id,
         "name"            =>  "minimal",
         "slug"            =>  "svenfuchs/minimal",

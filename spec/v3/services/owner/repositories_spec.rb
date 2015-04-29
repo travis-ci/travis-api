@@ -18,6 +18,11 @@ describe Travis::API::V3::Services::Owner::Repositories do
       "repositories"      => [{
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo.id}",
+        "@permissions"    => {
+          "read"          => true,
+          "enable"        => false,
+          "disable"       => false,
+          "create_request"=> false},
         "id"              =>  repo.id,
         "name"            =>  "minimal",
         "slug"            =>  "svenfuchs/minimal",

@@ -2,11 +2,12 @@ module Travis::API::V3
   class Permissions::Generic
     def self.access_rights
       @access_rights ||= begin
-        rights = superclass.respond_to?(:access_rights) ? superclass.access_rights.dup : []
-        public_instance_methods(false) do |method|
+        rights = superclass.respond_to?(:access_rights) ? superclass.access_rights.dup : {}
+        public_instance_methods(false).each do |method|
           next unless method.to_s =~ /^([^_].+)\?$/
-          rights << $1.to_sym
+          rights[$1.to_sym] = method
         end
+        rights
       end
     end
 
@@ -44,6 +45,10 @@ module Travis::API::V3
 
     def read?
       access_control.visible? object
+    end
+
+    def to_h
+      self.class.access_rights.map { |k,v| [k,!!public_send(v)] }.to_h
     end
 
     private
