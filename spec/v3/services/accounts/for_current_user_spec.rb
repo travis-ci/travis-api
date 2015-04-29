@@ -22,6 +22,7 @@ describe Travis::API::V3::Services::Accounts::ForCurrentUser do
       "@href"          => "/v3/accounts",
       "accounts"       => [{
         "@type"        => "account",
+        "@permissions" => { "read"=>true },
         "id"           => repo.owner.github_id,
         "subscribed"   => false,
         "educational"  => false,
@@ -31,6 +32,7 @@ describe Travis::API::V3::Services::Accounts::ForCurrentUser do
           "id"         => repo.owner_id,
           "login"      => "svenfuchs" }},
        {"@type"        => "account",
+        "@permissions" => { "read"=>true },
         "id"           => 42,
         "subscribed"   => false,
         "educational"  => false,

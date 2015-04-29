@@ -43,6 +43,10 @@ module Travis::API::V3
 
     protected
 
+    def account_visible?(account)
+      user and account.members.include?(user)
+    end
+
     def build_visible?(build)
       visible? build.repository
     end
