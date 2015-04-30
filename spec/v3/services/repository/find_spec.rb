@@ -47,6 +47,7 @@ describe Travis::API::V3::Services::Repository::Find do
           "number"      => "3",
           "state"       => "configured",
           "duration"    => nil,
+          "event_type"  => "push",
           "started_at"  => "2010-11-12T13:00:00Z",
           "finished_at" => nil}}
     }}
@@ -137,6 +138,7 @@ describe Travis::API::V3::Services::Repository::Find do
           "number"      => "3",
           "state"       => "configured",
           "duration"    => nil,
+          "event_type"  => "push",
           "started_at"  => "2010-11-12T13:00:00Z",
           "finished_at" => nil}}
     }}
@@ -212,6 +214,7 @@ describe Travis::API::V3::Services::Repository::Find do
           "number"      => "3",
           "state"       => "configured",
           "duration"    => nil,
+          "event_type"  => "push",
           "started_at"  => "2010-11-12T13:00:00Z",
           "finished_at" => nil}}
     }}
@@ -293,6 +296,7 @@ describe Travis::API::V3::Services::Repository::Find do
           "number"      => "3",
           "state"       => "configured",
           "duration"    => nil,
+          "event_type"  => "push",
           "started_at"  => "2010-11-12T13:00:00Z",
           "finished_at" => nil}}
     }}
