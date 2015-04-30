@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::FindRepository do
+describe Travis::API::V3::Services::Organizations::ForCurrentUser do
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
@@ -18,13 +18,17 @@ describe Travis::API::V3::Services::FindRepository do
     before  { get("/v3/orgs", {}, headers)     }
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
-      "@type"             => "organizations",
-      "organizations"     => [{
-        "@type"           => "organization",
-        "id"              => org.id,
-        "login"           => "example-org",
-        "name"            => nil,
-        "github_id"       => nil
+      "@type"          => "organizations",
+      "@href"          => "/v3/orgs",
+      "organizations"  => [{
+        "@type"        => "organization",
+        "@href"        => "/v3/org/#{org.id}",
+        "@permissions" => { "read"=>true, "sync"=>true },
+        "id"           => org.id,
+        "login"        => "example-org",
+        "name"         => nil,
+        "github_id"    => nil,
+        "avatar_url"   => nil
       }]
     }}
   end

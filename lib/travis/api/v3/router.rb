@@ -1,5 +1,6 @@
 module Travis::API::V3
   class Router
+    CASCADE = { 'X-Cascade'.freeze => 'pass'.freeze }
     include Travis::API::V3
     attr_accessor :routes
 
@@ -16,16 +17,17 @@ module Travis::API::V3
 
       raise NotFound unless factory
 
-      service         = factory.new(access_control, env_params.merge(params))
+      service         = factory.new(access_control, factory.filter_params(env_params).merge(params))
       result          = service.run
-      render(result, env_params)
+      render(result, env_params, env)
     rescue Error => error
-      result = Result.new(:error, error)
-      V3.response(result.render, 'X-Cascade'.freeze => 'pass'.freeze, status: error.status)
+      result  = Result.new(access_control, :error, error)
+      headers = error.status == 404 ? CASCADE : {}
+      V3.response(result.render(env_params, env), headers, status: error.status)
     end
 
-    def render(result, env_params)
-      V3.response(result.render)
+    def render(result, env_params, env)
+      V3.response(result.render(env_params, env), status: result.status)
     end
 
     def service_index(env)

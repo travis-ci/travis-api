@@ -44,7 +44,7 @@ describe Travis::Api::App::Cors do
     end
 
     it 'sets Access-Control-Allow-Headers' do
-      headers['Access-Control-Allow-Headers'].should == "Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent"
+      headers['Access-Control-Allow-Headers'].should == "Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent, Travis-API-Version"
     end
   end
 end

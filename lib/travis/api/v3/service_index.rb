@@ -25,17 +25,23 @@ module Travis::API::V3
     def render_json
       resources = { }
       routes.resources.each do |resource|
-        resources[resource.identifier] ||= {}
+        data = resources[resource.identifier] ||= { :@type => :resource, :actions => {} }
+        if renderer = Renderer[resource.identifier, false] and renderer.respond_to? :available_attributes
+          data[:attributes] = renderer.available_attributes
+        end
         resource.services.each do |(request_method, sub_route), service|
-          service &&= service.to_s.sub(/^#{resource.identifier}_|_#{resource.identifier}$/, ''.freeze)
-          list      = resources[resource.identifier][service] ||= []
-          pattern   = sub_route ? resource.route + sub_route : resource.route
+          list    = resources[resource.identifier][:actions][service] ||= []
+          pattern = sub_route ? resource.route + sub_route : resource.route
+          factory = Services[resource.identifier][service]
           pattern.to_templates.each do |template|
-            list << { 'request-method'.freeze => request_method, 'uri-template'.freeze => prefix + template }
+            params    = factory.params if request_method == 'GET'.freeze
+            params  &&= params.reject { |p| p.start_with? ?@.freeze }
+            template += "{?#{params.sort.join(?,)}}" if params and params.any?
+            list << { :@type => :template, :request_method => request_method, :uri_template => prefix + template }
           end
         end
       end
-      { resources: resources }
+      { :@type => :home, :@href => "#{prefix}/", :resources => resources }
     end
 
     def render_json_home
@@ -43,9 +49,8 @@ module Travis::API::V3
 
       routes.resources.each do |resource|
         resource.services.each do |(request_method, sub_route), service|
-          service  &&= service.to_s.sub(/_#{resource.identifier}$/, ''.freeze)
-          pattern    = sub_route ? resource.route + sub_route : resource.route
-          relation   = "http://schema.travis-ci.com/rel/#{resource.identifier}/#{service}"
+          pattern  = sub_route ? resource.route + sub_route : resource.route
+          relation = "http://schema.travis-ci.com/rel/#{resource.identifier}/#{service}"
           pattern.to_templates.each do |template|
             relations[relation]           ||= {}
             relations[relation][template] ||= { allow: [], vars: template.scan(/{\+?([^}]+)}/).flatten }

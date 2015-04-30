@@ -8,5 +8,14 @@ module Travis::API::V3
     def self.for_request(*)
       new
     end
+
+    def visible_repositories(list)
+      return [] unless unrestricted_api?
+      list.where(private: false)
+    end
+
+    def admin_for(repository)
+      raise LoginRequired
+    end
   end
 end

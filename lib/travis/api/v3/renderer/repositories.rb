@@ -1,9 +1,6 @@
 module Travis::API::V3
-  module Renderer::Repositories
-    extend self
-
-    def render(repositories)
-      Renderer[:collection].render(:repositories, :repository, repositories)
-    end
+  class Renderer::Repositories < Renderer::CollectionRenderer
+    type           :repositories
+    collection_key :repositories
   end
 end

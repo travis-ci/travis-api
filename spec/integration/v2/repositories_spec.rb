@@ -5,6 +5,24 @@ describe 'Repos' do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  it 'returns repositories by ids with ids=1,2,3 format' do
+    repos = Repository.all
+    ids = repos[0..1].map(&:id)
+    response = get "/repos?ids=#{ids.join(',')}", {}, headers
+    body = JSON.parse(response.body)
+
+    body['repos'].map { |r| r['id'] }.should == ids
+  end
+
+  it 'returns repositories by ids with ids[] format' do
+    repos = Repository.all
+    ids = repos[0..1].map(&:id)
+    response = get "/repos?ids[]=#{ids[0]}&ids[]=#{ids[1]}", {}, headers
+    body = JSON.parse(response.body)
+
+    body['repos'].map { |r| r['id'] }.should == ids
+  end
+
   describe 'with authenticated user' do
     let(:user)    { User.where(login: 'svenfuchs').first }
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
@@ -132,6 +150,30 @@ describe 'Repos' do
     result = get('/repos/foo/bar', {}, 'HTTP_ACCEPT' => 'application/json; version=2')
     result.status.should == 404
     JSON.parse(result.body).should == { 'file' => 'not found' }
+  end
+
+  it 'GET /repos/svenfuchs/minimal/branches' do
+    response = get '/repos/svenfuchs/minimal/branches', {}, headers
+    response.should deliver_json_for(repo.last_finished_builds_by_branches, version: 'v2', type: 'branches')
+  end
+
+  it 'GET /repos/1/branches' do
+    response = get "/repos/#{repo.id}/branches", {}, headers
+    response.should deliver_json_for(repo.last_finished_builds_by_branches, version: 'v2', type: 'branches')
+  end
+
+  it 'GET /repos/svenfuchs/minimal/branches/mybranch' do
+    mybuild = Factory(:build, repository: repo, state: :started, commit: Factory(:commit, branch: 'mybranch'), request: Factory(:request, event_type: 'push'))
+    response = get "/repos/svenfuchs/minimal/branches/mybranch", {}, headers
+    body = JSON.parse(response.body)
+    body['branch']['id'].should == mybuild.id
+  end
+
+  it 'GET /repos/svenfuchs/minimal/branches/my/branch' do
+    mybuild = Factory(:build, repository: repo, state: :started, commit: Factory(:commit, branch: 'my/branch'), request: Factory(:request, event_type: 'push'))
+    response = get "/repos/svenfuchs/minimal/branches/my/branch", {}, headers
+    body = JSON.parse(response.body)
+    body['branch']['id'].should == mybuild.id
   end
 
   describe 'GET /repos/svenfuchs/minimal.png?branch=foo,bar' do

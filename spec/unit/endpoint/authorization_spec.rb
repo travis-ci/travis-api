@@ -138,9 +138,18 @@ describe Travis::Api::App::Endpoint::Authorization do
     end
 
     it "errors if no token is given" do
+      User.stubs(:find_by_github_id).with(111).returns(user)
       post("/auth/github").should_not be_ok
       last_response.status.should == 422
       body.should_not include("access_token")
+    end
+
+    it "errors if github throws an error" do
+      GH.stubs(:with).raises(GH::Error)
+      post("/auth/github", github_token: 'foo bar').should_not be_ok
+      last_response.status.should == 403
+      body.should_not include("access_token")
+      body.should include("not a Travis user")
     end
   end
 end
