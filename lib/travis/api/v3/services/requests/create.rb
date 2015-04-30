@@ -8,6 +8,7 @@ module Travis::API::V3
     params "request", "user", :config, :message, :branch
 
     def run
+      p "!!!!!!!!!!! #{self.class.name} !!!!!!!!!!!"
       raise LoginRequired unless access_control.logged_in? or access_control.full_access?
       raise NotFound      unless repository = find(:repository)
       access_control.permissions(repository).create_request!
@@ -19,6 +20,7 @@ module Travis::API::V3
       raise RequestLimitReached, repository: repository if remaining == 0
 
       payload = query.schedule(repository, user)
+      p payload
       accepted(remaining_requests: remaining, repository: repository, request: payload)
     end
 

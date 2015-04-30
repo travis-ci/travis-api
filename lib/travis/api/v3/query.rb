@@ -38,6 +38,7 @@ module Travis::API::V3
         identifier.to_s.pluralize.freeze
       ]
 
+      p('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => args)
       ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => args)
     end
 
