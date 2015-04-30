@@ -1,6 +1,5 @@
 module Travis::API::V3
   class Router
-    CASCADE = { 'X-Cascade'.freeze => 'pass'.freeze }
     include Travis::API::V3
     attr_accessor :routes
 
@@ -22,8 +21,7 @@ module Travis::API::V3
       render(result, env_params, env)
     rescue Error => error
       result  = Result.new(access_control, :error, error)
-      headers = error.status == 404 ? CASCADE : {}
-      V3.response(result.render(env_params, env), headers, status: error.status)
+      V3.response(result.render(env_params, env), {}, status: error.status)
     end
 
     def render(result, env_params, env)
