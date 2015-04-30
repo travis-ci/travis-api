@@ -17,9 +17,15 @@ module Travis::API::V3
     def filter(list)
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
-      list = list.includes(:owner)              if includes? 'repository.owner'.freeze
-      list = list.includes(:last_build)         if includes? 'repository.last_build'.freeze
+      list = list.includes(:owner) if includes? 'repository.owner'.freeze
+
+      if includes? 'repository.last_build'.freeze
+        list = list.includes(:last_build)
+        list = list.includes(last_build: :commit) if includes? 'build.commit'.freeze
+      end
+
       list = list.includes(default_branch: :last_build)
+      list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
       list
     end
   end
