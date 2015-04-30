@@ -18,7 +18,13 @@ class Travis::Api::App
       end
 
       post '/', scope: :private do
-        respond_with service(:schedule_request, params[:request])
+        if params[:request] && params[:request][:repository]
+          respond_with service(:schedule_request, params[:request])
+        else
+          # DEPRECATED: this will be removed by 1st of December
+          Metriks.meter("api.request.restart").mark
+          respond_with service(:reset_model, params)
+        end
       end
     end
   end
