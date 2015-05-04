@@ -1,5 +1,7 @@
 module Travis::API::V3
   class Services::Owner::Find < Service
+    params :active, :private, prefix: :repository
+
     def result_type
       @result_type ||= super
     end
