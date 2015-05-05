@@ -12,8 +12,9 @@ module Travis::API::V3
     end
 
     def self.representation(name, *fields)
+      location = caller_locations.first
       fields.each do |field|
-        class_eval "def #{field}; @model.#{field}; end" unless method_defined?(field)
+        class_eval "def #{field}; @model.#{field}; end", location.path, location.lineno unless method_defined?(field)
         available_attributes << field.to_s
       end
       representations[name] ||= []

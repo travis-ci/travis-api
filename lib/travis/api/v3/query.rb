@@ -26,7 +26,7 @@ module Travis::API::V3
 
     attr_reader :params, :main_type
 
-    def initialize(params, main_type, includes = nil)
+    def initialize(params, main_type, includes: nil)
       @params    = params
       @main_type = main_type.to_s
       @includes  = includes
@@ -43,7 +43,7 @@ module Travis::API::V3
 
     def includes?(key)
       @includes ||= @params['include'.freeze].to_s.split(?,.freeze)
-      @includes.include? key
+      key.include?(?.) ? @includes.include?(key) : @includes.any? { |k| k.start_with? key }
     end
 
     def bool(value)

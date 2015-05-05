@@ -19,7 +19,7 @@ module Travis::API::V3
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
 
-      if includes? 'repository.last_build'.freeze
+      if includes? 'repository.last_build'.freeze or includes? 'build'.freeze
         list = list.includes(:last_build)
         list = list.includes(last_build: :commit) if includes? 'build.commit'.freeze
       end

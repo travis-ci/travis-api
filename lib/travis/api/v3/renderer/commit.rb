@@ -3,7 +3,7 @@ require 'travis/api/v3/renderer/model_renderer'
 module Travis::API::V3
   class Renderer::Commit < Renderer::ModelRenderer
     representation(:minimal,  :id, :sha, :ref, :message, :compare_url, :committed_at)
-    representation(:standard, *representations[:minimal], :repository, :branch, :committer, :author)
+    representation(:standard, *representations[:minimal], :committer, :author)
 
     def sha
       model.commit
