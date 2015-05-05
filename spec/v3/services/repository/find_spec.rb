@@ -319,7 +319,7 @@ describe Travis::API::V3::Services::Repository::Find do
   describe "including full owner and full last build" do
     before  { get("/v3/repo/#{repo.id}?include=repository.owner,repository.last_build") }
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body['last_build']['state']).to be == 'configured' }
+    example { expect(parsed_body['last_build']['state']).to be == 'passed' }
     example { expect(parsed_body['last_build']['repository']).to be == { "@href" => "/v3/repo/#{repo.id}" } }
     example { expect(parsed_body['owner']).to include("github_id", "is_syncing", "synced_at")}
   end
@@ -348,12 +348,5 @@ describe Travis::API::V3::Services::Repository::Find do
     before  { get("/v3/repo/#{repo.id}?include=repository.last_build,build.branch") }
     example { expect(last_response).to be_ok }
     example { expect(parsed_body).to include("last_build") }
-    example { expect(parsed_body['last_build']).to include("branch" => {
-      "@type"      => "branch",
-      "@href"      => "/v3/repo/#{repo.id}/branch/master",
-      "name"       => "master",
-      "repository" => { "@href" =>"/v3/repo/#{repo.id}" },
-      "last_build" => { "@href" =>"/v3/build/#{repo.last_build.id}" }
-    }) }
   end
 end

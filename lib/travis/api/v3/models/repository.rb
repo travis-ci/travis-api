@@ -8,10 +8,7 @@ module Travis::API::V3
     has_many :users,       through:   :permissions
 
     belongs_to :owner, polymorphic: true
-
-    has_one :last_build,
-      class_name: 'Travis::API::V3::Models::Build'.freeze,
-      order:      'id DESC'.freeze
+    belongs_to :last_build, class_name: 'Travis::API::V3::Models::Build'.freeze
 
     has_one :default_branch,
       foreign_key: [:repository_id, :name],

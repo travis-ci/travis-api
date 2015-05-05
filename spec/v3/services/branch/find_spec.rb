@@ -18,8 +18,8 @@ describe Travis::API::V3::Services::Repository::Find do
         "slug"           => "svenfuchs/minimal"},
       "last_build"       => {
         "@type"          => "build",
-        "@href"          => "/v3/build/#{repo.last_build.id}",
-        "id"             => repo.last_build.id,
+        "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
+        "id"             => repo.default_branch.last_build.id,
         "number"         => "3",
         "state"          => "configured",
         "duration"       => nil,
