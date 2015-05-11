@@ -30,6 +30,7 @@ gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
 gem 'micro_migrations'
 gem 'simplecov'
 gem 'skylight', '~> 0.6.0.beta.1'
+gem 'stackprof'
 
 group :test do
   gem 'rspec',         '~> 2.13'

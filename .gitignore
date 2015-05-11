@@ -5,3 +5,4 @@ vendor
 config/skylight.yml
 .coverage
 *.env
+tmp

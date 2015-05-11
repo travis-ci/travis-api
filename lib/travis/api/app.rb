@@ -79,6 +79,13 @@ module Travis::Api
 
     def initialize
       @app = Rack::Builder.app do
+
+        if ENV['STACKPROF']
+          require 'stackprof'
+          puts "Setting up stack profiling."
+          use StackProf::Middleware, enabled: true, save_every: 1, mode: :object
+        end
+
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
