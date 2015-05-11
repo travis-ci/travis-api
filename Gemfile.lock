@@ -22,7 +22,7 @@ GIT
 
 GIT
   remote: git://github.com/rkh/mustermann.git
-  revision: 01df7fe671838d6caadac278d9704b5cd3c7b999
+  revision: fa22e2cf4cfdb57f452c366eac66f241827b7e9c
   specs:
     mustermann (0.4.0)
       tool (~> 0.2)
