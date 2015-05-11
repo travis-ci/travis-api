@@ -18,6 +18,13 @@ module Travis::API::V3
     # in ActiveRecord::Base#[]=, so we don't break other code by accidentially writing the prefixed version to the
     # database.
     module BelongsTo
+      class BaseClass
+        attr_reader :name
+        def initialize(klass)
+          @name = klass.polymorphic_name
+        end
+      end
+
       module ClassMethods
         def polymorfic_foreign_types
           @polymorfic_foreign_types ||= []
@@ -28,8 +35,9 @@ module Travis::API::V3
           super
         end
 
-        def name
-          caller_locations.first.base_label == 'add_constraints'.freeze ? polymorphic_name : super
+        def base_class
+          return super unless caller_locations.first.base_label == 'add_constraints'.freeze
+          @base_class ||= BaseClass.new(super)
         end
 
         def polymorphic_name
