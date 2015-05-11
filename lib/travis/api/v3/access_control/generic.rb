@@ -8,11 +8,11 @@ module Travis::API::V3
     end
 
     def visible?(object)
-      full_access? or dispatch(object)
+      full_access? or dispatch(object, :visible?)
     end
 
     def writable?(object)
-      full_access? or dispatch(object)
+      full_access? or dispatch(object, :writable?)
     end
 
     def admin_for(repository)
@@ -82,7 +82,7 @@ module Travis::API::V3
 
     private
 
-    def dispatch(object, method = caller_locations.first.base_label)
+    def dispatch(object, method)
       method = method_for(object.class, method)
       send(method, object) if respond_to?(method, true)
     end
@@ -98,7 +98,8 @@ module Travis::API::V3
     end
 
     def method_for(type, method)
-      @@method_for_cache[[type, method]] ||= "#{normailze_type(type)}_#{method}"
+      type_cache = @@method_for_cache[type] ||= {}
+      type_cache[method]                    ||= "#{normailze_type(type)}_#{method}"
     end
 
     def normailze_type(type)
