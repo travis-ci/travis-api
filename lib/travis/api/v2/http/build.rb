@@ -31,6 +31,7 @@ module Travis
                 'repository_id' => build.repository_id,
                 'commit_id' => build.commit_id,
                 'number' => build.number,
+                'event_type' => build.event_type,
                 'pull_request' => build.pull_request?,
                 'pull_request_title' => build.pull_request_title,
                 'pull_request_number' => build.pull_request_number,
