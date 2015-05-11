@@ -80,10 +80,12 @@ module Travis::Api
     def initialize
       @app = Rack::Builder.app do
 
-        if ENV['STACKPROF']
+        if stackprof = ENV['STACKPROF']
           require 'stackprof'
-          puts "Setting up stack profiling."
-          use StackProf::Middleware, enabled: true, save_every: 1, mode: :object
+          modes = ['wall', 'cpu', 'object', 'custom']
+          mode  = modes.include?(stackprof) ? stackprof.to_sym : :cpu
+          Travis.logger.info "Setting up profiler: #{mode}"
+          use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         end
 
         extend StackInstrumentation
