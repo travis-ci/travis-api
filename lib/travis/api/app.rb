@@ -1,4 +1,8 @@
+# these things need to go first
 require 'conditional_skylight'
+require 'active_record_postgres_variables'
+
+# now actually load travis
 require 'travis'
 require 'travis/model'
 require 'travis/support/amqp'
