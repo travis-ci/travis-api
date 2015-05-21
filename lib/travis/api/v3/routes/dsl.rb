@@ -33,8 +33,8 @@ module Travis::API::V3
       @current_resource = resource_was
     end
 
-    def route(value)
-      current_resource.route = Mustermann.new(prefix) + Mustermann.new(value)
+    def route(value, options = {})
+      current_resource.route = Mustermann.new(prefix) + Mustermann.new(value, options)
     end
 
     def get(*args)

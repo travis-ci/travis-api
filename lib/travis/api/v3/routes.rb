@@ -15,7 +15,8 @@ module Travis::API::V3
     end
 
     resource :repository do
-      route '/repo/{repository.id}'
+      route '/repo/({repository.id}|{repository.slug})',
+            capture: { :"repository.id" => :digit }
       get :find
 
       post :enable,  '/enable'
