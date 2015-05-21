@@ -151,12 +151,12 @@ describe Travis::API::V3::ServiceIndex do
     describe 'with /v3 prefix' do
       let(:headers) { { 'HTTP_ACCEPT' => 'application/json-home' } }
       let(:path) { '/v3/' }
-      specify(:resources) { expect(json['resources']).to include("http://schema.travis-ci.com/rel/repository/find") }
+      specify(:resources) { expect(json['resources']).to include("http://schema.travis-ci.com/rel/repository/find/by_repository.id") }
     end
 
     describe 'with Travis-API-Version header' do
       let(:headers) { { 'HTTP_ACCEPT' => 'application/json-home', 'HTTP_TRAVIS_API_VERSION' => '3' } }
-      specify(:resources) { expect(json['resources']).to include("http://schema.travis-ci.com/rel/repository/find") }
+      specify(:resources) { expect(json['resources']).to include("http://schema.travis-ci.com/rel/repository/find/by_repository.id") }
     end
   end
 end

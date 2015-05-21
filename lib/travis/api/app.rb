@@ -108,7 +108,6 @@ module Travis::Api
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
         use Raven::Rack if Travis.env == 'production' || Travis.env == 'staging'
-        use Rack::Protection::PathTraversal
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache

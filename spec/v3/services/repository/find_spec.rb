@@ -4,6 +4,23 @@ describe Travis::API::V3::Services::Repository::Find do
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
   let(:parsed_body) { JSON.load(body) }
 
+  describe "fetching a public repository by slug" do
+    before     { get("/v3/repo/svenfuchs%2Fminimal")     }
+    example    { expect(last_response).to be_ok }
+    example    { expect(parsed_body['slug']).to be == 'svenfuchs/minimal' }
+  end
+
+  describe "fetching a non-existing repository by slug" do
+    before     { get("/v3/repo/svenfuchs%2Fminimal1")     }
+    example { expect(last_response).to be_not_found }
+    example { expect(parsed_body).to be == {
+      "@type"         => "error",
+      "error_type"    => "not_found",
+      "error_message" => "repository not found (or insufficient access)",
+      "resource_type" => "repository"
+    }}
+  end
+
   describe "public repository" do
     before     { get("/v3/repo/#{repo.id}")     }
     example    { expect(last_response).to be_ok }
