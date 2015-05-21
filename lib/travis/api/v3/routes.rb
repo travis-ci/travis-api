@@ -15,8 +15,8 @@ module Travis::API::V3
     end
 
     resource :repository do
-      route '/repo/({repository.id}|{repository.slug})',
-            capture: { :"repository.id" => :digit }
+      capture id: :digit, slug: %r{[^/]+%2[fF][^/]+}
+      route '/repo/({repository.id}|{repository.slug})'
       get :find
 
       post :enable,  '/enable'
@@ -40,17 +40,20 @@ module Travis::API::V3
     end
 
     resource :build do
+      capture id: :digit
       route '/build/{build.id}'
       get :find
     end
 
     resource :user do
+      capture id: :digit
       route '/user'
       get :current
       get :find, '/{user.id}'
     end
 
     resource :organization do
+      capture id: :digit
       route '/org/{organization.id}'
       get :find
     end

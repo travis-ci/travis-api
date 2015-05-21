@@ -33,8 +33,23 @@ module Travis::API::V3
       @current_resource = resource_was
     end
 
-    def route(value, options = {})
-      current_resource.route = Mustermann.new(prefix) + Mustermann.new(value, options)
+    def route(value)
+      current_resource.route = mustermann(prefix) + mustermann(value)
+    end
+
+    def mustermann(*input)
+      Mustermann.new(*input, **mustermann_options)
+    end
+
+    def mustermann_options
+      @mustermann_options ||= { capture: {} }
+    end
+
+    def capture(mapping)
+      mapping.each_pair do |key, value|
+        key = "#{current_resource.identifier}.#{key}" if current_resource and not key.to_s.include?(?.)
+        mustermann_options[:capture][key.to_sym] = value
+      end
     end
 
     def get(*args)
