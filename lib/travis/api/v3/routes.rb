@@ -12,6 +12,7 @@ module Travis::API::V3
       route '/owner/({owner.login}|{user.login}|{organization.login})'
       get :find
       get :repositories, '/repos'
+      get :pending_jobs, '/queue'
     end
 
     resource :repository do
