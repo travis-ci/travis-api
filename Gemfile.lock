@@ -50,7 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 34d98f2d6b05edfcb7b853c651d38e7ba2d6a046
+  revision: a5ff36f72068b848d1aa266b415ff1531306dda5
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -191,7 +191,7 @@ GEM
     i18n (0.7.0)
     ice_nine (0.11.1)
     journey (1.0.4)
-    json (1.8.2)
+    json (1.8.3)
     kgio (2.9.2)
     listen (1.0.3)
       rb-fsevent (>= 0.9.3)
