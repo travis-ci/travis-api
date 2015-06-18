@@ -28,6 +28,7 @@ describe Travis::Api::App::Endpoint::Users do
       'created_at'     => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'synced_at'      => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'correct_scopes' => true,
+      'channels'       => ["user-1", "repo-1", "repo-2", "repo-3"]
     }
   end
 
