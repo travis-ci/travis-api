@@ -8,6 +8,7 @@ describe Travis::Api::App::Endpoint::Users do
     User.stubs(:find_by_github_id).returns(user)
     User.stubs(:find).returns(user)
     user.stubs(:repositories).returns(stub(administratable: stub(select: [repository])))
+    user.stubs(:repository_ids).returns([1, 2, 3])
   end
 
   it 'needs to be authenticated' do
