@@ -32,7 +32,12 @@ module Travis
                 'synced_at' => format_date(user.synced_at),
                 'correct_scopes' => user.correct_scopes?,
                 'created_at' => format_date(user.created_at),
+                'channels' => channels
               }
+            end
+
+            def channels
+              ["user-#{user.id}"] + user.repository_ids.map { |id| "repo-#{id}" }
             end
         end
       end

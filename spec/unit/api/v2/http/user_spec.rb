@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::Api::V2::Http::User do
   include Travis::Testing::Stubs, Support::Formats
 
+  let(:user) { stub_user(repository_ids: [1, 4, 8]) }
   let(:data) { Travis::Api::V2::Http::User.new(user).data }
 
   it 'user' do
@@ -17,6 +18,7 @@ describe Travis::Api::V2::Http::User do
       'synced_at' => json_format_time(Time.now.utc - 1.hour),
       'correct_scopes' => true,
       'created_at' => json_format_time(Time.now.utc - 2.hours),
+      'channels' => ["user-1", "repo-1", "repo-4", "repo-8"]
     }
   end
 end
