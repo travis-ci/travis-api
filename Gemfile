@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-ruby '2.1.2' if ENV.key?('DYNO')
+ruby '2.1.6' if ENV.key?('DYNO')
 
 gem 's3',              github: 'travis-ci/s3'
 
@@ -31,6 +31,8 @@ gem 'micro_migrations'
 gem 'simplecov'
 gem 'skylight', '~> 0.6.0.beta.1'
 gem 'stackprof'
+
+gem 'jemalloc'
 
 group :test do
   gem 'rspec',         '~> 2.13'

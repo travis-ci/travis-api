@@ -190,6 +190,7 @@ GEM
     httpclient (2.6.0.1)
     i18n (0.7.0)
     ice_nine (0.11.1)
+    jemalloc (1.0.1)
     journey (1.0.4)
     json (1.8.3)
     kgio (2.9.2)
@@ -339,6 +340,7 @@ DEPENDENCIES
   factory_girl (~> 2.4.0)
   foreman
   gh
+  jemalloc
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
   micro_migrations
@@ -367,3 +369,6 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
+
+BUNDLED WITH
+   1.10.5
