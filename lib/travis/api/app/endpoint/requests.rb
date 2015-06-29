@@ -19,7 +19,7 @@ class Travis::Api::App
 
       post '/', scope: :private do
         if params[:request] && params[:request][:repository]
-          respond_with service(:schedule_request, params[:request])
+          status 404
         else
           # DEPRECATED: this will be removed by 1st of December
           Metriks.meter("api.request.restart").mark
