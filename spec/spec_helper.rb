@@ -66,6 +66,7 @@ RSpec.configure do |c|
     ::Redis.connect(url: Travis.config.redis.url).flushdb
     Travis.config.oauth2 ||= {}
     Travis.config.oauth2.scope = "user:email,public_repo"
+    Travis.config.repository.ssl_key.size = 1024
     set_app Travis::Api::App.new
   end
 
