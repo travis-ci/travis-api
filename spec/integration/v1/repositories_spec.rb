@@ -34,6 +34,11 @@ describe 'v1 repos' do
     response.should redirect_to('/repositories/svenfuchs/minimal.json')
   end
 
+  it 'GET /svenfuchs/minimal' do
+    response = get '/svenfuchs/minimal.json', {}, 'HTTP_ACCEPT' => 'application/json; version=2'
+    response.status.should == 404
+  end
+
   it 'GET /svenfuchs/minimal/cc.xml' do
     response = get '/svenfuchs/minimal/cc.xml'
     response.should redirect_to('/repositories/svenfuchs/minimal/cc.xml')

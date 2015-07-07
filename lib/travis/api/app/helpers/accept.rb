@@ -82,7 +82,7 @@ class Travis::Api::App
       end
 
       def accept_version
-        @accept_version ||= request.accept.join =~ HEADER_FORMAT && "v#{$1}" || DEFAULT_VERSION
+        @accept_version ||= accept_entries.map(&:version).compact.first || DEFAULT_VERSION
       end
 
       def accept_format
