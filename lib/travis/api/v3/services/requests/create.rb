@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Services::Requests::Create < Service
     TIME_FRAME = 1.hour
-    LIMIT      = 10
+    LIMIT      = 50
     private_constant :TIME_FRAME, :LIMIT
 
     result_type :request
