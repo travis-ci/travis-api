@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Request < Query
-    params :message, :branch, :config, prefix: :request
+    params :message, :branch, :config, :token, prefix: :request
 
     def schedule(repository, user)
       raise ServerError, 'repository does not have a github_id'.freeze unless repository.github_id
@@ -14,7 +14,7 @@ module Travis::API::V3
         config:     config || {}
       }
 
-      perform_async(:build_request, type: 'api'.freeze, credentials: {}, payload: JSON.dump(payload))
+      perform_async(:build_request, type: 'api'.freeze, credentials: { token: token }, payload: JSON.dump(payload))
       payload
     end
   end
