@@ -5,7 +5,7 @@ module Travis::API::V3
     private_constant :TIME_FRAME, :LIMIT
 
     result_type :request
-    params "request", "user", :config, :message, :branch
+    params "request", "user", :config, :message, :branch, :token
 
     def run
       raise LoginRequired unless access_control.logged_in? or access_control.full_access?

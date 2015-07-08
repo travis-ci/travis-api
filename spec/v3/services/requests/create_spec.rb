@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Requests::Create do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last[:payload]).deep_symbolize_keys }
+  let(:sidekiq_params) { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
   before { repo.requests.each(&:delete) }
 
   before do
@@ -229,6 +230,13 @@ describe Travis::API::V3::Services::Requests::Create do
         "error_type"    => "request_limit_reached",
         "error_message" => "request limit reached for resource",
         "repository"    => {"@type"=>"repository", "@href"=>"/repo/#{repo.id}", "id"=>repo.id, "slug"=>"svenfuchs/minimal" }
+      }}
+    end
+
+    describe "passing the token in params" do
+      let(:params) {{ request: { token: 'foo-bar' }}}
+      example { expect(sidekiq_params[:credentials]).to be == {
+        token: 'foo-bar'
       }}
     end
   end
