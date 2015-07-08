@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Services::Requests::Create < Service
     TIME_FRAME = 1.hour
-    LIMIT      = 50
+    LIMIT      = 10
     private_constant :TIME_FRAME, :LIMIT
 
     result_type :request
@@ -22,10 +22,14 @@ module Travis::API::V3
       accepted(remaining_requests: remaining, repository: repository, request: payload)
     end
 
+    def limit
+      Travis.config.requests_create_api_limit || LIMIT
+    end
+
     def remaining_requests(repository)
-      return LIMIT if access_control.full_access?
+      return limit if access_control.full_access?
       count = query(:requests).count(repository, TIME_FRAME)
-      count > LIMIT ? 0 : LIMIT - count
+      count > limit ? 0 : limit - count
     end
   end
 end
