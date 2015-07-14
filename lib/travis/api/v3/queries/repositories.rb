@@ -3,7 +3,7 @@ module Travis::API::V3
     params :active, :private, prefix: :repository
 
     def for_member(user)
-      all.joins(:users).where(users: user_condition(user))
+      all.joins(:users).where(users: user_condition(user), invalidated_at: nil)
     end
 
     def for_owner(owner)
@@ -15,6 +15,7 @@ module Travis::API::V3
     end
 
     def filter(list)
+      list = list.where(invalidated_at: nil)
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
