@@ -50,7 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 57095d5dc5583e1bba54a0db48bb195374f55838
+  revision: 3bf0ef70894375578a9af55e0eb9566eb9424294
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -145,7 +145,7 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    backports (3.6.4)
+    backports (3.6.5)
     builder (3.0.4)
     bunny (0.8.0)
     celluloid (0.16.0)
@@ -214,7 +214,7 @@ GEM
     mime-types (1.25.1)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.11.1)
+    multi_json (1.11.2)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
@@ -229,7 +229,7 @@ GEM
       httpclient (~> 2.5)
       multi_json (~> 1.0)
       signature (~> 0.1.8)
-    rack (1.4.6)
+    rack (1.4.7)
     rack-attack (4.2.0)
       rack
     rack-protection (1.5.3)
