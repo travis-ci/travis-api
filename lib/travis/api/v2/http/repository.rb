@@ -24,6 +24,7 @@ module Travis
               {
                 'id' => repository.id,
                 'slug' => repository.slug,
+                'active' => repository.active,
                 'description' => repository.description,
                 'last_build_id' => repository.last_build_id,
                 'last_build_number' => repository.last_build_number,
