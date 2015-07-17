@@ -11,6 +11,7 @@ describe Travis::Api::V2::Http::Repository do
       'id' => repository.id,
       'slug' => 'svenfuchs/minimal',
       'description' => 'the repo description',
+      'active' => true,
       'last_build_id' => 1,
       'last_build_number' => 2,
       'last_build_started_at' => json_format_time(Time.now.utc - 1.minute),
