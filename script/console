@@ -3,7 +3,6 @@
 
 require 'bundler/setup'
 require 'travis/api/app'
-require 'pry'
 
 class Travis::Console
   include Travis::Services::Helpers
@@ -20,4 +19,10 @@ V3 = Travis::API::V3
 Travis::Api::App.setup
 console = Travis::Console.new
 methods = Travis::Console.instance_methods - Object.instance_methods
-console.pry(quiet: true, prompt: Pry::SIMPLE_PROMPT)
+
+if $stdin.tty?
+  require 'pry'
+  console.pry(quiet: true, prompt: Pry::SIMPLE_PROMPT)
+else
+  console.instance_eval $stdin.read
+end
