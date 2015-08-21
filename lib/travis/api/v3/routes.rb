@@ -39,6 +39,11 @@ module Travis::API::V3
       get :for_current_user
     end
 
+    resource :builds do
+      route '/builds'
+      get  :find
+    end
+
     resource :build do
       capture id: :digit
       route '/build/{build.id}'
