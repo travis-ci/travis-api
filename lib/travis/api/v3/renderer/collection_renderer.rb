@@ -28,14 +28,14 @@ module Travis::API::V3
     end
 
     def fields
-      fields              = { :"@type" => type }
-      fields[:@href]      = href if href
-      fields[:pagination] = pagination_info if meta_data.include? :pagination
+      fields               = { :"@type" => type }
+      fields[:@href]       = href if href
+      fields[:@pagination] = pagination_info if meta_data.include? :pagination
       fields
     end
 
     def pagination_info
-      return meta_data[:@pagination] unless href
+      return meta_data[:pagination] unless href
       generator = V3::Paginator::URLGenerator.new(href, **meta_data[:pagination])
       meta_data[:pagination].merge generator.to_h
     end
