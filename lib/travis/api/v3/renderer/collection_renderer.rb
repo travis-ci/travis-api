@@ -17,19 +17,34 @@ module Travis::API::V3
       available_attributes << value
     end
 
-    def initialize(list, href: nil, included: [], **options)
-      @href     = href
-      @options  = options
-      @list     = list
-      @included = included
+    attr_reader :href, :options, :list, :included, :meta_data
+
+    def initialize(list, href: nil, included: [], meta_data: {}, **options)
+      @href      = href
+      @options   = options
+      @list      = list
+      @included  = included
+      @meta_data = meta_data
+    end
+
+    def fields
+      fields              = { :"@type" => type }
+      fields[:@href]      = href if href
+      fields[:pagination] = pagination_info if meta_data.include? :pagination
+      fields
+    end
+
+    def pagination_info
+      return meta_data[:@pagination] unless href
+      generator = V3::Paginator::URLGenerator.new(href, **meta_data[:pagination])
+      meta_data[:pagination].merge generator.to_h
     end
 
     def render
-      result                 = { :"@type" => type }
-      result[:@href]         = @href if @href
-      included               = @included.dup
-      result[collection_key] = @list.map do |entry|
-        rendered = render_entry(entry, included: included, mode: :standard, **@options)
+      result                 = fields
+      included               = self.included.dup
+      result[collection_key] = list.map do |entry|
+        rendered = render_entry(entry, included: included, mode: :standard, **options)
         included << entry
         rendered
       end
