@@ -130,14 +130,19 @@ describe Travis::API::V3::Services::Owner::Find do
       before  { get("/v3/owner/example-org?organization.id=#{other.id}") }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"        => "organization",
-        "@href"        => "/v3/org/#{org.id}",
-        "@permissions" => { "read"=>true, "sync"=>false },
-        "id"           => org.id,
-        "login"        => "example-org",
-        "name"         => nil,
-        "github_id"    => nil,
-        "avatar_url"   => nil
+        "@type"          => "organization",
+        "@href"          => "/v3/org/#{org.id}",
+        "@permissions"   => { "read"=>true, "sync"=>false },
+        "id"             => org.id,
+        "login"          => "example-org",
+        "name"           => nil,
+        "github_id"      => nil,
+        "avatar_url"     => nil,
+        "@warnings"      => [{
+          "@type"        => "warning",
+          "message"      => "query parameter organization.id not whitelisted, ignored",
+          "warning_type" => "ignored_parameter",
+          "parameter"    => "organization.id"}]
       }}
     end
   end
@@ -198,7 +203,12 @@ describe Travis::API::V3::Services::Owner::Find do
         "github_id"    => nil,
         "avatar_url"   => nil,
         "is_syncing"   => nil,
-        "synced_at"    => nil
+        "synced_at"    => nil,
+        "@warnings"      => [{
+          "@type"        => "warning",
+          "message"      => "query parameter user.id not whitelisted, ignored",
+          "warning_type" => "ignored_parameter",
+          "parameter"    => "user.id"}]
       }}
     end
   end
