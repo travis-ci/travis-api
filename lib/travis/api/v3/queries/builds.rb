@@ -6,7 +6,9 @@ module Travis::API::V3
 
     def filter(list)
       # filtering by branch, type, etc would go here
-      list.includes(:commit).includes(branch: :last_build)
+      list = list.includes(:commit).includes(branch: :last_build).includes(:repository)
+      list = list.includes(branch: { last_build: :commit }) if includes? 'build.commit'.freeze
+      list
     end
   end
 end
