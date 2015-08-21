@@ -56,7 +56,7 @@ module Travis::API::V3
     end
 
     def organization_visible?(organization)
-      unrestricted_api?
+      full_access? or public_api?
     end
 
     def user_visible?(user)

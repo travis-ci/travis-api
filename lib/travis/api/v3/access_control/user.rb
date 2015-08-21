@@ -25,6 +25,10 @@ module Travis::API::V3
 
     protected
 
+    def organization_visible?(organization)
+      super or organization_writable?(organization)
+    end
+
     def organization_writable?(organization)
       organization.members.include? user
     end
