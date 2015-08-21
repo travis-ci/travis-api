@@ -51,6 +51,10 @@ module Travis::API::V3
       !!value
     end
 
+    def list(value)
+      value.split(?,.freeze)
+    end
+
     def user_condition(value)
       case value
       when String       then { login: value    }
