@@ -11,6 +11,7 @@ module Travis::API::V3
         return @%<name>s = @params['%<prefix>s.%<name>s'.freeze]            if @params.include? '%<prefix>s.%<name>s'.freeze
         return @%<name>s = @params['%<prefix>s'.freeze]['%<name>s'.freeze]  if @params.include? '%<prefix>s'.freeze and @params['%<prefix>s'.freeze].is_a? Hash
         return @%<name>s = @params['%<name>s'.freeze]                       if (@params['@type'.freeze] || @main_type) == '%<prefix>s'.freeze
+        return @%<name>s = @params['%<name>s'.freeze]                       if %<check_type>p and (@params['@type'.freeze] || @main_type) == '%<type>s'.freeze
         @%<name>s = nil
       end
 
@@ -20,8 +21,9 @@ module Travis::API::V3
     RUBY
 
     def self.params(*list, prefix: nil)
-      prefix ||= name[/[^:]+$/].underscore
-      list.each { |e| class_eval(@@params_accessor % { name: e, prefix: prefix }) }
+      type     = name[/[^:]+$/].underscore
+      prefix ||= type.to_s
+      list.each { |e| class_eval(@@params_accessor % { name: e, prefix: prefix, type: type, check_type: type != prefix }) }
     end
 
     attr_reader :params, :main_type
