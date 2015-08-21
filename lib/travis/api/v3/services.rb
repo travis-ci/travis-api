@@ -5,6 +5,7 @@ module Travis::API::V3
     Accounts      = Module.new { extend Services }
     Branch        = Module.new { extend Services }
     Build         = Module.new { extend Services }
+    Builds      = Module.new { extend Services }
     Organization  = Module.new { extend Services }
     Organizations = Module.new { extend Services }
     Owner         = Module.new { extend Services }

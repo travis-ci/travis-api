@@ -28,6 +28,11 @@ module Travis::API::V3
         post :create
       end
 
+      resource :builds do
+        route '/builds'
+        get  :find
+      end
+
       resource :branch do
         route '/branch/{branch.name}'
         get :find
