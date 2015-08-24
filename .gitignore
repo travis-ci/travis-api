@@ -1,8 +1,8 @@
 config/travis.yml
+config/database.yml
 .yardoc
 log/
 vendor
 config/skylight.yml
 .coverage
 *.env
-tmp
