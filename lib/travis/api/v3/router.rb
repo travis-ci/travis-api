@@ -16,8 +16,11 @@ module Travis::API::V3
 
       raise NotFound unless factory
 
-      service         = factory.new(access_control, factory.filter_params(env_params).merge(params))
+      filtered        = factory.filter_params(env_params)
+      service         = factory.new(access_control, filtered.merge(params))
       result          = service.run
+
+      env_params.each_key { |key| result.ignored_param(key, reason: "not whitelisted".freeze) unless filtered.include?(key) }
       render(result, env_params, env)
     rescue Error => error
       result  = Result.new(access_control, :error, error)

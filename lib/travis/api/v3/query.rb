@@ -4,24 +4,35 @@ module Travis::API::V3
 
     # generate from eval to avoid additional string allocations on every params access
     @@params_accessor = <<-RUBY
-      attr_writer :%<name>s
+      attr_writer :%<method_name>s
 
-      def %<name>s
-        return @%<name>s if defined? @%<name>s
-        return @%<name>s = @params['%<prefix>s.%<name>s'.freeze]            if @params.include? '%<prefix>s.%<name>s'.freeze
-        return @%<name>s = @params['%<prefix>s'.freeze]['%<name>s'.freeze]  if @params.include? '%<prefix>s'.freeze and @params['%<prefix>s'.freeze].is_a? Hash
-        return @%<name>s = @params['%<name>s'.freeze]                       if (@params['@type'.freeze] || @main_type) == '%<prefix>s'.freeze
-        @%<name>s = nil
+      def %<method_name>s
+        return @%<method_name>s if defined? @%<method_name>s
+        return @%<method_name>s = @params['%<prefix>s.%<name>s'.freeze]            if @params.include? '%<prefix>s.%<name>s'.freeze
+        return @%<method_name>s = @params['%<prefix>s'.freeze]['%<name>s'.freeze]  if @params.include? '%<prefix>s'.freeze and @params['%<prefix>s'.freeze].is_a? Hash
+        return @%<method_name>s = @params['%<name>s'.freeze]                       if (@params['@type'.freeze] || @main_type) == '%<prefix>s'.freeze
+        return @%<method_name>s = @params['%<name>s'.freeze]                       if %<check_type>p and (@params['@type'.freeze] || @main_type) == '%<type>s'.freeze
+        @%<method_name>s = nil
       end
 
-      def %<name>s!
-        %<name>s or raise WrongParams, 'missing %<prefix>s.%<name>s'.freeze
+      def %<method_name>s!
+        %<method_name>s or raise WrongParams, 'missing %<prefix>s.%<name>s'.freeze
       end
     RUBY
 
-    def self.params(*list, prefix: nil)
-      prefix ||= name[/[^:]+$/].underscore
-      list.each { |e| class_eval(@@params_accessor % { name: e, prefix: prefix }) }
+    def self.params(*list, prefix: nil, method_name: nil)
+      type       = name[/[^:]+$/].underscore
+      prefix   ||= type.to_s
+      check_type = method_name.nil? and type != prefix
+      list.each do |entry|
+        class_eval(@@params_accessor % {
+          name:        entry,
+          prefix:      prefix,
+          type:        type,
+          method_name: method_name || entry,
+          check_type:  check_type
+        })
+      end
     end
 
     attr_reader :params, :main_type
@@ -49,6 +60,10 @@ module Travis::API::V3
     def bool(value)
       return false if value == 'false'.freeze
       !!value
+    end
+
+    def list(value)
+      value.split(?,.freeze)
     end
 
     def user_condition(value)

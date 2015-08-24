@@ -24,6 +24,19 @@ module Travis::API::V3
       @params
     end
 
+    def self.paginate(**options)
+      params("limit".freeze, "offset".freeze)
+      @paginator = Paginator.new(**options)
+    end
+
+    def self.paginator
+      @paginator ||= nil
+    end
+
+    def self.paginate?
+      !!@paginator if defined? @paginator
+    end
+
     attr_accessor :access_control, :params
 
     def initialize(access_control, params)
@@ -68,7 +81,15 @@ module Travis::API::V3
     def run
       not_found unless result = run!
       result = result(result_type, result) unless result.is_a? Result
-      result
+      self.class.paginate? ? paginate(result) : result
+    end
+
+    def paginate(result)
+      p params
+      self.class.paginator.paginate(result,
+        limit:          params['limit'.freeze],
+        offset:         params['offset'.freeze],
+        access_control: access_control)
     end
 
     def params_for?(prefix)
