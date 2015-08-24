@@ -22,7 +22,7 @@ describe Travis::API::V3::Services::Builds::Find do
   end
 
   describe "builds on public repository" do
-    before     { get("/v3/repo/#{repo.id}/builds?limit=1")     }
+    before     { get("/v3/repo/#{repo.id}/builds?limit=1") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
       "@type"              => "builds",
