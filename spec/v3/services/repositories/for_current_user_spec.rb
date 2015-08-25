@@ -15,6 +15,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
     example { expect(JSON.load(body)).to be == {
       "@type"                => "repositories",
       "@href"                => "/v3/repos",
+      "@representation"    => "standard",
       "repositories"         => [{
         "@type"              => "repository",
         "@href"              => "/v3/repo/#{repo.id}",
