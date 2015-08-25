@@ -49,16 +49,17 @@ describe Travis::API::V3::Services::Requests::Create do
 
     example { expect(last_response.status).to be == 403 }
     example { expect(JSON.load(body)).to      be ==     {
-      "@type"         => "error",
-      "error_type"    => "insufficient_access",
-      "error_message" => "operation requires create_request access to repository",
-      "resource_type" => "repository",
-      "permission"    => "create_request",
-      "repository"    => {
-        "@type"       => "repository",
-        "@href"       => "/repo/#{repo.id}",
-        "id"          => repo.id,
-        "slug"        => "svenfuchs/minimal"}
+      "@type"              => "error",
+      "error_type"         => "insufficient_access",
+      "error_message"      => "operation requires create_request access to repository",
+      "resource_type"      => "repository",
+      "permission"         => "create_request",
+      "repository"         => {
+        "@type"            => "repository",
+        "@href"            => "/repo/#{repo.id}",
+        "@representation"  => "minimal",
+        "id"               => repo.id,
+        "slug"             => "svenfuchs/minimal"}
     }}
   end
 
@@ -89,10 +90,19 @@ describe Travis::API::V3::Services::Requests::Create do
     example { expect(JSON.load(body)).to      be ==     {
       "@type"              => "pending",
       "remaining_requests" => 10,
-      "repository"         => {"@type"=>"repository", "@href"=>"/repo/#{repo.id}", "id"=>repo.id, "slug"=>"svenfuchs/minimal"},
+      "repository"         => {
+        "@type"            => "repository",
+        "@href"            => "/repo/#{repo.id}",
+        "@representation"  => "minimal",
+        "id"               => repo.id,
+        "slug"             => "svenfuchs/minimal"},
       "request"            => {
-        "repository"       =>  {"id"=>repo.id, "owner_name"=>"svenfuchs", "name"=>"minimal"},
-        "user"             =>  {"id"=>repo.owner.id},
+        "repository"       =>  {
+          "id"             => repo.id,
+          "owner_name"     => "svenfuchs",
+          "name"           => "minimal"},
+        "user"             =>  {
+          "id"             => repo.owner.id},
         "message"          => nil,
         "branch"           => "master",
         "config"           => {}},
@@ -229,7 +239,7 @@ describe Travis::API::V3::Services::Requests::Create do
         "@type"         => "error",
         "error_type"    => "request_limit_reached",
         "error_message" => "request limit reached for resource",
-        "repository"    => {"@type"=>"repository", "@href"=>"/repo/#{repo.id}", "id"=>repo.id, "slug"=>"svenfuchs/minimal" }
+        "repository"    => {"@type"=>"repository", "@href"=>"/repo/#{repo.id}", "@representation"=>"minimal", "id"=>repo.id, "slug"=>"svenfuchs/minimal" }
       }}
     end
 

@@ -27,6 +27,7 @@ describe Travis::API::V3::Services::Repository::Find do
     example    { expect(parsed_body).to be == {
       "@type"              => "repository",
       "@href"              => "/v3/repo/#{repo.id}",
+      "@representation"    => "standard",
       "@permissions"       => {
         "read"             => true,
         "enable"           => false,
@@ -56,10 +57,12 @@ describe Travis::API::V3::Services::Repository::Find do
       "default_branch"     => {
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
+        "@representation"  => "minimal",
         "name"             => "master",
         "last_build"       => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{repo.last_build.id}",
+          "@representation"=> "minimal",
           "id"             => repo.last_build.id,
           "number"         => "3",
           "state"          => "configured",
@@ -119,6 +122,7 @@ describe Travis::API::V3::Services::Repository::Find do
     example       { expect(parsed_body).to be == {
       "@type"              => "repository",
       "@href"              => "/v3/repo/#{repo.id}",
+      "@representation"    => "standard",
       "@permissions"       => {
         "read"             => true,
         "enable"           => false,
@@ -148,10 +152,12 @@ describe Travis::API::V3::Services::Repository::Find do
       "default_branch"     => {
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
+        "@representation"  => "minimal",
         "name"             => "master",
         "last_build"       => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{repo.last_build.id}",
+          "@representation"=> "minimal",
           "id"             => repo.last_build.id,
           "number"         => "3",
           "state"          => "configured",
@@ -196,6 +202,7 @@ describe Travis::API::V3::Services::Repository::Find do
     example { expect(parsed_body).to be == {
       "@type"              => "repository",
       "@href"              => "/v3/repo/#{repo.id}",
+      "@representation"    => "standard",
       "@permissions"       => {
         "read"             => true,
         "enable"           => true,
@@ -225,10 +232,12 @@ describe Travis::API::V3::Services::Repository::Find do
       "default_branch"     => {
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
+        "@representation"  => "minimal",
         "name"             => "master",
         "last_build"       => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{repo.last_build.id}",
+          "@representation"=> "minimal",
           "id"             => repo.last_build.id,
           "number"         => "3",
           "state"          => "configured",
@@ -279,6 +288,7 @@ describe Travis::API::V3::Services::Repository::Find do
     example { expect(parsed_body).to be == {
       "@type"              => "repository",
       "@href"              => "/v3/repo/#{repo.id}",
+      "@representation"    => "standard",
       "@permissions"       => {
         "read"             => true,
         "enable"           => true,
@@ -308,10 +318,12 @@ describe Travis::API::V3::Services::Repository::Find do
       "default_branch"     => {
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
+        "@representation"  => "minimal",
         "name"             => "master",
         "last_build"       => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{repo.last_build.id}",
+          "@representation"=> "minimal",
           "id"             => repo.last_build.id,
           "number"         => "3",
           "state"          => "configured",

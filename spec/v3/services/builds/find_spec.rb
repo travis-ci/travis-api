@@ -36,8 +36,8 @@ describe Travis::API::V3::Services::Builds::Find do
         "next"             => {
           "@href"          => "/v3/repo/#{repo.id}/builds?limit=1&offset=1",
           "offset"         => 1,
-          "limit"          =>1},
-        "prev"             =>nil,
+          "limit"          => 1},
+        "prev"             => nil,
         "first"            => {
           "@href"          => "/v3/repo/#{repo.id}/builds?limit=1",
           "offset"         => 0,
@@ -49,6 +49,7 @@ describe Travis::API::V3::Services::Builds::Find do
       "builds"             => [{
         "@type"            => "build",
         "@href"            => "/v3/build/#{build.id}",
+        "@representation"  => "standard",
         "id"               => build.id,
         "number"           => "3",
         "state"            => "configured",
@@ -60,16 +61,19 @@ describe Travis::API::V3::Services::Builds::Find do
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
+          "@representation"=> "minimal",
           "id"             => repo.id,
-          "slug"=>"svenfuchs/minimal" },
+          "slug"           => "svenfuchs/minimal" },
         "branch"           => {
           "@type"          => "branch",
           "@href"          => "/v3/repo/#{repo.id}/branch/master",
+          "@representation"=> "minimal",
           "name"           => "master",
           "last_build"     => {
-            "@href"=>"/v3/build/#{build.id}" }},
+            "@href"        => "/v3/build/#{build.id}" }},
         "commit"           => {
           "@type"          => "commit",
+          "@representation"=> "minimal",
           "id"             => 5,
           "sha"            => "add057e66c3e1d59ef1f",
           "ref"            => "refs/heads/master",
@@ -112,6 +116,7 @@ describe Travis::API::V3::Services::Builds::Find do
       "builds"             => [{
         "@type"            => "build",
         "@href"            => "/v3/build/#{build.id}",
+        "@representation"  => "standard",
         "id"               => build.id,
         "number"           => "3",
         "state"            => "configured",
@@ -119,20 +124,23 @@ describe Travis::API::V3::Services::Builds::Find do
         "event_type"       => "push",
         "previous_state"   => "passed",
         "started_at"       => "2010-11-12T13:00:00Z",
-        "finished_at"      =>nil,
+        "finished_at"      => nil,
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
+          "@representation"=> "minimal",
           "id"             => repo.id,
           "slug"           => "svenfuchs/minimal"},
         "branch"           => {
           "@type"          => "branch",
           "@href"          => "/v3/repo/#{repo.id}/branch/master",
+          "@representation"=> "minimal",
           "name"           => "master",
           "last_build"     => {
             "@href"        => "/v3/build/#{build.id}"}},
         "commit"           => {
           "@type"          => "commit",
+          "@representation"=> "minimal",
           "id"             => 5,
           "sha"            => "add057e66c3e1d59ef1f",
           "ref"            => "refs/heads/master",

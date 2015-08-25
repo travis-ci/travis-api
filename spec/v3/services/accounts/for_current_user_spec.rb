@@ -18,29 +18,33 @@ describe Travis::API::V3::Services::Accounts::ForCurrentUser do
     before  { get("/v3/accounts", {}, headers) }
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
-      "@type"          => "accounts",
-      "@href"          => "/v3/accounts",
-      "accounts"       => [{
-        "@type"        => "account",
-        "@permissions" => { "read"=>true },
-        "id"           => repo.owner.github_id,
-        "subscribed"   => false,
-        "educational"  => false,
-        "owner"        => {
-          "@type"      => "user",
-          "@href"      => "/v3/user/#{repo.owner_id}",
-          "id"         => repo.owner_id,
-          "login"      => "svenfuchs" }},
-       {"@type"        => "account",
-        "@permissions" => { "read"=>true },
-        "id"           => 42,
-        "subscribed"   => false,
-        "educational"  => false,
-        "owner"        => {
-          "@type"      => "organization",
-          "@href"      => "/v3/org/#{org.id}",
-          "id"         => org.id,
-          "login"      => "example-org"}
+      "@type"               => "accounts",
+      "@href"               => "/v3/accounts",
+      "accounts"            => [{
+        "@type"             => "account",
+        "@representation"   =>"standard",
+        "@permissions"      => { "read"=>true },
+        "id"                => repo.owner.github_id,
+        "subscribed"        => false,
+        "educational"       => false,
+        "owner"             => {
+          "@type"           => "user",
+          "@href"           => "/v3/user/#{repo.owner_id}",
+          "@representation" =>"minimal",
+          "id"              => repo.owner_id,
+          "login"           => "svenfuchs" }},
+       {"@type"             => "account",
+        "@representation"   => "standard",
+        "@permissions"      => { "read"=>true },
+        "id"                => 42,
+        "subscribed"        => false,
+        "educational"       => false,
+        "owner"             => {
+          "@type"           => "organization",
+          "@href"           => "/v3/org/#{org.id}",
+          "@representation" => "minimal",
+          "id"              => org.id,
+          "login"           => "example-org"}
       }]
     }}
   end
