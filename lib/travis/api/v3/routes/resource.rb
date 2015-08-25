@@ -2,11 +2,12 @@ require 'mustermann'
 
 module Travis::API::V3
   class Routes::Resource
-    attr_accessor :identifier, :route, :services
+    attr_accessor :identifier, :route, :services, :meta_data
 
-    def initialize(identifier)
+    def initialize(identifier, **meta_data)
       @identifier = identifier
       @services   = {}
+      @meta_data  = meta_data
     end
 
     def add_service(request_method, service, sub_route = nil)

@@ -5,12 +5,22 @@ module Travis::API::V3
     DEFAULT_OPTIONS = {
       client_id:      Travis.config.oauth2.try(:client_id),
       client_secret:  Travis.config.oauth2.try(:client_secret),
+      scopes:         Travis.config.oauth2.try(:scope).to_s.split(?,),
       user_agent:     "Travis-API/3 Travis-CI/0.0.1 GH/#{GH::VERSION}",
       origin:         Travis.config.host,
       api_url:        Travis.config.github.api_url,
+      web_url:        Travis.config.github.api_url.gsub(%r{\A(https?://)(?:api\.)?([^/]+)(?:/.*)?\Z}, '\1\2'),
       ssl:            Travis.config.ssl.merge(Travis.config.github.ssl || {}).to_hash.compact
     }
     private_constant :DEFAULT_OPTIONS
+
+    def self.client_config
+      {
+        api_url: DEFAULT_OPTIONS[:api_url],
+        web_url: DEFAULT_OPTIONS[:web_url],
+        scopes:  DEFAULT_OPTIONS[:scopes]
+      }
+    end
 
     attr_reader :gh, :user
 

@@ -8,6 +8,10 @@ module Travis::API::V3
       @available_attributes ||= Set.new
     end
 
+    def self.representations
+      { standard: available_attributes }
+    end
+
     def self.type(value)
       define_method(:type) { value }
     end
