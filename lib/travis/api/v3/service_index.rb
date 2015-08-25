@@ -26,8 +26,8 @@ module Travis::API::V3
       resources = { }
       routes.resources.each do |resource|
         data = resources[resource.identifier] ||= { :@type => :resource, :actions => {} }
-        if renderer = Renderer[resource.identifier, false] and renderer.respond_to? :available_attributes
-          data[:attributes] = renderer.available_attributes
+        if renderer = Renderer[resource.identifier, false] and renderer.respond_to? :representations
+          data[:representations] = renderer.representations
         end
         resource.services.each do |(request_method, sub_route), service|
           list    = resources[resource.identifier][:actions][service] ||= []
