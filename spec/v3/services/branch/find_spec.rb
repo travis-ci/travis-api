@@ -10,15 +10,18 @@ describe Travis::API::V3::Services::Repository::Find do
     example    { expect(JSON.load(body)).to be ==         {
       "@type"            => "branch",
       "@href"            => "/v3/repo/#{repo.id}/branch/master",
+      "@representation"  => "standard",
       "name"             => "master",
       "repository"       => {
         "@type"          => "repository",
         "@href"          => "/v3/repo/#{repo.id}",
+        "@representation"=> "minimal",
         "id"             => repo.id,
         "slug"           => "svenfuchs/minimal"},
       "last_build"       => {
         "@type"          => "build",
         "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
+        "@representation"=> "minimal",
         "id"             => repo.default_branch.last_build.id,
         "number"         => "3",
         "state"          => "configured",

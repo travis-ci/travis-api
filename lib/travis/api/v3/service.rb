@@ -85,7 +85,6 @@ module Travis::API::V3
     end
 
     def paginate(result)
-      p params
       self.class.paginator.paginate(result,
         limit:          params['limit'.freeze],
         offset:         params['offset'.freeze],

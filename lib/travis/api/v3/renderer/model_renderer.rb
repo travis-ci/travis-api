@@ -68,12 +68,13 @@ module Travis::API::V3
         return { :@href => href }
       end
 
-      result          = {}
-      result[:@type]  = self.class.type if self.class.type
-      result[:@href]  = href if href
-      fields          = self.class.representations.fetch(representation)
-      nested_included = included + [model]
-      modes           = {}
+      result                   = {}
+      result[:@type]           = self.class.type if self.class.type
+      result[:@href]           = href if href
+      result[:@representation] = representation
+      fields                   = self.class.representations.fetch(representation)
+      nested_included          = included + [model]
+      modes                    = {}
 
       if permissions = access_control.permissions(model) and (representation != :minimal or include? :@permissions)
         result[:@permissions] = permissions.to_h
@@ -96,7 +97,7 @@ module Travis::API::V3
           raise WrongParams, 'no field %p to include'.freeze % qualified_field unless result.keys.any? { |k| k.to_s == field.to_s }
         end
       end
-  
+
       fields.each do |field|
         value  = Renderer.render_value(send(field),
                    access_control: access_control,
