@@ -24,7 +24,7 @@ module Travis::API::V3
 
     def render_json
       resources = { }
-      routes.resources.each do |resource|
+      routes.resources.sort_by(&:identifier).each do |resource|
         data = resources[resource.identifier] ||= { :@type => :resource, :actions => {} }
         if renderer = Renderer[resource.identifier, false] and renderer.respond_to? :representations
           data[:representations] = renderer.representations
