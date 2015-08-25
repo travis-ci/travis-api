@@ -30,6 +30,7 @@ module Travis::API::V3
     def fields
       fields               = { :"@type" => type }
       fields[:@href]       = href if href
+      fields[:@representation] = representation
       fields[:@pagination] = pagination_info if meta_data.include? :pagination
       fields
     end
@@ -44,11 +45,15 @@ module Travis::API::V3
       result                 = fields
       included               = self.included.dup
       result[collection_key] = list.map do |entry|
-        rendered = render_entry(entry, included: included, mode: :standard, **options)
+        rendered = render_entry(entry, included: included, mode: representation, **options)
         included << entry
         rendered
       end
       result
+    end
+
+    def representation
+      :standard
     end
 
     def render_entry(entry, **options)

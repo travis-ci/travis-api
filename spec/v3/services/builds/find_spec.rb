@@ -27,6 +27,7 @@ describe Travis::API::V3::Services::Builds::Find do
     example    { expect(parsed_body).to be == {
       "@type"              => "builds",
       "@href"              => "/v3/repo/#{repo.id}/builds?limit=1",
+      "@representation"    => "standard",
       "@pagination"        => {
         "limit"            => 1,
         "offset"           => 0,
@@ -94,6 +95,7 @@ describe Travis::API::V3::Services::Builds::Find do
     example       { expect(parsed_body).to be == {
       "@type"              => "builds",
       "@href"              => "/v3/repo/#{repo.id}/builds?limit=1",
+      "@representation"    => "standard",
       "@pagination"        => {
         "limit"            => 1,
         "offset"           => 0,

@@ -20,6 +20,7 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser do
     example { expect(JSON.load(body)).to be == {
       "@type"             => "organizations",
       "@href"             => "/v3/orgs",
+      "@representation"    => "standard",
       "organizations"     => [{
         "@type"           => "organization",
         "@href"           => "/v3/org/#{org.id}",

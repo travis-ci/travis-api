@@ -20,6 +20,7 @@ describe Travis::API::V3::Services::Accounts::ForCurrentUser do
     example { expect(JSON.load(body)).to be == {
       "@type"               => "accounts",
       "@href"               => "/v3/accounts",
+      "@representation"     => "standard",
       "accounts"            => [{
         "@type"             => "account",
         "@representation"   =>"standard",
