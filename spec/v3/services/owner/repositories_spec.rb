@@ -15,7 +15,7 @@ describe Travis::API::V3::Services::Owner::Repositories do
     example { expect(JSON.load(body)).to be == {
       "@type"                => "repositories",
       "@href"                => "/v3/owner/svenfuchs/repos",
-      "@representation"    => "standard",
+      "@representation"      => "standard",
       "repositories"         => [{
         "@type"              => "repository",
         "@href"              => "/v3/repo/#{repo.id}",
