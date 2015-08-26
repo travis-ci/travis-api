@@ -1,5 +1,8 @@
 module Travis::API::V3
   class Models::Job < Model
+
+    self.inheritance_column = :_type_disabled
+    
     has_one    :log, dependent: :destroy
     belongs_to :repository
     belongs_to :commit

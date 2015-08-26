@@ -5,7 +5,11 @@ module Travis::API::V3
     belongs_to :request
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
-    has_many   :jobs, as: :source, order: :id, dependent: :destroy
+
+    has_many   :jobs,
+      as: :source,
+      order: :id,
+      dependent: :destroy
 
     has_one :branch,
       foreign_key: [:repository_id, :name],

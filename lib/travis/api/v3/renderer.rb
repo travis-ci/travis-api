@@ -48,6 +48,7 @@ module Travis::API::V3
       when Time                   then value.strftime('%Y-%m-%dT%H:%M:%SZ')
       when Model                  then render_model(value, **options)
       when ActiveRecord::Relation then render_value(value.to_a, **options)
+      when ActiveRecord::Associations::CollectionProxy then render_value(value.to_a, **options)
       else raise ArgumentError, 'cannot render %p (%p)' % [value.class, value]
       end
     end
