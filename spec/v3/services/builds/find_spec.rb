@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Builds::Find do
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.last }
+  let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
 
   describe "fetching builds on a public repository by slug" do
@@ -80,8 +81,42 @@ describe Travis::API::V3::Services::Builds::Find do
           "ref"            => "refs/heads/master",
           "message"        => "unignore Gemfile.lock",
           "compare_url"    => "https://github.com/svenfuchs/minimal/compare/master...develop",
-          "committed_at"   => "2010-11-12T12:55:00Z"}}],
-   }}
+          "committed_at"   => "2010-11-12T12:55:00Z"},
+        "jobs"             =>[
+          {
+          "@type"=>"job",
+          "@representation"=>"minimal",
+          "id"=>jobs[0].id,
+          "number"=>"3.1",
+          "state"=>"configured",
+          "started_at"=>"2010-11-12T13:00:00Z",
+          "finished_at"=>nil},
+          {
+          "@type"=>"job",
+          "@representation"=>"minimal",
+          "id"=>jobs[1].id,
+          "number"=>"3.2",
+          "state"=>"configured",
+          "started_at"=>"2010-11-12T13:00:00Z",
+          "finished_at"=>nil},
+          {
+          "@type"=>"job",
+          "@representation"=>"minimal",
+          "id"=>jobs[2].id,
+          "number"=>"3.3",
+          "state"=>"configured",
+          "started_at"=>"2010-11-12T13:00:00Z",
+          "finished_at"=>nil},
+          {
+          "@type"=>"job",
+          "@representation"=>"minimal",
+          "id"=>jobs[3].id,
+          "number"=>"3.4",
+          "state"=>"configured",
+          "started_at"=>"2010-11-12T13:00:00Z",
+          "finished_at"=>nil}]
+      }]
+    }}
   end
 
   describe "builds private repository, private API, authenticated as user with access" do
@@ -148,8 +183,42 @@ describe Travis::API::V3::Services::Builds::Find do
           "ref"            => "refs/heads/master",
           "message"        => "unignore Gemfile.lock",
           "compare_url"    => "https://github.com/svenfuchs/minimal/compare/master...develop",
-          "committed_at"   => "2010-11-12T12:55:00Z"}}]
-    }}
+          "committed_at"   => "2010-11-12T12:55:00Z"},
+          "jobs"             =>[
+            {
+            "@type"=>"job",
+            "@representation"=>"minimal",
+            "id"=>jobs[0].id,
+            "number"=>"3.1",
+            "state"=>"configured",
+            "started_at"=>"2010-11-12T13:00:00Z",
+            "finished_at"=>nil},
+            {
+            "@type"=>"job",
+            "@representation"=>"minimal",
+            "id"=>jobs[1].id,
+            "number"=>"3.2",
+            "state"=>"configured",
+            "started_at"=>"2010-11-12T13:00:00Z",
+            "finished_at"=>nil},
+            {
+            "@type"=>"job",
+            "@representation"=>"minimal",
+            "id"=>jobs[2].id,
+            "number"=>"3.3",
+            "state"=>"configured",
+            "started_at"=>"2010-11-12T13:00:00Z",
+            "finished_at"=>nil},
+            {
+            "@type"=>"job",
+            "@representation"=>"minimal",
+            "id"=>jobs[3].id,
+            "number"=>"3.4",
+            "state"=>"configured",
+            "started_at"=>"2010-11-12T13:00:00Z",
+            "finished_at"=>nil}]
+        }]
+      }}
   end
 
   describe "including branch.name params on existing branch" do
