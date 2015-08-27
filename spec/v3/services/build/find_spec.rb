@@ -7,12 +7,12 @@ describe Travis::API::V3::Services::Build::Find do
   let(:parsed_body) { JSON.load(body) }
 
   describe "fetching build on a public repository " do
-    before     { get("/v3/build/#{build.id}")     }
+    before     { get("/v3/build/#{build.id}")   }
     example    { expect(last_response).to be_ok }
   end
 
   describe "fetching a non-existing build" do
-    before     { get("/v3/build/1231987129387218")     }
+    before     { get("/v3/build/1231987129387218")  }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
@@ -102,12 +102,12 @@ describe Travis::API::V3::Services::Build::Find do
 
   describe "build private repository, private API, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     before        { Permission.create(repository: repo, user: repo.owner, pull: true) }
-    before        { repo.update_attribute(:private, true)                             }
-    before        { get("/v3/build/#{build.id}", {}, headers)                           }
-    after         { repo.update_attribute(:private, false)                            }
-    example       { expect(last_response).to be_ok                                    }
+    before        { repo.update_attribute(:private, true) }
+    before        { get("/v3/build/#{build.id}", {}, headers) }
+    after         { repo.update_attribute(:private, false) }
+    example       { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
       "@type"              => "build",
       "@href"              => "/v3/build/#{build.id}",

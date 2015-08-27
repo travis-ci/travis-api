@@ -33,7 +33,8 @@ describe Travis::API::V3::Services::Job::Find do
         "event_type"      => build.event_type,
         "previous_state"  => build.previous_state,
         "started_at"      => "2010-11-12T13:00:00Z",
-        "finished_at"     => build.finished_at},
+        "finished_at"     => build.finished_at,
+        "job_ids"         => build.cached_matrix_ids},
       "queue"             => job.queue,
       "repository"        => {
         "@type"           => "repository",
@@ -98,7 +99,8 @@ describe Travis::API::V3::Services::Job::Find do
         "event_type"      => build.event_type,
         "previous_state"  => build.previous_state,
         "started_at"      => "2010-11-12T13:00:00Z",
-        "finished_at"     => build.finished_at},
+        "finished_at"     => build.finished_at,
+        "job_ids"         => build.cached_matrix_ids},
       "queue"             => job.queue,
       "repository"        => {
         "@type"           => "repository",

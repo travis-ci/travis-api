@@ -70,7 +70,8 @@ describe Travis::API::V3::Services::Repository::Find do
           "event_type"     => "push",
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil}}
+          "finished_at"    => nil,
+          "job_ids"        => repo.last_build.cached_matrix_ids}}
     }}
   end
 
@@ -165,7 +166,8 @@ describe Travis::API::V3::Services::Repository::Find do
           "event_type"     => "push",
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil}}
+          "finished_at"    => nil,
+          "job_ids"        => repo.last_build.cached_matrix_ids}}
     }}
   end
 
@@ -245,7 +247,8 @@ describe Travis::API::V3::Services::Repository::Find do
           "event_type"     => "push",
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil}}
+          "finished_at"    => nil,
+          "job_ids"        => repo.last_build.cached_matrix_ids}}
     }}
   end
 
@@ -331,7 +334,8 @@ describe Travis::API::V3::Services::Repository::Find do
           "event_type"     => "push",
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil}}
+          "finished_at"    => nil,
+          "job_ids"        => repo.last_build.cached_matrix_ids}}
     }}
   end
 

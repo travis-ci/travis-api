@@ -10,8 +10,8 @@ describe Travis::API::V3::Services::Owner::Repositories do
   after         { repo.update_attribute(:private, false)                            }
 
   describe "private repository, private API, authenticated as user with access" do
-    before  { get("/v3/owner/svenfuchs/repos", {}, headers)    }
-    example { expect(last_response).to be_ok   }
+    before  { get("/v3/owner/svenfuchs/repos", {}, headers) }
+    example { expect(last_response).to be_ok }
     example { expect(JSON.load(body)).to be == {
       "@type"                => "repositories",
       "@href"                => "/v3/owner/svenfuchs/repos",
@@ -25,9 +25,9 @@ describe Travis::API::V3::Services::Owner::Repositories do
           "enable"           => false,
           "disable"          => false,
           "create_request"   => false},
-        "id"                 =>  repo.id,
-        "name"               =>  "minimal",
-        "slug"               =>  "svenfuchs/minimal",
+        "id"                 => repo.id,
+        "name"               => "minimal",
+        "slug"               => "svenfuchs/minimal",
         "description"        => nil,
         "github_language"    => nil,
         "active"             => true,
@@ -62,7 +62,8 @@ describe Travis::API::V3::Services::Owner::Repositories do
             "event_type"     => "push",
             "previous_state" => "passed",
             "started_at"     => "2010-11-12T13:00:00Z",
-            "finished_at"    => nil}}}]
+            "finished_at"    => nil,
+            "job_ids"        => repo.last_build.cached_matrix_ids}}}]
     }}
   end
 
