@@ -60,6 +60,7 @@ describe Travis::API::V3::Services::Builds::Find do
         "previous_state"   => "passed",
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
+        "job_ids"          => build.cached_matrix_ids,
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
@@ -85,6 +86,7 @@ describe Travis::API::V3::Services::Builds::Find do
         "jobs"             =>[
           {
           "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[0].id}",
           "@representation"=> "minimal",
           "id"             => jobs[0].id,
           "number"         => jobs[0].number,
@@ -93,6 +95,7 @@ describe Travis::API::V3::Services::Builds::Find do
           "finished_at"    => nil},
           {
           "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[1].id}",
           "@representation"=> "minimal",
           "id"             => jobs[1].id,
           "number"         => jobs[1].number,
@@ -101,6 +104,7 @@ describe Travis::API::V3::Services::Builds::Find do
           "finished_at"    => nil},
           {
           "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[2].id}",
           "@representation"=> "minimal",
           "id"             => jobs[2].id,
           "number"         => jobs[2].number,
@@ -109,6 +113,7 @@ describe Travis::API::V3::Services::Builds::Find do
           "finished_at"    => nil},
           {
           "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[3].id}",
           "@representation"=> "minimal",
           "id"             => jobs[3].id,
           "number"         => jobs[3].number,
@@ -127,7 +132,7 @@ describe Travis::API::V3::Services::Builds::Find do
     before        { get("/v3/repo/#{repo.id}/builds?limit=1", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example       { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to be == {
       "@type"              => "builds",
       "@href"              => "/v3/repo/#{repo.id}/builds?limit=1",
       "@representation"    => "standard",
@@ -140,7 +145,7 @@ describe Travis::API::V3::Services::Builds::Find do
         "next"             => {
           "@href"          => "/v3/repo/#{repo.id}/builds?limit=1&offset=1",
           "offset"         => 1,
-          "limit"          => 1 },
+          "limit"          => 1},
         "prev"             => nil,
         "first"            => {
           "@href"          => "/v3/repo/#{repo.id}/builds?limit=1",
@@ -162,19 +167,20 @@ describe Travis::API::V3::Services::Builds::Find do
         "previous_state"   => "passed",
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
+        "job_ids"          => build.cached_matrix_ids,
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
           "@representation"=> "minimal",
           "id"             => repo.id,
-          "slug"           => "svenfuchs/minimal"},
+          "slug"           => "svenfuchs/minimal" },
         "branch"           => {
           "@type"          => "branch",
           "@href"          => "/v3/repo/#{repo.id}/branch/master",
           "@representation"=> "minimal",
           "name"           => "master",
           "last_build"     => {
-            "@href"        => "/v3/build/#{build.id}"}},
+            "@href"        => "/v3/build/#{build.id}" }},
         "commit"           => {
           "@type"          => "commit",
           "@representation"=> "minimal",
@@ -184,41 +190,45 @@ describe Travis::API::V3::Services::Builds::Find do
           "message"        => "unignore Gemfile.lock",
           "compare_url"    => "https://github.com/svenfuchs/minimal/compare/master...develop",
           "committed_at"   => "2010-11-12T12:55:00Z"},
-          "jobs"             =>[
-            {
-            "@type"          => "job",
-            "@representation"=> "minimal",
-            "id"             => jobs[0].id,
-            "number"         => jobs[0].number,
-            "state"          => "configured",
-            "started_at"     => "2010-11-12T13:00:00Z",
-            "finished_at"    => nil},
-            {
-            "@type"          => "job",
-            "@representation"=> "minimal",
-            "id"             => jobs[1].id,
-            "number"         => jobs[1].number,
-            "state"          => "configured",
-            "started_at"     => "2010-11-12T13:00:00Z",
-            "finished_at"    => nil},
-            {
-            "@type"          => "job",
-            "@representation"=> "minimal",
-            "id"             => jobs[2].id,
-            "number"         => jobs[2].number,
-            "state"          => "configured",
-            "started_at"     => "2010-11-12T13:00:00Z",
-            "finished_at"    => nil},
-            {
-            "@type"          => "job",
-            "@representation"=> "minimal",
-            "id"             => jobs[3].id,
-            "number"         => jobs[3].number,
-            "state"          => "configured",
-            "started_at"     => "2010-11-12T13:00:00Z",
-            "finished_at"    => nil}]
-        }]
-      }}
+        "jobs"             =>[
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[0].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[0].id,
+          "number"         => jobs[0].number,
+          "state"          => "configured",
+          "started_at"     => "2010-11-12T13:00:00Z",
+          "finished_at"    => nil},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[1].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[1].id,
+          "number"         => jobs[1].number,
+          "state"          => "configured",
+          "started_at"     => "2010-11-12T13:00:00Z",
+          "finished_at"    => nil},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[2].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[2].id,
+          "number"         => jobs[2].number,
+          "state"          => "configured",
+          "started_at"     => "2010-11-12T13:00:00Z",
+          "finished_at"    => nil},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[3].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[3].id,
+          "number"         => jobs[3].number,
+          "state"          => "configured",
+          "started_at"     => "2010-11-12T13:00:00Z",
+          "finished_at"    => nil}]
+      }]
+    }}
   end
 
   describe "including branch.name params on existing branch" do
