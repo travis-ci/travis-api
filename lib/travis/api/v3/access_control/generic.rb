@@ -55,6 +55,10 @@ module Travis::API::V3
       visible? branch.repository
     end
 
+    def job_visible?(job)
+      visible? job.repository
+    end
+
     def organization_visible?(organization)
       full_access? or public_api?
     end

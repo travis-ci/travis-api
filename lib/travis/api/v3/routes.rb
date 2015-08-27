@@ -50,6 +50,12 @@ module Travis::API::V3
       get :find
     end
 
+    resource :job do
+      capture id: :digit
+      route '/job/{job.id}'
+      get :find
+    end
+
     resource :user do
       capture id: :digit
       route '/user'
