@@ -71,13 +71,56 @@ describe Travis::API::V3::Services::Job::Find do
   end
 
   describe "fetching job on private repository, private API, authenticated as user with access" do
-    let(:token)   { Travis::Api::App::AccessToken.create(user=> repo.owner, app_id=> 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' =>  "token #{token}"                        }}
-    before        { Permission.create(repository=> repo, user=> repo.owner, pull=> true) }
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    before        { Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { get("/v3/job/#{job.id}", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example       { expect(parsed_body).to be == {      }}
+    example       { expect(parsed_body).to be == {
+      "@type"             => "job",
+      "@href"             => "/v3/job/#{job.id}",
+      "@representation"   => "standard",
+      "id"                => job.id,
+      "number"            => job.number,
+      "state"             => job.state,
+      "started_at"        => "2010-11-12T13:00:00Z",
+      "finished_at"       => job.finished_at,
+      "build"             => {
+        "@type"           => "build",
+        "@href"           => "/v3/build/#{build.id}",
+        "@representation" => "minimal",
+        "id"              => build.id,
+        "number"          => build.number,
+        "state"           => build.state,
+        "duration"        => build.duration,
+        "event_type"      => build.event_type,
+        "previous_state"  => build.previous_state,
+        "started_at"      => "2010-11-12T13:00:00Z",
+        "finished_at"     => build.finished_at},
+      "queue"             => job.queue,
+      "repository"        => {
+        "@type"           => "repository",
+        "@href"           => "/v3/repo/#{repo.id}",
+        "@representation" => "minimal",
+        "id"              => repo.id,
+        "slug"            => repo.slug},
+      "commit"            => {
+        "@type"           => "commit",
+        "@representation" => "minimal",
+        "id"              => commit.id,
+        "sha"             => commit.commit,
+        "ref"             => commit.ref,
+        "message"         => commit.message,
+        "compare_url"     => commit.compare_url,
+        "committed_at"    => "2010-11-12T12:55:00Z"},
+      "owner"             => {
+        "@type"           => owner_type.to_s.downcase,
+        "@href"           => "/v3/#{owner_href}/#{owner.id}",
+        "@representation" => "minimal",
+        "id"              => owner.id,
+        "login"           => owner.login}
+    }}
   end
 end
