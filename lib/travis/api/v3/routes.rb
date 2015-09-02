@@ -8,10 +8,38 @@ module Travis::API::V3
       get :for_current_user
     end
 
+    resource :build do
+      capture id: :digit
+      route '/build/{build.id}'
+      get :find
+    end
+
+    resource :job do
+      capture id: :digit
+      route '/job/{job.id}'
+      get :find
+    end
+
+    resource :organization do
+      capture id: :digit
+      route '/org/{organization.id}'
+      get :find
+    end
+
+    resource :organizations do
+      route '/orgs'
+      get :for_current_user
+    end
+
     resource :owner do
       route '/owner/({owner.login}|{user.login}|{organization.login})'
       get :find
       get :repositories, '/repos'
+    end
+
+    resource :repositories do
+      route '/repos'
+      get :for_current_user
     end
 
     resource :repository do
@@ -39,23 +67,6 @@ module Travis::API::V3
       end
     end
 
-    resource :repositories do
-      route '/repos'
-      get :for_current_user
-    end
-
-    resource :build do
-      capture id: :digit
-      route '/build/{build.id}'
-      get :find
-    end
-
-    resource :job do
-      capture id: :digit
-      route '/job/{job.id}'
-      get :find
-    end
-
     resource :user do
       capture id: :digit
       route '/user'
@@ -63,15 +74,5 @@ module Travis::API::V3
       get :find, '/{user.id}'
     end
 
-    resource :organization do
-      capture id: :digit
-      route '/org/{organization.id}'
-      get :find
-    end
-
-    resource :organizations do
-      route '/orgs'
-      get :for_current_user
-    end
   end
 end
