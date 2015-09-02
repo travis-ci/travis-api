@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::User::Find do
-  let(:user) { User.find_by_login('svenfuchs') }
+  let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}

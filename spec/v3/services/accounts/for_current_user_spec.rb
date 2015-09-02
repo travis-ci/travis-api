@@ -1,15 +1,15 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::Accounts::ForCurrentUser do
-  let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
+  let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-  before        { Permission.create(repository: repo, user: repo.owner, pull: true) }
+  before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
   before        { repo.update_attribute(:private, true)                             }
   after         { repo.update_attribute(:private, false)                            }
 
-  let(:org) { Organization.new(login: 'example-org', github_id: 42)   }
+  let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 42)   }
   before    { org.save!                                               }
   before    { org.memberships.create(user: repo.owner)                }
   after     { org.delete                                              }

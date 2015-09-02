@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Builds::Find do
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.last }
+  let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
 
   describe "fetching builds on a public repository by slug" do
@@ -59,6 +60,27 @@ describe Travis::API::V3::Services::Builds::Find do
         "previous_state"   => "passed",
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
+        "jobs"             =>[
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[0].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[0].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[1].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[1].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[2].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[2].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[3].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[3].id}],
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
@@ -80,19 +102,20 @@ describe Travis::API::V3::Services::Builds::Find do
           "ref"            => "refs/heads/master",
           "message"        => "unignore Gemfile.lock",
           "compare_url"    => "https://github.com/svenfuchs/minimal/compare/master...develop",
-          "committed_at"   => "2010-11-12T12:55:00Z"}}],
-   }}
+          "committed_at"   => "2010-11-12T12:55:00Z"},
+      }]
+    }}
   end
 
   describe "builds private repository, private API, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { Permission.create(repository: repo, user: repo.owner, pull: true) }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { get("/v3/repo/#{repo.id}/builds?limit=1", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example       { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to be == {
       "@type"              => "builds",
       "@href"              => "/v3/repo/#{repo.id}/builds?limit=1",
       "@representation"    => "standard",
@@ -105,7 +128,7 @@ describe Travis::API::V3::Services::Builds::Find do
         "next"             => {
           "@href"          => "/v3/repo/#{repo.id}/builds?limit=1&offset=1",
           "offset"         => 1,
-          "limit"          => 1 },
+          "limit"          => 1},
         "prev"             => nil,
         "first"            => {
           "@href"          => "/v3/repo/#{repo.id}/builds?limit=1",
@@ -127,19 +150,40 @@ describe Travis::API::V3::Services::Builds::Find do
         "previous_state"   => "passed",
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
+        "jobs"             =>[
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[0].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[0].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[1].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[1].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[2].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[2].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[3].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[3].id}],
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
           "@representation"=> "minimal",
           "id"             => repo.id,
-          "slug"           => "svenfuchs/minimal"},
+          "slug"           => "svenfuchs/minimal" },
         "branch"           => {
           "@type"          => "branch",
           "@href"          => "/v3/repo/#{repo.id}/branch/master",
           "@representation"=> "minimal",
           "name"           => "master",
           "last_build"     => {
-            "@href"        => "/v3/build/#{build.id}"}},
+            "@href"        => "/v3/build/#{build.id}" }},
         "commit"           => {
           "@type"          => "commit",
           "@representation"=> "minimal",
@@ -148,7 +192,8 @@ describe Travis::API::V3::Services::Builds::Find do
           "ref"            => "refs/heads/master",
           "message"        => "unignore Gemfile.lock",
           "compare_url"    => "https://github.com/svenfuchs/minimal/compare/master...develop",
-          "committed_at"   => "2010-11-12T12:55:00Z"}}]
+          "committed_at"   => "2010-11-12T12:55:00Z"}
+      }]
     }}
   end
 
