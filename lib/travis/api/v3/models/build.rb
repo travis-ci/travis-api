@@ -6,9 +6,9 @@ module Travis::API::V3
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
 
-    has_many   :jobs,
-      as: :source,
-      order: :id,
+    has_many :jobs,
+      as:        :source,
+      order:     :id,
       dependent: :destroy
 
     has_one :branch,

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Travis::API::V3::Services::Owner::Find do
   describe "organization" do
-    let(:org) { Organization.new(login: 'example-org') }
+    let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org') }
     before    { org.save!                              }
     after     { org.delete                             }
 
@@ -23,7 +23,7 @@ describe Travis::API::V3::Services::Owner::Find do
     end
 
     describe 'eager loading repositories via organization.repositories' do
-      let(:repo) { Repository.new(name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
+      let(:repo) { Travis::API::V3::Models::Repository.new(name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
 
       before { repo.save!   }
       after  { repo.destroy }
@@ -69,7 +69,7 @@ describe Travis::API::V3::Services::Owner::Find do
     end
 
     describe 'eager loading repositories via owner.repositories' do
-      let(:repo) { Repository.new(name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
+      let(:repo) { Travis::API::V3::Models::Repository.new(name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
 
       before { repo.save!   }
       after  { repo.destroy }
@@ -131,7 +131,7 @@ describe Travis::API::V3::Services::Owner::Find do
     end
 
     describe "does not allow overriding org id" do
-      let(:other) { Organization.new(login: 'other-org') }
+      let(:other) { Travis::API::V3::Models::Organization.new(login: 'other-org') }
       before      { other.save!                          }
       after       { other.delete                         }
 
@@ -157,7 +157,7 @@ describe Travis::API::V3::Services::Owner::Find do
   end
 
   describe "user" do
-    let(:user) { User.new(login: 'example-user') }
+    let(:user) { Travis::API::V3::Models::User.new(login: 'example-user') }
     before     { user.save!                      }
     after      { user.delete                     }
 
@@ -198,7 +198,7 @@ describe Travis::API::V3::Services::Owner::Find do
     end
 
     describe "does not allow overriding user id" do
-      let(:other) { User.new(login: 'other-user') }
+      let(:other) { Travis::API::V3::Models::User.new(login: 'other-user') }
       before      { other.save!                   }
       after       { other.delete                  }
 

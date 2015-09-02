@@ -1,11 +1,13 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::Repositories::ForCurrentUser do
-  let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
+  let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:build) { repo.builds.first }
+  let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)             }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                    }}
-  before        { Permission.create(repository: repo, user: repo.owner, pull: true, push: true) }
+  before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true) }
   before        { repo.update_attribute(:private, true)                                         }
   after         { repo.update_attribute(:private, false)                                        }
 
@@ -53,9 +55,9 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
           "name"             => "master",
           "last_build"       => {
             "@type"          => "build",
-            "@href"          => "/v3/build/#{repo.last_build.id}",
+            "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
             "@representation"=> "minimal",
-            "id"             => repo.last_build.id,
+            "id"             => repo.default_branch.last_build.id,
             "number"         => "3",
             "state"          => "configured",
             "duration"       => nil,
@@ -63,7 +65,27 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
             "previous_state" => "passed",
             "started_at"     => "2010-11-12T13:00:00Z",
             "finished_at"    => nil,
-            "job_ids"        => repo.last_build.cached_matrix_ids}}}]
+            "jobs"           => [{
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[0].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[0].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[1].id}",
+              "@representation"=>"minimal",
+              "id"           =>  jobs[1].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[2].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[2].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[3].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[3].id}]
+            }}}]
     }}
   end
 

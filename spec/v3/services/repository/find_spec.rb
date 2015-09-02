@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::Repository::Find do
-  let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
+  let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:build) { repo.builds.first }
+  let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
 
   describe "fetching a public repository by slug" do
@@ -41,10 +43,10 @@ describe Travis::API::V3::Services::Repository::Find do
       "active"             => true,
       "private"            => false,
       "owner"              => {
-        "@type"            => "user",
-        "@href"            => "/v3/user/#{repo.owner_id}",
         "id"               => repo.owner_id,
-        "login"            => "svenfuchs" },
+        "login"            => "svenfuchs",
+        "@type"            => "user",
+        "@href"            => "/v3/user/#{repo.owner_id}"},
       "last_build"         => {
         "@type"            => "build",
         "@href"            => "/v3/build/#{repo.last_build_id}",
@@ -61,9 +63,9 @@ describe Travis::API::V3::Services::Repository::Find do
         "name"             => "master",
         "last_build"       => {
           "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.last_build.id}",
+          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
           "@representation"=> "minimal",
-          "id"             => repo.last_build.id,
+          "id"             => repo.default_branch.last_build.id,
           "number"         => "3",
           "state"          => "configured",
           "duration"       => nil,
@@ -71,7 +73,27 @@ describe Travis::API::V3::Services::Repository::Find do
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil,
-          "job_ids"        => repo.last_build.cached_matrix_ids}}
+          "jobs"           => [{
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[0].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[0].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[1].id}",
+              "@representation"=>"minimal",
+              "id"           =>  jobs[1].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[2].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[2].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[3].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[3].id}]
+          }}
     }}
   end
 
@@ -115,7 +137,7 @@ describe Travis::API::V3::Services::Repository::Find do
   describe "private repository, private API, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { Permission.create(repository: repo, user: repo.owner, pull: true) }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { get("/v3/repo/#{repo.id}", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
@@ -137,10 +159,10 @@ describe Travis::API::V3::Services::Repository::Find do
       "active"             => true,
       "private"            => true,
       "owner"              => {
-        "@type"            => "user",
-        "@href"            => "/v3/user/#{repo.owner_id}",
         "id"               => repo.owner_id,
-        "login"            => "svenfuchs" },
+        "login"            => "svenfuchs",
+        "@type"            => "user",
+        "@href"            => "/v3/user/#{repo.owner_id}"},
       "last_build"         => {
         "@type"            => "build",
         "@href"            => "/v3/build/#{repo.last_build_id}",
@@ -157,9 +179,9 @@ describe Travis::API::V3::Services::Repository::Find do
         "name"             => "master",
         "last_build"       => {
           "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.last_build.id}",
+          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
           "@representation"=> "minimal",
-          "id"             => repo.last_build.id,
+          "id"             => repo.default_branch.last_build.id,
           "number"         => "3",
           "state"          => "configured",
           "duration"       => nil,
@@ -167,7 +189,27 @@ describe Travis::API::V3::Services::Repository::Find do
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil,
-          "job_ids"        => repo.last_build.cached_matrix_ids}}
+          "jobs"           => [{
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[0].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[0].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[1].id}",
+              "@representation"=>"minimal",
+              "id"           =>  jobs[1].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[2].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[2].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[3].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[3].id}]
+          }}
     }}
   end
 
@@ -218,10 +260,10 @@ describe Travis::API::V3::Services::Repository::Find do
       "active"             => true,
       "private"            => true,
       "owner"              => {
-        "@type"            => "user",
-        "@href"            => "/v3/user/#{repo.owner_id}",
         "id"               => repo.owner_id,
-        "login"            => "svenfuchs" },
+        "login"            => "svenfuchs",
+        "@type"            => "user",
+        "@href"            => "/v3/user/#{repo.owner_id}"},
       "last_build"         => {
         "@type"            => "build",
         "@href"            => "/v3/build/#{repo.last_build_id}",
@@ -238,9 +280,9 @@ describe Travis::API::V3::Services::Repository::Find do
         "name"             => "master",
         "last_build"       => {
           "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.last_build.id}",
+          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
           "@representation"=> "minimal",
-          "id"             => repo.last_build.id,
+          "id"             => repo.default_branch.last_build.id,
           "number"         => "3",
           "state"          => "configured",
           "duration"       => nil,
@@ -248,7 +290,27 @@ describe Travis::API::V3::Services::Repository::Find do
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil,
-          "job_ids"        => repo.last_build.cached_matrix_ids}}
+          "jobs"           => [{
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[0].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[0].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[1].id}",
+              "@representation"=>"minimal",
+              "id"           =>  jobs[1].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[2].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[2].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[3].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[3].id}]
+          }}
     }}
   end
 
@@ -305,10 +367,10 @@ describe Travis::API::V3::Services::Repository::Find do
       "active"             => true,
       "private"            => true,
       "owner"              => {
-        "@type"            => "user",
-        "@href"            => "/v3/user/#{repo.owner_id}",
         "id"               => repo.owner_id,
-        "login"            => "svenfuchs" },
+        "login"            => "svenfuchs",
+        "@type"            => "user",
+        "@href"            => "/v3/user/#{repo.owner_id}"},
       "last_build"         => {
         "@type"            => "build",
         "@href"            => "/v3/build/#{repo.last_build_id}",
@@ -325,9 +387,9 @@ describe Travis::API::V3::Services::Repository::Find do
         "name"             => "master",
         "last_build"       => {
           "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.last_build.id}",
+          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
           "@representation"=> "minimal",
-          "id"             => repo.last_build.id,
+          "id"             => repo.default_branch.last_build.id,
           "number"         => "3",
           "state"          => "configured",
           "duration"       => nil,
@@ -335,7 +397,27 @@ describe Travis::API::V3::Services::Repository::Find do
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil,
-          "job_ids"        => repo.last_build.cached_matrix_ids}}
+          "jobs"           => [{
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[0].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[0].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[1].id}",
+              "@representation"=>"minimal",
+              "id"           =>  jobs[1].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[2].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[2].id},
+              {
+              "@type"        => "job",
+              "@href"        => "/v3/job/#{jobs[3].id}",
+              "@representation"=>"minimal",
+              "id"           => jobs[3].id}]
+          }}
     }}
   end
 

@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Travis::API::V3::Services::Repository::Find do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:build) { repo.builds.first }
+  let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   before { repo.default_branch.save! }
 
   describe "public repository, existing branch" do
@@ -30,7 +32,23 @@ describe Travis::API::V3::Services::Repository::Find do
         "previous_state" => "passed",
         "started_at"     => "2010-11-12T13:00:00Z",
         "finished_at"    => nil,
-        "job_ids"        => repo.default_branch.last_build.cached_matrix_ids[1...-1].split(",").map(&:to_i) }
+        "jobs"           => [{
+          "@type"        => "job",
+          "@href"        => "/v3/job/#{jobs[0].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[0].id},
+         {"@type"       => "job",
+          "@href"       => "/v3/job/#{jobs[1].id}",
+          "@representation"=>"minimal",
+          "id"          => jobs[1].id},
+         {"@type"       => "job",
+          "@href"       => "/v3/job/#{jobs[2].id}",
+          "@representation"=>"minimal",
+          "id"          => jobs[2].id},
+         {"@type"       => "job",
+          "@href"       => "/v3/job/#{jobs[3].id}",
+          "@representation"=>"minimal",
+          "id"          =>jobs[3].id}]}
     }}
   end
 end

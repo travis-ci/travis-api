@@ -60,7 +60,27 @@ describe Travis::API::V3::Services::Builds::Find do
         "previous_state"   => "passed",
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
-        "job_ids"          => build.cached_matrix_ids,
+        "jobs"             =>[
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[0].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[0].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[1].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[1].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[2].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[2].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[3].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[3].id}],
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
@@ -83,43 +103,6 @@ describe Travis::API::V3::Services::Builds::Find do
           "message"        => "unignore Gemfile.lock",
           "compare_url"    => "https://github.com/svenfuchs/minimal/compare/master...develop",
           "committed_at"   => "2010-11-12T12:55:00Z"},
-        "jobs"             =>[
-          {
-          "@type"          => "job",
-          "@href"          => "/v3/job/#{jobs[0].id}",
-          "@representation"=> "minimal",
-          "id"             => jobs[0].id,
-          "number"         => jobs[0].number,
-          "state"          => "configured",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil},
-          {
-          "@type"          => "job",
-          "@href"          => "/v3/job/#{jobs[1].id}",
-          "@representation"=> "minimal",
-          "id"             => jobs[1].id,
-          "number"         => jobs[1].number,
-          "state"          => "configured",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil},
-          {
-          "@type"          => "job",
-          "@href"          => "/v3/job/#{jobs[2].id}",
-          "@representation"=> "minimal",
-          "id"             => jobs[2].id,
-          "number"         => jobs[2].number,
-          "state"          => "configured",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil},
-          {
-          "@type"          => "job",
-          "@href"          => "/v3/job/#{jobs[3].id}",
-          "@representation"=> "minimal",
-          "id"             => jobs[3].id,
-          "number"         => jobs[3].number,
-          "state"          => "configured",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil}]
       }]
     }}
   end
@@ -127,7 +110,7 @@ describe Travis::API::V3::Services::Builds::Find do
   describe "builds private repository, private API, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { Permission.create(repository: repo, user: repo.owner, pull: true) }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { get("/v3/repo/#{repo.id}/builds?limit=1", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
@@ -167,7 +150,27 @@ describe Travis::API::V3::Services::Builds::Find do
         "previous_state"   => "passed",
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
-        "job_ids"          => build.cached_matrix_ids,
+        "jobs"             =>[
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[0].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[0].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[1].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[1].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[2].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[2].id},
+          {
+          "@type"          => "job",
+          "@href"          => "/v3/job/#{jobs[3].id}",
+          "@representation"=> "minimal",
+          "id"             => jobs[3].id}],
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
@@ -189,44 +192,7 @@ describe Travis::API::V3::Services::Builds::Find do
           "ref"            => "refs/heads/master",
           "message"        => "unignore Gemfile.lock",
           "compare_url"    => "https://github.com/svenfuchs/minimal/compare/master...develop",
-          "committed_at"   => "2010-11-12T12:55:00Z"},
-        "jobs"             =>[
-          {
-          "@type"          => "job",
-          "@href"          => "/v3/job/#{jobs[0].id}",
-          "@representation"=> "minimal",
-          "id"             => jobs[0].id,
-          "number"         => jobs[0].number,
-          "state"          => "configured",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil},
-          {
-          "@type"          => "job",
-          "@href"          => "/v3/job/#{jobs[1].id}",
-          "@representation"=> "minimal",
-          "id"             => jobs[1].id,
-          "number"         => jobs[1].number,
-          "state"          => "configured",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil},
-          {
-          "@type"          => "job",
-          "@href"          => "/v3/job/#{jobs[2].id}",
-          "@representation"=> "minimal",
-          "id"             => jobs[2].id,
-          "number"         => jobs[2].number,
-          "state"          => "configured",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil},
-          {
-          "@type"          => "job",
-          "@href"          => "/v3/job/#{jobs[3].id}",
-          "@representation"=> "minimal",
-          "id"             => jobs[3].id,
-          "number"         => jobs[3].number,
-          "state"          => "configured",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil}]
+          "committed_at"   => "2010-11-12T12:55:00Z"}
       }]
     }}
   end
