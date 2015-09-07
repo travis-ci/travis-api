@@ -50,10 +50,14 @@ module Travis::API::V3
       post :enable,  '/enable'
       post :disable, '/disable'
 
-      resource :requests do
-        route '/requests'
-        get  :find
-        post :create
+      resource :branch do
+        route '/branch/{branch.name}'
+        get :find
+      end
+
+      resource :branches do
+        route '/branches'
+        get :find
       end
 
       resource :builds do
@@ -61,9 +65,10 @@ module Travis::API::V3
         get  :find
       end
 
-      resource :branch do
-        route '/branch/{branch.name}'
-        get :find
+      resource :requests do
+        route '/requests'
+        get  :find
+        post :create
       end
     end
 
