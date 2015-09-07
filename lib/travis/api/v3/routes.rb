@@ -12,6 +12,9 @@ module Travis::API::V3
       capture id: :digit
       route '/build/{build.id}'
       get :find
+
+      # post :cancel, '/cancel'
+      # post :restart, '/restart'
     end
 
     resource :job do

@@ -4,6 +4,7 @@ module Travis::API::V3
 
     Accounts      = Module.new { extend Services }
     Branch        = Module.new { extend Services }
+    Branch        = Module.new { extend Services }
     Build         = Module.new { extend Services }
     Builds        = Module.new { extend Services }
     Job           = Module.new { extend Services }
