@@ -20,6 +20,16 @@ module Travis::API::V3
       read_attribute(:branch)
     end
 
+    def job_ids
+      return super unless cached = cached_matrix_ids
+
+      # AR 3.2 does not handle pg arrays and the plugins supporting them
+      # do not work well with jdbc drivers
+      # TODO: remove this once we're on >= 4.0
+      cached = cached.gsub(/^{|}$/, '').split(',').map(&:to_i) unless cached.is_a? Array
+      cached
+    end
+
     def branch_name=(value)
       write_attribute(:branch, value)
     end

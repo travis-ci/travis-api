@@ -15,6 +15,7 @@ module Travis::API::V3
 
       list = list.includes(:commit).includes(branch: :last_build).includes(:repository)
       list = list.includes(branch: { last_build: :commit }) if includes? 'build.commit'.freeze
+      list = list.includes(:jobs) if includes? 'build.jobs'.freeze or includes? 'job'.freeze
       list
     end
   end
