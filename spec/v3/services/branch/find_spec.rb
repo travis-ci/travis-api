@@ -48,7 +48,8 @@ describe Travis::API::V3::Services::Repository::Find do
          {"@type"       => "job",
           "@href"       => "/v3/job/#{jobs[3].id}",
           "@representation"=>"minimal",
-          "id"          =>jobs[3].id}]}
+          "id"          =>jobs[3].id}]},
+      "exists_on_github"=> true
     }}
   end
 end
