@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::Builds::Find do
-  let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
-  let(:build) { repo.builds.last }
+  let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
 
