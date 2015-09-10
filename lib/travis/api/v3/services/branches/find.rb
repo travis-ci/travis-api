@@ -5,5 +5,4 @@ module Travis::API::V3
       query.find(find(:repository))
     end
   end
-
 end

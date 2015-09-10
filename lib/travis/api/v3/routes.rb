@@ -63,6 +63,11 @@ module Travis::API::V3
         get :find
       end
 
+      resource :broadcasts do
+        route '/broadcasts'
+        get :for_current_repo
+      end
+
       resource :builds do
         route '/builds'
         get  :find
@@ -80,6 +85,11 @@ module Travis::API::V3
       route '/user'
       get :current
       get :find, '/{user.id}'
+
+      resource :broadcasts do
+        route '/broadcasts'
+        get :for_current_user
+      end
     end
 
   end
