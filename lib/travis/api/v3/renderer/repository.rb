@@ -2,7 +2,7 @@ require 'travis/api/v3/renderer/model_renderer'
 
 module Travis::API::V3
   class Renderer::Repository < Renderer::ModelRenderer
-    representation(:minimal,  :id, :slug)
+    representation(:minimal,  :id, :slug, :default_branch)
     representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :last_build, :default_branch)
 
     def active

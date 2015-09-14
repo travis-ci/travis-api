@@ -6,6 +6,8 @@ describe Travis::API::V3::Services::Job::Find do
   let(:owner_type)  { repo.owner_type.constantize }
   let(:owner)       { owner_type.find(repo.owner_id)}
   let(:build)       { repo.builds.last }
+  let(:default_branch) { repo.default_branch}
+  let(:def_branch_jobs){ Travis::API::V3::Models::Build.find(default_branch.last_build.id).jobs}
   let(:jobs)        { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:job)         { Travis::API::V3::Models::Build.find(build.id).jobs.last }
   let(:commit)      { job.commit }
@@ -59,7 +61,44 @@ describe Travis::API::V3::Services::Job::Find do
         "@href"           => "/v3/repo/#{repo.id}",
         "@representation" => "minimal",
         "id"              => repo.id,
-        "slug"            => repo.slug},
+        "slug"            => repo.slug,
+        "default_branch"  => {
+            "@type"         => "branch",
+            "@href"         =>"/v3/repo/#{repo.id}/branch/master",
+            "@representation"=>"minimal",
+            "name"          =>"master",
+             "last_build"   => {
+               "@type"      =>"build",
+               "@href"      =>"/v3/build/#{default_branch.last_build.id}",
+               "@representation"=>"minimal",
+               "id"         => default_branch.last_build.id,
+               "number"     => default_branch.last_build.number,
+               "state"      => default_branch.last_build.state,
+               "duration"   => nil,
+               "event_type" => "push",
+               "previous_state"=>"passed",
+               "started_at" =>"2010-11-12T13:00:00Z",
+               "finished_at"=> nil,
+               "jobs"       => [{
+                 "@type"    => "job",
+                 "@href"    => "/v3/job/#{def_branch_jobs[0].id}",
+                 "@representation" => "minimal",
+                 "id"       => def_branch_jobs[0].id},
+                 {
+                 "@type"    => "job",
+                 "@href"    => "/v3/job/#{def_branch_jobs[1].id}",
+                 "@representation"=>"minimal",
+                 "id"       => def_branch_jobs[1].id},
+                 {
+                 "@type"    => "job",
+                 "@href"    => "/v3/job/#{def_branch_jobs[2].id}",
+                 "@representation"=>"minimal",
+                 "id"       => def_branch_jobs[2].id},
+                 {
+                 "@type"    => "job",
+                 "@href"    => "/v3/job/#{def_branch_jobs[3].id}",
+                 "@representation"=>"minimal",
+                 "id"       => def_branch_jobs[3].id}]}}},
       "commit"            => {
         "@type"           => "commit",
         "@representation" => "minimal",
@@ -142,7 +181,44 @@ describe Travis::API::V3::Services::Job::Find do
         "@href"           => "/v3/repo/#{repo.id}",
         "@representation" => "minimal",
         "id"              => repo.id,
-        "slug"            => repo.slug},
+        "slug"            => repo.slug,
+        "default_branch"  => {
+            "@type"         => "branch",
+            "@href"         =>"/v3/repo/#{repo.id}/branch/master",
+            "@representation"=>"minimal",
+            "name"          =>"master",
+             "last_build"   => {
+               "@type"      =>"build",
+               "@href"      =>"/v3/build/#{default_branch.last_build.id}",
+               "@representation"=>"minimal",
+               "id"         => default_branch.last_build.id,
+               "number"     => default_branch.last_build.number,
+               "state"      => default_branch.last_build.state,
+               "duration"   => nil,
+               "event_type" => "push",
+               "previous_state"=>"passed",
+               "started_at" =>"2010-11-12T13:00:00Z",
+               "finished_at"=> nil,
+               "jobs"       => [{
+                 "@type"    => "job",
+                 "@href"    => "/v3/job/#{def_branch_jobs[0].id}",
+                 "@representation" => "minimal",
+                 "id"       => def_branch_jobs[0].id},
+                 {
+                 "@type"    => "job",
+                 "@href"    => "/v3/job/#{def_branch_jobs[1].id}",
+                 "@representation"=>"minimal",
+                 "id"       => def_branch_jobs[1].id},
+                 {
+                 "@type"    => "job",
+                 "@href"    => "/v3/job/#{def_branch_jobs[2].id}",
+                 "@representation"=>"minimal",
+                 "id"       => def_branch_jobs[2].id},
+                 {
+                 "@type"    => "job",
+                 "@href"    => "/v3/job/#{def_branch_jobs[3].id}",
+                 "@representation"=>"minimal",
+                 "id"       => def_branch_jobs[3].id}]}}},
       "commit"            => {
         "@type"           => "commit",
         "@representation" => "minimal",

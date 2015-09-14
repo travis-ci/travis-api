@@ -56,7 +56,9 @@ describe Travis::API::V3::Services::Branches::Find do
           "@href"          => "/v3/repo/#{repo.id}",
           "@representation"=> "minimal",
           "id"             => repo.id,
-          "slug"           => "svenfuchs/minimal" },
+          "slug"           => "svenfuchs/minimal",
+          "default_branch" => {
+            "@href"        =>"/v3/repo/#{repo.id}/branch/master"}},
         "last_build"       => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
@@ -131,7 +133,9 @@ describe Travis::API::V3::Services::Branches::Find do
           "@href"          => "/v3/repo/#{repo.id}",
           "@representation"=> "minimal",
           "id"             => repo.id,
-          "slug"           => "svenfuchs/minimal" },
+          "slug"           => "svenfuchs/minimal",
+          "default_branch" => {
+            "@href"        =>"/v3/repo/#{repo.id}/branch/master"}},
         "last_build"       => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
