@@ -127,6 +127,8 @@ module Travis::Api
             failover:             true,
             socket_timeout:       1.5,
             socket_failure_delay: 0.2)
+        else
+          Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
         end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
