@@ -4,9 +4,13 @@ module Travis::API::V3
 
     Accounts      = Module.new { extend Services }
     Branch        = Module.new { extend Services }
+    Branches      = Module.new { extend Services }
+    Broadcast     = Module.new { extend Services }
+    Broadcasts    = Module.new { extend Services }
     Build         = Module.new { extend Services }
     Builds        = Module.new { extend Services }
     Job           = Module.new { extend Services }
+    Jobs          = Module.new { extend Services }
     Organization  = Module.new { extend Services }
     Organizations = Module.new { extend Services }
     Owner         = Module.new { extend Services }
@@ -16,7 +20,7 @@ module Travis::API::V3
     User          = Module.new { extend Services }
 
     def result_type
-      @resul_type ||= name[/[^:]+$/].underscore.to_sym
+      @result_type ||= name[/[^:]+$/].underscore.to_sym
     end
   end
 end

@@ -19,7 +19,9 @@ describe Travis::API::V3::Services::Repository::Find do
         "@href"          => "/v3/repo/#{repo.id}",
         "@representation"=> "minimal",
         "id"             => repo.id,
-        "slug"           => "svenfuchs/minimal"},
+        "slug"           => "svenfuchs/minimal",
+        "default_branch" => {
+          "@href"        => "/v3/repo/#{repo.id}/branch/master"}},
       "last_build"       => {
         "@type"          => "build",
         "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
@@ -48,7 +50,8 @@ describe Travis::API::V3::Services::Repository::Find do
          {"@type"       => "job",
           "@href"       => "/v3/job/#{jobs[3].id}",
           "@representation"=>"minimal",
-          "id"          =>jobs[3].id}]}
+          "id"          =>jobs[3].id}]},
+      "exists_on_github"=> true
     }}
   end
 end
