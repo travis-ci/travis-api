@@ -99,7 +99,7 @@ module Travis::Api
         Rack::Utils::HTTP_STATUS_CODES[420] = "Enhance Your Calm"
         use Rack::Attack
         Rack::Attack.blacklist('block client requesting ruby builds') do |req|
-          req.ip == "130.15.4.210"
+          Travis.redis.sismember(:api_blacklisted_ips, req.ip)
         end
 
         Rack::Attack.blacklisted_response = lambda do |env|
