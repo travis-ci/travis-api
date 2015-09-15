@@ -97,13 +97,36 @@ module Travis::Api
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
         Rack::Utils::HTTP_STATUS_CODES[420] = "Enhance Your Calm"
+
         use Rack::Attack
         Rack::Attack.blacklist('block client requesting ruby builds') do |req|
           Travis.redis.sismember(:api_blacklisted_ips, req.ip)
         end
 
+        # Lockout IP addresses that are hammering /auth/github.
+        # After 10 requests in 1 minute, block all requests from that IP for 1 hour.
+        Rack::Attack.blacklist('allow2ban login scrapers') do |req|
+          # `filter` returns false value if request is to your login page (but still
+          # increments the count) so request below the limit are not blocked until
+          # they hit the limit.  At that point, filter will return true and block.
+          Rack::Attack::Allow2Ban.filter(req.ip, :maxretry => 10, :findtime => 1.minute, :bantime => 1.hour) do
+            # The count for the IP is incremented if the return value is truthy.
+            req.path == '/auth/github' and req.post?
+          end
+        end
+
         Rack::Attack.blacklisted_response = lambda do |env|
           [ 420, {}, ['Enhance Your Calm']]
+        end
+
+        if ENV["MEMCACHIER_SERVERS"]
+          Rack::Attack.cache.store = Dalli::Client.new(
+            ENV["MEMCACHIER_SERVERS"].split(","),
+            username:             ENV["MEMCACHIER_USERNAME"],
+            password:             ENV["MEMCACHIER_PASSWORD"],
+            failover:             true,
+            socket_timeout:       1.5,
+            socket_failure_delay: 0.2)
         end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
