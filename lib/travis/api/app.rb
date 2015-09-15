@@ -119,6 +119,18 @@ module Travis::Api
           [ 420, {}, ['Enhance Your Calm']]
         end
 
+        Rack::Attack.throttle('req/ip/1min', limit: 100, period: 1.minutes) do |req|
+          req.ip
+        end
+
+        Rack::Attack.throttle('req/ip/5min', limit: 300, period: 5.minutes) do |req|
+          req.ip
+        end
+
+        Rack::Attack.throttle('req/ip/10min', limit: 1000, period: 10.minutes) do |req|
+          req.ip
+        end
+
         if ENV["MEMCACHIER_SERVERS"]
           Rack::Attack.cache.store = Dalli::Client.new(
             ENV["MEMCACHIER_SERVERS"].split(","),
