@@ -2,6 +2,8 @@ require 'rack/attack'
 
 class Rack::Attack
   class Request
+    TOKEN = 'travis.access_token'.freeze
+
     def travis_token
       env.fetch(TOKEN)
     end
