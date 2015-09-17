@@ -125,7 +125,7 @@ module Travis::Api
         use Travis::Api::App::Middleware::Metriks
 
         # make sure this is below ScopeCheck so we have the token
-        use Rack::Attack
+        use Rack::Attack if Endpoint.production?
 
         # if this is a v3 API request, ignore everything after
         use Travis::API::V3::OptIn
