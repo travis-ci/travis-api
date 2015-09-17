@@ -1,10 +1,7 @@
 require 'rack/attack'
 
 class Rack::Attack
-  module RequestMixin
-    TOKEN = 'travis.access_token'.freeze
-    Rack::Attack::Request.prepend(self)
-
+  class Request
     def travis_token
       env.fetch(TOKEN)
     end
@@ -16,10 +13,6 @@ class Rack::Attack
     def identifier
       authenticated? ? travis_token.to_s : ip
     end
-  end
-
-  def self.cache
-    Rack::Attack.cache
   end
 
   ####
