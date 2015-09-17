@@ -2,6 +2,8 @@ require 'rack/attack'
 
 module Travis::Api
   class Attack < Rack::Attack
+    DalliProxy = Rack::Attack::DalliProxy # ?
+
     module Request
       TOKEN = 'travis.access_token'.freeze
       Rack::Attack::Request.prepend(self)
