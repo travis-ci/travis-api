@@ -43,9 +43,9 @@ class Rack::Attack
   end
 
   ###
-  # Throttle:  authenticated requests - 100 per minute
+  # Throttle:  authenticated requests - 200 per minute
   # Scoped by: access token
-  throttle('req/token/1min', limit: 100, period: 1.minute) do |request|
+  throttle('req/token/1min', limit: 200, period: 1.minute) do |request|
     request.identifier
   end
 
