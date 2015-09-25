@@ -52,12 +52,13 @@ describe Travis::API::V3::Services::Build::Cancel do
     example { expect(JSON.load(body).to_s).to include(
       "@type",
       "error_type",
-      "error_message",
       "insufficient access",
+      "error_message",
+      "operation requires cancel access to build",
       "resource_type",
       "build",
       "permission",
-      "build_cancellation")
+      "cancel")
     }
   end
 
@@ -66,7 +67,7 @@ describe Travis::API::V3::Services::Build::Cancel do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { repo.update_attribute(:private, true)                             }
     before        { post("/v3/build/#{build.id}/cancel", {}, headers)                 }
-    after         { build.update_attribute(:private, false)                            }
+    after         { repo.update_attribute(:private, false)                            }
 
     example { expect(last_response.status).to be == 404 }
     example { expect(JSON.load(body)).to      be ==     {
@@ -87,15 +88,15 @@ describe Travis::API::V3::Services::Build::Cancel do
     example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",
-      "pending",
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
       "build",
       "@href",
       "@representation",
       "minimal",
-      "request",
-      "user",
-      "resource_type",
-      "request")
+      "permission",
+      "cancel",
+      "id",
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     }
 
     example { expect(sidekiq_payload).to be == {
