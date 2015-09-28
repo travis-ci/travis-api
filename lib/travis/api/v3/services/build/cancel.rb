@@ -6,8 +6,8 @@ module Travis::API::V3
       raise NotFound      unless build = find(:build)
       access_control.permissions(build).cancel!
 
-      payload = query.cancel(build)
-      build
+      query.cancel(access_control.user)
+      accepted(build: build, state_change: :cancel)
     end
   end
 end

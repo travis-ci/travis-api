@@ -7,13 +7,9 @@ module Travis::API::V3
       raise WrongParams, 'missing build.id'.freeze
     end
 
-    def cancel
-      raise WrongParams, 'missing build.id'.freeze                         unless build.id
-      payload = {
-        build: { id: build.id }
-      }
-
-      perform_async(:build_cancellation, type: 'api'.freeze, credentials: { token: token }, payload: JSON.dump(payload))
+    def cancel(user)
+      payload = {build: {id: id, user_id: user.id, source: 'api'}}
+      perform_async(:build_cancellation, type: 'api'.freeze, payload: JSON.dump(payload))
       payload
     end
   end
