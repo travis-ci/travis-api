@@ -117,7 +117,10 @@ describe Travis::API::V3::Services::Build::Cancel do
     end
   end
 
-
+  #  TODO decided to discuss further with rkh as this use case doesn't really exist at the moment
+  #  and 'fixing' the query requires modifying workers that v2 uses, thereby running the risk of breaking v2,
+  #  and also because in 6 months or so travis-hub will be able to cancel builds without using travis-core at all.
+  #
   # describe "existing repository, application with full access" do
   #   let(:app_name)   { 'travis-example'                                                           }
   #   let(:app_secret) { '12345678'                                                                 }
@@ -136,17 +139,17 @@ describe Travis::API::V3::Services::Build::Cancel do
   #       "error_message" => "missing user"
   #     }}
   #   end
-
-    # describe 'setting user' do
-    #   let(:params) {{ user: { id: repo.owner.id } }}
-    #   example { expect(last_response.status).to be == 202 }
-    #   example { expect(sidekiq_payload).to be == {
-    #     repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
-    #     user:       { id: repo.owner.id },
-    #     message:    nil,
-    #     branch:     'master',
-    #     config:     {}
-    #   }}
-    # end
+  #
+  #   describe 'setting user' do
+  #     let(:params) {{ user: { id: repo.owner.id } }}
+  #     example { expect(last_response.status).to be == 202 }
+  #     example { expect(sidekiq_payload).to be == {
+  #       # repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+  #       # user:       { id: repo.owner.id },
+  #       # message:    nil,
+  #       # branch:     'master',
+  #       # config:     {}
+  #     }}
+  #   end
   # end
 end
