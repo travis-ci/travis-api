@@ -19,7 +19,7 @@ module Travis::API::V3
       get :find
 
       post :cancel, '/cancel'
-      # post :restart, '/restart'
+      post :restart, '/restart'
     end
 
     resource :job do
