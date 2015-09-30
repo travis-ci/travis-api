@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Build::Cancel do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
-  let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last[:payload]) }
+  let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last.to_json) }
   let(:sidekiq_params) { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
 
   before do
