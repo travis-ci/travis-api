@@ -14,7 +14,10 @@ module Travis::API::V3
     end
 
     def restart(user)
-      payload = {id: id, user_id: user.id, source: 'api'}
+      payload = {
+        build:  { id: id },
+        user:   { id: user.id }
+      }
       perform_async(:build_restart, type: 'api'.freeze, payload: JSON.dump(payload))
       payload
     end
