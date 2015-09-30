@@ -97,11 +97,10 @@ describe Travis::API::V3::Services::Build::Cancel do
     }
 
     example { expect(sidekiq_payload).to be == {
-      "build"    => {
-        "id"     => "#{build.id}",
-        "user_id"=> repo.owner_id,
-        "source" => "api"}
-    }}
+      "id"     => "#{build.id}",
+      "user_id"=> repo.owner_id,
+      "source" => "api"}
+    }
 
     example { expect(Sidekiq::Client.last['queue']).to be == 'build_cancellations'                }
     example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildCancellation' }
@@ -109,11 +108,10 @@ describe Travis::API::V3::Services::Build::Cancel do
     describe "setting id has no effect" do
       let(:params) {{ id: 42 }}
       example { expect(sidekiq_payload).to be == {
-        "build"    => {
-          "id"     => "#{build.id}",
-          "user_id"=> repo.owner_id,
-          "source" => "api"}
-      }}
+        "id"     => "#{build.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
     end
   end
 
