@@ -26,6 +26,9 @@ module Travis::API::V3
       capture id: :digit
       route '/job/{job.id}'
       get :find
+
+      post :cancel, '/cancel'
+      post :restart, '/restart'
     end
 
     resource :organization do

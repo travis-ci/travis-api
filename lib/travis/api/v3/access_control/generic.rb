@@ -63,6 +63,10 @@ module Travis::API::V3
       visible? job.repository
     end
 
+    def job_writable?(job)
+      writable? job.repository
+    end
+
     def organization_visible?(organization)
       full_access? or public_api?
     end
