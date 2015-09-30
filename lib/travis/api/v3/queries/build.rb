@@ -10,13 +10,13 @@ module Travis::API::V3
     # TODO this must match restart method below
     def cancel(user)
       payload = {id: id, user_id: user.id, source: 'api'}
-      perform_async(:build_cancellation, type: 'api'.freeze, payload: JSON.dump(payload))
+      perform_async(:build_cancellation, payload)
       payload
     end
 
     def restart(user)
       payload = { id: id, user_id: user.id, source: 'api' }
-      perform_async(:build_restart, payload: payload)
+      perform_async(:build_restart, payload)
       payload
     end
   end
