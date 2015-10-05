@@ -26,9 +26,13 @@ describe Travis::API::V3::Services::Build::Find do
     before     { get("/v3/build/#{build.id}") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
-      "@type"              => "build",
-      "@href"              => "/v3/build/#{build.id}",
-      "@representation"    => "standard",
+      "@type"            => "build",
+      "@href"            => "/v3/build/#{build.id}",
+      "@representation"  => "standard",
+      "@permissions"     => {
+        "read"           => true,
+        "cancel"         => false,
+        "restart"        => false},
       "id"               => build.id,
       "number"           => build.number,
       "state"            => build.state,
@@ -99,9 +103,13 @@ describe Travis::API::V3::Services::Build::Find do
     after         { repo.update_attribute(:private, false) }
     example       { expect(last_response).to be_ok  }
     example    { expect(parsed_body).to be == {
-      "@type"              => "build",
-      "@href"              => "/v3/build/#{build.id}",
-      "@representation"    => "standard",
+      "@type"            => "build",
+      "@href"            => "/v3/build/#{build.id}",
+      "@representation"  => "standard",
+      "@permissions"     => {
+        "read"           => true,
+        "cancel"         => false,
+        "restart"        => false},
       "id"               => build.id,
       "number"           => build.number,
       "state"            => build.state,

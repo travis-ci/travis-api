@@ -20,6 +20,10 @@ describe Travis::API::V3::Services::Job::Find do
       "@type"             => "job",
       "@href"             => "/v3/job/#{job.id}",
       "@representation"   => "standard",
+      "@permissions"      => {
+        "read"            => true,
+        "cancel"          => false,
+        "restart"         => false },
       "id"                => job.id,
       "number"            => job.number,
       "state"             => job.state,
@@ -140,6 +144,10 @@ describe Travis::API::V3::Services::Job::Find do
       "@type"             => "job",
       "@href"             => "/v3/job/#{job.id}",
       "@representation"   => "standard",
+      "@permissions"      => {
+        "read"            => true,
+        "cancel"          => false,
+        "restart"         => false },
       "id"                => job.id,
       "number"            => job.number,
       "state"             => job.state,

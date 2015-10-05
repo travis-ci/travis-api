@@ -51,12 +51,20 @@ module Travis::API::V3
       visible? build.repository
     end
 
+    def build_writable?(build)
+      writable? build.repository
+    end
+
     def branch_visible?(branch)
       visible? branch.repository
     end
 
     def job_visible?(job)
       visible? job.repository
+    end
+
+    def job_writable?(job)
+      writable? job.repository
     end
 
     def organization_visible?(organization)

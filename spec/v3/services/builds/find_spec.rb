@@ -52,6 +52,10 @@ describe Travis::API::V3::Services::Builds::Find do
         "@type"            => "build",
         "@href"            => "/v3/build/#{build.id}",
         "@representation"  => "standard",
+        "@permissions"     => {
+          "read"           => true,
+          "cancel"         => false,
+          "restart"        => false },
         "id"               => build.id,
         "number"           => "3",
         "state"            => "configured",
@@ -149,6 +153,10 @@ describe Travis::API::V3::Services::Builds::Find do
         "@type"            => "build",
         "@href"            => "/v3/build/#{build.id}",
         "@representation"  => "standard",
+        "@permissions"     => {
+          "read"           => true,
+          "cancel"         => false,
+          "restart"        => false },
         "id"               => build.id,
         "number"           => "3",
         "state"            => "configured",
