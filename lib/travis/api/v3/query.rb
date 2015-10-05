@@ -54,7 +54,13 @@ module Travis::API::V3
 
     def includes?(key)
       @includes ||= @params['include'.freeze].to_s.split(?,.freeze)
-      key.include?(?.) ? @includes.include?(key) : @includes.any? { |k| k.start_with? key }
+      key = key.to_s if key.is_a? Symbol
+
+      if key.is_a? String
+        key.include?(?.) ? @includes.include?(key) : @includes.any? { |k| k.start_with? key }
+      else
+        @includes.any? { |k| key === k }
+      end
     end
 
     def bool(value)

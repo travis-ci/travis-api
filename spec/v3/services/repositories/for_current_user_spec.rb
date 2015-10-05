@@ -89,6 +89,12 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
     }}
   end
 
+  describe "don't nest list of repositories inside a list of repositories even if the user asks for it. user has no idea what they are doing" do
+    before  { get("/v3/repos?include=user.repositories", {}, headers)                          }
+    example { expect(last_response).to be_ok                                                   }
+    example { expect(JSON.load(body)['repositories'].first['owner']['repositories']).to be_nil }
+  end
+
   describe "filter: private=false" do
     before  { get("/v3/repos", {"repository.private" => "false"}, headers)                           }
     example { expect(last_response)                   .to be_ok                                      }

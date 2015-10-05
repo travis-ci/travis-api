@@ -21,13 +21,14 @@ module Travis::API::V3
       available_attributes << value
     end
 
-    attr_reader :href, :options, :list, :included, :meta_data
+    attr_reader :href, :options, :list, :included, :include, :meta_data
 
-    def initialize(list, href: nil, included: [], meta_data: {}, **options)
+    def initialize(list, href: nil, included: [], include: [], meta_data: {}, **options)
       @href      = href
       @options   = options
       @list      = list
       @included  = included
+      @include   = include
       @meta_data = meta_data
     end
 
@@ -49,11 +50,16 @@ module Travis::API::V3
       result                 = fields
       included               = self.included.dup
       result[collection_key] = list.map do |entry|
-        rendered = render_entry(entry, included: included, mode: representation, **options)
+        rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
         included << entry
         rendered
       end
       result
+    end
+
+    def filtered_include
+      key = collection_key.to_s
+      include.reject { |entry| entry.split(?..freeze, 2).last == key }
     end
 
     def representation

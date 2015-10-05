@@ -50,7 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: c70ff174e2ceddebcf28a1b4fd92de5c52d6c74e
+  revision: 21793fc8b01f965b93cf98b7ab1458ee359a5a62
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -369,6 +369,3 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
-
-BUNDLED WITH
-   1.10.6
