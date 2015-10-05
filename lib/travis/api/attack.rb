@@ -27,10 +27,10 @@ class Rack::Attack
 
   ####
   # Ban based on: IP address or access token
-  # Ban time:     1 hour
-  # Ban after:    10 POST requests within one minute to /auth/github
+  # Ban time:     5 hours
+  # Ban after:    10 POST requests within five minutes to /auth/github
   blacklist('hammering /auth/github') do |request|
-     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 1.minute, bantime: 1.hour) do
+     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 5.minutes, bantime: 5.hours) do
        request.post? and request.path == '/auth/github'
      end
   end
