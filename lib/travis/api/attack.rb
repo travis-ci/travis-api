@@ -17,6 +17,20 @@ class Rack::Attack
     end
   end
 
+  def self.bantime(value)
+    case Travis.env
+    when "production" then value
+    when "staging"    then 10 # ban for 10 seconds on staging
+    else 1
+    end
+  end
+
+  POST_WHITELISTED = [
+    "/auth/handshake",
+    "/auth/post_message",
+    "/auth/post_message/iframe"
+  ]
+
   ####
   # Ban based on: IP address
   # Ban time:     indefinite
@@ -30,7 +44,7 @@ class Rack::Attack
   # Ban time:     5 hours
   # Ban after:    10 POST requests within five minutes to /auth/github
   blacklist('hammering /auth/github') do |request|
-     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 5.minutes, bantime: 5.hours) do
+     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 5.minutes, bantime: bantime(5.hours)) do
        request.post? and request.path == '/auth/github'
      end
   end
@@ -40,8 +54,8 @@ class Rack::Attack
   # Ban time:     1 hour
   # Ban after:    10 POST requests within 30 seconds
   blacklist('spamming with POST requests') do |request|
-     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 30.seconds, bantime: 1.hour) do
-       request.post?
+     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 30.seconds, bantime: bantime(1.hour)) do
+       request.post? and not POST_WHITELISTED.include? '/auth/github'
      end
   end
 
