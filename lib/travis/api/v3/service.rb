@@ -26,6 +26,7 @@ module Travis::API::V3
 
     def self.paginate(**options)
       params("limit".freeze, "offset".freeze)
+      params("sort_by".freeze) if query_factory.sortable?
       @paginator = Paginator.new(**options)
     end
 
@@ -35,6 +36,10 @@ module Travis::API::V3
 
     def self.paginate?
       !!@paginator if defined? @paginator
+    end
+
+    def self.query_factory
+      Queries[result_type]
     end
 
     attr_accessor :access_control, :params
@@ -47,7 +52,7 @@ module Travis::API::V3
     end
 
     def query(type = result_type)
-      @queries[type] ||= Queries[type].new(params, result_type)
+      @queries[type] ||= Queries[type].new(params, result_type, service: self)
     end
 
     def github(user = nil)
@@ -81,7 +86,21 @@ module Travis::API::V3
     def run
       not_found unless result = run!
       result = result(result_type, result) unless result.is_a? Result
-      self.class.paginate? ? paginate(result) : result
+      result = paginate(result) if self.class.paginate?
+      apply_warnings(result)
+      result
+    end
+
+    def warnings
+      @warnings ||= []
+    end
+
+    def warn(*args)
+      warnings << args
+    end
+
+    def apply_warnings(result)
+      warnings.each { |args| result.warn(*args) }
     end
 
     def paginate(result)

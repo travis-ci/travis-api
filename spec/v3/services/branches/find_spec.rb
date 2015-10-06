@@ -171,4 +171,60 @@ describe Travis::API::V3::Services::Branches::Find do
         "exists_on_github" => true }]}
     }
   end
+
+  describe "sorting by name" do
+    before  { get("/v3/repo/#{repo.id}/branches?sort_by=name&limit=1") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body["@pagination"]).to be == {
+        "limit"            => 1,
+        "offset"           => 0,
+        "count"            => 1,
+        "is_first"         => true,
+        "is_last"          => true,
+        "next"             => nil,
+        "prev"             => nil,
+        "first"            => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=name&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 },
+        "last"             => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=name&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 }}
+    }
+  end
+
+  describe "sorting by name:desc" do
+    before  { get("/v3/repo/#{repo.id}/branches?sort_by=name%3Adesc&limit=1") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body["@pagination"]).to be == {
+        "limit"            => 1,
+        "offset"           => 0,
+        "count"            => 1,
+        "is_first"         => true,
+        "is_last"          => true,
+        "next"             => nil,
+        "prev"             => nil,
+        "first"            => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=name%3Adesc&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 },
+        "last"             => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=name%3Adesc&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 }}
+    }
+  end
+
+  describe "sorting by unknown sort field" do
+    before  { get("/v3/repo/#{repo.id}/branches?sort_by=name:desc,foo&limit=1") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body["@warnings"]).to be == [{
+      "@type"       => "warning",
+      "message"     => "query value foo for sort_by not a valid sort mode, ignored",
+      "warning_type"=> "ignored_value",
+      "parameter"   => "sort_by",
+      "value"       => "foo"
+    }]}
+  end
 end
