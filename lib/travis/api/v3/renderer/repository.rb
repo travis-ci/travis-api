@@ -9,6 +9,22 @@ module Travis::API::V3
       !!model.active
     end
 
+    def default_branch
+      return model.default_branch if include_default_branch?
+      {
+        :@type           => 'branch'.freeze,
+        :@href           =>  Renderer.href(:branch, name: model.default_branch_name, repository_id: id, script_name: script_name),
+        :@representation => 'minimal'.freeze,
+        :name            => model.default_branch_name
+      }
+    end
+
+    def include_default_branch?
+      return true if include? 'repository.default_branch'.freeze
+      return true if include.any? { |i| i.start_with? 'branch'.freeze }
+      return true if included.any? { |i| i.is_a? Models::Branch and i.respository_id == id and i.name == i.default_branch_name }
+    end
+
     def owner
       return model.owner if include_owner?
       owner_href = Renderer.href(owner_type.to_sym, id: model.owner_id, script_name: script_name)
