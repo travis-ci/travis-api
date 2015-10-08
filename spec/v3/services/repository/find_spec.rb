@@ -60,40 +60,7 @@ describe Travis::API::V3::Services::Repository::Find do
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master",
-        "last_build"       => {
-          "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
-          "@representation"=> "minimal",
-          "id"             => repo.default_branch.last_build.id,
-          "number"         => "3",
-          "state"          => "configured",
-          "duration"       => nil,
-          "event_type"     => "push",
-          "previous_state" => "passed",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[0].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[0].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[1].id}",
-              "@representation"=>"minimal",
-              "id"           =>  jobs[1].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[2].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[2].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[3].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[3].id}]
-          }}
+        "name"             => "master"}
     }}
   end
 
@@ -176,40 +143,7 @@ describe Travis::API::V3::Services::Repository::Find do
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master",
-        "last_build"       => {
-          "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
-          "@representation"=> "minimal",
-          "id"             => repo.default_branch.last_build.id,
-          "number"         => "3",
-          "state"          => "configured",
-          "duration"       => nil,
-          "event_type"     => "push",
-          "previous_state" => "passed",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[0].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[0].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[1].id}",
-              "@representation"=>"minimal",
-              "id"           =>  jobs[1].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[2].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[2].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[3].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[3].id}]
-          }}
+        "name"             => "master"}
     }}
   end
 
@@ -277,40 +211,7 @@ describe Travis::API::V3::Services::Repository::Find do
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master",
-        "last_build"       => {
-          "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
-          "@representation"=> "minimal",
-          "id"             => repo.default_branch.last_build.id,
-          "number"         => "3",
-          "state"          => "configured",
-          "duration"       => nil,
-          "event_type"     => "push",
-          "previous_state" => "passed",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[0].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[0].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[1].id}",
-              "@representation"=>"minimal",
-              "id"           =>  jobs[1].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[2].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[2].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[3].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[3].id}]
-          }}
+        "name"             => "master"}
     }}
   end
 
@@ -384,40 +285,7 @@ describe Travis::API::V3::Services::Repository::Find do
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master",
-        "last_build"       => {
-          "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
-          "@representation"=> "minimal",
-          "id"             => repo.default_branch.last_build.id,
-          "number"         => "3",
-          "state"          => "configured",
-          "duration"       => nil,
-          "event_type"     => "push",
-          "previous_state" => "passed",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[0].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[0].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[1].id}",
-              "@representation"=>"minimal",
-              "id"           =>  jobs[1].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[2].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[2].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[3].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[3].id}]
-          }}
+        "name"             => "master"}
     }}
   end
 

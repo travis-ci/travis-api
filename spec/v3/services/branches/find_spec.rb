@@ -8,12 +8,12 @@ describe Travis::API::V3::Services::Branches::Find do
   let(:parsed_body) { JSON.load(body) }
 
   describe "fetching branches on a public repository by slug" do
-    before     { get("/v3/repo/svenfuchs%2Fminimal/branches")     }
-    example    { expect(last_response).to be_ok }
+    before  { get("/v3/repo/svenfuchs%2Fminimal/branches")     }
+    example { expect(last_response).to be_ok }
   end
 
   describe "fetching branches on a non-existing repository by slug" do
-    before     { get("/v3/repo/svenfuchs%2Fminimal1/branches")     }
+    before  { get("/v3/repo/svenfuchs%2Fminimal1/branches")     }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
@@ -48,17 +48,18 @@ describe Travis::API::V3::Services::Branches::Find do
           "limit"          => 1 }},
       "branches"           => [{
         "@type"            => "branch",
-        "@href"            => "/v3/repo/#{repo.id}/branch/#{branch.name}",
+        "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "standard",
-        "name"             => branch.name,
+        "name"             => "master",
+        "default_branch"   => true,
+        "exists_on_github" => true,
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
           "@representation"=> "minimal",
           "id"             => repo.id,
-          "slug"           => "svenfuchs/minimal",
-          "default_branch" => {
-            "@href"        =>"/v3/repo/#{repo.id}/branch/master"}},
+          "name"           => "minimal",
+          "slug"           => "svenfuchs/minimal"},
         "last_build"       => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
@@ -70,28 +71,7 @@ describe Travis::API::V3::Services::Branches::Find do
           "event_type"     => "push",
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-            "@type"        => "job",
-            "@href"        => "/v3/job/#{jobs[0].id}",
-            "@representation"=> "minimal",
-            "id"           => jobs[0].id },
-            {
-            "@type"        => "job",
-            "@href"        => "/v3/job/#{jobs[1].id}",
-            "@representation"=>"minimal",
-            "id"           => jobs[1].id },
-            {
-            "@type"        => "job",
-            "@href"        => "/v3/job/#{jobs[2].id}",
-            "@representation"=>"minimal",
-            "id"           => jobs[2].id },
-            {
-            "@type"        => "job",
-            "@href"        => "/v3/job/#{jobs[3].id}",
-            "@representation"=>"minimal",
-            "id"           => jobs[3].id }]},
-        "exists_on_github" => true }]}
+          "finished_at"    => nil }}]}
     }
   end
 
@@ -125,17 +105,18 @@ describe Travis::API::V3::Services::Branches::Find do
           "limit"          => 1 }},
       "branches"           => [{
         "@type"            => "branch",
-        "@href"            => "/v3/repo/#{repo.id}/branch/#{branch.name}",
+        "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "standard",
-        "name"             => branch.name,
+        "name"             => "master",
+        "default_branch"   => true,
+        "exists_on_github" => true,
         "repository"       => {
           "@type"          => "repository",
           "@href"          => "/v3/repo/#{repo.id}",
           "@representation"=> "minimal",
           "id"             => repo.id,
-          "slug"           => "svenfuchs/minimal",
-          "default_branch" => {
-            "@href"        =>"/v3/repo/#{repo.id}/branch/master"}},
+          "name"           => "minimal",
+          "slug"           => "svenfuchs/minimal"},
         "last_build"       => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
@@ -147,28 +128,7 @@ describe Travis::API::V3::Services::Branches::Find do
           "event_type"     => "push",
           "previous_state" => "passed",
           "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-            "@type"        => "job",
-            "@href"        => "/v3/job/#{jobs[0].id}",
-            "@representation"=> "minimal",
-            "id"           => jobs[0].id },
-            {
-            "@type"        => "job",
-            "@href"        => "/v3/job/#{jobs[1].id}",
-            "@representation"=>"minimal",
-            "id"           => jobs[1].id },
-            {
-            "@type"        => "job",
-            "@href"        => "/v3/job/#{jobs[2].id}",
-            "@representation"=>"minimal",
-            "id"           => jobs[2].id },
-            {
-            "@type"        => "job",
-            "@href"        => "/v3/job/#{jobs[3].id}",
-            "@representation"=>"minimal",
-            "id"           => jobs[3].id }]},
-        "exists_on_github" => true }]}
+          "finished_at"    => nil }}]}
     }
   end
 
