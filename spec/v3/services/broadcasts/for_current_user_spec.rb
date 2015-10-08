@@ -39,7 +39,7 @@ describe Travis::API::V3::Services::Broadcasts::ForCurrentUser do
         "category"       => broadcasts[0].category,
         "kind"           => nil,
         "message"        => broadcasts[0].message,
-        "expired"        => nil,
+        "expired"        => false,
         "created_at"     => "2010-11-12T13:00:00Z",
         "updated_at"     => "2010-11-12T13:00:00Z" },
         {
@@ -51,7 +51,7 @@ describe Travis::API::V3::Services::Broadcasts::ForCurrentUser do
         "category"       => broadcasts[1].category,
         "kind"           => nil,
         "message"        => broadcasts[1].message,
-        "expired"        => nil,
+        "expired"        => false,
         "created_at"     => "2010-11-12T13:00:00Z",
         "updated_at"     => "2010-11-12T13:00:00Z"},
         {
@@ -63,7 +63,7 @@ describe Travis::API::V3::Services::Broadcasts::ForCurrentUser do
         "category"       => broadcasts[2].category,
         "kind"           => nil,
         "message"        => broadcasts[2].message,
-        "expired"        => nil,
+        "expired"        => false,
         "created_at"     => "2010-11-12T13:00:00Z",
         "updated_at"     => "2010-11-12T13:00:00Z"},
         {
@@ -75,7 +75,7 @@ describe Travis::API::V3::Services::Broadcasts::ForCurrentUser do
         "category"       => broadcasts[3].category,
         "kind"           => nil,
         "message"        => broadcasts[3].message,
-        "expired"        => nil,
+        "expired"        => false,
         "created_at"     => "2010-11-12T13:00:00Z",
         "updated_at"     => "2010-11-12T13:00:00Z"}]
     }}
