@@ -39,15 +39,6 @@ describe Travis::API::V3::Services::Owner::Repositories do
           "id"               => repo.owner_id,
           "login"            => "svenfuchs",
           "@href"            => "/v3/user/#{repo.owner_id}" },
-        "last_build"         => {
-          "@type"            => "build",
-          "@href"            => "/v3/build/#{repo.last_build.id}",
-          "id"               => repo.last_build_id,
-          "number"           => "2",
-          "state"            => "passed",
-          "duration"         => nil,
-          "started_at"       => "2010-11-12T12:30:00Z",
-          "finished_at"      => "2010-11-12T12:30:20Z"},
         "default_branch"     => {
           "@type"            => "branch",
           "@href"            => "/v3/repo/#{repo.id}/branch/master",

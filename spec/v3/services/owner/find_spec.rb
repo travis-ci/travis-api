@@ -56,7 +56,6 @@ describe Travis::API::V3::Services::Owner::Find do
           "github_language"   => nil,
           "active"            => false,
           "private"           => false,
-          "last_build"        => nil,
           "owner"             => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"    => {
             "@type"           => "branch",
@@ -101,7 +100,6 @@ describe Travis::API::V3::Services::Owner::Find do
           "github_language" => nil,
           "active"          => false,
           "private"         => false,
-          "last_build"      => nil,
           "owner"           => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"  => {
             "@type"         => "branch",
