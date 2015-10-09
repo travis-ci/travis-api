@@ -3,13 +3,6 @@
 # make sure we kill all child processes once done
 trap '{ pkill -P $$; rm -f config/nginx.conf; exit 255; }' EXIT
 
-if [[ $RACK_ENV == "production" ]]; then
-  export tmp_dir=/tmp
-else
-  mkdir -p tmp
-  export tmp_dir=./tmp
-fi
-
 if [ -f bin/nginx ]; then
   nginx=bin/nginx
 else
