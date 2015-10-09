@@ -1,33 +1,20 @@
-#!/usr/bin/env ruby --disable=gems --disable=rubyopt
-GC.disable
+#!/bin/bash
 
-module System
-  extend self
-  def cpu_count
-    return Java::Java.lang.Runtime.getRuntime.availableProcessors if defined? Java::Java
-    return File.read('/proc/cpuinfo').scan(/^processor\s*:/).size if File.exist? '/proc/cpuinfo'
-    require 'win32ole'
-    WIN32OLE.connect("winmgmts://").ExecQuery("select * from Win32_ComputerSystem").NumberOfProcessors
-  rescue LoadError
-    Integer `sysctl -n hw.ncpu 2>/dev/null` rescue 1
-  end
-end
+if [[ "$RACK_ENV" == "development" ]]; then
+  echo -n 2
+  exit 0
+fi
 
-if ENV['DYNO']
-  # we're on Heroku
-  case `ulimit -u`.to_i
-  when 256   then concurrency = 2  # 1x dyno
-  when 512   then concurrency = 4  # 2x dyno
-  when 32768 then concurrency = 16 # px dyno
-  else $stderr.puts "Unkown dyno type, selecting concurrency of 4, because"
-  end
-end
+case $(ulimit -u) in
+    256) echo -n 2; exit 0;;
+    512) echo -n 4; exit 0;;
+    32768)
+      if [[ "$1" == "--nginx" ]]; then
+        echo -n 4
+      else
+        echo -n 16
+      fi
+      exit 0;;
+esac
 
-case ENV['RACK_ENV'] || 'development'
-when 'production'  then concurrency ||= System.cpu_count
-when 'development' then concurrency ||= 2 # use at least two so we can be sure things work concurrencly
-else                    concurrency ||= 1
-end
-
-concurrency = System.cpu_count if ARGV[0] == '--nginx' and System.cpu_count < concurrency
-print concurrency
+echo -n 4
