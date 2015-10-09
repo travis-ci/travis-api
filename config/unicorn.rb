@@ -3,7 +3,8 @@
 worker_processes Integer(ENV.fetch('WEB_CONCURRENCY')) # amount of unicorn workers to spin up
 timeout 30 # restarts workers that hang for 30 seconds
 
-listen File.expand_path("nginx.socket", ENV["tmp_dir"]), backlog: 1024
+tmp_dir = ENV.fetch("tmp_dir", "/tmp")
+listen File.expand_path("nginx.socket", tmp_dir), backlog: 1024
 
 require 'fileutils'
 before_fork do |server, worker|
@@ -11,5 +12,5 @@ before_fork do |server, worker|
   require 'travis/api/app'
 
   # signal to nginx we're ready
-  FileUtils.touch("#{ENV["tmp_dir"]}/app-initialized")
+  FileUtils.touch("#{tmp_dir}/app-initialized")
 end
