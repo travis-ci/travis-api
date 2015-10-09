@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 [ $WEB_CONCURRENCY ] || export WEB_CONCURRENCY=$(script/web_concurrency)
 [ $NGINX_WORKERS ]   || export NGINX_WORKERS=$(script/web_concurrency --nginx)
 
-echo "port=$PORT rack_env=$RACK_ENV web_concurrency=$WEB_CONCURRENCY nginx_workers=$NGINX_WORKERS"
+echo "port=$PORT rack_env=$RACK_ENV web_concurrency=$WEB_CONCURRENCY nginx_workers=$NGINX_WORKERS" >&2
 
 ruby="ruby -I lib -S"
 bexc="$ruby bundle exec"
