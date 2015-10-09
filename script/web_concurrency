@@ -15,7 +15,7 @@ end
 
 if ENV['DYNO']
   # we're on Heroku
-  case `uname -u`.to_i
+  case `ulimit -u`.to_i
   when 256   then concurrency = 2  # 1x dyno
   when 512   then concurrency = 4  # 2x dyno
   when 32768 then concurrency = 16 # px dyno
