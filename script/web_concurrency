@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [[ "$RACK_ENV" == "development" ]]; then
+  echo -n 2
+  exit 0
+fi
+
+case $(ulimit -u) in
+    256) echo -n 2; exit 0;;
+    512) echo -n 4; exit 0;;
+    32768)
+      if [[ "$1" == "--nginx" ]]; then
+        echo -n 4
+      else
+        echo -n 16
+      fi
+      exit 0;;
+esac
+
+echo -n 4
