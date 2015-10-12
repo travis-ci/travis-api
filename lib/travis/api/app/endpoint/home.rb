@@ -49,6 +49,18 @@ class Travis::Api::App
       get '/config' do
         { config: settings.client_config }
       end
+
+      deploy_sha = File.read(".deploy-sha") if File.exist?(".deploy-sha")
+      sys_info   = {
+        web_concurrency: ENV['WEB_CONCURRENCY'],
+        ulimit: `ulimit -u`.to_i,
+        dyno: ENV['DYNO'],
+        deploy_sha: deploy_sha
+      }
+
+      get '/sysinfo' do
+        sys_info
+      end
     end
   end
 end
