@@ -5,16 +5,21 @@ if [[ "$RACK_ENV" == "development" ]]; then
   exit 0
 fi
 
-case $(ulimit -u) in
-    256) echo -n 2; exit 0;;
-    512) echo -n 4; exit 0;;
-    32768)
-      if [[ "$1" == "--nginx" ]]; then
-        echo -n 4
-      else
-        echo -n 32
-      fi
-      exit 0;;
-esac
+
+if [[ "$1" == "--nginx" ]]; then
+  case $(ulimit -u) in
+    256)    echo -n 1; exit 0;; # Standard 1x, 512MB
+    512)    echo -n 2; exit 0;; # Standard 2x, 1GB
+    16384)  echo -n 4; exit 0;; # Performance M, 2.5GB
+    32768)  echo -n 4; exit 0;; # Performance L, 14GB
+  esac
+else
+  case $(ulimit -u) in
+    256)    echo -n 2;  exit 0;; # Standard 1x, 512MB
+    512)    echo -n 4;  exit 0;; # Standard 2x, 1GB
+    16384)  echo -n 10; exit 0;; # Performance M, 2.5GB
+    32768)  echo -n 48; exit 0;; # Performance L, 14GB
+  esac
+fi
 
 echo -n 4
