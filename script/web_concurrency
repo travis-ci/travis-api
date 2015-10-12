@@ -12,7 +12,7 @@ case $(ulimit -u) in
       if [[ "$1" == "--nginx" ]]; then
         echo -n 4
       else
-        echo -n 16
+        echo -n 32
       fi
       exit 0;;
 esac
