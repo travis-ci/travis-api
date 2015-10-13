@@ -7,7 +7,7 @@ module Travis::API::V3
       exists_on_github: sort_condition(:exists_on_github),
       default_branch:   sort_condition(name: "repositories.default_branch")
 
-    default_sort "last_build:desc"
+    default_sort "default_branch,exists_on_github,last_build:desc"
 
     def find(repository)
       sort(filter(repository.branches), repository: repository)
