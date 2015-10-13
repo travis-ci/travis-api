@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Queries::Repositories < Query
     params :active, :private, prefix: :repository
+    sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active)
 
     def for_member(user)
       all.joins(:users).where(users: user_condition(user), invalidated_at: nil)
@@ -27,7 +28,7 @@ module Travis::API::V3
 
       list = list.includes(default_branch: :last_build)
       list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
-      list
+      sort list
     end
   end
 end

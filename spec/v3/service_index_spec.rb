@@ -64,7 +64,7 @@ describe Travis::API::V3::ServiceIndex do
 
         describe "for_current_user action" do
           let(:action) { resource.fetch("actions").fetch("for_current_user") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repos{?active,include,private,repository.active,repository.private}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repos{?active,include,limit,offset,private,repository.active,repository.private,sort_by}") }
         end
       end
 
