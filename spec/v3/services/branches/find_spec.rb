@@ -172,6 +172,20 @@ describe Travis::API::V3::Services::Branches::Find do
     }
   end
 
+  describe "filtering by exists_on_github" do
+    describe "false" do
+      before     { get("/v3/repo/#{repo.id}/branches?branch.exists_on_github=false") }
+      example    { expect(last_response).to be_ok }
+      example    { expect(parsed_body["branches"]).to be_empty }
+    end
+
+    describe "true" do
+      before     { get("/v3/repo/#{repo.id}/branches?branch.exists_on_github=true") }
+      example    { expect(last_response).to be_ok }
+      example    { expect(parsed_body["branches"]).not_to be_empty }
+    end
+  end
+
   describe "sorting by name" do
     before  { get("/v3/repo/#{repo.id}/branches?sort_by=name&limit=1") }
     example { expect(last_response).to be_ok }
@@ -211,6 +225,50 @@ describe Travis::API::V3::Services::Branches::Find do
           "limit"          => 1 },
         "last"             => {
           "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=name%3Adesc&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 }}
+    }
+  end
+
+  describe "sorting by exists_on_github" do
+    before  { get("/v3/repo/#{repo.id}/branches?sort_by=exists_on_github&limit=1") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body["@pagination"]).to be == {
+        "limit"            => 1,
+        "offset"           => 0,
+        "count"            => 1,
+        "is_first"         => true,
+        "is_last"          => true,
+        "next"             => nil,
+        "prev"             => nil,
+        "first"            => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=exists_on_github&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 },
+        "last"             => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=exists_on_github&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 }}
+    }
+  end
+
+  describe "sorting by default_branch" do
+    before  { get("/v3/repo/#{repo.id}/branches?sort_by=default_branch&limit=1") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body["@pagination"]).to be == {
+        "limit"            => 1,
+        "offset"           => 0,
+        "count"            => 1,
+        "is_first"         => true,
+        "is_last"          => true,
+        "next"             => nil,
+        "prev"             => nil,
+        "first"            => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=default_branch&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 },
+        "last"             => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=default_branch&limit=1",
           "offset"         => 0,
           "limit"          => 1 }}
     }

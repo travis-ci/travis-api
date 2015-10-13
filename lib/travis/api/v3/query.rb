@@ -48,6 +48,13 @@ module Travis::API::V3
       mapping.each { |key, value| sort_by[key.to_s]   = prefix(value) }
     end
 
+    def self.sort_condition(condition)
+      if condition.is_a? Hash
+        condition = condition.map { |e| e.map { |v| prefix(v) }.join(" = ".freeze) }.join(" and ".freeze)
+      end
+      "(case when #{prefix(condition)} then 1 else 2 end)"
+    end
+
     def self.sortable?
       !sort_by.empty?
     end
@@ -111,14 +118,14 @@ module Travis::API::V3
       value.split(?,.freeze)
     end
 
-    def sort(collection)
+    def sort(collection, **options)
       return collection unless sort_by = params["sort_by".freeze] || self.class.default_sort and not sort_by.empty?
       first = true
       list(sort_by).each do |field_with_order|
         field, order = field_with_order.split(?:.freeze, 2)
         order      ||= "asc".freeze
         if sort_by? field, order
-          collection = sort_by(collection, field, order: order, first: first)
+          collection = sort_by(collection, field, order: order, first: first, **options)
           first      = false
         else
           ignored_value("sort_by".freeze, field_with_order, reason: "not a valid sort mode".freeze)
@@ -132,9 +139,9 @@ module Travis::API::V3
       self.class.sort_by.include?(field)
     end
 
-    def sort_by(collection, field, order: nil, first: false)
+    def sort_by(collection, field, order: nil, first: false, sql: nil, **)
       raise ArgumentError, 'cannot sort by that' unless sort_by?(field, order)
-      actual = self.class.sort_by.fetch(field)
+      actual = sql || self.class.sort_by.fetch(field)
       line   = "#{actual} #{order.upcase}"
 
       if sort_join?(collection, actual)
@@ -148,6 +155,14 @@ module Travis::API::V3
 
     def sort_join?(collection, field)
       !collection.reflect_on_association(field.to_sym).nil?
+    end
+
+    def sort_condition(*args)
+      self.class.sort_condition(*args)
+    end
+
+    def quote(value)
+      ActiveRecord::Base.connection.quote(value)
     end
 
     def user_condition(value)
