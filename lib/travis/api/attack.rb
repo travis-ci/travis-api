@@ -60,16 +60,16 @@ class Rack::Attack
   end
 
   ###
-  # Throttle:  unauthenticated requests - 50 per minute
+  # Throttle:  unauthenticated requests - 500 per minute
   # Scoped by: IP address
-  throttle('req/ip/1min', limit: 50, period: 1.minute) do |request|
+  throttle('req/ip/1min', limit: 500, period: 1.minute) do |request|
     request.ip unless request.authenticated?
   end
 
   ###
-  # Throttle:  authenticated requests - 200 per minute
+  # Throttle:  authenticated requests - 2000 per minute
   # Scoped by: access token
-  throttle('req/token/1min', limit: 200, period: 1.minute) do |request|
+  throttle('req/token/1min', limit: 2000, period: 1.minute) do |request|
     request.identifier
   end
 
