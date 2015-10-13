@@ -3,8 +3,10 @@ module Travis::API::V3
     params :state, :event_type, :previous_state, prefix: :build
     params :name, prefix: :branch, method_name: :branch_name
 
+    sortable_by :id, :started_at, :finished_at
+
     def find(repository)
-      filter(repository.builds)
+      sort filter(repository.builds)
     end
 
     def filter(list)
