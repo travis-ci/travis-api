@@ -20,7 +20,23 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser do
     example { expect(JSON.load(body)).to be == {
       "@type"             => "organizations",
       "@href"             => "/v3/orgs",
-      "@representation"    => "standard",
+      "@representation"   => "standard",
+      "@pagination"       => {
+        "limit"           => 100,
+        "offset"          => 0,
+        "count"           => 1,
+        "is_first"        => true,
+        "is_last"         => true,
+        "next"            => nil,
+        "prev"            => nil,
+        "first"           => {
+          "@href"         => "/v3/orgs",
+          "offset"        => 0,
+          "limit"         => 100},
+          "last"          => {
+            "@href"       => "/v3/orgs",
+            "offset"      => 0,
+            "limit"       => 100}},
       "organizations"     => [{
         "@type"           => "organization",
         "@href"           => "/v3/org/#{org.id}",
