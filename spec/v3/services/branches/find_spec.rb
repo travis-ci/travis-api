@@ -216,6 +216,28 @@ describe Travis::API::V3::Services::Branches::Find do
     }
   end
 
+  describe "sorting by exists_on_github" do
+    before  { get("/v3/repo/#{repo.id}/branches?sort_by=exists_on_github&limit=1") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body["@pagination"]).to be == {
+        "limit"            => 1,
+        "offset"           => 0,
+        "count"            => 1,
+        "is_first"         => true,
+        "is_last"          => true,
+        "next"             => nil,
+        "prev"             => nil,
+        "first"            => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=exists_on_github&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 },
+        "last"             => {
+          "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=exists_on_github&limit=1",
+          "offset"         => 0,
+          "limit"          => 1 }}
+    }
+  end
+
   describe "sorting by unknown sort field" do
     before  { get("/v3/repo/#{repo.id}/branches?sort_by=name:desc,foo&limit=1") }
     example { expect(last_response).to be_ok }
