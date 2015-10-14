@@ -96,6 +96,13 @@ module Travis::API::V3
           pattern = sub_route ? resource.route + sub_route : resource.route
           factory = Services[resource.identifier][service]
 
+          if factory.params and factory.params.include? "sort_by".freeze
+            query = Queries[resource.identifier]
+            if query and query.sortable?
+              resources[resource.identifier][:sortable_by] = query.sort_by.keys
+            end
+          end
+
           pattern.to_templates.each do |template|
             params    = factory.params if request_method == 'GET'.freeze
             params  &&= params.reject { |p| p.start_with? ?@.freeze }

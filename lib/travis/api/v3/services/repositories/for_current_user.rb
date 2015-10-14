@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Services::Repositories::ForCurrentUser < Service
     params :active, :private, prefix: :repository
+    paginate(default_limit: 100)
 
     def run!
       raise LoginRequired unless access_control.logged_in?
