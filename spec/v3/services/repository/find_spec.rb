@@ -47,53 +47,11 @@ describe Travis::API::V3::Services::Repository::Find do
         "login"            => "svenfuchs",
         "@type"            => "user",
         "@href"            => "/v3/user/#{repo.owner_id}"},
-      "last_build"         => {
-        "@type"            => "build",
-        "@href"            => "/v3/build/#{repo.last_build_id}",
-        "id"               => repo.last_build_id,
-        "number"           => "2",
-        "state"            => "passed",
-        "duration"         => nil,
-        "started_at"       => "2010-11-12T12:30:00Z",
-        "finished_at"      => "2010-11-12T12:30:20Z"},
       "default_branch"     => {
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master",
-        "last_build"       => {
-          "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
-          "@representation"=> "minimal",
-          "id"             => repo.default_branch.last_build.id,
-          "number"         => "3",
-          "state"          => "configured",
-          "duration"       => nil,
-          "event_type"     => "push",
-          "previous_state" => "passed",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[0].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[0].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[1].id}",
-              "@representation"=>"minimal",
-              "id"           =>  jobs[1].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[2].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[2].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[3].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[3].id}]
-          }}
+        "name"             => "master"}
     }}
   end
 
@@ -163,53 +121,11 @@ describe Travis::API::V3::Services::Repository::Find do
         "login"            => "svenfuchs",
         "@type"            => "user",
         "@href"            => "/v3/user/#{repo.owner_id}"},
-      "last_build"         => {
-        "@type"            => "build",
-        "@href"            => "/v3/build/#{repo.last_build_id}",
-        "id"               => repo.last_build_id,
-        "number"           => "2",
-        "state"            => "passed",
-        "duration"         => nil,
-        "started_at"       => "2010-11-12T12:30:00Z",
-        "finished_at"      => "2010-11-12T12:30:20Z"},
       "default_branch"     => {
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master",
-        "last_build"       => {
-          "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
-          "@representation"=> "minimal",
-          "id"             => repo.default_branch.last_build.id,
-          "number"         => "3",
-          "state"          => "configured",
-          "duration"       => nil,
-          "event_type"     => "push",
-          "previous_state" => "passed",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[0].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[0].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[1].id}",
-              "@representation"=>"minimal",
-              "id"           =>  jobs[1].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[2].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[2].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[3].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[3].id}]
-          }}
+        "name"             => "master"}
     }}
   end
 
@@ -264,53 +180,11 @@ describe Travis::API::V3::Services::Repository::Find do
         "login"            => "svenfuchs",
         "@type"            => "user",
         "@href"            => "/v3/user/#{repo.owner_id}"},
-      "last_build"         => {
-        "@type"            => "build",
-        "@href"            => "/v3/build/#{repo.last_build_id}",
-        "id"               => repo.last_build_id,
-        "number"           => "2",
-        "state"            => "passed",
-        "duration"         => nil,
-        "started_at"       => "2010-11-12T12:30:00Z",
-        "finished_at"      => "2010-11-12T12:30:20Z"},
       "default_branch"     => {
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master",
-        "last_build"       => {
-          "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
-          "@representation"=> "minimal",
-          "id"             => repo.default_branch.last_build.id,
-          "number"         => "3",
-          "state"          => "configured",
-          "duration"       => nil,
-          "event_type"     => "push",
-          "previous_state" => "passed",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[0].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[0].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[1].id}",
-              "@representation"=>"minimal",
-              "id"           =>  jobs[1].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[2].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[2].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[3].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[3].id}]
-          }}
+        "name"             => "master"}
     }}
   end
 
@@ -371,53 +245,11 @@ describe Travis::API::V3::Services::Repository::Find do
         "login"            => "svenfuchs",
         "@type"            => "user",
         "@href"            => "/v3/user/#{repo.owner_id}"},
-      "last_build"         => {
-        "@type"            => "build",
-        "@href"            => "/v3/build/#{repo.last_build_id}",
-        "id"               => repo.last_build_id,
-        "number"           => "2",
-        "state"            => "passed",
-        "duration"         => nil,
-        "started_at"       => "2010-11-12T12:30:00Z",
-        "finished_at"      => "2010-11-12T12:30:20Z"},
       "default_branch"     => {
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master",
-        "last_build"       => {
-          "@type"          => "build",
-          "@href"          => "/v3/build/#{repo.default_branch.last_build.id}",
-          "@representation"=> "minimal",
-          "id"             => repo.default_branch.last_build.id,
-          "number"         => "3",
-          "state"          => "configured",
-          "duration"       => nil,
-          "event_type"     => "push",
-          "previous_state" => "passed",
-          "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil,
-          "jobs"           => [{
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[0].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[0].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[1].id}",
-              "@representation"=>"minimal",
-              "id"           =>  jobs[1].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[2].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[2].id},
-              {
-              "@type"        => "job",
-              "@href"        => "/v3/job/#{jobs[3].id}",
-              "@representation"=>"minimal",
-              "id"           => jobs[3].id}]
-          }}
+        "name"             => "master"}
     }}
   end
 
@@ -431,11 +263,9 @@ describe Travis::API::V3::Services::Repository::Find do
     )}
   end
 
-  describe "including full owner and full last build" do
-    before  { get("/v3/repo/#{repo.id}?include=repository.owner,repository.last_build") }
+  describe "including full owner" do
+    before  { get("/v3/repo/#{repo.id}?include=repository.owner") }
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body['last_build']['state']).to be == 'passed' }
-    example { expect(parsed_body['last_build']['repository']).to be == { "@href" => "/v3/repo/#{repo.id}" } }
     example { expect(parsed_body['owner']).to include("github_id", "is_syncing", "synced_at")}
   end
 
@@ -457,11 +287,5 @@ describe Travis::API::V3::Services::Repository::Find do
       "error_type"    => "wrong_params",
       "error_message" => "illegal format for include parameter"
     }}
-  end
-
-  describe "including nested objects" do
-    before  { get("/v3/repo/#{repo.id}?include=repository.last_build,build.branch") }
-    example { expect(last_response).to be_ok }
-    example { expect(parsed_body).to include("last_build") }
   end
 end

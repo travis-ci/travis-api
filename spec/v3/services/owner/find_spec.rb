@@ -56,14 +56,12 @@ describe Travis::API::V3::Services::Owner::Find do
           "github_language"   => nil,
           "active"            => false,
           "private"           => false,
-          "last_build"        => nil,
           "owner"             => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"    => {
             "@type"           => "branch",
             "@href"           => "/v3/repo/#{repo.id}/branch/master",
             "@representation" => "minimal",
-            "name"            => "master",
-            "last_build"      => nil }
+            "name"            => "master"}
         }]
       }}
     end
@@ -102,14 +100,12 @@ describe Travis::API::V3::Services::Owner::Find do
           "github_language" => nil,
           "active"          => false,
           "private"         => false,
-          "last_build"      => nil,
           "owner"           => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"  => {
             "@type"         => "branch",
             "@href"         => "/v3/repo/#{repo.id}/branch/master",
             "@representation"=> "minimal",
-            "name"           => "master",
-            "last_build"     => nil }
+            "name"           => "master"}
         }]
       }}
     end

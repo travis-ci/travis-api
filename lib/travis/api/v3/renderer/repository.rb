@@ -2,11 +2,27 @@ require 'travis/api/v3/renderer/model_renderer'
 
 module Travis::API::V3
   class Renderer::Repository < Renderer::ModelRenderer
-    representation(:minimal,  :id, :slug, :default_branch)
-    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :last_build, :default_branch)
+    representation(:minimal,  :id, :name, :slug)
+    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch)
 
     def active
       !!model.active
+    end
+
+    def default_branch
+      return model.default_branch if include_default_branch?
+      {
+        :@type           => 'branch'.freeze,
+        :@href           =>  Renderer.href(:branch, name: model.default_branch_name, repository_id: id, script_name: script_name),
+        :@representation => 'minimal'.freeze,
+        :name            => model.default_branch_name
+      }
+    end
+
+    def include_default_branch?
+      return true if include? 'repository.default_branch'.freeze
+      return true if include.any? { |i| i.start_with? 'branch'.freeze }
+      return true if included.any? { |i| i.is_a? Models::Branch and i.respository_id == id and i.name == i.default_branch_name }
     end
 
     def owner
@@ -34,27 +50,6 @@ module Travis::API::V3
 
     def owner_type
       @owner_type ||= model.owner_type.downcase if model.owner_type
-    end
-
-    def last_build
-      return nil unless model.last_build_id
-      return model.last_build if include_last_build?
-      {
-        :@type        => 'build'.freeze,
-        :@href        => Renderer.href(:build, script_name: script_name, id: model.last_build_id),
-        :id           => model.last_build_id,
-        :number       => model.last_build_number,
-        :state        => model.last_build_state.to_s,
-        :duration     => model.last_build_duration,
-        :started_at   => model.last_build_started_at,
-        :finished_at  => model.last_build_finished_at,
-      }
-    end
-
-    def include_last_build?
-      return true if include? 'repository.last_build'.freeze
-      return true if include.any?  { |i| i.start_with? 'build.'.freeze }
-      return true if included.any? { |i| i.is_a? Models::Build and i.id == model.last_build_id }
     end
   end
 end

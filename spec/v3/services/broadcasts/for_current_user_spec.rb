@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::Broadcasts::ForCurrentUser do
-  let(:repo)      { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  # let(:user)      { Travis::API::V3::Models::User.where(login: 'svenfuchs') }
-
+  let(:repo)    { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
 
@@ -23,61 +21,37 @@ describe Travis::API::V3::Services::Broadcasts::ForCurrentUser do
   let(:broadcasts){ Travis::API::V3::Models::Broadcast.where(recipient_id: [repo.id, org.id, repo.owner_id, nil]) }
 
 
-  describe "authenticated as user with access" do
-    before  { get("/v3/broadcasts", {}, headers)     }
+  describe "only active broadcasts" do
+    before  { get("/v3/broadcasts", {}, headers) }
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
       "@type"            => "broadcasts",
       "@href"            => "/v3/broadcasts",
       "@representation"  => "standard",
-      "broadcasts"       => [{
-        "@type"          => "broadcast",
-        "@representation"=>"standard",
-        "id"             => broadcasts[0].id,
-        "recipient_id"   => broadcasts[0].recipient_id,
-        "recipient_type" => broadcasts[0].recipient_type,
-        "category"       => broadcasts[0].category,
-        "kind"           => nil,
-        "message"        => broadcasts[0].message,
-        "expired"        => nil,
-        "created_at"     => "2010-11-12T13:00:00Z",
-        "updated_at"     => "2010-11-12T13:00:00Z" },
-        {
-        "@type"          => "broadcast",
-        "@representation"=> "standard",
-        "id"             => broadcasts[1].id,
-        "recipient_id"   => broadcasts[1].recipient_id,
-        "recipient_type" => broadcasts[1].recipient_type,
-        "category"       => broadcasts[1].category,
-        "kind"           => nil,
-        "message"        => broadcasts[1].message,
-        "expired"        => nil,
-        "created_at"     => "2010-11-12T13:00:00Z",
-        "updated_at"     => "2010-11-12T13:00:00Z"},
-        {
-        "@type"          => "broadcast",
-        "@representation"=> "standard",
-        "id"             => broadcasts[2].id,
-        "recipient_id"   => broadcasts[2].recipient_id,
-        "recipient_type" => broadcasts[2].recipient_type,
-        "category"       => broadcasts[2].category,
-        "kind"           => nil,
-        "message"        => broadcasts[2].message,
-        "expired"        => nil,
-        "created_at"     => "2010-11-12T13:00:00Z",
-        "updated_at"     => "2010-11-12T13:00:00Z"},
-        {
-        "@type"          => "broadcast",
-        "@representation"=> "standard",
-        "id"             => broadcasts[3].id,
-        "recipient_id"   => broadcasts[3].recipient_id,
-        "recipient_type" => broadcasts[3].recipient_type,
-        "category"       => broadcasts[3].category,
-        "kind"           => nil,
-        "message"        => broadcasts[3].message,
-        "expired"        => nil,
-        "created_at"     => "2010-11-12T13:00:00Z",
-        "updated_at"     => "2010-11-12T13:00:00Z"}]
+      "broadcasts"       => []
+    }}
+  end
+
+  describe "only inactive broadcasts" do
+    let(:broadcast) { broadcasts.first }
+    before  { get("/v3/broadcasts?broadcast.active=false", {}, headers) }
+    example { expect(last_response).to be_ok   }
+    example { expect(JSON.load(body)["broadcasts"].first).to be == {
+      "@type"            => "broadcast",
+      "@representation"  => "standard",
+      "id"               => broadcast.id,
+      "message"          => broadcast.message,
+      "created_at"       => "2010-11-12T13:00:00Z",
+      "category"         => nil,
+      "active"           => false,
+      "recipient"        => {
+        "@type"          => "repository",
+        "@href"          => "/v3/repo/#{repo.id}",
+        "@representation"=> "minimal",
+        "id"             => repo.id,
+        "name"           => repo.name,
+        "slug"           => repo.slug,
+      }
     }}
   end
 end
