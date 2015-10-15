@@ -38,6 +38,11 @@ describe Travis::API::V3::Renderer::AvatarURL do
     it { should be == "https://0.gravatar.com/avatar/acbd18db4cc2f85cedef654fccc4a4d8" }
   end
 
+  describe 'with email and empty gravatar_id' do
+    let(:object) { stub('input', gravatar_id: "", email: "foo") }
+    it { should be == "https://0.gravatar.com/avatar/acbd18db4cc2f85cedef654fccc4a4d8" }
+  end
+
   describe 'with missing email' do
     let(:object) { stub('input', email: nil) }
     it { should be_nil }
