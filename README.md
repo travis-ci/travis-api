@@ -44,7 +44,7 @@ popd
 
 ### Run the server
 
-    $ script/server
+    $ bundle exec script/server
 
 ## Contributing
 
