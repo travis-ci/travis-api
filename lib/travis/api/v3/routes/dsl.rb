@@ -6,6 +6,10 @@ module Travis::API::V3
       @routes ||= {}
     end
 
+    def each(&block)
+      routes.each(&block)
+    end
+
     def resources
       @resources ||= []
     end

@@ -159,4 +159,9 @@ describe Travis::API::V3::ServiceIndex do
       specify(:resources) { expect(json['resources']).to include("http://schema.travis-ci.com/rel/repository/find/by_repository.id") }
     end
   end
+
+  describe "swagger" do
+    let(:path) { "/swagger" }
+    specify { expect(response).to be_ok }
+  end
 end

@@ -1,3 +1,5 @@
+require 'travis/api/v3/service_index/swagger'
+
 module Travis::API::V3
   class ServiceIndex
     ALLOW_POST = ['application/json', 'application/x-www-form-urlencoded', 'multipart/form-data']
@@ -6,16 +8,20 @@ module Travis::API::V3
     def self.for(env, routes)
       access_factory = AccessControl.new(env).class
       prefix         = env['SCRIPT_NAME'.freeze]
-      @index_cache[[access_factory, routes, prefix]] ||= new(access_factory, routes, prefix)
+      host           = Rack::Request.new(env).host
+      @index_cache[[access_factory, routes, prefix, host]] ||= new(access_factory, routes, prefix, host)
     end
 
-    attr_reader :access_factory, :routes, :json_home_response, :json_response, :prefix
+    attr_reader :access_factory, :routes, :json_home_response, :json_response, :swagger_response, :prefix, :host
 
-    def initialize(access_factory, routes, prefix)
+    def initialize(access_factory, routes, prefix, host)
       @prefix                  = prefix || ''
+      @host                    = host
       @access_factory, @routes = access_factory, routes
       @json_response           = V3.response(render_json,      content_type: 'application/json'.freeze)
       @json_home_response      = V3.response(render_json_home, content_type: 'application/json-home'.freeze)
+      @swagger_response        = V3.response(render_swagger,   content_type: 'application/json'.freeze)
+      @routes                  = routes
     end
 
     def config
@@ -73,6 +79,7 @@ module Travis::API::V3
     end
 
     def render(env)
+      return swagger_response if env['PATH_INFO'.freeze] == '/swagger'.freeze
       json_home?(env) ? json_home_response : json_response
     end
 
@@ -120,6 +127,10 @@ module Travis::API::V3
         :errors    => errors,
         :resources => resources
       }
+    end
+
+    def render_swagger
+      Swagger.new(access_factory, routes, prefix, host).to_h
     end
 
     def render_json_home

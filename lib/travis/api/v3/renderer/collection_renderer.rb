@@ -12,7 +12,7 @@ module Travis::API::V3
       { standard: available_attributes }
     end
 
-    def self.type(value)
+    def self.type(value = nil)
       define_method(:type) { value }
     end
 

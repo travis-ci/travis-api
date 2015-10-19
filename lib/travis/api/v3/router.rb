@@ -9,7 +9,7 @@ module Travis::API::V3
     end
 
     def call(env)
-      return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
+      return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze or env['PATH_INFO'.freeze] == '/swagger'.freeze
       access_control  = AccessControl.new(env)
       factory, params = routes.factory_for(env['REQUEST_METHOD'.freeze], env['PATH_INFO'.freeze])
       env_params      = params(env)
