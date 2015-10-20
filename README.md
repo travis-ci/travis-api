@@ -7,6 +7,7 @@ This is the app running on https://api.travis-ci.org/
 1. PostgreSQL 9.3 or higher
 1. Redis
 1. RabbitMQ
+1. Nginx *NB: If working on Ubuntu please install Nginx manually from source. [This guide](http://www.rackspace.com/knowledge_center/article/ubuntu-and-debian-installing-nginx-from-source) is helpful but make sure you install the [latest stable version](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/#stable) 
 
 ## Installation
 
