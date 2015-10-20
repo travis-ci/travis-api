@@ -7,7 +7,7 @@ This is the app running on https://api.travis-ci.org/
 1. PostgreSQL 9.3 or higher
 1. Redis
 1. RabbitMQ
-1. Nginx *NB: If working on Ubuntu please install Nginx manually from source. [This guide](http://www.rackspace.com/knowledge_center/article/ubuntu-and-debian-installing-nginx-from-source) is helpful but make sure you install the [latest stable version](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/#stable), include the user name on your ubuntu machine when configuring (add `--user=[yourusername]` as an option when running `configure` command), and don't follow any configuration steps. Travis-api will start and configure its own nginx server when run locally. 
+1. Nginx *NB: If working on Ubuntu please install Nginx manually from source. [This guide](http://www.rackspace.com/knowledge_center/article/ubuntu-and-debian-installing-nginx-from-source) is helpful but make sure you install the [latest stable version](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/#stable), include the user name on your ubuntu machine when compiling (add `--user=[yourusername]` as an option when running `./configure`), and don't follow any subsequent server configuration steps. Travis-api will start and configure its own nginx server when run locally. 
 
 ## Installation
 
