@@ -7,7 +7,7 @@ This is the app running on https://api.travis-ci.org/
 1. PostgreSQL 9.3 or higher
 1. Redis
 1. RabbitMQ
-1. Nginx *NB: If working on Ubuntu please install Nginx manually from source. [This guide](http://www.rackspace.com/knowledge_center/article/ubuntu-and-debian-installing-nginx-from-source) is helpful but make sure you install the [latest stable version](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/#stable) and don't follow any configuration steps. Traivs-api will start and configure its own nginx server when run locally.
+1. Nginx *NB: If working on Ubuntu please install Nginx manually from source. [This guide](http://www.rackspace.com/knowledge_center/article/ubuntu-and-debian-installing-nginx-from-source) is helpful but make sure you install the [latest stable version](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/#stable), include the user name on your ubuntu machine when configuring `--user=username`, and don't follow any configuration steps. Travis-api will start and configure its own nginx server when run locally. 
 
 ## Installation
 
@@ -59,31 +59,3 @@ popd
 
 We use source code comments to add documentation. If the server is running, you
 can browse an HTML documenation at [`/docs`](http://localhost:5000/docs).
-
-### Project architecture
-
-    lib
-    `-- travis
-        `-- api
-            `-- app
-                |-- endpoint    # API endpoints
-                |-- extensions  # Sinatra extensions
-                |-- helpers     # Sinatra helpers
-                `-- middleware  # Rack middleware
-
-Classes inheriting from `Endpoint` or `Middleware`, they will automatically be
-set up properly.
-
-Each endpoint class gets mapped to a prefix, which defaults to the snake-case
-class name (i.e. `Travis::Api::App::Profile` will map to `/profile`).
-It can be overridden by setting `:prefix`:
-
-``` ruby
-require 'travis/api/app'
-
-class Travis::Api::App
-  class MyRouts < Endpoint
-    set :prefix, '/awesome'
-  end
-end
-```
