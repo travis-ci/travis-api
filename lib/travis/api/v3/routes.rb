@@ -20,6 +20,11 @@ module Travis::API::V3
 
       post :cancel, '/cancel'
       post :restart, '/restart'
+
+      resource :jobs do
+        route '/jobs'
+        get  :find
+      end
     end
 
     resource :job do
