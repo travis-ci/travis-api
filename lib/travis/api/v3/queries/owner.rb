@@ -9,6 +9,7 @@ module Travis::API::V3
     def query(type, main_type: self.main_type, params: self.params)
       main_type = type if main_type == :owner
       params    = params.merge("#{type}.login" => params["owner.login".freeze]) if params["owner.login".freeze]
+      params    = params.merge("#{type}.github_id" => params["owner.github_id".freeze]) if params["owner.github_id".freeze]
       Queries[type].new(params, main_type, service: @service)
     end
 

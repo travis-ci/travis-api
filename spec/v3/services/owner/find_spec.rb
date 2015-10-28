@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe Travis::API::V3::Services::Owner::Find do
   describe "organization" do
-    let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org') }
+    let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
     before    { org.save!                              }
     after     { org.delete                             }
 
-    describe 'existing org, public api' do
+    describe 'existing org, public api, by login' do
       before  { get("/v3/owner/example-org")     }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
@@ -17,7 +17,23 @@ describe Travis::API::V3::Services::Owner::Find do
         "id"               => org.id,
         "login"            => "example-org",
         "name"             => nil,
-        "github_id"        => nil,
+        "github_id"        => 1234,
+        "avatar_url"       => nil
+      }}
+    end
+
+    describe 'existing org, public api, by github_id' do
+      before  { get("/v3/owner/github_id/1234")     }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be == {
+        "@type"            => "organization",
+        "@href"            => "/v3/org/#{org.id}",
+        "@representation"  => "standard",
+        "@permissions"     => { "read"=>true, "sync"=>false },
+        "id"               => org.id,
+        "login"            => "example-org",
+        "name"             => nil,
+        "github_id"        => 1234,
         "avatar_url"       => nil
       }}
     end
@@ -38,7 +54,7 @@ describe Travis::API::V3::Services::Owner::Find do
         "id"                  => org.id,
         "login"               => "example-org",
         "name"                => nil,
-        "github_id"           => nil,
+        "github_id"           => 1234,
         "avatar_url"          => nil,
         "repositories"        => [{
           "@type"             => "repository",
@@ -82,7 +98,7 @@ describe Travis::API::V3::Services::Owner::Find do
         "id"                => org.id,
         "login"             => "example-org",
         "name"              => nil,
-        "github_id"         => nil,
+        "github_id"         => 1234,
         "avatar_url"        => nil,
         "repositories"      => [{
           "@type"           => "repository",
@@ -121,7 +137,7 @@ describe Travis::API::V3::Services::Owner::Find do
         "id"               => org.id,
         "login"            => "example-org",
         "name"             => nil,
-        "github_id"        => nil,
+        "github_id"        => 1234,
         "avatar_url"       => nil
       }}
     end
@@ -141,7 +157,7 @@ describe Travis::API::V3::Services::Owner::Find do
         "id"             => org.id,
         "login"          => "example-org",
         "name"           => nil,
-        "github_id"      => nil,
+        "github_id"      => 1234,
         "avatar_url"     => nil,
         "@warnings"      => [{
           "@type"        => "warning",
@@ -153,11 +169,11 @@ describe Travis::API::V3::Services::Owner::Find do
   end
 
   describe "user" do
-    let(:user) { Travis::API::V3::Models::User.new(login: 'example-user') }
+    let(:user) { Travis::API::V3::Models::User.new(login: 'example-user', github_id: 5678) }
     before     { user.save!                      }
     after      { user.delete                     }
 
-    describe 'existing user, public api' do
+    describe 'existing user, public api, by login' do
       before  { get("/v3/owner/example-user")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
@@ -168,7 +184,25 @@ describe Travis::API::V3::Services::Owner::Find do
         "id"             => user.id,
         "login"          => "example-user",
         "name"           => nil,
-        "github_id"      => nil,
+        "github_id"      => 5678,
+        "avatar_url"     => nil,
+        "is_syncing"     => nil,
+        "synced_at"      => nil
+      }}
+    end
+
+    describe 'existing user, public api, by github_id' do
+      before  { get("/v3/owner/github_id/5678")   }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be == {
+        "@type"          => "user",
+        "@href"          => "/v3/user/#{user.id}",
+        "@representation"=> "standard",
+        "@permissions"   => {"read"=>true, "sync"=>false},
+        "id"             => user.id,
+        "login"          => "example-user",
+        "name"           => nil,
+        "github_id"      => 5678,
         "avatar_url"     => nil,
         "is_syncing"     => nil,
         "synced_at"      => nil
@@ -186,7 +220,7 @@ describe Travis::API::V3::Services::Owner::Find do
         "id"               => user.id,
         "login"            => "example-user",
         "name"             => nil,
-        "github_id"        => nil,
+        "github_id"        => 5678,
         "avatar_url"       => nil,
         "is_syncing"       => nil,
         "synced_at"        => nil
@@ -208,7 +242,7 @@ describe Travis::API::V3::Services::Owner::Find do
         "id"               => user.id,
         "login"            => "example-user",
         "name"             => nil,
-        "github_id"        => nil,
+        "github_id"        => 5678,
         "avatar_url"       => nil,
         "is_syncing"       => nil,
         "synced_at"        => nil,
