@@ -50,7 +50,11 @@ module Travis::API::V3
     resource :owner do
       route '/owner/({owner.login}|{user.login}|{organization.login}|github_id/{owner.github_id})'
       get :find
-      get :repositories, '/repos'
+
+      resource :repositories do
+        route '/repos'
+        get :for_owner
+      end
     end
 
     resource :repositories do
