@@ -12,7 +12,6 @@ module Travis::API::V3
       return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
       access_control  = AccessControl.new(env)
       factory, params = routes.factory_for(env['REQUEST_METHOD'.freeze], env['PATH_INFO'.freeze])
-      p factory
       env_params      = params(env)
 
       raise NotFound unless factory
