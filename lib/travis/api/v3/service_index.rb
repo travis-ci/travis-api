@@ -102,7 +102,8 @@ module Travis::API::V3
           if factory.params and factory.params.include? "sort_by".freeze
             query = Queries[resource.identifier]
             if query and query.sortable?
-              resources[resource.identifier][:sortable_by] = query.sort_by.keys
+              resources[resource.identifier][:sortable_by]  = query.sort_by.keys
+              resources[resource.identifier][:default_sort] = query.default_sort unless query.default_sort.empty?
             end
           end
 
