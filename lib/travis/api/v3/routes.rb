@@ -48,7 +48,7 @@ module Travis::API::V3
     end
 
     resource :owner do
-      route '/owner/({owner.login}|{user.login}|{organization.login})'
+      route '/owner/({owner.login}|{user.login}|{organization.login}|github_id/{owner.github_id})'
       get :find
       get :repositories, '/repos'
     end
