@@ -34,6 +34,7 @@ module Travis
       ServerError         = Error              .create(status: 500)
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
       RequestLimitReached = ClientError        .create('request limit reached for resource', status: 429)
+      AlreadySyncing      = ClientError        .create('sync already in progress', status: 409)
     end
   end
 end
