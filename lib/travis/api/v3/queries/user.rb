@@ -1,5 +1,6 @@
 module Travis::API::V3
   class Queries::User < Query
+    set_queue(:user_sync, :user_sync)
     params :id, :login, :email, :github_id, :is_syncing
 
     def find

@@ -1,6 +1,17 @@
 module Travis::API::V3
   class Query
-    @@sidekiq_cache = Tool::ThreadLocal.new
+    @@sidekiq_queue = {}
+
+    def self.sidekiq_queue(identifier)
+      @@sidekiq_queue[identifier] ||= [
+        "Travis::Sidekiq::#{identifier.to_s.camelcase}".freeze,
+        identifier.to_s.pluralize.freeze
+      ]
+    end
+
+    def self.set_queue(identifier, queue)
+      sidekiq_queue(identifier)[1] = queue
+    end
 
     # generate from eval to avoid additional string allocations on every params access
     @@params_accessor = <<-RUBY
@@ -90,11 +101,7 @@ module Travis::API::V3
     end
 
     def perform_async(identifier, *args)
-      class_name, queue = @@sidekiq_cache[identifier] ||= [
-        "Travis::Sidekiq::#{identifier.to_s.camelcase}".freeze,
-        identifier.to_s.pluralize.freeze
-      ]
-
+      class_name, queue = Query.sidekiq_queue(identifier)
       ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => args)
     end
 
