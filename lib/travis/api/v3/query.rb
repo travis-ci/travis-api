@@ -9,8 +9,9 @@ module Travis::API::V3
       ]
     end
 
-    def self.set_queue(identifier, queue)
-      sidekiq_queue(identifier)[1] = queue
+    def self.setup_sidekiq(identifier, queue: nil, class_name: nil)
+      sidekiq_queue(identifier)[0] = class_name if class_name
+      sidekiq_queue(identifier)[1] = queue      if queue
     end
 
     # generate from eval to avoid additional string allocations on every params access
