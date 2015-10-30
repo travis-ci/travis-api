@@ -64,8 +64,8 @@ describe Travis::API::V3::Services::User::Sync do
 
     example { expect(sidekiq_payload).to be == user.id }
 
-    example { expect(Sidekiq::Client.last['queue']).to be == 'user_syncs'                }
-    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::UserSync' }
+    example { expect(Sidekiq::Client.last['queue']).to be == :user_sync                }
+    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::GithubSync::Workers::SyncUser' }
   end
 
   describe "existing user, current user does not have sync access " do
