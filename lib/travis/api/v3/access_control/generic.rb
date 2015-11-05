@@ -63,6 +63,10 @@ module Travis::API::V3
       visible? cron.repository
     end
 
+    def cron_writable?(cron)
+      writable? cron.repository
+    end
+
     def job_visible?(job)
       visible? job.repository
     end

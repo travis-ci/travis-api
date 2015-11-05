@@ -33,6 +33,8 @@ module Travis::API::V3
       route '/cron/{cron.id}'
       get :find
 
+      get :delete, '/delete'
+
     end
 
     resource :job do
