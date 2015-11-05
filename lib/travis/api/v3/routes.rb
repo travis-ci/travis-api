@@ -98,6 +98,8 @@ module Travis::API::V3
       resource :crons do
         route '/crons'
         get  :find
+
+        get :create, '/create'
       end
 
       resource :requests do

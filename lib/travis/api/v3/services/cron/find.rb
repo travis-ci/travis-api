@@ -3,9 +3,7 @@ module Travis::API::V3
     #params :id
 
     def run!
-      
       find
     end
-
   end
 end
