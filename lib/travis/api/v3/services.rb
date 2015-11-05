@@ -9,6 +9,7 @@ module Travis::API::V3
     Broadcasts    = Module.new { extend Services }
     Build         = Module.new { extend Services }
     Builds        = Module.new { extend Services }
+    Cron          = Module.new { extend Services }
     Job           = Module.new { extend Services }
     Jobs          = Module.new { extend Services }
     Organization  = Module.new { extend Services }
