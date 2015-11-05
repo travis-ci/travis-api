@@ -95,6 +95,11 @@ module Travis::API::V3
         get  :find
       end
 
+      resource :crons do
+        route '/crons'
+        get  :find
+      end
+
       resource :requests do
         route '/requests'
         get  :find
