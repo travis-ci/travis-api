@@ -5,8 +5,8 @@ module Travis::API::V3
     sortable_by :id
 
     def find
-      return Models::Repository.find_by_id(id) if id
-      raise WrongParams, 'missing job.id'.freeze
+      return Models::Cron.find_by_id(id) if id
+      raise WrongParams, 'missing cron.id'.freeze
     end
   end
 end
