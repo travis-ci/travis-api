@@ -1,25 +1,27 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::Cron::Delete do
+describe Travis::API::V3::Services::Crons::Create do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:cron)  { Travis::API::V3::Models::Cron.create(repository: repo) }
+  let(:last_cron) {Travis::API::V3::Models::Cron.where(repository_id: repo.id).last}
+  let(:current_cron) {Travis::API::V3::Models::Cron.where(repository_id: repo.id).last}
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
   let(:parsed_body) { JSON.load(body) }
 
-  describe "deleting a cron job by id" do
+  describe "creating a cron job" do
+    before     { last_cron }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before     { post("/v3/cron/#{cron.id}/delete", {}, headers) }
+    before     { post("/v3/repo/#{repo.id}/crons/create", {}, headers) }
+    example    { expect(current_cron == last_cron).to be_falsey }
     example    { expect(last_response).to be_ok }
-    example    { expect(Travis::API::V3::Models::Cron.where(id: cron.id)).to be_empty }
     example    { expect(parsed_body).to be == {
         "@type"               => "cron",
-        "@href"               => "/v3/cron/#{cron.id}",
+        "@href"               => "/v3/cron/#{current_cron.id}",
         "@representation"     => "standard",
         "@permissions"        => {
             "read"            => true,
             "delete"          => true },
-        "id"                  => cron.id,
+        "id"                  => current_cron.id,
         "repository"          => {
             "@type"           => "repository",
             "@href"           => "/v3/repo/#{repo.id}",
@@ -30,9 +32,8 @@ describe Travis::API::V3::Services::Cron::Delete do
     }}
   end
 
-  describe "try deleting a cron job without login" do
-    before     { post("/v3/cron/#{cron.id}/delete") }
-    example    { expect(Travis::API::V3::Models::Cron.where(id: cron.id)).to exist }
+  describe "try creating a cron job without login" do
+    before     { post("/v3/repo/#{repo.id}/crons/create") }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
       "error_type"    => "login_required",
@@ -40,32 +41,34 @@ describe Travis::API::V3::Services::Cron::Delete do
     }}
   end
 
-  describe "try deleting a cron job with a user without permissions" do
+  describe "try creating a cron job with a user without permissions" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before     { post("/v3/cron/#{cron.id}/delete", {}, headers) }
-    example    { expect(Travis::API::V3::Models::Cron.where(id: cron.id)).to exist }
+    before     { post("/v3/repo/#{repo.id}/crons/create", {}, headers) }
     example    { expect(parsed_body).to be == {
         "@type"               => "error",
         "error_type"          => "insufficient_access",
-        "error_message"       => "operation requires delete access to cron",
-        "resource_type"       => "cron",
-        "permission"          => "delete",
-        "cron"                => {
-            "@type"           => "cron",
-            "@href"           => "/v3/cron/#{cron.id}",
+        "error_message"       => "operation requires create_cron access to repository",
+        "resource_type"       => "repository",
+        "permission"          => "create_cron",
+        "repository"          => {
+            "@type"           => "repository",
+            "@href"           => "/v3/repo/#{repo.id}",
             "@representation" => "minimal",
-            "id"              => cron.id }
+            "id"              => repo.id,
+            "name"            => "minimal",
+            "slug"            => "svenfuchs/minimal" }
     }}
   end
 
-  describe "try deleting a non-existing cron job" do
-    before  { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before  { post("/v3/cron/999999999999999/delete", {}, headers) }
+  describe "creating cron on a non-existing repository by slug" do
+    before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
+    before     { post("/v3/repo/svenfuchs%2Fminimal1/crons/create", {}, headers)     }
+    example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
       "error_type"    => "not_found",
-      "error_message" => "cron not found (or insufficient access)",
-      "resource_type" => "cron"
+      "error_message" => "repository not found (or insufficient access)",
+      "resource_type" => "repository"
     }}
   end
 
