@@ -43,4 +43,17 @@ describe Travis::API::V3::Services::Crons::Find do
     }}
   end
 
+  describe "fetching crons from private repo, not authenticated" do
+    before  { repo.update_attribute(:private, true)  }
+    before  { get("/v3/repo/#{repo.id}/crons")             }
+    after   { repo.update_attribute(:private, false) }
+    example { expect(last_response).to be_not_found  }
+    example { expect(parsed_body).to be == {
+      "@type"         => "error",
+      "error_type"    => "not_found",
+      "error_message" => "repository not found (or insufficient access)",
+      "resource_type" => "repository"
+    }}
+  end
+
 end
