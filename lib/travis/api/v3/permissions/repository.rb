@@ -13,5 +13,9 @@ module Travis::API::V3
     def create_request?
       write?
     end
+
+    def create_cron?
+      write?
+    end
   end
 end

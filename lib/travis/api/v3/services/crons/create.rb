@@ -5,7 +5,7 @@ module Travis::API::V3
     def run!
       raise LoginRequired unless access_control.logged_in? or access_control.full_access?
       raise NotFound      unless repository = find(:repository)
-      access_control.permissions(cron).create!
+      access_control.permissions(repository).create_cron!
 
       Models::Cron.create(repository: repository)
       end

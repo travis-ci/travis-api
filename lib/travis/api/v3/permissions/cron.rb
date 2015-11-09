@@ -5,9 +5,5 @@ module Travis::API::V3
     def delete?
       write?
     end
-
-    def create?
-      write?
-    end
   end
 end
