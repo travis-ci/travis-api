@@ -33,8 +33,7 @@ module Travis::API::V3
       route '/cron/{cron.id}'
       get :find
 
-      get :delete, '/delete'
-
+      post :delete, '/delete'
     end
 
     resource :job do
@@ -99,7 +98,7 @@ module Travis::API::V3
         route '/crons'
         get  :find
 
-        get :create, '/create'
+        post :create, '/create'
       end
 
       resource :requests do
