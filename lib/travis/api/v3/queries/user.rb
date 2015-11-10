@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Queries::User < Query
-    params :id, :login, :email, :github_id
+    setup_sidekiq(:user_sync, queue: :user_sync, class_name: "Travis::GithubSync::Workers::SyncUser")
+    params :id, :login, :email, :github_id, :is_syncing
 
     def find
       return Models::User.find_by_id(id) if id
@@ -16,6 +17,13 @@ module Travis::API::V3
       else
         User.find_by_email(email)
       end
+    end
+
+    def sync(user)
+      raise AlreadySyncing if user.is_syncing?
+      perform_async(:user_sync, user.id)
+      user.update_column(:is_syncing, true)
+      user
     end
   end
 end

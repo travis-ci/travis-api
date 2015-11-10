@@ -97,6 +97,7 @@ module Travis::API::V3
       route '/user'
       get :current
       get :find, '/{user.id}'
+      post :sync, '/{user.id}/sync'
     end
 
   end
