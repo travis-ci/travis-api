@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::Crons::Find do
+describe Travis::API::V3::Services::Crons::ForRepository do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo).first }
   let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch) }
@@ -8,11 +8,11 @@ describe Travis::API::V3::Services::Crons::Find do
 
   describe "fetching all crons by repo id" do
     before     { cron }
-    before     { get("/v3/repo/#{repo.id}/branch/#{branch.name}/crons")     }
+    before     { get("/v3/repo/#{repo.id}/crons")     }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
       "@type"              => "crons",
-        "@href"             => "/v3/repo/#{repo.id}/branch/#{branch.name}/crons",
+        "@href"             => "/v3/repo/#{repo.id}/crons",
         "@representation"   => "standard",
         "@pagination"       => {
           "limit"           => 25,
@@ -23,11 +23,11 @@ describe Travis::API::V3::Services::Crons::Find do
           "next"            => nil,
           "prev"            => nil,
           "first"           => {
-                "@href"     => "/v3/repo/#{repo.id}/branch/#{branch.name}/crons",
+                "@href"     => "/v3/repo/#{repo.id}/crons",
                 "offset"    => 0,
                 "limit"     => 25},
           "last"      => {
-                "@href"     => "/v3/repo/#{repo.id}/branch/#{branch.name}/crons",
+                "@href"     => "/v3/repo/#{repo.id}/crons",
                 "offset"    => 0,
                 "limit"     => 25 }},
           "crons"           => [
@@ -57,7 +57,7 @@ describe Travis::API::V3::Services::Crons::Find do
   end
 
   describe "fetching crons on a non-existing repository by slug" do
-    before  { get("/v3/repo/svenfuchs%2Fminimal1/branch/master/crons") }
+    before     { get("/v3/repo/svenfuchs%2Fminimal1/crons")     }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
@@ -67,20 +67,9 @@ describe Travis::API::V3::Services::Crons::Find do
     }}
   end
 
-  describe "fetching crons on a non-existing branch" do
-    before  { get("/v3/repo/#{repo.id}/branch/hopefullyNonExistingBranch/crons") }
-    example { expect(last_response).to be_not_found }
-    example { expect(parsed_body).to be == {
-      "@type"         => "error",
-      "error_type"    => "not_found",
-      "error_message" => "branch not found (or insufficient access)",
-      "resource_type" => "branch"
-    }}
-  end
-
   describe "fetching crons from private repo, not authenticated" do
     before  { repo.update_attribute(:private, true)  }
-    before  { get("/v3/repo/#{repo.id}/branch/#{branch.name}/crons") }
+    before  { get("/v3/repo/#{repo.id}/crons")             }
     after   { repo.update_attribute(:private, false) }
     example { expect(last_response).to be_not_found  }
     example { expect(parsed_body).to be == {

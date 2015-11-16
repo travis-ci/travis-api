@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Travis::API::V3::Services::Cron::Find do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:cron)  { Travis::API::V3::Models::Cron.create(repository: repo) }
+  let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo).first }
+  let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch) }
   let(:parsed_body) { JSON.load(body) }
 
   describe "fetching a cron job by id" do
@@ -16,6 +17,11 @@ describe Travis::API::V3::Services::Cron::Find do
             "read"            => true,
             "delete"          => false },
         "id"                  => cron.id,
+        "branch"              => {
+            "@type"           => "branch",
+            "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
+            "@representation" => "minimal",
+            "name"            => branch.name },
         "repository"          => {
             "@type"           => "repository",
             "@href"           => "/v3/repo/#{repo.id}",
@@ -66,6 +72,11 @@ describe Travis::API::V3::Services::Cron::Find do
           "read"            => true,
           "delete"          => false },
       "id"                  => cron.id,
+      "branch"              => {
+          "@type"           => "branch",
+          "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
+          "@representation" => "minimal",
+          "name"            => branch.name },
       "repository"          => {
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
