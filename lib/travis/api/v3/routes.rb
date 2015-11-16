@@ -82,6 +82,13 @@ module Travis::API::V3
       resource :branch do
         route '/branch/{branch.name}'
         get :find
+
+        resource :crons do
+          route '/crons'
+          get  :find
+
+          post :create, '/create'
+        end
       end
 
       resource :branches do
@@ -96,9 +103,7 @@ module Travis::API::V3
 
       resource :crons do
         route '/crons'
-        get  :find
-
-        post :create, '/create'
+        get  :for_repository
       end
 
       resource :requests do

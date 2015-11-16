@@ -1,8 +1,8 @@
 module Travis::API::V3
   class Queries::Crons < Query
 
-    def find(repository)
-      repository.crons
+    def find(branch)
+      branch.crons
     end
   end
 end
