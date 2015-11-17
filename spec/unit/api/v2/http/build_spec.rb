@@ -20,7 +20,8 @@ describe Travis::Api::V2::Http::Build do
       'state' => 'passed',
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
-      'duration' => 60
+      'duration' => 60,
+      'is_on_default_branch' => true
     }
   end
 
