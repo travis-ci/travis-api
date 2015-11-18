@@ -6,7 +6,7 @@ module Travis::API::V3
     has_many :tokens,        dependent: :destroy
     has_many :organizations, through:   :memberships
     has_many :repositories,  as:        :owner
-    has_many :starred_repositories, #TODO
+    has_many :starred_repositories #TODO
     has_one  :subscription,  as:        :owner
 
     serialize :github_oauth_token, Extensions::EncryptedColumn.new(disable: true)
