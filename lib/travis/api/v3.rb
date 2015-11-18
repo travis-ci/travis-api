@@ -35,6 +35,9 @@ module Travis
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
       RequestLimitReached = ClientError        .create('request limit reached for resource', status: 429)
       AlreadySyncing      = ClientError        .create('sync already in progress', status: 409)
+      AlreadyStarred      = ClientError        .create('repository is already starred', status: 409)
+      NotStarred          = ClientError        .create('repository is not a starred repository')
+
     end
   end
 end
