@@ -6,13 +6,14 @@ describe Travis::API::V3::Services::Crons::Create do
   let(:last_cron) {Travis::API::V3::Models::Cron.where(branch_id: branch.id).last}
   let(:current_cron) {Travis::API::V3::Models::Cron.where(branch_id: branch.id).last}
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-  let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+  let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}", "Content-Type" => "application/json" }}
+  let(:options) {{ "tue" => true, "sat" => true, "sun" => false, "disable_by_push" => true, "hour" => 12 }}
   let(:parsed_body) { JSON.load(body) }
 
   describe "creating a cron job" do
     before     { last_cron }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/crons/create", {}, headers) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/crons/create", options, headers) }
     example    { expect(current_cron == last_cron).to be_falsey }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
@@ -23,18 +24,27 @@ describe Travis::API::V3::Services::Crons::Create do
             "read"            => true,
             "delete"          => true },
         "id"                  => current_cron.id,
-        "branch"              => {
-            "@type"           => "branch",
-            "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
-            "@representation" => "minimal",
-            "name"            => "#{branch.name}" },
         "repository"          => {
             "@type"           => "repository",
             "@href"           => "/v3/repo/#{repo.id}",
             "@representation" => "minimal",
             "id"              => repo.id,
             "name"            => "minimal",
-            "slug"            => "svenfuchs/minimal" }
+            "slug"            => "svenfuchs/minimal" },
+        "branch"              => {
+            "@type"           => "branch",
+            "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
+            "@representation" => "minimal",
+            "name"            => "#{branch.name}" },
+        "hour"                => 12,
+        "mon"                 => false,
+        "tue"                 => true,
+        "wed"                 => false,
+        "thu"                 => false,
+        "fri"                 => false,
+        "sat"                 => true,
+        "sun"                 => false,
+        "disable_by_push"     => true
     }}
   end
 

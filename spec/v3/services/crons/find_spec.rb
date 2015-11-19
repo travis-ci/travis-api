@@ -39,18 +39,27 @@ describe Travis::API::V3::Services::Crons::Find do
                     "read"            => true,
                     "delete"          => false },
                 "id"                  => cron.id,
-                "branch"              => {
-                    "@type"           => "branch",
-                    "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
-                    "@representation" => "minimal",
-                    "name"            => "#{branch.name}" },
                 "repository"          => {
                     "@type"           => "repository",
                     "@href"           => "/v3/repo/#{repo.id}",
                     "@representation" => "minimal",
                     "id"              => repo.id,
                     "name"            => "minimal",
-                    "slug"            => "svenfuchs/minimal" }
+                    "slug"            => "svenfuchs/minimal" },
+                "branch"              => {
+                    "@type"           => "branch",
+                    "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
+                    "@representation" => "minimal",
+                    "name"            => "#{branch.name}" },
+                "hour"                => nil,
+                "mon"                 => false,
+                "tue"                 => false,
+                "wed"                 => false,
+                "thu"                 => false,
+                "fri"                 => false,
+                "sat"                 => false,
+                "sun"                 => false,
+                "disable_by_push"     => true
             }
           ]
     }}
