@@ -78,7 +78,7 @@ class Travis::Api::App
       #
       # * **github_token**: GitHub token for checking authorization (required)
       post '/github' do
-        halt 503, "Endpoint temporarily disabled" unless settings.test?
+        halt 503, "Endpoint temporarily disabled" unless settings.test? or request.user_agent =~ /^Travis/
         unless params[:github_token]
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
