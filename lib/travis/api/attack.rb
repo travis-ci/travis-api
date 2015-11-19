@@ -59,6 +59,14 @@ class Rack::Attack
      end
   end
 
+
+  ###
+  # Throttle:  unauthenticated requests to /auth/github - 1 per minute
+  # Scoped by: IP address
+  throttle('req/ip/1min', limit: 1, period: 1.minute) do |request|
+    request.ip unless request.authenticated? and request.path == '/auth/github'
+  end
+
   ###
   # Throttle:  unauthenticated requests - 500 per minute
   # Scoped by: IP address
