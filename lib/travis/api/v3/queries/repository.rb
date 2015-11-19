@@ -8,12 +8,18 @@ module Travis::API::V3
       raise WrongParams, 'missing repository.id'.freeze
     end
 
-    def star
-      Models::StarredRepository.create(repo_id: id, user_id: user_id)
+    def star(repository, current_user)
+      starred = Models::StarredRepository.where(repository_id: repository.id, user_id: current_user.id).first
+      raise AlreadyStarred unless starred == nil
+      Models::StarredRepository.create(repository_id: repository.id, user_id: current_user.id)
+      repository
     end
 
-    def unstar
-      Models::StarredRepository.where(repo_id: id, user_id: user_id).delete
+    def unstar(repository, current_user)
+      starred = Models::StarredRepository.where(repository_id: repository.id, user_id: current_user.id).first
+      raise NotStarred if starred == nil
+      starred.delete
+      repository
     end
 
     private
