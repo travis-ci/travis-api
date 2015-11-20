@@ -20,7 +20,8 @@ module Travis::API::V3
     end
 
     def starred
-      return true if Models::StarredRepository.where(repository_id: id, user_id: access_control.user.id).first
+      return false unless access_control.user
+      Models::StarredRepository.where(repository_id: id, user_id: access_control.user.id).any?
     end
 
     def include_default_branch?
