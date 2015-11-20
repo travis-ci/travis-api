@@ -78,6 +78,7 @@ class Travis::Api::App
       #
       # * **github_token**: GitHub token for checking authorization (required)
       post '/github' do
+        check_agent
         unless params[:github_token]
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
@@ -144,6 +145,16 @@ class Travis::Api::App
       end
 
       private
+
+        def allowed_agents
+          @allowed_agents ||= redis.smembers('auth_agents')
+        end
+
+        def check_agent
+          return if settings.test? or allowed_agents.empty?
+          return if allowed_agents.any? { |a| request.user_agent.to_s.start_with? a }
+          halt 403, "you are currently not allowed to perform this request. please contact support@travis-ci.com."
+        end
 
         def serialize_user(user)
           rendered = Travis::Api.data(user, version: :v2)
