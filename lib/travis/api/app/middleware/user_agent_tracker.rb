@@ -37,7 +37,7 @@ class Travis::Api::App
       end
 
       def mark_travis(agent)
-        command = agent.application.comment.detect { |c| c.start_with? "command " }
+        command = agent.application.comment.detect { |c| c.start_with? "command " } if agent.application.comment
 
         if command
           mark(:cli, :version, agent.version)
