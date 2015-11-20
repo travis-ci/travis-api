@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Repositories < Query
-    params :active, :private, prefix: :repository
+    params :active, :private, :starred, prefix: :repository
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active)
 
     def for_member(user)
@@ -20,6 +20,8 @@ module Travis::API::V3
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
+      #  where the repo is starred
+      # list = list.where(starred: bool(Repository.joins(:starred_repository).where(starred_repository: { repository_id: id, user_id: current_user.id }))) unless starred.nil?
 
       if includes? 'repository.last_build'.freeze or includes? 'build'.freeze
         list = list.includes(:last_build)
