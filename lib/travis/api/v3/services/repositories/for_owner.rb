@@ -4,7 +4,7 @@ module Travis::API::V3
     paginate(default_limit: 100)
 
     def run!
-      unfiltered = query.for_owner(find(:owner))
+      unfiltered = query.for_owner(find(:owner), user: acccess_control.user)
       access_control.visible_repositories(unfiltered)
     end
   end

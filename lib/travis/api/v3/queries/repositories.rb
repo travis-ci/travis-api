@@ -3,25 +3,28 @@ module Travis::API::V3
     params :active, :private, :starred, prefix: :repository
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active)
 
-    def for_member(user)
-      all.joins(:users).where(users: user_condition(user), invalidated_at: nil)
+    def for_member(user, **options)
+      all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
     end
 
-    def for_owner(owner)
-      filter(owner.repositories)
+    def for_owner(owner, **options)
+      filter(owner.repositories, **options)
     end
 
-    def all
-      @all ||= filter(Models::Repository)
+    def all(**options)
+      filter(Models::Repository, **options)
     end
 
-    def filter(list)
-      list = list.where(invalidated_at: nil)
-      list = list.where(active:  bool(active))  unless active.nil?
-      list = list.where(private: bool(private)) unless private.nil?
-      list = list.includes(:owner) if includes? 'repository.owner'.freeze
-      #  where the repo is starred
-      # list = list.where(starred: bool(Repository.joins(:starred_repository).where(starred_repository: { repository_id: 1, user_id: user.id }))) unless starred.nil?
+    def filter(list, user: nil)
+       list = list.where(invalidated_at: nil)
+       list = list.where(active:  bool(active))  unless active.nil?
+       list = list.where(private: bool(private)) unless private.nil?
+       list = list.includes(:owner) if includes? 'repository.owner'.freeze
+
+      if user and not starred.nil?
+        # user.id works
+        list = list.joins(:starred_repositories).where(starred_repositories: { user_id: user.id })
+      end
 
       if includes? 'repository.last_build'.freeze or includes? 'build'.freeze
         list = list.includes(:last_build)
