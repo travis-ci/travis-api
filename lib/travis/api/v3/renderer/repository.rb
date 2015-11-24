@@ -21,7 +21,7 @@ module Travis::API::V3
 
     def starred
       return false unless access_control.user
-      Models::StarredRepository.where(repository_id: id, user_id: access_control.user.id).any?
+      Models::Star.where(repository_id: id, user_id: access_control.user.id).any?
     end
 
     def include_default_branch?

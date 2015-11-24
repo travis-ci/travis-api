@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Models::StarredRepository < Model
+  class Models::Star < Model
     belongs_to :user
     belongs_to :repository
   end

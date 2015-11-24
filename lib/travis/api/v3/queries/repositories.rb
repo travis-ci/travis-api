@@ -23,7 +23,7 @@ module Travis::API::V3
 
       if user and not starred.nil?
         # user.id works
-        list = list.joins(:starred_repositories).where(starred_repositories: { user_id: user.id })
+        list = list.joins(:stars).where(stars: { user_id: user.id })
       end
 
       if includes? 'repository.last_build'.freeze or includes? 'build'.freeze

@@ -9,13 +9,13 @@ module Travis::API::V3
     end
 
     def star(repository, current_user)
-      starred = Models::StarredRepository.where(repository_id: repository.id, user_id: current_user.id).first
-      Models::StarredRepository.create(repository_id: repository.id, user_id: current_user.id) unless starred
+      starred = Models::Star.where(repository_id: repository.id, user_id: current_user.id).first
+      Models::Star.create(repository_id: repository.id, user_id: current_user.id) unless starred
       repository
     end
 
     def unstar(repository, current_user)
-      starred = Models::StarredRepository.where(repository_id: repository.id, user_id: current_user.id).first
+      starred = Models::Star.where(repository_id: repository.id, user_id: current_user.id).first
       starred.delete if starred
       repository
     end
