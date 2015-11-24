@@ -8,7 +8,6 @@ module Travis::API::V3
       user                = Models::User.find(user.id) if user.is_a? ::User
       @user               = user
       @access_permissions = user.permissions.where(user_id: user.id)
-      @got_request        = false
       super()
     end
 
@@ -21,7 +20,6 @@ module Travis::API::V3
     end
 
     def visible_repositories(list)
-      load_permissions
       list.where('repositories.private = false OR repositories.id IN (?)'.freeze, access_permissions.map(&:repository_id))
     end
 
@@ -49,19 +47,7 @@ module Travis::API::V3
 
     def permission?(type, id)
       id = id.id if id.is_a? ::Repository
-
-      load_permissions if @got_request
-      @got_request = true
-
-      if access_permissions.respond_to? :where
-        access_permissions.where(type => true, :repository_id => id).any?
-      else
-        access_permissions.any? { |p| p[type] == true and p.repository_id == id }
-      end
-    end
-
-    def load_permissions
-      @access_permissions = @access_permissions.to_a
+      access_permissions.where(type => true, :repository_id => id).any?
     end
   end
 end
