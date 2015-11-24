@@ -49,5 +49,17 @@ module Travis::API::V3
     rescue ActiveRecord::RecordNotUnique
       branches.where(name: name).first
     end
+
+    def id_default_branch
+      [id, default_branch_name]
+    end
+
+    def send(name, *args, &block)
+      if name == [:id, :default_branch]
+        name = :id_default_branch
+      end
+
+      __send__(name, *args, &block)
+    end
   end
 end
