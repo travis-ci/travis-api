@@ -16,14 +16,20 @@ module Travis::API::V3
     end
 
     def filter(list, user: nil)
-       list = list.where(invalidated_at: nil)
-       list = list.where(active:  bool(active))  unless active.nil?
-       list = list.where(private: bool(private)) unless private.nil?
-       list = list.includes(:owner) if includes? 'repository.owner'.freeze
+      p 'list'
+      p list.inspect
+
+      list = list.where(invalidated_at: nil)
+      list = list.where(active:  bool(active))  unless active.nil?
+      list = list.where(private: bool(private)) unless private.nil?
+      list = list.includes(:owner) if includes? 'repository.owner'.freeze
 
       if user and not starred.nil?
-        # user.id works
-        list = list.joins(:stars).where(stars: { user_id: user.id })
+        if bool(starred)
+          list = list.joins(:stars).where(stars: { user_id: user.id })
+        else
+          list = list.where("repositories.id NOT IN (?)", user.starred_repository_ids)
+        end
       end
 
       if includes? 'repository.last_build'.freeze or includes? 'build'.freeze
