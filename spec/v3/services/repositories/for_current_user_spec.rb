@@ -42,6 +42,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
           "read"             => true,
           "enable"           => true,
           "disable"          => true,
+          "star"             => true,
+          "unstar"           => true,
           "create_request"   => true},
         "id"                 =>  repo.id,
         "name"               =>  "minimal",
@@ -59,7 +61,9 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
           "@type"            => "branch",
           "@href"            => "/v3/repo/#{repo.id}/branch/master",
           "@representation"  => "minimal",
-          "name"             => "master"}}]
+          "name"             => "master"},
+        "starred"            => false  
+        }]
     }}
   end
 
