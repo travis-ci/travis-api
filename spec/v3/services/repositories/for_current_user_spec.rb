@@ -92,36 +92,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser do
     after   { repo.owner.stars.each(&:destroy)                                           }
     example { expect(last_response)                   .to be_ok                          }
     example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=true" }
-    example { expect(JSON.load(body)['repositories']) .to be == [{
-      "@type"               => "repository",
-      "@href"               => "/v3/repo/1",
-      "@representation"     => "standard",
-      "@permissions"        => {
-        "read"              => true,
-        "enable"            => true,
-        "disable"           => true,
-        "star"              => true,
-        "unstar"            => true,
-        "create_request"    => true },
-      "id"                  => 1,
-      "name"                => "minimal",
-      "slug"                => "svenfuchs/minimal",
-      "description"         => nil,
-      "github_language"     => nil,
-      "active"              => true,
-      "private"             => true,
-      "owner"               => {
-        "@type"             => "user",
-        "id"                => 1,
-        "login"             => "svenfuchs",
-        "@href"             => "/v3/user/1"},
-      "default_branch"      => {
-        "@type"             => "branch",
-        "@href"             => "/v3/repo/1/branch/master",
-        "@representation"   => "minimal",
-        "name"              => "master"},
-      "starred"=>true}
-      ]}
+    example { expect(JSON.load(body)['repositories']) .not_to be_empty                   }
   end
 
   describe "filter: starred=false" do
