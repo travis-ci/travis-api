@@ -24,7 +24,7 @@ module Travis::API::V3
       if user and not starred.nil?
         if bool(starred)
           list = list.joins(:stars).where(stars: { user_id: user.id })
-        else
+        elsif user.starred_repository_ids.any?
           list = list.where("repositories.id NOT IN (?)", user.starred_repository_ids)
         end
       end
