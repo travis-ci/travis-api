@@ -16,9 +16,6 @@ module Travis::API::V3
     end
 
     def filter(list, user: nil)
-      p 'list'
-      p list.inspect
-
       list = list.where(invalidated_at: nil)
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
