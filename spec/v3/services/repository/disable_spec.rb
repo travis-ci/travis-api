@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Travis::API::V3::Services::Repository::Disable do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last.to_json) }
-  let(:sidekiq_params)  { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
+  # let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last.to_json) }
+  # let(:sidekiq_params)  { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
 
   before do
     repo.update_attributes!(active: true)
@@ -81,8 +81,9 @@ describe Travis::API::V3::Services::Repository::Disable do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
-    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before        { post("/v3/repo/#{repo.id}/cancel", params, headers)                                      }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, admin: true) }
+    # this is failing because it's actually going to github
+    before        { post("/v3/repo/#{repo.id}/disable", params, headers)                                      }
 
     example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
