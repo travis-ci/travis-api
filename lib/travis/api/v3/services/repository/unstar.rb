@@ -5,7 +5,7 @@ module Travis::API::V3
       raise NotFound      unless repository = find(:repository)
       check_access(repository)
       current_user = access_control.user
-      query.unstar(repository, current_user)
+      query.unstar(current_user)
     end
 
     def check_access(repository)

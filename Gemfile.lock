@@ -369,6 +369,3 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
-
-BUNDLED WITH
-   1.10.6
