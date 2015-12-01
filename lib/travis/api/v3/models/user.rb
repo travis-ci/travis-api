@@ -6,6 +6,7 @@ module Travis::API::V3
     has_many :tokens,        dependent: :destroy
     has_many :organizations, through:   :memberships
     has_many :repositories,  as:        :owner
+    has_many :stars
     has_one  :subscription,  as:        :owner
 
     serialize :github_oauth_token, Extensions::EncryptedColumn.new(disable: true)
@@ -16,6 +17,10 @@ module Travis::API::V3
 
     def subscription
       super if Features.use_subscriptions?
+    end
+
+    def starred_repository_ids
+      @starred_repository_ids ||= stars.map(&:repository_id)
     end
   end
 end

@@ -6,6 +6,7 @@ module Travis::API::V3
     has_many :builds,      dependent: :delete_all, order: 'builds.id DESC'.freeze
     has_many :permissions, dependent: :delete_all
     has_many :users,       through:   :permissions
+    has_many :stars
 
     belongs_to :owner, polymorphic: true
     belongs_to :last_build, class_name: 'Travis::API::V3::Models::Build'.freeze
