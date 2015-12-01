@@ -2,20 +2,10 @@ require 'spec_helper'
 
 describe Travis::API::V3::Services::Repository::Disable do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  # let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last.to_json) }
-  # let(:sidekiq_params)  { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
 
   before do
     repo.update_attributes!(active: true)
     Travis::Features.stubs(:owner_active?).returns(true)
-    @original_sidekiq = Sidekiq::Client
-    Sidekiq.send(:remove_const, :Client) # to avoid a warning
-    Sidekiq::Client = []
-  end
-
-  after do
-    Sidekiq.send(:remove_const, :Client) # to avoid a warning
-    Sidekiq::Client = @original_sidekiq
   end
 
   describe "not authenticated" do
@@ -79,41 +69,30 @@ describe Travis::API::V3::Services::Repository::Disable do
 
   describe "existing repository, push access" do
     let(:params)  {{}}
-    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                     }
+    let(:headers) {{ 'Http-Authorization' => "token #{token}"                                            }}
+    let(:uri) { "/v3/repo/#{repo.id}/disable" }
+
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, admin: true) }
-    # this is failing because it's actually going to github
-    before        { post("/v3/repo/#{repo.id}/disable", params, headers)                                      }
+    before        { stub_request(:get, "https://api.github.com/repos/svenfuchs/minimal/hooks?per_page=100").
+         with(:headers => {'Accept'=>'application/vnd.github.v3+json,application/vnd.github.beta+json;q=0.5,application/json;q=0.1', 'Accept-Charset'=>'utf-8', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Authorization'=>'token github_oauth_token', 'Origin'=>'travis-ci.org', 'User-Agent'=>'Travis-API/3 Travis-CI/0.0.1 GH/0.14.0'}).
+         to_return(:status => 202, :body => "hello", :headers => {}) }
+    before        { stub_request(:post, "http://v3/repo/1/disable").
+         with(:headers => headers) }
+    before        { post(uri) }
 
     example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",
-      "job",
+      "cxxxxxxxxxx",
       "@href",
       "@representation",
       "minimal",
-      "cancel",
+      "disable",
       "id",
-      "state_change")
+      "xxxxxxxxxxx")
     }
 
-    example { expect(sidekiq_payload).to be == {
-      "id"     => "#{job.id}",
-      "user_id"=> repo.owner_id,
-      "source" => "api"}
-    }
-
-    example { expect(Sidekiq::Client.last['queue']).to be == 'job_cancellations'                }
-    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::JobCancellation' }
-
-    describe "setting id has no effect" do
-      let(:params) {{ id: 42 }}
-      example { expect(sidekiq_payload).to be == {
-        "id"     => "#{job.id}",
-        "user_id"=> repo.owner_id,
-        "source" => "api"}
-      }
-    end
   end
 
 

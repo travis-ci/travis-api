@@ -2,11 +2,10 @@ require 'spec_helper'
 
 describe Travis::API::V3::Services::Repository::Unstar do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:star)  { Travis::API::V3::Models::Star.create(user_id: repo.owner_id, repository_id: repo.id) }
 
-  before do
-    Travis::Features.stubs(:owner_active?).returns(true)
-  end
+  # before do
+  #   Travis::API::V3::Models::Star.create(user_id: repo.owner_id, repository_id: repo.id)
+  # end
 
   describe "not authenticated" do
     before  { post("/v3/repo/#{repo.id}/unstar")      }
@@ -71,8 +70,10 @@ describe Travis::API::V3::Services::Repository::Unstar do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
+    let(:star) { Travis::API::V3::Models::Star.create(user_id: repo.owner_id, repository_id: repo.id) }
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
     before        { post("/v3/repo/#{repo.id}/unstar", params, headers)                                      }
+    after         { star.delete }
 
     example { expect(last_response.status).to be == 200 }
     example { expect(JSON.load(body).to_s).to include(
@@ -85,5 +86,28 @@ describe Travis::API::V3::Services::Repository::Unstar do
       "id")
     }
     example { expect(Travis::API::V3::Models::Star.where(user_id: repo.owner_id, repository_id: repo.id)).to be == []}
+  end
+
+
+  # TODO return an error when alreasy not on the star db
+
+  describe "existing repository, push access, already starred" do
+    let(:params)  {{}}
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+    before        { post("/v3/repo/#{repo.id}/unstar", params, headers)                                      }
+
+    example { expect(last_response.status).to be == 403 }
+    example { expect(JSON.load(body).to_s).to include(
+      "@type",
+      "star",
+      "@href",
+      "@representation",
+      "minimal",
+      "false",
+      "id")
+    }
+    example { expect(Travis::API::V3::Models::Star.where(user_id: repo.owner_id, repository_id: repo.id)).to be == "idushifuhds"}
   end
 end
