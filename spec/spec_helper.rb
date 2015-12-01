@@ -8,7 +8,6 @@ require 'sinatra/test_helpers'
 require 'logger'
 require 'gh'
 require 'multi_json'
-require 'webmock/rspec'
 
 require 'travis/api/app'
 require 'travis/testing'

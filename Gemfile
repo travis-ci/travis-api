@@ -36,7 +36,6 @@ gem 'jemalloc'
 
 group :test do
   gem 'rspec',         '~> 2.13'
-  gem 'webmock'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
   gem 'database_cleaner', '~> 0.8.0'
