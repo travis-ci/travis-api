@@ -4,8 +4,7 @@ describe Travis::API::V3::Services::Repository::Enable do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   before do
-    repo.update_attributes!(active: true)
-    Travis::Features.stubs(:owner_active?).returns(true)
+    repo.update_attributes!(active: false)
   end
 
   describe "not authenticated" do
@@ -70,6 +69,4 @@ describe Travis::API::V3::Services::Repository::Enable do
   describe "existing repository, push access"
   # as this reqires a call to github, and stubbing this request has proven difficult,
   # this test has been omitted for now
-
-
 end

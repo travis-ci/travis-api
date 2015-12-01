@@ -4,7 +4,7 @@ describe Travis::API::V3::Services::Repository::Star do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   before do
-    Travis::Features.stubs(:owner_active?).returns(true)
+    # Travis::Features.stubs(:owner_active?).returns(true)
   end
 
   describe "not authenticated" do

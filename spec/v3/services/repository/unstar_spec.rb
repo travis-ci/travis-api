@@ -86,28 +86,5 @@ describe Travis::API::V3::Services::Repository::Unstar do
       "id")
     }
     example { expect(Travis::API::V3::Models::Star.where(user_id: repo.owner_id, repository_id: repo.id)).to be == []}
-  end
-
-
-  # TODO return an error when alreasy not on the star db
-
-  describe "existing repository, push access, already starred" do
-    let(:params)  {{}}
-    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
-    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before        { post("/v3/repo/#{repo.id}/unstar", params, headers)                                      }
-
-    example { expect(last_response.status).to be == 403 }
-    example { expect(JSON.load(body).to_s).to include(
-      "@type",
-      "star",
-      "@href",
-      "@representation",
-      "minimal",
-      "false",
-      "id")
-    }
-    example { expect(Travis::API::V3::Models::Star.where(user_id: repo.owner_id, repository_id: repo.id)).to be == "idushifuhds"}
-  end
+  end  
 end
