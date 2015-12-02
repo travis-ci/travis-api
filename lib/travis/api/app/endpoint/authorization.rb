@@ -194,6 +194,7 @@ class Travis::Api::App
           end
         end
 
+
         def create_state
           state = SecureRandom.urlsafe_base64(16)
           redis.sadd('github:states', state)
@@ -223,6 +224,16 @@ class Travis::Api::App
             super
 
             @user = ::User.find_by_github_id(data['id'])
+            check_first_login(@user)
+            # where is a user created if there is no user yet on our sytem
+
+          end
+
+          def check_first_login(user)
+            return if user.first_logged_in_at
+            puts "this is the first log in!!"
+            #   user.update_attributes(first_logged_in_at: Time.now)
+            #   #send event to customer.io
           end
 
           def info(attributes = {})
