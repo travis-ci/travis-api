@@ -95,6 +95,9 @@ class Travis::Api::App
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake' do
         handshake do |user, token, redirect_uri|
+
+          check_first_login(@user)
+
           if target_ok? redirect_uri
             content_type :html
             data = { user: user, token: token, uri: redirect_uri }
@@ -154,6 +157,13 @@ class Travis::Api::App
           return if settings.test? or allowed_agents.empty?
           return if allowed_agents.any? { |a| request.user_agent.to_s.start_with? a }
           halt 403, "you are currently not allowed to perform this request. please contact support@travis-ci.com."
+        end
+
+        def check_first_login(user)
+          return if user.first_logged_in_at
+          puts "this is the first log in!!"
+          #   user.update_attributes(first_logged_in_at: Time.now)
+          #   #send event to customer.io
         end
 
         def serialize_user(user)
@@ -224,16 +234,7 @@ class Travis::Api::App
             super
 
             @user = ::User.find_by_github_id(data['id'])
-            check_first_login(@user)
-            # where is a user created if there is no user yet on our sytem
 
-          end
-
-          def check_first_login(user)
-            return if user.first_logged_in_at
-            puts "this is the first log in!!"
-            #   user.update_attributes(first_logged_in_at: Time.now)
-            #   #send event to customer.io
           end
 
           def info(attributes = {})
