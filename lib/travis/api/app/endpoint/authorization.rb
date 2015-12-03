@@ -163,15 +163,17 @@ class Travis::Api::App
           puts "this is the first log in!!"
           #   send event to customer.io
           customerio = Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
-          customerio.identify(
+          puts "customerio client set up"
+          payload = {
             :id => user.id,
             :name => user.name,
             :login => user.login,
             :email => user.email,
             :created_at => user.created_at.to_i,
             :github_id => user.github_id,
-            :education => user.education
-          )
+            :education => user.education }
+          puts "about to identify" + payload.inspect
+          customerio.identify( payload )         )
           #   user.update_attributes(first_logged_in_at: Time.now)
         end
 
