@@ -96,8 +96,6 @@ class Travis::Api::App
       get '/handshake' do
         handshake do |user, token, redirect_uri|
 
-          check_first_login(user)
-
           if target_ok? redirect_uri
             content_type :html
             data = { user: user, token: token, uri: redirect_uri }
@@ -195,6 +193,7 @@ class Travis::Api::App
             user                   = user_for_github_token(github_token)
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
+            check_first_login(user)
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
