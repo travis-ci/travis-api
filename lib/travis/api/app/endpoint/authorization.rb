@@ -96,7 +96,7 @@ class Travis::Api::App
       get '/handshake' do
         handshake do |user, token, redirect_uri|
 
-          check_first_login(@user)
+          check_first_login(user)
 
           if target_ok? redirect_uri
             content_type :html
