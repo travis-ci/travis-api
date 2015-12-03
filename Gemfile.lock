@@ -157,6 +157,9 @@ GEM
     composite_primary_keys (5.0.14)
       activerecord (~> 3.2.0, >= 3.2.9)
     connection_pool (2.1.1)
+    customerio (0.6.1)
+      httparty (>= 0.5, < 0.12)
+      multi_json (~> 1.0)
     dalli (2.7.2)
     data_migrations (0.0.1)
       activerecord
@@ -187,6 +190,9 @@ GEM
     hashr (0.0.22)
     hike (1.2.3)
     hitimes (1.2.3)
+    httparty (0.11.0)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     httpclient (2.7.0.1)
     i18n (0.7.0)
     ice_nine (0.11.1)
@@ -215,6 +221,7 @@ GEM
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multi_json (1.11.2)
+    multi_xml (0.5.5)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
@@ -335,6 +342,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers
   bunny (~> 0.8.0)
+  customerio
   dalli
   database_cleaner (~> 0.8.0)
   factory_girl (~> 2.4.0)
