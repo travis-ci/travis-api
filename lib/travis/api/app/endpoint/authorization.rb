@@ -173,7 +173,7 @@ class Travis::Api::App
             :github_id => user.github_id,
             :education => user.education }
           puts "about to identify" + payload.inspect
-          customerio.identify( payload )         )
+          customerio.identify( payload )
           #   user.update_attributes(first_logged_in_at: Time.now)
         end
 
