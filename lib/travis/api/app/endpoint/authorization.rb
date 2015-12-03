@@ -162,7 +162,7 @@ class Travis::Api::App
           return if user.first_logged_in_at
           puts "this is the first log in!!"
           #   send event to customer.io
-          customerio = Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key)
+          customerio = Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => false)
           payload = {
             :id => user.id,
             :name => user.name,
