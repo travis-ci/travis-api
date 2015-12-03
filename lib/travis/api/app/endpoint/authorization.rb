@@ -163,7 +163,7 @@ class Travis::Api::App
           puts "this is the first log in!!"
           #   send event to customer.io
           customerio = Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
-          $customerio.identify(
+          customerio.identify(
             :id => user.id,
             :name => user.name,
             :login => user.login,
