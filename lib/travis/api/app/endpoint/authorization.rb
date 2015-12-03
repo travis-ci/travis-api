@@ -2,6 +2,7 @@ require 'travis/api/app'
 require 'addressable/uri'
 require 'faraday'
 require 'securerandom'
+require 'customerio'
 
 class Travis::Api::App
   class Endpoint
