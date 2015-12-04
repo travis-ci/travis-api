@@ -50,7 +50,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 6ce83e05afc07d412195d226b77a896e2b652146
+  revision: a89fdc039713ff20a0a62c0fcd35b03d042a23a8
+  branch: cd-add-first-logged-in
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -322,7 +323,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.45)
+    tzinfo (0.3.46)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
