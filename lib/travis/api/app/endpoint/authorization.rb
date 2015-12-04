@@ -159,12 +159,11 @@ class Travis::Api::App
         end
 
         def check_first_login(user)
-          return if user.first_logged_in_at
-          puts "********  This is the first log in for " + user.login + "  **********"
+          return unless Travis.config.customerio.site_id
           # update user
-          timestamp = Time.now
-          puts "Updating first_logged_in_at with " + timestamp.to_s
-          user.update_attributes(first_logged_in_at: timestamp)
+          unless user.first_logged_in_at
+            user.update_attributes(first_logged_in_at: Time.now)
+          end
           #   send event to customer.io
           customerio = Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
           payload = {
@@ -175,9 +174,10 @@ class Travis::Api::App
             :created_at => user.created_at.to_i,
             :github_id => user.github_id,
             :education => user.education,
-            :first_logged_in_at => timestamp.to_i}
-          puts "Sending payload to Customer.io: " + payload.to_s
+            :first_logged_in_at => user.first_logged_in_at}
           customerio.identify(payload)
+        rescue StandardError => e
+          Travis.logger.error "Could not update Customer.io for User: #{user.id}:#{user.login} with message:#{e.message}"
         end
 
         def serialize_user(user)
