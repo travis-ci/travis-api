@@ -50,8 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: f46605dd4e6beebdb767e6b832277e222dbf980b
-  branch: cd-add-first-logged-in
+  revision: 90c2d1b67935f20fd117bc6d9bc02783312e27ba
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
