@@ -158,13 +158,15 @@ class Travis::Api::App
           halt 403, "you are currently not allowed to perform this request. please contact support@travis-ci.com."
         end
 
-        def check_first_login(user)
-          return unless Travis.config.customerio.site_id
-
-          # update first login date if not set
+        # update first login date if not set
+        def update_first_login(user)
           unless user.first_logged_in_at
             user.update_attributes(first_logged_in_at: Time.now)
           end
+        end
+
+        def update_customerio(user)
+          return unless Travis.config.customerio.site_id
 
           # send event to customer.io
           payload = {
@@ -177,6 +179,7 @@ class Travis::Api::App
             :education => user.education,
             :first_logged_in_at => user.first_logged_in_at.to_i
           }
+
           customerio.identify(payload)
         rescue StandardError => e
           Travis.logger.error "Could not update Customer.io for User: #{user.id}:#{user.login} with message:#{e.message}"
@@ -211,7 +214,8 @@ class Travis::Api::App
             user                   = user_for_github_token(github_token)
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
-            check_first_login(user)
+            update_first_login(user)
+            update_customerio(user)
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
