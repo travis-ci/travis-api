@@ -50,7 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: a89fdc039713ff20a0a62c0fcd35b03d042a23a8
+  revision: f46605dd4e6beebdb767e6b832277e222dbf980b
   branch: cd-add-first-logged-in
   specs:
     travis-core (0.0.1)
