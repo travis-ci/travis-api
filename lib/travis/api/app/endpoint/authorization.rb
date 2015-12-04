@@ -160,22 +160,23 @@ class Travis::Api::App
 
         def check_first_login(user)
           return unless Travis.config.customerio.site_id
-          # update user
+
+          # update first login date if not set
           unless user.first_logged_in_at
-            email = GH.with(token: user.github_oauth_token, client_id: nil) { GH['user/emails'] }.select { |e| e['primary'] }.first['email']
-            user.update_attributes(email: email, first_logged_in_at: Time.now)
+            user.update_attributes(first_logged_in_at: Time.now)
           end
-          #   send event to customer.io
-          customerio = Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
+
+          # send event to customer.io
           payload = {
             :id => user.id,
             :name => user.name,
             :login => user.login,
-            :email => user.email,
+            :email => primary_email_for_user(user.github_oauth_token),
             :created_at => user.created_at,
             :github_id => user.github_id,
             :education => user.education,
-            :first_logged_in_at => user.first_logged_in_at}
+            :first_logged_in_at => user.first_logged_in_at
+          }
           customerio.identify(payload)
         rescue StandardError => e
           Travis.logger.error "Could not update Customer.io for User: #{user.id}:#{user.login} with message:#{e.message}"
@@ -380,6 +381,15 @@ class Travis::Api::App
 
         def allowed_https_targets
           @allowed_https_targets ||= Travis.config.auth.target_origin.to_s.split(',')
+        end
+
+        def primary_email_for_user(oauth_token)
+          # check for the users primary email address (we don't store this info)
+          GH.with(token: oauth_token, client_id: nil) { GH['user/emails'] }.select { |e| e['primary'] }.first['email']
+        end
+
+        def customerio
+          Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
         end
     end
   end
