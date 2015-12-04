@@ -162,7 +162,8 @@ class Travis::Api::App
           return unless Travis.config.customerio.site_id
           # update user
           unless user.first_logged_in_at
-            user.update_attributes(first_logged_in_at: Time.now)
+            email = GH.with(token: user.github_oauth_token, client_id: nil) { GH['user/emails'] }.select { |e| e['primary'] }.first['email']
+            user.update_attributes(email:, email, first_logged_in_at: Time.now)
           end
           #   send event to customer.io
           customerio = Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
@@ -171,7 +172,7 @@ class Travis::Api::App
             :name => user.name,
             :login => user.login,
             :email => user.email,
-            :created_at => user.created_at.to_i,
+            :created_at => user.created_at,
             :github_id => user.github_id,
             :education => user.education,
             :first_logged_in_at => user.first_logged_in_at}
