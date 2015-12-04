@@ -176,7 +176,7 @@ class Travis::Api::App
             :github_id => user.github_id,
             :education => user.education,
             :first_logged_in_at => timestamp.to_i}
-          puts "Sending payload to Customer.io: " + payload
+          puts "Sending payload to Customer.io: " + payload.to_s
           customerio.identify(payload)
         end
 
