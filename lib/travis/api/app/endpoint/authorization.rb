@@ -163,7 +163,7 @@ class Travis::Api::App
           puts "********  This is the first log in for " + user.login + "  **********"
           # update user
           timestamp = Time.now
-          puts "Updating first_logged_in_at with " + timestamp
+          puts "Updating first_logged_in_at with " + timestamp.to_s
           user.update_attributes(first_logged_in_at: timestamp)
           #   send event to customer.io
           customerio = Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
