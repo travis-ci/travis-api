@@ -172,10 +172,10 @@ class Travis::Api::App
             :name => user.name,
             :login => user.login,
             :email => primary_email_for_user(user.github_oauth_token),
-            :created_at => user.created_at,
+            :created_at => user.created_at.to_i,
             :github_id => user.github_id,
             :education => user.education,
-            :first_logged_in_at => user.first_logged_in_at
+            :first_logged_in_at => user.first_logged_in_at.to_i
           }
           customerio.identify(payload)
         rescue StandardError => e
