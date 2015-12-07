@@ -33,6 +33,7 @@ gem 'skylight', '~> 0.6.0.beta.1'
 gem 'stackprof'
 
 gem 'jemalloc'
+gem 'customerio'
 
 group :test do
   gem 'rspec',         '~> 2.13'

@@ -50,7 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 6ce83e05afc07d412195d226b77a896e2b652146
+  revision: 90c2d1b67935f20fd117bc6d9bc02783312e27ba
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -157,6 +157,9 @@ GEM
     composite_primary_keys (5.0.14)
       activerecord (~> 3.2.0, >= 3.2.9)
     connection_pool (2.1.1)
+    customerio (0.6.1)
+      httparty (>= 0.5, < 0.12)
+      multi_json (~> 1.0)
     dalli (2.7.2)
     data_migrations (0.0.1)
       activerecord
@@ -187,6 +190,9 @@ GEM
     hashr (0.0.22)
     hike (1.2.3)
     hitimes (1.2.3)
+    httparty (0.11.0)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     httpclient (2.7.0.1)
     i18n (0.7.0)
     ice_nine (0.11.1)
@@ -215,6 +221,7 @@ GEM
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multi_json (1.11.2)
+    multi_xml (0.5.5)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
@@ -315,7 +322,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.45)
+    tzinfo (0.3.46)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
@@ -335,6 +342,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers
   bunny (~> 0.8.0)
+  customerio
   dalli
   database_cleaner (~> 0.8.0)
   factory_girl (~> 2.4.0)
@@ -369,3 +377,6 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
+
+BUNDLED WITH
+   1.10.6
