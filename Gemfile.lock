@@ -50,7 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 90c2d1b67935f20fd117bc6d9bc02783312e27ba
+  revision: 3a9f6e4c14bb1eacb93609e1864c9c547a13c1a4
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -137,7 +137,7 @@ GEM
     activesupport (3.2.22)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    addressable (2.3.8)
+    addressable (2.4.0)
     arel (3.0.3)
     atomic (1.1.99)
     avl_tree (1.1.3)
