@@ -8,7 +8,6 @@ begin
 rescue LoadError
   # we can't load micro migrations on production
 end
-require 'travis'
 
 begin
   require 'rspec/core/rake_task'
