@@ -32,6 +32,12 @@ class Rack::Attack
   ]
 
   ####
+  # Whitelisted IP addresses
+  whitelist('whitelist client requesting from redis') do |request|
+    Travis.redis.sismember(:api_whitelisted_ips, request.ip)
+  end
+
+  ####
   # Ban based on: IP address
   # Ban time:     indefinite
   # Ban after:    manually banned
