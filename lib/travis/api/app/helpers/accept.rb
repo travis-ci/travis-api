@@ -53,6 +53,8 @@ class Travis::Api::App
           if params
             params = Hash[*params.split(';').map { |p| p.scan /(#{TOKEN})=(#{TOKEN})/ }.flatten]
             quality = params.delete('q').to_f if params['q']
+          else
+            params = {}
           end
 
           if subtype =~ HEADER_FORMAT
