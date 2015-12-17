@@ -10,6 +10,14 @@ module Travis::API::V3
       write?
     end
 
+    def star?
+      write?
+    end
+
+    def unstar?
+      write?
+    end
+
     def create_request?
       write?
     end

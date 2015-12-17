@@ -78,6 +78,8 @@ module Travis::API::V3
 
       post :enable,  '/enable'
       post :disable, '/disable'
+      post :star,    '/star'
+      post :unstar,  '/unstar'
 
       resource :branch do
         route '/branch/{branch.name}'

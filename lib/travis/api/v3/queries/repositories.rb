@@ -1,25 +1,33 @@
 module Travis::API::V3
   class Queries::Repositories < Query
-    params :active, :private, prefix: :repository
+    params :active, :private, :starred, prefix: :repository
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active)
 
-    def for_member(user)
-      all.joins(:users).where(users: user_condition(user), invalidated_at: nil)
+    def for_member(user, **options)
+      all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
     end
 
-    def for_owner(owner)
-      filter(owner.repositories)
+    def for_owner(owner, **options)
+      filter(owner.repositories, **options)
     end
 
-    def all
-      @all ||= filter(Models::Repository)
+    def all(**options)
+      filter(Models::Repository, **options)
     end
 
-    def filter(list)
+    def filter(list, user: nil)
       list = list.where(invalidated_at: nil)
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
+
+      if user and not starred.nil?
+        if bool(starred)
+          list = list.joins(:stars).where(stars: { user_id: user.id })
+        elsif user.starred_repository_ids.any?
+          list = list.where("repositories.id NOT IN (?)", user.starred_repository_ids)
+        end
+      end
 
       if includes? 'repository.last_build'.freeze or includes? 'build'.freeze
         list = list.includes(:last_build)

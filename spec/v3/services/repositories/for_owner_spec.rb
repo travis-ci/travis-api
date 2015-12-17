@@ -42,8 +42,10 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "read"             => true,
           "enable"           => false,
           "disable"          => false,
+          "star"             => false,
+          "unstar"           => false,
           "create_request"   => false,
-          "create_cron"      => false },
+          "create_cron"      => false},
         "id"                 => repo.id,
         "name"               => "minimal",
         "slug"               => "svenfuchs/minimal",
@@ -60,7 +62,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "@type"            => "branch",
           "@href"            => "/v3/repo/#{repo.id}/branch/master",
           "@representation"  => "minimal",
-          "name"             => "master"}}]}}
+          "name"             => "master"},
+          "starred"          => false
+        }]}}
   end
 
   describe "filter: private=false" do
@@ -74,5 +78,30 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
     before  { get("/v3/repos", {"repository.active" => "false"}, headers)  }
     example { expect(last_response)                   .to be_ok            }
     example { expect(JSON.load(body)['repositories']) .to be == []         }
+  end
+
+  describe "filter: starred=true" do
+    before  { Travis::API::V3::Models::Star.create(user: repo.owner, repository: repo)   }
+    before  { get("/v3/repos", {"starred" => "true"}, headers)                           }
+    after   { repo.owner.stars.each(&:destroy)                                           }
+    example { expect(last_response)                   .to be_ok                          }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=true" }
+    example { expect(JSON.load(body)['repositories']) .not_to be_empty                   }
+  end
+
+  describe "filter: starred=false" do
+    before  { get("/v3/repos", {"starred" => "false"}, headers)                              }
+    example { expect(last_response)                   .to be_ok                              }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=false"    }
+    example { expect(JSON.load(body)['repositories']) .not_to be_empty                       }
+  end
+
+  describe "filter: starred=false but no unstarred repos" do
+    before  { Travis::API::V3::Models::Star.create(user: repo.owner, repository: repo)       }
+    after   { repo.owner.stars.each(&:destroy)                                               }
+    before  { get("/v3/repos", {"starred" => "false"}, headers)                              }
+    example { expect(last_response)                   .to be_ok                              }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=false"    }
+    example { expect(JSON.load(body)['repositories']) .to be_empty                           }
   end
 end

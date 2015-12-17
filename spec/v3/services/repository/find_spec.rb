@@ -34,8 +34,10 @@ describe Travis::API::V3::Services::Repository::Find do
         "read"             => true,
         "enable"           => false,
         "disable"          => false,
+        "star"             => false,
+        "unstar"           => false,
         "create_request"   => false,
-        "create_cron"      => false },
+        "create_cron"      => false},
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -52,7 +54,8 @@ describe Travis::API::V3::Services::Repository::Find do
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master"}
+        "name"             => "master"},
+      "starred"            => false
     }}
   end
 
@@ -109,8 +112,10 @@ describe Travis::API::V3::Services::Repository::Find do
         "read"             => true,
         "enable"           => false,
         "disable"          => false,
+        "star"             => false,
+        "unstar"           => false,
         "create_request"   => false,
-        "create_cron"      => false },
+        "create_cron"      => false},
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -127,7 +132,8 @@ describe Travis::API::V3::Services::Repository::Find do
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master"}
+        "name"             => "master"},
+      "starred"            => false
     }}
   end
 
@@ -169,8 +175,10 @@ describe Travis::API::V3::Services::Repository::Find do
         "read"             => true,
         "enable"           => true,
         "disable"          => true,
+        "star"             => true,
+        "unstar"           => true,
         "create_request"   => true,
-        "create_cron"      => true },
+        "create_cron"      => true},
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -187,7 +195,8 @@ describe Travis::API::V3::Services::Repository::Find do
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master"}
+        "name"             => "master"},
+      "starred"            => false
     }}
   end
 
@@ -235,8 +244,10 @@ describe Travis::API::V3::Services::Repository::Find do
         "read"             => true,
         "enable"           => true,
         "disable"          => true,
+        "star"             => true,
+        "unstar"           => true,
         "create_request"   => true,
-        "create_cron"      => true },
+        "create_cron"      => true},
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -253,7 +264,8 @@ describe Travis::API::V3::Services::Repository::Find do
         "@type"            => "branch",
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
-        "name"             => "master"}
+        "name"             => "master"},
+      "starred"            => false
     }}
   end
 

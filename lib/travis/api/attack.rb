@@ -32,6 +32,12 @@ class Rack::Attack
   ]
 
   ####
+  # Whitelisted IP addresses
+  whitelist('whitelist client requesting from redis') do |request|
+    Travis.redis.sismember(:api_whitelisted_ips, request.ip)
+  end
+
+  ####
   # Ban based on: IP address
   # Ban time:     indefinite
   # Ban after:    manually banned
@@ -44,7 +50,7 @@ class Rack::Attack
   # Ban time:     5 hours
   # Ban after:    10 POST requests within five minutes to /auth/github
   blacklist('hammering /auth/github') do |request|
-     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 5.minutes, bantime: bantime(5.hours)) do
+     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 2, findtime: 5.minutes, bantime: bantime(5.hours)) do
        request.post? and request.path == '/auth/github'
      end
   end
@@ -57,6 +63,14 @@ class Rack::Attack
      Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 30.seconds, bantime: bantime(1.hour)) do
        request.post? and not POST_WHITELISTED.include? '/auth/github'
      end
+  end
+
+
+  ###
+  # Throttle:  unauthenticated requests to /auth/github - 1 per minute
+  # Scoped by: IP address
+  throttle('req/ip/1min', limit: 1, period: 1.minute) do |request|
+    request.ip unless request.authenticated? and request.path == '/auth/github'
   end
 
   ###

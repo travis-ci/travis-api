@@ -2,6 +2,7 @@ require 'travis/api/app'
 require 'addressable/uri'
 require 'faraday'
 require 'securerandom'
+require 'customerio'
 
 class Travis::Api::App
   class Endpoint
@@ -78,6 +79,7 @@ class Travis::Api::App
       #
       # * **github_token**: GitHub token for checking authorization (required)
       post '/github' do
+        check_agent
         unless params[:github_token]
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
@@ -94,6 +96,7 @@ class Travis::Api::App
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake' do
         handshake do |user, token, redirect_uri|
+
           if target_ok? redirect_uri
             content_type :html
             data = { user: user, token: token, uri: redirect_uri }
@@ -145,6 +148,43 @@ class Travis::Api::App
 
       private
 
+        def allowed_agents
+          @allowed_agents ||= redis.smembers('auth_agents')
+        end
+
+        def check_agent
+          return if settings.test? or allowed_agents.empty?
+          return if allowed_agents.any? { |a| request.user_agent.to_s.start_with? a }
+          halt 403, "you are currently not allowed to perform this request. please contact support@travis-ci.com."
+        end
+
+        # update first login date if not set
+        def update_first_login(user)
+          unless user.first_logged_in_at
+            user.update_attributes(first_logged_in_at: Time.now)
+          end
+        end
+
+        def update_customerio(user)
+          return unless Travis.config.customerio.site_id
+
+          # send event to customer.io
+          payload = {
+            :id => user.id,
+            :name => user.name,
+            :login => user.login,
+            :email => primary_email_for_user(user.github_oauth_token),
+            :created_at => user.created_at.to_i,
+            :github_id => user.github_id,
+            :education => user.education,
+            :first_logged_in_at => user.first_logged_in_at.to_i
+          }
+
+          customerio.identify(payload)
+        rescue StandardError => e
+          Travis.logger.error "Could not update Customer.io for User: #{user.id}:#{user.login} with message:#{e.message}"
+        end
+
         def serialize_user(user)
           rendered = Travis::Api.data(user, version: :v2)
           rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
@@ -174,6 +214,8 @@ class Travis::Api::App
             user                   = user_for_github_token(github_token)
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
+            update_first_login(user)
+            update_customerio(user)
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
@@ -182,6 +224,7 @@ class Travis::Api::App
             redirect to(endpoint.to_s)
           end
         end
+
 
         def create_state
           state = SecureRandom.urlsafe_base64(16)
@@ -212,6 +255,7 @@ class Travis::Api::App
             super
 
             @user = ::User.find_by_github_id(data['id'])
+
           end
 
           def info(attributes = {})
@@ -341,6 +385,15 @@ class Travis::Api::App
 
         def allowed_https_targets
           @allowed_https_targets ||= Travis.config.auth.target_origin.to_s.split(',')
+        end
+
+        def primary_email_for_user(oauth_token)
+          # check for the users primary email address (we don't store this info)
+          GH.with(token: oauth_token, client_id: nil) { GH['user/emails'] }.select { |e| e['primary'] }.first['email']
+        end
+
+        def customerio
+          Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
         end
     end
   end

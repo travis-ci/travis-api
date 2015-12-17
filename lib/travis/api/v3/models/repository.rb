@@ -6,6 +6,7 @@ module Travis::API::V3
     has_many :builds,      dependent: :delete_all, order: 'builds.id DESC'.freeze
     has_many :permissions, dependent: :delete_all
     has_many :users,       through:   :permissions
+    has_many :stars
 
     belongs_to :owner, polymorphic: true
     belongs_to :last_build, class_name: 'Travis::API::V3::Models::Build'.freeze
@@ -48,6 +49,18 @@ module Travis::API::V3
       branch
     rescue ActiveRecord::RecordNotUnique
       branches.where(name: name).first
+    end
+
+    def id_default_branch
+      [id, default_branch_name]
+    end
+
+    def send(name, *args, &block)
+      if name == [:id, :default_branch]
+        name = :id_default_branch
+      end
+
+      __send__(name, *args, &block)
     end
   end
 end

@@ -3,7 +3,7 @@ require 'travis/api/v3/renderer/model_renderer'
 module Travis::API::V3
   class Renderer::Repository < Renderer::ModelRenderer
     representation(:minimal,  :id, :name, :slug)
-    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch)
+    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred)
 
     def active
       !!model.active
@@ -17,6 +17,11 @@ module Travis::API::V3
         :@representation => 'minimal'.freeze,
         :name            => model.default_branch_name
       }
+    end
+
+    def starred
+      return false unless user = access_control.user
+      user.starred_repository_ids.include? id
     end
 
     def include_default_branch?

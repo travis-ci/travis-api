@@ -17,7 +17,8 @@ This is the app running on https://api.travis-ci.org/
 
 ### Database setup
 
-1. `rake db:create db:structure:load`
+1. `rake db:create db:migrate`
+2. for testing 'RAILS_ENV=test bundle exec rake db:create db:migrate --trace'
 1. Clone `travis-logs` and copy the `logs` database (assume the PostgreSQL user is `postgres`):
 ```sh-session
 cd ..

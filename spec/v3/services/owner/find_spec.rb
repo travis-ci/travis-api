@@ -64,8 +64,10 @@ describe Travis::API::V3::Services::Owner::Find do
             "read"            => true,
             "enable"          => false,
             "disable"         => false,
+            "star"            => false,
+            "unstar"          => false,
             "create_request"  => false,
-            "create_cron"     => false },
+            "create_cron"     => false},
           "id"                => repo.id,
           "name"              => "example-repo",
           "slug"              => "example-org/example-repo",
@@ -78,7 +80,8 @@ describe Travis::API::V3::Services::Owner::Find do
             "@type"           => "branch",
             "@href"           => "/v3/repo/#{repo.id}/branch/master",
             "@representation" => "minimal",
-            "name"            => "master"}
+            "name"            => "master"},
+          "starred"           => false
         }]
       }}
     end
@@ -109,8 +112,10 @@ describe Travis::API::V3::Services::Owner::Find do
             "read"          => true,
             "enable"        => false,
             "disable"       => false,
+            "star"          => false,
+            "unstar"        => false,
             "create_request"=> false,
-            "create_cron"   => false },
+            "create_cron"   => false},
           "id"              => repo.id,
           "name"            => "example-repo",
           "slug"            => "example-org/example-repo",
@@ -123,7 +128,8 @@ describe Travis::API::V3::Services::Owner::Find do
             "@type"         => "branch",
             "@href"         => "/v3/repo/#{repo.id}/branch/master",
             "@representation"=> "minimal",
-            "name"           => "master"}
+            "name"          => "master"},
+          "starred"         => false
         }]
       }}
     end
