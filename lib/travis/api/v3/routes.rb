@@ -86,7 +86,7 @@ module Travis::API::V3
         get :find
 
         resource :crons do
-          route '/crons'
+          route '/cron'
           get  :find
 
           post :create, '/create'

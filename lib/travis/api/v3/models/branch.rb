@@ -4,7 +4,7 @@ module Travis::API::V3
     belongs_to :last_build, class_name: 'Travis::API::V3::Models::Build'.freeze
     has_many   :builds,  foreign_key: [:repository_id, :branch], primary_key: [:repository_id, :name], order: 'builds.id DESC'.freeze, conditions: { event_type: 'push' }
     has_many   :commits, foreign_key: [:repository_id, :branch], primary_key: [:repository_id, :name], order: 'commits.id DESC'.freeze
-    has_many   :crons,   dependent: :delete_all
+    has_one    :crons,   dependent: :delete
 
     def default_branch
       name == repository.default_branch_name
