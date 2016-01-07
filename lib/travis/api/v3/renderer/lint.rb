@@ -3,7 +3,7 @@ module Travis::API::V3
     extend self
 
     def render(payload)
-      { Renderer.render_value(payload) }
+      Renderer.render_value(payload)
     end
   end
 end
