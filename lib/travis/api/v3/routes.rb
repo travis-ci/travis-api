@@ -36,6 +36,12 @@ module Travis::API::V3
       post :restart, '/restart'
     end
 
+    resource :lint do
+      route '/lint'
+      post :lint
+      put  :lint
+    end
+
     resource :organization do
       capture id: :digit
       route '/org/{organization.id}'
