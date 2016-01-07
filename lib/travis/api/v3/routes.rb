@@ -39,7 +39,6 @@ module Travis::API::V3
     resource :lint do
       route '/lint'
       post :lint
-      put  :lint
     end
 
     resource :organization do
