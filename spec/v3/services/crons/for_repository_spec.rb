@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Crons::ForRepository do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo).first }
-  let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch) }
+  let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch, interval:'daily') }
   let(:parsed_body) { JSON.load(body) }
 
   describe "fetching all crons by repo id" do
@@ -51,15 +51,8 @@ describe Travis::API::V3::Services::Crons::ForRepository do
                     "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
                     "@representation" => "minimal",
                     "name"            => "#{branch.name}" },
-                "hour"                => nil,
-                "mon"                 => false,
-                "tue"                 => false,
-                "wed"                 => false,
-                "thu"                 => false,
-                "fri"                 => false,
-                "sat"                 => false,
-                "sun"                 => false,
-                "disable_by_push"     => true
+                "interval"            => "daily",
+                "disable_by_build"     => true
             }
           ]
     }}

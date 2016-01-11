@@ -1,19 +1,19 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::Crons::Create do
+describe Travis::API::V3::Services::Cron::Create do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo).first }
   let(:last_cron) {Travis::API::V3::Models::Cron.where(branch_id: branch.id).last}
   let(:current_cron) {Travis::API::V3::Models::Cron.where(branch_id: branch.id).last}
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}", "Content-Type" => "application/json" }}
-  let(:options) {{ "tue" => true, "sat" => true, "sun" => false, "disable_by_push" => true, "hour" => 12 }}
+  let(:options) {{ "interval" => "monthly", "disable_by_build" => false }}
   let(:parsed_body) { JSON.load(body) }
 
   describe "creating a cron job" do
     before     { last_cron }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/crons/create", options, headers) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options, headers) }
     example    { expect(current_cron == last_cron).to be_falsey }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
@@ -36,20 +36,13 @@ describe Travis::API::V3::Services::Crons::Create do
             "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
             "@representation" => "minimal",
             "name"            => "#{branch.name}" },
-        "hour"                => 12,
-        "mon"                 => false,
-        "tue"                 => true,
-        "wed"                 => false,
-        "thu"                 => false,
-        "fri"                 => false,
-        "sat"                 => true,
-        "sun"                 => false,
-        "disable_by_push"     => true
+        "interval"            => "monthly",
+        "disable_by_build"    => false
     }}
   end
 
   describe "try creating a cron job without login" do
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/crons/create") }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options) }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
       "error_type"    => "login_required",
@@ -59,7 +52,7 @@ describe Travis::API::V3::Services::Crons::Create do
 
   describe "try creating a cron job with a user without permissions" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/crons/create", {}, headers) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options, headers) }
     example    { expect(parsed_body).to be == {
         "@type"               => "error",
         "error_type"          => "insufficient_access",
@@ -78,7 +71,7 @@ describe Travis::API::V3::Services::Crons::Create do
 
   describe "creating cron on a non-existing repository by slug" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before     { post("/v3/repo/svenfuchs%2Fminimal1/branch/master/crons/create", {}, headers)     }
+    before     { post("/v3/repo/svenfuchs%2Fminimal1/branch/master/cron/create", options, headers)     }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
@@ -90,7 +83,7 @@ describe Travis::API::V3::Services::Crons::Create do
 
   describe "creating cron on a non-existing branch" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before     { post("/v3/repo/#{repo.id}/branch/hopefullyNonExistingBranch/crons/create", {}, headers)     }
+    before     { post("/v3/repo/#{repo.id}/branch/hopefullyNonExistingBranch/cron/create", options, headers)     }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",

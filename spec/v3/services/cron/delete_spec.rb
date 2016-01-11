@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Cron::Delete do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo).first }
-  let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch) }
+  let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch, interval:'daily') }
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
   let(:parsed_body) { JSON.load(body) }
@@ -33,15 +33,8 @@ describe Travis::API::V3::Services::Cron::Delete do
             "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
             "@representation" => "minimal",
             "name"            => branch.name },
-        "hour"                => nil,
-        "mon"                 => false,
-        "tue"                 => false,
-        "wed"                 => false,
-        "thu"                 => false,
-        "fri"                 => false,
-        "sat"                 => false,
-        "sun"                 => false,
-        "disable_by_push"     => true
+        "interval"            => "daily",
+        "disable_by_build"     => true
     }}
   end
 
