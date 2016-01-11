@@ -85,9 +85,9 @@ module Travis::API::V3
         route '/branch/{branch.name}'
         get :find
 
-        resource :crons do
+        resource :cron do
           route '/cron'
-          get  :find
+          get  :for_branch
 
           post :create, '/create'
         end
