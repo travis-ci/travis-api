@@ -8,6 +8,7 @@ describe Travis::API::V3::Services::Cron::Create do
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}", "Content-Type" => "application/json" }}
   let(:options) {{ "interval" => "monthly", "disable_by_build" => false }}
+  let(:wrong_options) {{ "interval" => "notExisting", "disable_by_build" => false }}
   let(:parsed_body) { JSON.load(body) }
 
   describe "creating a cron job" do
@@ -39,6 +40,25 @@ describe Travis::API::V3::Services::Cron::Create do
         "interval"            => "monthly",
         "disable_by_build"    => false
     }}
+  end
+
+  describe "creating multiple cron jobs for one branch" do
+    before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options, headers) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options, headers) }
+    it "only stores one" do
+      expect(Travis::API::V3::Models::Cron.where(branch_id: branch.id).count).to eq(1)
+    end
+  end
+
+  describe "creating a cron job with a wrong interval" do
+    before     { last_cron }
+    before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+    it "raises an error" do
+     expect {
+       post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", wrong_options, headers)
+     }.to raise_error(ArgumentError, 'interval must be "daily", "weekly" or "monthly"')
+    end
   end
 
   describe "try creating a cron job without login" do
