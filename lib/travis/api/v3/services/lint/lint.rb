@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Services::Lint::Lint < Service
-    def run!
+    def run
       request.body.rewind
       content  = params[:content] || request.body.read
       parsed   = Travis::Yaml.parse(content)
