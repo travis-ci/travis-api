@@ -16,7 +16,7 @@ gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require:
 
 gem 'active_model_serializers'
 gem 'unicorn'
-gem 'sentry-raven',    github: 'getsentry/raven-ruby'
+gem 'sentry-raven'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
 gem 'rack-cache',      github: 'rtomayko/rack-cache'
