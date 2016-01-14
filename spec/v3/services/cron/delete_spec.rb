@@ -34,7 +34,8 @@ describe Travis::API::V3::Services::Cron::Delete do
             "@representation" => "minimal",
             "name"            => branch.name },
         "interval"            => "daily",
-        "disable_by_build"     => true
+        "disable_by_build"    => true,
+        "next_build_time"     => cron.next_build_time.strftime('%Y-%m-%dT%H:%M:%SZ')
     }}
   end
 
