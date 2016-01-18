@@ -155,5 +155,77 @@ describe Travis::API::V3::Models::Cron do
 
   end
 
+  describe "build starts now if next build time is in the past" do
+
+    before do
+      # nothing, this time
+      # time freeze is performed in examples
+    end
+
+    after do
+      Timecop.return
+    end
+
+    it "for daily builds with disable_by_build true" do
+      Timecop.travel(DateTime.new(2015, 12, 31, 16))
+      cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'daily', disable_by_build: true)
+      build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
+      Timecop.freeze(DateTime.new(2016, 1, 1, 19))
+      expect(cron.next_build_time).to be == DateTime.now
+      build.destroy
+      cron.destroy
+    end
+
+    it "for daily builds with disable_by_build false" do
+      Timecop.travel(DateTime.new(2015, 12, 31, 16))
+      cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'daily', disable_by_build: false)
+      build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
+      Timecop.freeze(DateTime.new(2016, 1, 1, 19))
+      expect(cron.next_build_time).to be == DateTime.now
+      build.destroy
+      cron.destroy
+    end
+
+    it "for weekly builds with disable_by_build true" do
+      Timecop.travel(DateTime.new(2015, 12, 31, 16))
+      cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'weekly', disable_by_build: true)
+      build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
+      Timecop.freeze(DateTime.new(2016, 1, 7, 19))
+      expect(cron.next_build_time).to be == DateTime.now
+      build.destroy
+      cron.destroy
+    end
+
+    it "for weekly builds with disable_by_build false" do
+      Timecop.travel(DateTime.new(2015, 12, 31, 16))
+      cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'weekly', disable_by_build: false)
+      build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
+      Timecop.freeze(DateTime.new(2016, 1, 7, 19))
+      expect(cron.next_build_time).to be == DateTime.now
+      build.destroy
+      cron.destroy
+    end
+
+    it "for monthly builds with disable_by_build true" do
+      Timecop.travel(DateTime.new(2015, 12, 31, 16))
+      cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'monthly', disable_by_build: true)
+      build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
+      Timecop.freeze(DateTime.new(2016, 1, 31, 19))
+      expect(cron.next_build_time).to be == DateTime.now
+      build.destroy
+      cron.destroy
+    end
+
+    it "for monthly builds with disable_by_build false" do
+      Timecop.travel(DateTime.new(2015, 12, 31, 16))
+      cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'monthly', disable_by_build: false)
+      build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
+      Timecop.freeze(DateTime.new(2016, 1, 31, 19))
+      expect(cron.next_build_time).to be == DateTime.now
+      build.destroy
+      cron.destroy
+    end
+
+  end
 
 end

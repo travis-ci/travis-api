@@ -3,20 +3,36 @@ module Travis::API::V3
 
     belongs_to :branch
 
+    def self.start_all
+      self.all.each do |cron|
+        cron.start if cron.next_build_time <= Time.now
+      end
+    end
+
+    def start
+      raise ServerError, 'repository does not have a github_id'.freeze unless branch.repository.github_id
+
+      payload = {
+        repository: { id: branch.repository.github_id, owner_name: branch.repository.owner_name, name: branch.repository.name },
+        user:       { id: user.id },
+        message:    '',
+        branch:     branch,
+        config:     {}
+      }
+
+      token = "TODO: Figure out where to get this (branch.repository.owner ?)"
+      perform_async(:build_request, type: 'cron'.freeze, credentials: { token: token }, payload: JSON.dump(payload))
+      payload
+    end
+
     def next_build_time
 
-      if disable_by_build
-        if last_non_cron_build_date > last_planned_time
-          return after_next_planned_time
-        else
-          return next_planned_time
-        end
+      if (disable_by_build) && (last_non_cron_build_date > last_planned_time)
+        return after_next_planned_time
+      elsif last_cron_build_date >= last_planned_time
+        return next_planned_time
       else
-        if last_cron_build_date >= last_planned_time
-          return next_planned_time
-        else
-          return Time.now
-        end
+        return Time.now
       end
     end
 
