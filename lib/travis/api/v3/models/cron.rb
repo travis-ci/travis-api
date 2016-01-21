@@ -4,9 +4,16 @@ module Travis::API::V3
     belongs_to :branch
 
     def self.start_all
+      started = []
+
       self.all.each do |cron|
-        cron.start if cron.next_build_time <= Time.now
+        if cron.next_build_time <= Time.now
+          cron.start
+          started.push cron
+        end
       end
+
+      started
     end
 
     def start
@@ -14,11 +21,11 @@ module Travis::API::V3
 
       payload = {
         repository: { id: branch.repository.github_id, owner_name: branch.repository.owner_name, name: branch.repository.name },
-        user:       { id: user.id },
-        branch:     branch
+        branch:     branch.name
       }
 
-      perform_async(:build_request, type: 'cron'.freeze, payload: JSON.dump(payload))
+      class_name, queue = Query.sidekiq_queue(:build_request)
+      ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => [{type: 'cron'.freeze, payload: JSON.dump(payload)}])
       payload
     end
 
