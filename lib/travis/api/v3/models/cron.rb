@@ -15,13 +15,10 @@ module Travis::API::V3
       payload = {
         repository: { id: branch.repository.github_id, owner_name: branch.repository.owner_name, name: branch.repository.name },
         user:       { id: user.id },
-        message:    '',
-        branch:     branch,
-        config:     {}
+        branch:     branch
       }
 
-      token = "TODO: Figure out where to get this (branch.repository.owner ?)"
-      perform_async(:build_request, type: 'cron'.freeze, credentials: { token: token }, payload: JSON.dump(payload))
+      perform_async(:build_request, type: 'cron'.freeze, payload: JSON.dump(payload))
       payload
     end
 
