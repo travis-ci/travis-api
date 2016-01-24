@@ -41,6 +41,12 @@ GIT
       proxies (~> 0.2.0)
 
 GIT
+  remote: git://github.com/travis-ci/travis-amqp.git
+  revision: c388299757b7eda2cc0e33cdc7d90113cf283e6a
+  specs:
+    travis-amqp (0.0.1)
+
+GIT
   remote: git://github.com/travis-ci/travis-core.git
   revision: 21793fc8b01f965b93cf98b7ab1458ee359a5a62
   specs:
@@ -354,6 +360,7 @@ DEPENDENCIES
   sinatra-contrib
   skylight (~> 0.6.0.beta.1)
   stackprof
+  travis-amqp!
   travis-api!
   travis-config (~> 0.1.0)
   travis-core!

@@ -7,6 +7,7 @@ gem 's3',              github: 'travis-ci/s3'
 
 gem 'travis-core',     github: 'travis-ci/travis-core'
 gem 'travis-support',  github: 'travis-ci/travis-support'
+gem 'travis-amqp',     github: 'travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'travis-yaml',     github: 'travis-ci/travis-yaml'

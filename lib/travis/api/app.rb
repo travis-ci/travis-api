@@ -4,8 +4,8 @@ require 'active_record_postgres_variables'
 
 # now actually load travis
 require 'travis'
+require 'travis/amqp'
 require 'travis/model'
-require 'travis/support/amqp'
 require 'travis/states_cache'
 require 'rack'
 require 'rack/protection'
@@ -179,7 +179,7 @@ module Travis::Api
 
       def self.setup_travis
         Travis::Async.enabled = true
-        Travis::Amqp.config = Travis.config.amqp
+        Travis::Amqp.setup(Travis.config.amqp)
 
         setup_database_connections
 
