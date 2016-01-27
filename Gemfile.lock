@@ -6,14 +6,6 @@ GIT
       metriks (>= 0.9.9.6)
 
 GIT
-  remote: git://github.com/getsentry/raven-ruby.git
-  revision: 84392e5db701f0b5c66802aab9cc82ef9a5ad830
-  specs:
-    sentry-raven (0.10.1)
-      faraday (>= 0.7.6)
-      uuidtools
-
-GIT
   remote: git://github.com/rack/rack-contrib.git
   revision: 1b11346d729efd88b274cd7f704e0bca9eb3de7a
   specs:
@@ -47,6 +39,12 @@ GIT
   specs:
     s3 (0.3.21)
       proxies (~> 0.2.0)
+
+GIT
+  remote: git://github.com/travis-ci/travis-amqp.git
+  revision: c388299757b7eda2cc0e33cdc7d90113cf283e6a
+  specs:
+    travis-amqp (0.0.1)
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
@@ -280,6 +278,8 @@ GEM
       rspec-core (>= 2.99.0.beta1)
       rspec-expectations (>= 2.99.0.beta1)
     rspec-mocks (2.99.2)
+    sentry-raven (0.15.3)
+      faraday (>= 0.7.6)
     sidekiq (3.3.0)
       celluloid (>= 0.16.0)
       connection_pool (>= 2.0.0)
@@ -331,7 +331,6 @@ GEM
       rack
       raindrops (~> 0.7)
     useragent (0.13.3)
-    uuidtools (2.1.5)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -367,12 +366,13 @@ DEPENDENCIES
   rspec (~> 2.13)
   rspec-its
   s3!
-  sentry-raven!
+  sentry-raven
   simplecov
   sinatra
   sinatra-contrib
   skylight (~> 0.6.0.beta.1)
   stackprof
+  travis-amqp!
   travis-api!
   travis-config (~> 0.1.0)
   travis-core!
