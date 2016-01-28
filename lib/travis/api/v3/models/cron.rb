@@ -3,19 +3,6 @@ module Travis::API::V3
 
     belongs_to :branch
 
-    def self.start_all
-      started = []
-
-      self.all.each do |cron|
-        if cron.next_build_time <= Time.now
-          cron.start
-          started.push cron
-        end
-      end
-
-      started
-    end
-
     def start
       raise ServerError, 'repository does not have a github_id'.freeze unless branch.repository.github_id
 
