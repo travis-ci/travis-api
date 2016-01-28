@@ -16,7 +16,7 @@ module Travis::API::V3
       payload
     end
 
-    def next_build_time
+    def next_enqueuing
 
       if (disable_by_build) && (last_non_cron_build_date > last_planned_time)
         return after_next_planned_time
