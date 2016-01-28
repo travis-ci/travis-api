@@ -13,6 +13,7 @@ module Travis::API::V3
     Jobs          = Module.new { extend Services }
     Organization  = Module.new { extend Services }
     Organizations = Module.new { extend Services }
+    Overview      = Module.new { extend Services }
     Owner         = Module.new { extend Services }
     Repositories  = Module.new { extend Services }
     Repository    = Module.new { extend Services }

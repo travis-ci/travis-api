@@ -92,6 +92,13 @@ module Travis::API::V3
         get  :find
         post :create
       end
+
+      resource :overview do
+        route '/overview'
+        get :getStreakData, '/streak'
+
+      end
+
     end
 
     resource :user do
