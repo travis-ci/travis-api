@@ -14,7 +14,7 @@ describe Travis::API::V3::Services::Cron::Create do
   describe "creating a cron job" do
     before     { last_cron }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options, headers) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers) }
     example    { expect(current_cron == last_cron).to be_falsey }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
@@ -45,8 +45,8 @@ describe Travis::API::V3::Services::Cron::Create do
 
   describe "creating multiple cron jobs for one branch" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options, headers) }
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options, headers) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers) }
     it "only stores one" do
       expect(Travis::API::V3::Models::Cron.where(branch_id: branch.id).count).to eq(1)
     end
@@ -57,13 +57,13 @@ describe Travis::API::V3::Services::Cron::Create do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
     it "raises an error" do
      expect {
-       post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", wrong_options, headers)
+       post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", wrong_options, headers)
      }.to raise_error(ArgumentError, 'interval must be "daily", "weekly" or "monthly"')
     end
   end
 
   describe "try creating a cron job without login" do
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options) }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
       "error_type"    => "login_required",
@@ -73,7 +73,7 @@ describe Travis::API::V3::Services::Cron::Create do
 
   describe "try creating a cron job with a user without permissions" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron/create", options, headers) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers) }
     example    { expect(parsed_body).to be == {
         "@type"               => "error",
         "error_type"          => "insufficient_access",
@@ -92,7 +92,7 @@ describe Travis::API::V3::Services::Cron::Create do
 
   describe "creating cron on a non-existing repository by slug" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before     { post("/v3/repo/svenfuchs%2Fminimal1/branch/master/cron/create", options, headers)     }
+    before     { post("/v3/repo/svenfuchs%2Fminimal1/branch/master/cron", options, headers)     }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
@@ -104,7 +104,7 @@ describe Travis::API::V3::Services::Cron::Create do
 
   describe "creating cron on a non-existing branch" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before     { post("/v3/repo/#{repo.id}/branch/hopefullyNonExistingBranch/cron/create", options, headers)     }
+    before     { post("/v3/repo/#{repo.id}/branch/hopefullyNonExistingBranch/cron", options, headers)     }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",

@@ -10,7 +10,7 @@ describe Travis::API::V3::Services::Cron::Delete do
 
   describe "deleting a cron job by id" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before     { post("/v3/cron/#{cron.id}/delete", {}, headers) }
+    before     { delete("/v3/cron/#{cron.id}", {}, headers) }
     example    { expect(last_response).to be_ok }
     example    { expect(Travis::API::V3::Models::Cron.where(id: cron.id)).to be_empty }
     example    { expect(parsed_body).to be == {
@@ -40,7 +40,7 @@ describe Travis::API::V3::Services::Cron::Delete do
   end
 
   describe "try deleting a cron job without login" do
-    before     { post("/v3/cron/#{cron.id}/delete") }
+    before     { delete("/v3/cron/#{cron.id}") }
     example    { expect(Travis::API::V3::Models::Cron.where(id: cron.id)).to exist }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
@@ -51,7 +51,7 @@ describe Travis::API::V3::Services::Cron::Delete do
 
   describe "try deleting a cron job with a user without permissions" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before     { post("/v3/cron/#{cron.id}/delete", {}, headers) }
+    before     { delete("/v3/cron/#{cron.id}", {}, headers) }
     example    { expect(Travis::API::V3::Models::Cron.where(id: cron.id)).to exist }
     example    { expect(parsed_body).to be == {
         "@type"               => "error",
@@ -69,7 +69,7 @@ describe Travis::API::V3::Services::Cron::Delete do
 
   describe "try deleting a non-existing cron job" do
     before  { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
-    before  { post("/v3/cron/999999999999999/delete", {}, headers) }
+    before  { delete("/v3/cron/999999999999999", {}, headers) }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
       "error_type"    => "not_found",
