@@ -33,6 +33,6 @@ group :development do
 end
 
 group :test do
- # stuff
+ gem 'rake'
 end
 
