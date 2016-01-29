@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 ruby '2.1.8' if ENV.key?('DYNO')
 
 group :travis do
+  # should this stuff be global or stay in here?
   gem 'rails', '4.2.5'
   gem 'activeresource'
   gem 'sass-rails', '~> 5.0'
@@ -32,6 +33,6 @@ group :development do
 end
 
 group :test do
-  # gem 'byebug'
+ # stuff
 end
 
