@@ -3,7 +3,7 @@ module Travis::API::V3
     paginate
 
     def run!
-      Models::Cron.where(:branch_id => find(:repository).branches)
+      query.find(find(:repository))
     end
   end
 end

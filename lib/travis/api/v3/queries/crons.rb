@@ -1,6 +1,10 @@
 module Travis::API::V3
   class Queries::Crons < Query
 
+    def find(repository)
+      Models::Cron.where(:branch_id => repository.branches)
+    end
+
     def start(branch)
       raise ServerError, 'repository does not have a github_id'.freeze unless branch.repository.github_id
 
