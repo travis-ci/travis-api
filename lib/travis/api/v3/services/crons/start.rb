@@ -6,7 +6,7 @@ module Travis::API::V3
 
       Models::Cron.all.each do |cron|
         if cron.next_enqueuing <= Time.now
-          cron.start
+          query.start(cron.branch)
           started.push cron
         end
       end

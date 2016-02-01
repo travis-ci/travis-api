@@ -3,19 +3,6 @@ module Travis::API::V3
 
     belongs_to :branch
 
-    def start
-      raise ServerError, 'repository does not have a github_id'.freeze unless branch.repository.github_id
-
-      payload = {
-        repository: { id: branch.repository.github_id, owner_name: branch.repository.owner_name, name: branch.repository.name },
-        branch:     branch.name
-      }
-
-      class_name, queue = Query.sidekiq_queue(:build_request)
-      ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => [{type: 'cron'.freeze, payload: JSON.dump(payload)}])
-      payload
-    end
-
     def next_enqueuing
 
       if (disable_by_build) && (last_non_cron_build_date > last_planned_time)
