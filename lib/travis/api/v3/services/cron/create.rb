@@ -12,12 +12,10 @@ module Travis::API::V3
 
       if branch.cron
         access_control.permissions(branch.cron).delete!
-        branch.cron.destroy
       end
 
-      Models::Cron.create(branch: branch,
-                          interval: params["interval"],
-                          disable_by_build: params["disable_by_build"] ? params["disable_by_build"] : false)
+      query.create(branch, params["interval"], params["disable_by_build"] ? params["disable_by_build"] : false)
+
     end
 
   end
