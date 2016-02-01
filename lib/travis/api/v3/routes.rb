@@ -96,7 +96,7 @@ module Travis::API::V3
       resource :overview do
         route '/overview'
         get :getStreakData, '/streak'
-
+        get :getRecentBuildHistory, '/build_history'
       end
 
     end
