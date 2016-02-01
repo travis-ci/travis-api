@@ -55,11 +55,12 @@ describe Travis::API::V3::Services::Cron::Create do
   describe "creating a cron job with a wrong interval" do
     before     { last_cron }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    it "raises an error" do
-     expect {
-       post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", wrong_options, headers)
-     }.to raise_error(ArgumentError, 'interval must be "daily", "weekly" or "monthly"')
-    end
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", wrong_options, headers) }
+    example    { expect(parsed_body).to be == {
+      "@type"         => "error",
+      "error_type"    => "error",
+      "error_message" => "Invalid value for interval. Interval must be \"daily\", \"weekly\" or \"monthly\"!"
+    }}
   end
 
   describe "try creating a cron job without login" do
