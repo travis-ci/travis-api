@@ -5,6 +5,19 @@ module Travis::API::V3
       Models::Cron.where(:branch_id => repository.branches)
     end
 
+    def start_all()
+      started = []
+
+      Models::Cron.all.each do |cron|
+        if cron.next_enqueuing <= Time.now
+          start(cron.branch)
+          started.push cron
+        end
+      end
+
+      started
+    end
+
     def start(branch)
       raise ServerError, 'repository does not have a github_id'.freeze unless branch.repository.github_id
 
