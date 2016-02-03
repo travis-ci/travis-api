@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'travis'
+require 'micro_migrations'
 require 'travis/migrations'
 require 'travis/engine'
 
@@ -8,7 +9,6 @@ Rake::Task["db:structure:dump"].clear
 
 begin
   ENV['SCHEMA'] = File.expand_path('../db/migrate/structure.sql', $:.detect { |p| p.include?('travis-migrations') })
-  require 'micro_migrations'
 rescue LoadError
   # we can't load micro migrations on production
 end
