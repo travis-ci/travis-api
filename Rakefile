@@ -1,4 +1,5 @@
 require 'bundler/setup'
+require 'travis'
 require 'travis/migrations'
 require 'travis/engine'
 
