@@ -5,7 +5,6 @@ require 'travis/migrations'
 require 'travis/engine'
 
 ActiveRecord::Base.schema_format = :sql
-Rake::Task["db:structure:dump"].clear
 
 begin
   ENV['SCHEMA'] = File.expand_path('../db/migrate/structure.sql', $:.detect { |p| p.include?('travis-migrations') })
@@ -22,6 +21,7 @@ rescue LoadError
   warn "could not load rspec"
 end
 
+Rake::Task["db:structure:dump"].clear
 
 desc "generate gemspec"
 task 'travis-api.gemspec' do
