@@ -4,7 +4,7 @@ require 'travis/migrations'
 require 'travis/engine'
 
 ActiveRecord::Base.schema_format = :sql
-Rake::Task["db:structure:dump"].clear unless Rails.env.development?
+Rake::Task["db:structure:dump"].clear
 
 begin
   ENV['SCHEMA'] = File.expand_path('../db/migrate/structure.sql', $:.detect { |p| p.include?('travis-migrations') })
