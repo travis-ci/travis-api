@@ -1,13 +1,16 @@
 require 'bundler/setup'
-# require 'travis'
+require 'travis/migrations'
 require 'travis/engine'
 
-# begin
-#   ENV['SCHEMA'] = File.expand_path('../db/schema.rb', $:.detect { |p| p.include?('travis-core') })
-#   require 'micro_migrations'
-# rescue LoadError
-#   # we can't load micro migrations on production
-# end
+ActiveRecord::Base.schema_format = :sql
+
+begin
+  ENV['SCHEMA'] = File.expand_path('../db/migrate/structure.sql', $:.detect { |p| p.include?('travis-migrations') })
+  require 'micro_migrations'
+rescue LoadError
+  # we can't load micro migrations on production
+end
+
 
 begin
   require 'rspec/core/rake_task'
