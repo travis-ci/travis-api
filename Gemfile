@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-ruby '2.1.6' if ENV.key?('DYNO')
+ruby '2.1.7' if ENV.key?('DYNO')
 
 gem 's3',              github: 'travis-ci/s3'
 
@@ -37,6 +37,7 @@ gem 'customerio'
 
 group :test do
   gem 'rspec',         '~> 2.13'
+  gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
   gem 'database_cleaner', '~> 0.8.0'
