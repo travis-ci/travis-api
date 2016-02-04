@@ -98,6 +98,7 @@ module Travis::API::V3
         get :getStreakData, '/streak'
         get :getRecentBuildHistory, '/build_history'
         get :getBuildTime, '/build_time'
+        get :getEventTypeData, '/event_type_data'
       end
 
     end

@@ -16,8 +16,5 @@ module Travis::API::V3
 
       return [{recent_build_history: hash}]
     end
-
-
-
   end
 end

@@ -34,8 +34,8 @@ describe Travis::API::V3::Services::Overview::GetStreakData do
       "@href" => "/v3/repo/#{repo.id}/overview/streak",
       "@representation" => "standard",
       "streak" => {
-          'days' => 2,
-          'builds' => 2
+          'days'      => 2,
+          'builds'    => 2
       }
     }}
   end
