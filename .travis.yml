@@ -20,6 +20,7 @@ services:
 before_script:
   - RAILS_ENV=test
   - createdb travis_test
+  - createdb travis_pro_test
   - bundle exec rake db:migrate --trace
 
 script:
