@@ -15,8 +15,8 @@ production:
 
 development:
   <<: *defaults
-  database: travis_pro_development
+  database: travis_development
 
 test:
   <<: *defaults
-  database: travis_pro_test
+  database: travis_test
