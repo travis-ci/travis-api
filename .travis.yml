@@ -18,4 +18,9 @@ services:
   - redis
 
 before_script:
-  - 'RAILS_ENV=test bundle exec rake db:create db:migrate --trace'
+  - RAILS_ENV=test
+  - createdb travis_test
+  - bundle exec rake db:migrate --trace
+
+script:
+  - bundle exec rspec spec
