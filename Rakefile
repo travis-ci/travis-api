@@ -3,7 +3,7 @@ require 'travis'
 require 'travis/engine'
 
 begin
-  ENV['SCHEMA'] = File.expand_path('../db/schema.rb', $:.detect { |p| p.include?('travis-core') })
+  # ENV['SCHEMA'] = File.expand_path('../db/schema.rb', $:.detect { |p| p.include?('travis-core') })
   require 'micro_migrations'
 rescue LoadError
   # we can't load micro migrations on production
