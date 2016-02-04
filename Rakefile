@@ -1,17 +1,13 @@
 require 'bundler/setup'
 require 'travis'
-require 'micro_migrations'
-require 'travis/migrations'
 require 'travis/engine'
 
-ActiveRecord::Base.schema_format = :sql
-
 begin
-  ENV['SCHEMA'] = File.expand_path('../db/migrate/structure.sql', $:.detect { |p| p.include?('travis-migrations') })
+  ENV['SCHEMA'] = File.expand_path('../db/schema.rb', $:.detect { |p| p.include?('travis-core') })
+  require 'micro_migrations'
 rescue LoadError
   # we can't load micro migrations on production
 end
-
 
 begin
   require 'rspec/core/rake_task'
@@ -20,8 +16,6 @@ begin
 rescue LoadError
   warn "could not load rspec"
 end
-
-Rake::Task["db:structure:dump"].clear
 
 desc "generate gemspec"
 task 'travis-api.gemspec' do
