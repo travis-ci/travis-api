@@ -1,8 +1,6 @@
 module Travis::API::V3
   class Services::Overview::GetStreakData < Service
 
-    DataContainer = Struct.new :streak
-
     def run!
       repo = find(:repository)
       last_failing_build = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'failed').order("id DESC").first

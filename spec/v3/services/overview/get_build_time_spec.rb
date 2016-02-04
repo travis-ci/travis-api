@@ -3,12 +3,12 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Overview::GetBuildTime do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
-  describe "fetching steak data on a public repository" do
+  describe "fetching build_time data on a public repository" do
     before     { get("/v3/repo/#{repo.id}/overview/build_time")   }
     example    { expect(last_response).to be_ok }
   end
 
-  describe "fetching streak from non-existing repo" do
+  describe "fetching build_time from non-existing repo" do
     before     { get("/v3/repo/1231987129387218/overview/build_time")  }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
@@ -20,13 +20,13 @@ describe Travis::API::V3::Services::Overview::GetBuildTime do
   end
 
   describe "build_time on public repository" do
+    builds = []
     before     {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, id: 345, created_at: DateTime.now - 5, duration: 600, state: 'passed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, id: 346, created_at: DateTime.now - 4, duration: 1200, state: 'failed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, id: 347, created_at: DateTime.now - 2, duration: 10, state: 'passed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, id: 348, created_at: DateTime.now    , duration: 6000, state: 'failed', branch_name: repo.default_branch.name)
-
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 5, duration: 600, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 4, duration: 1200, state: 'failed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 2, duration: 10, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now    , duration: 6000, state: 'failed', branch_name: repo.default_branch.name)
       get("/v3/repo/#{repo.id}/overview/build_time") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
@@ -34,21 +34,21 @@ describe Travis::API::V3::Services::Overview::GetBuildTime do
       "@href" => "/v3/repo/#{repo.id}/overview/build_time",
       "@representation" => "standard",
       "build_time" => [
-        { "id" => 345,
-          "state" => "passed",
-          "duration" => 600
-        },
-        { "id" => 346,
+        { "id" => builds[-1].id,
           "state" => "failed",
-          "duration" => 1200
+          "duration" => 6000
         },
-        { "id" => 347,
+        { "id" => builds[-2].id,
           "state" => "passed",
           "duration" => 10
         },
-        { "id" => 348,
+        { "id" => builds[-3].id,
           "state" => "failed",
-          "duration" => 6000
+          "duration" => 1200
+        },
+        { "id" => builds[-4].id,
+          "state" => "passed",
+          "duration" => 600
         }
       ]
     }}
