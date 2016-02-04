@@ -6,6 +6,8 @@ require 'travis'
 ActiveRecord::Base.schema_format = :sql
 Rails.application.config.paths["db/migrate"] = ["db/migrate", "#{Gem.loaded_specs['travis-core'].full_gem_path}/db/migrate"]
 
+Rake::Task["db:structure:dump"].clear if ENV['RAILS_ENV=test']
+
 desc 'Run specs'
 RSpec::Core::RakeTask.new do |t|
   t.pattern = './spec/**/*_spec.rb'
