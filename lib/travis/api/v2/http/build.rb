@@ -40,7 +40,8 @@ module Travis
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
-                'job_ids' => build.matrix_ids
+                'job_ids' => build.matrix_ids,
+                'is_on_default_branch' => on_default_branch?(build)
               }
             end
 
@@ -76,6 +77,10 @@ module Travis
                 'tags' => job.tags,
                 'annotation_ids' => job.annotation_ids,
               }
+            end
+
+            def on_default_branch?(build)
+              build.repository.default_branch == build.commit.branch
             end
 
             def annotations(build)
