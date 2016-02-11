@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'rails_helper'
 
 describe User, '.find' do
   context 'there is a user with id 125283' do
