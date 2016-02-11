@@ -1,5 +1,7 @@
+require 'active_resource'
+
 class Travis::Resource < ActiveResource::Base
-  self.site = 'http://api.travis-ci.org'
+  self.site = 'https://api.travis-ci.org'
   self.headers['Authorization'] = 'Token token="D0nqa10GPgIE0Q7rlEIJyQ"'
   self.headers['Travis-API-Version'] = '3'
   self.headers['User-Agent'] = 'Travis'
