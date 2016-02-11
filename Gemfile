@@ -2,12 +2,13 @@ source 'https://rubygems.org'
 
 ruby '2.1.8' if ENV.key?('DYNO')
 
-
-# should this stuff be global or stay in here?
 gem 'rails', '4.2.5'
 gem 'activeresource'
 gem 'sass-rails', '~> 5.0'
 gem 'jquery-rails'
+
+gem 'travis-sso', github:'travis-ci/travis-sso'
+
 
 # Not sure if I need/want the stuff below but just in case
 gem 'uglifier', '>= 1.3.0'
