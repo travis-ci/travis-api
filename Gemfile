@@ -15,7 +15,6 @@ gem 'uglifier', '>= 1.3.0'
 gem 'turbolinks'
 gem 'coffee-rails', '~> 4.1.0'
 
-
 group :server do
   # stuff will go here eventually
 end
@@ -29,12 +28,8 @@ group :doc do
   gem 'sdoc', '~> 0.4.0'
 end
 
-group :development do
-  # gem 'web-console', '~> 2.0'
-end
-
 group :test do
  gem 'rake'
- gem 'rspec-rails'
+ gem 'rspec-rails', '~> 3.0'
 end
 

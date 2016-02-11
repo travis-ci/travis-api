@@ -1,3 +1,5 @@
+require 'test_helper'
+
 describe User, '.find' do
   context 'there is a user with id 125283' do
     it 'finds user 125283' do
