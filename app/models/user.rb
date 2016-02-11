@@ -1,4 +1,4 @@
-class User < Travis::Base
+class User < Travis::Resource
 
   # I don't think this has to match the way API has it exactly but putting this here for now.
   # TODO: Trim this down if necessary.
