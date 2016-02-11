@@ -1,4 +1,4 @@
-class Travis::Base < ActiveResource::Base
+class Travis::Resource < ActiveResource::Base
   self.site = 'http://api.travis-ci.com'
   # self.headers['Authorization'] = 'Token token="abcd"'
   # headers['Accept'] = 'application/json'
