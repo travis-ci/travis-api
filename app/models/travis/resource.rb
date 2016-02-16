@@ -1,7 +1,7 @@
 require 'active_resource'
 
 class Travis::Resource < ActiveResource::Base
-  include ActionController::HttpAuthentication::Token
+  Rails.logger.debug "DEBUG resource"
   self.site = 'https://api.travis-ci.org'
   self.format = :json
   def self.headers
@@ -11,5 +11,6 @@ class Travis::Resource < ActiveResource::Base
         'User-Agent' => 'Travis',
         'Accept' => 'application/json'
     }
+    Rails.logger.debug "DEBUG headers"
   end
 end

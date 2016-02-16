@@ -1,6 +1,7 @@
 class User < Travis::Resource
-  # self.element_name = "user"
-  self.collection_name = "user"
+  Rails.logger.debug "DEBUG USER"
+  self.element_name = 'user'
+  self.collection_name = 'user'
   # I don't think this has to match the way API has it exactly but putting this here for now.
   # TODO: Find what/how this needs to be added
   # has_many :memberships,   dependent: :destroy
