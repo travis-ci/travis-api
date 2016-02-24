@@ -17,6 +17,8 @@ This is the app running on https://api.travis-ci.org/
 
 ### Database setup
 
+NB detail for how `rake` sets up the database can be found in the `Rakefile`. In the `namespace :db` block you will see the database name for development is hardcoded to `travis-development`. If you are using a different configuration you will have to make your own adjustments.
+
 1. `bundle exec rake db:create`
 2. for testing 'RAILS_ENV=test bundle exec rake db:create --trace'
 1. Clone `travis-logs` and copy the `logs` database (assume the PostgreSQL user is `postgres`):
