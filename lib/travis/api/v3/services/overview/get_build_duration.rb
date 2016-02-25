@@ -1,6 +1,5 @@
 module Travis::API::V3
-  class Services::Overview::GetBuildTime < Service
-
+  class Services::Overview::GetBuildDuration < Service
 
     def run!
       repo = find(:repository)
@@ -14,7 +13,7 @@ module Travis::API::V3
           "duration" => build.duration
         })
       end
-      return [{build_time: data}]
+      return [{build_duration: data}]
     end
   end
 end

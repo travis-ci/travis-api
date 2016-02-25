@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::Overview::GetBuildTime do
+describe Travis::API::V3::Services::Overview::GetBuildDuration do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
-  describe "fetching build_time data on a public repository" do
-    before     { get("/v3/repo/#{repo.id}/overview/build_time")   }
+  describe "fetching build_duration data on a public repository" do
+    before     { get("/v3/repo/#{repo.id}/overview/build_duration")   }
     example    { expect(last_response).to be_ok }
   end
 
-  describe "fetching build_time from non-existing repo" do
-    before     { get("/v3/repo/1231987129387218/overview/build_time")  }
+  describe "fetching build_duration from non-existing repo" do
+    before     { get("/v3/repo/1231987129387218/overview/build_duration")  }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
@@ -19,7 +19,7 @@ describe Travis::API::V3::Services::Overview::GetBuildTime do
     }}
   end
 
-  describe "build_time on public repository" do
+  describe "build_duration on public repository" do
     builds = []
     before     {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
@@ -27,13 +27,13 @@ describe Travis::API::V3::Services::Overview::GetBuildTime do
       builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 4, duration: 1200, number: 2, state: 'failed', branch_name: repo.default_branch.name)
       builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 2, duration: 10,   number: 3, state: 'passed', branch_name: repo.default_branch.name)
       builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now    , duration: 6000, number: 4, state: 'failed', branch_name: repo.default_branch.name)
-      get("/v3/repo/#{repo.id}/overview/build_time") }
+      get("/v3/repo/#{repo.id}/overview/build_duration") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
       "@type" => "overview",
-      "@href" => "/v3/repo/#{repo.id}/overview/build_time",
+      "@href" => "/v3/repo/#{repo.id}/overview/build_duration",
       "@representation" => "standard",
-      "build_time" => [
+      "build_duration" => [
         { "id" => builds[-1].id,
           "number" => "4",
           "state" => "failed",
@@ -59,23 +59,23 @@ describe Travis::API::V3::Services::Overview::GetBuildTime do
   end
 
 
-  describe "build_time on public empty repository" do
+  describe "build_duration on public empty repository" do
     before     {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
-      get("/v3/repo/#{repo.id}/overview/build_time") }
+      get("/v3/repo/#{repo.id}/overview/build_duration") }
     example    { expect(last_response).to be_ok                    }
     example    { expect(parsed_body).to be == {
       "@type" => "overview",
-      "@href" => "/v3/repo/#{repo.id}/overview/build_time",
+      "@href" => "/v3/repo/#{repo.id}/overview/build_duration",
       "@representation" => "standard",
-      "build_time" => []
+      "build_duration" => []
     }}
   end
 
 
   describe "private repository, not authenticated" do
     before  { repo.update_attribute(:private, true)             }
-    before  { get("/v3/repo/#{repo.id}/overview/build_time") }
+    before  { get("/v3/repo/#{repo.id}/overview/build_duration") }
     before  { repo.update_attribute(:private, false)            }
     example { expect(last_response).to be_not_found             }
     example { expect(parsed_body).to be == {
@@ -92,14 +92,14 @@ describe Travis::API::V3::Services::Overview::GetBuildTime do
     before        { Travis::API::V3::Models::Build.where(repository_id: repo).each do |build| build.destroy end
                     Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
-    before        { get("/v3/repo/#{repo.id}/overview/build_time", {}, headers)    }
+    before        { get("/v3/repo/#{repo.id}/overview/build_duration", {}, headers)    }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
     example       { expect(parsed_body).to be == {
       "@type" => "overview",
-      "@href" => "/v3/repo/#{repo.id}/overview/build_time",
+      "@href" => "/v3/repo/#{repo.id}/overview/build_duration",
       "@representation" => "standard",
-      "build_time" => []
+      "build_duration" => []
     }}
   end
 end

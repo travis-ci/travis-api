@@ -97,7 +97,7 @@ module Travis::API::V3
         route '/overview'
         get :getStreakData, '/streak'
         get :getRecentBuildHistory, '/build_history'
-        get :getBuildTime, '/build_time'
+        get :getBuildDuration, '/build_duration'
         get :getEventTypeData, '/event_type_data'
       end
 
