@@ -21,9 +21,12 @@ module Travis::API::V3
     def start(branch)
       raise ServerError, 'repository does not have a github_id'.freeze unless branch.repository.github_id
 
+      user_id = branch.repository.users.detect { |u| u.github_oauth_token }.id
+
       payload = {
         repository: { id: branch.repository.github_id, owner_name: branch.repository.owner_name, name: branch.repository.name },
-        branch:     branch.name
+        branch:     branch.name,
+        user:       { id: user_id }
       }
 
       class_name, queue = Query.sidekiq_queue(:build_request)
