@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '2.1.8' if ENV.key?('DYNO')
 
 gem 'rails', '4.2.5'
-gem 'activeresource', require: 'active_resource'
+gem 'her'
 gem 'sass-rails', '~> 5.0'
 gem 'jquery-rails'
 
@@ -29,7 +29,9 @@ group :doc do
 end
 
 group :test do
- gem 'rake'
- gem 'rspec-rails', '~> 3.0'
+  gem 'rake'
+  gem 'rspec-rails', '~> 3.0'
+  gem 'webmock'
+  gem 'vcr'
 end
 
