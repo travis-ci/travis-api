@@ -1,5 +1,6 @@
-class User < Travis::Resource
-
+class User
+  include Her::Model
+  collection_path 'user'
   # I don't think this has to match the way API has it exactly but putting this here for now.
   # TODO: Find what/how this needs to be added
   # has_many :memberships,   dependent: :destroy
