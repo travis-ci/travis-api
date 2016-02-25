@@ -35,10 +35,4 @@ module Travis::API::V3
       super(message)
     end
   end
-
-  class MethodNotAllowed < Error
-    def self.status
-      405
-    end
-  end
 end
