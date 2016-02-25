@@ -23,10 +23,10 @@ describe Travis::API::V3::Services::Overview::GetBuildTime do
     builds = []
     before     {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
-      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 5, duration: 600, state: 'passed', branch_name: repo.default_branch.name)
-      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 4, duration: 1200, state: 'failed', branch_name: repo.default_branch.name)
-      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 2, duration: 10, state: 'passed', branch_name: repo.default_branch.name)
-      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now    , duration: 6000, state: 'failed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 5, duration: 600,  number: 1, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 4, duration: 1200, number: 2, state: 'failed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 2, duration: 10,   number: 3, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now    , duration: 6000, number: 4, state: 'failed', branch_name: repo.default_branch.name)
       get("/v3/repo/#{repo.id}/overview/build_time") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
@@ -35,18 +35,22 @@ describe Travis::API::V3::Services::Overview::GetBuildTime do
       "@representation" => "standard",
       "build_time" => [
         { "id" => builds[-1].id,
+          "number" => "4",
           "state" => "failed",
           "duration" => 6000
         },
         { "id" => builds[-2].id,
+          "number" => "3",
           "state" => "passed",
           "duration" => 10
         },
         { "id" => builds[-3].id,
+          "number" => "2",
           "state" => "failed",
           "duration" => 1200
         },
         { "id" => builds[-4].id,
+          "number" => "1",
           "state" => "passed",
           "duration" => 600
         }

@@ -9,6 +9,7 @@ module Travis::API::V3
       for build in builds do
         data.push ({
           "id" => build.id,
+          "number" => build.number,
           "state" => build.state,
           "duration" => build.duration
         })
