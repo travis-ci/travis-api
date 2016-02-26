@@ -87,7 +87,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-yaml.git
-  revision: 9ebe328e7546c696dd374a8cf773d93276f98e4f
+  revision: 032caed23af8ed1ed55e9204bb91316f3ada2f74
   specs:
     travis-yaml (0.2.0)
 
