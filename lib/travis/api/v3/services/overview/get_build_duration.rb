@@ -13,7 +13,7 @@ module Travis::API::V3
           "duration" => build.duration
         })
       end
-      return [{build_duration: data}]
+      [{build_duration: data}]
     end
   end
 end

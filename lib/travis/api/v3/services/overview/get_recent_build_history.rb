@@ -14,7 +14,7 @@ module Travis::API::V3
         hash[build.started_at.to_date][build.state] += 1
       end
 
-      return [{recent_build_history: hash}]
+      [{recent_build_history: hash}]
     end
   end
 end

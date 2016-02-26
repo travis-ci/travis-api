@@ -59,8 +59,8 @@ describe Travis::API::V3::Services::Overview::GetStreakData do
     before  {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now - 15, state: 'passed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now - 5 , state: 'passed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now     , state: 'passed', branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now - 5,  state: 'passed', branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now,      state: 'passed', branch_name: repo.default_branch.name)
       get("/v3/repo/#{repo.id}/overview/streak") }
     example { expect(last_response).to be_ok     }
     example { expect(parsed_body).to be == {
@@ -77,11 +77,11 @@ describe Travis::API::V3::Services::Overview::GetStreakData do
   describe "days of future-past (streak when first passed build is in future)" do
     before  {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now - 5 , state: 'failed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now     , state: 'failed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now + 5 , state: 'passed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now + 6 , state: 'passed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now + 7 , state: 'passed', branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now - 5, state: 'failed', branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now,     state: 'failed', branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now + 5, state: 'passed', branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now + 6, state: 'passed', branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', created_at: DateTime.now + 7, state: 'passed', branch_name: repo.default_branch.name)
       get("/v3/repo/#{repo.id}/overview/streak") }
     example { expect(last_response).to be_ok     }
     example { expect(parsed_body).to be == {
