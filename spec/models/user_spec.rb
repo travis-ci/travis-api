@@ -13,6 +13,7 @@ describe User do
 
     context 'there is no user with an id' do
       # TODO: this
+      # user = User.find(6) will bring up a not found error
     end
 
     context 'the user id is invalid' do
