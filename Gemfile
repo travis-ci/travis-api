@@ -2,18 +2,25 @@ source 'https://rubygems.org'
 
 ruby '2.1.8' if ENV.key?('DYNO')
 
+# Magic Makers
 gem 'rails', '4.2.5'
 gem 'her'
-gem 'sass-rails', '~> 5.0'
-gem 'jquery-rails'
 
+# Travis things
 gem 'travis-sso', github:'travis-ci/travis-sso'
 
+# Bootstrap/Sass stuff
+gem 'sass-rails', '~> 5.0'
+gem 'bootstrap-sass', '~> 3.3.6'
+gem 'font-awesome-sass'
 
-# Not sure if I need/want the stuff below but just in case
+# JS Stuff
 gem 'uglifier', '>= 1.3.0'
-gem 'turbolinks'
 gem 'coffee-rails', '~> 4.1.0'
+gem 'jquery-rails'
+
+# Not sure if I need this
+gem 'turbolinks'
 
 group :server do
   # stuff will go here eventually
