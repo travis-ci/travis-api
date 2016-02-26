@@ -44,8 +44,8 @@ describe Travis::API::V3::Services::Overview::GetRecentBuildHistory do
 
   describe "recent build history on public repository dynamic, fringe cases" do
     before  {
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now - 9,  state: 'passed', branch_name : branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now,      state: 'failed', branch_name : branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now - 9,  state: 'passed',  branch_name: branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now,      state: 'failed',  branch_name: branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now - 10, state: 'errored', branch_name: branch.name)
       get("/v3/repo/#{repo.id}/overview/build_history") }
     example { expect(last_response).to be_ok            }
