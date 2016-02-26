@@ -3,7 +3,7 @@ module Travis::API::V3
 
     def run!
       repo = find(:repository)
-      builds = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).where("started_at > ?", Date.today - 9)
+      builds = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).where("created_at > ?", Date.today - 9)
 
       hash = {}
       hash.default_proc = proc do |hash, key|
@@ -11,7 +11,7 @@ module Travis::API::V3
       end
 
       for build in builds do
-        hash[build.started_at.to_date][build.state] += 1
+        hash[build.created_at.to_date][build.state] += 1
       end
 
       [{recent_build_history: hash}]
