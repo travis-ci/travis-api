@@ -59,7 +59,6 @@ describe Travis::API::V3::Services::Overview::GetBuildDuration do
     }}
   end
 
-
   describe "build_duration on public empty repository" do
     before     {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
@@ -72,7 +71,6 @@ describe Travis::API::V3::Services::Overview::GetBuildDuration do
       "build_duration" => []
     }}
   end
-
 
   describe "private repository, not authenticated" do
     before  { repo.update_attribute(:private, true)             }

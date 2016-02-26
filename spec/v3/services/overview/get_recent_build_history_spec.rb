@@ -104,5 +104,4 @@ describe Travis::API::V3::Services::Overview::GetRecentBuildHistory do
       "recent_build_history" => {}
     }}
   end
-
 end

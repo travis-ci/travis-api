@@ -40,7 +40,6 @@ describe Travis::API::V3::Services::Overview::GetStreakData do
     }}
   end
 
-
   describe "streak on public empty repository" do
     before     {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end

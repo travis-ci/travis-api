@@ -100,7 +100,6 @@ module Travis::API::V3
         get :getBuildDuration, '/build_duration'
         get :getEventTypeData, '/event_type_data'
       end
-
     end
 
     resource :user do
