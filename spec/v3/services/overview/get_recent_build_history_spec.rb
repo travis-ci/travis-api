@@ -5,15 +5,14 @@ describe Travis::API::V3::Services::Overview::GetRecentBuildHistory do
   let(:builds) { repo.default_branch.builds.last(10) }
   let(:branch) { repo.default_branch }
 
-
   describe "fetching recent build history on a public repository" do
-    before     { get("/v3/repo/#{repo.id}/overview/build_history")   }
-    example    { expect(last_response).to be_ok }
+    before  { get("/v3/repo/#{repo.id}/overview/build_history") }
+    example { expect(last_response).to be_ok                    }
   end
 
   describe "fetching history from non-existing repo" do
-    before     { get("/v3/repo/1231987129387218/overview/build_history")  }
-    example { expect(last_response).to be_not_found }
+    before  { get("/v3/repo/1231987129387218/overview/build_history") }
+    example { expect(last_response).to be_not_found                   }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
       "error_type"    => "not_found",
@@ -23,37 +22,37 @@ describe Travis::API::V3::Services::Overview::GetRecentBuildHistory do
   end
 
   describe "recent build history on public repository dynamic" do
-    before     {
+    before  {
       Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now, state: 'passed', branch_name: branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now, state: 'failed', branch_name: branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now, state: 'errored', branch_name: branch.name)
       get("/v3/repo/#{repo.id}/overview/build_history") }
-    example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
-      "@type" => "overview",
-      "@href" => "/v3/repo/#{repo.id}/overview/build_history",
-      "@representation" => "standard",
+    example { expect(last_response).to be_ok            }
+    example { expect(parsed_body).to be == {
+      "@type"                => "overview",
+      "@href"                => "/v3/repo/#{repo.id}/overview/build_history",
+      "@representation"      => "standard",
       "recent_build_history" => {
         Date.today.iso8601 => {
-          'passed' => 1,
+          'passed'  => 1,
           'errored' => 1,
-          'failed' => 1
+          'failed'  => 1
         }
       }
     }}
   end
 
   describe "recent build history on public repository dynamic, fringe cases" do
-    before     {
+    before  {
       Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now - 9, state: 'passed', branch_name: branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now, state: 'failed', branch_name: branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, started_at: DateTime.now - 10, state: 'errored', branch_name: branch.name)
       get("/v3/repo/#{repo.id}/overview/build_history") }
-    example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
-      "@type" => "overview",
-      "@href" => "/v3/repo/#{repo.id}/overview/build_history",
-      "@representation" => "standard",
+    example { expect(last_response).to be_ok            }
+    example { expect(parsed_body).to be == {
+      "@type"                => "overview",
+      "@href"                => "/v3/repo/#{repo.id}/overview/build_history",
+      "@representation"      => "standard",
       "recent_build_history" => {
         Date.today.iso8601 => {
           'failed' => 1
@@ -66,12 +65,12 @@ describe Travis::API::V3::Services::Overview::GetRecentBuildHistory do
   end
 
   describe "recent build hitsory on public empty repository" do
-    before     { get("/v3/repo/#{repo.id}/overview/build_history") }
-    example    { expect(last_response).to be_ok                    }
-    example    { expect(parsed_body).to be == {
-      "@type" => "overview",
-      "@href" => "/v3/repo/#{repo.id}/overview/build_history",
-      "@representation" => "standard",
+    before  { get("/v3/repo/#{repo.id}/overview/build_history") }
+    example { expect(last_response).to be_ok                    }
+    example { expect(parsed_body).to be == {
+      "@type"                => "overview",
+      "@href"                => "/v3/repo/#{repo.id}/overview/build_history",
+      "@representation"      => "standard",
       "recent_build_history" => { }
     }}
   end
@@ -98,9 +97,9 @@ describe Travis::API::V3::Services::Overview::GetRecentBuildHistory do
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
     example       { expect(parsed_body).to be == {
-      "@type" => "overview",
-      "@href" => "/v3/repo/#{repo.id}/overview/build_history",
-      "@representation" => "standard",
+      "@type"                => "overview",
+      "@href"                => "/v3/repo/#{repo.id}/overview/build_history",
+      "@representation"      => "standard",
       "recent_build_history" => {}
     }}
   end
