@@ -3,6 +3,7 @@ cd "$(dirname "$0")/.."
 
 . config/ruby_config.sh
 
+[ $CUSTOM_PORT ]     && export PORT=$CUSTOM_PORT
 [ $PORT ]            || export PORT=3000
 [ $RACK_ENV ]        || export RACK_ENV=development
 [ $WEB_CONCURRENCY ] || export WEB_CONCURRENCY=$(script/web_concurrency)
