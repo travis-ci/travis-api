@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Services::Overview::GetRecentBuildHistory < Service
+  class Services::Overview::RecentBuildHistory < Service
 
     def run!
       repo = find(:repository)

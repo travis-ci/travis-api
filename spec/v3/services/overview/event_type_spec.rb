@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::Overview::GetEventTypeData do
+describe Travis::API::V3::Services::Overview::EventType do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
-  describe "fetching event_type_data data on a public repository" do
-    before  { get("/v3/repo/#{repo.id}/overview/event_type_data") }
-    example { expect(last_response).to be_ok                      }
+  describe "fetching event_type on a public repository" do
+    before  { get("/v3/repo/#{repo.id}/overview/event_type") }
+    example { expect(last_response).to be_ok                 }
   end
 
-  describe "fetching event_type_data from non-existing repo" do
-    before  { get("/v3/repo/1231987129387218/overview/event_type_data") }
-    example { expect(last_response).to be_not_found                     }
+  describe "fetching event_type from non-existing repo" do
+    before  { get("/v3/repo/1231987129387218/overview/event_type") }
+    example { expect(last_response).to be_not_found                }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
       "error_type"    => "not_found",
@@ -19,7 +19,7 @@ describe Travis::API::V3::Services::Overview::GetEventTypeData do
     }}
   end
 
-  describe "event_type_data on public repository" do
+  describe "event_type on public repository" do
     before  {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
 
@@ -35,13 +35,13 @@ describe Travis::API::V3::Services::Overview::GetEventTypeData do
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'passed', branch_name: repo.default_branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'failed', branch_name: repo.default_branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'passed', branch_name: repo.default_branch.name)
-      get("/v3/repo/#{repo.id}/overview/event_type_data") }
-    example { expect(last_response).to be_ok              }
+      get("/v3/repo/#{repo.id}/overview/event_type") }
+    example { expect(last_response).to be_ok         }
     example { expect(parsed_body).to be == {
       "@type"           => "overview",
-      "@href"           => "/v3/repo/#{repo.id}/overview/event_type_data",
+      "@href"           => "/v3/repo/#{repo.id}/overview/event_type",
       "@representation" => "standard",
-      "event_type_data" => {
+      "event_type"      => {
         'push'         => {
           'passed'  => 1,
           'errored' => 1,
@@ -61,7 +61,7 @@ describe Travis::API::V3::Services::Overview::GetEventTypeData do
     }}
   end
 
-  describe "event_type_data on public repository with non existing cron jobs" do
+  describe "event_type on public repository with non existing cron jobs" do
     before  {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', state: 'passed', branch_name: repo.default_branch.name)
@@ -73,13 +73,13 @@ describe Travis::API::V3::Services::Overview::GetEventTypeData do
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'pull_request', state: 'failed', branch_name: repo.default_branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'pull_request', state: 'errored', branch_name: repo.default_branch.name)
 
-      get("/v3/repo/#{repo.id}/overview/event_type_data") }
-    example { expect(last_response).to be_ok              }
+      get("/v3/repo/#{repo.id}/overview/event_type") }
+    example { expect(last_response).to be_ok         }
     example { expect(parsed_body).to be == {
       "@type"           => "overview",
-      "@href"           => "/v3/repo/#{repo.id}/overview/event_type_data",
+      "@href"           => "/v3/repo/#{repo.id}/overview/event_type",
       "@representation" => "standard",
-      "event_type_data" => {
+      "event_type"      => {
         'push'         => {
           'passed'  => 1,
           'errored' => 1,
@@ -94,16 +94,16 @@ describe Travis::API::V3::Services::Overview::GetEventTypeData do
     }}
   end
 
-  describe "event_type_data on public empty repository" do
+  describe "event_type on public empty repository" do
     before  {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
-      get("/v3/repo/#{repo.id}/overview/event_type_data") }
-    example { expect(last_response).to be_ok              }
+      get("/v3/repo/#{repo.id}/overview/event_type") }
+    example { expect(last_response).to be_ok         }
     example { expect(parsed_body).to be == {
       "@type"           => "overview",
-      "@href"           => "/v3/repo/#{repo.id}/overview/event_type_data",
+      "@href"           => "/v3/repo/#{repo.id}/overview/event_type",
       "@representation" => "standard",
-      "event_type_data" => {
+      "event_type"      => {
         'push'         => {
           'passed'  => 0,
           'errored' => 0,
@@ -119,10 +119,10 @@ describe Travis::API::V3::Services::Overview::GetEventTypeData do
   end
 
   describe "private repository, not authenticated" do
-    before  { repo.update_attribute(:private, true)               }
-    before  { get("/v3/repo/#{repo.id}/overview/event_type_data") }
-    before  { repo.update_attribute(:private, false)              }
-    example { expect(last_response).to be_not_found               }
+    before  { repo.update_attribute(:private, true)          }
+    before  { get("/v3/repo/#{repo.id}/overview/event_type") }
+    before  { repo.update_attribute(:private, false)         }
+    example { expect(last_response).to be_not_found          }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
       "error_type"    => "not_found",
@@ -137,14 +137,14 @@ describe Travis::API::V3::Services::Overview::GetEventTypeData do
     before        { Travis::API::V3::Models::Build.where(repository_id: repo).each do |build| build.destroy end
                     Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
-    before        { get("/v3/repo/#{repo.id}/overview/event_type_data", {}, headers)  }
+    before        { get("/v3/repo/#{repo.id}/overview/event_type", {}, headers)       }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
     example       { expect(parsed_body).to be == {
       "@type"           => "overview",
-      "@href"           => "/v3/repo/#{repo.id}/overview/event_type_data",
+      "@href"           => "/v3/repo/#{repo.id}/overview/event_type",
       "@representation" => "standard",
-      "event_type_data" => {
+      "event_type"      => {
         'push'         => {
           'passed'  => 0,
           'errored' => 0,

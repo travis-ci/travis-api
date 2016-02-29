@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Services::Overview::GetBuildDuration < Service
+  class Services::Overview::BuildDuration < Service
 
     def run!
       repo = find(:repository)

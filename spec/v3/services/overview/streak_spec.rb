@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::Overview::GetStreakData do
+describe Travis::API::V3::Services::Overview::Streak do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   describe "fetching steak data on a public repository" do

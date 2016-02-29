@@ -95,10 +95,10 @@ module Travis::API::V3
 
       resource :overview do
         route '/overview'
-        get :getStreakData,         '/streak'
-        get :getRecentBuildHistory, '/build_history'
-        get :getBuildDuration,      '/build_duration'
-        get :getEventTypeData,      '/event_type_data'
+        get :streak,             '/streak'
+        get :recentBuildHistory, '/build_history'
+        get :buildDuration,      '/build_duration'
+        get :eventType,          '/event_type'
       end
     end
 

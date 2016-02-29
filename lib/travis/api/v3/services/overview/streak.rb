@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Services::Overview::GetStreakData < Service
+  class Services::Overview::Streak < Service
 
     def run!
       repo = find(:repository)

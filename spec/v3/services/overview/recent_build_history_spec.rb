@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::Overview::GetRecentBuildHistory do
+describe Travis::API::V3::Services::Overview::RecentBuildHistory do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:builds) { repo.default_branch.builds.last(10) }
   let(:branch) { repo.default_branch }

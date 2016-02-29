@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Services::Overview::GetEventTypeData < Service
+  class Services::Overview::EventType < Service
 
     def run!
       repo = find(:repository)
@@ -27,7 +27,7 @@ module Travis::API::V3
 
       data.merge! cron_data unless (cron_data['cron'].all? {|key, value| value <= 0})
 
-      [{event_type_data: data}]
+      [{event_type: data}]
     end
   end
 end
