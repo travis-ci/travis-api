@@ -9,5 +9,9 @@ module Travis::API::V3
     def restart?
       write?
     end
+
+    def debug?
+      write?
+    end
   end
 end

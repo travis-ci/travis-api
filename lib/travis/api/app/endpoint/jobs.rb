@@ -124,16 +124,6 @@ class Travis::Api::App
         end
       end
 
-      post "/:job_id/debug" do
-        Travis.logger.debug "Reached endpoint"
-        job = service(:find_job, params).run
-        Travis.logger.debug "found job: #{job}"
-        cfg = job.config
-        cfg.merge! debug_data
-        job.save!
-        status 200
-      end
-
       def archive_url(path)
         "https://s3.amazonaws.com/#{hostname('archive')}#{path}"
       end
