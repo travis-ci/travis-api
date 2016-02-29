@@ -6,14 +6,20 @@ module Travis::API::V3
       raise NotFound      unless job = find(:job)
       access_control.permissions(job).debug!
 
-      Travis.logger.debug "Reached endpoint"
-      job = service(:find_job, params).run
-      Travis.logger.debug "found job: #{job}"
-      cfg = job.config
-      cfg.merge! debug_data
+      job.config.merge! debug_data
       job.save!
 
       accepted(job: job, state_change: :created)
+    end
+
+    def debug_data
+      {
+        debug: {
+          stage: 'before_install',
+          previous_status: 'failed',
+          created_by: access_control.user
+        }
+      }
     end
   end
 end
