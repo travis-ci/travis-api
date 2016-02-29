@@ -124,12 +124,29 @@ class Travis::Api::App
         end
       end
 
+      post "/:job_id/debug" do
+        job = service(:find_job, params).run
+        cfg = job.config
+        cfg.merge! debug_data
+        job.save!
+      end
+
       def archive_url(path)
         "https://s3.amazonaws.com/#{hostname('archive')}#{path}"
       end
 
       def hostname(name)
         "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
+      end
+
+      def debug_data
+        {
+          debug: {
+            stage: 'before_install',
+            previous_status: 'failed',
+            created_by: current_user.login
+          }
+        }
       end
     end
   end
