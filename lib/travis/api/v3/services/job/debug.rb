@@ -9,6 +9,7 @@ module Travis::API::V3
       job.config.merge! debug_data
       job.save!
 
+      query.restart(access_control.user)
       accepted(job: job, state_change: :created)
     end
 
@@ -17,7 +18,7 @@ module Travis::API::V3
         debug: {
           stage: 'before_install',
           previous_status: 'failed',
-          created_by: access_control.user
+          created_by: access_control.user.login
         }
       }
     end
