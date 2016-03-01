@@ -32,9 +32,11 @@ describe Travis::API::V3::Services::Overview::EventType do
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'pull_request', state: 'failed', branch_name: repo.default_branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'pull_request', state: 'errored', branch_name: repo.default_branch.name)
 
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'passed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'failed', branch_name: repo.default_branch.name)
-      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'passed', branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'passed',   branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'failed',   branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'canceled', branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'started',  branch_name: repo.default_branch.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'passed',   branch_name: repo.default_branch.name)
       get("/v3/repo/#{repo.id}/overview/event_type") }
     example { expect(last_response).to be_ok         }
     example { expect(parsed_body).to be == {
@@ -43,25 +45,26 @@ describe Travis::API::V3::Services::Overview::EventType do
       "@representation" => "standard",
       "event_type"      => {
         'push'         => {
-          'passed'  => 1,
           'errored' => 1,
+          'passed'  => 1,
           'failed'  => 1
         },
         'pull_request' => {
-          'passed'  => 1,
           'errored' => 1,
+          'passed'  => 1,
           'failed'  => 2
         },
         'cron'         => {
-          'passed'  => 2,
-          'errored' => 0,
-          'failed'  => 1
+          'canceled' => 1,
+          'started'  => 1,
+          'passed'   => 2,
+          'failed'   => 1
         }
       }
     }}
   end
 
-  describe "event_type on public repository with non existing cron jobs" do
+  describe "event_type on public repository with no existing cron jobs" do
     before  {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', state: 'passed', branch_name: repo.default_branch.name)
@@ -86,7 +89,6 @@ describe Travis::API::V3::Services::Overview::EventType do
           'failed'  => 1
         },
         'pull_request' => {
-          'passed'  => 0,
           'errored' => 1,
           'failed'  => 3
         }
@@ -103,18 +105,7 @@ describe Travis::API::V3::Services::Overview::EventType do
       "@type"           => "overview",
       "@href"           => "/v3/repo/#{repo.id}/overview/event_type",
       "@representation" => "standard",
-      "event_type"      => {
-        'push'         => {
-          'passed'  => 0,
-          'errored' => 0,
-          'failed'  => 0
-        },
-        'pull_request' => {
-          'passed'  => 0,
-          'errored' => 0,
-          'failed'  => 0
-        }
-      }
+      "event_type"      => {}
     }}
   end
 
@@ -144,18 +135,7 @@ describe Travis::API::V3::Services::Overview::EventType do
       "@type"           => "overview",
       "@href"           => "/v3/repo/#{repo.id}/overview/event_type",
       "@representation" => "standard",
-      "event_type"      => {
-        'push'         => {
-          'passed'  => 0,
-          'errored' => 0,
-          'failed'  => 0
-        },
-        'pull_request' => {
-          'passed'  => 0,
-          'errored' => 0,
-          'failed'  => 0
-        }
-      }
+      "event_type"      => {}
     }}
   end
 end

@@ -4,30 +4,20 @@ module Travis::API::V3
     def run!
       repo = find(:repository)
 
-      data = {
-        'push' => {
-          'passed'  => Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'passed',  :event_type => 'push').count,
-          'errored' => Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'errored', :event_type => 'push').count,
-          'failed'  => Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'failed',  :event_type => 'push').count
-        },
-        'pull_request' => {
-          'passed'  => Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'passed',  :event_type => 'pull_request').count,
-          'errored' => Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'errored', :event_type => 'pull_request').count,
-          'failed'  => Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'failed',  :event_type => 'pull_request').count
-        }
+      builds = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).group(:event_type, :state).count
+
+      hash = {}
+      hash.default_proc = proc do |hash, key|
+        hash[key] = Hash.new(0)
+      end
+
+      builds.each {|key, value|
+        event_type = key[0]
+        state      = key[1]
+        hash[event_type][state] = value
       }
 
-      cron_data = {
-        'cron' => {
-          'passed'  => Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'passed',  :event_type => 'cron').count,
-          'errored' => Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'errored', :event_type => 'cron').count,
-          'failed'  => Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'failed',  :event_type => 'cron').count
-        }
-      }
-
-      data.merge! cron_data unless (cron_data['cron'].all? {|key, value| value <= 0})
-
-      [{event_type: data}]
+      [{event_type: hash}]
     end
   end
 end
