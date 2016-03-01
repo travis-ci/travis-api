@@ -131,16 +131,6 @@ class Travis::Api::App
       def hostname(name)
         "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
       end
-
-      def debug_data
-        {
-          debug: {
-            stage: 'before_install',
-            previous_status: 'failed',
-            created_by: current_user.login
-          }
-        }
-      end
     end
   end
 end
