@@ -17,7 +17,7 @@ module Travis::API::V3
       {
         debug: {
           stage: 'before_install',
-          previous_status: 'failed',
+          previous_state: job.state,
           created_by: access_control.user.login
         }
       }
