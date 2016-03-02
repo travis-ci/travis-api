@@ -7,6 +7,7 @@ require 'travis/api/workers/job_cancellation'
 require 'travis/api/workers/job_restart'
 require 'travis/support/amqp'
 
+Travis.config.database[:pool] = 5
 Travis::Database.connect
 
 if Travis.config.logs_database
