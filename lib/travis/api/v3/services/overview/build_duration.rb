@@ -3,7 +3,7 @@ module Travis::API::V3
 
     def run!
       repo = find(:repository)
-      builds = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).where("duration IS NOT NULL").where("state != 'canceled'").order("id DESC").last(20)
+      builds = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).where("duration IS NOT NULL").where("state != 'canceled'").order("id DESC").select("id, number, state, duration").last(20)
       data = []
       for build in builds do
         data.push ({
