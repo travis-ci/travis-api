@@ -1,5 +1,6 @@
 module Travis::API::V3
   class Services::Job::Debug < Service
+    params "quiet"
 
     def run
       raise LoginRequired unless access_control.logged_in? or access_control.full_access?
@@ -13,12 +14,13 @@ module Travis::API::V3
       accepted(job: job, state_change: :created)
     end
 
-    def debug_data
+    def debug_data(j)
       {
         debug: {
           stage: 'before_install',
-          previous_state: job.state,
-          created_by: access_control.user.login
+          previous_state: j.state,
+          created_by: access_control.user.login,
+          quiet: params["quiet"] || false
         }
       }
     end
