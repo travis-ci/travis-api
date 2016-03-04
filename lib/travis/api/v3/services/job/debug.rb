@@ -10,7 +10,7 @@ module Travis::API::V3
       raise WrongCredentials unless Travis.config.debug_tools_enabled or Travis::Features.active?(:debug_tools, job.repository)
       access_control.permissions(job).debug!
 
-      job.config.merge! debug_data
+      job.debug_options = debug_data
       job.save!
 
       query.restart(access_control.user)
@@ -19,12 +19,10 @@ module Travis::API::V3
 
     def debug_data
       {
-        debug: {
-          stage: 'before_install',
-          previous_state: job.state,
-          created_by: access_control.user.login,
-          quiet: params["quiet"] || false
-        }
+        stage: 'before_install',
+        previous_state: job.state,
+        created_by: access_control.user.login,
+        quiet: params["quiet"] || false
       }
     end
   end
