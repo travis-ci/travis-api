@@ -7,7 +7,7 @@ module Travis::API::V3
     def run
       raise LoginRequired unless access_control.logged_in? or access_control.full_access?
       raise NotFound      unless @job = find(:job)
-      raise WrongCredentials unless Travis.config.debug_tools_enabled or Travis::Features.active?(:debug_tools, access_control.user)
+      raise WrongCredentials unless Travis.config.debug_tools_enabled or Travis::Features.active?(:debug_tools, job.repository)
       access_control.permissions(job).debug!
 
       job.config.merge! debug_data
