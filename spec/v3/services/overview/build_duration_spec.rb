@@ -59,6 +59,143 @@ describe Travis::API::V3::Services::Overview::BuildDuration do
     }}
   end
 
+  describe "build_duration returns last 20 builds" do
+    builds = []
+    before  {
+      Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 1,  state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 2,  state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 3,  state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 4,  state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 5,  state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 6,  state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 7,  state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 8,  state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 9,  state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 10, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 11, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 12, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 13, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 14, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 15, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 16, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 17, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 18, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 19, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 20, state: 'passed', branch_name: repo.default_branch.name)
+      builds.push Travis::API::V3::Models::Build.create(repository_id: repo.id, duration: 1,  number: 21, state: 'passed', branch_name: repo.default_branch.name)
+
+      get("/v3/repo/#{repo.id}/overview/build_duration") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body).to be == {
+      "@type"           => "overview",
+      "@href"           => "/v3/repo/#{repo.id}/overview/build_duration",
+      "@representation" => "standard",
+      "build_duration"  => [
+        { "id"       => builds[-1].id,
+          "number"   => "21",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-2].id,
+          "number"   => "20",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-3].id,
+          "number"   => "19",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-4].id,
+          "number"   => "18",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-5].id,
+          "number"   => "17",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-6].id,
+          "number"   => "16",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-7].id,
+          "number"   => "15",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-8].id,
+          "number"   => "14",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-9].id,
+          "number"   => "13",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-10].id,
+          "number"   => "12",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-11].id,
+          "number"   => "11",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-12].id,
+          "number"   => "10",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-13].id,
+          "number"   => "9",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-14].id,
+          "number"   => "8",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-15].id,
+          "number"   => "7",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-16].id,
+          "number"   => "6",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-17].id,
+          "number"   => "5",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-18].id,
+          "number"   => "4",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-19].id,
+          "number"   => "3",
+          "state"    => "passed",
+          "duration" => 1
+        },
+        { "id"       => builds[-20].id,
+          "number"   => "2",
+          "state"    => "passed",
+          "duration" => 1
+        },
+      ]
+    }}
+  end
+
   describe "build_duration on public empty repository" do
     before  {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
