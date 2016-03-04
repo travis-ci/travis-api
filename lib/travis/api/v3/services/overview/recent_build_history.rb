@@ -4,10 +4,7 @@ module Travis::API::V3
     def run!
       builds = query.recent_build_history(find(:repository))
 
-      hash = {}
-      hash.default_proc = proc do |hash, key|
-        hash[key] = Hash.new(0)
-      end
+      hash = Hash.new { |hash, key| hash[key] = Hash.new(0) }
 
       builds.each {|key, value|
         created_at = key[0]
