@@ -2,9 +2,7 @@ module Travis::API::V3
   class Services::Overview::EventType < Service
 
     def run!
-      repo = find(:repository)
-
-      builds = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).group(:event_type, :state).count
+      builds = query.event_type(find(:repository))
 
       hash = {}
       hash.default_proc = proc do |hash, key|

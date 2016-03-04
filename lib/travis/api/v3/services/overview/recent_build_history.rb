@@ -2,9 +2,7 @@ module Travis::API::V3
   class Services::Overview::RecentBuildHistory < Service
 
     def run!
-      repo = find(:repository)
-
-      builds = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).where("created_at > ?", Date.today - 9).group(:state, "date_trunc('day', created_at)").count
+      builds = query.recent_build_history(find(:repository))
 
       hash = {}
       hash.default_proc = proc do |hash, key|
@@ -12,8 +10,8 @@ module Travis::API::V3
       end
 
       builds.each {|key, value|
-        state      = key[0]
-        created_at = key[1]
+        created_at = key[0]
+        state      = key[1]
         hash[created_at.to_date][state] = value
       }
 
