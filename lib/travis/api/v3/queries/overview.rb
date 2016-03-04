@@ -21,5 +21,9 @@ module Travis::API::V3
     def streak(repo)
       Models::Build.select('COUNT(*) AS "count", MIN(created_at) AS "created_at", "event_type"').where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'passed', :event_type => ['push', 'cron']).where("id > ?", streak_last_failing_build_id(repo)).group(:event_type).to_a
     end
+
+    def branches(repo)
+      Models::Build.select('COUNT(*) AS "count", "branch", "state"').where(:repository_id => repo.id, :event_type => ['push', 'cron']).where("created_at > ?", Date.today - 30).group(:branch, :state).to_a
+    end
   end
 end

@@ -2,15 +2,21 @@ module Travis::API::V3
   class Services::Overview::Branches < Service
 
     def run!
-      repo = find(:repository)
-      branches = repo.branches
-      data = {}
-      branches.each do |branch|
-        passed = Models::Build.where(:repository_id => repo.id, :branch => branch.name, :event_type => ['push', 'cron'], :state => 'passed').where("created_at > ?", Date.today - 30).count
-        all    = Models::Build.where(:repository_id => repo.id, :branch => branch.name, :event_type => ['push', 'cron']).where("created_at > ?", Date.today - 30).count
-        if all > 0
-          data[branch.name] = passed.to_f / all
+      result = query.branches(find(:repository))
+
+      passed = Hash.new(0)
+      all    = Hash.new(0)
+
+      for builds in result
+        if builds.state == "passed"
+          passed[builds.branch_name] += builds.count.to_i
         end
+        all[builds.branch_name] += builds.count.to_i
+      end
+
+      data = {}
+      all.each do |branch, all|
+        data[branch] = passed[branch].to_f / all
       end
 
       [{branches: data}]
