@@ -13,11 +13,6 @@ module Travis::API::V3
       Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).where("created_at > ?", Date.today - 9).group("date_trunc('day', created_at)", :state).count
     end
 
-    def streak_last_failing_build_id(repo)
-      last_failing_build = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => ['failed', 'canceled', 'errored'], :event_type => ['push', 'cron']).order("id DESC").select(:id).first
-      (last_failing_build != nil) ? last_failing_build.id : 0
-    end
-
     def streak(repo)
       subquery = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => ['failed', 'canceled', 'errored'], :event_type => ['push', 'cron']).order("id DESC").select(:id).limit(1)
       subquery = "SELECT COALESCE((" + subquery.to_sql + "), 0)"
