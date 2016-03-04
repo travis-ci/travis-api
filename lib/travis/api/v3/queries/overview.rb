@@ -19,7 +19,9 @@ module Travis::API::V3
     end
 
     def streak(repo)
-      Models::Build.select('COUNT(*) AS "count", MIN(created_at) AS "created_at", "event_type"').where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'passed', :event_type => ['push', 'cron']).where("id > ?", streak_last_failing_build_id(repo)).group(:event_type).to_a
+      subquery = Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => ['failed', 'canceled', 'errored'], :event_type => ['push', 'cron']).order("id DESC").select(:id).limit(1)
+      subquery = "SELECT COALESCE((" + subquery.to_sql + "), 0)"
+      Models::Build.select('COUNT(*) AS "count", MIN(created_at) AS "created_at", "event_type"').where(:repository_id => repo.id, :branch => repo.default_branch_name, :state => 'passed', :event_type => ['push', 'cron']).where("id > (#{subquery})").group(:event_type).to_a
     end
 
     def branches(repo)
