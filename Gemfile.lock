@@ -50,7 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 96ee8c449ebe305c5c95633cea13eb88fe978abb
+  revision: fb39f8af5628444e2d7f5893a9f09fde7b0796e2
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -199,9 +199,9 @@ GEM
     httparty (0.11.0)
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
-    httpclient (2.7.0.1)
+    httpclient (2.7.1)
     i18n (0.7.0)
-    ice_nine (0.11.1)
+    ice_nine (0.11.2)
     jemalloc (1.0.1)
     journey (1.0.4)
     json (1.8.3)
