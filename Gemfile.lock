@@ -50,8 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 501f31a40af589b5ea8a677e7f8b067949a322b2
-  branch: ha-feature-debug-endpoint
+  revision: fb39f8af5628444e2d7f5893a9f09fde7b0796e2
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
