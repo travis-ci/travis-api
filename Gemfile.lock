@@ -73,6 +73,12 @@ GIT
       virtus (~> 1.0.0)
 
 GIT
+  remote: git://github.com/travis-ci/travis-migrations.git
+  revision: d6105ad77303bcd04d1e376070a11dbc8b3077c7
+  specs:
+    travis-migrations (0.0.1)
+
+GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
   revision: 21a2fee158e25252dd78f5fa31e81b4f6583be23
   specs:
@@ -376,8 +382,12 @@ DEPENDENCIES
   travis-api!
   travis-config (~> 0.1.0)
   travis-core!
+  travis-migrations!
   travis-sidekiqs!
   travis-support!
   travis-yaml!
   unicorn
   yard-sinatra!
+
+BUNDLED WITH
+   1.10.6
