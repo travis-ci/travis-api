@@ -4,6 +4,7 @@ describe Travis::API::V3::Services::Overview::Branches do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch1) { repo.default_branch }
   let(:branch2) { Travis::API::V3::Models::Branch.create(repository_id: repo.id, name: 'new_branch') }
+  let(:branch3) { Travis::API::V3::Models::Branch.create(repository_id: repo.id, name: 'a_new_branch') }
 
   describe "fetching overview/branches on a public repository" do
     before  { get("/v3/repo/#{repo.id}/overview/branches") }
@@ -29,12 +30,15 @@ describe Travis::API::V3::Services::Overview::Branches do
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', state: 'failed',  branch_name: branch1.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', state: 'errored', branch_name: branch1.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', state: 'passed',  branch_name: branch2.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', state: 'passed',  branch_name: branch3.name)
 
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'pull_request', state: 'passed', branch_name: branch1.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'pull_request', state: 'failed', branch_name: branch2.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'pull_request', state: 'failed', branch_name: branch3.name)
 
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'passed', branch_name: branch1.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'failed', branch_name: branch2.name)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'failed', branch_name: branch3.name)
       get("/v3/repo/#{repo.id}/overview/branches") }
     example { expect(last_response).to be_ok       }
     example { expect(parsed_body).to be == {
@@ -43,6 +47,7 @@ describe Travis::API::V3::Services::Overview::Branches do
       "@representation" => "standard",
       "branches"        => {
         branch1.name => 0.5,
+        branch3.name => 0.5,
         branch2.name => 0.5
       }
     }}
@@ -56,6 +61,7 @@ describe Travis::API::V3::Services::Overview::Branches do
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', state: 'failed',  branch_name: branch1.name, created_at: Date.today - 30)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'cron', state: 'errored', branch_name: branch1.name, created_at: Date.today - 30)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', state: 'passed',  branch_name: branch2.name, created_at: Date.today - 30)
+      Travis::API::V3::Models::Build.create(repository_id: repo.id, event_type: 'push', state: 'passed',  branch_name: branch3.name, created_at: Date.today - 30)
       get("/v3/repo/#{repo.id}/overview/branches") }
     example { expect(last_response).to be_ok       }
     example { expect(parsed_body).to be == {
