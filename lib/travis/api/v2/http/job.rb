@@ -15,7 +15,7 @@ module Travis
           def data
             {
               'job' => job_data(job),
-              'commit' => commit_data(job.commit),
+              'commit' => commit_data(job.commit, job.repository),
               'annotations' => Annotations.new(job.annotations, @options).data["annotations"],
             }
           end
@@ -42,11 +42,12 @@ module Travis
               }
             end
 
-            def commit_data(commit)
+            def commit_data(commit, repository)
               {
                 'id' => commit.id,
                 'sha' => commit.commit,
                 'branch' => commit.branch,
+                'branch_is_default' => branch_is_default(commit, repository),
                 'message' => commit.message,
                 'committed_at' => format_date(commit.committed_at),
                 'author_name' => commit.author_name,
@@ -55,6 +56,10 @@ module Travis
                 'committer_email' => commit.committer_email,
                 'compare_url' => commit.compare_url,
               }
+            end
+
+            def branch_is_default(commit, repository)
+              repository.default_branch == commit.branch
             end
         end
       end

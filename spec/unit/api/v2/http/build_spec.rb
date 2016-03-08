@@ -29,6 +29,7 @@ describe Travis::Api::V2::Http::Build do
       'id' => 1,
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
+      'branch_is_default' => true,
       'message' => 'the commit message',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
