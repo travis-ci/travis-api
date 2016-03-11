@@ -103,4 +103,26 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
     example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=false"    }
     example { expect(JSON.load(body)['repositories']) .to be_empty                           }
   end
+
+  describe "sorting by default_branch.last_build" do
+    before  { get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body["@pagination"]).to be == {
+        "limit"           => 100,
+        "offset"          => 0,
+        "count"           => 0,
+        "is_first"        => true,
+        "is_last"         => true,
+        "next"            => nil,
+        "prev"            => nil,
+        "first"           => {
+          "@href"         => "/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build",
+          "offset"        => 0,
+          "limit"         => 100 },
+        "last"            => {
+          "@href"         =>"/v3/owner/svenfuchs/repos?limit=100&offset=-100&sort_by=default_branch.last_build",
+          "offset"        => -100,
+          "limit"         => 100 }}
+    }
+  end
 end
