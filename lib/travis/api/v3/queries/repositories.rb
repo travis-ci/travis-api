@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::Repositories < Query
     params :active, :private, :starred, prefix: :repository
-    sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active), :'default_branch.last_build' => 'builds.id'
+    sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active), :'default_branch.last_build' => 'builds.started_at'
 
     def for_member(user, **options)
       all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
