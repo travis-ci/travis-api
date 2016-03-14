@@ -106,7 +106,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
   end
 
   describe "sorting by default_branch.last_build" do
-    before  { repo2 = Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, last_build_id: 1788, next_build_number: 3) }
+    before  { repo2 = Travis::API::V3::Models::Repository.create(id: 5, owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, last_build_id: 1788, next_build_number: 3) }
     before  { get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build", {}, headers) }
     example { expect(last_response).to be_ok }
     example { expect(JSON.load(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build" }
@@ -140,7 +140,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "name"          => "master" },
         "starred"         => false }, {
         "@type"           => "repository",
-        "@href"           => "/v3/repo/#{repo2.id}",
+        "@href"           => "/v3/repo/5",
         "@representation" => "standard",
         "@permissions"    => {
           "read"          => true,
@@ -149,7 +149,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "star"          => false,
           "unstar"        => false,
           "create_request"=> false },
-        "id"              => repo2.id,
+        "id"              => 5,
         "name"            => "maximal",
         "slug"            => "svenfuchs/maximal",
         "description"     => nil,
@@ -163,7 +163,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "@href"         => "/v3/user/1" },
         "default_branch"  => {
           "@type"         => "branch",
-          "@href"         => "/v3/repo/#{repo2.id}/branch/master",
+          "@href"         => "/v3/repo/5/branch/master",
           "@representation"=>"minimal",
           "name"           =>"master" },
           "starred"=>false}]}
