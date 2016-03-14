@@ -140,7 +140,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "name"          => "master" },
         "starred"         => false }, {
         "@type"           => "repository",
-        "@href"           => "/v3/repo/5",
+        "@href"           => "/v3/repo/#{repo.id}",
         "@representation" => "standard",
         "@permissions"    => {
           "read"          => true,
@@ -149,7 +149,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "star"          => false,
           "unstar"        => false,
           "create_request"=> false },
-        "id"              => 5,
+        "id"              => repo.id,
         "name"            => "maximal",
         "slug"            => "svenfuchs/maximal",
         "description"     => nil,
@@ -163,7 +163,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "@href"         => "/v3/user/1" },
         "default_branch"  => {
           "@type"         => "branch",
-          "@href"         => "/v3/repo/5/branch/master",
+          "@href"         => "/v3/repo/#{repo.id}/branch/master",
           "@representation"=>"minimal",
           "name"           =>"master" },
           "starred"=>false}]}
