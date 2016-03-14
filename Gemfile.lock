@@ -50,8 +50,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: ce489dfaf9457bd43844894c1240defea087f831
-  branch: cd-statement-timeout
+  revision: 5bff6bf138d31754e38b8c148e56ba8ceab39859
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
