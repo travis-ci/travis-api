@@ -6,6 +6,20 @@ describe Travis::API::V3::Services::Cron::Find do
   let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch, interval:'daily') }
   let(:parsed_body) { JSON.load(body) }
 
+  before do
+    Travis::Features.enable_for_all(:cron)
+  end
+
+  describe "no Feature enabled" do
+    before     { Travis::Features.disable_for_all(:cron)   }
+    before     { get("/v3/cron/#{cron.id}")   }
+    example { expect(parsed_body).to be == {
+    "@type"=> "error",
+    "error_type"=> "insufficient_access",
+    "error_message"=> "forbidden"
+  }}
+  end
+
   describe "fetching a cron job by id" do
     before     { get("/v3/cron/#{cron.id}")     }
     example    { expect(last_response).to be_ok }

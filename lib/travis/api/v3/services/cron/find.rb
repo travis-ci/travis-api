@@ -3,6 +3,7 @@ module Travis::API::V3
     #params :id
 
     def run!
+      raise InsufficientAccess unless Travis::Features.feature_active?(:cron)
       find
     end
   end

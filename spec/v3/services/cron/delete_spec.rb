@@ -8,6 +8,20 @@ describe Travis::API::V3::Services::Cron::Delete do
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
   let(:parsed_body) { JSON.load(body) }
 
+  before do
+    Travis::Features.enable_for_all(:cron)
+  end
+
+  describe "no Feature enabled" do
+    before     { Travis::Features.disable_for_all(:cron)   }
+    before     { delete("/v3/cron/#{cron.id}", {}, headers)}
+    example { expect(parsed_body).to be == {
+    "@type"=> "error",
+    "error_type"=> "insufficient_access",
+    "error_message"=> "forbidden"
+  }}
+  end
+
   describe "deleting a cron job by id" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
     before     { delete("/v3/cron/#{cron.id}", {}, headers) }

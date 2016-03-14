@@ -11,6 +11,20 @@ describe Travis::API::V3::Services::Cron::Create do
   let(:wrong_options) {{ "interval" => "notExisting", "disable_by_build" => false }}
   let(:parsed_body) { JSON.load(body) }
 
+  before do
+    Travis::Features.enable_for_all(:cron)
+  end
+
+  describe "no Feature enabled" do
+    before     { Travis::Features.disable_for_all(:cron)   }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers)}
+    example { expect(parsed_body).to be == {
+    "@type"=> "error",
+    "error_type"=> "insufficient_access",
+    "error_message"=> "forbidden"
+  }}
+  end
+
   describe "creating a cron job" do
     before     { last_cron }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
