@@ -13,8 +13,7 @@ Travis.config.logs_database[:pool] = pool_size.to_i
 Travis::Database.connect
 
 if Travis.config.logs_database
-  Log.establish_connection 'logs_database'
-  Log::Part.establish_connection 'logs_database'
+  Travis::LogsModel.establish_connection 'logs_database'
 end
 
 Travis::Async.enabled = true
