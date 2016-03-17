@@ -8,8 +8,8 @@ require 'travis/api/workers/job_restart'
 require 'travis/support/amqp'
 
 pool_size = ENV['SIDEKIQ_DB_POOL_SIZE'] || 5
-Travis.config.database[:pool] = pool_size
-Travis.config.logs_database[:pool] = pool_size
+Travis.config.database[:pool] = pool_size.to_i
+Travis.config.logs_database[:pool] = pool_size.to_i
 Travis::Database.connect
 
 if Travis.config.logs_database
