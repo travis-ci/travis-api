@@ -1,12 +1,12 @@
+require 'travis/yaml'
+
 module Travis::API::V3
   class Services::Lint::Lint < Service
+    params "content"
     def run!
-      # request.body.rewind
-      # content  = params[:content] || request.body.read
-      # parsed   = Travis::Yaml.parse(content)
-      # warnings = parsed.nested_warnings.map { |k, m| { key: k, message: m } }
-      # payload = { lint: { warnings: warnings } }.to_json
-      
+      request_body.rewind
+      content  = params[:content] || request_body.read
+      parsed = Travis::Yaml.parse(content)
     end
   end
 end
