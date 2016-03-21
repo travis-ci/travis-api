@@ -23,7 +23,8 @@ describe Travis::API::V3::Services::Job::Find do
       "@permissions"      => {
         "read"            => true,
         "cancel"          => false,
-        "restart"         => false },
+        "restart"         => false,
+        "debug"           => false },
       "id"                => job.id,
       "number"            => job.number,
       "state"             => job.state,
@@ -93,7 +94,8 @@ describe Travis::API::V3::Services::Job::Find do
       "@permissions"      => {
         "read"            => true,
         "cancel"          => false,
-        "restart"         => false },
+        "restart"         => false,
+        "debug"           => false },
       "id"                => job.id,
       "number"            => job.number,
       "state"             => job.state,

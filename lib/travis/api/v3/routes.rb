@@ -34,6 +34,7 @@ module Travis::API::V3
 
       post :cancel, '/cancel'
       post :restart, '/restart'
+      post :debug, '/debug'
     end
 
     resource :organization do
