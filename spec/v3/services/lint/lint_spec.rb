@@ -3,15 +3,13 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Lint::Lint do
     let(:content) { "foo: bar" }
     let(:parsed_body) { JSON.load(last_response.body) }
+    let(:headers) {{ 'CONTENT_TYPE' => 'text/yaml'}}
+
 
   describe "accepts content in parameter" do
     before        { post("v3/lint", content: content )  }
     example       { expect(last_response).to be_ok }
     example       { expect(parsed_body).to be == {
-                    "@warnings"         => [{
-                      "@type"           => "warning",
-                      "message"         => "query parameter foo: bar not whitelisted, ignored",
-                      "warning_type"    => "ignored_parameter", "parameter"=>"foo: bar"}],
                     "@type"             =>  "lint",
                     "warnings"          => [{
                       "key"             => [],
@@ -22,13 +20,9 @@ describe Travis::API::V3::Services::Lint::Lint do
   end
 
   describe "accepts content as body" do
-    before        { post("/v3/lint", content)  }
+    before        { post("/v3/lint", content, headers)  }
     example       { expect(last_response).to be_ok }
     example       { expect(parsed_body).to be == {
-                    "@warnings"         => [{
-                      "@type"           => "warning",
-                      "message"         => "query parameter foo: bar not whitelisted, ignored",
-                      "warning_type"    => "ignored_parameter", "parameter"=>"foo: bar"}],
                     "@type"             =>  "lint",
                     "warnings"          => [{
                       "key"             => [],
