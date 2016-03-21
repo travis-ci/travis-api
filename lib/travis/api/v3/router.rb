@@ -23,7 +23,7 @@ module Travis::API::V3
       metrics.name_after(factory)
 
       filtered = factory.filter_params(env_params)
-      service  = factory.new(access_control, filtered.merge(params))
+      service  = factory.new(access_control, filtered.merge(params), env['rack.input'.freeze])
 
       metrics.tick(:prepare)
       result   = service.run
