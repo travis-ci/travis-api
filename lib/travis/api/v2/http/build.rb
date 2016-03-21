@@ -17,7 +17,7 @@ module Travis
           def data
             {
               'build'  => build_data(build),
-              'commit' => commit_data(build.commit),
+              'commit' => commit_data(build.commit, build.repository),
               'jobs'   => options[:include_jobs] ? build.matrix.map { |job| job_data(job) } : [],
               'annotations' => options[:include_jobs] ? Annotations.new(annotations(build), @options).data["annotations"] : [],
             }
@@ -44,11 +44,12 @@ module Travis
               }
             end
 
-            def commit_data(commit)
+            def commit_data(commit, repository)
               {
                 'id' => commit.id,
                 'sha' => commit.commit,
                 'branch' => commit.branch,
+                'branch_is_default' => branch_is_default(commit, repository),
                 'message' => commit.message,
                 'committed_at' => format_date(commit.committed_at),
                 'author_name' => commit.author_name,
@@ -76,6 +77,10 @@ module Travis
                 'tags' => job.tags,
                 'annotation_ids' => job.annotation_ids,
               }
+            end
+
+            def branch_is_default(commit, repository)
+              repository.default_branch == commit.branch
             end
 
             def annotations(build)

@@ -199,8 +199,10 @@ module Travis::Api
         Travis::Database.connect
 
         if Travis.config.logs_database
-          Log.establish_connection 'logs_database'
-          Log::Part.establish_connection 'logs_database'
+          pool_size = ENV['DATABASE_POOL_SIZE']
+          Travis.config.logs_database[:pool] = pool_size.to_i if pool_size
+
+          Travis::LogsModel.establish_connection 'logs_database'
         end
       end
 
