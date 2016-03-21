@@ -42,13 +42,14 @@ module Travis::API::V3
       Queries[result_type]
     end
 
-    attr_accessor :access_control, :params
+    attr_accessor :access_control, :params, :request_body
 
-    def initialize(access_control, params)
+    def initialize(access_control, params, request_body)
       @access_control = access_control
       @params         = params
       @queries        = {}
       @github         = {}
+      @request_body   = request_body
     end
 
     def query(type = result_type)

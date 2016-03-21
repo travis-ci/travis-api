@@ -37,6 +37,11 @@ module Travis::API::V3
       post :debug, '/debug'
     end
 
+    resource :lint do
+      route '/lint'
+      post :lint
+    end
+
     resource :organization do
       capture id: :digit
       route '/org/{organization.id}'
