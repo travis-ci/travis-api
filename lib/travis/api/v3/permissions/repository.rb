@@ -23,7 +23,7 @@ module Travis::API::V3
     end
 
     def create_cron?
-      write?
+      Travis::Features.owner_active?(:cron, object.owner) and write?
     end
   end
 end

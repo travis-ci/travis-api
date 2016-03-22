@@ -10,7 +10,7 @@ module Travis::API::V3
 
       Models::Cron.all.each do |cron|
         if cron.next_enqueuing <= Time.now
-          start(cron.branch)
+          start(cron)
           started.push cron
         end
       end
@@ -18,8 +18,10 @@ module Travis::API::V3
       started
     end
 
-    def start(branch)
+    def start(cron)
+      branch = cron.branch
       raise ServerError, 'repository does not have a github_id'.freeze unless branch.repository.github_id
+      access_control.permissions(cron).start!
 
       user_id = branch.repository.users.detect { |u| u.github_oauth_token }.id
 

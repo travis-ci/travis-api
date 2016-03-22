@@ -12,17 +12,26 @@ describe Travis::API::V3::Services::Cron::Create do
   let(:parsed_body) { JSON.load(body) }
 
   before do
-    Travis::Features.enable_for_all(:cron)
+    Travis::Features.activate_owner(:cron, repo.owner)
   end
 
-  describe "no Feature enabled" do
-    before     { Travis::Features.disable_for_all(:cron)   }
+  describe "creating a cron job with feature flag disabled" do
+    before     { Travis::Features.deactivate_owner(:cron, repo.owner)   }
     before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers)}
-    example { expect(parsed_body).to be == {
-    "@type"=> "error",
-    "error_type"=> "insufficient_access",
-    "error_message"=> "forbidden"
-  }}
+    example    { expect(parsed_body).to be == {
+        "@type"               => "error",
+        "error_type"          => "insufficient_access",
+        "error_message"       => "operation requires create_cron access to repository",
+        "resource_type"       => "repository",
+        "permission"          => "create_cron",
+        "repository"          => {
+            "@type"           => "repository",
+            "@href"           => "/repo/#{repo.id}", # should be /v3/repo/#{repo.id}
+            "@representation" => "minimal",
+            "id"              => repo.id,
+            "name"            => "minimal",
+            "slug"            => "svenfuchs/minimal" }
+    }}
   end
 
   describe "creating a cron job" do
@@ -37,7 +46,8 @@ describe Travis::API::V3::Services::Cron::Create do
         "@representation"     => "standard",
         "@permissions"        => {
             "read"            => true,
-            "delete"          => true },
+            "delete"          => true,
+            "start"           => true },
         "id"                  => current_cron.id,
         "repository"          => {
             "@type"           => "repository",

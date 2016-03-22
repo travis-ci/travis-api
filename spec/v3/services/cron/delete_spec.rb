@@ -9,17 +9,19 @@ describe Travis::API::V3::Services::Cron::Delete do
   let(:parsed_body) { JSON.load(body) }
 
   before do
-    Travis::Features.enable_for_all(:cron)
+    Travis::Features.activate_owner(:cron, repo.owner)
   end
 
-  describe "no Feature enabled" do
-    before     { Travis::Features.disable_for_all(:cron)   }
+  describe "deleting cron jobs with feature disabled" do
+    before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+    before     { Travis::Features.deactivate_owner(:cron, repo.owner)   }
     before     { delete("/v3/cron/#{cron.id}", {}, headers)}
-    example { expect(parsed_body).to be == {
-    "@type"=> "error",
-    "error_type"=> "insufficient_access",
-    "error_message"=> "forbidden"
-  }}
+    example    { expect(parsed_body).to be == {
+        "@type"               => "error",
+        "error_type"          => "not_found",
+        "error_message"       => "cron not found (or insufficient access)",
+        "resource_type"       => "cron"
+    }}
   end
 
   describe "deleting a cron job by id" do
@@ -33,7 +35,8 @@ describe Travis::API::V3::Services::Cron::Delete do
         "@representation"     => "standard",
         "@permissions"        => {
             "read"            => true,
-            "delete"          => true },
+            "delete"          => true,
+            "start"           => true },
         "id"                  => cron.id,
         "repository"          => {
             "@type"           => "repository",
