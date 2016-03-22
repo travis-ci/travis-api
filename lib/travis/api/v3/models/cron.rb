@@ -4,45 +4,48 @@ module Travis::API::V3
     belongs_to :branch
 
     def next_enqueuing
-
-      if (disable_by_build) && (last_non_cron_build_date > plannedTime(-1))
-        return plannedTime(1)
-      elsif last_cron_build_date >= plannedTime(-1)
-        return plannedTime(0)
+      if (disable_by_build) && (last_non_cron_build_date > planned_time(-1))
+        return planned_time(1)
+      elsif last_cron_build_date >= planned_time(-1)
+        return planned_time(0)
       else
         return Time.now
       end
     end
 
-    def plannedTime(in_builds = 0) # 0 equals next build, 1 after next build, -1 last build, ...
-      now = DateTime.now
-      created = DateTime.new(created_at.year, created_at.month, created_at.day, created_at.hour)
+    def planned_time(in_builds = 0) # 0 equals next build, 1 after next build, -1 last build, ...
       case interval
       when 'daily'
-        build_today = DateTime.new(now.year, now.month, now.day, created_at.hour)
-        if now > build_today
-          return build_today + 1 + in_builds
-        else
-          return build_today + in_builds
-        end
+        return planned_time_daily(in_builds)
       when 'weekly'
-        build_today = DateTime.new(now.year, now.month, now.day, created_at.hour)
-        in_days = (created_at.wday - now.wday) % 7
-        next_time = build_today + in_days
-        if now > next_time
-          return build_today + 7 * (1 + in_builds)
-        else
-          return next_time + 7 * in_builds
-        end
+        return planned_time_weekly(in_builds)
       when 'monthly'
-        month_since_creation = (now.year*12+now.month) - (created_at.year*12+created_at.month)
-        this_month = created >> month_since_creation
-        if now > this_month
-          return created >> (month_since_creation + 1 + in_builds)
-        else
-          return created >> (month_since_creation + in_builds)
-        end
+        return planned_time_monthly(in_builds)
       end
+    end
+
+    def planned_time_daily(in_builds = 0)
+      now = DateTime.now
+      build_today = DateTime.new(now.year, now.month, now.day, created_at.hour)
+      return build_today + 1 + in_builds if (now > build_today)
+      return build_today + in_builds
+    end
+
+    def planned_time_weekly(in_builds = 0)
+      now = DateTime.now
+      build_today = DateTime.new(now.year, now.month, now.day, created_at.hour)
+      next_time = build_today + ((created_at.wday - now.wday) % 7)
+      return build_today + 7 * (1 + in_builds) if (now > next_time)
+      return next_time + 7 * in_builds
+    end
+
+    def planned_time_monthly(in_builds = 0)
+      now = DateTime.now
+      created = DateTime.new(created_at.year, created_at.month, created_at.day, created_at.hour)
+      month_since_creation = (now.year*12+now.month) - (created_at.year*12+created_at.month)
+      this_month = created >> month_since_creation
+      return created >> (month_since_creation + 1 + in_builds) if (now > this_month)
+      return created >> (month_since_creation + in_builds)
     end
 
     def last_cron_build_date
