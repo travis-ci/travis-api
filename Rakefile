@@ -1,16 +1,9 @@
 namespace :db do
-  if ENV["RAILS_ENV"] == 'test'
-    desc 'Create and migrate the test database'
-    task :create do
-      sh 'createdb travis_test' rescue nil
-      sh "psql -q travis_test < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/structure.sql"
-    end
-  else
-    desc 'Create and migrate the development database'
-    task :create do
-      sh 'createdb travis_development' rescue nil
-      sh "psql -q travis_development < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/structure.sql"
-    end
+  env = ENV["RAILS_ENV"]
+  desc "Create and migrate the #{env} database"
+  task :create do
+    sh "createdb travis_pro_#{env}" rescue nil
+    sh "psql -q travis_pro_#{env} < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/structure.sql"
   end
 end
 
