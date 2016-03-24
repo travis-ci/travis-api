@@ -11,7 +11,6 @@ gem 'travis-amqp',     github: 'travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'travis-yaml',     github: 'travis-ci/travis-yaml'
-gem 'travis-migrations', github: 'travis-ci/travis-migrations'
 gem 'mustermann',      github: 'rkh/mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
@@ -36,6 +35,10 @@ gem 'stackprof'
 
 gem 'jemalloc'
 gem 'customerio'
+
+group :development, :test do
+  gem 'travis-migrations', github: 'travis-ci/travis-migrations'
+end
 
 group :test do
   gem 'rspec',         '~> 2.13'
