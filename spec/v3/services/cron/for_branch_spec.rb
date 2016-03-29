@@ -11,13 +11,13 @@ describe Travis::API::V3::Services::Cron::ForBranch do
   end
 
   describe "find cron job for branch with feature disabled" do
+    before     { cron }
     before     { Travis::Features.deactivate_owner(:cron, repo.owner)   }
     before     { get("/v3/repo/#{repo.id}/branch/#{branch.name}/cron")   }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
-      "error_type"    => "not_found",
-      "error_message" => "cron not found (or insufficient access)",
-      "resource_type" => "cron"
+      "error_type"    => "insufficient_access",
+      "error_message" => "forbidden"
     }}
   end
 
