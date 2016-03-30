@@ -62,5 +62,9 @@ module Travis::API::V3
 
       __send__(name, *args, &block)
     end
+
+    def settings
+      @settings ||= JSON.load(super)
+    end
   end
 end
