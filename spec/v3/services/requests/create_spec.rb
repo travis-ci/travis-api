@@ -239,6 +239,27 @@ describe Travis::API::V3::Services::Requests::Create do
       }
     end
 
+    describe "overrides default request limit if included in repository.settings" do
+      let(:repository) { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'minimal', settings: { "api_builds_rate_limit" => "11" } )}
+      before { 10.times { repository.requests.create(event_type: 'api', result: 'accepted') } }
+      before { post("/v3/repo/#{repository.id}/requests", params, headers)                    }
+
+      example { expect(last_response.status).to be == 200 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "error",
+        "error_type",
+        "request_limit_reached",
+        "error_message",
+        "request limit reached for resource",
+        "repository",
+        "representation",
+        "minimal",
+        "slug",
+        "svenfuchs/minimal")
+      }
+    end
+
     describe "passing the token in params" do
       let(:params) {{ request: { token: 'foo-bar' }}}
       example { expect(sidekiq_params[:credentials]).to be == {
