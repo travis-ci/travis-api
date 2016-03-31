@@ -48,7 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: f7b3a76b3f39c28bb5cf7b9dc24acec13908a11a
+  revision: 57634c3103dec6472bf732de5f051702224dc345
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -331,7 +331,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.47)
+    tzinfo (0.3.48)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
@@ -388,3 +388,6 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
+
+BUNDLED WITH
+   1.10.6
