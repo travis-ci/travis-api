@@ -50,19 +50,22 @@ class Rack::Attack
   # Ban time:     5 hours
   # Ban after:    10 POST requests within five minutes to /auth/github
   blacklist('hammering /auth/github') do |request|
-     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 2, findtime: 5.minutes, bantime: bantime(5.hours)) do
-       request.post? and request.path == '/auth/github'
-     end
+    Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 2, findtime: 5.minutes, bantime: bantime(5.hours)) do
+      request.post? and request.path == '/auth/github'
+    end
   end
 
   ####
   # Ban based on: IP address or access token
   # Ban time:     1 hour
-  # Ban after:    10 POST requests within 30 seconds
+  # Ban after:    10 POST requests within 30 seconds, unless api_builds_rate_limit is set in repository settings
   blacklist('spamming with POST requests') do |request|
-     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 30.seconds, bantime: bantime(1.hour)) do
-       request.post? and not POST_WHITELISTED.include? request.path
-     end
+    p "request.inspect ++++++++++++++++++++++++++++"
+    p request.inspect
+    p "+++++++++++++++++++++++++++++++++++++++++++++++++++"
+    Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 30.seconds, bantime: bantime(1.hour)) do
+      request.post? and not POST_WHITELISTED.include? request.path
+    end
   end
 
 
