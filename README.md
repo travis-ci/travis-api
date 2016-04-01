@@ -17,7 +17,7 @@ You will need the following packages to get travis-api to work:
     $ auto/configure --user=$USER
     $ make
     $ sudo make install
-    $ ln -s /usr/local/nginx/sbin/nginx /bin/nginx
+    $ sudo ln -s /usr/local/nginx/sbin/nginx /bin/nginx
 ```
 
 ## Installation
