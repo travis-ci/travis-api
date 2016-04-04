@@ -62,5 +62,9 @@ module Travis::API::V3
 
       __send__(name, *args, &block)
     end
+
+    def overview
+      Models::Overview.new(self)
+    end
   end
 end
