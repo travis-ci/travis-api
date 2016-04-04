@@ -26,6 +26,8 @@ require 'metriks/reporter/logger'
 require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
+require 'travis/api/app/endpoint'
+require 'travis/api/app/middleware'
 require 'travis/api/instruments'
 require 'travis/api/v2/http'
 require 'travis/api/v3'
@@ -174,7 +176,6 @@ module Travis::Api
 
       def self.setup!
         setup_travis
-        load_endpoints
         setup_endpoints
         @setup = true
       end
@@ -215,11 +216,6 @@ module Travis::Api
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         Travis::Notification.setup(instrumentation: false)
         Travis::Metrics.setup
-      end
-
-      def self.load_endpoints
-        Dir.glob("#{__dir__}/app/middleware/*.rb").each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
-        Dir.glob("#{__dir__}/app/endpoint/*.rb").each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
       end
 
       def self.setup_endpoints

@@ -1,6 +1,8 @@
-require 'travis/api/app'
 require 'sinatra/base'
 require 'mustermann'
+require 'travis/api/app'
+require 'travis/api/app/extensions'
+require 'travis/api/app/helpers'
 
 class Travis::Api::App
   # Superclass for any endpoint and middleware.

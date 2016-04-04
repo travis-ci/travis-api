@@ -48,7 +48,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: f7b3a76b3f39c28bb5cf7b9dc24acec13908a11a
+  revision: fdcd69981dc9ccb6f85452213d8bdc096f4308be
+  ref: sf-ar-te
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -56,7 +57,7 @@ GIT
       coder (~> 0.4.0)
       data_migrations (~> 0.0.1)
       gh
-      hashr (~> 0.0.19)
+      hashr
       metriks (~> 0.9.7)
       multi_json
       pusher (~> 0.14.0)
@@ -332,7 +333,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.47)
+    tzinfo (0.3.48)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
@@ -392,4 +393,4 @@ DEPENDENCIES
   yard-sinatra!
 
 BUNDLED WITH
-   1.11.2
+   1.12.0.pre.1

@@ -5,13 +5,12 @@ ruby '2.1.7' if ENV.key?('DYNO')
 
 gem 's3',              github: 'travis-ci/s3'
 
-gem 'travis-core',     github: 'travis-ci/travis-core'
+gem 'travis-core',     github: 'travis-ci/travis-core', ref: 'sf-ar-te'
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-amqp',     github: 'travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'travis-yaml',     github: 'travis-ci/travis-yaml'
-gem 'travis-migrations', github: 'travis-ci/travis-migrations'
 gem 'mustermann',      github: 'rkh/mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
@@ -36,6 +35,10 @@ gem 'stackprof'
 
 gem 'jemalloc'
 gem 'customerio'
+
+group :development, :test do
+  gem 'travis-migrations', github: 'travis-ci/travis-migrations'
+end
 
 group :test do
   gem 'rspec',         '~> 2.13'
