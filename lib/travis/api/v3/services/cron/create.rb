@@ -9,13 +9,8 @@ module Travis::API::V3
       raise NotFound unless branch = find(:branch, repository)
       raise Error.new('Invalid value for interval. Interval must be "daily", "weekly" or "monthly"!', status: 422) unless ["daily", "weekly", "monthly"].include?(params["interval"])
       access_control.permissions(repository).create_cron!
-
-      if branch.cron
-        access_control.permissions(branch.cron).delete!
-      end
-
+      access_control.permissions(branch.cron).delete! if branch.cron
       query.create(branch, params["interval"], params["disable_by_build"] ? params["disable_by_build"] : false)
-
     end
 
   end
