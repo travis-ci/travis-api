@@ -240,19 +240,18 @@ describe Travis::API::V3::Services::Requests::Create do
     end
 
     describe "overrides default request limit if included in repository.settings" do
-      let(:repository) { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'minimal', settings: { "api_builds_rate_limit" => "11" } )}
-      before { 10.times { repository.requests.create(event_type: 'api', result: 'accepted') } }
-      before { post("/v3/repo/#{repository.id}/requests", params, headers)                    }
+      before { repo.update_attribute(:settings, { api_builds_rate_limit: 12 }.to_json) }
 
-      example { expect(last_response.status).to be == 200 }
-      example { expect(JSON.load(body).to_s).to include(
+      before { 10.times { repo.requests.create(event_type: 'api', result: 'accepted') } }
+      before { post("/v3/repo/#{repo.id}/requests", {}, headers) }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to  include(
         "@type",
-        "error",
-        "error_type",
-        "request_limit_reached",
-        "error_message",
-        "request limit reached for resource",
         "repository",
+        "remaining_requests",
+        "2",
+        "request",
         "representation",
         "minimal",
         "slug",
