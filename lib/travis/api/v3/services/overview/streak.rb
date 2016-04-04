@@ -2,7 +2,7 @@ module Travis::API::V3
   class Services::Overview::Streak < Service
 
     def run!
-      find(:repository).overview.streak
+      find(:repository).streak_overview
     end
   end
 end
