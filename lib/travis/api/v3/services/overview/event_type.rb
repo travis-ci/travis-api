@@ -2,17 +2,8 @@ module Travis::API::V3
   class Services::Overview::EventType < Service
 
     def run!
-      builds = query.event_type(find(:repository))
-
-      hash = Hash.new { |hash, key| hash[key] = Hash.new(0) }
-
-      builds.each {|key, value|
-        event_type = key[0]
-        state      = key[1]
-        hash[event_type][state] = value
-      }
-
-      [{event_type: hash}]
+      model = Models::Overview.new(find(:repository))
+      model.event_type
     end
   end
 end
