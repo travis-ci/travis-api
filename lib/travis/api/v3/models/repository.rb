@@ -1,6 +1,5 @@
 module Travis::API::V3
   class Models::Repository < Model
-
     has_many :commits,     dependent: :delete_all
     has_many :requests,    dependent: :delete_all
     has_many :branches,    dependent: :delete_all, order: 'branches.id DESC'.freeze
