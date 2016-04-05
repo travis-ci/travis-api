@@ -48,8 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 76ddca556f0eb9f40daa50789223db9e18174d46
-  branch: cd-ar-rate-limit-on-travis-config
+  revision: e5740f49f18f826a2d4a246647e5e7f1a26494eb
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
