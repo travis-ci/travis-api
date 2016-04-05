@@ -48,7 +48,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 9978518236afb520c8fff68bebe7beb62f8ad776
+  revision: 76ddca556f0eb9f40daa50789223db9e18174d46
+  branch: cd-ar-rate-limit-on-travis-config
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -388,6 +389,3 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
-
-BUNDLED WITH
-   1.12.0.pre.1
