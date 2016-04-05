@@ -62,6 +62,10 @@ module Travis::API::V3
       Queries[type].new({}, type, includes: include)
     end
 
+    def model_fields(representation)
+      self.class.representations.fetch(representation)
+    end
+
     def render(representation)
       if included.include? model
         return REDUNDANT unless href
@@ -72,7 +76,7 @@ module Travis::API::V3
       result[:@type]           = self.class.type if self.class.type
       result[:@href]           = href if href
       result[:@representation] = representation
-      fields                   = self.class.representations.fetch(representation)
+      fields                   = model_fields(representation)
       nested_included          = included + [model]
       modes                    = {}
 

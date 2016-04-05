@@ -2,7 +2,7 @@ module Travis::API::V3
   class Queries::Overview < Query
 
     def build_duration(repo)
-      Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).where("duration IS NOT NULL").where("state != 'canceled'").order("id DESC").select("id, number, state, duration").first(20)
+      Models::Build.where(:repository_id => repo.id, :branch => repo.default_branch_name).where("duration IS NOT NULL").where("state != 'canceled'").order("id DESC").first(20)
     end
 
     def event_type(repo)

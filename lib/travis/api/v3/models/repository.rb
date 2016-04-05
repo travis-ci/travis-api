@@ -1,5 +1,6 @@
 module Travis::API::V3
   class Models::Repository < Model
+
     has_many :commits,     dependent: :delete_all
     has_many :requests,    dependent: :delete_all
     has_many :branches,    dependent: :delete_all, order: 'branches.id DESC'.freeze
@@ -90,49 +91,39 @@ module Travis::API::V3
         insert_guarded(data, passed, all, branch)
       end
 
-      [{branches: data}]
+      Models::Overview::Branches.new(data)
     end
 
     def build_duration_overview
-      builds = overview_query.build_duration(self)
-      data = []
-      builds.each do |build|
-        data.push ({
-          "id"       => build.id,
-          "number"   => build.number,
-          "state"    => build.state,
-          "duration" => build.duration
-        })
-      end
-      [{build_duration: data}]
+      Models::Overview::BuildDuration.new(overview_query.build_duration(self))
     end
 
     def event_type_overview
       builds = overview_query.event_type(self)
 
-      hash = Hash.new { |hash, key| hash[key] = Hash.new(0) }
+      data = Hash.new { |hash, key| hash[key] = Hash.new(0) }
 
-      builds.each do |key, value|
+      builds.each_pair do |key, value|
         event_type = key[0]
         state      = key[1]
-        hash[event_type][state] = value
+        data[event_type][state] = value
       end
 
-      [{event_type: hash}]
+      Models::Overview::EventType.new(data)
     end
 
     def recent_build_history_overview
       builds = overview_query.recent_build_history(self)
 
-      hash = Hash.new { |hash, key| hash[key] = Hash.new(0) }
+      data = Hash.new { |hash, key| hash[key] = Hash.new(0) }
 
-      builds.each {|key, value|
+      builds.each_pair do |key, value|
         created_at = key[0]
         state      = key[1]
-        hash[created_at.to_date][state] = value
-      }
+        data[created_at.to_date][state] = value
+      end
 
-      [{recent_build_history: hash}]
+      Models::Overview::RecentBuildHistory.new(data)
     end
 
     def streak_overview
@@ -148,7 +139,7 @@ module Travis::API::V3
 
       day_count = (build_count > 0) ? ((Time.now - start_of_streak)/(60*60*24)).floor : 0
 
-      [{streak: {days: day_count, builds: build_count}}]
+      Models::Overview::Streak.new({days: day_count, builds: build_count})
     end
 
     private
