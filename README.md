@@ -41,7 +41,6 @@ pg_dump -t logs travis_logs_test | psql -U postgres travis_test
 popd
 ```
 
-
 ### Run tests
 
     $ rake spec
