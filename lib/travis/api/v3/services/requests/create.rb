@@ -24,9 +24,9 @@ module Travis::API::V3
 
     def limit(repository)
       if repository.settings.nil?
-        Travis.config.requests_create_api_limit || LIMIT
+        Travis.config.requests_create_api_limit || 50
       else
-        repository.settings["api_builds_rate_limit"] || Travis.config.requests_create_api_limit || LIMIT
+        repository.settings["api_builds_rate_limit"] || Travis.config.requests_create_api_limit || 50
       end
     end
 
