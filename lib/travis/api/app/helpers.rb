@@ -1,8 +1,7 @@
 require 'travis/api/app'
-
-class Travis::Api::App
-  # Namespace for helpers.
-  module Helpers
-    Dir.glob("#{__dir__}/helpers/*.rb").each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
-  end
-end
+require 'travis/api/app/helpers/accept'
+require 'travis/api/app/helpers/current_user'
+require 'travis/api/app/helpers/db_follower'
+require 'travis/api/app/helpers/flash'
+require 'travis/api/app/helpers/mime_types'
+require 'travis/api/app/helpers/respond_with'

@@ -11,6 +11,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
   before        { repo.update_attribute(:private, true)                             }
   after         { repo.update_attribute(:private, false)                            }
 
+
   describe "private repository, private API, authenticated as user with access" do
     before  { get("/v3/owner/svenfuchs/repos", {}, headers) }
     example { expect(last_response).to be_ok }
@@ -102,5 +103,70 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
     example { expect(last_response)                   .to be_ok                              }
     example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=false"    }
     example { expect(JSON.load(body)['repositories']) .to be_empty                           }
+  end
+
+  describe "sorting by default_branch.last_build" do
+    let(:repo2)  { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, last_build_id: 1788, next_build_number: 3) }
+    before  { repo2.save! }
+    before  { get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build", {}, headers) }
+    example { expect(last_response).to be_ok }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build" }
+    example { expect(JSON.load(body)['repositories'])   .to be == [{
+        "@type"           => "repository",
+        "@href"           => "/v3/repo/1",
+        "@representation" => "standard",
+        "@permissions"    => {
+          "read"          => true,
+          "enable"        => false,
+          "disable"       => false,
+          "star"          => false,
+          "unstar"        => false,
+          "create_request"=> false },
+        "id"              => 1,
+        "name"            => "minimal",
+        "slug"            => "svenfuchs/minimal",
+        "description"     => nil,
+        "github_language" => nil,
+        "active"          => true,
+        "private"         => true,
+        "owner"           => {
+          "@type"         => "user",
+          "id"            => 1,
+          "login"         => "svenfuchs",
+          "@href"         => "/v3/user/1" },
+        "default_branch"  => {
+          "@type"         => "branch",
+          "@href"         => "/v3/repo/1/branch/master",
+          "@representation"=>"minimal",
+          "name"          => "master" },
+        "starred"         => false }, {
+        "@type"           => "repository",
+        "@href"           => "/v3/repo/#{repo2.id}",
+        "@representation" => "standard",
+        "@permissions"    => {
+          "read"          => true,
+          "enable"        => false,
+          "disable"       => false,
+          "star"          => false,
+          "unstar"        => false,
+          "create_request"=> false },
+        "id"              => repo2.id,
+        "name"            => "maximal",
+        "slug"            => "svenfuchs/maximal",
+        "description"     => nil,
+        "github_language" => nil,
+        "active"          => true,
+        "private"         => false,
+        "owner"           => {
+          "@type"         => "user",
+          "id"            => 1,
+          "login"         => "svenfuchs",
+          "@href"         => "/v3/user/1" },
+        "default_branch"  => {
+          "@type"         => "branch",
+          "@href"         => "/v3/repo/#{repo2.id}/branch/master",
+          "@representation"=>"minimal",
+          "name"           =>"master" },
+          "starred"=>false}]}
   end
 end

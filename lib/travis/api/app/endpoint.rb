@@ -1,6 +1,7 @@
-require 'travis/api/app'
 require 'addressable/uri'
 require 'active_record/base'
+require 'travis/api/app'
+require 'travis/api/app/base'
 
 class Travis::Api::App
   # Superclass for HTTP endpoints. Takes care of prefixing.
@@ -48,3 +49,23 @@ class Travis::Api::App
       end
   end
 end
+
+require 'travis/api/app/endpoint/accounts'
+require 'travis/api/app/endpoint/authorization'
+require 'travis/api/app/endpoint/branches'
+require 'travis/api/app/endpoint/broadcasts'
+require 'travis/api/app/endpoint/builds'
+require 'travis/api/app/endpoint/documentation'
+require 'travis/api/app/endpoint/endpoints'
+require 'travis/api/app/endpoint/env_vars'
+require 'travis/api/app/endpoint/home'
+require 'travis/api/app/endpoint/hooks'
+require 'travis/api/app/endpoint/jobs'
+require 'travis/api/app/endpoint/lint'
+require 'travis/api/app/endpoint/logs'
+require 'travis/api/app/endpoint/repos'
+require 'travis/api/app/endpoint/requests'
+require 'travis/api/app/endpoint/setting_endpoint'
+require 'travis/api/app/endpoint/singleton_settings_endpoint'
+require 'travis/api/app/endpoint/uptime'
+require 'travis/api/app/endpoint/users'
