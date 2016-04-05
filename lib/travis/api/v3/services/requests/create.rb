@@ -22,14 +22,19 @@ module Travis::API::V3
       accepted(remaining_requests: remaining, repository: repository, request: payload)
     end
 
-    def limit
-      Travis.config.requests_create_api_limit || LIMIT
+    def limit(repository)
+      if repository.settings.nil?
+        LIMIT
+      else
+        repository.settings["api_builds_rate_limit"] || Travis.config.requests_create_api_limit || LIMIT
+      end
     end
 
     def remaining_requests(repository)
-      return limit if access_control.full_access?
+      api_builds_rate_limit = limit(repository)
+      return api_builds_rate_limit if access_control.full_access?
       count = query(:requests).count(repository, TIME_FRAME)
-      count > limit ? 0 : limit - count
+      count > api_builds_rate_limit ? 0 : api_builds_rate_limit - count
     end
   end
 end
