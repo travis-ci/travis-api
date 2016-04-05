@@ -1,8 +1,4 @@
-require 'travis/api/app'
-
-class Travis::Api::App
-  # Namespace for Sinatra extensions.
-  module Extensions
-    Dir.glob("#{__dir__}/extensions/*.rb").each { |f| require f[%r[(?<=lib/).+(?=\.rb$)]] }
-  end
-end
+require 'travis/api/app/extensions/expose_pattern'
+require 'travis/api/app/extensions/scoping'
+require 'travis/api/app/extensions/smart_constants'
+require 'travis/api/app/extensions/subclass_tracker'

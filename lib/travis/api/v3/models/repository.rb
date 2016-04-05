@@ -63,6 +63,10 @@ module Travis::API::V3
       __send__(name, *args, &block)
     end
 
+    def settings
+      @settings ||= JSON.load(super)
+    end
+
     def branches_overview
       result = overview_query.branches(self)
 

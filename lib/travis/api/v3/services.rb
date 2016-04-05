@@ -11,6 +11,7 @@ module Travis::API::V3
     Builds        = Module.new { extend Services }
     Job           = Module.new { extend Services }
     Jobs          = Module.new { extend Services }
+    Lint          = Module.new { extend Services }
     Organization  = Module.new { extend Services }
     Organizations = Module.new { extend Services }
     Overview      = Module.new { extend Services }
