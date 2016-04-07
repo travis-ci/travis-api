@@ -48,8 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: fdcd69981dc9ccb6f85452213d8bdc096f4308be
-  ref: sf-ar-te
+  revision: a66c345d44fd9c28884d694acfff3b1a0fbc5232
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -391,4 +390,4 @@ DEPENDENCIES
   yard-sinatra!
 
 BUNDLED WITH
-   1.12.0.pre.1
+   1.11.2
