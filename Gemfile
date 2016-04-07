@@ -43,7 +43,7 @@ end
 group :test do
   gem 'rspec',         '~> 2.13'
   gem 'rspec-its'
-  gem 'factory_girl',  '~> 2.4.0'
+  gem 'factory_girl',  '~> 4.7.0'
   gem 'mocha',         '~> 0.12'
   gem 'database_cleaner', '~> 0.8.0'
 end

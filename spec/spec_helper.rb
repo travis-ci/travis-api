@@ -1,6 +1,7 @@
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 
 require 'support/coverage'
+require 'support/factory_girl_legacy'
 
 require 'rspec'
 require 'rspec/its'
