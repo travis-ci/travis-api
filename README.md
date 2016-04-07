@@ -43,11 +43,13 @@ popd
 
 ### Run tests
 
-    $ rake spec
+    $ bundle exec spec
 
 ### Run the server
 
     $ bundle exec script/server
+    
+    If you have problems with Nginx because the websocket is already in use, try restarting your computer.
 
 ## Contributing
 
