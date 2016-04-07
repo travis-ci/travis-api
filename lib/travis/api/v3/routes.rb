@@ -37,6 +37,11 @@ module Travis::API::V3
       post :debug, '/debug'
     end
 
+    resource :tmate do
+      route '/tmate'
+      post :event, '/event'
+    end
+
     resource :lint do
       route '/lint'
       post :lint

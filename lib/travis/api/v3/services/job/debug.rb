@@ -13,16 +13,21 @@ module Travis::API::V3
       job.debug_options = debug_data
       job.save!
 
+      Travis::API::V3::TmateStore.register_job_id(job.id, debug_data[:session_token])
+
       query.restart(access_control.user)
       accepted(job: job, state_change: :created)
     end
 
     def debug_data
-      {
+      @debug_data ||= {
         stage: 'before_install',
         previous_state: job.state,
         created_by: access_control.user.login,
-        quiet: params["quiet"] || false
+        quiet: params["quiet"] || false,
+        session_token: SecureRandom.hex(16),
+        session_state: 'pending',
+        session_data: {}
       }
     end
   end
