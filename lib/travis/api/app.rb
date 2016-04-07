@@ -195,6 +195,10 @@ module Travis::Api
         if use_monitoring? and not console?
           setup_monitoring
         end
+
+        def Redis.instance
+          Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
+        end
       end
 
       def self.setup_database_connections

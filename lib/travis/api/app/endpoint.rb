@@ -33,7 +33,7 @@ class Travis::Api::App
     private
 
       def redis
-        Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
+        Redis.instance
       end
 
       def endpoint(link, query_values = {})
