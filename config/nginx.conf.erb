@@ -9,9 +9,13 @@ events {
 }
 
 http {
-        gzip on;
-        gzip_comp_level 2;
-        gzip_min_length 512;
+  gzip on;
+  gzip_comp_level 2;
+  gzip_min_length 512;
+
+	<% unless ENV['SIGSCI_ENABLED'].nil? || ENV['SIGSCI_ENABLED'].empty? %>
+	include "../sigsci-module-nginx/sigsci.conf";
+	<% end %>
 
 	server_tokens off;
 
