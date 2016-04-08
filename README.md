@@ -65,7 +65,7 @@ $ bundle exec rspec
 ```sh-session
 $ bundle exec script/server
 ```
-    If you have problems with Nginx because the websocket is already in use, try restarting your computer.
+If you have problems with Nginx because the websocket is already in use, try restarting your computer.
 
 ## Contributing
 
