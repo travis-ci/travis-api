@@ -8,9 +8,10 @@ module Travis::API::V3
     attr_reader :job
 
     def run
-      raise WrongParams unless token = params['userdata']
-      raise NotFound    unless job_id = Travis::API::V3::TmateStore.find_job_id(token)
-      raise NotFound    unless @job = Models::Job.find_by_id(job_id)
+      job_id, token = params['userdata'].to_s.split('/')
+      raise WrongParams      unless job_id && token
+      raise NotFound         unless @job = Models::Job.find_by_id(job_id)
+      raise WrongCredentials unless (job.debug_options || {})[:session_token] == token
 
       case params['type']
       when 'session_register', 'session_open' then on_session_open(params['params'])

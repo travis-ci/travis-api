@@ -13,7 +13,8 @@ describe Travis::API::V3::Services::Tmate::Event do
     headers = { 'HTTP_AUTHORIZATION' => "token #{token}" }
     Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
     post("/v3/job/#{job.id}/debug", {}, headers)
-    job.reload.debug_options[:session_token]
+    token = job.reload.debug_options[:session_token]
+    "#{job.id}/#{token}"
   end
   let(:session_id) { SecureRandom.uuid }
   let(:event_common) { { userdata: session_token, session_id: session_id } }
@@ -35,16 +36,22 @@ describe Travis::API::V3::Services::Tmate::Event do
   end
 
   describe "#run" do
-    context "when receiving an event with an invalid debug token" do
-      before  { post("/v3/tmate/event", FactoryGirl.build(:event_session_open, userdata: nil)) }
+    context "when receiving an event with a malformed job token" do
+      before  { post("/v3/tmate/event", FactoryGirl.build(:event_session_open, userdata: 'xxx')) }
       example { expect(last_response.status).to be == 400 }
       example { expect(JSON.load(body)).to include("@type" => "error", "error_type" => "wrong_params") }
     end
 
-    context "when receiving an event with a non existant debug token" do
-      before  { post("/v3/tmate/event", FactoryGirl.build(:event_session_open, userdata: 'xxx')) }
+    context "when receiving an event with an invalid job id" do
+      before  { post("/v3/tmate/event", FactoryGirl.build(:event_session_open, userdata: "1234/abc")) }
       example { expect(last_response.status).to be == 404 }
       example { expect(JSON.load(body)).to include("@type" => "error", "error_type" => "not_found") }
+    end
+
+    context "when receiving an event with an invalid debug token" do
+      before  { post("/v3/tmate/event", FactoryGirl.build(:event_session_open, userdata: "#{job.id}/abc")) }
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to include("@type" => "error", "error_type" => "wrong_credentials") }
     end
 
     context "when no event has been received yet" do
@@ -56,7 +63,7 @@ describe Travis::API::V3::Services::Tmate::Event do
 
     context "when receiving a session_open" do
       let(:event_session_open) { FactoryGirl.build(:event_session_open, **event_common) }
-      before  { post("/v3/tmate/event", event_session_open) }
+      before { post("/v3/tmate/event", event_session_open) }
 
       example { expect(last_response.status).to be == 202 }
       example { expect(job.reload.debug_options).to include(
@@ -71,8 +78,8 @@ describe Travis::API::V3::Services::Tmate::Event do
     context "when receiving a session_open twice (e.g. due to reconnection)" do
       let(:event_session_open1) { FactoryGirl.build(:event_session_open, **event_common) }
       let(:event_session_open2) { FactoryGirl.build(:event_session_open, **event_common, reconnected: true) }
-      before  { post("/v3/tmate/event", event_session_open1) }
-      before  { post("/v3/tmate/event", event_session_open2) }
+      before { post("/v3/tmate/event", event_session_open1) }
+      before { post("/v3/tmate/event", event_session_open2) }
 
       example { expect(last_response.status).to be == 202 }
       example { expect(job.reload.debug_options).to include(
@@ -87,8 +94,8 @@ describe Travis::API::V3::Services::Tmate::Event do
     context "when receiving a session_close" do
       let(:event_session_open)  { FactoryGirl.build(:event_session_open,  **event_common) }
       let(:event_session_close) { FactoryGirl.build(:event_session_close, **event_common) }
-      before  { post("/v3/tmate/event", event_session_open) }
-      before  { post("/v3/tmate/event", event_session_close) }
+      before { post("/v3/tmate/event", event_session_open) }
+      before { post("/v3/tmate/event", event_session_close) }
 
       example { expect(job.reload.debug_options).to include(
         session_state: "closed",
