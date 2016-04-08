@@ -73,7 +73,7 @@ class Travis::Api::App
     module Helpers
       private
         def redis
-          Redis.instance
+          Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
         end
 
         def key(token)
