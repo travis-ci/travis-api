@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Cron::Create do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo).first }
+  let(:non_existing_branch) { Travis::API::V3::Models::Branch.create(repository: repo, name: 'cron-test', exists_on_github: false) }
   let(:last_cron) {Travis::API::V3::Models::Cron.where(branch_id: branch.id).last}
   let(:current_cron) {Travis::API::V3::Models::Cron.where(branch_id: branch.id).last}
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
@@ -84,6 +85,16 @@ describe Travis::API::V3::Services::Cron::Create do
       "@type"         => "error",
       "error_type"    => "error",
       "error_message" => "Invalid value for interval. Interval must be \"daily\", \"weekly\" or \"monthly\"!"
+    }}
+  end
+
+  describe "creating a cron job on a branch not existing on GitHub" do
+    before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{non_existing_branch.name}/cron", options, headers) }
+    example    { expect(parsed_body).to be == {
+      "@type"         => "error",
+      "error_type"    => "error",
+      "error_message" => "Crons can only be set up for branches existing on GitHub!"
     }}
   end
 

@@ -6,22 +6,25 @@ module Travis::API::V3
     end
 
     def start_all()
-      started = []
+      started_crons = []
 
       Models::Cron.all.each do |cron|
         if cron.next_enqueuing <= Time.now
-          start(cron)
-          started.push cron
+          started = start(cron)
+          started_crons.push cron if started
         end
       end
 
-      started
+      started_crons
     end
 
     def start(cron)
       branch = cron.branch
       raise ServerError, 'repository does not have a github_id'.freeze unless branch.repository.github_id
-      access_control.permissions(cron).start!
+      unless branch.exists_on_github
+        cron.destroy
+        return false
+      end
 
       user_id = branch.repository.users.detect { |u| u.github_oauth_token }.id
 
@@ -33,7 +36,7 @@ module Travis::API::V3
 
       class_name, queue = Query.sidekiq_queue(:build_request)
       ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => [{type: 'cron'.freeze, payload: JSON.dump(payload), credentials: {}}])
-      payload
+      true
     end
   end
 end
