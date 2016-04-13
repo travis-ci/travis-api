@@ -48,8 +48,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: b09c810112b781c3eea9d9ae0508a2355d1c57f0
-  branch: ha-feature-google-api
+  revision: 7367ff4875e4f22eaf60c3a142202673eadd0d83
+  branch: ha-feature-google-api-debug
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
