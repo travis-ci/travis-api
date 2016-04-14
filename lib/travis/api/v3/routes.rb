@@ -99,12 +99,6 @@ module Travis::API::V3
       end
     end
 
-    resource :request do
-      capture id: :digit
-      route '/request/{request.id}'
-      get  :find
-    end
-
     resource :user do
       capture id: :digit
       route '/user'

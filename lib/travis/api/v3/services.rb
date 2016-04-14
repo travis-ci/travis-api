@@ -17,7 +17,6 @@ module Travis::API::V3
     Owner         = Module.new { extend Services }
     Repositories  = Module.new { extend Services }
     Repository    = Module.new { extend Services }
-    Request       = Module.new { extend Services }
     Requests      = Module.new { extend Services }
     User          = Module.new { extend Services }
 
