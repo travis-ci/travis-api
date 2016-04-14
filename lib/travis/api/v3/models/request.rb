@@ -6,5 +6,12 @@ module Travis::API::V3
     has_many   :builds
     serialize  :config
     serialize  :payload
+
+    # has_one :branch_name,
+    #   primary_key: [:id,  :branch_name]
+
+    def branch_name
+      read_attribute(:branch_name)
+    end
   end
 end
