@@ -122,7 +122,6 @@ module Travis::Api
         use Travis::Api::App::Middleware::Logging
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
-        use Travis::Api::App::Middleware::Metriks
 
         # make sure this is below ScopeCheck so we have the token
         use Rack::Attack if Endpoint.production?
@@ -132,6 +131,9 @@ module Travis::Api
 
         # rewrite should come after V3 hook
         use Travis::Api::App::Middleware::Rewrite
+
+        # v3 has its own metriks
+        use Travis::Api::App::Middleware::Metriks
 
         SettingsEndpoint.subclass :env_vars
         if Travis.config.endpoints.ssh_key
@@ -197,8 +199,10 @@ module Travis::Api
         Travis::Database.connect
 
         if Travis.config.logs_database
-          Log.establish_connection 'logs_database'
-          Log::Part.establish_connection 'logs_database'
+          pool_size = ENV['DATABASE_POOL_SIZE']
+          Travis.config.logs_database[:pool] = pool_size.to_i if pool_size
+
+          Travis::LogsModel.establish_connection 'logs_database'
         end
       end
 
