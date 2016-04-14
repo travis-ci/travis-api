@@ -6,16 +6,9 @@ module Travis::API::V3
     end
 
     def start_all()
-      started_crons = []
-
-      Models::Cron.all.each do |cron|
-        if cron.next_enqueuing <= Time.now
-          started = start(cron)
-          started_crons.push cron if started
-        end
+      Models::Cron.all.select do |cron|
+        start(cron) if cron.next_enqueuing <= Time.now
       end
-
-      started_crons
     end
 
     def start(cron)
