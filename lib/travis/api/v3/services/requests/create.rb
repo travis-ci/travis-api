@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Services::Requests::Create < Service
     TIME_FRAME = 1.hour
-    LIMIT      = 10
+    LIMIT = 10
     private_constant :TIME_FRAME, :LIMIT
 
     result_type :request
@@ -24,7 +24,7 @@ module Travis::API::V3
 
     def limit(repository)
       if repository.settings.nil?
-        LIMIT
+        Travis.config.requests_create_api_limit || LIMIT
       else
         repository.settings["api_builds_rate_limit"] || Travis.config.requests_create_api_limit || LIMIT
       end
