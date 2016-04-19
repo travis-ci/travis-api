@@ -1,5 +1,7 @@
 module Travis::API::V3
   class Models::Request < Model
+    BRANCH_REF = %r{refs/heads/(.*?)$}
+
     belongs_to :commit
     belongs_to :repository
     belongs_to :owner, polymorphic: true
@@ -7,11 +9,12 @@ module Travis::API::V3
     serialize  :config
     serialize  :payload
 
-    has_one :branch,
-      primary_key: [:id,  :branch_name]
+    def branch_name
+      ref =~ BRANCH_REF and $1
+    end
 
-    def branch
-      read_attribute(:branch)
+    def ref
+      payload['ref'] if payload
     end
   end
 end

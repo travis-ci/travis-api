@@ -48,7 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: a66c345d44fd9c28884d694acfff3b1a0fbc5232
+  revision: f1d4c3246ea7a5434076fdc7026aa11a2c90bdac
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -56,6 +56,7 @@ GIT
       coder (~> 0.4.0)
       data_migrations (~> 0.0.1)
       gh
+      google-api-client (~> 0.9.4)
       hashr
       metriks (~> 0.9.7)
       multi_json
@@ -66,7 +67,7 @@ GIT
       rollout (~> 1.1.0)
       s3 (~> 0.3)
       simple_states (~> 1.0.0)
-      thor (~> 0.14.6)
+      thor
       travis-config (~> 0.1.0)
       virtus (~> 1.0.0)
 
@@ -191,6 +192,24 @@ GEM
       multi_json (~> 1.0)
       net-http-persistent (>= 2.7)
       net-http-pipeline
+    google-api-client (0.9.4)
+      addressable (~> 2.3)
+      googleauth (~> 0.5)
+      httpclient (~> 2.7)
+      hurley (~> 0.1)
+      memoist (~> 0.11)
+      mime-types (>= 1.6)
+      representable (~> 2.3.0)
+      retriable (~> 2.0)
+      thor (~> 0.19)
+    googleauth (0.5.1)
+      faraday (~> 0.9)
+      jwt (~> 1.4)
+      logging (~> 2.0)
+      memoist (~> 0.12)
+      multi_json (~> 1.11)
+      os (~> 0.9)
+      signet (~> 0.7)
     hashr (0.0.22)
     hike (1.2.3)
     hitimes (1.2.3)
@@ -198,20 +217,27 @@ GEM
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
     httpclient (2.7.1)
+    hurley (0.2)
     i18n (0.7.0)
     ice_nine (0.11.2)
     jemalloc (1.0.1)
     journey (1.0.4)
     json (1.8.3)
+    jwt (1.5.4)
     kgio (2.9.2)
     listen (1.0.3)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
+    little-plugger (1.1.4)
+    logging (2.1.0)
+      little-plugger (~> 1.1)
+      multi_json (~> 1.10)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     memcachier (0.0.2)
+    memoist (0.14.0)
     metaclass (0.0.4)
     method_source (0.8.2)
     metriks (0.9.9.6)
@@ -229,6 +255,7 @@ GEM
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
+    os (0.9.6)
     pg (0.18.2)
     polyglot (0.3.5)
     proxies (0.2.1)
@@ -270,8 +297,11 @@ GEM
     redis (3.2.2)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
+    representable (2.3.0)
+      uber (~> 0.0.7)
     rerun (0.8.2)
       listen (~> 1.0.3)
+    retriable (2.1.0)
     rollout (1.1.0)
     rspec (2.99.0)
       rspec-core (~> 2.99.0)
@@ -292,6 +322,11 @@ GEM
       json
       redis (>= 3.0.6)
       redis-namespace (>= 1.3.1)
+    signet (0.7.2)
+      addressable (~> 2.3)
+      faraday (~> 0.9)
+      jwt (~> 1.5)
+      multi_json (~> 1.10)
     simple_states (1.0.1)
       activesupport
       hashr (~> 0.0.10)
@@ -320,7 +355,7 @@ GEM
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
     stackprof (0.2.7)
-    thor (0.14.6)
+    thor (0.19.1)
     thread_safe (0.3.5)
     tilt (1.4.1)
     timers (4.0.1)
@@ -332,6 +367,7 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.48)
+    uber (0.0.15)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
