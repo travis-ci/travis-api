@@ -36,7 +36,7 @@ module Travis
       RequestLimitReached = ClientError        .create('request limit reached for resource', status: 429)
       AlreadySyncing      = ClientError        .create('sync already in progress', status: 409)
       AlreadyRunning      = ClientError        .create('job already running', status: 409)
-      NotCancelable       = ClientError        .create('job is not running, cannot canel', status: 409)
+      NotCancelable       = ClientError        .create('job is not running, cannot cancel', status: 409)
       MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
     end
   end
