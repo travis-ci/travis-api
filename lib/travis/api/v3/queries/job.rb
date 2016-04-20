@@ -8,16 +8,13 @@ module Travis::API::V3
     end
 
     def cancel(user)
-      puts find.state
-      raise NotCancelable if %w(passed failed cancelled errored).include? find.state
+      raise NotCancelable if %w(passed failed canceled errored).include? find.state
       payload = { id: id, user_id: user.id, source: 'api' }
       perform_async(:job_cancellation, payload)
       payload
     end
 
     def restart(user)
-      puts find.state
-      puts find.state.class
       raise AlreadyRunning if %w(received queued started).include? find.state
       payload = { id: id, user_id: user.id, source: 'api' }
       perform_async(:job_restart, payload)
