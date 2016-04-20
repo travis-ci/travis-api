@@ -77,36 +77,148 @@ describe Travis::API::V3::Services::Build::Cancel do
     }}
   end
 
-  describe "existing repository, push access" do
+  describe "existing repository, push access, not cancelable" do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
 
-    example { expect(last_response.status).to be == 202 }
-    example { expect(JSON.load(body).to_s).to include(
-      "@type",
-      "build",
-      "@href",
-      "@representation",
-      "minimal",
-      "cancel",
-      "id",
-      "state_change")
-    }
+    describe "passed state" do
+      before        { build.update_attribute(:state, "passed")                                                   }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
 
-    example { expect(sidekiq_payload).to be == {
-      "id"     => "#{build.id}",
-      "user_id"=> repo.owner_id,
-      "source" => "api"}
-    }
+      example { expect(last_response.status).to be == 409 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "build_not_cancelable",
+        "error_message" => "build is not running, cannot cancel"
+      }}
+    end
 
-    example { expect(Sidekiq::Client.last['queue']).to be == 'build_cancellations'                }
-    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildCancellation' }
+    describe "errored state" do
+      before        { build.update_attribute(:state, "errored")                                                   }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 409 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "build_not_cancelable",
+        "error_message" => "build is not running, cannot cancel"
+      }}
+    end
+
+    describe "failed state" do
+      before        { build.update_attribute(:state, "failed")                                                   }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 409 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "build_not_cancelable",
+        "error_message" => "build is not running, cannot cancel"
+      }}
+    end
+
+    describe "canceled state" do
+      before        { build.update_attribute(:state, "canceled")                                                   }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 409 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "build_not_cancelable",
+        "error_message" => "build is not running, cannot cancel"
+      }}
+    end
+  end
+
+  describe "existing repository, push access, cancelable" do
+    let(:params)  {{}}
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+
+    describe "started state" do
+      before        { build.update_attribute(:state, "started")                                                  }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "build",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{build.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'build_cancellations'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildCancellation' }
+    end
+
+    describe "started queued" do
+      before        { build.update_attribute(:state, "queued")                                                  }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "build",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{build.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'build_cancellations'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildCancellation' }
+    end
+
+    describe "received state" do
+      before        { build.update_attribute(:state, "received")                                                  }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "build",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{build.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'build_cancellations'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildCancellation' }
+    end
 
     describe "setting id has no effect" do
       let(:params) {{ id: 42 }}
+      before  { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
       example { expect(sidekiq_payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id,
