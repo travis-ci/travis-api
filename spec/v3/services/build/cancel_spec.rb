@@ -164,7 +164,7 @@ describe Travis::API::V3::Services::Build::Cancel do
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildCancellation' }
     end
 
-    describe "started queued" do
+    describe "queued state" do
       before        { build.update_attribute(:state, "queued")                                                  }
       before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
 

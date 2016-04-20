@@ -29,11 +29,11 @@ module Travis
       NotFound            = ClientError        .create(:resource, status: 404, template: '%s not found (or insufficient access)')
 
       AlreadySyncing      = ClientError        .create('sync already in progress', status: 409)
-      BuildAlreadyRunning = ClientError        .create('build already running', status: 409)
+      BuildAlreadyRunning = ClientError        .create('build already running, cannot restart', status: 409)
       BuildNotCancelable  = ClientError        .create('build is not running, cannot cancel', status: 409)
       EntityMissing       = NotFound           .create(type: 'not_found')
       InsufficientAccess  = ClientError        .create(status: 403)
-      JobAlreadyRunning   = ClientError        .create('job already running', status: 409)
+      JobAlreadyRunning   = ClientError        .create('job already running, cannot restart', status: 409)
       JobNotCancelable    = ClientError        .create('job is not running, cannot cancel', status: 409)
       LoginRequired       = ClientError        .create('login required', status: 403)
       MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
