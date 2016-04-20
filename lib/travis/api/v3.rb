@@ -25,19 +25,22 @@ module Travis
       load_dir("#{__dir__}/v3")
 
       ClientError         = Error              .create(status: 400)
-      NotFound            = ClientError        .create(:resource, status: 404, template: '%s not found (or insufficient access)')
-      EntityMissing       = NotFound           .create(type: 'not_found')
-      WrongCredentials    = ClientError        .create('access denied',  status: 403)
-      LoginRequired       = ClientError        .create('login required', status: 403)
-      InsufficientAccess  = ClientError        .create(status: 403)
-      WrongParams         = ClientError        .create('wrong parameters')
       ServerError         = Error              .create(status: 500)
+      NotFound            = ClientError        .create(:resource, status: 404, template: '%s not found (or insufficient access)')
+
+      AlreadySyncing      = ClientError        .create('sync already in progress', status: 409)
+      BuildAlreadyRunning = ClientError        .create('build already running', status: 409)
+      BuildNotCancelable  = ClientError        .create('build is not running, cannot cancel', status: 409)
+      EntityMissing       = NotFound           .create(type: 'not_found')
+      InsufficientAccess  = ClientError        .create(status: 403)
+      JobAlreadyRunning   = ClientError        .create('job already running', status: 409)
+      JobNotCancelable    = ClientError        .create('job is not running, cannot cancel', status: 409)
+      LoginRequired       = ClientError        .create('login required', status: 403)
+      MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
       RequestLimitReached = ClientError        .create('request limit reached for resource', status: 429)
-      AlreadySyncing      = ClientError        .create('sync already in progress', status: 409)
-      AlreadyRunning      = ClientError        .create('job already running', status: 409)
-      NotCancelable       = ClientError        .create('job is not running, cannot cancel', status: 409)
-      MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
+      WrongCredentials    = ClientError        .create('access denied',  status: 403)
+      WrongParams         = ClientError        .create('wrong parameters')
     end
   end
 end
