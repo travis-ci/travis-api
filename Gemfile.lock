@@ -48,7 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: f1d4c3246ea7a5434076fdc7026aa11a2c90bdac
+  revision: 1f723c183993c7961cf2db76037e03cef4769e23
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -192,7 +192,7 @@ GEM
       multi_json (~> 1.0)
       net-http-persistent (>= 2.7)
       net-http-pipeline
-    google-api-client (0.9.4)
+    google-api-client (0.9.5)
       addressable (~> 2.3)
       googleauth (~> 0.5)
       httpclient (~> 2.7)
@@ -294,7 +294,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     redcarpet (2.3.0)
-    redis (3.2.2)
+    redis (3.3.0)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
     representable (2.3.0)
@@ -366,7 +366,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.48)
+    tzinfo (0.3.49)
     uber (0.0.15)
     unicorn (4.8.3)
       kgio (~> 2.6)
@@ -424,3 +424,6 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
+
+BUNDLED WITH
+   1.10.6
