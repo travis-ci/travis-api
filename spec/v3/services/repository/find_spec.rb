@@ -36,7 +36,8 @@ describe Travis::API::V3::Services::Repository::Find do
         "disable"          => false,
         "star"             => false,
         "unstar"           => false,
-        "create_request"   => false},
+        "create_request"   => false,
+        "create_cron"      => false},
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -113,7 +114,8 @@ describe Travis::API::V3::Services::Repository::Find do
         "disable"          => false,
         "star"             => false,
         "unstar"           => false,
-        "create_request"   => false},
+        "create_request"   => false,
+        "create_cron"      => false},
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -150,7 +152,7 @@ describe Travis::API::V3::Services::Repository::Find do
     }}
   end
 
-  describe "private repository, authenticated as internal application with full access" do
+  describe "private repository without cron feature, authenticated as internal application with full access" do
     let(:app_name)   { 'travis-example'                                                           }
     let(:app_secret) { '12345678'                                                                 }
     let(:sign_opts)  { "a=#{app_name}"                                                            }
@@ -175,7 +177,8 @@ describe Travis::API::V3::Services::Repository::Find do
         "disable"          => true,
         "star"             => true,
         "unstar"           => true,
-        "create_request"   => true},
+        "create_request"   => true,
+        "create_cron"      => false},
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -218,7 +221,7 @@ describe Travis::API::V3::Services::Repository::Find do
     }}
   end
 
-  describe "private repository, authenticated as internal application with full access, scoped to the right org" do
+  describe "private repository without cron feature, authenticated as internal application with full access, scoped to the right org" do
     let(:app_name)   { 'travis-example'                                                           }
     let(:app_secret) { '12345678'                                                                 }
     let(:sign_opts)  { "a=#{app_name}:s=#{repo.owner_name}"                                       }
@@ -243,7 +246,8 @@ describe Travis::API::V3::Services::Repository::Find do
         "disable"          => true,
         "star"             => true,
         "unstar"           => true,
-        "create_request"   => true},
+        "create_request"   => true,
+        "create_cron"      => false},
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",

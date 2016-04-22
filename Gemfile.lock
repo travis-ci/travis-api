@@ -73,7 +73,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-migrations.git
-  revision: fcf6eea3e3122a7cbb857826db835de69974c54d
+  revision: 3f6bb84800b0222ceba95a4b1368969eb5ede8e0
   specs:
     travis-migrations (0.0.1)
 
@@ -358,6 +358,7 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (1.4.1)
+    timecop (0.8.0)
     timers (4.0.1)
       hitimes
     tool (0.2.3)
@@ -414,6 +415,7 @@ DEPENDENCIES
   sinatra-contrib
   skylight (~> 0.6.0.beta.1)
   stackprof
+  timecop (~> 0.8.0)
   travis-amqp!
   travis-api!
   travis-config (~> 0.1.0)
