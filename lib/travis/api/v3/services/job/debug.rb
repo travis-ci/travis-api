@@ -22,7 +22,10 @@ module Travis::API::V3
         stage: 'before_install',
         previous_state: job.state,
         created_by: access_control.user.login,
-        quiet: params["quiet"] || false
+        quiet: params["quiet"] || false,
+        session_token: SecureRandom.hex(16),
+        session_state: 'pending',
+        session_data: {}
       }
     end
   end

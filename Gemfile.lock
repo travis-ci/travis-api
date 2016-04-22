@@ -73,7 +73,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-migrations.git
-  revision: fcf6eea3e3122a7cbb857826db835de69974c54d
+  revision: bd5ca87ad53ca8a599fe774d8b4abad9f55052d4
   specs:
     travis-migrations (0.0.1)
 
@@ -177,8 +177,8 @@ GEM
     dotenv (0.7.0)
     equalizer (0.0.11)
     erubis (2.7.0)
-    factory_girl (2.4.2)
-      activesupport
+    factory_girl (4.7.0)
+      activesupport (>= 3.0.0)
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.6)
@@ -389,7 +389,7 @@ DEPENDENCIES
   customerio
   dalli
   database_cleaner (~> 0.8.0)
-  factory_girl (~> 2.4.0)
+  factory_girl (~> 4.7.0)
   foreman
   gh
   jemalloc

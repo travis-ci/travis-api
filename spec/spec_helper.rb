@@ -1,6 +1,7 @@
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 
 require 'support/coverage'
+require 'support/factory_girl_legacy'
 
 require 'rspec'
 require 'rspec/its'
@@ -22,6 +23,8 @@ Travis.logger = Logger.new(StringIO.new)
 Travis::Api::App.setup
 Travis.config.client_domain = "www.example.com"
 Travis.config.endpoints.ssh_key = true
+
+FactoryGirl.find_definitions
 
 module TestHelpers
   include Sinatra::TestHelpers
