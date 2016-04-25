@@ -78,41 +78,154 @@ describe Travis::API::V3::Services::Job::Cancel do
     }}
   end
 
-  describe "existing repository, push access" do
+  describe "existing repository, push access, job cancelable" do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
 
-    example { expect(last_response.status).to be == 202 }
-    example { expect(JSON.load(body).to_s).to include(
-      "@type",
-      "job",
-      "@href",
-      "@representation",
-      "minimal",
-      "cancel",
-      "id",
-      "state_change")
-    }
+    describe "started state" do
+      before        { job.update_attribute(:state, "started")                                                }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
 
-    example { expect(sidekiq_payload).to be == {
-      "id"     => "#{job.id}",
-      "user_id"=> repo.owner_id,
-      "source" => "api"}
-    }
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "pending",
+        "job",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
 
-    example { expect(Sidekiq::Client.last['queue']).to be == 'job_cancellations'                }
-    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::JobCancellation' }
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{job.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'job_cancellations'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::JobCancellation' }
+    end
+    describe "queued state" do
+      before        { job.update_attribute(:state, "queued")                                                }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "pending",
+        "job",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{job.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'job_cancellations'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::JobCancellation' }
+    end
+
+    describe "received state" do
+      before        { job.update_attribute(:state, "received")                                                }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "pending",
+        "job",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{job.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'job_cancellations'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::JobCancellation' }
+    end
 
     describe "setting id has no effect" do
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                           }
       let(:params) {{ id: 42 }}
       example { expect(sidekiq_payload).to be == {
         "id"     => "#{job.id}",
         "user_id"=> repo.owner_id,
         "source" => "api"}
       }
+    end
+  end
+  describe "existing repository, push access, not cancelable" do
+    let(:params)  {{}}
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+
+    describe "passed state" do
+      before        { job.update_attribute(:state, "passed")                                                   }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 409 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "job_not_cancelable",
+        "error_message" => "job is not running, cannot cancel"
+      }}
+    end
+
+    describe "errored state" do
+      before        { job.update_attribute(:state, "errored")                                                   }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 409 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "job_not_cancelable",
+        "error_message" => "job is not running, cannot cancel"
+      }}
+    end
+
+    describe "failed state" do
+      before        { job.update_attribute(:state, "failed")                                                   }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 409 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "job_not_cancelable",
+        "error_message" => "job is not running, cannot cancel"
+      }}
+    end
+
+    describe "canceled state" do
+      before        { job.update_attribute(:state, "canceled")                                                   }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 409 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "job_not_cancelable",
+        "error_message" => "job is not running, cannot cancel"
+      }}
     end
   end
 
