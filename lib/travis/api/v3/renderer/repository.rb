@@ -4,6 +4,7 @@ module Travis::API::V3
   class Renderer::Repository < Renderer::ModelRenderer
     representation(:minimal,  :id, :name, :slug)
     representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred)
+    representation(:additional, :cronjobs)
 
     def active
       !!model.active
@@ -56,5 +57,12 @@ module Travis::API::V3
     def owner_type
       @owner_type ||= model.owner_type.downcase if model.owner_type
     end
+
+    def cronjobs
+      model.branches.all.collect do |branch|
+        branch.cron
+      end.compact
+    end
+
   end
 end

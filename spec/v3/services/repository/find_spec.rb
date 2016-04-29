@@ -4,6 +4,7 @@ describe Travis::API::V3::Services::Repository::Find do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
+  let(:cron)  { Travis::API::V3::Models::Cron.create(branch: repo.default_branch, interval:'daily') }
   let(:parsed_body) { JSON.load(body) }
 
   describe "fetching a public repository by slug" do
@@ -277,6 +278,36 @@ describe Travis::API::V3::Services::Repository::Find do
       "id"    => repo.owner_id,
       "login" => "svenfuchs",
     )}
+  end
+
+  describe "including crons" do
+    before  { Travis::Features.activate_owner(:cron, repo.owner) }
+    before  { cron }
+    before  { get("/v3/repo/#{repo.id}?include=repository.cronjobs") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body["cronjobs"]).to be == [{
+      "@type"           => "cron",
+      "@href"           => "/v3/cron/#{cron.id}",
+      "@representation" => "standard",
+      "@permissions"    => {
+        "read"   => true,
+        "delete" => false,
+        "start"  => true
+      },
+      "id"         => cron.id,
+      "repository" => {
+        "@href" => "/v3/repo/#{repo.id}"
+      },
+      "branch"  => {
+        "@type" => "branch",
+        "@href" => "/v3/repo/#{repo.id}/branch/master",
+        "@representation" => "minimal",
+        "name"  => "master"
+      },
+      "interval"         => "daily",
+      "disable_by_build" => true,
+      "next_enqueuing"   => cron.next_enqueuing.strftime('%Y-%m-%dT%H:%M:%SZ')
+    }]}
   end
 
   describe "including full owner" do
