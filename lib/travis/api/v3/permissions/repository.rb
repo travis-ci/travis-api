@@ -21,5 +21,9 @@ module Travis::API::V3
     def create_request?
       write?
     end
+
+    def create_cron?
+      Travis::Features.owner_active?(:cron, object.owner) and write?
+    end
   end
 end

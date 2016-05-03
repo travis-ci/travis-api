@@ -46,6 +46,7 @@ group :test do
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
   gem 'database_cleaner', '~> 0.8.0'
+  gem 'timecop',       '~> 0.8.0'
 end
 
 group :development do
