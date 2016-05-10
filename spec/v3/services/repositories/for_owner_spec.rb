@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Repositories::ForOwner do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
+  let(:current_build) { repo.current_build }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
@@ -64,6 +65,18 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "@href"            => "/v3/repo/#{repo.id}/branch/master",
           "@representation"  => "minimal",
           "name"             => "master"},
+        "current_build"      => {
+          "@type"            => "build",
+          "@href"            => "/v3/build/#{current_build.id}",
+          "@representation"  => "minimal",
+          "id"               => current_build.id.to_i,
+          "number"           => current_build.number,
+          "state"            => current_build.state,
+          "duration"         => current_build.duration,
+          "event_type"       => current_build.event_type,
+          "previous_state"   => current_build.previous_state,
+          "started_at"       => current_build.started_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+          "finished_at"      => current_build.finished_at.strftime("%Y-%m-%dT%H:%M:%SZ")},
           "starred"          => false
         }]}}
   end
@@ -141,6 +154,18 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "@href"         => "/v3/repo/1/branch/master",
           "@representation"=>"minimal",
           "name"          => "master" },
+        "current_build"      => {
+          "@type"            => "build",
+          "@href"            => "/v3/build/#{current_build.id}",
+          "@representation"  => "minimal",
+          "id"               => current_build.id.to_i,
+          "number"           => current_build.number,
+          "state"            => current_build.state,
+          "duration"         => current_build.duration,
+          "event_type"       => current_build.event_type,
+          "previous_state"   => current_build.previous_state,
+          "started_at"       => current_build.started_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+          "finished_at"      => current_build.finished_at.strftime("%Y-%m-%dT%H:%M:%SZ")},
         "starred"         => false }, {
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo2.id}",
@@ -170,6 +195,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner do
           "@href"         => "/v3/repo/#{repo2.id}/branch/master",
           "@representation"=>"minimal",
           "name"           =>"master" },
+        "current_build"      => nil,
           "starred"=>false}]}
   end
 end

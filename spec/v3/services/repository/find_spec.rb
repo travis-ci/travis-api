@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Repository::Find do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
+  let(:current_build) { repo.current_build }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
 
@@ -55,6 +56,18 @@ describe Travis::API::V3::Services::Repository::Find do
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
         "name"             => "master"},
+        "current_build"      => {
+          "@type"            => "build",
+          "@href"            => "/v3/build/#{current_build.id}",
+          "@representation"  => "minimal",
+          "id"               => current_build.id.to_i,
+          "number"           => current_build.number,
+          "state"            => current_build.state,
+          "duration"         => current_build.duration,
+          "event_type"       => current_build.event_type,
+          "previous_state"   => current_build.previous_state,
+          "started_at"       => current_build.started_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+          "finished_at"      => current_build.finished_at.strftime("%Y-%m-%dT%H:%M:%SZ")},
       "starred"            => false
     }}
   end
@@ -133,6 +146,18 @@ describe Travis::API::V3::Services::Repository::Find do
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
         "name"             => "master"},
+        "current_build"      => {
+          "@type"            => "build",
+          "@href"            => "/v3/build/#{current_build.id}",
+          "@representation"  => "minimal",
+          "id"               => current_build.id.to_i,
+          "number"           => current_build.number,
+          "state"            => current_build.state,
+          "duration"         => current_build.duration,
+          "event_type"       => current_build.event_type,
+          "previous_state"   => current_build.previous_state,
+          "started_at"       => current_build.started_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+          "finished_at"      => current_build.finished_at.strftime("%Y-%m-%dT%H:%M:%SZ")},
       "starred"            => false
     }}
   end
@@ -196,6 +221,18 @@ describe Travis::API::V3::Services::Repository::Find do
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
         "name"             => "master"},
+        "current_build"      => {
+          "@type"            => "build",
+          "@href"            => "/v3/build/#{current_build.id}",
+          "@representation"  => "minimal",
+          "id"               => current_build.id.to_i,
+          "number"           => current_build.number,
+          "state"            => current_build.state,
+          "duration"         => current_build.duration,
+          "event_type"       => current_build.event_type,
+          "previous_state"   => current_build.previous_state,
+          "started_at"       => current_build.started_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+          "finished_at"      => current_build.finished_at.strftime("%Y-%m-%dT%H:%M:%SZ")},
       "starred"            => false
     }}
   end
@@ -265,6 +302,18 @@ describe Travis::API::V3::Services::Repository::Find do
         "@href"            => "/v3/repo/#{repo.id}/branch/master",
         "@representation"  => "minimal",
         "name"             => "master"},
+        "current_build"      => {
+          "@type"            => "build",
+          "@href"            => "/v3/build/#{current_build.id}",
+          "@representation"  => "minimal",
+          "id"               => current_build.id.to_i,
+          "number"           => current_build.number,
+          "state"            => current_build.state,
+          "duration"         => current_build.duration,
+          "event_type"       => current_build.event_type,
+          "previous_state"   => current_build.previous_state,
+          "started_at"       => current_build.started_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+          "finished_at"      => current_build.finished_at.strftime("%Y-%m-%dT%H:%M:%SZ")},
       "starred"            => false
     }}
   end
