@@ -150,7 +150,7 @@ module Travis::API::V3
     def sort_by(collection, field, order: nil, first: false, sql: nil, **)
       raise ArgumentError, 'cannot sort by that' unless sort_by?(field, order)
       actual = sql || self.class.sort_by.fetch(field)
-      line   = add_order(actual, order)
+      line   = "#{actual} #{order.upcase}"
 
       if sort_join?(collection, actual)
         collection = collection.joins(actual.to_sym)
@@ -179,15 +179,6 @@ module Travis::API::V3
       when Integer      then { id:    value    }
       when Models::User then { id:    value.id }
       else raise WrongParams
-      end
-    end
-
-    def add_order(field, order)
-      order = order.upcase
-      if field =~ /%{order}/
-        field % { order: order }
-      else
-        "#{field} #{order}"
       end
     end
   end

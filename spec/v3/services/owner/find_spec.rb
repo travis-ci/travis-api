@@ -81,7 +81,6 @@ describe Travis::API::V3::Services::Owner::Find do
             "@href"           => "/v3/repo/#{repo.id}/branch/master",
             "@representation" => "minimal",
             "name"            => "master"},
-          "current_build"     => nil,
           "starred"           => false
         }]
       }}
@@ -130,7 +129,6 @@ describe Travis::API::V3::Services::Owner::Find do
             "@href"         => "/v3/repo/#{repo.id}/branch/master",
             "@representation"=> "minimal",
             "name"          => "master"},
-          "current_build"   => nil,
           "starred"         => false
         }]
       }}

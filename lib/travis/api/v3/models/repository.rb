@@ -20,15 +20,6 @@ module Travis::API::V3
       update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
     end
 
-    def current_build
-      if self[:current_build_id]
-        Travis::API::V3::Models::Build.find(self[:current_build_id])
-      else
-        builds.where(state: ['started', 'passed', 'errored', 'failed', 'canceled'],
-                     event_type: ['push', 'api', 'cron']).order("id DESC").first
-      end
-    end
-
     def slug
       @slug ||= "#{owner_name}/#{name}"
     end
