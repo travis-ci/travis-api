@@ -48,7 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 1f723c183993c7961cf2db76037e03cef4769e23
+  revision: 3512abe7814ae68f51fb682cfe7cefb9b6bfa576
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -192,7 +192,7 @@ GEM
       multi_json (~> 1.0)
       net-http-persistent (>= 2.7)
       net-http-pipeline
-    google-api-client (0.9.5)
+    google-api-client (0.9.6)
       addressable (~> 2.3)
       googleauth (~> 0.5)
       httpclient (~> 2.7)
@@ -212,11 +212,11 @@ GEM
       signet (~> 0.7)
     hashr (0.0.22)
     hike (1.2.3)
-    hitimes (1.2.3)
+    hitimes (1.2.4)
     httparty (0.11.0)
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
-    httpclient (2.7.1)
+    httpclient (2.8.0)
     hurley (0.2)
     i18n (0.7.0)
     ice_nine (0.11.2)
@@ -250,7 +250,7 @@ GEM
     mime-types (1.25.1)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.11.2)
+    multi_json (1.12.0)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
@@ -426,6 +426,3 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
-
-BUNDLED WITH
-   1.10.6
