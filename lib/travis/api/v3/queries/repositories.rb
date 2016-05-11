@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::Repositories < Query
     params :active, :private, :starred, prefix: :repository
-    sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active), :'default_branch.last_build' => 'builds.started_at'
+    sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active), :'default_branch.last_build' => 'builds.started_at', :current_build => "current_build.id %{order} NULLS LAST"
 
     def for_member(user, **options)
       all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
@@ -36,7 +36,25 @@ module Travis::API::V3
 
       list = list.includes(default_branch: :last_build)
       list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
-      sort list
+
+      sort add_current_build list
+    end
+
+    # this will add SQL needed to fetch current_build along with the
+    # repositories list. It will probably go away soon, once we test the current
+    # build and use current_build_id column, just as we do with last_build for
+    # branches
+    def add_current_build(list)
+      join = "
+        LEFT OUTER JOIN builds as %{column_alias}
+          ON %{column_alias}.repository_id = repositories.id AND
+             %{column_alias}.event_type IN ('api', 'push', 'cron') AND
+             %{column_alias}.state IN ('started', 'errored', 'passed', 'finished', 'canceled')"
+
+      list = list.joins(join % { column_alias: 'current_build' })
+      list = list.joins(join % { column_alias: 'older_builds'  }+ " AND current_build.id < older_builds.id")
+      list = list.where("older_builds.id IS NULL")
+      list.select("repositories.*, current_build.id as current_build_id")
     end
   end
 end
