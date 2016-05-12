@@ -125,6 +125,7 @@ module Travis::API::V3
         get :recentBuildHistory, '/build_history'
         get :eventType,          '/event_type'
         get :streak,             '/streak'
+        get :buildTime,          '/build_time'
       end
     end
 

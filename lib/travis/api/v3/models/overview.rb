@@ -5,5 +5,6 @@ module Travis::API::V3
     EventType = Struct.new(:event_type)
     RecentBuildHistory = Struct.new(:recent_build_history)
     Streak = Struct.new(:streak)
+    BuildTime = Struct.new(:build_time)
   end
 end
