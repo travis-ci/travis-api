@@ -54,7 +54,13 @@ class Travis::Api::App
           status 400
           result = false
         else
-          Travis::Sidekiq::BuildRestart.perform_async(id: params[:id], user_id: current_user.id)
+
+          ::Sidekiq::Client.push(
+                'queue'   => 'hub',
+                'class'   => 'Travis::Hub::Sidekiq::Worker',
+                'args'    => ["build:restart", {id: params[:id], user_id: current_user.id}]
+              )
+
           status 202
           result = true
         end
