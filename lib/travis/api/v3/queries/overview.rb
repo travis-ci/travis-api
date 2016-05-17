@@ -23,12 +23,9 @@ module Travis::API::V3
       Models::Build.select('COUNT(*) AS "count", "branch", "state"').where(:repository_id => repo.id, :event_type => ['push', 'cron']).where("created_at > ?", Date.today - 30).group(:branch, :state).to_a
     end
 
-    def build_time_last_thrity(repo)
-      Models::Build.where(:repository_id => repo.id).where("created_at > ?", Date.today - 29).sum("EXTRACT(EPOCH FROM builds.finished_at) - EXTRACT(EPOCH FROM builds.started_at)")
+    def history(repo)
+      Models::Build.select("SUM(EXTRACT(EPOCH FROM builds.finished_at) - EXTRACT(EPOCH FROM builds.started_at)) AS duration, COUNT(*) AS id").where(:repository_id => repo.id).where("created_at > ?", Date.today - 29)
     end
 
-    def build_time_thrity_before(repo)
-      Models::Build.where(:repository_id => repo.id).where("created_at > ?", Date.today - 59).where("created_at < ?", Date.today - 29).sum("EXTRACT(EPOCH FROM builds.finished_at) - EXTRACT(EPOCH FROM builds.started_at)")
-    end
   end
 end

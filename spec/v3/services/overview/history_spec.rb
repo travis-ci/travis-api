@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::Overview::BuildTime do
+describe Travis::API::V3::Services::Overview::History do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
-  describe "fetching build_time data on a public repository" do
-    before  { get("/v3/repo/#{repo.id}/overview/build_time") }
+  describe "fetching history data on a public repository" do
+    before  { get("/v3/repo/#{repo.id}/overview/history") }
     example { expect(last_response).to be_ok             }
   end
 
-  describe "fetching build_time from non-existing repo" do
-    before  { get("/v3/repo/1231987129387218/overview/build_time") }
+  describe "fetching history from non-existing repo" do
+    before  { get("/v3/repo/1231987129387218/overview/history") }
     example { expect(last_response).to be_not_found            }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
@@ -19,7 +19,7 @@ describe Travis::API::V3::Services::Overview::BuildTime do
     }}
   end
 
-  describe "build_time on public repository" do
+  describe "history on public repository" do
     before  {
       finished = DateTime.now
       started = finished - 1
@@ -28,15 +28,15 @@ describe Travis::API::V3::Services::Overview::BuildTime do
       Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 4, started_at: started, finished_at: finished, branch_name: repo.default_branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now - 2, started_at: started, finished_at: finished, branch_name: repo.default_branch.name)
       Travis::API::V3::Models::Build.create(repository_id: repo.id, created_at: DateTime.now    , started_at: started, finished_at: finished, branch_name: repo.default_branch.name)
-      get("/v3/repo/#{repo.id}/overview/build_time") }
+      get("/v3/repo/#{repo.id}/overview/history") }
     example { expect(last_response).to be_ok     }
     example { expect(parsed_body).to be == {
       "@type"           => "overview",
-      "@href"           => "/v3/repo/#{repo.id}/overview/build_time",
+      "@href"           => "/v3/repo/#{repo.id}/overview/history",
       "@representation" => "standard",
-      "build_time"      => {
-          "last_thirty_days"   => "345600",
-          "thrity_days_before" => "0"
+      "history"         => {
+          "builds"  => 4,
+          "minutes" => 345600
       }
     }}
   end

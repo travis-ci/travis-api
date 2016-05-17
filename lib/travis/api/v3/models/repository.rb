@@ -145,10 +145,9 @@ module Travis::API::V3
       Models::Overview::Streak.new({days: day_count, builds: build_count})
     end
 
-    def build_time
-      last_thirty = overview_query.build_time_last_thrity(self)
-      thirty_before = overview_query.build_time_thrity_before(self)
-      Models::Overview::BuildTime.new({last_thirty_days: last_thirty, thrity_days_before: thirty_before})
+    def history
+      history = overview_query.history(self)[0]
+      Models::Overview::History.new({builds: history.id, minutes: history.duration})
     end
 
     private
