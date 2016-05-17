@@ -78,4 +78,4 @@ If you have problems with Nginx because the websocket is already in use, try res
 ### API documentation
 
 We use source code comments to add documentation. If the server is running, you
-can browse an HTML documenation at [`/docs`](http://localhost:5000/docs).
+can browse an HTML documentation at [`/docs`](http://localhost:5000/docs).
