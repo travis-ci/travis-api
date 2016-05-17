@@ -147,8 +147,8 @@ module Travis::API::V3
 
     def history
       history = overview_query.history(self)[0]
-      minutes = history.duration ? history.duration : 0
-      Models::Overview::History.new({builds: history.id, minutes: minutes})
+      seconds = history.duration ? history.duration : 0
+      Models::Overview::History.new({builds: history.id, seconds: seconds})
     end
 
     private

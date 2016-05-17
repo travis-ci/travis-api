@@ -36,7 +36,7 @@ describe Travis::API::V3::Services::Overview::History do
       "@representation" => "standard",
       "history"         => {
         "builds"  => 4,
-        "minutes" => 345600
+        "seconds" => 345600
       }
     }}
   end
@@ -69,7 +69,7 @@ describe Travis::API::V3::Services::Overview::History do
       "@representation"      => "standard",
       "history"         => {
         "builds"  => 0,
-        "minutes" => 0
+        "seconds" => 0
       }
     }}
   end
