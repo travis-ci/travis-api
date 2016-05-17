@@ -66,7 +66,7 @@ describe Travis::API::V3::Services::Overview::RecentBuildHistory do
     }}
   end
 
-  describe "recent build hitsory on public empty repository" do
+  describe "recent build history on public empty repository" do
     before  {
       Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end
       get("/v3/repo/#{repo.id}/overview/build_history") }

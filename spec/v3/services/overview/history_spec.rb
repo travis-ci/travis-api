@@ -35,8 +35,41 @@ describe Travis::API::V3::Services::Overview::History do
       "@href"           => "/v3/repo/#{repo.id}/overview/history",
       "@representation" => "standard",
       "history"         => {
-          "builds"  => 4,
-          "minutes" => 345600
+        "builds"  => 4,
+        "minutes" => 345600
+      }
+    }}
+  end
+
+  describe "private repository, not authenticated" do
+    before  { repo.update_attribute(:private, true)             }
+    before  { get("/v3/repo/#{repo.id}/overview/history") }
+    before  { repo.update_attribute(:private, false)            }
+    example { expect(last_response).to be_not_found             }
+    example { expect(parsed_body).to be == {
+      "@type"         => "error",
+      "error_type"    => "not_found",
+      "error_message" => "repository not found (or insufficient access)",
+      "resource_type" => "repository"
+    }}
+  end
+
+  describe "empty private repository, authenticated as user with access" do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                              }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"}                                                     }
+    before        { Travis::API::V3::Models::Build.where(repository_id: repo.id).each do |build| build.destroy end }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)     }
+    before        { repo.update_attribute(:private, true)                                                          }
+    before        { get("/v3/repo/#{repo.id}/overview/history", {}, headers)                                 }
+    after         { repo.update_attribute(:private, false)                                                         }
+    example       { expect(last_response).to be_ok                                                                 }
+    example       { expect(parsed_body).to be == {
+      "@type"                => "overview",
+      "@href"                => "/v3/repo/#{repo.id}/overview/history",
+      "@representation"      => "standard",
+      "history"         => {
+        "builds"  => 0,
+        "minutes" => 0
       }
     }}
   end
