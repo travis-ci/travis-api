@@ -1,6 +1,6 @@
 require 'travis/api/app'
 require 'travis/api/workers/build_cancellation'
-require 'travis/api/workers/build_restart'
+require 'travis/api/enqueue/services/enqueue_build'
 
 class Travis::Api::App
   class Endpoint
@@ -54,12 +54,8 @@ class Travis::Api::App
           status 400
           result = false
         else
-
-          ::Sidekiq::Client.push(
-                'queue'   => 'hub',
-                'class'   => 'Travis::Hub::Sidekiq::Worker',
-                'args'    => ["build:restart", {id: params[:id], user_id: current_user.id}]
-              )
+          payload = {id: params[:id], user_id: current_user.id}
+          Travis::Enqueue::Services::EnqueueBuild.push("build:restart", payload)
 
           status 202
           result = true

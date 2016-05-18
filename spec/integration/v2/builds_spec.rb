@@ -119,13 +119,13 @@ describe 'Builds' do
       end
 
       it 'restarts the build' do
-        Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
+        Travis::Enqueue::Services::EnqueueBuild.expects(:push).with("build:restart", {id: build.id.to_s, user_id: user.id})
         response = post "/builds/#{build.id}/restart", {}, headers
         response.status.should == 202
       end
 
       it 'sends the correct response body' do
-        Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
+        Travis::Enqueue::Services::EnqueueBuild.expects(:push).with("build:restart", {id: build.id.to_s, user_id: user.id})
         response = post "/builds/#{build.id}/restart", {}, headers
         body = JSON.parse(response.body)
         body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}

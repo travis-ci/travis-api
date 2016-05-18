@@ -4,15 +4,14 @@ require 'multi_json'
 module Travis
   module Sidekiq
     class BuildRestart
-      include ::Sidekiq::Worker
-      sidekiq_options queue: :hub
+      class ProcessingError < StandardError; end
 
-      def perform(payload)
-        ::Sidekiq::Client.push(
-              'queue'   => 'hub',
-              'class'   => 'Travis::Hub::Sidekiq::Worker',
-              'args'    => ["build:restart", payload]
-            )
+      include ::Sidekiq::Worker
+      sidekiq_options queue: :build_restarts
+
+      def perform(data)
+        user = User.find(data['user_id'])
+        Travis.service(:reset_model, user, build_id: data['id']).run
       end
 
     end
