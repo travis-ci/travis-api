@@ -15,6 +15,11 @@ class Travis::Api::App
     options // do
       headers['Access-Control-Allow-Methods'] = "HEAD, GET, POST, PATCH, PUT, DELETE"
       headers['Access-Control-Allow-Headers'] = "Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent, Travis-API-Version"
+
+      # cache OPTIONS for 24 hours to avoid excessive preflight requests and speed up access
+      # browsers might still limit this value to 10 minutes, see caveats
+      # http://stackoverflow.com/a/12021982
+      headers['Access-Control-Max-Age'] = "86400"
     end
   end
 end
