@@ -46,5 +46,9 @@ describe Travis::Api::App::Cors do
     it 'sets Access-Control-Allow-Headers' do
       headers['Access-Control-Allow-Headers'].should == "Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent, Travis-API-Version"
     end
+
+    it 'sets Access-Control-Max-Age' do
+      headers['Access-Control-Max-Age'].should == "86400"
+    end
   end
 end
