@@ -118,17 +118,36 @@ describe 'Builds' do
         build.update_attribute(:state, 'passed')
       end
 
-      it 'restarts the build' do
-        Travis::Enqueue::Services::EnqueueBuild.expects(:push).with("build:restart", {id: build.id.to_s, user_id: user.id})
-        response = post "/builds/#{build.id}/restart", {}, headers
-        response.status.should == 202
+      describe 'Enqueues restart event to the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
+
+        it 'restarts the build' do
+          Travis::Enqueue::Services::EnqueueBuild.expects(:push).with("build:restart", {id: build.id.to_s, user_id: user.id})
+          response = post "/builds/#{build.id}/restart", {}, headers
+          response.status.should == 202
+        end
+
+        it 'sends the correct response body' do
+          Travis::Enqueue::Services::EnqueueBuild.expects(:push).with("build:restart", {id: build.id.to_s, user_id: user.id})
+          response = post "/builds/#{build.id}/restart", {}, headers
+          body = JSON.parse(response.body)
+          body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
+        end
       end
 
-      it 'sends the correct response body' do
-        Travis::Enqueue::Services::EnqueueBuild.expects(:push).with("build:restart", {id: build.id.to_s, user_id: user.id})
-        response = post "/builds/#{build.id}/restart", {}, headers
-        body = JSON.parse(response.body)
-        body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
+      describe 'Restart from the Core' do
+        it 'restarts the build' do
+          Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
+          response = post "/builds/#{build.id}/restart", {}, headers
+          response.status.should == 202
+        end
+
+        it 'sends the correct response body' do
+          Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
+          response = post "/builds/#{build.id}/restart", {}, headers
+          body = JSON.parse(response.body)
+          body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
+        end
       end
     end
   end

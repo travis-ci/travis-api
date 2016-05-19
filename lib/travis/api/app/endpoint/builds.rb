@@ -1,5 +1,6 @@
 require 'travis/api/app'
 require 'travis/api/workers/build_cancellation'
+require 'travis/api/workers/build_restart'
 require 'travis/api/enqueue/services/enqueue_build'
 
 class Travis::Api::App
@@ -54,8 +55,12 @@ class Travis::Api::App
           status 400
           result = false
         else
-          payload = {id: params[:id], user_id: current_user.id}
-          Travis::Enqueue::Services::EnqueueBuild.push("build:restart", payload)
+          if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
+            payload = {id: params[:id], user_id: current_user.id}
+            Travis::Enqueue::Services::EnqueueBuild.push("build:restart", payload)
+          else
+            Travis::Sidekiq::BuildRestart.perform_async(id: params[:id], user_id: current_user.id)
+          end
 
           status 202
           result = true
