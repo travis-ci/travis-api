@@ -122,13 +122,13 @@ describe 'Builds' do
         before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
 
         it 'restarts the build' do
-          Travis::Enqueue::Services::EnqueueBuild.expects(:push).with("build:restart", {id: build.id.to_s, user_id: user.id})
+          ::Sidekiq::Client.expects(:push)
           response = post "/builds/#{build.id}/restart", {}, headers
           response.status.should == 202
         end
 
         it 'sends the correct response body' do
-          Travis::Enqueue::Services::EnqueueBuild.expects(:push).with("build:restart", {id: build.id.to_s, user_id: user.id})
+          ::Sidekiq::Client.expects(:push)
           response = post "/builds/#{build.id}/restart", {}, headers
           body = JSON.parse(response.body)
           body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
