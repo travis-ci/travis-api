@@ -1,10 +1,17 @@
 module Travis::API::V3
   class Queries::Repositories < Query
     params :active, :private, :starred, prefix: :repository
-    sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active), :'default_branch.last_build' => 'builds.started_at'
+
+    # TODO this looks like a leftover from a mergeconflict, maybe?
+    # see lib/travis/api/v3/query.rb#58
+    #
+    # sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active),
+    #             :'default_branch.last_build' => 'builds.started_at'
+
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active),
                 :'default_branch.last_build' => 'builds.started_at',
-                :current_build => "current_build_id %{order} NULLS LAST"
+                :'default_branch.current_build' => 'builds.started_at',
+                :current_build => 'current_build_id %{order} NULLS LAST'
 
     def for_member(user, **options)
       all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
