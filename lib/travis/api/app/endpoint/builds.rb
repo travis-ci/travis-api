@@ -49,7 +49,6 @@ class Travis::Api::App
 
       post '/:id/restart' do
         Metriks.meter("api.request.restart_build").mark
-
         if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
           service = Travis::Enqueue::Services::EnqueueBuild.new(current_user, params[:id])
           if !service.accept?

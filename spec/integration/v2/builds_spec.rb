@@ -113,7 +113,6 @@ describe 'Builds' do
 
     context 'when build passed' do
       before do
-        Travis::Sidekiq::BuildCancellation.stubs(:perform_async)
         build.matrix.each { |j| j.update_attribute(:state, 'passed') }
         build.update_attribute(:state, 'passed')
       end
@@ -136,6 +135,8 @@ describe 'Builds' do
       end
 
       describe 'Restart from the Core' do
+        before { Travis::Sidekiq::BuildRestart.stubs(:perform_async) }
+
         it 'restarts the build' do
           Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
           response = post "/builds/#{build.id}/restart", {}, headers
