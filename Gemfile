@@ -1,11 +1,11 @@
 source 'https://rubygems.org'
 gemspec
 
-ruby '2.1.7' if ENV.key?('DYNO')
+ruby '2.2.3' if ENV.key?('DYNO')
 
 gem 's3',              github: 'travis-ci/s3'
 
-gem 'travis-core',     github: 'travis-ci/travis-core'
+gem 'travis-core',     path:   'vendor'
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-amqp',     github: 'travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'

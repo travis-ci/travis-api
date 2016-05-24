@@ -28,7 +28,6 @@ describe Travis::Api::V2::Http::Jobs do
     data['commits'].first.should == {
       'id' => 1,
       'sha' => '62aae5f70ceee39123ef',
-      'message' => 'the commit message',
       'branch' => 'master',
       'message' => 'the commit message',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),

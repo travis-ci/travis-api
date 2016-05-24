@@ -32,7 +32,6 @@ describe Travis::Api::V2::Http::Job do
       'message' => 'the commit message',
       'branch' => 'master',
       'branch_is_default' => true,
-      'message' => 'the commit message',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
       'committer_name' => 'Sven Fuchs',
       'committer_email' => 'svenfuchs@artweb-design.de',

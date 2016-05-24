@@ -47,31 +47,6 @@ GIT
     travis-amqp (0.0.1)
 
 GIT
-  remote: git://github.com/travis-ci/travis-core.git
-  revision: 13061d1474d7b4a71cf7889216410ec3c1d43304
-  specs:
-    travis-core (0.0.1)
-      actionmailer (~> 3.2.19)
-      activerecord (~> 3.2.19)
-      coder (~> 0.4.0)
-      data_migrations (~> 0.0.1)
-      gh
-      google-api-client (~> 0.9.4)
-      hashr
-      metriks (~> 0.9.7)
-      multi_json
-      pusher (~> 0.14.0)
-      railties (~> 3.2.19)
-      rake
-      redis (~> 3.0)
-      rollout (~> 1.1.0)
-      s3 (~> 0.3)
-      simple_states (~> 1.0.0)
-      thor
-      travis-config (~> 0.1.0)
-      virtus (~> 1.0.0)
-
-GIT
   remote: git://github.com/travis-ci/travis-migrations.git
   revision: bf360857ef7830f7e3ff12de181ab58c33fb29f1
   specs:
@@ -112,6 +87,30 @@ PATH
       travis-core
       travis-support
       useragent
+
+PATH
+  remote: vendor
+  specs:
+    travis-core (0.0.1)
+      actionmailer (~> 3.2.19)
+      activerecord (~> 3.2.19)
+      coder (~> 0.4.0)
+      data_migrations (~> 0.0.1)
+      gh
+      google-api-client (~> 0.9.4)
+      hashr
+      metriks (~> 0.9.7)
+      multi_json
+      pusher (~> 0.14.0)
+      railties (~> 3.2.19)
+      rake
+      redis (~> 3.0)
+      rollout (~> 1.1.0)
+      s3 (~> 0.3)
+      simple_states (~> 1.0.0)
+      thor
+      travis-config (~> 0.1.0)
+      virtus (~> 1.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -428,4 +427,4 @@ DEPENDENCIES
   yard-sinatra!
 
 BUNDLED WITH
-   1.11.2
+   1.12.0.pre.1
