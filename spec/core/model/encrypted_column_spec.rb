@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_core'
 
 class Travis::Model < ActiveRecord::Base
   describe EncryptedColumn do
