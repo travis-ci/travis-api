@@ -1,0 +1,76 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.travis-ci.org/user/125283
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Travis
+      Authorization:
+      - token D0nqa10GPgIE0Q7rlEIJyQ
+      Travis-Api-Version:
+      - '3'
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      Server:
+      - nginx
+      Date:
+      - Tue, 01 Mar 2016 17:17:32 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Expose-Headers:
+      - Content-Type, Cache-Control, Expires, Etag, Last-Modified
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Oauth-Scopes:
+      - public,private
+      Vary:
+      - Accept-Encoding
+      Cache-Control:
+      - private
+      X-Rack-Cache:
+      - miss
+      Via:
+      - 1.1 vegur
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "@type": "user",
+          "@href": "/user/125283",
+          "@representation": "standard",
+          "@permissions": {
+            "read": true,
+            "sync": true
+          },
+          "id": 125283,
+          "login": "sinthetix",
+          "name": "Aly Fulton",
+          "github_id": 5157195,
+          "avatar_url": "https://0.gravatar.com/avatar/4e53b07ba0c0992fb7615e0c3279b108",
+          "is_syncing": false,
+          "synced_at": "2016-03-01T08:15:00Z"
+        }
+    http_version: 
+  recorded_at: Tue, 01 Mar 2016 17:17:32 GMT
+recorded_with: VCR 3.0.1
