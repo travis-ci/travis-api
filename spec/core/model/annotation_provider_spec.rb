@@ -6,7 +6,7 @@ describe AnnotationProvider do
   let(:provider) { Factory(:annotation_provider) }
 
 
-  describe '.authenticate_provider' do
+  describe '.authenticate_provider', truncation: true do
     context 'given a valid username and key' do
       it 'authenticates the provider' do
         described_class.authenticate_provider(provider.api_username, provider.api_key).should eq(provider)

@@ -312,7 +312,7 @@ GEM
     rspec-its (1.0.1)
       rspec-core (>= 2.99.0.beta1)
       rspec-expectations (>= 2.99.0.beta1)
-    rspec-mocks (2.99.2)
+    rspec-mocks (2.99.4)
     sentry-raven (0.15.3)
       faraday (>= 0.7.6)
     sidekiq (3.3.0)
@@ -425,3 +425,6 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
+
+BUNDLED WITH
+   1.12.4

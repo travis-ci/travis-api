@@ -1,6 +1,6 @@
 require 'spec_helper_core'
 
-describe User do
+describe User, truncation: true do
   include Support::ActiveRecord
 
   let(:user)    { Factory(:user, :github_oauth_token => 'token') }

@@ -1,10 +1,10 @@
 require 'spec_helper_core'
 
-describe Repository do
+describe Repository, truncation: true do
   include Support::ActiveRecord
 
   describe '#last_completed_build' do
-    let(:repo)   {  Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
+    let(:repo)   { Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
     let(:build1) { Factory(:build, finished_at: 1.hour.ago, state: :passed) }
     let(:build2) { Factory(:build, finished_at: Time.now, state: :failed) }
 

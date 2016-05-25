@@ -1,6 +1,6 @@
 require 'spec_helper_core'
 
-describe Build::UpdateBranch do
+describe Build::UpdateBranch, truncation: true do
   include Support::ActiveRecord
 
   let(:request) { Factory.create(:request, event_type: event_type) }
