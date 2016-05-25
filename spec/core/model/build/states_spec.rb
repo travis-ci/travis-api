@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_core'
 
 class BuildMock
   include Build::States

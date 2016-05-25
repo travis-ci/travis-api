@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_core'
 
 describe Request::Branches do
   include Travis::Testing::Stubs

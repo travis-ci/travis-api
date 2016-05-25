@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_core'
 
 describe User::Oauth do
   include Support::ActiveRecord

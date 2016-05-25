@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_core'
 
 describe Build::UpdateBranch do
   include Support::ActiveRecord
