@@ -22,11 +22,8 @@ module Support
 
     included do
       before :each, truncation: true do
-        DatabaseCleaner.strategy = :truncation
-      end
-
-      after :each do
         DatabaseCleaner.clean
+        DatabaseCleaner.strategy = :truncation
       end
     end
   end
