@@ -14,6 +14,7 @@ RSpec.describe User do
 
   context 'the user id is invalid' do
       # TODO: this
+      # should this just be tied in with no user with id?
   end
 
   context 'with unauthorized access' do
