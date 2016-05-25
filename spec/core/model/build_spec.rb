@@ -1,6 +1,6 @@
 require 'spec_helper_core'
 
-describe Build do
+describe Build, truncation: true do
   include Support::ActiveRecord
 
   let(:repository) { Factory(:repository) }

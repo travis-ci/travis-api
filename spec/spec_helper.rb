@@ -80,27 +80,6 @@ RSpec.configure do |c|
       endpoint.superclass.direct_subclasses.delete(endpoint)
     end
   end
-    #included do
-      #before :suite do
-        #DatabaseCleaner.clean_with(:truncation)
-      #end
-
-      #before :each do
-        #DatabaseCleaner.strategy = :transaction
-      #end
-
-      #before(:each, :truncation => true) do
-        #DatabaseCleaner.strategy = :truncation
-      #end
-
-      #before :each do
-        #DatabaseCleaner.start
-      #end
-
-      #after :each do
-        #DatabaseCleaner.clean
-      #end
-    #end
 end
 
 # this keeps Model.inspect from exploding which happens for

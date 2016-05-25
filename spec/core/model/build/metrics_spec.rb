@@ -2,7 +2,11 @@ require 'spec_helper_core'
 
 class BuildMetricsMock
   include do
-    attr_accessor :state
+    attr_accessor :state, :request
+
+    def initialize(request)
+      @request = request
+    end
 
     def start(data = {})
       self.state = :started
@@ -12,16 +16,14 @@ class BuildMetricsMock
       Time.now
     end
 
-    def request
-      stub('request', created_at: Time.now - 60)
-    end
   end
 
   include Build::Metrics
 end
 
 describe Build::Metrics do
-  let(:build) { BuildMetricsMock.new }
+  let(:request) { stub('request', created_at: Time.now - 60) }
+  let(:build) { BuildMetricsMock.new(request) }
   let(:timer) { stub('meter', :update) }
 
   before :each do

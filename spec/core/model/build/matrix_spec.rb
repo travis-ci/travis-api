@@ -393,7 +393,7 @@ describe Build, 'matrix' do
     yml
     }
 
-    describe :expand_matrix do
+    describe :expand_matrix, truncation: true do
       it 'does not expand on :os' do
         build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
         build.matrix.map(&:config).should == [
