@@ -1,4 +1,4 @@
-require 'spec_helper_core'
+require 'spec_helper'
 
 describe Build, 'matrix' do
   include Support::ActiveRecord

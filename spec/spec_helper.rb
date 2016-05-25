@@ -18,6 +18,7 @@ require 'travis/testing/matchers'
 require 'support'
 require 'support/matchers'
 require 'support/formats'
+require 'pry'
 
 
 Travis.logger = Logger.new(StringIO.new)
