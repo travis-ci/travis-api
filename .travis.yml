@@ -19,7 +19,3 @@ services:
 
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
-
-script:
-  - bundle exec rspec spec
-  - bundle exec rspec core_specs
