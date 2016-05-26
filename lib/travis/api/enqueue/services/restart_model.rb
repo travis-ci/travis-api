@@ -12,11 +12,13 @@ module Travis
         end
 
         def push(event, payload)
-          ::Sidekiq::Client.push(
-                'queue'   => 'hub',
-                'class'   => 'Travis::Hub::Sidekiq::Worker',
-                'args'    => [event, payload]
-              )
+          if current_user && target && accept?
+            ::Sidekiq::Client.push(
+                  'queue'   => 'hub',
+                  'class'   => 'Travis::Hub::Sidekiq::Worker',
+                  'args'    => [event, payload]
+                )
+          end
         end
 
         def accept?

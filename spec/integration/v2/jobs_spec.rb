@@ -274,24 +274,51 @@ describe 'Jobs' do
         response = post "/jobs/#{job.id}/restart", {}, headers
         response.status.should == 400
       end
+
+      context 'when enqueueing for the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
+
+        it 'responds with 400' do
+          response = post "/jobs/#{job.id}/restart", {}, headers
+          response.status.should == 400
+        end
+      end
     end
 
     context 'when job passed' do
-      before do
-        Travis::Sidekiq::JobCancellation.stubs(:perform_async)
-        job.update_attribute(:state, 'passed')
+      before { job.update_attribute(:state, 'passed') }
+
+      context 'Restart from travis-core' do
+        before { Travis::Sidekiq::JobCancellation.stubs(:perform_async) }
+
+        it 'restarts the job' do
+          Travis::Sidekiq::JobRestart.expects(:perform_async).with(id: job.id.to_s, user_id: user.id)
+          response = post "/jobs/#{job.id}/restart", {}, headers
+          response.status.should == 202
+        end
+        it 'sends the correct response body' do
+          Travis::Sidekiq::JobRestart.expects(:perform_async).with(id: job.id.to_s, user_id: user.id)
+          response = post "/jobs/#{job.id}/restart", {}, headers
+          body = JSON.parse(response.body)
+          body.should == {"result"=>true, "flash"=>[{"notice"=>"The job was successfully restarted."}]}
+        end
       end
 
-      it 'restarts the job' do
-        Travis::Sidekiq::JobRestart.expects(:perform_async).with(id: job.id.to_s, user_id: user.id)
-        response = post "/jobs/#{job.id}/restart", {}, headers
-        response.status.should == 202
-      end
-      it 'sends the correct response body' do
-        Travis::Sidekiq::JobRestart.expects(:perform_async).with(id: job.id.to_s, user_id: user.id)
-        response = post "/jobs/#{job.id}/restart", {}, headers
-        body = JSON.parse(response.body)
-        body.should == {"result"=>true, "flash"=>[{"notice"=>"The job was successfully restarted."}]}
+      context 'Enqueues restart event for the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
+
+        it 'restarts the job' do
+          ::Sidekiq::Client.expects(:push)
+          response = post "/jobs/#{job.id}/restart", {}, headers
+          response.status.should == 202
+        end
+        it 'sends the correct response body' do
+          ::Sidekiq::Client.expects(:push)
+          response = post "/jobs/#{job.id}/restart", {}, headers
+          body = JSON.parse(response.body)
+          body.should == {"result"=>true, "flash"=>[{"notice"=>"The job was successfully restarted."}]}
+        end
+
       end
     end
   end
