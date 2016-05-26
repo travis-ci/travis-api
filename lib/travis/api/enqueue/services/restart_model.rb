@@ -2,12 +2,13 @@ module Travis
   module Enqueue
     module Services
 
-      class EnqueueBuild
-        attr_reader :current_user, :build
+      class RestartModel
+        attr_reader :current_user, :target
 
-        def initialize(current_user, build_id)
+        def initialize(current_user, params)
           @current_user = current_user
-          @build = Build.find(build_id)
+          @params = params
+          target
         end
 
         def push(event, payload)
@@ -24,20 +25,32 @@ module Travis
 
         def messages
           messages = []
-          messages << { notice: "The build was successfully restarted." } if accept?
+          messages << { notice: "The #{type} was successfully restarted." } if accept?
           messages << { error:  'You do not seem to have sufficient permissions.' } unless permission?
-          messages << { error:  "This build currently can not be restarted." } unless resetable?
+          messages << { error:  "This #{type} currently can not be restarted." } unless resetable?
           messages
+        end
+
+        def type
+          @type ||= @params[:build_id] ? :build : :job
+        end
+
+        def target
+          if type == :build
+            @target = Build.find(@params[:build_id])
+          else
+            @target = Job.find(@params[:job_id])
+          end
         end
 
         private
 
           def permission?
-            current_user.permission?(required_role, repository_id: build.repository_id)
+            current_user.permission?(required_role, repository_id: target.repository_id)
           end
 
           def resetable?
-            build.resetable?
+            target.resetable?
           end
 
           def required_role

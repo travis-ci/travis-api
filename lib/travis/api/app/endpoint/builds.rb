@@ -1,7 +1,7 @@
 require 'travis/api/app'
 require 'travis/api/workers/build_cancellation'
 require 'travis/api/workers/build_restart'
-require 'travis/api/enqueue/services/enqueue_build'
+require 'travis/api/enqueue/services/restart_model'
 
 class Travis::Api::App
   class Endpoint
@@ -50,7 +50,7 @@ class Travis::Api::App
       post '/:id/restart' do
         Metriks.meter("api.request.restart_build").mark
         if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
-          service = Travis::Enqueue::Services::EnqueueBuild.new(current_user, params[:id])
+          service = Travis::Enqueue::Services::RestartModel.new(current_user, { build_id: params[:id] })
           if !service.accept?
             status 400
             result = false
