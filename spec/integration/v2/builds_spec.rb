@@ -113,22 +113,42 @@ describe 'Builds' do
 
     context 'when build passed' do
       before do
-        Travis::Sidekiq::BuildCancellation.stubs(:perform_async)
         build.matrix.each { |j| j.update_attribute(:state, 'passed') }
         build.update_attribute(:state, 'passed')
       end
 
-      it 'restarts the build' do
-        Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
-        response = post "/builds/#{build.id}/restart", {}, headers
-        response.status.should == 202
+      describe 'Enqueues restart event to the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
+
+        it 'restarts the build' do
+          ::Sidekiq::Client.expects(:push)
+          response = post "/builds/#{build.id}/restart", {}, headers
+          response.status.should == 202
+        end
+
+        it 'sends the correct response body' do
+          ::Sidekiq::Client.expects(:push)
+          response = post "/builds/#{build.id}/restart", {}, headers
+          body = JSON.parse(response.body)
+          body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
+        end
       end
 
-      it 'sends the correct response body' do
-        Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
-        response = post "/builds/#{build.id}/restart", {}, headers
-        body = JSON.parse(response.body)
-        body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
+      describe 'Restart from the Core' do
+        before { Travis::Sidekiq::BuildRestart.stubs(:perform_async) }
+
+        it 'restarts the build' do
+          Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
+          response = post "/builds/#{build.id}/restart", {}, headers
+          response.status.should == 202
+        end
+
+        it 'sends the correct response body' do
+          Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
+          response = post "/builds/#{build.id}/restart", {}, headers
+          body = JSON.parse(response.body)
+          body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
+        end
       end
     end
   end

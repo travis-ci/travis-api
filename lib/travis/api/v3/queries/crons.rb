@@ -30,6 +30,8 @@ module Travis::API::V3
       class_name, queue = Query.sidekiq_queue(:build_request)
       ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => [{type: 'cron'.freeze, payload: JSON.dump(payload), credentials: {}}])
       true
+    rescue => e
+      puts e.message, e.backtrace
     end
   end
 end
