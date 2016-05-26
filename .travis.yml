@@ -22,3 +22,4 @@ before_script:
 
 script:
   - bundle exec rspec spec
+  - bundle exec rspec core_specs
