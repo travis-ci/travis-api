@@ -1,6 +1,7 @@
 require 'travis/api/app'
 require 'travis/api/workers/job_cancellation'
 require 'travis/api/workers/job_restart'
+require 'travis/api/enqueue/services/restart_model'
 
 class Travis::Api::App
   class Endpoint
@@ -55,15 +56,27 @@ class Travis::Api::App
 
       post '/:id/restart' do
         Metriks.meter("api.request.restart_job").mark
-
-        service = self.service(:reset_model, job_id: params[:id])
-        if !service.accept?
-          status 400
-          result = false
+        if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
+          service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
+          if !service.accept?
+            status 400
+            result = false
+          else
+            payload = {id: params[:id], user_id: current_user.id}
+            service.push("job:restart", payload)
+            status 202
+            result = true
+          end
         else
-          Travis::Sidekiq::JobRestart.perform_async(id: params[:id], user_id: current_user.id)
-          status 202
-          result = true
+          service = self.service(:reset_model, job_id: params[:id])
+          if !service.accept?
+            status 400
+            result = false
+          else
+            Travis::Sidekiq::JobRestart.perform_async(id: params[:id], user_id: current_user.id)
+            status 202
+            result = true
+          end
         end
         respond_with(result: result, flash: service.messages)
       end
