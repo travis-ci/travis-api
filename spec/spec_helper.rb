@@ -15,11 +15,8 @@ require 'travis/testing'
 require 'travis/testing/scenario'
 require 'travis/testing/factories'
 require 'travis/testing/matchers'
-require 'support'
 require 'support/matchers'
 require 'support/formats'
-require 'pry'
-
 
 Travis.logger = Logger.new(StringIO.new)
 Travis::Api::App.setup
@@ -60,19 +57,17 @@ RSpec.configure do |c|
   c.include TestHelpers
 
   c.before :suite do
+    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with :truncation
     Scenario.default
   end
 
   c.before :each do
-    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.start
     ::Redis.connect(url: Travis.config.redis.url).flushdb
     Travis.config.oauth2 ||= {}
     Travis.config.oauth2.scope = "user:email,public_repo"
     set_app Travis::Api::App.new
-    Travis::Github.stubs(:scopes_for).returns(['public_repo', 'user'])
-    GH.reset
   end
 
   c.after :each do
@@ -80,15 +75,6 @@ RSpec.configure do |c|
     custom_endpoints.each do |endpoint|
       endpoint.superclass.direct_subclasses.delete(endpoint)
     end
-  end
-end
-
-# this keeps Model.inspect from exploding which happens for
-# expected method calls in tests that do not use a db connection
-require 'active_record'
-ActiveRecord::Base.class_eval do
-  def self.inspect
-    super
   end
 end
 
