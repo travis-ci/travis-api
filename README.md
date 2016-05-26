@@ -59,7 +59,7 @@ $ popd
 
 ### Run tests
 ```sh-session
-$ bundle exec rspec
+$ bundle exec rake
 ```
 ### Run the server
 ```sh-session

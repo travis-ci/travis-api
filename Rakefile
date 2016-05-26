@@ -9,6 +9,21 @@ namespace :db do
   end
 end
 
+begin
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new(:spec)
+
+  task :core_specs do
+    RSpec::Core::RakeTask.new(:core_spec) do |t|
+      t.pattern = 'core_specs/**{,/*/**}/*_spec.rb'
+    end
+    Rake::Task["core_spec"].execute
+  end
+
+  task :default => [:spec, :core_specs]
+rescue LoadError
+end
+
 desc "generate gemspec"
 task 'travis-api.gemspec' do
   content = File.read 'travis-api.gemspec'
