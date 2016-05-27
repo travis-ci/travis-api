@@ -32,7 +32,7 @@ include Mocha::API
 RSpec.configure do |c|
   c.mock_with :mocha
   c.alias_example_to :fit, :focused => true
-  c.filter_run :focused => true
+  c.filter_run :focus => true
   c.run_all_when_everything_filtered = true
   # c.backtrace_clean_patterns.clear
 

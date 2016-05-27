@@ -210,7 +210,7 @@ describe Job do
 
       job = Job.new
       job.commit = commit
-      job.pull_request?.should be_true
+      job.pull_request?.should be true
     end
   end
 

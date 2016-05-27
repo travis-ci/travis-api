@@ -11,7 +11,7 @@ describe Build, 'matrix' do
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started)
 
-          build.matrix_finished?.should_not be_true
+          build.matrix_finished?.should_not be true
         end
       end
 
@@ -21,7 +21,7 @@ describe Build, 'matrix' do
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started, allow_failure: true)
 
-          build.matrix_finished?.should_not be_true
+          build.matrix_finished?.should_not be true
         end
       end
 
@@ -31,7 +31,7 @@ describe Build, 'matrix' do
           build.matrix[0].update_attributes!(state: :passed)
           build.matrix[1].update_attributes!(state: :passed)
 
-          build.matrix_finished?.should be_true
+          build.matrix_finished?.should be true
         end
       end
     end
@@ -42,7 +42,7 @@ describe Build, 'matrix' do
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started)
 
-          build.matrix_finished?.should be_false
+          build.matrix_finished?.should be false
         end
       end
 
@@ -52,7 +52,7 @@ describe Build, 'matrix' do
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started, allow_failure: true)
 
-          build.matrix_finished?.should be_true
+          build.matrix_finished?.should be true
         end
       end
 
@@ -62,7 +62,7 @@ describe Build, 'matrix' do
           build.matrix[0].update_attributes!(state: :passed)
           build.matrix[1].update_attributes!(state: :passed)
 
-          build.matrix_finished?.should be_true
+          build.matrix_finished?.should be true
         end
       end
     end

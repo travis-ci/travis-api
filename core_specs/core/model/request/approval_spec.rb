@@ -14,38 +14,38 @@ describe Request::Approval do
   describe 'config_accepted?' do
     it 'approves the build when .travis.yml is missing, but builds with .travis.yml are allowed' do
       request.config['.result'] = 'not_found'
-      approval.config_accepted?.should be_true
+      approval.config_accepted?.should be true
     end
 
     it 'does not approve the build if .travis.yml is missing and builds without it are not allowed' do
       request.repository.stubs(:builds_only_with_travis_yml?).returns(true)
       request.config['.result'] = 'not_found'
 
-      approval.config_accepted?.should be_false
+      approval.config_accepted?.should be false
       approval.message.should == '.travis.yml is missing and builds without .travis.yml are disabled'
     end
 
     it 'approves the build when .travis.yml is present' do
       request.config['.result'] = 'configured'
-      approval.config_accepted?.should be_true
+      approval.config_accepted?.should be true
     end
   end
 
   describe 'branch_accepted?' do
     it 'does not accept a request that belongs to the github_pages branch' do
       request.commit.stubs(:branch).returns('gh_pages')
-      approval.branch_accepted?.should be_false
+      approval.branch_accepted?.should be false
     end
 
     it 'accepts a request that belongs to the gh-pages branch if it\'s specified in branches:only' do
       request.commit.stubs(:branch).returns('gh_pages')
       request.config['branches'] = { 'only' => ['gh-pages'] }
-      approval.branch_accepted?.should be_true
+      approval.branch_accepted?.should be_truthy
     end
 
     it "doesn't fail when the branch configuration is an array" do
       request.config['branches'] = [{ 'only' => ['gh-pages'] }]
-      approval.branch_accepted?.should be_true
+      approval.branch_accepted?.should be true
     end
   end
 
@@ -162,109 +162,111 @@ describe Request::Approval do
   describe 'skipped?' do
     it 'returns true when the commit message contains [ci skip]' do
       request.commit.stubs(:message).returns 'lets party like its 1999 [ci skip]'
-      approval.send(:skipped?).should be_true
+      approval.send(:skipped?).should be true
     end
   end
 
   describe 'github_pages?' do
     it 'returns true for a branch named gh-pages' do
       request.commit.stubs(:branch).returns 'gh-pages'
-      approval.send(:github_pages?).should be_true
+      approval.send(:github_pages?).should be_truthy
     end
 
     it 'returns true for a branch named gh_pages' do
       request.commit.stubs(:branch).returns 'gh_pages'
-      approval.send(:github_pages?).should be_true
+      approval.send(:github_pages?).should be_truthy
     end
 
     it 'returns true when a PR is for gh_pages' do
       request.commit.stubs(:ref).returns 'refs/pulls/1/merge'
       request.commit.stubs(:branch).returns 'gh_pages'
-      approval.send(:github_pages?).should be_true
+      approval.send(:github_pages?).should be_truthy
     end
 
     it 'returns false for a branch named master' do
       commit.stubs(:branch).returns 'master'
-      approval.send(:github_pages?).should be_false
+      approval.send(:github_pages?).should be_falsy
     end
   end
 
   describe 'included_repository?' do
     it 'returns true if the repository is an included repository' do
       request.repository.stubs(:slug).returns 'rails/rails'
-      approval.send(:included_repository?).should be_true
+      approval.send(:included_repository?).should be true
     end
 
     it 'returns true if the repository is an included repository with rule as a string' do
       Travis.config.repository_filter.stubs(:include).returns(["rails\\/rails"])
       request.repository.stubs(:slug).returns 'rails/rails'
-      approval.send(:included_repository?).should be_true
+      approval.send(:included_repository?).should be true
     end
 
     it 'returns false if the repository is not included' do
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
-      approval.send(:included_repository?).should be_false
+      approval.send(:included_repository?).should be false
     end
 
     it 'returns false if the repository is not included with rule as a string' do
       Travis.config.repository_filter.stubs(:include).returns(["rails\\/rails"])
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
-      approval.send(:included_repository?).should be_false
+      approval.send(:included_repository?).should be false
     end
   end
 
   describe 'excluded_repository?' do
     it 'returns true if the repository is an excluded repository' do
       request.repository.stubs(:slug).returns 'josh/rails'
-      approval.send(:excluded_repository?).should be_true
+      approval.send(:excluded_repository?).should be true
     end
 
     it 'returns false if the repository is not excluded' do
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
-      approval.send(:excluded_repository?).should be_false
+      approval.send(:excluded_repository?).should be false
     end
 
     it 'returns true if the repository is an excluded repository with rule as a string' do
       Travis.config.repository_filter.stubs(:exclude).returns(["\\/rails$"])
       request.repository.stubs(:slug).returns 'josh/rails'
-      approval.send(:excluded_repository?).should be_true
+      approval.send(:excluded_repository?).should be true
     end
 
     it 'returns false if the repository is not excluded with rule as a string' do
       Travis.config.repository_filter.stubs(:exclude).returns(["\\/rails$"])
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
-      approval.send(:excluded_repository?).should be_false
+      approval.send(:excluded_repository?).should be false
     end
   end
 
   describe 'enabled_in_settings?' do
     it 'returns true if a request is an api request' do
       request.stubs(:api_request?).returns(true)
-      approval.enabled_in_settings?.should be_true
+      approval.enabled_in_settings?.should be true
     end
 
     it 'returns true if pull requests are enabled and a request is a pull request' do
       request.stubs(:pull_request?).returns(true)
       approval.stubs(:build_pull_requests?).returns(true)
-      approval.enabled_in_settings?.should be_true
+      approval.enabled_in_settings?.should be true
     end
 
     it 'returns true if pushes are enabled and a request is a push' do
       request.stubs(:pull_request?).returns(false)
       approval.stubs(:build_pushes?).returns(true)
-      approval.enabled_in_settings?.should be_true
+      approval.enabled_in_settings?.should be true
+
     end
 
     it 'returns false if pull requests are disabled and a request is a pull request' do
       request.stubs(:pull_request?).returns(true)
       approval.stubs(:build_pull_requests?).returns(false)
-      approval.enabled_in_settings?.should be_false
+      approval.enabled_in_settings?.should be false
     end
 
     it 'returns false if pushes are disabled and a request is a push' do
       request.stubs(:pull_request?).returns(false)
       approval.stubs(:build_pushes?).returns(false)
-      approval.enabled_in_settings?.should be_false
+      approval.enabled_in_settings?.should be false
+
     end
   end
 end

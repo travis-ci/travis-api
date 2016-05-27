@@ -53,7 +53,7 @@ describe Build::States do
       let(:data) { WORKER_PAYLOADS['job:test:receive'] }
 
       it 'does not denormalize attributes' do
-        build.denormalize?('job:test:receive').should be_false
+        build.denormalize?('job:test:receive').should be false
       end
 
       describe 'when the build is not already received' do
