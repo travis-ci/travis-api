@@ -53,8 +53,8 @@ class Travis::Api::App
           status 422
           respond_with json
         else
-          if service.respond_to?(:enqueue_to_hub)
-            service.enqueue_to_hub
+          if service.respond_to?(:push)
+            service.push
           else
             Travis::Sidekiq::JobCancellation.perform_async(id: params[:id], user_id: current_user.id, source: 'api')
           end

@@ -20,33 +20,15 @@ module Travis
           messages
         end
 
-        def enqueue_to_hub
+        def push
           # target may have been retrieved with a :join query, so we need to reset the readonly status
           if can_cancel?
-            target.send(:instance_variable_set, :@readonly, false)
-            target.cancel!
-
-            if type == :build
-              push_matrix(@params)
-            else
-              push(@params, target)
-            end
+            ::Sidekiq::Client.push(
+                  'queue'   => 'hub',
+                  'class'   => 'Travis::Hub::Sidekiq::Worker',
+                  'args'    => ["#{type}:cancel", @params]
+                )
           end
-        end
-
-        def push_matrix(payload)
-          target.matrix.each do |job|
-            push(payload, job)
-          end
-        end
-
-        def push(payload, job)
-          Travis.logger.info("Publishing cancel_job message to worker.commands queue for Job##{job.id}")
-          ::Sidekiq::Client.push(
-                'queue'   => 'hub',
-                'class'   => 'Travis::Hub::Sidekiq::Worker',
-                'args'    => ["#{type}:cancel", payload]
-              )
         end
 
         def type
@@ -70,7 +52,6 @@ module Travis
         end
 
       end
-
     end
   end
 end

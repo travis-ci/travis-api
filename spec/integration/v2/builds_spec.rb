@@ -122,12 +122,12 @@ describe 'Builds' do
         end
 
         it 'cancels the build' do
-          ::Sidekiq::Client.expects(:push).times(4)
+          ::Sidekiq::Client.expects(:push)
           post "/builds/#{build.id}/cancel", {}, headers
         end
 
         it 'responds with 204' do
-          ::Sidekiq::Client.expects(:push).times(4)
+          ::Sidekiq::Client.expects(:push)
           response = post "/builds/#{build.id}/cancel", {}, headers
           response.status.should == 204
         end
