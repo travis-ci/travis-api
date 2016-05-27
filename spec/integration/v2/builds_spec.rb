@@ -63,6 +63,16 @@ describe 'Builds' do
         response = post "/builds/#{build.id}/cancel", {}, headers
         response.status.should == 403
       end
+
+      context 'and enqueues cancel event for the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
+
+        it 'responds with 403' do
+          response = post "/builds/#{build.id}/cancel", {}, headers
+          response.status.should == 403
+        end
+
+      end
     end
 
     context 'when build is not cancelable' do
@@ -72,23 +82,55 @@ describe 'Builds' do
         response = post "/builds/#{build.id}/cancel", {}, headers
         response.status.should == 422
       end
+
+      context 'and enqueues cancel event for the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
+
+        it 'responds with 422' do
+          response = post "/builds/#{build.id}/cancel", {}, headers
+          response.status.should == 422
+        end
+      end
     end
 
     context 'when build can be canceled' do
       before do
-        Travis::Sidekiq::BuildCancellation.stubs(:perform_async)
         build.matrix.each { |j| j.update_attribute(:state, 'created') }
         build.update_attribute(:state, 'created')
       end
 
-      it 'cancels the build' do
-        Travis::Sidekiq::BuildCancellation.expects(:perform_async).with( id: build.id.to_s, user_id: user.id, source: 'api')
-        post "/builds/#{build.id}/cancel", {}, headers
+      context 'from the Core' do
+        before { Travis::Sidekiq::BuildCancellation.stubs(:perform_async) }
+
+        it 'cancels the build' do
+          Travis::Sidekiq::BuildCancellation.expects(:perform_async).with( id: build.id.to_s, user_id: user.id, source: 'api')
+          post "/builds/#{build.id}/cancel", {}, headers
+        end
+
+        it 'responds with 204' do
+          response = post "/builds/#{build.id}/cancel", {}, headers
+          response.status.should == 204
+        end
       end
 
-      it 'responds with 204' do
-        response = post "/builds/#{build.id}/cancel", {}, headers
-        response.status.should == 204
+      context 'and enqueues cancel event for the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
+
+        before do
+          build.matrix.each { |j| j.update_attribute(:state, 'created') }
+          build.update_attribute(:state, 'created')
+        end
+
+        it 'cancels the build' do
+          ::Sidekiq::Client.expects(:push).times(4)
+          post "/builds/#{build.id}/cancel", {}, headers
+        end
+
+        it 'responds with 204' do
+          ::Sidekiq::Client.expects(:push).times(4)
+          response = post "/builds/#{build.id}/cancel", {}, headers
+          response.status.should == 204
+        end
       end
     end
   end

@@ -13,11 +13,6 @@ module Travis
           target
         end
 
-        def run
-          cancel
-        end
-        instrument :run
-
         def messages
           messages = []
           messages << { :notice => "The #{type} was successfully cancelled." } if can_cancel?
@@ -26,7 +21,7 @@ module Travis
           messages
         end
 
-        def cancel(payload)
+        def enqueue_to_hub(payload)
           # target may have been retrieved with a :join query, so we need to reset the readonly status
           if can_cancel?
             target.send(:instance_variable_set, :@readonly, false)
@@ -41,11 +36,9 @@ module Travis
         end
 
         def push_matrix(payload)
-
           target.matrix.each do |job|
             push(payload, job)
           end
-
         end
 
         def push(payload, job)
