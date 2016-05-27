@@ -4,12 +4,11 @@ module Travis
 
       class CancelModel
 
-        attr_reader :current_user, :source, :target
+        attr_reader :current_user, :target
 
         def initialize(current_user, params)
           @current_user = current_user
           @params = params
-          @source = params.delete(:source) || 'unknown'
           target
         end
 
@@ -21,16 +20,16 @@ module Travis
           messages
         end
 
-        def enqueue_to_hub(payload)
+        def enqueue_to_hub
           # target may have been retrieved with a :join query, so we need to reset the readonly status
           if can_cancel?
             target.send(:instance_variable_set, :@readonly, false)
             target.cancel!
 
             if type == :build
-              push_matrix(payload)
+              push_matrix(@params)
             else
-              push(payload, target)
+              push(@params, target)
             end
           end
         end

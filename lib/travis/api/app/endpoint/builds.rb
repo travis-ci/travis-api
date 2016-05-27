@@ -23,7 +23,7 @@ class Travis::Api::App
         Metriks.meter("api.request.cancel_build").mark
 
         if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
-          service = Travis::Enqueue::Services::CancelModel.new(current_user, { build_id: params[:id], source: 'api' })
+          service = Travis::Enqueue::Services::CancelModel.new(current_user, { build_id: params[:id] })
         else
           service = self.service(:cancel_build, params.merge(source: 'api'))
         end
@@ -47,8 +47,7 @@ class Travis::Api::App
           respond_with json
         else
           if service.respond_to?(:enqueue_to_hub)
-            payload = { build_id: params[:id], source: 'api'}
-            service.enqueue_to_hub(payload)
+            service.enqueue_to_hub
           else
             Travis::Sidekiq::BuildCancellation.perform_async(id: params[:id], user_id: current_user.id, source: 'api')
           end
