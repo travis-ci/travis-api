@@ -2,6 +2,7 @@ require 'travis/api/app'
 require 'travis/api/workers/job_cancellation'
 require 'travis/api/workers/job_restart'
 require 'travis/api/enqueue/services/restart_model'
+require 'travis/api/enqueue/services/cancel_model'
 
 class Travis::Api::App
   class Endpoint
@@ -28,7 +29,12 @@ class Travis::Api::App
       post '/:id/cancel' do
         Metriks.meter("api.request.cancel_job").mark
 
-        service = self.service(:cancel_job, params.merge(source: 'api'))
+        if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
+          service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
+        else
+          service = self.service(:cancel_job, params.merge(source: 'api'))
+        end
+
         if !service.authorized?
           json = { error: {
             message: "You don't have access to cancel job(#{params[:id]})"
@@ -47,7 +53,11 @@ class Travis::Api::App
           status 422
           respond_with json
         else
-          Travis::Sidekiq::JobCancellation.perform_async(id: params[:id], user_id: current_user.id, source: 'api')
+          if service.respond_to?(:enqueue_to_hub)
+            service.enqueue_to_hub
+          else
+            Travis::Sidekiq::JobCancellation.perform_async(id: params[:id], user_id: current_user.id, source: 'api')
+          end
 
           Metriks.meter("api.request.cancel_job.success").mark
           status 204
