@@ -40,7 +40,7 @@ describe Request::States do
 
       it 'sets the state to started' do
         request.start
-        request.was_started?.should be_true
+        request.was_started?.should be true
       end
 
       it 'sets the result to :accepted' do
@@ -94,7 +94,7 @@ describe Request::States do
 
       it 'sets the state to started' do
         request.start
-        request.was_started?.should be_true
+        request.was_started?.should be true
       end
 
       it 'sets the result to :rejected' do
@@ -123,7 +123,7 @@ describe Request::States do
 
     it 'sets the state to configured' do
       request.configure
-      request.was_configured?.should be_true
+      request.was_configured?.should be true
     end
   end
 

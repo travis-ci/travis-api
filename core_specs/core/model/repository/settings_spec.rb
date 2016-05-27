@@ -23,12 +23,12 @@ describe Repository::Settings do
   describe '#restricts_number_of_builds?' do
     it 'returns true if number of builds is restricted' do
       settings = Repository::Settings.new(maximum_number_of_builds: 2)
-      settings.restricts_number_of_builds?.should be_true
+      settings.restricts_number_of_builds?.should be true
     end
 
     it 'returns false if builds are not restricted' do
       settings = Repository::Settings.new(maximum_number_of_builds: 0)
-      settings.restricts_number_of_builds?.should be_false
+      settings.restricts_number_of_builds?.should be false
     end
   end
 

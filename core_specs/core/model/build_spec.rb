@@ -38,21 +38,21 @@ describe Build, truncation: true do
     it 'returns true if we\'re not dealing with pull request' do
       build = Factory.build(:build)
       build.stubs(:pull_request?).returns(false)
-      build.secure_env_enabled?.should be_true
+      build.secure_env_enabled?.should be true
     end
 
     it 'returns true if pull request is from the same repository' do
       build = Factory.build(:build)
       build.stubs(:pull_request?).returns(true)
       build.stubs(:same_repo_pull_request?).returns(true)
-      build.secure_env_enabled?.should be_true
+      build.secure_env_enabled?.should be true
     end
 
     it 'returns false if pull request is not from the same repository' do
       build = Factory.build(:build)
       build.stubs(:pull_request?).returns(true)
       build.stubs(:same_repo_pull_request?).returns(false)
-      build.secure_env_enabled?.should be_false
+      build.secure_env_enabled?.should be false
     end
   end
 
@@ -243,24 +243,24 @@ describe Build, truncation: true do
     describe :pending? do
       it 'returns true if the build is finished' do
         build = Factory(:build, state: :finished)
-        build.pending?.should be_false
+        build.pending?.should be false
       end
 
       it 'returns true if the build is not finished' do
         build = Factory(:build, state: :started)
-        build.pending?.should be_true
+        build.pending?.should be true
       end
     end
 
     describe :passed? do
       it 'passed? returns true if state equals :passed' do
         build = Factory(:build, state: :passed)
-        build.passed?.should be_true
+        build.passed?.should be true
       end
 
       it 'passed? returns true if result does not equal :passed' do
         build = Factory(:build, state: :failed)
-        build.passed?.should be_false
+        build.passed?.should be false
       end
     end
 

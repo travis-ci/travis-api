@@ -132,7 +132,7 @@ describe Request do
         }
       }
 
-      request.same_repo_pull_request?.should be_true
+      request.same_repo_pull_request?.should be true
     end
 
     it 'returns false if the base and head repos do not match' do
@@ -143,13 +143,13 @@ describe Request do
         }
       }
 
-      request.same_repo_pull_request?.should be_false
+      request.same_repo_pull_request?.should be false
     end
 
     it 'returns false if repo data is not available' do
       request.payload = {}
 
-      request.same_repo_pull_request?.should be_false
+      request.same_repo_pull_request?.should be_falsy
     end
   end
 end

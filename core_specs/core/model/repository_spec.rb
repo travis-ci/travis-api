@@ -351,10 +351,10 @@ describe Repository, truncation: true do
       repo.settings = {}
       repo.update_column(:settings, { 'build_pushes' => false }.to_json)
       repo.reload
-      repo.settings.build_pushes?.should be_false
+      repo.settings.build_pushes?.should be false
       repo.update_column(:settings, { 'build_pushes' => true }.to_json)
       repo.reload
-      repo.settings.build_pushes?.should be_true
+      repo.settings.build_pushes?.should be true
     end
 
     it "allows to set nil for settings" do
