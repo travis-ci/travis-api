@@ -32,14 +32,14 @@ module Travis
         end
 
         def type
-          @type ||= @params[:build_id] ? :build : :job
+          @params[:type]
         end
 
         def target
           if type == :build
-            @target = Build.find(@params[:build_id])
+            @target = Build.find(@params[:id])
           else
-            @target = Job.find(@params[:job_id])
+            @target = Job.find(@params[:id])
           end
         end
 

@@ -30,7 +30,7 @@ class Travis::Api::App
         Metriks.meter("api.request.cancel_job").mark
 
         if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
-          service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
+          service = Travis::Enqueue::Services::CancelModel.new(current_user, { id: params[:id], type: :job })
         else
           service = self.service(:cancel_job, params.merge(source: 'api'))
         end
