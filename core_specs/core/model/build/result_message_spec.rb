@@ -5,7 +5,7 @@ describe Build::ResultMessage do
     described_class.new(data)
   end
 
-  describe :short do
+  describe "short" do
     it 'returns :pending if the build is pending' do
       data = { state: :created, previous_state: nil }
       message(data).short.should == 'Pending'
@@ -52,7 +52,7 @@ describe Build::ResultMessage do
     end
   end
 
-  describe :full do
+  describe "full" do
     it 'returns :pending if the build is pending' do
       data = { state: :created, previous_state: nil }
       message(data).full.should == 'The build is pending.'
@@ -99,7 +99,7 @@ describe Build::ResultMessage do
     end
   end
 
-  describe :email do
+  describe "email" do
     it 'returns :pending if the build is pending' do
       data = { state: :created, previous_state: nil, number: 2 }
       message(data).email.should == 'Build #2 is pending.'

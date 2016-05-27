@@ -10,6 +10,7 @@ require 'logger'
 require 'gh'
 require 'multi_json'
 
+require 'travis/support'
 require 'travis/api/app'
 require 'travis/testing'
 require 'travis/testing/scenario'

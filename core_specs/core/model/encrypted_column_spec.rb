@@ -13,22 +13,22 @@ class Travis::Model < ActiveRecord::Base
 
     describe '#encrypt?' do
       it 'does not encrypt if given data is empty' do
-        column.encrypt?(nil).should be_false
-        column.encrypt?('').should be_false
+        column.encrypt?(nil).should be false
+        column.encrypt?('').should be false
       end
 
       context 'when disabled' do
         let(:options) { { disable: true, key: 'secret-key' } }
         it 'does not encrypt' do
-          column.encrypt?('--ENCR--abc').should be_false
+          column.encrypt?('--ENCR--abc').should be false
         end
       end
     end
 
     describe '#decrypt?' do
       it 'does not decrypt if given data is empty' do
-        column.decrypt?(nil).should be_false
-        column.decrypt?('').should be_false
+        column.decrypt?(nil).should be false
+        column.decrypt?('').should be false
       end
     end
 
@@ -43,7 +43,7 @@ class Travis::Model < ActiveRecord::Base
     end
 
     it 'allows to pass use_prefix as an option' do
-      EncryptedColumn.new(use_prefix: true).use_prefix?.should be_true
+      EncryptedColumn.new(use_prefix: true).use_prefix?.should be true
     end
 
     it 'allows to pass key as an option' do

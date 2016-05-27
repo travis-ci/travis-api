@@ -33,21 +33,21 @@ describe User, truncation: true do
 
     it 'given roles and a condition it returns true if the user has a matching permission for this role' do
       user.permissions.create!(push: true, repository_id: repo.id)
-      user.permission?(['push'], repository_id: repo.id).should be_true
+      user.permission?(['push'], repository_id: repo.id).should be true
     end
 
     it 'given roles and a condition it returns false if the user does not have a matching permission for this role' do
       user.permissions.create!(pull: true, repository_id: repo.id)
-      user.permission?(['push'], repository_id: repo.id).should be_false
+      user.permission?(['push'], repository_id: repo.id).should be false
     end
 
     it 'given a condition it returns true if the user has a matching permission' do
       user.permissions.create!(push: true, repository_id: repo.id)
-      user.permission?(repository_id: repo.id).should be_true
+      user.permission?(repository_id: repo.id).should be true
     end
 
     it 'given a condition it returns true if the user has a matching permission' do
-      user.permission?(repository_id: repo.id).should be_false
+      user.permission?(repository_id: repo.id).should be false
     end
   end
 

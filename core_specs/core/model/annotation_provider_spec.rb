@@ -49,7 +49,7 @@ describe AnnotationProvider do
 
     context 'given no annotation exists yet for the job' do
       it 'returns a new annotation object' do
-        provider.annotation_for_job(job.id).new_record?.should be_true
+        provider.annotation_for_job(job.id).new_record?.should be true
       end
     end
   end
