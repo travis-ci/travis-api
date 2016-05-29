@@ -56,7 +56,7 @@ describe Travis::Services::FindJobs do
 
   describe 'updated_at' do
     it 'returns the latest updated_at time' do
-      pending 'rack cache is disabled, so not much need for caching now'
+      skip 'rack cache is disabled, so not much need for caching now'
 
       @params = { :queue => 'builds.linux' }
       Job.delete_all
