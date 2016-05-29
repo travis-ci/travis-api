@@ -37,7 +37,7 @@
 #
 #     it 'finishes the job' do
 #       job.force_finish
-#       job.finished?.should be_true
+#       job.finished?.should be_truthy
 #     end
 #   end
 # end

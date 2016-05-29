@@ -23,7 +23,7 @@ describe Travis::Services::RegenerateRepoKey do
     it 'does not regenerate key' do
       user.permissions.destroy_all
       repo.expects(:regenerate_key!).never
-      service.run.should be_false
+      service.run.should be_falsey
     end
   end
 end

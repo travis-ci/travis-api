@@ -56,12 +56,12 @@ describe Travis::Services::FindBuild do
   # describe 'final?' do
   #   it 'returns true if the build is finished' do
   #     build.update_attributes!(:state => :errored)
-  #     service.final?.should be_true
+  #     service.final?.should be_truthy
   #   end
 
   #   it 'returns false if the build is not finished' do
   #     build.update_attributes!(:state => :started)
-  #     service.final?.should be_false
+  #     service.final?.should be false
   #   end
   # end
 end

@@ -46,8 +46,8 @@ describe Travis::Services::RemoveLog do
     it 'runs successfully' do
       result = service.run
       result.removed_by.should == user
-      result.removed_at.should be_true
-      result.should be_true
+      result.removed_at.should be_truthy
+      result.should be_truthy
     end
 
     it "updates logs with desired information" do

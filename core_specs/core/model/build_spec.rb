@@ -103,7 +103,7 @@ describe Build, truncation: true do
         subject { Build.older_than(Build.new(number: 3)) }
 
         it "should limit the results" do
-          should have(2).items
+          expect(subject.size).to eq(2)
         end
 
         it "should return older than the passed build" do
@@ -115,7 +115,7 @@ describe Build, truncation: true do
         subject { Build.older_than(3) }
 
         it "should limit the results" do
-          should have(2).items
+          expect(subject.size).to eq(2)
         end
 
         it "should return older than the passed build" do
@@ -127,7 +127,7 @@ describe Build, truncation: true do
         subject { Build.older_than() }
 
         it "should limit the results" do
-          should have(2).item
+          expect(subject.size).to eq(2)
         end
       end
     end
@@ -137,7 +137,7 @@ describe Build, truncation: true do
         3.times { Factory(:build) }
         Build.stubs(:per_page).returns(1)
 
-        Build.descending.paged({}).should have(1).item
+        expect(Build.descending.paged({}).size).to eq(1)
       end
 
       it 'uses an offset' do
@@ -145,7 +145,7 @@ describe Build, truncation: true do
         Build.stubs(:per_page).returns(1)
 
         builds = Build.descending.paged({page: 2})
-        builds.should have(1).item
+        expect(builds.size).to eq(1)
         builds.first.number.should == '2'
       end
     end
