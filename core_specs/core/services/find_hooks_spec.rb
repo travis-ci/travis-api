@@ -20,7 +20,7 @@ describe Travis::Services::FindHooks do
     hooks = service.run
     hooks.should include(repo)
     hooks.should include(push_repo)
-    hooks.should have(2).items
+    expect(hooks.size).to eq(2)
 
     # hooks should include admin information
     hooks.sort_by(&:id).map(&:admin?).should == [true, false]

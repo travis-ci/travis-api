@@ -158,7 +158,7 @@ describe Repository, truncation: true do
       end
 
       it 'returns all repositories a user has rights to' do
-        Repository.by_member('svenfuchs').should have(2).items
+        expect(Repository.by_member('svenfuchs').size).to eq(2)
       end
 
       it 'does not find invalidated repos' do
