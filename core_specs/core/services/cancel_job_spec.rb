@@ -37,7 +37,7 @@ describe Travis::Services::CancelJob do
     it 'should not be able to cancel job if user does not have pull permission' do
       user.permissions.destroy_all
 
-      service.can_cancel?.should be_false
+      service.can_cancel?.should be false
     end
   end
 end

@@ -31,12 +31,12 @@ describe Travis::Services::FindLog do
   # describe 'final?' do
   #   it 'returns true if the job is finished' do
   #     log.job.update_attributes!(:state => :finished)
-  #     service.final?.should be_true
+  #     service.final?.should be_truthy
   #   end
 
   #   it 'returns false if the job is not finished' do
   #     log.job.update_attributes!(:state => :started)
-  #     service.final?.should be_false
+  #     service.final?.should be false
   #   end
   # end
 end
