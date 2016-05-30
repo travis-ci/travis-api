@@ -51,25 +51,22 @@ class Travis::Api::App
         Metriks.meter("api.request.restart_build").mark
         if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
           service = Travis::Enqueue::Services::RestartModel.new(current_user, { build_id: params[:id] })
-          if !service.accept?
-            status 400
-            result = false
-          else
-            payload = {id: params[:id], user_id: current_user.id}
-            service.push("build:restart", payload)
-            status 202
-            result = true
-          end
         else
           service = self.service(:reset_model, build_id: params[:id])
-          if !service.accept?
-            status 400
-            result = false
+        end
+
+        if !service.accept?
+          status 400
+          result = false
+        else
+          if service.respond_to?(:push)
+            payload = {id: params[:id], user_id: current_user.id}
+            service.push("build:restart", payload)
           else
             Travis::Sidekiq::BuildRestart.perform_async(id: params[:id], user_id: current_user.id)
-            status 202
-            result = true
           end
+          status 202
+          result = true
         end
 
         respond_with(result: result, flash: service.messages)
