@@ -6,8 +6,7 @@ config/skylight.yml
 tmp/
 log/
 logs/
-
-vendor
+!vendor/travis-core/lib/travis/logs/
 
 .yardoc
 .coverage
