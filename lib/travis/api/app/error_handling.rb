@@ -9,7 +9,7 @@ class Travis::Api::App
       Thread.new do
         loop do
           begin
-            Raven.send queue.pop
+            Raven.send :send_event, queue.pop
           rescue Exception => e
             puts e.message, e.backtrace
           end

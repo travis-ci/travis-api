@@ -102,7 +102,7 @@ module Travis::Api
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
-        use Raven::Rack if Travis.env == 'production' || Travis.env == 'staging'
+        use Raven::Rack if Travis::Api::App.use_monitoring?
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
@@ -192,7 +192,7 @@ module Travis::Api
           end
         end
 
-        if use_monitoring? and not console?
+        if use_monitoring? && !console
           setup_monitoring
         end
       end
