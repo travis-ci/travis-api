@@ -8,6 +8,7 @@ module Travis
           attr_reader :repositories, :options
 
           def initialize(repositories, options = {})
+            this is a test to throw an error on staging
             @repositories = repositories
             @options = options
           end
