@@ -12,3 +12,4 @@ vendor
 .yardoc
 .coverage
 *.env
+.ruby-gemset
