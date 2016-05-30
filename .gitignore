@@ -7,6 +7,7 @@ tmp/
 log/
 logs/
 !vendor/travis-core/lib/travis/logs/
+!vendor/travis-core/lib/travis/model/log/
 
 .yardoc
 .coverage
