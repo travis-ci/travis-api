@@ -15,7 +15,6 @@ class Travis::Api::App
       #
       # json(:repositories)
       get '/' do
-        we want an error
         prefer_follower do
           params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
           respond_with service(:find_repos, params)
