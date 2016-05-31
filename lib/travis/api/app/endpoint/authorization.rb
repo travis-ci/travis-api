@@ -325,6 +325,8 @@ class Travis::Api::App
 
         def get_token(endpoint, values)
           response   = Faraday.new(ssl: Travis.config.github.ssl).post(endpoint, values)
+          #Travis.logger.info 
+          puts "Faraday Object: #{response.inspect}"
           parameters = Addressable::URI.form_unencode(response.body)
           token_info = parameters.assoc("access_token")
           halt 401, 'could not resolve github token' unless token_info
