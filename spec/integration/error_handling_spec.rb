@@ -26,7 +26,7 @@ describe 'Exception' do
   it 'enques error into a thread' do
     error = TestError.new('Konstantin broke all the thingz!')
     Travis::Api::App::Endpoint::Repos.any_instance.stubs(:service).raises(error)
-    Raven.expects(:send).with do |event|
+    Raven.expects(:send_event).with do |event|
       event.message == "#{error.class}: #{error.message}"
     end
     expect { get "/repos" }.to raise_error(TestError)
