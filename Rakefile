@@ -10,6 +10,7 @@ namespace :db do
 end
 
 begin
+  require 'rspec'
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(:spec)
 
@@ -21,7 +22,8 @@ begin
   end
 
   task :default => [:spec, :core_specs]
-rescue LoadError
+rescue LoadError => e
+  puts e.inspect
 end
 
 desc "generate gemspec"
