@@ -47,9 +47,10 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
-  revision: 21a2fee158e25252dd78f5fa31e81b4f6583be23
+  revision: c5d4a4abc6c3737f9c43d3333efb94daa18b9fbb
   specs:
     travis-sidekiqs (0.0.1)
+      redis-namespace
       sidekiq
 
 GIT
@@ -281,6 +282,8 @@ GEM
       json (~> 1.4)
     redcarpet (2.3.0)
     redis (3.3.0)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
     representable (2.3.0)
       uber (~> 0.0.7)
     rerun (0.11.0)

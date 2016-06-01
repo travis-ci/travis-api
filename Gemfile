@@ -9,7 +9,8 @@ gem 'travis-core',     path:   'vendor'
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-amqp',     github: 'travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
-gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil
+gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs'
+
 gem 'travis-yaml',     github: 'travis-ci/travis-yaml'
 gem 'mustermann',      github: 'rkh/mustermann'
 gem 'sinatra'
