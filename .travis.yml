@@ -1,4 +1,0 @@
-sudo: false
-language: ruby
-rvm: '2.1.8'
-cache: bundler
