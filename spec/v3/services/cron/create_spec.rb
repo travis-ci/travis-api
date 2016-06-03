@@ -64,8 +64,7 @@ describe Travis::API::V3::Services::Cron::Create do
             "name"            => "#{branch.name}" },
         "interval"            => "monthly",
         "disable_by_build"    => false,
-        "next_enqueuing"      => current_cron.next_enqueuing.strftime('%Y-%m-%dT%H:%M:%SZ'),
-        "created_at"          => current_cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
+        "next_enqueuing"     => current_cron.next_enqueuing.strftime('%Y-%m-%dT%H:%M:%SZ')
     }}
   end
 
