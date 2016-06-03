@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="90" height="20"><linearGradient id="a" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><rect rx="3" width="90" height="20" fill="#555"/><rect rx="3" x="37" width="53" height="20" fill="#4c1"/><path fill="#4c1" d="M37 0h4v20h-4z"/><rect rx="3" width="90" height="20" fill="url(#a)"/><g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"><text x="19.5" y="15" fill="#010101" fill-opacity=".3">build</text><text x="19.5" y="14">build</text><text x="62.5" y="15" fill="#010101" fill-opacity=".3">passing</text><text x="62.5" y="14">passing</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="90" height="20">
+  <path d="M90,3C90,1.344 88.656,0 87,0L3,0C1.344,0 0,1.344 0,3L0,17C0,18.656 1.344,20 3,20L87,20C88.656,20 90,18.656 90,17L90,3Z" style="fill:rgb(52,73,94);"/>
+    <path d="M90,3C90,1.344 88.656,0 87,0L40,0C38.344,0 37,1.344 37,3L37,17C37,18.656 38.344,20 40,20L87,20C88.656,20 90,18.656 90,17L90,3Z" style="fill:rgb(39,174,96);"/>
+    <rect x="37" y="0" width="4" height="20" style="fill:rgb(39,174,96);"/>
+    <g>
+        <g transform="matrix(1,0,0,1,6.147,14)">
+            <text x="0px" y="0px" style="font-family:'Verdana';font-size:11px;fill:white;">build</text>
+        </g>
+        <g transform="matrix(1,0,0,1,41.623,14)">
+            <text x="0px" y="0px" style="font-family:'Verdana';font-size:11px;fill:white;">passing</text>
+        </g>
+    </g>
+</svg>
