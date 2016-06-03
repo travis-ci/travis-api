@@ -16,7 +16,7 @@ end
 
 V3 = Travis::API::V3
 
-Travis::Api::App.setup
+Travis::Api::App.new
 console = Travis::Console.new
 methods = Travis::Console.instance_methods - Object.instance_methods
 
