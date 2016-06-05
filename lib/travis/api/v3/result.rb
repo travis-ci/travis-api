@@ -2,7 +2,7 @@ module Travis::API::V3
   class Result
     attr_accessor :access_control, :type, :resource, :status, :href, :meta_data, :warnings
 
-    def initialize(access_control, type, resource = [], status: 200, **meta_data)
+    def initialize(access_control, type, resource: [], status: 200, **meta_data)
       @warnings = []
       @access_control, @type, @resource, @status, @meta_data = access_control, type, resource, status, meta_data
     end

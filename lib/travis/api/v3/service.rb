@@ -86,7 +86,7 @@ module Travis::API::V3
 
     def run
       not_found unless result = run!
-      result = result(result_type, result) unless result.is_a? Result
+      result = result(result_type, resource: result) unless result.is_a? Result
       result = paginate(result) if self.class.paginate?
       apply_warnings(result)
       result
@@ -119,7 +119,7 @@ module Travis::API::V3
 
     def accepted(**payload)
       payload[:resource_type] ||= result_type
-      result(:accepted, payload, status: 202)
+      result(:accepted, resource: payload, status: 202)
     end
 
     def not_implemented
