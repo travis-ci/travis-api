@@ -47,8 +47,9 @@ describe Travis::API::V3::Services::Cron::ForBranch do
           "@representation" => "minimal",
           "name"            => branch.name },
       "interval"            => "daily",
-      "disable_by_build"     => true,
-      "next_enqueuing"     => cron.next_enqueuing.strftime('%Y-%m-%dT%H:%M:%SZ')
+      "disable_by_build"    => true,
+      "next_enqueuing"      => cron.next_enqueuing.strftime('%Y-%m-%dT%H:%M:%SZ'),
+      "created_at"          => cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
     }}
   end
 
