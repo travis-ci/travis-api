@@ -2,6 +2,8 @@ defaults: &defaults
   adapter: postgresql
   encoding: unicode
   pool: 5
+  host: localhost
+  username: <%= ENV['USER'] %>
 
   # Minimum log levels, in increasing order:
   #   debug5, debug4, debug3, debug2, debug1,
@@ -11,14 +13,8 @@ defaults: &defaults
 
 development:
   <<: *defaults
-  database: travis_development
-  host: localhost
-
-production:
-  <<: *defaults
-  database: travis_production
+  database: travis_pro_development
 
 test:
   <<: *defaults
-  database: travis_test
-  host: localhost
+  database: travis_pro_test
