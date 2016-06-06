@@ -1,7 +1,6 @@
 module Travis::API::V3
   class Queries::Repositories < Query
     params :active, :private, :starred, prefix: :repository
-    sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active), :'default_branch.last_build' => 'builds.started_at'
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active),
                 :'default_branch.last_build' => 'builds.started_at',
                 :current_build_id => "repositories.current_build_id %{order} NULLS LAST"
