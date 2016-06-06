@@ -12,6 +12,8 @@ Travis Admin (2.0) is actively maintained by the Emerald Project team and falls 
 ## In The System
 
 ## Local Setup
+### Setup the database for development/test
+Go to [travis-pro-migrations](https://github.com/travis-pro/travis-pro-migrations) and follow the instructions.
 
 ## How to Deploy
 
