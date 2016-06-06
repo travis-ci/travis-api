@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Magic Makers
-gem 'rails', '4.2.5'
+gem 'rails', '4.2.6'
 
 # JS Stuff
 gem 'uglifier', '>= 1.3.0'
@@ -26,9 +26,12 @@ group :console, :test do
   # gem 'pry-byebug'
 end
 
+group :development, :test do
+  gem 'rspec-rails', '~> 3.4'
+end
+
 group :test do
   gem 'rake'
-  gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails', '~> 4.0'
 end
 
