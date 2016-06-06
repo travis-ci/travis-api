@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Magic Makers
-gem 'rails', '4.2.5'
+gem 'rails', '4.2.6'
 
 # JS Stuff
 gem 'uglifier', '>= 1.3.0'
