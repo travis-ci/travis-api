@@ -4,7 +4,7 @@ module Travis::API::V3
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active), :'default_branch.last_build' => 'builds.started_at'
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active),
                 :'default_branch.last_build' => 'builds.started_at',
-                :current_build => "repositories.current_build_id %{order} NULLS LAST"
+                :current_build_id => "repositories.current_build_id %{order} NULLS LAST"
 
     def for_member(user, **options)
       all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
