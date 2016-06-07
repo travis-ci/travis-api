@@ -1,0 +1,47 @@
+<h2>User</h2>
+
+<section class="box">
+  <h3 class="box-title">Basic Information</h3>
+
+  <div class="detail-pair">
+    <strong>Name</strong>
+    <%= @user.name %>
+  </div>
+
+  <div class="detail-pair">
+    <strong>Primary E-mail Address</strong>
+    <%= @user.email %>
+  </div>
+
+  <div class="detail-pair">
+    <strong>Additional E-Mail Addresses</strong>
+    <% @user.emails.each do |entry| %>
+      <% if entry.email != @user.email %>
+        <%= entry.email %>
+      <% end %>
+    <% end %>
+  </div>
+</section>
+
+<section class="box">
+  <h3 class="box-title">GitHub Information</h3>
+  <div class="detail-pair">
+    <strong>GitHub ID</strong>
+    <%= @user.login %> (<%= @user.github_id %>)
+  </div>
+
+  <div class="detail-pair">
+    <strong>Token</strong>
+
+  </div>
+
+  <div class="detail-pair">
+    <strong>Scopes</strong>
+
+  </div>
+
+  <div class="detail-pair">
+    <strong>Last Sync</strong>
+
+  </div>
+</section>
