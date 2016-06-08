@@ -32,16 +32,20 @@
 
   <div class="detail-pair">
     <strong>Token</strong>
-
+    <%= hidden(@user, :github_oauth_token) %>
   </div>
 
   <div class="detail-pair">
     <strong>Scopes</strong>
-
+    <% if @user.github_scopes.present? %>
+      <%= @user.github_scopes %>
+    <% else %>
+      none
+    <% end %>
   </div>
 
   <div class="detail-pair">
     <strong>Last Sync</strong>
-
+    <%= @user.synced_at ? @user.synced_at : "never" %>
   </div>
 </section>
