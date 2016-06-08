@@ -3,7 +3,8 @@ dist: trusty
 language: ruby
 rvm: '2.3.1'
 cache: bundler
-services:
-  - postgresql
+addons:
+  postgresql: 9.3
 before_script:
   - psql -c 'create database travis_pro_test;' -U postgres
+script: RAILS_ENV=test bundle exec rake db:create db:structure:load spec
