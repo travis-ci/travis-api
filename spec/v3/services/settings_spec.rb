@@ -107,6 +107,7 @@ describe Travis::API::V3::Services::Settings do
       let(:params) { JSON.dump('settings.build_pushes' => false) }
 
       before do
+        repo.update_attributes(settings: JSON.dump('maximum_number_of_builds' => 20))
         patch("/v3/repo/#{repo.id}/settings", params, json_headers.merge(auth_headers))
       end
 
@@ -118,7 +119,7 @@ describe Travis::API::V3::Services::Settings do
             'builds_only_with_travis_yml' => false,
             'build_pushes' => false,
             'build_pull_requests' => true,
-            'maximum_number_of_builds' => 0
+            'maximum_number_of_builds' => 20
           }
         )
       end 

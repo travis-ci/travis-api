@@ -11,8 +11,10 @@ module Travis::API::V3
     end
 
     def update(settings = {})
-      settings = defaults.merge(settings)
-      repository.update_attributes(settings: JSON.generate(settings))
+      settings = to_h.merge(settings)
+      repository.settings.clear
+      settings.each { |k, v| repository.settings[k] = v }
+      repository.save!
     end
 
     private
