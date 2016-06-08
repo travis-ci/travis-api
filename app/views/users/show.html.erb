@@ -17,7 +17,7 @@
     <strong>Additional E-Mail Addresses</strong>
     <% @user.emails.each do |entry| %>
       <% if entry.email != @user.email %>
-        <%= entry.email %>
+        <div><%= entry.email %></div>
       <% end %>
     <% end %>
   </div>
@@ -48,4 +48,21 @@
     <strong>Last Sync</strong>
     <%= @user.synced_at ? @user.synced_at : "never" %>
   </div>
+</section>
+
+<section class="box">
+  <h3 class="box-title">Organizations</h3>
+
+  <% if @user.organizations.empty? %>
+    <p>No organizations.</p>
+  <% else %>
+    <% @user.organizations.each do |org| %>
+      <% if org.avatar_url %>
+        <div>
+          <img class="avatar" src="<%= org.avatar_url %>?s=20">
+          <%= org.name.present? ? "#{org.name} (#{org.login})" : org.login %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
 </section>
