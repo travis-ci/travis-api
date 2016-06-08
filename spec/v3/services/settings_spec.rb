@@ -40,12 +40,10 @@ describe Travis::API::V3::Services::Settings do
       example do
         expect(JSON.load(body)).to eq(
           '@type' => 'settings',
-          'settings' => {
-            'builds_only_with_travis_yml' => false,
-            'build_pushes' => true,
-            'build_pull_requests' => true,
-            'maximum_number_of_builds' => 0
-          }
+          'builds_only_with_travis_yml' => false,
+          'build_pushes' => true,
+          'build_pull_requests' => true,
+          'maximum_number_of_builds' => 0
         )
       end 
     end
@@ -60,12 +58,10 @@ describe Travis::API::V3::Services::Settings do
       example do
         expect(JSON.load(body)).to eq(
           '@type' => 'settings',
-          'settings' => {
-            'builds_only_with_travis_yml' => false,
-            'build_pushes' => false,
-            'build_pull_requests' => true,
-            'maximum_number_of_builds' => 0
-          }
+          'builds_only_with_travis_yml' => false,
+          'build_pushes' => false,
+          'build_pull_requests' => true,
+          'maximum_number_of_builds' => 0
         )
       end 
     end
@@ -115,12 +111,10 @@ describe Travis::API::V3::Services::Settings do
       example do
         expect(JSON.load(body)).to eq(
           '@type' => 'settings',
-          'settings' => {
-            'builds_only_with_travis_yml' => false,
-            'build_pushes' => false,
-            'build_pull_requests' => true,
-            'maximum_number_of_builds' => 20
-          }
+          'builds_only_with_travis_yml' => false,
+          'build_pushes' => false,
+          'build_pull_requests' => true,
+          'maximum_number_of_builds' => 20
         )
       end 
     end
