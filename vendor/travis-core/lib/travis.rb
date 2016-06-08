@@ -43,14 +43,10 @@ module Travis
   require 'travis/addons'
   require 'travis/api'
   require 'travis/config/defaults'
-  require 'travis/commit_command'
-  require 'travis/enqueue'
   require 'travis/features'
   require 'travis/github'
-  require 'travis/logs'
   require 'travis/mailer'
   require 'travis/notification'
-  require 'travis/requests'
   require 'travis/services'
 
   class UnknownRepository < StandardError; end
@@ -71,10 +67,7 @@ module Travis
       Github.setup
       Addons.register
       Services.register
-      Enqueue::Services.register
       Github::Services.register
-      Logs::Services.register
-      Requests::Services.register
     end
 
     attr_accessor :redis, :config
