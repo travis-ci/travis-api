@@ -1,7 +1,6 @@
 module Travis
   module Github
     module Services
-      require 'travis/github/services/fetch_config'
       require 'travis/github/services/find_or_create_org'
       require 'travis/github/services/find_or_create_repo'
       require 'travis/github/services/find_or_create_user'
