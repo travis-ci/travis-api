@@ -54,6 +54,14 @@ GIT
       virtus
 
 GIT
+  remote: git://github.com/travis-ci/travis-settings.git
+  revision: d510e63b6c6f059cccae141c265e7a0c7236d1fd
+  specs:
+    travis-settings (0.0.1)
+      activemodel
+      virtus
+
+GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
   revision: c5d4a4abc6c3737f9c43d3333efb94daa18b9fbb
   specs:
