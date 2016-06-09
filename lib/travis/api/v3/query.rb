@@ -32,6 +32,15 @@ module Travis::API::V3
       end
     RUBY
 
+    @@prefixed_params_accessor = <<-RUBY
+      def %<prefix>s_params
+        @%<prefix>s ||= begin
+          params = @params.select { |key, _| key.start_with?('%<prefix>s.'.freeze) }
+          Hash[params.map { |key, value| [key.split('.'.freeze).last, value] }]
+        end
+      end
+    RUBY
+
     def self.type
       name[/[^:]+$/].underscore
     end
@@ -48,6 +57,7 @@ module Travis::API::V3
           check_type:  check_type
         })
       end
+      class_eval(@@prefixed_params_accessor % { prefix: prefix })
     end
 
     def self.prefix(input)

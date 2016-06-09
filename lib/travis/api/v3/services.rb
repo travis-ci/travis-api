@@ -20,6 +20,7 @@ module Travis::API::V3
     Repositories  = Module.new { extend Services }
     Repository    = Module.new { extend Services }
     Requests      = Module.new { extend Services }
+    Settings      = Module.new { extend Services }
     User          = Module.new { extend Services }
 
     def result_type

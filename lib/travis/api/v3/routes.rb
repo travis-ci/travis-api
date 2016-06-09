@@ -117,6 +117,12 @@ module Travis::API::V3
         get  :find
         post :create
       end
+
+      resource :settings do
+        route '/settings'
+        get   :find
+        patch :update
+      end
     end
 
     resource :user do
