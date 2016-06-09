@@ -15,6 +15,7 @@
     </div>
 
     <div id="repositories">
+      <%= render partial: "repos", locals: {repositories: @user.repositories} %>
     </div>
 
     <div id="queue">
