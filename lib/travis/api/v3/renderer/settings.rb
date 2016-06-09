@@ -9,8 +9,7 @@ module Travis::API::V3
     end
 
     def render(settings, **)
-      response = { '@type' => 'settings'.freeze }
-      response.merge(settings.to_h)
+      { '@type' => 'settings'.freeze }.merge!(settings.to_h)
     end
   end
 end

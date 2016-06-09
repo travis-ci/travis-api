@@ -1,5 +1,12 @@
 module Travis::API::V3
   class Models::Settings
+    DEFAULTS = {
+      'builds_only_with_travis_yml' => false,
+      'build_pushes' => true,
+      'build_pull_requests' => true,
+      'maximum_number_of_builds' => 0
+    }.freeze
+
     attr_reader :repository
 
     def initialize(repository)
@@ -7,7 +14,7 @@ module Travis::API::V3
     end
 
     def to_h
-      defaults.merge(repository.settings || {})
+      DEFAULTS.merge(repository.settings || {})
     end
 
     def update(settings = {})
@@ -16,16 +23,5 @@ module Travis::API::V3
       settings.each { |k, v| repository.settings[k] = v }
       repository.save!
     end
-
-    private
-
-      def defaults
-        {
-          'builds_only_with_travis_yml' => false,
-          'build_pushes' => true,
-          'build_pull_requests' => true,
-          'maximum_number_of_builds' => 0
-        }
-      end
   end
 end
