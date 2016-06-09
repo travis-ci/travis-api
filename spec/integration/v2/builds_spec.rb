@@ -117,7 +117,7 @@ describe 'Builds' do
         build.update_attribute(:state, 'passed')
       end
 
-      describe 'Enqueues restart event to the Hub' do
+      describe 'Enqueues restart event for the Hub' do
         before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
 
         it 'restarts the build' do
