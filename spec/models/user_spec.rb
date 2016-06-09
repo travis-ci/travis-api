@@ -6,22 +6,20 @@ RSpec.describe User, type: :model do
   let!(:organization) { create(:organization) }
   let!(:membership) { create(:membership) }
 
-  describe '.find' do
-    it 'finds user by ID' do
-      expect(User.find(125283)).to_not be_nil
-    end
-
+  describe '.login' do
     it 'retrieves login name' do
-      expect(User.find(125283).login).to eql 'sinthetix'
+      expect(user.login).to eql 'sinthetix'
     end
+  end
 
+  describe '.login' do
     it 'retrieves primary email address' do
-      expect(User.find(125283).email).to eql 'aly@example.com'
+      expect(user.email).to eql 'aly@example.com'
     end
   end
 
   describe '.emails' do
-    it 'finds additional email asscociated with a user' do
+    it 'finds additional email associated with a user' do
       expect(user.emails.first.email).to eql 'sinthetix@example.com'
     end
   end
