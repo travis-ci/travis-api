@@ -1,14 +1,11 @@
 require 'rails_helper'
 
-# Specs in this file have access to a helper object that includes
-# the UsersHelper. For example:
-#
-# describe UsersHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       expect(helper.concat_strings("this","that")).to eq("this that")
-#     end
-#   end
-# end
 RSpec.describe UsersHelper, type: :helper do
+  describe '#hidden' do
+    let(:user) { build :user, github_oauth_token: '3k0Tjf#kdls'}
+
+    it 'replaces all characters with *' do
+      expect(helper.hidden(user, :github_oauth_token)).to eq('***********')
+    end
+  end
 end
