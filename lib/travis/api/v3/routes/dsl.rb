@@ -60,6 +60,10 @@ module Travis::API::V3
       current_resource.add_service('POST'.freeze, *args)
     end
 
+    def patch(*args)
+      current_resource.add_service('PATCH'.freeze, *args)
+    end
+
     def delete(*args)
       current_resource.add_service('DELETE'.freeze, *args)
     end

@@ -92,6 +92,10 @@ module Travis::API::V3
       private_repository_visible?(repository)
     end
 
+    def settings_visible?(settings)
+      repository_visible?(settings.repository)
+    end
+
     def private_repository_visible?(repository)
       false
     end
