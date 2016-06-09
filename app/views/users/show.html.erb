@@ -1,68 +1,23 @@
-<h2>User</h2>
+<nav class="tablist">
+  <ul class="tabs group">
+    <li><a href="#user">User</a></li>
+    <li><a href="#account">Account</a></li>
+    <li><a href="#repositories">Repositories</a></li>
+    <li><a href="#queue">Queue</a></li>
+  </ul>
 
-<section class="box">
-  <h3 class="box-title">Basic Information</h3>
+  <div class="box-wrap">
+    <div id="user">
+      <%= render partial: "user", locals: {user: @user} %>
+    </div>
 
-  <div class="detail-pair">
-    <strong>Name</strong>
-    <%= @user.name %>
+    <div id="account">
+    </div>
+
+    <div id="repositories">
+    </div>
+
+    <div id="queue">
+    </div>
   </div>
-
-  <div class="detail-pair">
-    <strong>Primary E-mail Address</strong>
-    <%= @user.email %>
-  </div>
-
-  <div class="detail-pair">
-    <strong>Additional E-Mail Addresses</strong>
-    <% @user.emails.each do |entry| %>
-      <% if entry.email != @user.email %>
-        <div><%= entry.email %></div>
-      <% end %>
-    <% end %>
-  </div>
-</section>
-
-<section class="box">
-  <h3 class="box-title">GitHub Information</h3>
-  <div class="detail-pair">
-    <strong>GitHub ID</strong>
-    <%= @user.login %> (<%= @user.github_id %>)
-  </div>
-
-  <div class="detail-pair">
-    <strong>Token</strong>
-    <%= hidden(@user, :github_oauth_token) %>
-  </div>
-
-  <div class="detail-pair">
-    <strong>Scopes</strong>
-    <% if @user.github_scopes.present? %>
-      <%= @user.github_scopes %>
-    <% else %>
-      none
-    <% end %>
-  </div>
-
-  <div class="detail-pair">
-    <strong>Last Sync</strong>
-    <%= @user.synced_at ? @user.synced_at : "never" %>
-  </div>
-</section>
-
-<section class="box">
-  <h3 class="box-title">Organizations</h3>
-
-  <% if @user.organizations.empty? %>
-    <p>No organizations.</p>
-  <% else %>
-    <% @user.organizations.each do |org| %>
-      <% if org.avatar_url %>
-        <div>
-          <img class="avatar" src="<%= org.avatar_url %>?s=20">
-          <%= org.name.present? ? "#{org.name} (#{org.login})" : org.login %>
-        </div>
-      <% end %>
-    <% end %>
-  <% end %>
-</section>
+</nav>
