@@ -4,6 +4,7 @@ require 'travis/support/database'
 require 'travis_core/version'
 require 'travis/redis_pool'
 require 'travis/errors'
+require 'travis/commit_command'
 
 # travis-core holds the central parts of the model layer used in both travis-ci
 # (i.e. the web application) as well as travis-hub (a non-rails ui-less JRuby

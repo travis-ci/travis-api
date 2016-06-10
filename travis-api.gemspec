@@ -695,6 +695,7 @@ Gem::Specification.new do |s|
     "vendor/travis-core/lib/travis/api/v1/webhook/build/finished.rb",
     "vendor/travis-core/lib/travis/api/v1/webhook/build/finished/job.rb",
     "vendor/travis-core/lib/travis/api/v2.rb",
+    "vendor/travis-core/lib/travis/commit_command.rb",
     "vendor/travis-core/lib/travis/config/database.rb",
     "vendor/travis-core/lib/travis/config/defaults.rb",
     "vendor/travis-core/lib/travis/config/url.rb",
