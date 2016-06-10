@@ -96,6 +96,8 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-rails (0.3.4)
+      pry (>= 0.9.10)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -181,6 +183,7 @@ DEPENDENCIES
   jquery-rails
   pg
   pry
+  pry-rails
   rails (= 4.2.6)
   rake
   rspec-rails (~> 3.4)

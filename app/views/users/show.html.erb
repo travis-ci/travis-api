@@ -16,10 +16,11 @@
     </div>
 
     <div id="repositories">
-      <%= render partial: "repos", locals: {repositories: @user.repositories} %>
+      <%= render partial: "repos", locals: {repositories: @repositories} %>
     </div>
 
     <div id="queue">
+      <%= render partial: "queue", locals: {user: @user, current_jobs: @current_jobs} %>
     </div>
   </div>
 </nav>

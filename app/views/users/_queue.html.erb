@@ -1,0 +1,27 @@
+<section class="box">
+  <h3 class="box-title">Build History</h3>
+</section>
+
+<section class="box">
+  <h3 class="box-title">Current</h3>
+  <% if current_jobs.empty? %>
+    No jobs.
+  <% else %>
+  <ul class="list">
+    <% current_jobs.each do |job| %>
+      <li>
+        <ul class="list-item">
+          <li><%= job.id %></li>
+          <li><%= job.state %></li>
+          <li><%= job.finished_at || job.started_at %></li>
+          <li><%= job.queue %></li>
+        </ul>
+      </li>
+    <% end %>
+    </ul>
+  <% end %>
+</section>
+
+<section class="box">
+  <h3 class="box-title">Finished</h3>
+</section>
