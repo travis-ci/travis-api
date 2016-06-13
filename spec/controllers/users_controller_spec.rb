@@ -4,7 +4,7 @@ RSpec.describe UsersController, type: :controller do
   describe 'GET #show' do
     context 'as an admin user' do
       let!(:user) { create(:user) }
-      before(:each) { get :show, id: 125283 }
+      before(:each) { get :show, id: user.id }
 
       it 'assigns valid user to @user' do
         expect(assigns(:user)).to eq user
