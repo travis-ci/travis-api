@@ -2,14 +2,8 @@ require 'rails_helper'
 
 RSpec.describe UsersController, type: :controller do
   describe 'GET #show' do
-
-    # We need to setup FactoryGirl in this too. Not sure if it's just
-
-    # Not sure how to setup for an authorized user and unauthorized user yet, either.
-    # I know there is an admin status flag of some sort (which is an authorized user).
-
     context 'as an admin user' do
-      let!(:user) { FactoryGirl.create(:user) }
+      let!(:user) { create(:user) }
       before(:each) { get :show, id: 125283 }
 
       it 'assigns valid user to @user' do
