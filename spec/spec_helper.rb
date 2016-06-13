@@ -18,6 +18,8 @@ require 'travis/testing/matchers'
 require 'support/matchers'
 require 'support/formats'
 
+require 'pry'
+
 Travis.logger = Logger.new(StringIO.new)
 Travis::Api::App.setup
 Travis.config.client_domain = "www.example.com"
