@@ -3,10 +3,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @repositories = @user.repositories
 
-    @current_jobs = Job.not_finished
-                       .from_repositories(@repositories)
-                       .sort_by do |job|
-                         %w[started received queued created].index(job.state.to_s)
-                       end
+    @current_jobs = Job.from_repositories(@repositories)
+                       .not_finished_sorted
   end
 end
