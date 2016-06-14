@@ -16,7 +16,6 @@ module Travis
         target  = (options[:for] || 'http').to_s.camelize
         version = (options[:version] || default_version(options)).to_s.camelize
         type    = (options[:type] || type_for(resource)).to_s.camelize.split('::')
-        Travis.logger.info("target: #{target}, version:  #{version}, type: #{type}")
         ([version, target] + type).inject(Travis::Api) do |const, name|
           begin
             if const && const.const_defined?(name.to_s.camelize, false)
