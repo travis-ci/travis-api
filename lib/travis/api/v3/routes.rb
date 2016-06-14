@@ -123,6 +123,19 @@ module Travis::API::V3
         get   :find
         patch :update
       end
+
+      resource :env_vars do
+        route '/env_vars'
+        get   :for_repository
+        post  :create
+      end
+
+      resource :env_var do
+        route  '/env_var/{env_var.id}'
+        get    :find
+        patch  :update
+        delete :delete
+      end
     end
 
     resource :user do

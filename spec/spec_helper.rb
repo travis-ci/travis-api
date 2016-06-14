@@ -23,6 +23,40 @@ require 'support/payloads'
 require 'support/private_key'
 require 'support/s3'
 require 'support/test_helpers'
+require 'support/shared_examples'
+
+Travis.logger = Logger.new(StringIO.new)
+Travis::Api::App.setup
+Travis.config.client_domain = "www.example.com"
+Travis.config.endpoints.ssh_key = true
+
+module TestHelpers
+  include Sinatra::TestHelpers
+
+  def custom_endpoints
+    @custom_endpoints ||= []
+  end
+
+  def add_settings_endpoint(name, options = {})
+    if options[:singleton]
+      Travis::Api::App::SingletonSettingsEndpoint.subclass(name)
+    else
+      Travis::Api::App::SettingsEndpoint.subclass(name)
+    end
+    set_app Travis::Api::App.new
+  end
+
+  def add_endpoint(prefix, &block)
+    endpoint = Sinatra.new(Travis::Api::App::Endpoint, &block)
+    endpoint.set(prefix: prefix)
+    set_app Travis::Api::App.new
+    custom_endpoints << endpoint
+  end
+
+  def parsed_body
+    MultiJson.decode(body)
+  end
+end
 
 RSpec.configure do |c|
   c.mock_framework = :mocha

@@ -75,5 +75,11 @@ module Travis::API::V3
     def admin_settings
       @admin_settings ||= Models::AdminSettings.new(settings)
     end
+
+    def env_vars
+      @env_vars ||= Models::EnvVars.new.tap do |vars|
+        vars.load(settings.fetch('env_vars', []), repository_id: self.id)
+      end
+    end
   end
 end
