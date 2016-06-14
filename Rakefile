@@ -14,14 +14,11 @@ begin
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(:spec)
 
-  task :core_specs do
-    RSpec::Core::RakeTask.new(:core_spec) do |t|
-      t.pattern = 'core_specs/**{,/*/**}/*_spec.rb'
-    end
-    Rake::Task["core_spec"].execute
+  RSpec::Core::RakeTask.new(:spec_core) do |t|
+    t.pattern = 'spec_core/**{,/*/**}/*_spec.rb'
   end
 
-  task :default => [:spec, :core_specs]
+  task :default => [:spec, :spec_core]
 rescue LoadError => e
   puts e.inspect
 end
