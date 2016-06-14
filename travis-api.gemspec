@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
     "María de Antón",
     "Mathias Meyer",
     "Nick Schonning",
-    "Patrick Williams"
+    "Patrick Williams",
     "Piotr Sarnacki",
     "Puneeth Chaganti",
     "Renée Hendricksen",
@@ -45,7 +45,7 @@ Gem::Specification.new do |s|
     "Tyranja",
     "Zachary Scott",
     "carlad",
-    "rainsun",
+    "rainsun"
   ]
 
   s.email = [
@@ -83,15 +83,15 @@ Gem::Specification.new do |s|
     "meyer@paperplanes.de",
     "nschonni@gmail.com",
     "patrick@bittorrent.com",
-    "punchagan@muse-amuse.in"
-    "rainsuner@gmail.com"
+    "punchagan@muse-amuse.in",
+    "rainsuner@gmail.com",
     "renee@travis-ci.org",
     "sferik@gmail.com",
     "steffen.koette@gmail.com",
     "steve.richert@gmail.com",
     "svenfuchs@artweb-design.de",
     "tim@spork.in",
-    "tyranja@cassiopeia.uberspace.de",
+    "tyranja@cassiopeia.uberspace.de"
   ]
 
   s.files = [
