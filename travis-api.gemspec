@@ -805,7 +805,6 @@ Gem::Specification.new do |s|
   ]
 
   s.add_dependency 'travis-support'
-  s.add_dependency 'travis-core'
 
   s.add_dependency 'pg'
   s.add_dependency 'composite_primary_keys', '~> 5.0'
