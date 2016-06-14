@@ -34,7 +34,7 @@ RSpec.describe User, type: :model do
   describe '.repositories' do
     let(:user_with_repo) { create(:user, :with_repo) }
 
-    it 'finds repositories asscociated with the user' do
+    it 'finds repositories associated with the user' do
       expect(user_with_repo.repositories.count).to eql 1
       expect(user_with_repo.repositories.first.name).to eql 'travis-admin'
     end
@@ -43,7 +43,7 @@ RSpec.describe User, type: :model do
   describe '.subscription' do
     let(:user_with_subscription) { create(:user, :with_subscription) }
 
-    it 'finds the subscription asscociated with the user' do
+    it 'finds the subscription associated with the user' do
       expect(user_with_subscription.subscription).not_to be nil
       expect(user_with_subscription.subscription.owner_id).to eql user_with_subscription.id
     end
