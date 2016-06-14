@@ -96,6 +96,14 @@ module Travis::API::V3
       repository_visible?(settings.repository)
     end
 
+    def env_vars_visible?(env_vars)
+      repository_visible?(env_vars.repository)
+    end
+
+    def env_var_visible?(env_var)
+      repository_visible?(env_var.repository)
+    end
+
     def private_repository_visible?(repository)
       false
     end

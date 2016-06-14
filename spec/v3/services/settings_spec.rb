@@ -7,14 +7,7 @@ describe Travis::API::V3::Services::Settings, set_app: true do
   describe :Find do
     describe 'not authenticated' do
       before { get("/v3/repo/#{repo.id}/settings") }
-      example { expect(last_response.status).to eq(403) }
-      example do
-        expect(JSON.load(body)).to eq(
-          '@type' => 'error',
-          'error_type' => 'login_required',
-          'error_message' => 'login required'
-        )
-      end
+      include_examples 'not authenticated'
     end
 
     describe 'authenticated, missing repo' do
