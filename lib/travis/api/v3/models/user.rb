@@ -22,5 +22,13 @@ module Travis::API::V3
     def starred_repository_ids
       @starred_repository_ids ||= stars.map(&:repository_id)
     end
+
+    def permission?(roles, options = {})
+      roles, options = nil, roles if roles.is_a?(Hash)
+      scope = permissions.where(options)
+      scope = scope.by_roles(roles) if roles
+      scope.any?
+    end
+
   end
 end

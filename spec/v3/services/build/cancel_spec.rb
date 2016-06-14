@@ -8,6 +8,7 @@ describe Travis::API::V3::Services::Build::Cancel do
 
   before do
     Travis::Features.stubs(:owner_active?).returns(true)
+    Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(false)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
@@ -226,6 +227,111 @@ describe Travis::API::V3::Services::Build::Cancel do
       }
     end
   end
+
+  describe "existing repository, push & pull access, cancelable, enqueues message for Hub" do
+    let(:params)  {{}}
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
+    before do
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true)
+      Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(true)
+    end
+
+    describe "started state" do
+      before        { build.update_attribute(:state, "started")                                                  }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "build",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{build.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api",
+        "type"   => "build"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'hub' }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
+    end
+
+    describe "queued state" do
+      before        { build.update_attribute(:state, "queued")                                                  }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "build",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{build.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api",
+        "type"   => "build"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
+    end
+
+    describe "received state" do
+      before        { build.update_attribute(:state, "received")                                                  }
+      before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "build",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{build.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api",
+        "type"   => "build"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
+    end
+
+    describe "setting id has no effect" do
+      let(:params) {{ id: 42 }}
+      before  { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{build.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api",
+        "type"   => "build"}
+      }
+    end
+  end
+
+
+
 
   #  TODO decided to discuss further with rkh as this use case doesn't really exist at the moment
   #  and 'fixing' the query requires modifying workers that v2 uses, thereby running the risk of breaking v2,
