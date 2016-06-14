@@ -8,3 +8,6 @@
 
 # Ignore Apple created files
 .DS_Store
+
+# Ignore ENVs
+.env
