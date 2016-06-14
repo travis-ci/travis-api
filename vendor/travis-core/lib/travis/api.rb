@@ -1,6 +1,7 @@
 module Travis
   module Api
     require 'travis/api/formats'
+    require 'travis/api/v0'
     require 'travis/api/v1'
     require 'travis/api/v2'
 
