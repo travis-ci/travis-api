@@ -24,8 +24,15 @@ module Travis::API::V3
 
     def restart(user)
       raise JobAlreadyRunning if %w(received queued started).include? find.state
-      payload = { id: id, user_id: user.id, source: 'api' }
-      perform_async(:job_restart, payload)
+
+      if Travis::Features.owner_active?(:enqueue_to_hub, user)
+        service = Travis::Enqueue::Services::RestartModel.new(user, { job_id: id })
+        payload = { id: id, user_id: user.id }
+        service.push("job:restart", payload)
+      else
+        payload = { id: id, user_id: user.id, source: 'api' }
+        perform_async(:job_restart, payload)
+      end
       payload
     end
   end
