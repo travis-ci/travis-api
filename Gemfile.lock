@@ -1,3 +1,15 @@
+GIT
+  remote: git://github.com/travis-ci/travis-migrations.git
+  revision: f920317b25af508451839dfe594dae1768673b7e
+  specs:
+    travis-migrations (0.0.2)
+
+GIT
+  remote: https://fba4602ab138c5b2c8d48ae32a67aedeefc5e939:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git
+  revision: b10c60bfe0a80313825316f45121c1cbe5a8c31c
+  specs:
+    travis-pro-migrations (0.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -171,6 +183,8 @@ DEPENDENCIES
   rake
   rspec-rails (~> 3.4)
   sass-rails (~> 5.0)
+  travis-migrations!
+  travis-pro-migrations!
   turbolinks
   uglifier (>= 1.3.0)
   web-console (~> 2.0)

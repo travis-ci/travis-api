@@ -11,6 +11,10 @@ gem 'jquery-rails'
 # Use postgresql as the database for Active Record
 gem 'pg'
 
+# Travis Migrations for the db
+gem 'travis-migrations', github: 'travis-ci/travis-migrations'
+gem 'travis-pro-migrations',  git: "https://fba4602ab138c5b2c8d48ae32a67aedeefc5e939:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git", require: 'travis/pro/migrations'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 
