@@ -9,6 +9,7 @@ describe Travis::API::V3::Services::Job::Cancel do
 
   before do
     Travis::Features.stubs(:owner_active?).returns(true)
+    Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(false)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
@@ -174,6 +175,107 @@ describe Travis::API::V3::Services::Job::Cancel do
       }
     end
   end
+
+  describe "existing repository, push access, job cancelable, enqueues message for Hub" do
+    let(:params)  {{}}
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
+    before  do
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true)
+      Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(true)
+    end
+
+    describe "started state" do
+      before        { job.update_attribute(:state, "started")                                                }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "pending",
+        "job",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{job.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
+    end
+    describe "queued state" do
+      before        { job.update_attribute(:state, "queued")                                                }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "pending",
+        "job",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{job.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
+    end
+
+    describe "received state" do
+      before        { job.update_attribute(:state, "received")                                                }
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                                      }
+
+      example { expect(last_response.status).to be == 202 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "pending",
+        "job",
+        "@href",
+        "@representation",
+        "minimal",
+        "cancel",
+        "id",
+        "state_change")
+      }
+
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{job.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+
+      example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
+      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
+    end
+
+    describe "setting id has no effect" do
+      before        { post("/v3/job/#{job.id}/cancel", params, headers)                           }
+      let(:params) {{ id: 42 }}
+      example { expect(sidekiq_payload).to be == {
+        "id"     => "#{job.id}",
+        "user_id"=> repo.owner_id,
+        "source" => "api"}
+      }
+    end
+  end
+
   describe "existing repository, push access, not cancelable" do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
