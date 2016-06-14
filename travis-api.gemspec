@@ -558,9 +558,6 @@ Gem::Specification.new do |s|
     "spec_core/core/services/update_user_spec.rb",
     "spec_core/core/services_spec.rb",
     "tmp/.gitkeep",
-<<<<<<< ce071ad7280edddc0c5118d0d624198a25f90281
-    "travis-api.gemspec"
-=======
     "travis-api.gemspec",
     "vendor/travis-core/lib/travis.rb",
     "vendor/travis-core/lib/travis/addons.rb",
@@ -805,7 +802,6 @@ Gem::Specification.new do |s|
     "vendor/travis-core/lib/travis/testing/stubs/stub.rb",
     "vendor/travis-core/lib/travis_core/version.rb",
     "vendor/travis-core/travis-core.gemspec"
->>>>>>> renamed the core spec directory
   ]
 
   s.add_dependency 'travis-support'
