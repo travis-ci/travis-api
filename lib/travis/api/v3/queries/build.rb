@@ -14,9 +14,8 @@ module Travis::API::V3
       raise BuildNotCancelable if %w(passed failed canceled errored).include? find.state
       payload = { id: id, user_id: user.id, source: 'api' }
       if Travis::Features.owner_active?(:enqueue_to_hub, user)
-        payload[:type] = :build
-        service = Travis::Enqueue::Services::CancelModel.new(user, payload)
-        service.push
+        service = Travis::Enqueue::Services::CancelModel.new(user, { build_id: id })
+        service.push("build:cancel", payload)
       else
         perform_async(:build_cancellation, payload)
       end

@@ -14,8 +14,8 @@ module Travis::API::V3
       raise JobNotCancelable if %w(passed failed canceled errored).include? find.state
       payload = { id: id, user_id: user.id, source: 'api' }
       if Travis::Features.owner_active?(:enqueue_to_hub, user)
-        service = Travis::Enqueue::Services::CancelModel.new(user, payload)
-        service.push
+        service = Travis::Enqueue::Services::CancelModel.new(user, { job_id: id })
+        service.push("job:cancel", payload)
       else
         perform_async(:job_cancellation, payload)
       end

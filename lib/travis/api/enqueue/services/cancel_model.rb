@@ -20,26 +20,27 @@ module Travis
           messages
         end
 
-        def push
+        def push(event, payload)
           # target may have been retrieved with a :join query, so we need to reset the readonly status
           if can_cancel?
             ::Sidekiq::Client.push(
                   'queue'   => 'hub',
                   'class'   => 'Travis::Hub::Sidekiq::Worker',
-                  'args'    => ["#{type}:cancel", @params]
+                  #'args'    => ["#{type}:cancel", @params]
+                  'args'    => [event, payload]
                 )
           end
         end
 
         def type
-          @params[:type]
+          @type ||= @params[:build_id] ? :build : :job
         end
 
         def target
           if type == :build
-            @target = Build.find(@params[:id])
+            @target = Build.find(@params[:build_id])
           else
-            @target = Job.find(@params[:id])
+            @target = Job.find(@params[:job_id])
           end
         end
 
@@ -47,6 +48,7 @@ module Travis
           authorized? && target.cancelable?
         end
 
+        # check on web
         def authorized?
           current_user.permission?(:pull, :repository_id => target.repository_id)
         end

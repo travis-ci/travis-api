@@ -256,8 +256,7 @@ describe Travis::API::V3::Services::Build::Cancel do
       example { expect(sidekiq_payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id,
-        "source" => "api",
-        "type"   => "build"}
+        "source" => "api"}
       }
 
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub' }
@@ -283,8 +282,7 @@ describe Travis::API::V3::Services::Build::Cancel do
       example { expect(sidekiq_payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id,
-        "source" => "api",
-        "type"   => "build"}
+        "source" => "api"}
       }
 
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
@@ -310,8 +308,7 @@ describe Travis::API::V3::Services::Build::Cancel do
       example { expect(sidekiq_payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id,
-        "source" => "api",
-        "type"   => "build"}
+        "source" => "api"}
       }
 
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
@@ -324,8 +321,7 @@ describe Travis::API::V3::Services::Build::Cancel do
       example { expect(sidekiq_payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id,
-        "source" => "api",
-        "type"   => "build"}
+        "source" => "api"}
       }
     end
   end
