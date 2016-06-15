@@ -10,7 +10,7 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '.login' do
+  describe '.email' do
     it 'retrieves primary email address' do
       expect(user.email).to eql 'aly@example.com'
     end
