@@ -2,6 +2,7 @@ require 'travis/api/app'
 require 'travis/api/workers/build_cancellation'
 require 'travis/api/workers/build_restart'
 require 'travis/api/enqueue/services/restart_model'
+require 'travis/api/enqueue/services/cancel_model'
 
 class Travis::Api::App
   class Endpoint
@@ -21,7 +22,12 @@ class Travis::Api::App
       post '/:id/cancel' do
         Metriks.meter("api.request.cancel_build").mark
 
-        service = self.service(:cancel_build, params.merge(source: 'api'))
+        if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
+          service = Travis::Enqueue::Services::CancelModel.new(current_user, { build_id: params[:id] })
+        else
+          service = self.service(:cancel_build, params.merge(source: 'api'))
+        end
+
         if !service.authorized?
           json = { error: {
             message: "You don't have access to cancel build(#{params[:id]})"
@@ -40,7 +46,12 @@ class Travis::Api::App
           status 422
           respond_with json
         else
-          Travis::Sidekiq::BuildCancellation.perform_async(id: params[:id], user_id: current_user.id, source: 'api')
+          payload = { id: params[:id], user_id: current_user.id, source: 'api' }
+          if service.respond_to?(:push)
+            service.push("build:cancel", payload)
+          else
+            Travis::Sidekiq::BuildCancellation.perform_async(payload)
+          end
 
           Metriks.meter("api.request.cancel_build.success").mark
           status 204

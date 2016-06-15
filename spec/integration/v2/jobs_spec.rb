@@ -230,6 +230,15 @@ describe 'Jobs' do
         response = post "/jobs/#{job.id}/cancel", {}, headers
         response.status.should == 403
       end
+
+      context 'and tries to enqueue cancel event for the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
+
+        it 'responds with 403' do
+          response = post "/jobs/#{job.id}/cancel", {}, headers
+          response.status.should == 403
+        end
+      end
     end
 
     context 'when job is not cancelable' do
@@ -238,6 +247,15 @@ describe 'Jobs' do
       it 'responds with 422' do
         response = post "/jobs/#{job.id}/cancel", {}, headers
         response.status.should == 422
+      end
+
+      context 'and tries to enqueue cancel event for the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
+
+        it 'responds with 422' do
+          response = post "/jobs/#{job.id}/cancel", {}, headers
+          response.status.should == 422
+        end
       end
     end
 
@@ -254,6 +272,21 @@ describe 'Jobs' do
       it 'responds with 204' do
         response = post "/jobs/#{job.id}/cancel", {}, headers
         response.status.should == 204
+      end
+
+      context 'and enqueues cancel event for the Hub' do
+        before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
+
+        it 'cancels the job' do
+          ::Sidekiq::Client.expects(:push)
+          post "/jobs/#{job.id}/cancel", {}, headers
+        end
+
+        it 'responds with 204' do
+          ::Sidekiq::Client.expects(:push)
+          response = post "/jobs/#{job.id}/cancel", {}, headers
+          response.status.should == 204
+        end
       end
     end
   end
