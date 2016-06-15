@@ -18,6 +18,8 @@ require 'travis/testing/matchers'
 require 'support/matchers'
 require 'support/formats'
 
+require 'pry'
+
 Travis.logger = Logger.new(StringIO.new)
 Travis::Api::App.setup
 Travis.config.client_domain = "www.example.com"
@@ -53,7 +55,7 @@ end
 
 RSpec.configure do |c|
   c.mock_framework = :mocha
-  c.expect_with :rspec, :test_unit
+  c.expect_with :rspec
   c.include TestHelpers
 
   c.before :suite do

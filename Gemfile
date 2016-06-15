@@ -3,11 +3,12 @@ gemspec
 
 gem 's3',              github: 'travis-ci/s3'
 
-gem 'travis-core',     github: 'travis-ci/travis-core'
+gem 'travis-core',     path:   'vendor'
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-amqp',     github: 'travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
-gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs', require: nil
+gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs'
+
 gem 'travis-yaml',     github: 'travis-ci/travis-yaml'
 gem 'mustermann',      github: 'rkh/mustermann'
 gem 'sinatra'
@@ -17,7 +18,7 @@ gem 'active_model_serializers'
 gem 'unicorn'
 gem 'sentry-raven'
 gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
-gem 'rack-contrib',    github: 'rack/rack-contrib'
+gem 'rack-contrib'
 gem 'rack-cache',      github: 'rtomayko/rack-cache'
 gem 'rack-attack'
 gem 'gh'
