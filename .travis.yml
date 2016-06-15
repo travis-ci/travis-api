@@ -2,7 +2,7 @@ language: ruby
 
 sudo: false
 
-rvm: 2.1.5
+rvm: 2.2.3
 
 env:
   global:
@@ -19,6 +19,3 @@ services:
 
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
-
-script:
-  - bundle exec rspec spec

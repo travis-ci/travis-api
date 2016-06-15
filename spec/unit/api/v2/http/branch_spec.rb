@@ -28,7 +28,6 @@ describe Travis::Api::V2::Http::Branch do
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
       'message' => 'the commit message',
-      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committer_name' => 'Sven Fuchs',
