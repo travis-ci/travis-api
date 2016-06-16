@@ -44,7 +44,7 @@ RSpec.describe User, type: :model do
     let!(:user_with_repos) { create(:user_with_repositories) }
     let!(:organization_with_repositories) { create(:organization_with_repositories) }
 
-    xit 'finds repositories user ownes' do
+    it 'finds repositories user ownes' do
       expect(user_with_repos.permitted_repositories.count).to eql 2
       expect(user_with_repos.permitted_repositories.first.name).to eql 'travis-admin'
     end
