@@ -41,12 +41,12 @@ RSpec.describe User, type: :model do
   end
 
   describe '.permitted_repositories' do
-    let!(:user_with_repos) { create(:user_with_repositories) }
+    let!(:user_with_repo) { create(:user_with_repository) }
     let!(:organization_with_repositories) { create(:organization_with_repositories) }
 
-    it 'finds repositories user ownes' do
-      expect(user_with_repos.permitted_repositories.count).to eql 2
-      expect(user_with_repos.permitted_repositories.first.name).to eql 'travis-admin'
+    it 'finds repository user ownes' do
+      expect(user_with_repo.permitted_repositories.count).to eql 1
+      expect(user_with_repo.permitted_repositories.first.name).to eql 'travis-admin'
     end
 
     xit 'finds repositories associated with user through organizations' do

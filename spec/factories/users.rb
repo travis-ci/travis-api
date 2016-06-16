@@ -13,6 +13,13 @@ FactoryGirl.define do
       end
     end
 
+    factory :user_with_repository do
+      after(:create) do |user, evaluator|
+        repo = create(:repository, owner: user)
+        create(:permission, repository_id: repo.id, user_id: user.id )
+      end
+    end
+
     factory :user_with_repositories do
       transient do
         repository_count 2
