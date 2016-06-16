@@ -2,17 +2,25 @@ FactoryGirl.define do
   factory :user do
     login 'sinthetix'
     email 'aly@example.com'
-  end
 
-  trait :with_organization do
-    after(:create) do |user|
-      user.organizations << create(:organization)
+    factory :user_with_organizations do
+      transient do
+        organization_count 2
+      end
+
+      after(:create) do |user, evaluator|
+        create_list(:organization, evaluator.organization_count, users: [user])
+      end
     end
-  end
 
-  trait :with_repo do
-    after(:create) do |user|
-      user.repositories << create(:repository)
+    factory :user_with_repositories do
+      transient do
+        repo_count 2
+      end
+
+      after(:create) do |user, evaluator|
+        create_list(:repository, evaluator.repo_count, owner: user)
+      end
     end
   end
 

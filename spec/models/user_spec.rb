@@ -23,20 +23,33 @@ RSpec.describe User, type: :model do
   end
 
   describe '.organizations' do
-    let(:user_with_organization) { create(:user, :with_organization) }
+    let(:user_with_organizations) { create(:user_with_organizations) }
 
-    it 'finds organization asscociated with the user' do
-      expect(user_with_organization.organizations.count).to eql 1
-      expect(user_with_organization.organizations.first.name).to eql 'Travis'
+    it 'finds organizations associated with the user' do
+      expect(user_with_organizations.organizations.count).to eql 2
+      expect(user_with_organizations.organizations.first.name).to eql 'Travis'
     end
   end
 
   describe '.repositories' do
-    let(:user_with_repo) { create(:user, :with_repo) }
+    let(:user_with_repos) { create(:user_with_repositories) }
 
-    it 'finds repositories associated with the user' do
-      expect(user_with_repo.repositories.count).to eql 1
-      expect(user_with_repo.repositories.first.name).to eql 'travis-admin'
+    it 'finds repositories user ownes' do
+      expect(user_with_repos.repositories.count).to eql 2
+      expect(user_with_repos.repositories.first.name).to eql 'travis-admin'
+    end
+  end
+
+  describe '.permitted_repositories' do
+    let!(:user_with_repos) { create(:user_with_repositories) }
+    let!(:organization_with_repositories) { create(:organization_with_repositories) }
+
+    xit 'finds repositories user ownes' do
+      expect(user_with_repos.permitted_repositories.count).to eql 2
+      expect(user_with_repos.permitted_repositories.first.name).to eql 'travis-admin'
+    end
+
+    xit 'finds repositories associated with user through organizations' do
     end
   end
 
