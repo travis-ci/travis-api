@@ -1,0 +1,29 @@
+<section class="box">
+  <h3 class="box-title">Repositories</h3>
+
+  <% if repositories.empty? %>
+    <p>No repositories.</p>
+  <% else %>
+    <ul class="list">
+      <% repositories.each do |repo| %>
+        <li>
+          <ul class="list-item">
+            <li class="key"><%= repo.name %></li>
+            <% if repo.active? %>
+              <li>enabled</li>
+            <% else %>
+              <li>disabled</li>
+            <% end %>
+            <% if repo.last_build_id %>
+              <li><a href="/build/<%= repo.last_build_id %>"> build # <%= repo.last_build_number %></a></li>
+              <li><%= " #{repo.last_build_state.to_s} (#{repo.last_build_finished_at || repo.last_build_started_at})" %></li>
+            <% else %>
+              <li>no build</li>
+            <% end %>
+            <li>
+          </ul>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
