@@ -15,18 +15,18 @@ FactoryGirl.define do
 
     factory :user_with_repositories do
       transient do
-        repo_count 2
+        repository_count 2
       end
 
       after(:create) do |user, evaluator|
-        create_list(:repository, evaluator.repo_count, owner: user)
+        create_list(:repository, evaluator.repository_count, owner: user)
       end
     end
-  end
 
-  trait :with_subscription do
-    after(:create) do |user|
-      user.subscription = create(:subscription)
+    trait :with_subscription do
+      after(:create) do |user|
+        user.subscription = create(:subscription)
+      end
     end
   end
 end
