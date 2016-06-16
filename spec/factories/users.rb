@@ -30,6 +30,14 @@ FactoryGirl.define do
       end
     end
 
+    factory :user_with_repo_through_organization do
+      after(:create) do |user, evaluator|
+        organization = create(:organization, users: [user])
+        repo = create(:repository, owner: organization, name: 'emerald')
+        create(:permission, repository_id: repo.id, user_id: user.id)
+      end
+    end
+
     trait :with_subscription do
       after(:create) do |user|
         user.subscription = create(:subscription)
