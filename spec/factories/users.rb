@@ -14,7 +14,7 @@ FactoryGirl.define do
     end
 
     factory :user_with_repository do
-      after(:create) do |user, evaluator|
+      after(:create) do |user|
         repo = create(:repository, owner: user)
         create(:permission, repository_id: repo.id, user_id: user.id )
       end
@@ -31,7 +31,7 @@ FactoryGirl.define do
     end
 
     factory :user_with_repo_through_organization do
-      after(:create) do |user, evaluator|
+      after(:create) do |user|
         organization = create(:organization, users: [user])
         repo = create(:repository, owner: organization, name: 'emerald')
         create(:permission, repository_id: repo.id, user_id: user.id)
