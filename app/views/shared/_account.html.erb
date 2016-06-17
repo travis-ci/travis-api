@@ -1,36 +1,54 @@
-<section class="box">
-  <h2 class="box-title">Subscription</h2>
-    <div class="detail-pair">
-      <strong>Account Creation</strong>
-    </div>
+<section class="info-block">
+  <h3>Travis Information:</h3>
+  <dl class="simple-info">
 
-    <div class="detail-pair">
-      <strong>Trial Builds</strong>
-    </div>
+    <dt class="info-label">Travis ID:</dt>
+    <dd><%= organization.id %></dd>
 
-    <div class="detail-pair">
-      <strong>Total Trials</strong>
-    </div>
+    <dt class="info-label">Account Creation:</dt>
+    <dd>
+      <time>
+        <%= owner.created_at %>
+      </time>
+    </dd>
 
-    <div class="detail-pair">
-      <strong>Subscription</strong>
-        <% if owner.subscription %>
-         has subscription (fill in real data)
-        <% else %>
-          none
-        <% end %>
-    </div>
+    <dt class="info-label">Trial Builds:</dt>
+    <dd>
+      <form>
 
-    <div class="detail-pair">
-      <strong>Job Boost</strong>
-    </div>
+      </form>
+    </dd>
+
+    <dt class="info-label">Total Trials:</dt>
+    <dd></dd>
+
+    <dt class="info-label">Subscription:</dt>
+    <dd>
+      <% if owner.subscription %>
+          {{subscription info}}
+      <% else %>
+          None.
+      <% end %>
+    </dd>
+
+    <dt class="info-label">Job Boost:</dt>
+    <dd>
+      <form>
+      </form>
+    </dd>
+
+  </dl>
 </section>
 
 
-<section class="box">
-  <h2 class="box-title">Feature Flags</h2>
+<section class="info-block">
+  <h3>Feature Flags:</h3>
+  <form>
+  </form>
 </section>
 
-<section class="box">
-  <h2 class="box-title">Abuse</h2>
+<section class="info-block">
+  <h3>Abuse Flags:</h3>
+  <form>
+  </form>
 </section>
