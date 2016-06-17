@@ -1,5 +1,5 @@
 <section class="box">
-  <h3 class="box-title">Basic Information</h3>
+  <h2 class="box-title">Basic Information</h2>
 
   <div class="detail-pair">
     <strong>Name</strong>
@@ -22,10 +22,15 @@
 </section>
 
 <section class="box">
-  <h3 class="box-title">GitHub Information</h3>
+  <h2 class="box-title">GitHub Information</h2>
+  <div class="detail-pair">
+    <strong>GitHub Name</strong>
+    <%= user.login %>
+  </div>
+
   <div class="detail-pair">
     <strong>GitHub ID</strong>
-    <%= user.login %> (<%= user.github_id %>)
+    <%= user.github_id %>
   </div>
 
   <div class="detail-pair">
@@ -49,18 +54,19 @@
 </section>
 
 <section class="box">
-  <h3 class="box-title">Organizations</h3>
+  <h2 class="box-title">Organizations</h2>
 
   <% if user.organizations.empty? %>
     <p>No organizations.</p>
   <% else %>
     <% user.organizations.each do |org| %>
-      <% if org.avatar_url %>
-        <div>
+      <div>
+        <% if org.avatar_url %>
           <img class="avatar" src="<%= org.avatar_url %>?s=20">
-          <%= org.name.present? ? "#{org.name} (#{org.login})" : org.login %>
-        </div>
-      <% end %>
+        <% end %>
+        <%= org.name.present? ? "#{org.name} (#{org.login})" : org.login %>
+        <%= link_to "View", org %>
+      </div>
     <% end %>
   <% end %>
 </section>
