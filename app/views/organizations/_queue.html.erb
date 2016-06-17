@@ -1,0 +1,19 @@
+<section class="box">
+  <h2 class="box-title">Repositories</h2>
+  <% if pending_jobs.empty? %>
+      No jobs.
+  <% else %>
+      <ul class="list">
+        <% pending_jobs.each do |job| %>
+            <li>
+              <ul class="list-item">
+                <li><%= job.id %></li>
+                <li><%= job.state %></li>
+                <li><%= job.started_at %></li>
+                <li><%= job.queue %></li>
+              </ul>
+            </li>
+        <% end %>
+      </ul>
+  <% end %>
+</section>
