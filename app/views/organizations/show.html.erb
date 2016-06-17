@@ -1,0 +1,26 @@
+<nav class="tablist">
+  <ul class="tabs group">
+    <li><a href="#organization">Organization</a></li>
+    <li><a href="#account">Account</a></li>
+    <li><a href="#repositories">Repositories</a></li>
+    <li><a href="#queue">Queue</a></li>
+  </ul>
+
+  <div class="box-wrap">
+    <div id="organization">
+      <%= render partial: "organization", locals: {organization: @organization} %>
+    </div>
+
+    <div id="account">
+      <%= render partial: "account", locals: {user: @user} %>
+    </div>
+
+    <div id="repositories">
+      <%= render partial: "repositories", locals: {repositories: @repositories} %>
+    </div>
+
+    <div id="queue">
+      <%= render partial: "queue", locals: {organization: @organization, pending_jobs: @pending_jobs} %>
+    </div>
+  </div>
+</nav>
