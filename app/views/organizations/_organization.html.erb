@@ -25,8 +25,16 @@
 <section class="box">
   <h2 class="box-title">GitHub Information</h2>
   <div class="detail-pair">
+    <strong>GitHub Name</strong>
+    <% if organization.avatar_url %>
+      <img class="avatar" src="<%= organization.avatar_url %>?s=20">
+    <% end %>
+    <%= organization.login %>
+  </div>
+
+  <div class="detail-pair">
     <strong>GitHub ID</strong>
-    <%= organization.login %> (<%= organization.github_id %>)
+    <%= organization.github_id %>
   </div>
 </section>
 
