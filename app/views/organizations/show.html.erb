@@ -8,11 +8,11 @@
 
   <div class="box-wrap">
     <div id="organization">
-      <%= render partial: "organization", locals: {organization: @organization} %>
+      <%= render partial: "organization", locals: {organization: @organization, users: @users} %>
     </div>
 
     <div id="account">
-      <%= render partial: "account", locals: {user: @user} %>
+      <%= render partial: "account", locals: {organization: @organization} %>
     </div>
 
     <div id="repositories">
