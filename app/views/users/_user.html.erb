@@ -22,16 +22,16 @@
 <section class="info-block">
   <h3>GitHub Information</h3>
   <dl class="simple-info">
-    <dt class="info-label">GitHub Login</dt>
+    <dt class="info-label">GitHub Login:</dt>
     <dd><%= user.login %></dd>
 
-    <dt class="info-label">GitHub ID</dt>
+    <dt class="info-label">GitHub ID:</dt>
     <dd><%= user.github_id %></dd>
 
-    <dt class="info-label">Token</dt>
+    <dt class="info-label">Token:</dt>
     <dd><%= hidden(user, :github_oauth_token) %></dd>
 =
-    <dt class="info-label">Scopes</dt>
+    <dt class="info-label">Scopes:</dt>
     <dd>
       <% if user.github_scopes.present? %>
           <%= user.github_scopes %>
@@ -40,7 +40,7 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Last Sync</dt>
+    <dt class="info-label">Last Sync:</dt>
     <dd><%= user.synced_at ? user.synced_at : "Never" %></dd>
   </dl>
 </section>
