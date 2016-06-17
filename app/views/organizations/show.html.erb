@@ -1,18 +1,18 @@
 <nav class="tablist">
   <ul class="tabs group">
-    <li><a href="#user">User</a></li>
+    <li><a href="#organization">Organization</a></li>
     <li><a href="#account">Account</a></li>
     <li><a href="#repositories">Repositories</a></li>
     <li><a href="#queue">Queue</a></li>
   </ul>
 
   <div class="box-wrap">
-    <div id="user">
-      <%= render partial: "user", locals: {user: @user} %>
+    <div id="organization">
+      <%= render partial: "organization", locals: {organization: @organization, users: @users} %>
     </div>
 
     <div id="account">
-      <%= render partial: "shared/account", locals: {owner: @user} %>
+      <%= render partial: "shared/account", locals: {owner: @organization} %>
     </div>
 
     <div id="repositories">
@@ -20,7 +20,7 @@
     </div>
 
     <div id="queue">
-      <%= render partial: "shared/queue", locals: {user: @user, pending_jobs: @pending_jobs} %>
+      <%= render partial: "shared/queue", locals: {organization: @organization, pending_jobs: @pending_jobs} %>
     </div>
   </div>
 </nav>

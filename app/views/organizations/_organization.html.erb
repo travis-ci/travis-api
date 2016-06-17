@@ -1,0 +1,53 @@
+<section class="box">
+  <h2 class="box-title">Basic Information</h2>
+
+  <div class="detail-pair">
+    <strong>Name</strong>
+    <%= organization.name %>
+  </div>
+
+  <div class="detail-pair">
+    <strong>Primary E-mail Address</strong>
+    <%= organization.email %>
+  </div>
+
+  <div class="detail-pair">
+    <strong>Homepage</strong>
+    <%= organization.homepage %>
+  </div>
+
+  <div class="detail-pair">
+    <strong>Location</strong>
+    <%= organization.location %>
+  </div>
+</section>
+
+<section class="box">
+  <h2 class="box-title">GitHub Information</h2>
+  <div class="detail-pair">
+    <strong>GitHub Login</strong>
+    <% if organization.avatar_url %>
+      <img class="avatar" src="<%= organization.avatar_url %>?s=20">
+    <% end %>
+    <%= organization.login %>
+  </div>
+
+  <div class="detail-pair">
+    <strong>GitHub ID</strong>
+    <%= organization.github_id %>
+  </div>
+</section>
+
+<section class="box">
+  <h2 class="box-title">Users</h2>
+
+  <% if users.empty? %>
+    <p>No users.</p>
+  <% else %>
+    <ul class="list">
+      <% users.each do |user| %>
+        <li><%= link_to "#{user.name} (#{user.login})", user %></li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
