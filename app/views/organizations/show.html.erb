@@ -1,26 +1,25 @@
-<nav class="tablist">
-  <ul class="tabs group">
-    <li><a href="#organization">Organization</a></li>
-    <li><a href="#account">Account</a></li>
-    <li><a href="#repositories">Repositories</a></li>
-    <li><a href="#queue">Queue</a></li>
-  </ul>
+<div id="tabs">
+  <span id="organization" class="tab-switch"></span>
+  <a href="#organization" class="tab-link">Organization</a>
+  <article class="tab-content">
+    <%= render partial: 'organization', locals: {organization: @organization} %>
+  </article>
 
-  <div class="box-wrap">
-    <div id="organization">
-      <%= render partial: "organization", locals: {organization: @organization, users: @users} %>
-    </div>
+  <span id="account" class="tab-switch"></span>
+  <a href="#account" class="tab-link">Account</a>
+  <article class="tab-content">
+    <%= render partial: 'shared/account', locals: {organization: @organization} %>
+  </article>
 
-    <div id="account">
-      <%= render partial: "shared/account", locals: {owner: @organization} %>
-    </div>
+  <span id="repositories" class="tab-switch"></span>
+  <a href="#repositories" class="tab-link">Repositories</a>
+  <article class="tab-content">
+    <%= render partial: 'shared/repositories', locals: {repositories: @repositories} %>
+  </article>
 
-    <div id="repositories">
-      <%= render partial: "shared/repositories", locals: {repositories: @repositories} %>
-    </div>
-
-    <div id="queue">
-      <%= render partial: "shared/queue", locals: {organization: @organization, pending_jobs: @pending_jobs} %>
-    </div>
-  </div>
-</nav>
+  <span id="queue" class="tab-switch"></span>
+  <a href="#queue" class="tab-link">Queue</a>
+  <article class="tab-content">
+    <%= render partial: 'shared/queue', locals: {organization: @organization, pending_jobs: @pending_jobs} %>
+  </article>
+</div>
