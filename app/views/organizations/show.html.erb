@@ -20,7 +20,7 @@
     </div>
 
     <div id="queue">
-      <%= render partial: "queue", locals: {organization: @organization, pending_jobs: @pending_jobs} %>
+      <%= render partial: "shared/queue", locals: {organization: @organization, pending_jobs: @pending_jobs} %>
     </div>
   </div>
 </nav>
