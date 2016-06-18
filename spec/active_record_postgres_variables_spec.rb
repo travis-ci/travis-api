@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe "ActiveRecordPostgresVariables" do
   let(:variables) {{ foo: 'bar' }}
   let(:database_options) { Travis.config.database.merge(variables: variables) }

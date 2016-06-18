@@ -22,6 +22,11 @@ class Travis::Api::App
           status 404
         else
           # DEPRECATED: this will be removed by 1st of December
+          #
+          # TODO It seems this endpoint is still in use, quite a bit:
+          # https://metrics.librato.com/s/metrics/api.request.restart?duration=2419200&q=api.request.restart
+          #
+          # I think we need to properly deprecate this by publishing a blog post.
           Metriks.meter("api.request.restart").mark
           respond_with service(:reset_model, params)
         end

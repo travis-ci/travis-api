@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::Api::App::Endpoint do
+describe Travis::Api::App::Endpoint, set_app: true do
   class MyEndpoint < Travis::Api::App::Endpoint
     set :prefix, '/my_endpoint'
     get('/') { 'ok' }

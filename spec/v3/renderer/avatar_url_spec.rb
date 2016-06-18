@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::API::V3::Renderer::AvatarURL do
   let(:object) { Object.new }
   subject { Travis::API::V3::Renderer::AvatarURL.avatar_url(object) }

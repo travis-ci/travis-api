@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Lint::Lint do
+describe Travis::API::V3::Services::Lint::Lint, set_app: true do
     let(:content) { "foo: bar" }
     let(:parsed_body) { JSON.load(last_response.body) }
     let(:headers) {{ 'CONTENT_TYPE' => 'text/yaml'}}

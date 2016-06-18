@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Extensions::SubclassTracker do
   let!(:root) { Sinatra.new { register Travis::Api::App::Extensions::SubclassTracker } }
   let!(:left) { Class.new(root) }

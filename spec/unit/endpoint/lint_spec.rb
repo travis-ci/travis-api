@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::Api::App::Endpoint::Lint do
+describe Travis::Api::App::Endpoint::Lint, set_app: true do
   let(:content) { "foo: bar" }
   let(:body) { "{\"lint\":{\"warnings\":[{\"key\":[],\"message\":\"unexpected key \\\"foo\\\", dropping\"},{\"key\":[],\"message\":\"missing key \\\"language\\\", defaulting to \\\"ruby\\\"\"}]}}" }
 

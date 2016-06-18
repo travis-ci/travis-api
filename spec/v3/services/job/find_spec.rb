@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Job::Find do
+describe Travis::API::V3::Services::Job::Find, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:owner_href)  { repo.owner_type.downcase }
   let(:owner_type)  { repo.owner_type.constantize }

@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::ServiceIndex do
+describe Travis::API::V3::ServiceIndex, set_app: true do
   let(:headers)   {{                        }}
   let(:path)      { '/'                      }
   let(:json)      { JSON.load(response.body) }

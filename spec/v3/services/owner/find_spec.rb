@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Owner::Find do
+describe Travis::API::V3::Services::Owner::Find, set_app: true do
   describe "organization" do
     let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
     before    { org.save!                              }

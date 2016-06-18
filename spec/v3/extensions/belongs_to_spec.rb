@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::API::V3::Extensions::BelongsTo do
   describe 'reading polymorphic relation' do
     subject(:repo) { Travis::API::V3::Models::Repository.first }

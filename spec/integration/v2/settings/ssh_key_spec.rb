@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe 'ssh keys endpoint' do
+describe 'ssh keys endpoint', set_app: true do
   let(:repo)    { Factory(:repository) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 

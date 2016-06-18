@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Repository::Unstar do
+describe Travis::API::V3::Services::Repository::Unstar, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   describe "not authenticated" do
@@ -64,5 +62,5 @@ describe Travis::API::V3::Services::Repository::Unstar do
 
   describe "existing repository, push access"
   #  this requires stubing a github request, which is difficult, so has been omitted for now
-  
+
 end

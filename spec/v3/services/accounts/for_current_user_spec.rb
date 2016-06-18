@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Accounts::ForCurrentUser do
+describe Travis::API::V3::Services::Accounts::ForCurrentUser, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }

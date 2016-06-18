@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe 'Branches' do
+describe 'Branches', set_app: true do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 

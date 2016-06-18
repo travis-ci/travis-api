@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Middleware::Logging do
   it 'configures ActiveRecord' do
     ActiveRecord::Base.logger.should == Travis.logger

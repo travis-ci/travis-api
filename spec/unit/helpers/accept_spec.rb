@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module Travis::Api::App::Helpers
   describe Accept do
     class FakeApp < Struct.new(:env)

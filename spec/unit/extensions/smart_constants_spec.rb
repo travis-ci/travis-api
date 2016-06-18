@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Extensions::SmartConstants do
   let(:some_app) do
     Sinatra.new { register Travis::Api::App::Extensions::SmartConstants }

@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::Api::App::Endpoint::Jobs do
+describe Travis::Api::App::Endpoint::Jobs, set_app: true do
   let(:job) { Factory(:test) }
   let(:provider) { Factory(:annotation_provider) }
 

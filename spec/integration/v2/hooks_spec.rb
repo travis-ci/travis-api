@@ -1,7 +1,6 @@
-require 'spec_helper'
 require 'travis/testing/payloads'
 
-describe 'Hooks' do
+describe 'Hooks', set_app: true do
   before(:each) do
     user.permissions.create repository: repo, admin: true
   end

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Endpoint::Authorization do
   include Travis::Testing::Stubs
 

@@ -1,7 +1,6 @@
-require 'spec_helper'
 require 'json'
 
-describe 'Requests' do
+describe 'Requests', set_app: true do
   let(:repo)    { Factory.create(:repository) }
   let(:request) { Factory.create(:request, repository: repo) }
   let(:user)    { Factory.create(:user) }

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Endpoint::Authorization::UserManager do
   let(:manager) { described_class.new(data, 'abc123') }
 

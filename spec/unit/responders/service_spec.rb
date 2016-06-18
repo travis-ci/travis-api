@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Responders::Service do
   class MyService < Travis::Api::App::Responders::Service
   end

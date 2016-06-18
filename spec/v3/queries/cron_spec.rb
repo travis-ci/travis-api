@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::API::V3::Queries::Crons do
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'App' do
   before do
     add_endpoint '/foo' do

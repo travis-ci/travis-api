@@ -1,8 +1,6 @@
-require 'spec_helper'
 require 'sentry-raven'
 
-describe 'Exception' do
-
+describe 'Exception', set_app: true do
   class FixRaven < Struct.new(:app)
     def call(env)
       requested_at = env['requested_at']

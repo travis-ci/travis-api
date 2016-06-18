@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::Api::App::Endpoint::Users do
+describe Travis::Api::App::Endpoint::Users, set_app: true do
   include Travis::Testing::Stubs
   let(:access_token) { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
 

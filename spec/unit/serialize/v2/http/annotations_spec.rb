@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::Serialize::V2::Http::Annotations do
   include Travis::Testing::Stubs, Support::Formats
 

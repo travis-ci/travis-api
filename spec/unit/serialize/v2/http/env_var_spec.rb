@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::Serialize::V2::Http::EnvVar do
   let(:env_var) { Repository::Settings::EnvVar.new(name: 'FOO', value: 'bar', public: true) }
   let(:data) { described_class.new(env_var) }

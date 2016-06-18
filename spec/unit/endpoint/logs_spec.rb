@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::Api::App::Endpoint::Logs do
+describe Travis::Api::App::Endpoint::Logs, set_app: true do
   let(:job)  { Factory(:test) }
 
   describe "GET /logs/:id/" do

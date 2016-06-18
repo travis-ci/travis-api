@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Settings do
+describe Travis::API::V3::Services::Settings, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first_or_create }
   let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
@@ -45,7 +43,7 @@ describe Travis::API::V3::Services::Settings do
           'build_pull_requests' => true,
           'maximum_number_of_builds' => 0
         )
-      end 
+      end
     end
 
     describe 'authenticated, existing repo, repo has some settings' do
@@ -63,7 +61,7 @@ describe Travis::API::V3::Services::Settings do
           'build_pull_requests' => true,
           'maximum_number_of_builds' => 0
         )
-      end 
+      end
     end
   end
 
@@ -116,7 +114,7 @@ describe Travis::API::V3::Services::Settings do
           'build_pull_requests' => true,
           'maximum_number_of_builds' => 20
         )
-      end 
+      end
     end
   end
 end

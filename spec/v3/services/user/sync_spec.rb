@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::User::Sync do
+describe Travis::API::V3::Services::User::Sync, set_app: true do
   let(:user)  { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
   let(:user2) { Travis::API::V3::Models::User.create(login: 'carlad', is_syncing: true) }
   let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last.to_json) }

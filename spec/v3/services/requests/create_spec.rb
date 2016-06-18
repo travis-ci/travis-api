@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Requests::Create do
+describe Travis::API::V3::Services::Requests::Create, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last[:payload]).deep_symbolize_keys }
   let(:sidekiq_params) { Sidekiq::Client.last['args'].last.deep_symbolize_keys }

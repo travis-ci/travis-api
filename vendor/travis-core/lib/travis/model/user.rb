@@ -136,8 +136,13 @@ class User < Travis::Model
 
   protected
 
+    # TODO this accesses GitHub during tests. should move initializing the scopes out of the model.
     def track_github_scopes
-      self.github_scopes = Travis::Github.scopes_for(self) if github_oauth_token_changed? or github_scopes.blank?
+      self.github_scopes = Travis::Github.scopes_for(self) if invalid_github_scopes?
+    end
+
+    def invalid_github_scopes?
+      Travis.env == 'production' and (github_oauth_token_changed? or github_scopes.blank?)
     end
 
     def set_as_recent

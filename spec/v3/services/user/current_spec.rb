@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::User::Current do
+describe Travis::API::V3::Services::User::Current, set_app: true do
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }

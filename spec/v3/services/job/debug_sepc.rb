@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Job::Debug do
+describe Travis::API::V3::Services::Job::Debug, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:owner_type)  { repo.owner_type.constantize }
   let(:owner)       { owner_type.find(repo.owner_id)}
