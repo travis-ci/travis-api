@@ -42,7 +42,7 @@ module Travis
   require 'travis/task'
   require 'travis/event'
   require 'travis/addons'
-  require 'travis/api'
+  require 'travis/api/serialize'
   require 'travis/config/defaults'
   require 'travis/features'
   require 'travis/github'

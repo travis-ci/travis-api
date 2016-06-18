@@ -16,7 +16,7 @@ module Travis
 
         def initialize(*)
           super
-          @pusher_payload = Api.data(object, :for => 'pusher', :type => type, :params => data) if handle?
+          @pusher_payload = Serializer.data(object, :for => 'pusher', :type => type, :params => data) if handle?
         end
 
         def handle?

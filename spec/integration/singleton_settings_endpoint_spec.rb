@@ -18,14 +18,14 @@ describe Travis::Api::App::SettingsEndpoint do
     serializer_class = Class.new(Travis::Api::Serializer) do
       attributes :name
     end
-    Travis::Api::V2::Http.const_set(:Item, serializer_class)
+    Travis::Api::Serialize::V2::Http.const_set(:Item, serializer_class)
 
     add_settings_endpoint :item, singleton: true
   end
 
   after do
     Travis::Api::App::Endpoint.send :remove_const, :Item
-    Travis::Api::V2::Http.send :remove_const, :Item
+    Travis::Api::Serialize::V2::Http.send :remove_const, :Item
   end
 
   describe 'with authenticated user' do

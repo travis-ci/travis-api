@@ -22,16 +22,16 @@ describe Travis::Api::App::SettingsEndpoint do
     serializer_class = Class.new(Travis::Api::Serializer) do
       attributes :id, :name
     end
-    Travis::Api::V2::Http.const_set(:Item, serializer_class)
-    Travis::Api::V2::Http.const_set(:Items, Travis::Api::ArraySerializer)
+    Travis::Api::Serialize::V2::Http.const_set(:Item, serializer_class)
+    Travis::Api::Serialize::V2::Http.const_set(:Items, Travis::Api::ArraySerializer)
 
     add_settings_endpoint :items
   end
 
   after do
     Travis::Api::App::Endpoint.send :remove_const, :Items
-    Travis::Api::V2::Http.send :remove_const, :Items
-    Travis::Api::V2::Http.send :remove_const, :Item
+    Travis::Api::Serialize::V2::Http.send :remove_const, :Items
+    Travis::Api::Serialize::V2::Http.send :remove_const, :Item
   end
 
   describe 'with authenticated user' do

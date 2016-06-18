@@ -10,7 +10,7 @@ describe 'App' do
   end
 
   it 'uses version from current accept header' do
-    Travis::Api.expects(:builder).with { |r, options| options[:version] == 'v1' }
+    Travis::Api::Serialize.expects(:builder).with { |r, options| options[:version] == 'v1' }
 
     Travis::Api::App::Responders::Json.any_instance.stubs(:apply?).
         returns(false).then.returns(true)
@@ -20,7 +20,7 @@ describe 'App' do
   end
 
   it 'uses v1 by default' do
-    Travis::Api.expects(:builder).with { |r, options| options[:version] == 'v1' }
+    Travis::Api::Serialize.expects(:builder).with { |r, options| options[:version] == 'v1' }
     get '/foo', {}, 'HTTP_ACCEPT' => 'application/json'
   end
 end

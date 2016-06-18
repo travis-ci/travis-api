@@ -1,13 +1,13 @@
 require 'dalli'
 require 'connection_pool'
 require 'active_support/core_ext/module/delegation'
-require 'travis/api'
+require 'travis/api/serialize'
 
 module Travis
   class StatesCache
     class CacheError < StandardError; end
 
-    include Travis::Api::Formats
+    include Travis::Api::Serialize::Formats
 
     attr_reader :adapter
 

@@ -14,7 +14,7 @@ module Travis
       end
 
       def initialize(resource, options)
-        options[:each_serializer] ||= Travis::Api::V2::Http.const_get(options[:root].to_s.singularize.camelize)
+        options[:each_serializer] ||= Travis::Api::Serialize::V2::Http.const_get(options[:root].to_s.singularize.camelize)
         super(resource, options)
       end
     end

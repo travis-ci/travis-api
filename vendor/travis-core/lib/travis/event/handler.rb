@@ -3,9 +3,9 @@ require 'travis/support/logging'
 require 'travis/support/instrumentation'
 require 'travis/support/exceptions/handling'
 
-require 'travis/api'
 require 'travis/event/config'
 require 'travis/model/build'
+require 'travis/api/serialize'
 
 module Travis
   module Event

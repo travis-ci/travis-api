@@ -1,3 +1,5 @@
+require 'travis/api/serialize'
+
 class Travis::Api::App
   module Responders
     class Json < Base
@@ -46,7 +48,7 @@ class Travis::Api::App
           if defined?(@builder)
            @builder
           else
-           @builder = Travis::Api.builder(resource, { :version => version }.merge(options))
+           @builder = Travis::Api::Serialize.builder(resource, { :version => version }.merge(options))
           end
         end
 
