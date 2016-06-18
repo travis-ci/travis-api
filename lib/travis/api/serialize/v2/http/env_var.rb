@@ -3,7 +3,7 @@ module Travis
     module Serialize
       module V2
         module Http
-          class EnvVar < Travis::Api::Serializer
+          class EnvVar < Travis::Api::Serialize::ObjectSerializer
             attributes :id, :name, :value, :public, :repository_id
 
             def value

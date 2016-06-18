@@ -1,4 +1,4 @@
-require 'travis/api/serializer'
+require 'travis/api/serialize/serializer'
 require 'travis/api/serialize/v2/http/accounts'
 require 'travis/api/serialize/v2/http/annotations'
 require 'travis/api/serialize/v2/http/broadcasts'

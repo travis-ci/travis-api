@@ -6,7 +6,7 @@ module Travis
     module Serialize
       module V2
         module Http
-          class SshKey < Travis::Api::Serializer
+          class SshKey < Travis::Api::Serialize::ObjectSerializer
             attributes :id, :description, :fingerprint
 
             def id

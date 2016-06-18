@@ -15,7 +15,7 @@ describe Travis::Api::App::SettingsEndpoint do
     Repository::Settings.class_eval do
       attribute :item, model_class
     end
-    serializer_class = Class.new(Travis::Api::Serializer) do
+    serializer_class = Class.new(Travis::Api::Serialize::ObjectSerializer) do
       attributes :name
     end
     Travis::Api::Serialize::V2::Http.const_set(:Item, serializer_class)
