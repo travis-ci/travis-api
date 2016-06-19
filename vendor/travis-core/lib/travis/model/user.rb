@@ -4,6 +4,7 @@ require 'travis/github/oauth'
 
 class User < Travis::Model
   require 'travis/model/user/oauth'
+  require 'travis/model/user/renaming'
 
   has_many :tokens, dependent: :destroy
   has_many :memberships, dependent: :destroy
