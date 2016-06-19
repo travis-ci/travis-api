@@ -1,5 +1,5 @@
 describe User do
-  before { User.delete_all }
+  before { DatabaseCleaner.clean_with :truncation }
 
   let(:user)    { Factory(:user, :github_oauth_token => 'token') }
   let(:payload) { GITHUB_PAYLOADS[:oauth] }
