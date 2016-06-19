@@ -1,7 +1,6 @@
 # encoding: utf-8
 require 'coercible'
 require 'travis/settings'
-require 'travis/overwritable_method_definitions'
 require 'travis/settings/encrypted_value'
 require 'openssl'
 

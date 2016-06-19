@@ -4,7 +4,6 @@ require 'travis/support/database'
 require 'travis/version'
 require 'travis/redis_pool'
 require 'travis/errors'
-require 'travis/commit_command'
 
 module Travis
   class << self

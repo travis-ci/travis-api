@@ -1,12 +1,10 @@
 require 'coercible'
-require 'travis/overwritable_method_definitions'
 require 'travis/settings/collection'
 require 'travis/settings/model'
 require 'travis/settings/model_extensions'
 
 module Travis
   class Settings
-    include Travis::OverwritableMethodDefinitions
     include Virtus.model
     include ActiveModel::Validations
     include Travis::Settings::ModelExtensions
