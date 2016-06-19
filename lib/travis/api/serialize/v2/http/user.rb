@@ -1,4 +1,5 @@
 require 'travis/api/serialize/formats'
+require 'travis/github/oauth'
 
 module Travis
   module Api
@@ -33,7 +34,7 @@ module Travis
                   'locale' => user.locale,
                   'is_syncing' => user.syncing?,
                   'synced_at' => format_date(user.synced_at),
-                  'correct_scopes' => user.correct_scopes?,
+                  'correct_scopes' => Github::Oauth.correct_scopes?(user),
                   'created_at' => format_date(user.created_at),
                   'channels' => channels
                 }

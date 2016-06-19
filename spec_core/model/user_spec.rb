@@ -165,59 +165,11 @@ describe User do
     end
   end
 
-  describe 'track_github_scopes' do
-    before { user.save! }
-
-    it "does not resolve github scopes if the token didn't change" do
-      user.github_scopes = ['public_repo', 'user:email']
-      user.save!
-      Travis::Github.expects(:scopes_for).never
-      user.save!
-    end
-
-    it "it resolves github scopes if the token did change" do
-      ENV['ENV'] = 'production' # TODO see user.rb ... move this out of the model.
-      Travis::Github.expects(:scopes_for).with(user).returns(['foo', 'bar'])
-      user.github_oauth_token = 'new_token'
-      user.save!
-      user.github_scopes.should be == ['foo', 'bar']
-      ENV['ENV'] = 'test'
-    end
-
-    it "it resolves github scopes if they haven't been resolved already" do
-      ENV['ENV'] = 'production' # TODO see user.rb ... move this out of the model.
-      Travis::Github.expects(:scopes_for).with(user).returns(['foo', 'bar'])
-      user.github_scopes = nil
-      user.save!
-      user.github_scopes.should be == ['foo', 'bar']
-      ENV['ENV'] = 'test'
-    end
-
+  describe 'github_scopes' do
     it 'returns an empty list if the token is missing' do
       user.github_scopes = ['foo']
       user.github_oauth_token = nil
       user.github_scopes.should be_empty
-    end
-  end
-
-  describe 'correct_scopes?' do
-    before do
-      user.github_scopes = ['public_repo', 'user:email']
-      user.save!
-    end
-
-    it "accepts correct scopes" do
-      user.should be_correct_scopes
-    end
-
-    it "complains about missing scopes" do
-      user.github_scopes.pop
-      user.should_not be_correct_scopes
-    end
-
-    it "accepts additional scopes" do
-      user.github_scopes << "foo"
-      user.should be_correct_scopes
     end
   end
 

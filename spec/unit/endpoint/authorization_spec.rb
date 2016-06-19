@@ -68,9 +68,6 @@ describe Travis::Api::App::Endpoint::Authorization do
 
       after do
         Travis.redis.srem('github:states', 'github-state')
-        # this is cached after first run, so if we change scopes, it will stay
-        # like that for the rest of the run
-        User::Oauth.instance_variable_set("@wanted_scopes", nil)
       end
 
       # in endpoint/authorization.rb 271, get_token faraday raises the exception:

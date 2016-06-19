@@ -3,6 +3,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
   before do
     Travis::Features.enable_for_all(:education_data_sync)
+    Travis::Github::Oauth.stubs(:track_scopes) # TODO test that scopes are being updated
   end
 
   describe '#info' do

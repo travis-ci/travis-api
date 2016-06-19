@@ -1,5 +1,6 @@
 require 'gh'
 require 'travis/model'
+require 'travis/github/oauth'
 
 class User < Travis::Model
   require 'travis/model/user/oauth'
@@ -16,9 +17,9 @@ class User < Travis::Model
   before_create :set_as_recent
   after_create :create_a_token
   after_commit :sync, on: :create
+  before_save :track_previous_changes
 
   serialize :github_scopes
-  before_save :track_github_scopes
 
   serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
 
@@ -65,7 +66,7 @@ class User < Travis::Model
   end
 
   def sync
-    Travis.run_service(:sync_user, self) # TODO remove once apps use the service
+    Travis.run_service(:sync_user, self) # TODO move to the authentication endpoint, or create a separate service
   end
 
   def syncing?
@@ -102,7 +103,7 @@ class User < Travis::Model
   end
 
   def recently_signed_up?
-    @recently_signed_up || false
+    !!@recently_signed_up
   end
 
   def profile_image_hash
@@ -113,36 +114,30 @@ class User < Travis::Model
   end
 
   def github_scopes
-    return [] unless github_oauth_token
-    read_attribute(:github_scopes) || []
-  end
-
-  def correct_scopes?
-    missing = Oauth.wanted_scopes - github_scopes
-    missing.empty?
+    github_oauth_token && read_attribute(:github_scopes) || []
   end
 
   def avatar_url
     "https://0.gravatar.com/avatar/#{profile_image_hash}"
   end
 
+  def previous_changes
+    @previous_changes ||= {}
+  end
+
+  def reload
+    @previous_changes = nil
+    super
+  end
+
   def inspect
-    if github_oauth_token
-      super.gsub(github_oauth_token, '[REDACTED]')
-    else
-      super
-    end
+    github_oauth_token ? super.gsub(github_oauth_token, '[REDACTED]') : super
   end
 
   protected
 
-    # TODO this accesses GitHub during tests. should move initializing the scopes out of the model.
-    def track_github_scopes
-      self.github_scopes = Travis::Github.scopes_for(self) if invalid_github_scopes?
-    end
-
-    def invalid_github_scopes?
-      Travis.env != 'test' and (github_oauth_token_changed? or github_scopes.blank?)
+    def track_previous_changes
+      @previous_changes = changes
     end
 
     def set_as_recent

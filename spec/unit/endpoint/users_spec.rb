@@ -7,6 +7,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
     User.stubs(:find).returns(user)
     user.stubs(:repositories).returns(stub(administratable: stub(select: [repository])))
     user.stubs(:repository_ids).returns([1, 2, 3])
+    user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
   end
 
   it 'needs to be authenticated' do

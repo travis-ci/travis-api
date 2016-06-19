@@ -4,6 +4,7 @@ require 'securerandom'
 require 'customerio'
 require 'travis/api/app'
 require 'travis/github/education'
+require 'travis/github/oauth'
 
 class Travis::Api::App
   class Endpoint
@@ -290,6 +291,8 @@ class Travis::Api::App
                 self.user = ::User.create! info
               end
 
+              Travis::Github::Oauth.track_scopes(user) # unless Travis.env == 'test'
+
               nullify_logins(user.github_id, user.login)
             end
 
@@ -341,7 +344,7 @@ class Travis::Api::App
         end
 
         def acceptable?(scopes, lossy = false)
-          User::Oauth.wanted_scopes.all? do |scope|
+          Travis::Github::Oauth.wanted_scopes.all? do |scope|
             acceptable_scopes_for(scope, lossy).any? { |s| scopes.include? s }
           end
         end

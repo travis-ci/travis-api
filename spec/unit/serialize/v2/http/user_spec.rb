@@ -4,6 +4,8 @@ describe Travis::Api::Serialize::V2::Http::User do
   let(:user) { stub_user(repository_ids: [1, 4, 8]) }
   let(:data) { described_class.new(user).data }
 
+  before { user.stubs(:github_scopes).returns(['public_repo', 'user:email']) }
+
   it 'user' do
     data['user'].should == {
       'id' => 1,
