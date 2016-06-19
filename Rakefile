@@ -25,6 +25,11 @@ end
 
 # not sure how else to include the spec_helper
 namespace :spec do
+  desc 'Run all specs'
+  task :api do
+    sh 'bundle exec rspec -r spec_helper spec spec_core'
+  end
+
   desc 'Run api specs'
   task :api do
     sh 'bundle exec rspec -r spec_helper spec'
@@ -36,7 +41,7 @@ namespace :spec do
   end
 end
 
-task :default => %w(spec:api spec:core)
+task :default => :'spec:all'
 
 desc "generate gemspec"
 task 'travis-api.gemspec' do

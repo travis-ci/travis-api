@@ -20,8 +20,6 @@ require 'travis/commit_command'
 #                  events and send out such things as email, pusher, irc
 #                  notifications, archive builds or queue jobs for the
 #                  workers.
-# travis/mailer  - contains ActionMailers for sending out email
-#                  notifications
 #
 # travis-core also contains some helper classes and modules like Travis::Database
 # (needed in travis-hub in order to connect to the database) and Travis::Renderer
