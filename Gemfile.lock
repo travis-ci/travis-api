@@ -69,7 +69,6 @@ PATH
   remote: .
   specs:
     travis-api (0.0.1)
-      actionmailer (~> 3.2.19)
       activerecord (~> 3.2.19)
       coder (~> 0.4.0)
       composite_primary_keys (~> 5.0)

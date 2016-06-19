@@ -1,7 +1,7 @@
 require 'pusher'
 require 'travis/support'
 require 'travis/support/database'
-require 'travis_core/version'
+require 'travis/version'
 require 'travis/redis_pool'
 require 'travis/errors'
 require 'travis/commit_command'
@@ -46,7 +46,6 @@ module Travis
   require 'travis/config/defaults'
   require 'travis/features'
   require 'travis/github'
-  require 'travis/mailer'
   require 'travis/notification'
   require 'travis/services'
 

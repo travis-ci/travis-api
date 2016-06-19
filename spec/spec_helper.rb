@@ -38,6 +38,10 @@ RSpec.configure do |c|
     DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
 
+    # This sets up a scenario in the db as an initial state. The db will be
+    # rolled back to this state after each test. Several tests in ./spec depend
+    # on this scenario, so this gives a performance benefit, but also can be
+    # confusing.
     Scenario.default
   end
 
@@ -45,7 +49,6 @@ RSpec.configure do |c|
     DatabaseCleaner.start
     Redis.new.flushall
     Travis.config.oauth2.scope = "user:email,public_repo"
-    # set_app Travis::Api::App.new
   end
 
   c.before :each, set_app: true do
@@ -53,7 +56,6 @@ RSpec.configure do |c|
   end
 
   c.after :each do
-    # puts DatabaseCleaner.connections.map(&:strategy).map(&:class).map(&:name).join(', ')
     DatabaseCleaner.clean
     custom_endpoints.each do |endpoint|
       endpoint.superclass.direct_subclasses.delete(endpoint)

@@ -5,7 +5,6 @@ module Travis
       require 'travis/github/services/find_or_create_repo'
       require 'travis/github/services/find_or_create_user'
       require 'travis/github/services/set_hook'
-      require 'travis/github/services/sync_user'
 
       class << self
         def register
