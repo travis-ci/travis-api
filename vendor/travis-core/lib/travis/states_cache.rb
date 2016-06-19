@@ -3,6 +3,8 @@ require 'connection_pool'
 require 'active_support/core_ext/module/delegation'
 require 'travis/api/serialize'
 
+# TODO compare commit history to travis-states-cache, and start using it
+
 module Travis
   class StatesCache
     class CacheError < StandardError; end

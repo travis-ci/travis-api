@@ -46,6 +46,14 @@ GIT
     travis-migrations (0.0.2)
 
 GIT
+  remote: git://github.com/travis-ci/travis-settings.git
+  revision: d510e63b6c6f059cccae141c265e7a0c7236d1fd
+  specs:
+    travis-settings (0.0.1)
+      activemodel
+      virtus
+
+GIT
   remote: git://github.com/travis-ci/travis-sidekiqs.git
   revision: c5d4a4abc6c3737f9c43d3333efb94daa18b9fbb
   specs:
@@ -93,7 +101,7 @@ PATH
       virtus (~> 1.0.0)
 
 PATH
-  remote: vendor
+  remote: vendor/travis-core
   specs:
     travis-core (0.0.1)
       activerecord (~> 3.2.19)
@@ -403,6 +411,7 @@ DEPENDENCIES
   travis-config (~> 0.1.0)
   travis-core!
   travis-migrations!
+  travis-settings!
   travis-sidekiqs!
   travis-support!
   travis-yaml!

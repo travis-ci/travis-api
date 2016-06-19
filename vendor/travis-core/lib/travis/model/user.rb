@@ -142,7 +142,7 @@ class User < Travis::Model
     end
 
     def invalid_github_scopes?
-      Travis.env == 'production' and (github_oauth_token_changed? or github_scopes.blank?)
+      Travis.env != 'test' and (github_oauth_token_changed? or github_scopes.blank?)
     end
 
     def set_as_recent
