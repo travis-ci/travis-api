@@ -7,11 +7,16 @@
     <%= csrf_meta_tags %>
   </head>
   <body>
-    <header>
-      <h1>Travis Admin</h1>
-      <nav>{{main admin nav will go here}}</nav>
+    <header class="top">
+      <div class="row topbar">
+        <h1 id="logo" class="logo">
+          <%= link_to "Travis Admin", "#" %>
+        </h1>
+        <nav></nav>
+      </div>
     </header>
-    <main>
+
+    <main class="main">
       <%= yield %>
     </main>
   </body>

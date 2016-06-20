@@ -3,17 +3,14 @@
   <% if pending_jobs.empty? %>
     <p>No jobs pending.</p>
   <% else %>
-  <ul class="jobs-list">
     <% pending_jobs.each do |job| %>
-      <li>
-        <ul class="job-item">
-          <li><%= job.id %></li>
-          <li><%= job.state %></li>
-          <li><%= job.started_at %></li>
-          <li><%= job.queue %></li>
-        </ul>
-      </li>
+      <ul class="inline-list job-item">
+        <li><%= job.id %></li>
+        <li><%= job.state %></li>
+        <li><%= job.started_at %></li>
+        <li><%= job.queue %></li>
+        <li></li>
+      </ul>
     <% end %>
-    </ul>
   <% end %>
 </section>

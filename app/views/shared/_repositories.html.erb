@@ -3,26 +3,21 @@
   <% if repositories.empty? %>
     <p>No repositories.</p>
   <% else %>
-    <ul class="repositories-list">
-      <% repositories.each do |repo| %>
-        <li>
-          <ul class="repository-item">
-            <li class="key"><%= repo.name %></li>
-            <% if repo.active? %>
-              <li>enabled</li>
-            <% else %>
-              <li>disabled</li>
-            <% end %>
-            <% if repo.last_build_id %>
-              <li><a href="/build/<%= repo.last_build_id %>"> build # <%= repo.last_build_number %></a></li>
-              <li><%= " #{repo.last_build_state.to_s} (#{repo.last_build_finished_at || repo.last_build_started_at})" %></li>
-            <% else %>
-              <li>no build</li>
-            <% end %>
-            <li>
-          </ul>
-        </li>
-      <% end %>
-    </ul>
+    <% repositories.each do |repo| %>
+      <ul class="inline-list repository-item">
+        <li class="repo-name"><%= repo.name %></li>
+        <% if repo.active? %>
+          <li class="repo-active">enabled</li>
+        <% else %>
+          <li class="repo-active">disabled</li>
+        <% end %>
+        <% if repo.last_build_id %>
+          <li class="repo-build"><a href="/build/<%= repo.last_build_id %>"> build # <%= repo.last_build_number %></a><%= " #{repo.last_build_state.to_s} (#{repo.last_build_finished_at || repo.last_build_started_at})" %></li>
+        <% else %>
+          <li class="repo-build">no build</li>
+        <% end %>
+        <li class="repo-view"></li>
+      </ul>
+    <% end %>
   <% end %>
 </section>
