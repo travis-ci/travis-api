@@ -1,13 +1,12 @@
-<section class="box">
-  <h2 class="box-title">Repositories</h2>
-
+<section class="info-block">
+  <h2>Repositories</h2>
   <% if repositories.empty? %>
     <p>No repositories.</p>
   <% else %>
-    <ul class="list">
+    <ul class="repositories-list">
       <% repositories.each do |repo| %>
         <li>
-          <ul class="list-item">
+          <ul class="repository-item">
             <li class="key"><%= repo.name %></li>
             <% if repo.active? %>
               <li>enabled</li>

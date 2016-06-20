@@ -1,60 +1,52 @@
-<section class="box">
-  <h2 class="box-title">Basic Information</h2>
+<section class="info-block">
+  <h2>Basic Information</h2>
 
-  <div class="detail-pair">
-    <strong>Name</strong>
-    <%= user.name %>
-  </div>
+  <dl class="simple-info">
+    <dt class="info-label">Name:</dt>
+    <dd><%= user.name %></dd>
 
-  <div class="detail-pair">
-    <strong>Primary E-mail Address</strong>
-    <%= user.email %>
-  </div>
+    <dt class="info-label">Primary E-mail Address:</dt>
+    <dd><%= user.email %></dd>
 
-  <div class="detail-pair">
-    <strong>Additional E-Mail Addresses</strong>
-    <% user.emails.each do |entry| %>
-      <% if entry.email != user.email %>
-        <div><%= entry.email %></div>
+    <dt class="info-label">Additional E-Mail Addresses:</dt>
+    <dd>
+      <% user.emails.each do |entry| %>
+        <% if entry.email != user.email %>
+          <div><%= entry.email %></div>
+        <% end %>
       <% end %>
-    <% end %>
-  </div>
+    </dd>
+  </dl>
 </section>
 
-<section class="box">
-  <h2 class="box-title">GitHub Information</h2>
-  <div class="detail-pair">
-    <strong>GitHub Login</strong>
-    <%= user.login %>
-  </div>
+<section class="info-block">
+  <h2>GitHub Information</h2>
+  <dl class="simple-info">
+    <dt class="info-label">GitHub Login:</dt>
+    <dd><%= user.login %></dd>
 
-  <div class="detail-pair">
-    <strong>GitHub ID</strong>
-    <%= user.github_id %>
-  </div>
+    <dt class="info-label">GitHub ID:</dt>
+    <dd><%= user.github_id %></dd>
 
-  <div class="detail-pair">
-    <strong>Token</strong>
-    <%= hidden(user, :github_oauth_token) %>
-  </div>
+    <dt class="info-label">Token:</dt>
+    <dd><%= hidden(user, :github_oauth_token) %></dd>
 
-  <div class="detail-pair">
-    <strong>Scopes</strong>
-    <% if user.github_scopes.present? %>
-      <%= user.github_scopes %>
-    <% else %>
-      none
-    <% end %>
-  </div>
+    <dt class="info-label">Scopes:</dt>
+    <dd>
+      <% if user.github_scopes.present? %>
+        <%= user.github_scopes %>
+      <% else %>
+        none
+      <% end %>
+    </dd>
 
-  <div class="detail-pair">
-    <strong>Last Sync</strong>
-    <%= user.synced_at ? user.synced_at : "never" %>
-  </div>
+    <dt class="info-label">Last Sync:</dt>
+    <dd><%= user.synced_at ? user.synced_at : "Never" %></dd>
+  </dl>
 </section>
 
-<section class="box">
-  <h2 class="box-title">Organizations</h2>
+<section class="info-block">
+  <h2>Organizations</h2>
 
   <% if user.organizations.empty? %>
     <p>No organizations.</p>

@@ -1,12 +1,12 @@
-<section class="box">
-  <h2 class="box-title">Job Queue</h2>
+<section class="info-block">
+  <h2>Job Queue</h2>
   <% if pending_jobs.empty? %>
-    No jobs.
+    <p>No jobs pending.</p>
   <% else %>
-  <ul class="list">
+  <ul class="jobs-list">
     <% pending_jobs.each do |job| %>
       <li>
-        <ul class="list-item">
+        <ul class="job-item">
           <li><%= job.id %></li>
           <li><%= job.state %></li>
           <li><%= job.started_at %></li>

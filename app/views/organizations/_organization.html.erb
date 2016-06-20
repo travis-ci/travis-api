@@ -1,50 +1,44 @@
-<section class="box">
-  <h2 class="box-title">Basic Information</h2>
+<section class="info-block">
+  <h2>Basic Information</h2>
 
-  <div class="detail-pair">
-    <strong>Name</strong>
-    <%= organization.name %>
-  </div>
+  <dl class="simple-info">
+    <dt class="info-label">Name:</dt>
+    <dd><%= organization.name %></dd>
 
-  <div class="detail-pair">
-    <strong>Primary E-mail Address</strong>
-    <%= organization.email %>
-  </div>
+    <dt class="info-label">Primary E-mail Address:</dt>
+    <dd><%= organization.email %></dd>
 
-  <div class="detail-pair">
-    <strong>Homepage</strong>
-    <%= organization.homepage %>
-  </div>
+    <dt class="info-label">Homepage:</dt>
+    <dd><%= organization.homepage %></dd>
 
-  <div class="detail-pair">
-    <strong>Location</strong>
-    <%= organization.location %>
-  </div>
+    <dt class="info-label">Location:</dt>
+    <dd><%= organization.location %></dd>
+  </dl>
 </section>
 
-<section class="box">
-  <h2 class="box-title">GitHub Information</h2>
-  <div class="detail-pair">
-    <strong>GitHub Login</strong>
-    <% if organization.avatar_url %>
-      <img class="avatar" src="<%= organization.avatar_url %>?s=20">
-    <% end %>
-    <%= organization.login %>
-  </div>
+<section class="info-block">
+  <h2>GitHub Information</h2>
+  <dl class="simple-info">
+    <dt class="info-label">GitHub Login</dt>
+    <dd>
+      <% if organization.avatar_url %>
+        <img class="avatar" src="<%= organization.avatar_url %>?s=20" alt="organization avatar" />
+      <% end %>
+      <%= organization.login %>
+    </dd>
 
-  <div class="detail-pair">
-    <strong>GitHub ID</strong>
-    <%= organization.github_id %>
-  </div>
+    <dt class="info-label">GitHub ID</dt>
+    <dd><%= organization.github_id %></dd>
+  </dl>
 </section>
 
-<section class="box">
-  <h2 class="box-title">Users</h2>
+<section class="info-block">
+  <h2>Users</h2>
 
   <% if users.empty? %>
     <p>No users.</p>
   <% else %>
-    <ul class="list">
+    <ul class="user-list">
       <% users.each do |user| %>
         <li><%= link_to "#{user.name} (#{user.login})", user %></li>
       <% end %>
