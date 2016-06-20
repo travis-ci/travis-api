@@ -17,7 +17,7 @@ class User < Travis::Model
 
   before_create :set_as_recent
   after_create :create_a_token
-  after_commit :sync, on: :create
+  # after_commit :sync, on: :create
   before_save :track_previous_changes
 
   serialize :github_scopes
@@ -66,9 +66,9 @@ class User < Travis::Model
     synced_at.nil?
   end
 
-  def sync
-    Travis.run_service(:sync_user, self) # TODO move to the authentication endpoint, or create a separate service
-  end
+  # def sync
+  #   Travis.run_service(:sync_user, self) # TODO move to the authentication endpoint, or create a separate service
+  # end
 
   def syncing?
     is_syncing?

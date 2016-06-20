@@ -289,6 +289,7 @@ class Travis::Api::App
                 user.update_attributes info
               else
                 self.user = ::User.create! info
+                Travis.run_service(:sync_user, user)
               end
 
               Travis::Github::Oauth.track_scopes(user) # unless Travis.env == 'test'
