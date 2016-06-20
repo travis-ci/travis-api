@@ -188,7 +188,7 @@ class Travis::Api::App
         end
 
         def serialize_user(user)
-          rendered = Travis::Api.data(user, version: :v2)
+          rendered = Travis::Api::Serialize.data(user, version: :v2)
           rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
         end
 
