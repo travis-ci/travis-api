@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'App' do
   before do
     FactoryGirl.create(:test, :number => '3.1', :queue => 'builds.common')

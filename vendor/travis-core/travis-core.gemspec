@@ -1,11 +1,11 @@
 # encoding: utf-8
 
 $:.unshift File.expand_path('../lib', __FILE__)
-require 'travis_core/version'
+require 'travis/version'
 
 Gem::Specification.new do |s|
   s.name         = "travis-core"
-  s.version      = TravisCore::VERSION
+  s.version      = Travis::VERSION
   s.authors      = ["Travis CI"]
   s.email        = "contact@travis-ci.org"
   s.homepage     = "https://github.com/travis-ci/travis-core"
@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rake'
   s.add_dependency 'thor'
   s.add_dependency 'activerecord',      '~> 3.2.19'
-  s.add_dependency 'actionmailer',      '~> 3.2.19'
   s.add_dependency 'railties',          '~> 3.2.19'
   s.add_dependency 'rollout',           '~> 1.1.0'
   s.add_dependency 'coder',             '~> 0.4.0'

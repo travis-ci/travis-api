@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 class Foo < Sinatra::Base
   register Travis::Api::App::Extensions::ExposePattern
 

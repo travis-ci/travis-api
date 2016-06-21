@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Cors do
   before do
     mock_app do

@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Cron::Find do
+describe Travis::API::V3::Services::Cron::Find, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo).first }
   let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch, interval:'daily') }

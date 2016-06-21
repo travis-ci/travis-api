@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::Api::App::Endpoint::Repos do
+describe Travis::Api::App::Endpoint::Repos, set_app: true do
   before do
     described_class.get('/spec/match/:id')   { "id"   }
     described_class.get('/spec/match/:name') { "name" }

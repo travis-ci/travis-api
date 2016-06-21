@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::AccessToken do
   it 'errors out on wrong type of :expires_in argument' do
     expect {

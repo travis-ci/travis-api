@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'v2' do
   let(:format)     { :json }
   let(:params)     { { :controller => controller, :action => action, :format => format } }

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Middleware::ScopeCheck do
   include Travis::Testing::Stubs
 

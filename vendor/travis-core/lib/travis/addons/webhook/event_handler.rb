@@ -25,7 +25,7 @@ module Travis
         end
 
         def webhook_payload
-          Api.data(object, :for => 'webhook', :type => 'build/finished', :version => 'v1')
+          Api::Serialize.data(object, :for => 'webhook', :type => 'build/finished', :version => 'v1')
         end
 
         def targets

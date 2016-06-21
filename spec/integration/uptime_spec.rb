@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe 'Uptime' do
+describe 'Uptime', set_app: true do
   after do
     ActiveRecord::Base.connection.unstub(:execute)
   end

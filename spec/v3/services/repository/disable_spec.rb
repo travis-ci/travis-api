@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Repository::Disable do
+describe Travis::API::V3::Services::Repository::Disable, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   before do

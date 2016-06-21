@@ -1,8 +1,10 @@
-require 'travis/api/app'
 require 'addressable/uri'
 require 'faraday'
 require 'securerandom'
 require 'customerio'
+require 'travis/api/app'
+require 'travis/github/education'
+require 'travis/github/oauth'
 
 class Travis::Api::App
   class Endpoint
@@ -186,7 +188,7 @@ class Travis::Api::App
         end
 
         def serialize_user(user)
-          rendered = Travis::Api.data(user, version: :v2)
+          rendered = Travis::Api::Serialize.data(user, version: :v2)
           rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
         end
 
@@ -287,7 +289,10 @@ class Travis::Api::App
                 user.update_attributes info
               else
                 self.user = ::User.create! info
+                Travis.run_service(:sync_user, user)
               end
+
+              Travis::Github::Oauth.update_scopes(user) # unless Travis.env == 'test'
 
               nullify_logins(user.github_id, user.login)
             end
@@ -340,7 +345,7 @@ class Travis::Api::App
         end
 
         def acceptable?(scopes, lossy = false)
-          User::Oauth.wanted_scopes.all? do |scope|
+          Travis::Github::Oauth.wanted_scopes.all? do |scope|
             acceptable_scopes_for(scope, lossy).any? { |s| scopes.include? s }
           end
         end

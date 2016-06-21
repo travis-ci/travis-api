@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::Api::App::Endpoint::Home do
+describe Travis::Api::App::Endpoint::Home, set_app: true do
   describe 'GET /' do
     it 'replies with a json response by default' do
       get('/')["Content-Type"].should include("json")

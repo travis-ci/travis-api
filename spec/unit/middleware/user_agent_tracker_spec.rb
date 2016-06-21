@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Middleware::UserAgentTracker do
   before do
     mock_app do

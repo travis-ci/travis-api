@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Organization::Find do
+describe Travis::API::V3::Services::Organization::Find, set_app: true do
   let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org') }
   before    { org.save!                              }
   after     { org.delete                             }

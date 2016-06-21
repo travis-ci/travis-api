@@ -1,13 +1,15 @@
 require 'dalli'
 require 'connection_pool'
 require 'active_support/core_ext/module/delegation'
-require 'travis/api'
+require 'travis/api/serialize'
+
+# TODO compare commit history to travis-states-cache, and start using it
 
 module Travis
   class StatesCache
     class CacheError < StandardError; end
 
-    include Travis::Api::Formats
+    include Travis::Api::Serialize::Formats
 
     attr_reader :adapter
 

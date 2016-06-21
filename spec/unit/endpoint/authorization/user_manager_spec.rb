@@ -1,10 +1,9 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Endpoint::Authorization::UserManager do
   let(:manager) { described_class.new(data, 'abc123') }
 
   before do
     Travis::Features.enable_for_all(:education_data_sync)
+    Travis::Github::Oauth.stubs(:update_scopes) # TODO test that scopes are being updated
   end
 
   describe '#info' do
@@ -63,9 +62,9 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
     context 'without existing user' do
       it 'creates new user' do
-        user = stub('user', login: 'drogus', github_id: 456)
         User.expects(:find_by_github_id).with(456).returns(nil)
         attributes = { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false }.stringify_keys
+        user = User.create(id: 1, login: 'drogus', github_id: 456)
         User.expects(:create!).with(attributes).returns(user)
         manager.stubs(:education).returns(false)
 

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::SettingsEndpoint do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
@@ -15,17 +13,17 @@ describe Travis::Api::App::SettingsEndpoint do
     Repository::Settings.class_eval do
       attribute :item, model_class
     end
-    serializer_class = Class.new(Travis::Api::Serializer) do
+    serializer_class = Class.new(Travis::Api::Serialize::ObjectSerializer) do
       attributes :name
     end
-    Travis::Api::V2::Http.const_set(:Item, serializer_class)
+    Travis::Api::Serialize::V2::Http.const_set(:Item, serializer_class)
 
     add_settings_endpoint :item, singleton: true
   end
 
   after do
     Travis::Api::App::Endpoint.send :remove_const, :Item
-    Travis::Api::V2::Http.send :remove_const, :Item
+    Travis::Api::Serialize::V2::Http.send :remove_const, :Item
   end
 
   describe 'with authenticated user' do

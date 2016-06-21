@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App do
   describe :setup? do
     it 'indicates if #setup has been called' do

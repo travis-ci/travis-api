@@ -8,12 +8,9 @@ require 'travis/model/encrypted_column'
 # and needs to be approved based on the configuration. Once approved the
 # Request creates a Build.
 class Request < Travis::Model
-  require 'travis/model/request/approval'
-  require 'travis/model/request/branches'
   require 'travis/model/request/pull_request'
-  require 'travis/model/request/states'
 
-  include States, SimpleStates
+  include SimpleStates
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 

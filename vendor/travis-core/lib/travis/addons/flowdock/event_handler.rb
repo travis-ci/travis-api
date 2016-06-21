@@ -16,7 +16,7 @@ module Travis
 
         def initialize(*)
           super
-          @payload = Api.data(object, for: 'event', version: 'v0', params: data)
+          @payload = Api::Serialize.data(object, for: 'event', version: 'v0', params: data)
         end
 
         def handle?

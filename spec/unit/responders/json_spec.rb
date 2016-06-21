@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module Travis::Api::App::Responders
   describe Json do
     class MyJson < Json

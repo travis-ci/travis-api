@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Services::ScheduleRequest::Throttle do
   let(:repo) { Factory(:repository) }
   subject    { described_class.new(repo.slug) }

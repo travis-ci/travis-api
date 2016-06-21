@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'timecop'
 
 describe Travis::API::V3::Models::Cron do

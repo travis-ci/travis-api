@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe 'Builds' do
+describe 'Builds', set_app: true do
   let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }

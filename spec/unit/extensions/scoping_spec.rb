@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::Api::App::Extensions::Scoping do
   include Travis::Testing::Stubs
 

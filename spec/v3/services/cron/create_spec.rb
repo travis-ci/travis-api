@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Cron::Create do
+describe Travis::API::V3::Services::Cron::Create, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo).first }
   let(:non_existing_branch) { Travis::API::V3::Models::Branch.create(repository: repo, name: 'cron-test', exists_on_github: false) }

@@ -26,10 +26,14 @@ require 'metriks/reporter/logger'
 require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
+
+module Travis::Api
+end
+
 require 'travis/api/app/endpoint'
 require 'travis/api/app/middleware'
 require 'travis/api/instruments'
-require 'travis/api/v2/http'
+require 'travis/api/serialize/v2'
 require 'travis/api/v3'
 require 'travis/api/app/stack_instrumentation'
 require 'travis/api/app/error_handling'
@@ -88,14 +92,13 @@ module Travis::Api
 
     def initialize
       @app = Rack::Builder.app do
-
-        if stackprof = ENV['STACKPROF']
-          require 'stackprof'
-          modes = ['wall', 'cpu', 'object', 'custom']
-          mode  = modes.include?(stackprof) ? stackprof.to_sym : :cpu
-          Travis.logger.info "Setting up profiler: #{mode}"
-          use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
-        end
+        # if stackprof = ENV['STACKPROF']
+        #   require 'stackprof'
+        #   modes = ['wall', 'cpu', 'object', 'custom']
+        #   mode  = modes.include?(stackprof) ? stackprof.to_sym : :cpu
+        #   Travis.logger.info "Setting up profiler: #{mode}"
+        #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
+        # end
 
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight

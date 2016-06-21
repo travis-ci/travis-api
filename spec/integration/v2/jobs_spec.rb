@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe 'Jobs' do
+describe 'Jobs', set_app: true do
   let!(:jobs) {[
     FactoryGirl.create(:test, :number => '3.1', :queue => 'builds.common'),
     FactoryGirl.create(:test, :number => '3.2', :queue => 'builds.common')

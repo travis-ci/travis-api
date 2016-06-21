@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::API::V3::Metrics do
   class TestProcessor
     attr_reader :times, :marks, :queue

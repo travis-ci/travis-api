@@ -3,9 +3,9 @@ require 'travis/support/logging'
 require 'travis/support/instrumentation'
 require 'travis/support/exceptions/handling'
 
-require 'travis/api'
 require 'travis/event/config'
 require 'travis/model/build'
+require 'travis/api/serialize'
 
 module Travis
   module Event
@@ -18,7 +18,7 @@ module Travis
 
       class << self
         def notify(event, object, data = {})
-          payload = Api.data(object, for: 'event', version: 'v0', params: data) if object.is_a?(Build)
+          payload = Travis::Api::Serialize.data(object, for: 'event', version: 'v0', params: data) if object.is_a?(Build)
           handler = new(event, object, data, payload)
           handler.notify if handler.handle?
         end

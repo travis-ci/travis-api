@@ -1,7 +1,6 @@
 # encoding: utf-8
-require 'spec_helper'
 
-describe 'Repos' do
+describe 'Repos', set_app: true do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
@@ -31,12 +30,14 @@ describe 'Repos' do
     before { user.permissions.create!(:repository_id => repo.id, :admin => true, :push => true) }
 
     it 'POST /repos/:id/key' do
+      repo.regenerate_key!
       expect {
         response = post "/repos/#{repo.id}/key", {}, headers
       }.to change { repo.reload.key.private_key }
     end
 
     it 'POST /repos/:owner/:name/key' do
+      repo.regenerate_key!
       expect {
         response = post "/repos/#{repo.slug}/key", {}, headers
       }.to change { repo.reload.key.private_key }
@@ -86,11 +87,13 @@ describe 'Repos' do
   end
 
   it 'GET /repos/:id/key' do
+    repo.regenerate_key!
     response = get "/repos/#{repo.id}/key", {}, headers
     response.should deliver_json_for(repo.key, version: 'v2')
   end
 
   it 'GET /repos/:slug/key' do
+    repo.regenerate_key!
     response = get "/repos/#{repo.slug}/key", {}, headers
     response.should deliver_json_for(repo.key, version: 'v2')
   end

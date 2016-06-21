@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::API::V3::Services::Branches::Find do
+describe Travis::API::V3::Services::Branches::Find, set_app: true do
   let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo.id).first }
   let(:build)  { branch.last_build }

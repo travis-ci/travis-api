@@ -9,41 +9,36 @@ namespace :db do
   end
 end
 
-begin
-  require 'rspec'
-  require 'rspec/core/rake_task'
-  RSpec::Core::RakeTask.new(:spec)
+# begin
+#   require 'rspec'
+#   require 'rspec/core/rake_task'
+#   RSpec::Core::RakeTask.new(:spec)
+#
+#   RSpec::Core::RakeTask.new(:spec_core) do |t|
+#     t.pattern = 'spec_core/**{,/*/**}/*_spec.rb'
+#   end
+#
+#   task :default => [:spec, :spec_core]
+# rescue LoadError => e
+#   puts e.inspect
+# end
 
-  RSpec::Core::RakeTask.new(:spec_core) do |t|
-    t.pattern = 'spec_core/**{,/*/**}/*_spec.rb'
+# not sure how else to include the spec_helper
+namespace :spec do
+  desc 'Run all specs'
+  task :all do
+    sh 'bundle exec rspec -r spec_helper spec spec_core'
   end
 
-  task :default => [:spec, :spec_core]
-rescue LoadError => e
-  puts e.inspect
-end
-
-desc "generate gemspec"
-task 'travis-api.gemspec' do
-  content = File.read 'travis-api.gemspec'
-
-  fields = {
-    authors: `git shortlog -sn`.scan(/[^\d\s].*/),
-    email:   `git shortlog -sne`.scan(/[^<]+@[^>]+/),
-    files:   `git ls-files`.split("\n").reject { |f| f =~ /^(\.|Gemfile)/ }
-  }
-
-  fields.each do |field, values|
-    updated = "  s.#{field} = ["
-    updated << values.map { |v| "\n    %p" % v }.join(',')
-    updated << "\n  ]"
-    content.sub!(/  s\.#{field} = \[\n(    .*\n)*  \]/, updated)
+  desc 'Run api specs'
+  task :api do
+    sh 'bundle exec rspec -r spec_helper spec'
   end
 
-  File.open('travis-api.gemspec', 'w') { |f| f << content }
+  desc 'Run core specs'
+  task :core do
+    sh 'bundle exec rspec -r spec_helper spec_core'
+  end
 end
-task default: 'travis-api.gemspec'
 
-## can this be removed? what other rakefiles need to be included?
-# tasks_path = File.expand_path('../lib/tasks/*.rake', __FILE__)
-# Dir.glob(tasks_path).each { |r| import r }
+task :default => :'spec:all'

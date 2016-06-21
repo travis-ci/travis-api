@@ -1,6 +1,4 @@
-require 'spec_helper'
-
-describe Travis::Api::App::Endpoint::Builds do
+describe Travis::Api::App::Endpoint::Builds, set_app: true do
   include Travis::Testing::Stubs
 
   it 'works with default options' do
@@ -38,5 +36,5 @@ describe Travis::Api::App::Endpoint::Builds do
       end
     end
   end
-  
+
 end
