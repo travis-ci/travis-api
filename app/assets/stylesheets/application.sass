@@ -23,5 +23,93 @@
 @import "_top"
 @import "_footer"
 @import "_layout"
-@import "tabs"
-@import "users"
+
+
+/* Following styles are for development purposes and can be replaced */
+
+/* Styles for Tabs */
+
+#tabs
+  margin-top: 20px
+
+#tabs::after
+  display: block
+  content: ""
+  clear: both
+
+.tab-switch
+  position: fixed
+
+  &:target
+    + .tab-link
+      color: $oxide-blue
+      font-weight: $font-weight-bold
+      + .tab-content
+        display: block
+
+.tab-link
+  display: inline-block
+  text-decoration: none
+  padding: 0 10px
+
+.tab-content
+  box-sizing: border-box
+  float: right
+  display: none
+  width: 100%
+
+
+/* Styles for listing information */
+
+dl, dt, dd
+  margin: 0
+  padding: 0
+
+dl
+  width: 100%
+  overflow: hidden
+
+dt
+  float: left
+  width: 25%
+  clear: left
+
+dd
+  float: left
+  width: 75%
+
+.info-label
+  font-weight: $font-weight-bold
+
+.user-list>li
+  list-style: none
+
+.inline-list
+  display: flex
+  flex-flow: row nowrap
+  justify-content: space-between
+  align-items: left
+  li
+    list-style: none
+
+.repo-active, .repo-view
+  flex: 1 1 10%
+
+.repo-name, .repo-build
+  flex: 1 1 30%
+
+.job-item > li
+  flex: 1 1 20%
+
+
+/* Button styles */
+
+.button
+  padding: 5px 10px
+  border-radius: 4px
+  background-color: lighten($cement-grey, 20)
+  font-size: $font-size-s
+  text-decoration: none
+  &:hover
+    color: $white
+    background-color: $cement-grey
