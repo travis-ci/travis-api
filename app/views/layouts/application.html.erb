@@ -17,7 +17,14 @@
     </header>
 
     <main class="main">
+      <section class="alert">
+        <% flash.each do |name, msg| -%>
+            <%= content_tag :p, msg, class: name %>
+        <% end -%>
+      </section>
+
       <%= yield %>
+
     </main>
   </body>
 </html>
