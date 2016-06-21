@@ -92,21 +92,14 @@ module Travis::API::V3
       private_repository_visible?(repository)
     end
 
-    def settings_visible?(settings)
-      repository_visible?(settings.repository)
-    end
-
-    def env_vars_visible?(env_vars)
-      repository_visible?(env_vars.repository)
-    end
-
-    def env_var_visible?(env_var)
-      repository_visible?(env_var.repository)
-    end
-
     def private_repository_visible?(repository)
       false
     end
+
+    def repository_attr_visible?(record)
+      repository_visible?(record.repository)
+    end
+    [:settings_visible?, :env_vars_visible?, :env_var_visible?].each { |m| alias_method m, :repository_attr_visible? }
 
     def public_api?
       !Travis.config.private_api
