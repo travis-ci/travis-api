@@ -1,0 +1,18 @@
+<section class="info-block">
+  <h1 class="info-header">Builds</h1>
+  <% if builds.empty? %>
+    <p>No build.</p>
+  <% else %>
+    <% builds.each do |build| %>
+      <ul class="inline-list build-item state_<%= build.state %>">
+        <li><%= describe(build) %></li>
+        <li></li>
+        <li><%= build.event_type %></li>
+        <li><%= build.state %></li>
+        <li><%= build.finished_at || build.started_at %></li>
+        <li><%= format_short_duration(build.duration) %></li>
+        <li></li>
+      </ul>
+    <% end %>
+  <% end %>
+</section>

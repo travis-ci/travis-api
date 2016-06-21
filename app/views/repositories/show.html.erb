@@ -11,13 +11,9 @@
     <%= render partial: 'shared/users', locals: {users: @repository.users} %>
   </section>
 
-  <span id="settings" class="tab-switch"></span>
-  <a href="#settings" class="tab-link">Settings</a>
-  <section class="tab-content">
-  </section>
-
-  <span id="queue" class="tab-switch"></span>
-  <a href="#queue" class="tab-link">Queue</a>
+  <span id="builds" class="tab-switch"></span>
+  <a href="#builds" class="tab-link">Builds</a>
   <section   class="tab-content">
+    <%= render partial: 'builds', locals: {builds: @builds} %>
   </section>
 </div>
