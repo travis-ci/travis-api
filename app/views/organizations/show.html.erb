@@ -1,25 +1,25 @@
 <div id="tabs">
   <span id="organization" class="tab-switch"></span>
   <a href="#organization" class="tab-link">Organization</a>
-  <article class="tab-content">
+  <section   class="tab-content">
     <%= render partial: 'organization', locals: {organization: @organization, users: @users} %>
-  </article>
+  </section>
 
   <span id="account" class="tab-switch"></span>
   <a href="#account" class="tab-link">Account</a>
-  <article class="tab-content">
+  <section   class="tab-content">
     <%= render partial: 'shared/account', locals: {owner: @organization} %>
-  </article>
+  </section>
 
   <span id="repositories" class="tab-switch"></span>
   <a href="#repositories" class="tab-link">Repositories</a>
-  <article class="tab-content">
+  <section class="tab-content">
     <%= render partial: 'shared/repositories', locals: {repositories: @repositories} %>
-  </article>
+  </section>
 
   <span id="queue" class="tab-switch"></span>
   <a href="#queue" class="tab-link">Queue</a>
-  <article class="tab-content">
+  <section class="tab-content">
     <%= render partial: 'shared/queue', locals: {organization: @organization, pending_jobs: @pending_jobs} %>
-  </article>
+  </section>
 </div>
