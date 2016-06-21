@@ -1,7 +1,7 @@
 module Travis
   module Github
     module Oauth
-      class TrackScopes < Struct.new(:user)
+      class UpdateScopes < Struct.new(:user)
         def run
           update if update?
         end
@@ -14,17 +14,17 @@ module Travis
           end
 
           def update?
-            github_oauth_token_changed?(user) or user.github_scopes.blank?
+            token_changed?(user) or not Oauth.correct_scopes?(user)
           end
 
-          def github_oauth_token_changed?(user)
+          def token_changed?(user)
             user.github_oauth_token_changed? or user.previous_changes.key?('github_oauth_token')
           end
       end
 
       class << self
-        def track_scopes(user)
-          TrackScopes.new(user).run
+        def update_scopes(user)
+          UpdateScopes.new(user).run
         end
 
         def correct_scopes?(user)

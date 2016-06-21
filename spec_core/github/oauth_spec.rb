@@ -20,7 +20,7 @@ describe Travis::Github::Oauth do
     end
   end
 
-  describe 'track_scopes' do
+  describe 'update_scopes' do
     before { user.reload }
 
     describe 'the token did not change' do
@@ -28,7 +28,7 @@ describe Travis::Github::Oauth do
 
       it 'does not resolve github scopes' do
         Travis::Github::Oauth.expects(:scopes_for).never
-        described_class.track_scopes(user)
+        described_class.update_scopes(user)
       end
     end
 
@@ -42,7 +42,7 @@ describe Travis::Github::Oauth do
 
       it 'updates github scopes' do
         Travis::Github::Oauth.expects(:scopes_for).returns(['foo', 'bar'])
-        described_class.track_scopes(user)
+        described_class.update_scopes(user)
         expect(user.reload.github_scopes).to eq ['foo', 'bar']
       end
     end
@@ -57,7 +57,7 @@ describe Travis::Github::Oauth do
 
       it 'updates github scopes' do
         Travis::Github::Oauth.expects(:scopes_for).returns(['foo', 'bar'])
-        described_class.track_scopes(user)
+        described_class.update_scopes(user)
         expect(user.reload.github_scopes).to eq ['foo', 'bar']
       end
     end

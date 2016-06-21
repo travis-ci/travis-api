@@ -292,7 +292,7 @@ class Travis::Api::App
                 Travis.run_service(:sync_user, user)
               end
 
-              Travis::Github::Oauth.track_scopes(user) # unless Travis.env == 'test'
+              Travis::Github::Oauth.update_scopes(user) # unless Travis.env == 'test'
 
               nullify_logins(user.github_id, user.login)
             end
