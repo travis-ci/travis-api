@@ -17,11 +17,9 @@ module Travis::API::V3
 
       def handle_errors(env_var)
         base = env_var.errors[:base]
-        case
-        when base.include?(:format)             then raise WrongParams
-        when base.include?(:duplicate_resource) then raise DuplicateResource
-        else                                         raise ServerError
-        end
+        raise WrongParams       if base.include?(:format)
+        raise DuplicateResource if base.include?(:duplicate_resource)
+        raise ServerError
       end
   end
 end
