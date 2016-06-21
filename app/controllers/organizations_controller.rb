@@ -5,6 +5,5 @@ class OrganizationsController < ApplicationController
 
     @repositories = @organization.repositories
     @pending_jobs = Job.from_repositories(@repositories).not_finished
-    @users = @organization.users
   end
 end

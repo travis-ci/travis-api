@@ -16,7 +16,7 @@
         <% else %>
           <li class="repo-build">no build</li>
         <% end %>
-        <li class="repo-view"></li>
+        <li class="repo-view"><%= link_to "View", repository_path(repo), class: "button" %></li>
       </ul>
     <% end %>
   <% end %>
