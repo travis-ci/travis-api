@@ -4,8 +4,7 @@ module Travis::API::V3
     params :id, :name, :value, :public, prefix: :env_var
 
     def run!
-      raise LoginRequired unless access_control.logged_in? or access_control.full_access?
-      raise NotFound      unless repository = find(:repository)
+      repository = check_login_and_find(:repository)
       query.update(repository)
     end
   end
