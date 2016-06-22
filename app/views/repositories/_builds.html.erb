@@ -6,7 +6,7 @@
     <% builds.each do |build| %>
       <ul class="inline-list build-item state_<%= build.state %>">
         <li><%= describe(build) %></li>
-        <li></li>
+        <li><%= build.branch %></li>
         <li><%= build.event_type %></li>
         <li><%= build.state %></li>
         <li><%= build.finished_at || build.started_at %></li>
