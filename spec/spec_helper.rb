@@ -25,11 +25,6 @@ require 'support/s3'
 require 'support/test_helpers'
 require 'support/shared_examples'
 
-Travis.logger = Logger.new(StringIO.new)
-Travis::Api::App.setup
-Travis.config.client_domain = "www.example.com"
-Travis.config.endpoints.ssh_key = true
-
 module TestHelpers
   include Sinatra::TestHelpers
 
