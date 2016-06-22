@@ -79,6 +79,17 @@ module Travis::API::V3
       @dont_join ||= superclass.dont_join.dup
     end
 
+    @experimental_sortable_by = []
+    def self.experimental_sortable_by(*fields)
+      @experimental_sortable_by ||= []
+
+      if fields.first
+        @experimental_sortable_by.push(*fields.map(&:to_s))
+      end
+
+      @experimental_sortable_by
+    end
+
     def self.sort_condition(condition)
       if condition.is_a? Hash
         condition = condition.map { |e| e.map { |v| prefix(v) }.join(" = ".freeze) }.join(" and ".freeze)

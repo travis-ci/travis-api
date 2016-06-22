@@ -11,6 +11,7 @@ module Travis::API::V3
     # is an association. This prevents adding the join. We will probably be able
     # to remove it once we move to newer AR versions
     prevent_sortable_join :current_build
+    experimental_sortable_by :current_build
 
     def for_member(user, **options)
       all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
@@ -44,7 +45,7 @@ module Travis::API::V3
       end
 
       list = list.includes(default_branch: :last_build)
-      list = list.includes(:current_build)
+      list = list.includes(:current_build) if includes? 'repository.current_build'.freeze
       list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
       sort list
     end
