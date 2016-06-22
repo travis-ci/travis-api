@@ -30,5 +30,6 @@
   <span id="requests" class="tab-switch"></span>
   <a href="#requests" class="tab-link">Requests</a>
   <section class="tab-content">
-   </section>
+    <%= render partial: 'requests', locals: {requests: @repository.requests} %>
+  </section>
 </div>
