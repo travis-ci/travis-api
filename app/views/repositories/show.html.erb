@@ -8,16 +8,16 @@
   <span id="users" class="tab-switch"></span>
   <a href="#users" class="tab-link">Users</a>
   <section class="tab-content">
-    <%= render partial: 'shared/users', locals: {users: @repository.users} %>
+    <%= render partial: 'users', locals: {users: @repository.users} %>
   </section>
 
-  <span id="builds" class="tab-switch"></span>
-  <a href="#builds" class="tab-link">Settings</a>
+  <span id="settings" class="tab-switch"></span>
+  <a href="#settings" class="tab-link">Settings</a>
   <section class="tab-content">
   </section>
 
-  <span id="builds" class="tab-switch"></span>
-  <a href="#builds" class="tab-link">Caches</a>
+  <span id="caches" class="tab-switch"></span>
+  <a href="#caches" class="tab-link">Caches</a>
   <section class="tab-content">
   </section>
 
@@ -27,8 +27,8 @@
     <%= render partial: 'builds', locals: {builds: @builds} %>
   </section>
 
-  <span id="builds" class="tab-switch"></span>
-  <a href="#builds" class="tab-link">Requests</a>
+  <span id="requests" class="tab-switch"></span>
+  <a href="#requests" class="tab-link">Requests</a>
   <section class="tab-content">
    </section>
 </div>
