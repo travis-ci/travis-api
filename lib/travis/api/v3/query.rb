@@ -70,6 +70,15 @@ module Travis::API::V3
       mapping.each { |key, value| sort_by[key.to_s]   = prefix(value) }
     end
 
+    def self.prevent_sortable_join(*fields)
+      dont_join.push(*fields.map(&:to_s))
+    end
+
+    @dont_join = []
+    def self.dont_join
+      @dont_join ||= superclass.dont_join.dup
+    end
+
     def self.sort_condition(condition)
       if condition.is_a? Hash
         condition = condition.map { |e| e.map { |v| prefix(v) }.join(" = ".freeze) }.join(" and ".freeze)
@@ -172,6 +181,7 @@ module Travis::API::V3
     end
 
     def sort_join?(collection, field)
+      return if self.class.dont_join.include?(field)
       !collection.reflect_on_association(field.to_sym).nil?
     end
 
