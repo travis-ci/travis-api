@@ -32,4 +32,16 @@
   </dl>
 </section>
 
-<%= render partial: 'shared/users', locals: {users: @organization.users} %>
+<section class="info-block">
+  <h1 class="info-header">Members</h1>
+
+  <% if organization.users.empty? %>
+      <p>No users.</p>
+  <% else %>
+      <ul class="user-list">
+        <% organization.users.each do |user| %>
+            <li><%= link_to "#{user.name} (#{user.login})", user %></li>
+        <% end %>
+      </ul>
+  <% end %>
+</section>
