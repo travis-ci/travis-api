@@ -54,7 +54,6 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "@representation"  => "minimal",
         "name"             => "master"},
       "starred"            => false,
-      "current_build"      => nil
     }}
   end
 
@@ -133,7 +132,6 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "@representation"  => "minimal",
         "name"             => "master"},
       "starred"            => false,
-      "current_build"      => nil
     }}
   end
 
@@ -197,7 +195,6 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "@representation"  => "minimal",
         "name"             => "master"},
       "starred"            => false,
-      "current_build"      => nil
     }}
   end
 
@@ -267,7 +264,6 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "@representation"  => "minimal",
         "name"             => "master"},
       "starred"            => false,
-      "current_build"      => nil
     }}
   end
 

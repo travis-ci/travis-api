@@ -85,9 +85,17 @@ module Travis::API::V3
         data = resources[resource.identifier] ||= { :@type => :resource, :actions => {} }
         data.merge! resource.meta_data
 
-        if renderer              = Renderer[resource.identifier, false]
-          data[:attributes]      = renderer.available_attributes if renderer.respond_to? :available_attributes
-          data[:representations] = renderer.representations      if renderer.respond_to? :representations
+        if renderer = Renderer[resource.identifier, false]
+
+          data[:attributes] = renderer.available_attributes if renderer.respond_to? :available_attributes
+
+          if renderer.respond_to? :representations
+            representations = renderer.representations
+            if renderer.respond_to? :experimental_representations
+              representations = representations.reject { |k| renderer.experimental_representations.include? k }
+            end
+            data[:representations] = representations
+          end
         end
 
         if permissions           = Permissions[resource.identifier, false]
@@ -102,7 +110,7 @@ module Travis::API::V3
           if factory.params and factory.params.include? "sort_by".freeze
             query = Queries[resource.identifier]
             if query and query.sortable?
-              resources[resource.identifier][:sortable_by]  = query.sort_by.keys
+              resources[resource.identifier][:sortable_by]  = query.sort_by.keys - query.experimental_sortable_by
               resources[resource.identifier][:default_sort] = query.default_sort unless query.default_sort.empty?
             end
           end

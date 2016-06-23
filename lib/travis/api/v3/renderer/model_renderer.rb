@@ -26,6 +26,17 @@ module Travis::API::V3
       @representations ||= superclass.representations.dup
     end
 
+    @experimental_representations = []
+    def self.experimental_representations(*representations)
+      @experimental_representations ||= superclass.experimental_representations.dup
+
+      if representations.first
+        @experimental_representations.push(*representations)
+      end
+
+      @experimental_representations
+    end
+
     @available_attributes = Set.new
     def self.available_attributes
       @available_attributes ||= superclass.available_attributes.dup
