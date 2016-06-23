@@ -28,7 +28,13 @@
 
   <dl class="simple-info">
     <dt class="info-label">Last Build:</dt>
-    <dd><%= "Build ##{repository.last_build_number} #{repository.last_build_state.to_s} (#{repository.last_build_finished_at || repository.last_build_started_at})" %></dd>
+    <dd>
+      <% if repository.last_build_id %>
+        <%= "Build ##{repository.last_build_number} #{repository.last_build_state.to_s} (#{repository.last_build_finished_at || repository.last_build_started_at})" %>
+      <% else %>
+        No Build.
+      <% end %>
+    </dd>
 
     <dt class="info-label">Activation:</dt>
     <dd><%= repository.active? ? "enabled" : "disabled" %></dd>
