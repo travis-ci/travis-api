@@ -8,7 +8,7 @@
         <li>#<%= request.id %></li>
         <li>
           <% request.builds.each do |build| %>
-            <%= "#{build.repository.slug} ##{build.number}" %>
+            <%= "#{repository.slug} ##{build.number}" %>
           <% end %>
           <%= request.message %>
         </li>
