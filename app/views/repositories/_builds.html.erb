@@ -5,13 +5,13 @@
   <% else %>
     <% builds.each do |build| %>
       <ul class="inline-list build-item state_<%= build.state %>">
-        <li><%= describe(build) %></li>
-        <li><%= build.commit.branch %></li>
-        <li><%= build.event_type %></li>
-        <li><%= build.state %></li>
-        <li><%= build.finished_at || build.started_at %></li>
-        <li><%= format_short_duration(build.duration) %></li>
-        <li></li>
+        <li class="build-name"><%= describe(build) %></li>
+        <li class="build-branch"><%= build.commit.branch %></li>
+        <li class="build-type"><%= build.event_type %></li>
+        <li class="build-state"><%= build.state %></li>
+        <li class="build-time"><%= build.finished_at || build.started_at %></li>
+        <li class="build-duration"><%= format_short_duration(build.duration) %></li>
+        <li class="build-reset"></li>
       </ul>
     <% end %>
   <% end %>
