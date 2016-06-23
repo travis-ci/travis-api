@@ -5,7 +5,7 @@
   <% else %>
     <% builds.each do |build| %>
       <ul class="inline-list build-item state_<%= build.state %>">
-        <li class="build-name"><%= describe(build) %></li>
+        <li class="build-name"><%= "#{repository.slug}##{build.number}" %></li>
         <li class="build-branch"><%= build.commit.branch %></li>
         <li class="build-type"><%= build.event_type %></li>
         <li class="build-state"><%= build.state %></li>

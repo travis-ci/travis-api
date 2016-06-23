@@ -18,12 +18,4 @@ RSpec.describe UsersHelper, type: :helper do
       expect(helper.format_short_duration(4865)).to eq('1h 21m 5s')
     end
   end
-
-  describe 'describe' do
-    let!(:repository) { create(:repository, owner_name: 'travis') }
-
-    it 'returns String to describe a repositories' do
-      expect(helper.describe(repository)).to eql 'travis/travis-admin'
-    end
-  end
 end

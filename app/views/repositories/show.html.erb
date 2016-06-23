@@ -24,7 +24,7 @@
   <span id="builds" class="tab-switch"></span>
   <a href="#builds" class="tab-link">Builds</a>
   <section class="tab-content">
-    <%= render partial: 'builds', locals: {builds: @builds} %>
+    <%= render partial: 'builds', locals: {repository: @repository, builds: @builds} %>
   </section>
 
   <span id="requests" class="tab-switch"></span>

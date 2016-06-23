@@ -5,7 +5,7 @@
   <% else %>
     <% repositories.each do |repo| %>
       <ul class="inline-list repository-item">
-        <li class="repo-name"><%= describe(repo) %></li>
+        <li class="repo-name"><%= repo.slug %></li>
         <% if repo.active? %>
           <li class="repo-active">enabled</li>
         <% else %>
