@@ -3,7 +3,15 @@ module Travis::API::V3
     params :active, :private, :starred, prefix: :repository
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active),
                 :'default_branch.last_build' => 'builds.started_at',
-                :current_build_id => "repositories.current_build_id %{order} NULLS LAST"
+                :current_build => "repositories.current_build_id %{order} NULLS LAST"
+
+    # this is a hack for a bug in AR that generates invalid query when it tries
+    # to include `current_build` and join it at the same time. We don't actually
+    # need the join, but it will be automatically added, because `current_build`
+    # is an association. This prevents adding the join. We will probably be able
+    # to remove it once we move to newer AR versions
+    prevent_sortable_join :current_build
+    experimental_sortable_by :current_build
 
     def for_member(user, **options)
       all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
@@ -37,7 +45,7 @@ module Travis::API::V3
       end
 
       list = list.includes(default_branch: :last_build)
-      list = list.includes(:current_build)
+      list = list.includes(:current_build) if includes? 'repository.current_build'.freeze
       list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
       sort list
     end

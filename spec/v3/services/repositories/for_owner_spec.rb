@@ -63,7 +63,6 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@representation"  => "minimal",
           "name"             => "master"},
           "starred"          => false,
-          "current_build"    => nil
         }]}}
   end
 
@@ -140,8 +139,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@href"         => "/v3/repo/1/branch/master",
           "@representation"=>"minimal",
           "name"          => "master" },
-        "starred"         => false,
-        "current_build"   => nil }, {
+        "starred"         => false }, {
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo2.id}",
         "@representation" => "standard",
@@ -170,7 +168,6 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@href"         => "/v3/repo/#{repo2.id}/branch/master",
           "@representation"=>"minimal",
           "name"           =>"master" },
-          "starred"        => false,
-          "current_build"  => nil}]}
+          "starred"        => false}]}
   end
 end

@@ -3,7 +3,10 @@ require 'travis/api/v3/renderer/model_renderer'
 module Travis::API::V3
   class Renderer::Repository < Renderer::ModelRenderer
     representation(:minimal,  :id, :name, :slug)
-    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build)
+    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred)
+    representation(:experimental, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build)
+
+    experimental_representations(:experimental)
 
     def active
       !!model.active

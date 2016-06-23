@@ -2,7 +2,6 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
-  let(:current_build) { repo.builds.first }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)             }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                    }}
@@ -11,7 +10,6 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   after         { repo.update_attribute(:private, false)                                        }
 
   describe "private repository, private API, authenticated as user with access" do
-    before  { repo.update_attribute(:current_build_id, current_build.id) }
     before  { get("/v3/repos", {}, headers)    }
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
@@ -64,18 +62,6 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "@representation"  => "minimal",
           "name"             => "master"},
         "starred"            => false,
-        "current_build"      => {
-          "@type"            => "build",
-          "@href"            => "/v3/build/#{current_build.id}",
-          "@representation"  => "minimal",
-          "id"               => current_build.id.to_i,
-          "number"           => current_build.number,
-          "state"            => current_build.state,
-          "duration"         => current_build.duration,
-          "event_type"       => current_build.event_type,
-          "previous_state"   => current_build.previous_state,
-          "started_at"       => current_build.started_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-          "finished_at"      => nil},
         }]
     }}
   end
