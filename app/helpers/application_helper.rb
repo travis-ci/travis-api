@@ -1,17 +1,10 @@
 module ApplicationHelper
-  def format_duration(seconds)
+  def format_duration(seconds, hrs_suffix: "hrs", min_suffix: "min", sec_suffix: "sec")
     return "none" if seconds.nil?
-    seconds          = (Time.now - seconds).to_i if seconds.is_a? Time
-    output           = []
-    minutes, seconds = seconds.divmod(60)
-    hours, minutes   = minutes.divmod(60)
-    output << "#{hours  } hrs" if hours > 0
-    output << "#{minutes} min" if minutes > 0
-    output << "#{seconds} sec" if seconds > 0 or output.empty?
-    output.join(" ")
+    Time.at(seconds.to_i).utc.strftime("%H #{hrs_suffix} %M #{min_suffix} %S #{sec_suffix}")
   end
 
   def format_short_duration(seconds)
-    format_duration(seconds).gsub(' hrs', 'h').gsub(' min', 'm').gsub(' sec', 's')
+    format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
 end
