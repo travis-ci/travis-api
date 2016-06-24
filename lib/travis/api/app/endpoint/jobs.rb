@@ -29,9 +29,9 @@ class Travis::Api::App
       post '/:id/cancel' do
         Metriks.meter("api.request.cancel_job").mark
 
-        if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
-          service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
-        else
+        service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
+        repository_owner = service.target.repository.owner
+        if !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
           service = self.service(:cancel_job, params.merge(source: 'api'))
         end
 
@@ -68,10 +68,10 @@ class Travis::Api::App
       post '/:id/restart' do
         Metriks.meter("api.request.restart_job").mark
 
-        service = if Travis::Features.owner_active?(:enqueue_to_hub, current_user)
-          Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
-        else
-          self.service(:reset_model, job_id: params[:id])
+        service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
+        repository_owner = service.target.repository.owner
+        if !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
+          service = self.service(:reset_model, job_id: params[:id])
         end
 
         result = if !service.accept?

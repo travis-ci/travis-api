@@ -13,7 +13,6 @@ module Travis
         user = User.find(data['user_id'])
         Travis.service(:cancel_job, user, { id: data['id'], source: data['source'] }).run
       end
-
     end
   end
 end
