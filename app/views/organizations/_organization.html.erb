@@ -33,15 +33,6 @@
 </section>
 
 <section class="info-block">
-  <h1 class="info-header">Users</h1>
-
-  <% if users.empty? %>
-    <p>No users.</p>
-  <% else %>
-    <ul class="user-list">
-      <% users.each do |user| %>
-        <li><%= link_to "#{user.name} (#{user.login})", user %></li>
-      <% end %>
-    </ul>
-  <% end %>
+  <h1 class="info-header">Members</h1>
+  <%= render partial: 'shared/user_list', locals: {users: @organization.users} %>
 </section>

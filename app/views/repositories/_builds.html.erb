@@ -1,0 +1,28 @@
+<section class="info-block">
+  <h1 class="info-header">Builds</h1>
+  <% if builds.empty? %>
+    <p>No builds exist for this repository.</p>
+  <% else %>
+    <ul class="inline-list build-item">
+      <li class="info-label build-name">Build</li>
+      <li class="info-label build-branch">Branch</li>
+      <li class="info-label build-type">Type</li>
+      <li class="info-label build-state"> State</li>
+      <li class="info-label build-duration">Duration</li>
+      <li class="info-label build-reset"></li>
+    </ul>
+    <% builds.each do |build| %>
+      <ul class="inline-list build-item state_<%= build.state %>">
+        <li class="build-name"><%= "#{repository.slug}##{build.number}" %></li>
+        <li class="build-branch"><%= build.commit.branch %></li>
+        <li class="build-type"><%= build.event_type %></li>
+        <li class="build-state">
+          <%= build.state %> at
+          <%= build.finished_at || build.started_at || build.created_at %>
+        </li>
+        <li class="build-duration"><%= format_short_duration(build.duration) %></li>
+        <li class="build-reset"></li>
+      </ul>
+    <% end %>
+  <% end %>
+</section>

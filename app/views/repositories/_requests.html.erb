@@ -1,0 +1,28 @@
+<section class="info-block">
+  <h1 class="info-header">Requests</h1>
+  <% if requests.empty? %>
+    <p>No requests exist for this repository.</p>
+  <% else %>
+    <ul class="inline-list request-item">
+      <li class="info-label">Request</li>
+      <li class="info-label">Build</li>
+      <li class="info-label">Result</li>
+      <li class="info-label">Event Type</li>
+      <li class="info-label">State</li>
+    </ul>
+    <% requests.each do |request| %>
+      <ul class="inline-list request-item state_<%= request.state %>">
+        <li>#<%= request.id %></li>
+        <li>
+          <% request.builds.each do |build| %>
+            <%= "#{repository.slug} ##{build.number}" %>
+          <% end %>
+          <%= request.message %>
+        </li>
+        <li><%= request.result %></li>
+        <li><%= request.event_type %></li>
+        <li><%= request.state %></li>
+      </ul>
+    <% end %>
+  <% end %>
+</section>

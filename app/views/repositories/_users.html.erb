@@ -1,0 +1,14 @@
+<section class="info-block">
+  <h1 class="info-header">Admin Access</h1>
+  <%= render partial: 'shared/user_list', locals: {users: @repository.permissions_sorted[:admin]} %>
+</section>
+
+<section class="info-block">
+  <h1 class="info-header">Push Access</h1>
+  <%= render partial: 'shared/user_list', locals: {users: @repository.permissions_sorted[:push]} %>
+</section>
+
+<section class="info-block">
+  <h1 class="info-header">Pull Access</h1>
+  <%= render partial: 'shared/user_list', locals: {users: @repository.permissions_sorted[:pull]} %>
+</section>

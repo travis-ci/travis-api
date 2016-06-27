@@ -1,0 +1,35 @@
+<div id="tabs">
+  <span id="repository" class="tab-switch"></span>
+  <a href="#repository" class="tab-link">Repository</a>
+  <section class="tab-content">
+    <%= render partial: 'repository', locals: {repository: @repository} %>
+  </section>
+
+  <span id="users" class="tab-switch"></span>
+  <a href="#users" class="tab-link">Users</a>
+  <section class="tab-content">
+    <%= render partial: 'users' %>
+  </section>
+
+  <span id="settings" class="tab-switch"></span>
+  <a href="#settings" class="tab-link">Settings</a>
+  <section class="tab-content">
+  </section>
+
+  <span id="caches" class="tab-switch"></span>
+  <a href="#caches" class="tab-link">Caches</a>
+  <section class="tab-content">
+  </section>
+
+  <span id="builds" class="tab-switch"></span>
+  <a href="#builds" class="tab-link">Builds</a>
+  <section class="tab-content">
+    <%= render partial: 'builds', locals: {repository: @repository, builds: @builds} %>
+  </section>
+
+  <span id="requests" class="tab-switch"></span>
+  <a href="#requests" class="tab-link">Requests</a>
+  <section class="tab-content">
+    <%= render partial: 'requests', locals: {repository: @repository, requests: @requests} %>
+  </section>
+</div>

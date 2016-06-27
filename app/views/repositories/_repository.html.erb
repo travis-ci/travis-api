@@ -1,0 +1,42 @@
+<section class="info-block">
+  <h1 class="info-header">Basic Information</h1>
+
+  <dl class="simple-info">
+    <dt class="info-label">Name:</dt>
+    <dd><%= repository.name %></dd>
+
+    <dt class="info-label">Description:</dt>
+    <dd><%= repository.description %></dd>
+
+    <dt class="info-label">Visibility:</dt>
+    <dd><%= repository.private? ? "private" : "public" %></dd>
+
+    <dt class="info-label">Default Branch:</dt>
+    <dd><%= repository.default_branch %></dd>
+
+    <dt class="info-label">Repository Owner:</dt>
+    <dd>
+      <% if repository.owner.respond_to? :avatar_url and repository.owner.avatar_url %>
+        <img src="<%= repository.owner.avatar_url %>?s=20">
+      <% end %>
+      <%= link_to repository.owner.name, repository.owner %></dd>
+  </dl>
+</section>
+
+<section class="info-block">
+  <h1 class="info-header">Status</h1>
+
+  <dl class="simple-info">
+    <dt class="info-label">Last Build:</dt>
+    <dd>
+      <% if repository.last_build_id %>
+        <%= "##{repository.last_build_number} #{repository.last_build_state.to_s} at <time>#{repository.last_build_finished_at || repository.last_build_started_at}</time>".html_safe %>
+      <% else %>
+        No Build.
+      <% end %>
+    </dd>
+
+    <dt class="info-label">Activation:</dt>
+    <dd><%= repository.active? ? "enabled" : "disabled" %></dd>
+  </dl>
+</section>
