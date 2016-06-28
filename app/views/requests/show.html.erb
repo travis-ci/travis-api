@@ -1,0 +1,46 @@
+<h1 class="info-header"><%= "Request - ##{@request.id}" %></h1>
+
+<section class="info-block">
+  <h2 class="info-header">Information</h2>
+
+  <dl class="simple-info">
+    <dt class="info-label">State:</dt>
+    <dd><%= @request.state %></dd>
+
+    <dt class="info-label">Result:</dt>
+    <dd><%= @request.result %></dd>
+
+    <dt class="info-label">Message:</dt>
+    <dd><%= @request.message %></dd>
+
+    <dt class="info-label">Repository:</dt>
+    <dd><%= link_to @request.repository.slug, @request.repository %></dd>
+
+    <dt class="info-label">Owner:</dt>
+    <dd><%= link_to "#{@request.owner.name} (#{@request.owner.login})", @request.owner %></dd>
+
+    <dt class="info-label">Event Type:</dt>
+    <dd><%= @request.event_type %></dd>
+
+    <dt class="info-label">Created:</dt>
+    <dd><time><%= @request.created_at %></time></dd>
+
+    <dt class="info-label">Started:</dt>
+    <dd><time><%= @request.started_at %></time></dd>
+
+    <dt class="info-label">Finished:</dt>
+    <dd><time><%= @request.finished_at %></time></dd>
+  </dl>
+</section>
+
+<section class="info-block">
+  <h2 class="info-header">Payload</h2>
+
+  <dl class="simple-info">
+    <dt class="info-label">Ref:</dt>
+    <dd><%= @request.payload['ref'] %></dd>
+
+    <dt class="info-label">Compare:</dt>
+    <dd><a href="<%= @request.payload['compare']%>">compare URL</a></dd>
+  </dl>
+</section>
