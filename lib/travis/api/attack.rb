@@ -25,7 +25,7 @@ class Rack::Attack
     end
   end
 
-  POST_WHITELISTED = [
+  POST_SAFELIST = [
     "/auth/handshake",
     "/auth/post_message",
     "/auth/post_message/iframe"
@@ -61,7 +61,7 @@ class Rack::Attack
   # Ban after:    10 POST requests within 30 seconds
   blacklist('spamming with POST requests') do |request|
     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 30.seconds, bantime: bantime(1.hour)) do
-      request.post? and not POST_WHITELISTED.include? request.path
+      request.post? and not POST_SAFELIST.include? request.path
     end
   end
 
