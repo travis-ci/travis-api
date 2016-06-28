@@ -5,5 +5,6 @@ class UsersController < ApplicationController
 
     @repositories = @user.permitted_repositories
     @pending_jobs = Job.from_repositories(@repositories).not_finished
+    @finished_jobs = Job.from_repositories(@repositories).finished.take(10)
   end
 end

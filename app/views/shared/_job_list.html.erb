@@ -1,0 +1,13 @@
+<% if jobs.empty? %>
+  <p>No jobs.</p>
+<% else %>
+  <% jobs.each do |job| %>
+    <ul class="inline-list job-item">
+      <li><%= link_to "##{job.id}", job %></li>
+      <li><%= job.state %></li>
+      <li><%= job.started_at %></li>
+      <li><%= job.queue %></li>
+      <li></li>
+    </ul>
+  <% end %>
+<% end %>
