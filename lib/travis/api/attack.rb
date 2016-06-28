@@ -31,10 +31,16 @@ class Rack::Attack
     "/auth/post_message/iframe"
   ]
 
+  IMAGE_PATTERN = /^\/([a-z0-9_-]+)\/([a-z0-9_-]+)\.(png|svg)$/
+
   ####
   # Whitelisted IP addresses
   whitelist('whitelist client requesting from redis') do |request|
     Travis.redis.sismember(:api_whitelisted_ips, request.ip)
+  end
+
+  whitelist('safelist build status images when requested by github') do |request|
+    request.user_agent and request.user_agent.start_with?('github-camo') and IMAGE_PATTERN.match(request.path)
   end
 
   ####
