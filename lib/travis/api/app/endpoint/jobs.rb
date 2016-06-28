@@ -31,7 +31,7 @@ class Travis::Api::App
 
         service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
         repository_owner = service.target.repository.owner
-        if !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
+        if !Travis::Features.enabled_for_all?(:enqueue_to_hub) && !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
           service = self.service(:cancel_job, params.merge(source: 'api'))
         end
 
@@ -70,7 +70,7 @@ class Travis::Api::App
 
         service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
         repository_owner = service.target.repository.owner
-        if !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
+        if !Travis::Features.enabled_for_all?(:enqueue_to_hub) && !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
           service = self.service(:reset_model, job_id: params[:id])
         end
 

@@ -14,7 +14,7 @@ module Travis::API::V3
       raise JobNotCancelable if %w(passed failed canceled errored).include? find.state
       payload = { id: id, user_id: user.id, source: 'api' }
       #look for repo.owner instead and look if the user belongs to the repo, instead of using user for the feature flag
-      if Travis::Features.owner_active?(:enqueue_to_hub, find.repository.owner)
+      if Travis::Features.enabled_for_all?(:enqueue_to_hub) || Travis::Features.owner_active?(:enqueue_to_hub, find.repository.owner)
         service = Travis::Enqueue::Services::CancelModel.new(user, { job_id: id })
         service.push("job:cancel", payload)
       else
@@ -26,7 +26,7 @@ module Travis::API::V3
     def restart(user)
       raise JobAlreadyRunning if %w(received queued started).include? find.state
 
-      if Travis::Features.owner_active?(:enqueue_to_hub, find.repository.owner)
+      if Travis::Features.enabled_for_all?(:enqueue_to_hub) || Travis::Features.owner_active?(:enqueue_to_hub, find.repository.owner)
         service = Travis::Enqueue::Services::RestartModel.new(user, { job_id: id })
         payload = { id: id, user_id: user.id }
         service.push("job:restart", payload)
