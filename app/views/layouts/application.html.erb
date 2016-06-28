@@ -10,7 +10,7 @@
     <header class="top">
       <div class="row topbar">
         <h1 id="logo" class="logo">
-          <%= link_to "Travis Admin", "#" %>
+          <%= link_to "Travis Admin", root_path %>
         </h1>
         <nav></nav>
       </div>
@@ -19,7 +19,7 @@
     <main class="main">
       <section class="alert">
         <% flash.each do |name, msg| -%>
-            <%= content_tag :p, msg, class: name %>
+          <%= content_tag :p, msg, class: name %>
         <% end -%>
       </section>
 
