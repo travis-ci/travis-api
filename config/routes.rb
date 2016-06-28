@@ -5,4 +5,5 @@ Rails.application.routes.draw do
   get 'organization/:id' => 'organizations#show', as: :organization
   get 'repository/:id' => 'repositories#show', as: :repository
   get 'request/:id' => 'requests#show', as: :request
+  get 'build/:id' => 'builds#show', as: :build
 end
