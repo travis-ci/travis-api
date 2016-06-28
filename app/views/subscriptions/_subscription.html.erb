@@ -1,0 +1,55 @@
+<section class="info-block">
+  <h2 class="info-header">General Information</h2>
+
+  <dl class="simple-info">
+    <dt class="info-label">Plan:</dt>
+    <dd>
+      <% if plan %>
+        <%= "#{plan.name} (#{format_price(plan.amount)}/month)" %>
+      <% else %>
+        No Plan.
+      <% end %>
+    </dd>
+  </dl>
+
+  <dl class="simple-info">
+    <dt class="info-label">Coupon:</dt>
+    <dd>
+      <% if subscription.coupon %>
+        <%= subscription.coupon %>
+      <% else %>
+        No Coupon.
+      <% end %>
+    </dd>
+  </dl>
+
+  <dl class="simple-info">
+    <dt class="info-label">Expires:</dt>
+    <dd><time><%= subscription.valid_to %></time></dd>
+  </dl>
+
+  <dl class="simple-info">
+    <dt class="info-label">Owner:</dt>
+    <dd><%= link_to "#{subscription.owner.name} (#{subscription.owner.login})", subscription.owner %></dd>
+  </dl>
+
+  <dl class="simple-info">
+    <dt class="info-label">Contact:</dt>
+    <dd><%= link_to "#{subscription.contact.name} (#{subscription.contact.login})", subscription.contact %></dd>
+  </dl>
+
+  <dl class="simple-info">
+    <dt class="info-label">Billing E-mail:</dt>
+    <dd><%= subscription.billing_email %></dd>
+  </dl>
+
+  <dl class="simple-info">
+    <dt class="info-label">VAT ID:</dt>
+    <dd><%= subscription.vat_id %></dd>
+  </dl>
+
+  <dl class="simple-info">
+    <dt class="info-label">Address:</dt>
+    <dd></dd>
+  </dl>
+</section>
