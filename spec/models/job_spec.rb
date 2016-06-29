@@ -69,4 +69,21 @@ RSpec.describe Job, type: :model do
       expect(queued_job.time.to_s).to eql '2016-06-29 11:06:01 UTC'
     end
   end
+
+  describe '.duration' do
+    let(:finished_job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:07:11') }
+    let(:started_job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: nil) }
+
+    context 'job is finished' do
+      it 'gives the duration in seconds' do
+        expect(finished_job.duration).to eql 70.0
+      end
+    end
+
+    context 'job is not finished' do
+      it 'returns nil' do
+        expect(started_job.duration).to be nil
+      end
+    end
+  end
 end
