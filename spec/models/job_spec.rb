@@ -61,4 +61,12 @@ RSpec.describe Job, type: :model do
       expect(Job.finished.map(&:id)).to eql Job.finished.map(&:id).sort { |x,y| y <=> x }
     end
   end
+
+  describe '.time' do
+    let(:queued_job) { create(:job, state: 'queued', queued_at: '2016-06-29 11:06:01') }
+
+    it 'gets time queued_at for a job with state queued' do
+      expect(queued_job.time.to_s).to eql '2016-06-29 11:06:01 UTC'
+    end
+  end
 end
