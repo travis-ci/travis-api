@@ -62,14 +62,6 @@ RSpec.describe Job, type: :model do
     end
   end
 
-  describe '.time' do
-    let(:queued_job) { create(:job, state: 'queued', queued_at: '2016-06-29 11:06:01') }
-
-    it 'gets time queued_at for a job with state queued' do
-      expect(queued_job.time.to_s).to eql '2016-06-29 11:06:01 UTC'
-    end
-  end
-
   describe '.duration' do
     let(:finished_job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:07:11') }
     let(:started_job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: nil) }

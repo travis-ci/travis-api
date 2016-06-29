@@ -1,5 +1,5 @@
 class Job < ActiveRecord::Base
-  include StateMessages
+  include StateDisplay
 
   self.inheritance_column = :_type_disabled
 

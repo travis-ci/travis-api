@@ -1,5 +1,5 @@
 class Build < ActiveRecord::Base
-  include StateMessages
+  include StateDisplay
 
   belongs_to :owner, polymorphic: true
   belongs_to :repository

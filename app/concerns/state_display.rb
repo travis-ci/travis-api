@@ -1,7 +1,7 @@
-module StateMessages
+module StateDisplay
   extend ActiveSupport::Concern
 
-  def time
+  def state_time
     case state
     when 'canceled'
       canceled_at
