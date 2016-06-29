@@ -1,0 +1,57 @@
+<section class="info-block">
+  <h2 class="info-header">Status</h2>
+
+  <dl class="simple-info">
+    <dt class="info-label">State:</dt>
+    <dd><%= build.state %></dd>
+
+    <dt class="info-label">Previous State:</dt>
+    <dd><%= build.previous_state %></dd>
+
+    <dt class="info-label">Repository:</dt>
+    <dd><%= link_to build.repository.slug, build.repository %></dd>
+
+    <dt class="info-label">Request:</dt>
+    <dd><%= build.request.id %></dd>
+
+    <dt class="info-label">Owner:</dt>
+    <dd><%= link_to "#{build.owner.name} (#{build.owner.login})", build.owner %></dd>
+
+    <dt class="info-label">Event Type:</dt>
+    <dd><%= build.event_type %></dd>
+
+    <dt class="info-label">Created:</dt>
+    <dd><time><%= build.created_at %></time></dd>
+
+    <dt class="info-label">Started:</dt>
+    <dd><time><%= build.started_at %></time></dd>
+
+    <dt class="info-label">Finished:</dt>
+    <dd><time><%= build.finished_at %></time></dd>
+
+    <dt class="info-label">Duration:</dt>
+    <dd><%= format_duration(build.duration) %></dd>
+
+    <dt class="info-label">Branch:</dt>
+    <dd><%= build.branch %></dd>
+
+    <dt class="info-label">Commit:</dt>
+    <dd><%= build.commit.commit %></dd>
+
+    <dt class="info-label">Message:</dt>
+    <dd><%= build.commit.message %></dd>
+
+    <dt class="info-label">Committer:</dt>
+    <dd><%= build.commit.committer_name %></dd>
+
+    <dt class="info-label">Author:</dt>
+    <dd><%= build.commit.author_name %></dd>
+
+    <dt class="info-label">Config Status:</dt>
+    <dd><%= "#{build.config? ? 'Configured' : 'Not Configured'}" %></dd>
+  </dl>
+</section>
+
+<section class="info-block">
+  <h2 class="info-header">Matrix</h2>
+</section>
