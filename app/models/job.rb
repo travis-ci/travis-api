@@ -15,4 +15,19 @@ class Job < ActiveRecord::Base
   def duration
     started_at && finished_at ? finished_at - started_at : nil
   end
+
+  def time
+    case state
+    when 'canceled'
+      canceled_at
+    when 'errored', 'passed', 'failed', 'finished'
+      finished_at
+    when 'started'
+      started_at
+    when 'queued'
+      queued_at
+    when 'created'
+      created_at
+    end
+  end
 end

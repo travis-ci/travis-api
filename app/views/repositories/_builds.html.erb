@@ -16,10 +16,7 @@
         <li class="build-name"><%= link_to "#{repository.slug}##{build.number}", build %></li>
         <li class="build-branch"><%= build.commit.branch %></li>
         <li class="build-type"><%= build.event_type %></li>
-        <li class="build-state">
-          <%= build.state %> at
-          <%= build.finished_at || build.started_at || build.created_at %>
-        </li>
+        <li class="build-state"><%= "#{build.state} at #{build.time}" %></li>
         <li class="build-duration"><%= format_short_duration(build.duration) %></li>
         <li class="build-reset"></li>
       </ul>

@@ -12,7 +12,7 @@
     <dd><%= link_to "#{job.owner.name} (#{job.owner.login})", job.owner %></dd>
 
     <dt class="info-label">Build:</dt>
-    <dd><%= "##{job.build.number}" %></dd>
+    <dd><%= link_to "##{job.build.number}", job.build %></dd>
 
     <dt class="info-label">Created:</dt>
     <dd><time><%= job.created_at %></time></dd>
