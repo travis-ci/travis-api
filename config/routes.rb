@@ -6,4 +6,5 @@ Rails.application.routes.draw do
   get 'repository/:id' => 'repositories#show', as: :repository
   get 'request/:id' => 'requests#show', as: :request
   get 'build/:id' => 'builds#show', as: :build
+  get 'job/:id' => 'jobs#show', as: :job
 end

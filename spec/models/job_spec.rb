@@ -38,4 +38,44 @@ RSpec.describe Job, type: :model do
       expect(Job.not_finished).to eql [started_job, received_job, queued_job, created_job]
     end
   end
+
+  describe '.finished' do
+    let!(:passed_job)   { create(:job, state: 'passed') }
+    let!(:finished_job) { create(:job, state: 'finished') }
+    let!(:failed_job)   { create(:job, state: 'failed') }
+    let!(:started_job)  { create(:job, state: 'started') }
+    let!(:canceled_job) { create(:job, state: 'canceled') }
+    let!(:errored_job)  { create(:job, state: 'errored') }
+
+
+    it 'gets only jobs with state passed failed finished canceled and errored' do
+      expect(Job.all.count).to eql 6
+      expect(Job.finished.count).to eql 5
+    end
+
+    it 'doesn\'t get started job' do
+      expect(Job.finished).not_to include started_job
+    end
+
+    it 'sorts the jobs in order of id DESC' do
+      expect(Job.finished.map(&:id)).to eql Job.finished.map(&:id).sort { |x,y| y <=> x }
+    end
+  end
+
+  describe '.duration' do
+    let(:finished_job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:07:11') }
+    let(:started_job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: nil) }
+
+    context 'job is finished' do
+      it 'gives the duration in seconds' do
+        expect(finished_job.duration).to eql 70.0
+      end
+    end
+
+    context 'job is not finished' do
+      it 'returns nil' do
+        expect(started_job.duration).to be nil
+      end
+    end
+  end
 end

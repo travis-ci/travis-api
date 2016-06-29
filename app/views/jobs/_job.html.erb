@@ -1,0 +1,53 @@
+<section class="info-block">
+  <h2 class="info-header">General Information</h2>
+
+  <dl class="simple-info">
+    <dt class="info-label">State:</dt>
+    <dd><%= job.state %></dd>
+
+    <dt class="info-label">Repository:</dt>
+    <dd><%= link_to job.repository.slug, job.repository %></dd>
+
+    <dt class="info-label">Owner:</dt>
+    <dd><%= link_to "#{job.owner.name} (#{job.owner.login})", job.owner %></dd>
+
+    <dt class="info-label">Build:</dt>
+    <dd><%= link_to "##{job.build.number}", job.build %></dd>
+
+    <dt class="info-label">Created:</dt>
+    <dd><time><%= job.created_at %></time></dd>
+
+    <dt class="info-label">Queued:</dt>
+    <dd><time><%= job.queued_at %></time></dd>
+
+    <dt class="info-label">Received:</dt>
+    <dd><time><%= job.received_at %></time></dd>
+
+    <dt class="info-label">Started:</dt>
+    <dd><time><%= job.started_at %></time></dd>
+
+    <dt class="info-label">Finished:</dt>
+    <dd><time><%= job.finished_at %></time></dd>
+
+    <dt class="info-label">Duration:</dt>
+    <dd><time><%= format_duration(job.duration) %></time></dd>
+
+    <dt class="info-label">Branch:</dt>
+    <dd><%= job.commit.branch %></dd>
+
+    <dt class="info-label">Commit:</dt>
+    <dd><%= job.commit.commit %></dd>
+
+    <dt class="info-label">Subject:</dt>
+    <dd><%= job.commit.message %></dd>
+
+    <dt class="info-label">Committer:</dt>
+    <dd><%= job.commit.committer_name %></dd>
+
+    <dt class="info-label">Author:</dt>
+    <dd><%= job.commit.author_name %></dd>
+
+    <dt class="info-label">Config Status:</dt>
+    <dd></dd>
+  </dl>
+</section>

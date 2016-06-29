@@ -1,0 +1,19 @@
+<h1 class="info-header"><%= "Job #{@job.repository.slug} ##{@job.number}" %></h1>
+
+<div id="tabs">
+  <span id="job" class="tab-switch"></span>
+  <a href="#job" class="tab-link">General Information</a>
+  <section class="tab-content">
+    <%= render partial: 'job', locals: {job: @job} %>
+  </section>
+
+  <span id="config" class="tab-switch"></span>
+  <a href="#config" class="tab-link">Configuration</a>
+  <section class="tab-content">
+  </section>
+
+  <span id="logs" class="tab-switch"></span>
+  <a href="#logs" class="tab-link">Logs</a>
+  <section class="tab-content">
+  </section>
+</div>
