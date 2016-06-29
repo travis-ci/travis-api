@@ -3,7 +3,17 @@ module SubscriptionsHelper
     number_to_currency(amount.to_f/100)
   end
 
-  def format_subscription(name)
-    name.selected_plan.gsub(/-/, ' ').remove('travis ci')
+  def format_subscription(subscription)
+    if subscription.active?
+      "active, #{format_plan(subscription.selected_plan) || "unknown plan"}, expires #{subscription.valid_to.to_date}"
+    elsif subscription.valid_to && subscription.valid_to < Time.now
+      "inactive, expired #{subscription.valid_to.to_date}"
+    else
+      "not active"
+    end
+  end
+
+  def format_plan(plan)
+    plan.gsub(/-/, ' ').remove('travis ci ')
   end
 end

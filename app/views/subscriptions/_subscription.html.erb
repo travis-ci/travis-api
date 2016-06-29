@@ -24,7 +24,7 @@
   </dl>
 
   <dl class="simple-info">
-    <dt class="info-label">Expires:</dt>
+    <dt class="info-label"><%= subscription.active? ? "Expires:" : "Expired:" %></dt>
     <dd><time><%= subscription.valid_to %></time></dd>
   </dl>
 
@@ -33,10 +33,12 @@
     <dd><%= link_to "#{subscription.owner.name} (#{subscription.owner.login})", subscription.owner %></dd>
   </dl>
 
-  <dl class="simple-info">
-    <dt class="info-label">Contact:</dt>
-    <dd><%= link_to "#{subscription.contact.name} (#{subscription.contact.login})", subscription.contact %></dd>
-  </dl>
+  <% if subscription.contact %>
+    <dl class="simple-info">
+      <dt class="info-label">Contact:</dt>
+      <dd><%= link_to "#{subscription.contact.name} (#{subscription.contact.login})", subscription.contact %></dd>
+    </dl>
+  <% end %>
 
   <dl class="simple-info">
     <dt class="info-label">Billing E-mail:</dt>
