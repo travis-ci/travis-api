@@ -24,7 +24,7 @@
     <dt class="info-label">Subscription:</dt>
     <dd>
       <% if owner.subscription %>
-        <p>{{Subscription Info}}</p>
+        <%= link_to "#{format_subscription(owner.subscription)} (expires #{owner.subscription.valid_to.to_date})", owner.subscription %>
       <% else %>
         <p>None.</p>
       <% end %>
