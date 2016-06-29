@@ -23,8 +23,10 @@
 
     <dt class="info-label">Subscription:</dt>
     <dd>
-      <% if owner.subscription %>
-        <%= link_to "#{format_subscription(owner.subscription)} (expires #{owner.subscription.valid_to.to_date})", owner.subscription %>
+      <% if owner.subscription && owner.subscription.valid_to > Time.now %>
+        <%= link_to "#{format_subscription(owner.subscription)} (Active, expires #{owner.subscription.valid_to.to_date})", owner.subscription %>
+      <% elsif owner.subscription && owner.subscription.valid_to < Time.now %>
+        <%= link_to "#{format_subscription(owner.subscription)} (Cancelled, expired #{owner.subscription.valid_to.to_date})", owner.subscription %>
       <% else %>
         <p>None.</p>
       <% end %>
