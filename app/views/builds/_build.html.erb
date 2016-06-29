@@ -1,5 +1,5 @@
 <section class="info-block">
-  <h1 class="info-header">Status</h1>
+  <h2 class="info-header">Status</h2>
 
   <dl class="simple-info">
     <dt class="info-label">State:</dt>
@@ -9,13 +9,13 @@
     <dd><%= build.previous_state %></dd>
 
     <dt class="info-label">Repository:</dt>
-    <dd><%= link_to build.repository.name, build.repository %></dd>
+    <dd><%= link_to build.repository.slug, build.repository %></dd>
 
     <dt class="info-label">Request:</dt>
     <dd><%= build.request.id %></dd>
 
     <dt class="info-label">Owner:</dt>
-    <dd><%= link_to build.repository.owner.name, build.repository.owner %></dd>
+    <dd><%= link_to "#{build.owner.name} (#{build.owner.login})", build.owner %></dd>
 
     <dt class="info-label">Event Type:</dt>
     <dd><%= build.event_type %></dd>
@@ -24,13 +24,13 @@
     <dd><time><%= build.created_at %></time></dd>
 
     <dt class="info-label">Started:</dt>
-    <dd><time><%= build.started_at %>></time></dd>
+    <dd><time><%= build.started_at %></time></dd>
 
     <dt class="info-label">Finished:</dt>
-    <dd><time><%= build.finished_at %>></time></dd>
+    <dd><time><%= build.finished_at %></time></dd>
 
     <dt class="info-label">Duration:</dt>
-    <dd><%= build.duration %></dd>
+    <dd><%= format_duration(build.duration) %></dd>
 
     <dt class="info-label">Branch:</dt>
     <dd><%= build.branch %></dd>
@@ -53,5 +53,5 @@
 </section>
 
 <section class="info-block">
-  <h1 class="info-header">Matrix</h1>
+  <h2 class="info-header">Matrix</h2>
 </section>

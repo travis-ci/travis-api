@@ -1,14 +1,14 @@
-<h1 class="info-header"><%= "#{@build.repository.slug} build #{@build.number}" %></h1>
+<h1 class="info-header"><%= "Build - #{@build.repository.slug} ##{@build.number}" %></h1>
 
 <div id="tabs">
-  <span id="repository" class="tab-switch"></span>
-  <a href="#repository" class="tab-link">Information</a>
+  <span id="build" class="tab-switch"></span>
+  <a href="#build" class="tab-link">Information</a>
   <section class="tab-content">
     <%= render partial: 'build', locals: {build: @build} %>
   </section>
 
-  <span id="repository" class="tab-switch"></span>
-  <a href="#repository" class="tab-link">Configuration</a>
+  <span id="config" class="tab-switch"></span>
+  <a href="#config" class="tab-link">Configuration</a>
   <section class="tab-content">
     <%= render partial: 'config', locals: {build: @build} %>
   </section>
