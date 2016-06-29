@@ -15,6 +15,6 @@ class Job < ActiveRecord::Base
   scope :finished, -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
 
   def duration
-    started_at && finished_at ? finished_at - started_at : nil
+    (started_at && finished_at) ? (finished_at - started_at) : nil
   end
 end
