@@ -5,6 +5,6 @@ class Subscription < ActiveRecord::Base
   has_many   :invoices
 
   def active?
-    cc_token? and valid_to.present? and valid_to >= Time.now.utc
+    cc_token? && valid_to.present? && valid_to >= Time.now
   end
 end
