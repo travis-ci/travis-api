@@ -18,6 +18,12 @@
   <section class="tab-content">
   </section>
 
+  <span id="broadcast" class="tab-switch"></span>
+  <a href="#broadcast" class="tab-link">Broadcast</a>
+  <section   class="tab-content">
+    <%= render partial: 'shared/broadcasts', locals: {recipient: @repository} %>
+  </section>
+
   <span id="caches" class="tab-switch"></span>
   <a href="#caches" class="tab-link">Caches</a>
   <section class="tab-content">
