@@ -12,7 +12,7 @@
       <ul class="inline-list invoice-item">
         <li>#<%= invoice.invoice_id %></li>
         <li><%= invoice.created_at.to_date %></li>
-        <li><%= format_price(invoice.object["amount_due"]) %></li>
+        <li><%= format_price(invoice.amount_due) %></li>
       </ul>
     <% end %>
   <% end %>
