@@ -97,20 +97,6 @@ describe 'Builds', set_app: true do
         build.update_attribute(:state, 'created')
       end
 
-      context 'from the Core' do
-        before { Travis::Sidekiq::BuildCancellation.stubs(:perform_async) }
-
-        it 'cancels the build' do
-          Travis::Sidekiq::BuildCancellation.expects(:perform_async).with( id: build.id.to_s, user_id: user.id, source: 'api')
-          post "/builds/#{build.id}/cancel", {}, headers
-        end
-
-        it 'responds with 204' do
-          response = post "/builds/#{build.id}/cancel", {}, headers
-          response.status.should == 204
-        end
-      end
-
       context 'and enqueues cancel event for the Hub' do
         before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
 
@@ -168,23 +154,6 @@ describe 'Builds', set_app: true do
 
         it 'sends the correct response body' do
           ::Sidekiq::Client.expects(:push)
-          response = post "/builds/#{build.id}/restart", {}, headers
-          body = JSON.parse(response.body)
-          body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
-        end
-      end
-
-      describe 'Restart from the Core' do
-        before { Travis::Sidekiq::BuildRestart.stubs(:perform_async) }
-
-        it 'restarts the build' do
-          Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
-          response = post "/builds/#{build.id}/restart", {}, headers
-          response.status.should == 202
-        end
-
-        it 'sends the correct response body' do
-          Travis::Sidekiq::BuildRestart.expects(:perform_async).with(id: build.id.to_s, user_id: user.id)
           response = post "/builds/#{build.id}/restart", {}, headers
           body = JSON.parse(response.body)
           body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
