@@ -1,4 +1,13 @@
 module ApplicationHelper
+  def describe(object)
+    case object
+    when ::User, ::Organization then object.name.present? ? "#{object.name} (#{object.login})" : object.login
+    when ::Repository           then object.slug
+    when ::Build, ::Job         then "#{object.repository.slug}##{object.number}"
+    else object.inspect
+    end
+  end
+
   def format_duration(seconds, hrs_suffix: " hrs", min_suffix: " min", sec_suffix: " sec")
     return "none" if seconds.nil?
     time = Time.at(seconds.to_i).utc.strftime("%H#{hrs_suffix} %M#{min_suffix} %S#{sec_suffix}")
