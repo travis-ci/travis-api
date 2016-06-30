@@ -37,8 +37,6 @@ module Travis
 end
 
 require 'travis/services/base'
-require 'travis/services/cancel_job'
-require 'travis/services/cancel_build'
 require 'travis/services/delete_caches'
 require 'travis/services/find_admin'
 require 'travis/services/find_annotations'
@@ -63,7 +61,6 @@ require 'travis/services/find_user_permissions'
 require 'travis/services/next_build_number'
 require 'travis/services/regenerate_repo_key'
 require 'travis/services/remove_log'
-require 'travis/services/reset_model'
 require 'travis/services/sync_user'
 require 'travis/services/update_annotation'
 require 'travis/services/update_hook'
