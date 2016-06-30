@@ -6,7 +6,7 @@ module SubscriptionsHelper
   def format_subscription(subscription)
     if subscription.active?
       "active, #{format_plan(subscription.selected_plan) || "unknown plan"}, expires #{subscription.valid_to.to_date}"
-    elsif subscription.valid_to && subscription.valid_to < Time.now
+    elsif subscription.expired?
       "inactive, expired #{subscription.valid_to.to_date}"
     else
       "not active"

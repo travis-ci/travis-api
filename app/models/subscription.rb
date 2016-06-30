@@ -7,4 +7,8 @@ class Subscription < ActiveRecord::Base
   def active?
     cc_token? && valid_to.present? && valid_to >= Time.now
   end
+
+  def expired?
+    valid_to && valid_to < Time.now
+  end
 end
