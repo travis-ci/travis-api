@@ -1,8 +1,7 @@
 describe Travis::API::V3::Services::Build::Restart, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
-  let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last.to_json) }
-  let(:sidekiq_params) { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
+  let(:payload) { { 'id'=> "#{build.id}", 'user_id' => 1 } }
 
   before do
     Travis::Features.stubs(:owner_active?).returns(true)
@@ -119,131 +118,6 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
     end
   end
 
-  describe "existing repository, push access, build not already running" do
-    let(:params)  {{}}
-    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
-    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-
-    describe "errored state" do
-      before        { build.update_attribute(:state, "errored")                                                  }
-      before        { post("/v3/build/#{build.id}/restart", params, headers)                                      }
-
-      example { expect(last_response.status).to be == 202 }
-      example { expect(JSON.load(body).to_s).to include(
-        "@type",
-        "pending",
-        "build",
-        "@href",
-        "@representation",
-        "minimal",
-        "restart",
-        "id",
-        "state_change")
-      }
-
-      example { expect(sidekiq_payload).to be == {
-        "id"     => "#{build.id}",
-        "user_id"=> repo.owner_id,
-        "source" => "api"}
-      }
-
-      example { expect(Sidekiq::Client.last['queue']).to be == 'build_restarts'                }
-      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildRestart' }
-    end
-
-    describe "passed state" do
-      before        { build.update_attribute(:state, "passed")                                                  }
-      before        { post("/v3/build/#{build.id}/restart", params, headers)                                      }
-
-      example { expect(last_response.status).to be == 202 }
-      example { expect(JSON.load(body).to_s).to include(
-        "@type",
-        "pending",
-        "build",
-        "@href",
-        "@representation",
-        "minimal",
-        "restart",
-        "id",
-        "state_change")
-      }
-
-      example { expect(sidekiq_payload).to be == {
-        "id"     => "#{build.id}",
-        "user_id"=> repo.owner_id,
-        "source" => "api"}
-      }
-
-      example { expect(Sidekiq::Client.last['queue']).to be == 'build_restarts'                }
-      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildRestart' }
-    end
-
-    describe "failed state" do
-      before        { build.update_attribute(:state, "failed")                                                  }
-      before        { post("/v3/build/#{build.id}/restart", params, headers)                                      }
-
-      example { expect(last_response.status).to be == 202 }
-      example { expect(JSON.load(body).to_s).to include(
-        "@type",
-        "pending",
-        "build",
-        "@href",
-        "@representation",
-        "minimal",
-        "restart",
-        "id",
-        "state_change")
-      }
-
-      example { expect(sidekiq_payload).to be == {
-        "id"     => "#{build.id}",
-        "user_id"=> repo.owner_id,
-        "source" => "api"}
-      }
-
-      example { expect(Sidekiq::Client.last['queue']).to be == 'build_restarts'                }
-      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildRestart' }
-    end
-
-    describe "canceled state" do
-      before        { build.update_attribute(:state, "canceled")                                                  }
-      before        { post("/v3/build/#{build.id}/restart", params, headers)                                      }
-
-      example { expect(last_response.status).to be == 202 }
-      example { expect(JSON.load(body).to_s).to include(
-        "@type",
-        "pending",
-        "build",
-        "@href",
-        "@representation",
-        "minimal",
-        "restart",
-        "id",
-        "state_change")
-      }
-
-      example { expect(sidekiq_payload).to be == {
-        "id"     => "#{build.id}",
-        "user_id"=> repo.owner_id,
-        "source" => "api"}
-      }
-
-      example { expect(Sidekiq::Client.last['queue']).to be == 'build_restarts'                }
-      example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildRestart' }
-    end
-
-    describe "setting id has no effect" do
-      before        { post("/v3/build/#{build.id}/restart", params, headers)                   }
-      let(:params) {{ id: 42 }}
-      example { expect(sidekiq_payload).to be == {
-        "id"     => "#{build.id}",
-        "user_id"=> repo.owner_id,
-        "source" => "api"}
-      }
-    end
-  end
-
   describe "existing repository, push access, build not already running, enqueues message for Hub" do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
@@ -272,7 +146,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
         "state_change")
       }
 
-      example { expect(sidekiq_payload).to be == {
+      example { expect(payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id}
       }
@@ -298,7 +172,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
         "state_change")
       }
 
-      example { expect(sidekiq_payload).to be == {
+      example { expect(payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id}
       }
@@ -324,7 +198,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
         "state_change")
       }
 
-      example { expect(sidekiq_payload).to be == {
+      example { expect(payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id}
       }
@@ -350,7 +224,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
         "state_change")
       }
 
-      example { expect(sidekiq_payload).to be == {
+      example { expect(payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id}
       }
@@ -364,7 +238,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
       before        { post("/v3/build/#{build.id}/restart", params, headers)   }
       let(:params) {{ id: 42 }}
 
-      example { expect(sidekiq_payload).to be == {
+      example { expect(payload).to be == {
         "id"     => "#{build.id}",
         "user_id"=> repo.owner_id}
       }
@@ -397,7 +271,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
   #   describe 'setting user' do
   #     let(:params) {{ user: { id: repo.owner.id } }}
   #     example { expect(last_response.status).to be == 202 }
-  #     example { expect(sidekiq_payload).to be == {
+  #     example { expect(payload).to be == {
   #       # repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
   #       # user:       { id: repo.owner.id },
   #       # message:    nil,
