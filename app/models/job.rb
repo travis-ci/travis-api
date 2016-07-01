@@ -1,4 +1,6 @@
 class Job < ActiveRecord::Base
+  serialize :config
+
   include StateDisplay
 
   self.inheritance_column = :_type_disabled
