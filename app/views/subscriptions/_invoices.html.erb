@@ -1,0 +1,19 @@
+<section class="info-block">
+  <h2 class="info-header">Invoices</h2>
+  <% if invoices.empty? %>
+    <p>No invoices exist for this subscription.</p>
+  <% else %>
+    <ul class="inline-list invoice-item">
+      <li class="info-label">Invoice ID</li>
+      <li class="info-label">Invoice Date</li>
+      <li class="info-label">Total</li>
+    </ul>
+    <% invoices.each do |invoice| %>
+      <ul class="inline-list invoice-item">
+        <li>#<%= invoice.invoice_id %></li>
+        <li><%= invoice.created_at.to_date %></li>
+        <li><%= format_price(invoice.amount_due) %></li>
+      </ul>
+    <% end %>
+  <% end %>
+</section>

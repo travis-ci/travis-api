@@ -7,4 +7,5 @@ Rails.application.routes.draw do
   get 'request/:id' => 'requests#show', as: :request
   get 'build/:id' => 'builds#show', as: :build
   get 'job/:id' => 'jobs#show', as: :job
+  get 'subscription/:id' => 'subscriptions#show', as: :subscription
 end
