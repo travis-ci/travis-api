@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UsersHelper, type: :helper do
+RSpec.describe ApplicationHelper, type: :helper do
   describe 'describe' do
     let(:user) { create(:user, name: 'Katrin', login: 'katrina') }
     let(:organization) { create(:organization, name: 'travis', login: 'travis-pro') }
