@@ -43,6 +43,7 @@ module Travis
     end
 
     def notify(event, *args)
+      Travis.logger.info("DEPRECATED: Event.notify used: event=#{event}, args=#{args}")
       Travis::Event.dispatch(client_event(event, self), self, *args)
     end
 
