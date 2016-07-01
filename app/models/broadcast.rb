@@ -8,7 +8,7 @@ class Broadcast < ActiveRecord::Base
   scope :inactive,       -> { where('created_at < ? OR (expired = ?)', EXPIRY_TIME.ago, true).order('id DESC') }
 
   scope :for_user, -> (user) do
-    where(<<-SQL, 'Organization', user.organization_ids, 'User', user.id, 'Repository', user.repository_ids).order('id DESC')
+    where(<<-SQL, 'Organization', user.organization_ids, 'User', user.id, 'Repository', user.permitted_repository_ids).order('id DESC')
       recipient_type IS NULL OR
       recipient_type = ? AND recipient_id IN(?) OR
       recipient_type = ? AND recipient_id = ? OR
