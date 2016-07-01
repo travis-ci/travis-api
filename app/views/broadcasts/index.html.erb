@@ -1,0 +1,9 @@
+<section class="info-block">
+  <h2 class="info-header">Active</h2>
+  <%= render partial: 'shared/broadcast_list', locals: {broadcasts: @active_broadcasts} %>
+</section>
+
+<section class="info-block">
+  <h2 class="info-header">Recently Expired</h2>
+  <%= render partial: 'shared/broadcast_list', locals: {broadcasts: @recent_expired_broadcasts} %>
+</section>
