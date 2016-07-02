@@ -129,7 +129,7 @@ describe Job do
       }
     end
 
-    it 'removes addons items which are not whitelisted' do
+    it 'removes addons items which are not safelisted' do
       job = Job.new(repository: repo)
       config = { rvm: '1.8.7',
                  addons: { sauce_connect: true, firefox: '22.0' },
@@ -328,7 +328,7 @@ describe Job do
         }
       end
 
-      it 'removes addons items which are not whitelisted' do
+      it 'removes addons items which are not safelisted' do
         config = { rvm: '1.8.7',
                    addons: {
                      sauce_connect: {
