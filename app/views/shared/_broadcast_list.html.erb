@@ -1,0 +1,26 @@
+<% if broadcasts.empty? %>
+  <p>No broadcasts.</p>
+<% else %>
+  <ul class="inline-list broadcast-item">
+    <li class="info-label">Recipient</li>
+    <li class="info-label">Date</li>
+    <li class="info-label">Kind</li>
+    <li class="info-label">Message</li>
+    <li class="info-label"></li>
+  </ul>
+  <% broadcasts.each do |broadcast| %>
+    <ul class="inline-list broadcast-item">
+      <li>
+        <% if broadcast.recipient %>
+          <%= link_to describe(broadcast.recipient), broadcast.recipient %>
+        <% else %>
+          everybody
+        <% end %>
+      </li>
+      <li><%= broadcast.created_at.to_date %></li>
+      <li><%= broadcast.kind %></li>
+      <li><%= sanitize broadcast.message %></li>
+      <li></li>
+    </ul>
+  <% end %>
+<% end %>
