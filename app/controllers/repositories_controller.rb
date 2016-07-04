@@ -11,10 +11,9 @@ class RepositoriesController < ApplicationController
   end
 
   def enable
-    # TODO: All of this
-    logger.debug "Hello"
     @repository = Repository.find_by(id: params[:id])
-    EnableTravis.new
-    redirect_to :back
+
+    Service::Repository::Enable.new(@repository.id).call
+    redirect_to @repository
   end
 end
