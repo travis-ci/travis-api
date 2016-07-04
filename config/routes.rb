@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   get 'user/:id' => 'users#show', as: :user
   get 'organization/:id' => 'organizations#show', as: :organization
   get 'repository/:id' => 'repositories#show', as: :repository
+  post 'repository/:id/enable' => 'repositories#enable', as: :enable_repository
+
   get 'request/:id' => 'requests#show', as: :request
   get 'build/:id' => 'builds#show', as: :build
   get 'job/:id' => 'jobs#show', as: :job

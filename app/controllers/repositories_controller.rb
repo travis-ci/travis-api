@@ -9,4 +9,12 @@ class RepositoriesController < ApplicationController
     @active_broadcasts = Broadcast.active.for(@repository)
     @inactive_broadcasts = Broadcast.inactive.for(@repository)
   end
+
+  def enable
+    # TODO: All of this
+    logger.debug "Hello"
+    @repository = Repository.find_by(id: params[:id])
+    EnableTravis.new
+    redirect_to :back
+  end
 end
