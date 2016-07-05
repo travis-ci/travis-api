@@ -18,8 +18,8 @@ describe Rack::Attack do
       Rack::Attack::Request.new(env)
     }
 
-    it 'should not be safelisted' do
-      expect(Rack::Attack.whitelisted?(request)).to be_falsy
+    it 'should be safelisted' do
+      expect(Rack::Attack.whitelisted?(request)).to be_truthy
     end
   end
 
