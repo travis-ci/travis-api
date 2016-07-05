@@ -23,15 +23,15 @@ module ApplicationHelper
       when Symbol
         format_config(value.to_s)
       when String
-        h(value.inspect == "\"#{value.strip}\"" ? value : value.inspect)
+        h(value)
       when Array
-        items = value.map { |v| "<li>#{format_config(v)}</li>" }.join
-        "<ul>#{items}</ul>"
+        items = value.map { |v| "<li class='config-item'>#{format_config(v)}</li>" }.join
+        "<ul class='config-list'>#{items}</ul>"
       when Hash
-        items = value.map { |k,v| "<li><b>#{format_config(k)}:</b> #{format_config(v)}</li>" }.join
-        "<ul>#{items}</ul>"
+        items = value.map { |k,v| "<dt class='config-item'>#{format_config(k)}:</dt> <dl>#{format_config(v)}</dl>" }.join
+        "<dl class='config-list'>#{items}</dl>"
       else
-        h(value.inspect)
+        h(value.to_s)
     end
   end
 end
