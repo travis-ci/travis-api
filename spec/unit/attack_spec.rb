@@ -6,18 +6,31 @@ describe Rack::Attack do
     }
 
     it 'should be safelisted' do
-      expect(Rack::Attack.whitelisted?(request)).to be_truthy
+      expect(Rack::Attack.safelisted?(request)).to be_truthy
     end
   end
 
-  describe 'non-image API request' do
+  describe 'request from GitHub ip' do
+    let(:request) {
+      env = Rack::MockRequest.env_for("https://api-test.travis-ci.org/repos/rails/rails/branches", {
+        'REMOTE_ADDR' => '192.30.252.42',
+      })
+      Rack::Attack::Request.new(env)
+    }
+
+    it 'should be safelisted' do
+      expect(Rack::Attack.safelisted?(request)).to be_truthy
+    end
+  end
+
+  describe 'non-safelisted request' do
     let(:request) {
       env = Rack::MockRequest.env_for("https://api-test.travis-ci.org/repos/rails/rails/branches")
       Rack::Attack::Request.new(env)
     }
 
     it 'should not be safelisted' do
-      expect(Rack::Attack.whitelisted?(request)).to be_falsy
+      expect(Rack::Attack.safelisted?(request)).to be_falsy
     end
   end
 end

@@ -114,7 +114,7 @@ class Travis::Api::App
       # access token and user payload to the parent window via postMessage.
       #
       # However, the endpoint to send the payload to has to be explicitely
-      # whitelisted in production, as this is endpoint is only meant to be used
+      # safelisted in production, as this is endpoint is only meant to be used
       # with the official Travis CI client at the moment.
       #
       # Example usage:
@@ -408,7 +408,7 @@ __END__
 
 @@ invalid_target
 <script>
-console.log('refusing to send a token to <%= target_origin.inspect %>, not whitelisted!');
+console.log('refusing to send a token to <%= target_origin.inspect %>, not safelisted!');
 </script>
 
 @@ common
