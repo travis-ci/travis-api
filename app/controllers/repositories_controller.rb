@@ -16,4 +16,11 @@ class RepositoriesController < ApplicationController
     Services::Repository::Enable.new(@repository.id).call
     redirect_to @repository
   end
+
+  def disable
+    @repository = Repository.find_by(id: params[:id])
+
+    Services::Repository::Disable.new(@repository.id).call
+    redirect_to @repository
+  end
 end

@@ -38,8 +38,13 @@
     </dd>
 
     <dt class="info-label">Activation:</dt>
-    <dd><%= repository.active? ? "enabled" : "disabled" %>
-    <%= link_to "Enable", enable_repository_path(repository), :method => :post %>
+    <dd>
+      <%= repository.active? ? "enabled" : "disabled" %>
+      <% if repository.active? %>
+        <%= link_to "Disable", disable_repository_path(repository), :method => :post, class: "button" %>
+      <% else %>
+        <%= link_to "Enable", enable_repository_path(repository), :method => :post, class: "button" %>
+      <% end %>
     </dd>
   </dl>
 </section>

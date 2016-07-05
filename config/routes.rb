@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'organization/:id' => 'organizations#show', as: :organization
   get 'repository/:id' => 'repositories#show', as: :repository
   post 'repository/:id/enable' => 'repositories#enable', as: :enable_repository
+  post 'repository/:id/disable' => 'repositories#disable', as: :disable_repository
 
   get 'request/:id' => 'requests#show', as: :request
   get 'build/:id' => 'builds#show', as: :build
