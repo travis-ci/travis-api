@@ -1,4 +1,5 @@
 require 'rack/attack'
+require 'netaddr'
 
 class Rack::Attack
   class Request
@@ -31,14 +32,22 @@ class Rack::Attack
     "/auth/post_message/iframe"
   ]
 
+  GITHUB_CIDR = NetAddr::CIDR.create('192.30.252.0/22')
+
   safelist('safelist build status images') do |request|
     /\.(png|svg)$/.match(request.path)
+  end
+
+  # https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-safelist/
+  safelist('safelist anything coming from github') do |request|
+    request.ip && GITHUB_CIDR.contains?(request.ip)
   end
 
   ####
   # Safelisted IP addresses
   safelist('safelist client requesting from redis') do |request|
-    Travis.redis.sismember(:api_safelisted_ips, request.ip)
+    # TODO: deprecate :api_whitelisted_ips in favour of api_safelisted_ips
+    Travis.redis.sismember(:api_whitelisted_ips, request.ip) || Travis.redis.sismember(:api_safelisted_ips, request.ip)
   end
 
   ####
@@ -46,7 +55,8 @@ class Rack::Attack
   # Ban time:     indefinite
   # Ban after:    manually banned
   blocklist('block client requesting from redis') do |request|
-    Travis.redis.sismember(:api_blocklisted_ips, request.ip)
+    # TODO: deprecate :api_blacklisted_ips in favour of api_blocklisted_ips
+    Travis.redis.sismember(:api_blacklisted_ips, request.ip) || Travis.redis.sismember(:api_blocklisted_ips, request.ip)
   end
 
   ####

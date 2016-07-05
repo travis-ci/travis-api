@@ -14,7 +14,7 @@ class Job < Travis::Model
   require 'travis/model/job/test'
   require 'travis/model/env_helpers'
 
-  WHITELISTED_ADDONS = %w(
+  SAFELISTED_ADDONS = %w(
     apt
     apt_packages
     apt_sources
@@ -167,7 +167,7 @@ class Job < Travis::Model
 
     def delete_addons(config)
       if config[:addons].is_a?(Hash)
-        config[:addons].keep_if { |key, _| WHITELISTED_ADDONS.include? key.to_s }
+        config[:addons].keep_if { |key, _| SAFELISTED_ADDONS.include? key.to_s }
       else
         config.delete(:addons)
       end
