@@ -21,11 +21,10 @@ class Job
     event :finish,  to: :finished
     event :reset,   to: :created, unless: :created?
     event :cancel,  to: :canceled, if: :cancelable?
-    event :all, after: [:propagate, :notify]
+    event :all, after: [:propagate]
 
     def enqueue # TODO rename to queue and make it an event, simple_states should support that now
       update_attributes!(state: :queued, queued_at: Time.now.utc)
-      notify(:queue)
     end
 
     def receive(data = {})
@@ -93,13 +92,6 @@ class Job
 
     def unknown?
       state == nil
-    end
-
-    def notify(event, *args)
-      Metriks.timer("job.notify.#{event}").time do
-        event = :create if event == :reset
-        super
-      end
     end
 
     delegate :id, :content, :to => :log, :prefix => true, :allow_nil => true

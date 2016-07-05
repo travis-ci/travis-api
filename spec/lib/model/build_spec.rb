@@ -325,11 +325,6 @@ describe Build do
         build.matrix.each { |job| job.expects(:reset).never }
         build.reset
       end
-
-      it 'notifies obsevers' do
-        Travis::Event.expects(:dispatch).with('build:created', build)
-        build.reset
-      end
     end
   end
 end
