@@ -38,7 +38,7 @@ class Rack::Attack
 
   # https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-whitelist/
   whitelist('safelist anything coming from github') do |request|
-    NetAddr::CIDR.create('192.30.252.0/22').contains?(request.ip)
+    request.ip && NetAddr::CIDR.create('192.30.252.0/22').contains?(request.ip)
   end
 
   ####

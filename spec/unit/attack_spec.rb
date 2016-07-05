@@ -13,7 +13,7 @@ describe Rack::Attack do
   describe 'request from GitHub ip' do
     let(:request) {
       env = Rack::MockRequest.env_for("https://api-test.travis-ci.org/repos/rails/rails/branches", {
-        'REMOTE_ADDR' => '192.30.252.42'
+        'REMOTE_ADDR' => '192.30.252.42',
       })
       Rack::Attack::Request.new(env)
     }
