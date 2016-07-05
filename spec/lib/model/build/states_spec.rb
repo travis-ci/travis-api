@@ -57,21 +57,11 @@ describe Build::States do
           build.receive(data)
           build.state.should == :received
         end
-
-        it 'notifies observers' do
-          Travis::Event.expects(:dispatch).with('build:received', build, data)
-          build.receive(data)
-        end
       end
 
       describe 'when the build is already received' do
         before :each do
           build.state = :received
-        end
-
-        it 'does not notify observers' do
-          Travis::Event.expects(:dispatch).never
-          build.receive(data)
         end
       end
 
@@ -79,21 +69,11 @@ describe Build::States do
         before :each do
           build.state = :failed
         end
-
-        it 'does not notify observers' do
-          Travis::Event.expects(:dispatch).never
-          build.receive(data)
-        end
       end
 
       describe 'when the build has errored' do
         before :each do
           build.state = :errored
-        end
-
-        it 'does not notify observers' do
-          Travis::Event.expects(:dispatch).never
-          build.receive(data)
         end
       end
     end
@@ -111,11 +91,6 @@ describe Build::States do
           build.expects(:denormalize)
           build.start(data)
         end
-
-        it 'notifies observers' do
-          Travis::Event.expects(:dispatch).with('build:started', build, data)
-          build.start(data)
-        end
       end
 
       describe 'when the build is already started' do
@@ -125,11 +100,6 @@ describe Build::States do
 
         it 'does not denormalize attributes' do
           build.expects(:denormalize).never
-          build.start(data)
-        end
-
-        it 'does not notify observers' do
-          Travis::Event.expects(:dispatch).never
           build.start(data)
         end
       end
@@ -143,11 +113,6 @@ describe Build::States do
           build.expects(:denormalize).never
           build.start(data)
         end
-
-        it 'does not notify observers' do
-          Travis::Event.expects(:dispatch).never
-          build.start(data)
-        end
       end
 
       describe 'when the build has errored' do
@@ -157,11 +122,6 @@ describe Build::States do
 
         it 'does not denormalize attributes' do
           build.expects(:denormalize).never
-          build.start(data)
-        end
-
-        it 'does not notify observers' do
-          Travis::Event.expects(:dispatch).never
           build.start(data)
         end
       end
@@ -182,11 +142,6 @@ describe Build::States do
 
           it 'does not denormalize attributes' do
             build.expects(:denormalize).never
-            build.finish(data)
-          end
-
-          it 'does not notify observers' do
-            Travis::Event.expects(:dispatch).never
             build.finish(data)
           end
         end
@@ -217,11 +172,6 @@ describe Build::States do
             build.expects(:denormalize).with(:finish, data)
             build.finish(data)
           end
-
-          it 'notifies observers' do
-            Travis::Event.expects(:dispatch).with('build:finished', build, data)
-            build.finish(data)
-          end
         end
 
         describe 'when the build has already finished' do
@@ -231,11 +181,6 @@ describe Build::States do
 
           it 'does not denormalize attributes' do
             build.expects(:denormalize).never
-            build.finish(data)
-          end
-
-          it 'does not notify observers' do
-            Travis::Event.expects(:dispatch).never
             build.finish(data)
           end
         end
