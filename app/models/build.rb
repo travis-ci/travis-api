@@ -6,4 +6,6 @@ class Build < ActiveRecord::Base
   belongs_to :commit
   belongs_to :request
   has_many   :jobs,     as: :source
+
+  serialize :config
 end
