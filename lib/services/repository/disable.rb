@@ -11,7 +11,7 @@ module Services
 
       def call
         url = "/repo/#{@repository_id}/disable"
-        Services::CallTravisApi.new(url).post
+        Services::CallTravisApi.new.post(url)
       end
     end
   end
