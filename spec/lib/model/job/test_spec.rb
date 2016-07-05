@@ -82,11 +82,6 @@ describe Job::Test do
         job.receive(data)
       end
 
-      it 'notifies observers' do
-        Travis::Event.expects(:dispatch).with('job:test:received', job, data)
-        job.receive(data)
-      end
-
       it 'propagates the event to the source' do
         job.source.expects(:receive)
         job.receive(data)
@@ -109,11 +104,6 @@ describe Job::Test do
         job.state.should == :started
       end
 
-      it 'notifies observers' do
-        Travis::Event.expects(:dispatch).with('job:test:started', job, data)
-        job.start(data)
-      end
-
       it 'propagates the event to the source' do
         job.source.expects(:start)
         job.start(data)
@@ -126,11 +116,6 @@ describe Job::Test do
       it 'sets the state to the given result state' do
         job.finish(data)
         job.state.should == 'passed'
-      end
-
-      it 'notifies observers' do
-        Travis::Event.expects(:dispatch).with('job:test:finished', job, data)
-        job.finish(data)
       end
 
       it 'propagates the event to the source' do
@@ -175,11 +160,6 @@ describe Job::Test do
         job.reload
         job.reset!
         job.reload.annotations.should be_empty
-      end
-
-      it 'triggers a :created event' do
-        job.expects(:notify).with(:reset)
-        job.reset
       end
     end
   end
