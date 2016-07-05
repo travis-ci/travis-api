@@ -29,7 +29,7 @@ module Travis::API::V3
       result   = service.run
       metrics.tick(:service)
 
-      env_params.each_key { |key| result.ignored_param(key, reason: "not whitelisted".freeze) unless filtered.include?(key) }
+      env_params.each_key { |key| result.ignored_param(key, reason: "not safelisted".freeze) unless filtered.include?(key) }
       response = render(result, env_params, env)
 
       metrics.tick(:renderer)

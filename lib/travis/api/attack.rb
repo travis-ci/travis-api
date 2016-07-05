@@ -32,34 +32,36 @@ class Rack::Attack
     "/auth/post_message/iframe"
   ]
 
-  whitelist('safelist build status images') do |request|
+  safelist('safelist build status images') do |request|
     /\.(png|svg)$/.match(request.path)
   end
 
-  # https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-whitelist/
-  whitelist('safelist anything coming from github') do |request|
+  # https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-safelist/
+  safelist('safelist anything coming from github') do |request|
     request.ip && NetAddr::CIDR.create('192.30.252.0/22').contains?(request.ip)
   end
 
   ####
   # Whitelisted IP addresses
-  whitelist('whitelist client requesting from redis') do |request|
-    Travis.redis.sismember(:api_whitelisted_ips, request.ip)
+  safelist('safelist client requesting from redis') do |request|
+    # TODO: deprecate :api_whitelisted_ips in favour of api_safelisted_ips
+    Travis.redis.sismember(:api_whitelisted_ips, request.ip) || Travis.redis.sismember(:api_safelisted_ips, request.ip)
   end
 
   ####
   # Ban based on: IP address
   # Ban time:     indefinite
   # Ban after:    manually banned
-  blacklist('block client requesting from redis') do |request|
-    Travis.redis.sismember(:api_blacklisted_ips, request.ip)
+  blocklist('block client requesting from redis') do |request|
+    # TODO: deprecate :api_blacklisted_ips in favour of api_blocklisted_ips
+    Travis.redis.sismember(:api_blacklisted_ips, request.ip) || Travis.redis.sismember(:api_blocklisted_ips, request.ip)
   end
 
   ####
   # Ban based on: IP address or access token
   # Ban time:     5 hours
   # Ban after:    10 POST requests within five minutes to /auth/github
-  blacklist('hammering /auth/github') do |request|
+  blocklist('hammering /auth/github') do |request|
     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 2, findtime: 5.minutes, bantime: bantime(5.hours)) do
       request.post? and request.path == '/auth/github'
     end
@@ -69,7 +71,7 @@ class Rack::Attack
   # Ban based on: IP address or access token
   # Ban time:     1 hour
   # Ban after:    10 POST requests within 30 seconds
-  blacklist('spamming with POST requests') do |request|
+  blocklist('spamming with POST requests') do |request|
     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 30.seconds, bantime: bantime(1.hour)) do
       request.post? and not POST_SAFELIST.include? request.path
     end
