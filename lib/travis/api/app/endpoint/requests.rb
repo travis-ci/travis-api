@@ -30,16 +30,9 @@ class Travis::Api::App
           Metriks.meter("api.request.restart").mark
 
           service = Travis::Enqueue::Services::RestartModel.new(current_user, { build_id: params[:build_id] })
-          repository_owner = service.target.repository.owner
-
-          if !Travis::Features.enabled_for_all?(:enqueue_to_hub) && !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
-            respond_with service(:reset_model, params)
-          elsif service.respond_to?(:push)
-            payload = {id: params[:build_id], user_id: current_user.id}
-            service.push("job:restart", payload)
-            status 202
-            true
-          end
+          payload = {id: params[:build_id], user_id: current_user.id}
+          service.push("job:restart", payload)
+          status 202
         end
       end
     end

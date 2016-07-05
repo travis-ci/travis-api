@@ -28,14 +28,7 @@ describe 'Requests', set_app: true do
   end
 
   describe 'POST /requests' do
-    it 'triggers a build request using Core code' do
-      response = post "/requests", { build_id: build.id }, headers
-      response.status.should be(200)
-    end
-
     it 'triggers a build request using Hub' do
-      Travis::Features.activate_owner(:enqueue_to_hub, repo.owner)
-
       response = post "/requests", { build_id: build.id }, headers
       response.status.should be(202)
     end
