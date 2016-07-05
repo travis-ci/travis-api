@@ -167,7 +167,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"     => nil,
         "@warnings"      => [{
           "@type"        => "warning",
-          "message"      => "query parameter organization.id not whitelisted, ignored",
+          "message"      => "query parameter organization.id not safelisted, ignored",
           "warning_type" => "ignored_parameter",
           "parameter"    => "organization.id"}]
       }}
@@ -254,7 +254,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "synced_at"        => nil,
         "@warnings"        => [{
           "@type"          => "warning",
-          "message"        => "query parameter user.id not whitelisted, ignored",
+          "message"        => "query parameter user.id not safelisted, ignored",
           "warning_type"   => "ignored_parameter",
           "parameter"      => "user.id"}]
       }}
