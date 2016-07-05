@@ -32,6 +32,7 @@ gem 'micro_migrations'
 gem 'simplecov'
 gem 'skylight', '~> 0.6.0.beta.1'
 gem 'stackprof'
+gem 'netaddr'
 
 gem 'jemalloc'
 gem 'customerio'

@@ -1,4 +1,5 @@
 require 'rack/attack'
+require 'cidr'
 
 class Rack::Attack
   class Request
@@ -33,6 +34,11 @@ class Rack::Attack
 
   whitelist('safelist build status images') do |request|
     /\.(png|svg)$/.match(request.path)
+  end
+
+  # https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-whitelist/
+  whitelist('safelist anything coming from github') do |request|
+    NetAddr::CIDR.create('192.30.252.0/22').contains?(request.ip)
   end
 
   ####
