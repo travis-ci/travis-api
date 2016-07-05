@@ -1,5 +1,5 @@
 require 'rack/attack'
-require 'cidr'
+require 'netaddr'
 
 class Rack::Attack
   class Request
