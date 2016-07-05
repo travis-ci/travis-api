@@ -13,7 +13,7 @@ class RepositoriesController < ApplicationController
   def enable
     @repository = Repository.find_by(id: params[:id])
 
-    Service::Repository::Enable.new(@repository.id).call
+    Services::Repository::Enable.new(@repository.id).call
     redirect_to @repository
   end
 end
