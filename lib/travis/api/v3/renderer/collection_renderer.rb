@@ -33,10 +33,10 @@ module Travis::API::V3
     end
 
     def fields
-      fields               = { :"@type" => type }
-      fields[:@href]       = href if href
+      fields                   = { :"@type" => type }
+      fields[:@href]           = href if href
       fields[:@representation] = representation
-      fields[:@pagination] = pagination_info if meta_data.include? :pagination
+      fields[:@pagination]     = pagination_info if meta_data.include? :pagination
       fields
     end
 
