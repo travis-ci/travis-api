@@ -1,7 +1,5 @@
 module Services
   class CallTravisApi
-    attr_reader :url
-
     def initialize(api_endpoint: ENV['TRAVIS_API_ENDPOINT'],
                    token: ENV['TRAVIS_TOKEN'])
       @api_endpoint = api_endpoint
