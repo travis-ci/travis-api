@@ -1,8 +1,9 @@
-require 'faraday'
+require 'travis/a_p_i'
 
 module Services
   module Repository
-    class Enable
+    class Disable
+      include Travis::API
       attr_reader :repository_id
 
       def initialize(repository_id)
@@ -11,7 +12,7 @@ module Services
 
       def call
         url = "/repo/#{@repository_id}/enable"
-        Services::CallTravisApi.new.post(url)
+        post(url)
       end
     end
   end
