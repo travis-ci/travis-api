@@ -8,11 +8,6 @@ module Travis
   #
   # Handler registrations are defined in Travis.config so they can be added or
   # removed easily for different environments.
-  #
-  # Note that Travis::Event#notify accepts an internal event name like
-  # 'create' (coming from the simple_states implementation in the models) and
-  # turns it into a namespaced client event name like 'job:test:created').
-  # Notification handlers register for and deal with these client event names.
   module Event
     require 'travis/event/config'
     require 'travis/event/handler'
@@ -42,10 +37,6 @@ module Travis
       end
     end
 
-    def notify(event, *args)
-      Travis.logger.info("DEPRECATED: Event.notify used: event=#{event}, args=#{args}")
-      Travis::Event.dispatch(client_event(event, self), self, *args)
-    end
 
     protected
 
