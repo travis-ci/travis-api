@@ -38,11 +38,15 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.format_config(:ruby)).to eql 'ruby'
     end
 
-    it 'formats hash values' do
-
+    it 'formats hash values a definition list' do
+      expect(helper.format_config({:ruby => 'rails', :over => 9000})).to eql '<dl><dt>ruby:</dt> <dl>rails</dl><dt>over:</dt> <dl>9000</dl></dl>'
     end
 
-    it 'prints boolean values' do
+    it 'formats array values into a list' do
+      expect(helper.format_config([:ruby,'rails',true])).to eql '<ul><li>ruby</li><li>rails</li><li>true</li></ul>'
+    end
+
+    it 'prints all other classes as strings' do
       expect(helper.format_config(true)).to eql 'true'
     end
   end
