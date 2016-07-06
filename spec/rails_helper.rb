@@ -5,8 +5,15 @@ require File.expand_path('../../config/environment', __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'spec_helper'
 require 'rspec/rails'
-require 'capybara/rails'
 require 'support/factory_girl'
+
+# load up Capybara
+require 'capybara/rspec'
+require 'capybara/rails'
+
+# load up Poltergeist (not turning off js errors, b/c this is our app, we want to know about errors!)
+require 'capybara/poltergeist'
+Capybara.javascript_driver = :poltergeist
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
