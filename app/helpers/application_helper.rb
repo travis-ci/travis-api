@@ -25,11 +25,11 @@ module ApplicationHelper
       when String
         h(value)
       when Array
-        items = value.map { |v| "<li class='config-item'>#{format_config(v)}</li>" }.join
-        "<ul class='config-list'>#{items}</ul>"
+        items = value.map { |v| "<li>#{format_config(v)}</li>" }.join
+        "<ul>#{items}</ul>"
       when Hash
-        items = value.map { |k,v| "<dt class='config-item'>#{format_config(k)}:</dt> <dl>#{format_config(v)}</dl>" }.join
-        "<dl class='config-list'>#{items}</dl>"
+        items = value.map { |k,v| "<dt>#{format_config(k)}:</dt> <dl>#{format_config(v)}</dl>" }.join
+        "<dl>#{items}</dl>"
       else
         h(value.to_s)
     end
