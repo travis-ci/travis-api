@@ -20,9 +20,9 @@ class Repository < ActiveRecord::Base
 
   def gather_permissions
     {
-      admin: permissions.admin_access.includes(:user).map(&:user),
-      push: permissions.push_access.includes(:user).map(&:user),
-      pull: permissions.pull_access.includes(:user).map(&:user)
+      admin: permissions.admin_access.includes(user: :subscription).map(&:user),
+      push: permissions.push_access.includes(user: :subscription).map(&:user),
+      pull: permissions.pull_access.includes(user: :subscription).map(&:user)
     }
   end
 end
