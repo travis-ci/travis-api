@@ -4,11 +4,11 @@ module Travis
   module API
 
     def token
-      ENV['$TRAVIS_API_TOKEN']
+      ENV['TRAVIS_API_TOKEN']
     end
 
     def endpoint
-      ENV['$TRAVIS_API_ENDPOINT']
+      ENV['TRAVIS_API_ENDPOINT']
     end
 
     def conn

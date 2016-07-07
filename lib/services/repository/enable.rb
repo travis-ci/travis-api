@@ -2,7 +2,7 @@ require 'travis/a_p_i'
 
 module Services
   module Repository
-    class Disable
+    class Enable
       include Travis::API
       attr_reader :repository_id
 
