@@ -1,6 +1,17 @@
-<% config.each do |key, value| %>
- <dl class="config-item">
-   <dt><%= key %></dt>
-   <dd><%= format_config(value).html_safe %></dd>
- </dl>
-<% end %>
+<section class="info-block">
+  <h2 class="info-header">Configuration</h2>
+
+  <% if config.empty? or config.keys == [:".result"] %>
+    <p>No configuration.</p>
+  <% else %>
+
+    <% config.each do |key, value| %>
+      <dl class="config-item">
+        <% if key != :".result" %>
+          <dt><%= key %></dt>
+          <dd><%= format_config(value).html_safe %></dd>
+        <% end %>
+      </dl>
+    <% end %>
+  <% end %>
+</section>
