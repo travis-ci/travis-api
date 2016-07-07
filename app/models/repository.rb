@@ -15,14 +15,11 @@ class Repository < ActiveRecord::Base
   end
 
   def permissions_sorted
-    @permissions_sorted ||= gather_permissions
-  end
-
-  def gather_permissions
+    @permissions_sorted ||=
     {
-      admin: permissions.admin_access.includes(:user).map(&:user),
-      push: permissions.push_access.includes(:user).map(&:user),
-      pull: permissions.pull_access.includes(:user).map(&:user)
+      admin: permissions.admin_access.includes(user: :subscription).map(&:user),
+      push: permissions.push_access.includes(user: :subscription).map(&:user),
+      pull: permissions.pull_access.includes(user: :subscription).map(&:user)
     }
   end
 end
