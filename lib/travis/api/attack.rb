@@ -44,7 +44,7 @@ class Rack::Attack
   end
 
   ####
-  # Whitelisted IP addresses
+  # Safelisted IP addresses
   safelist('safelist client requesting from redis') do |request|
     # TODO: deprecate :api_whitelisted_ips in favour of api_safelisted_ips
     Travis.redis.sismember(:api_whitelisted_ips, request.ip) || Travis.redis.sismember(:api_safelisted_ips, request.ip)

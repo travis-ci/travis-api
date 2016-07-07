@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: git://github.com/rkh/mustermann.git
-  revision: 9611951c5c789ad8227a740ae142c157a8bf7401
+  revision: 30b45b6a15452244fe512f14a5647aa9af31ceb6
   specs:
     mustermann (0.4.0)
       tool (~> 0.2)
@@ -41,7 +41,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-migrations.git
-  revision: dc432e45354287c617c3ae07a72e9e3c4be012cd
+  revision: 70a6bcdb662b3144c1095d3d6f0529b7edbfaadf
   specs:
     travis-migrations (0.0.2)
 
@@ -196,7 +196,7 @@ GEM
       net-http-persistent (>= 2.7)
       net-http-pipeline
     git-version-bump (0.15.1)
-    google-api-client (0.9.8)
+    google-api-client (0.9.9)
       addressable (~> 2.3)
       googleauth (~> 0.5)
       httpclient (~> 2.7)
@@ -245,7 +245,9 @@ GEM
     micro_migrations (0.0.2)
       activerecord
       railties
-    mime-types (1.25.1)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multi_json (1.12.1)
@@ -313,13 +315,14 @@ GEM
       rspec-expectations (>= 2.99.0.beta1)
     rspec-mocks (2.99.4)
     ruby_dep (1.3.1)
-    sentry-raven (1.0.0)
-      faraday (>= 0.7.6)
-    sidekiq (4.1.2)
+    sentry-raven (1.2.0)
+      faraday (>= 0.7.6, < 0.10.x)
+    sidekiq (4.1.3)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
       redis (~> 3.2, >= 3.2.1)
-    signet (0.7.2)
+      sinatra (~> 1.4, >= 1.4.6)
+    signet (0.7.3)
       addressable (~> 2.3)
       faraday (~> 0.9)
       jwt (~> 1.5)
@@ -327,9 +330,9 @@ GEM
     simple_states (1.0.1)
       activesupport
       hashr (~> 0.0.10)
-    simplecov (0.11.2)
+    simplecov (0.12.0)
       docile (~> 1.1.0)
-      json (~> 1.8)
+      json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
     sinatra (1.4.6)
@@ -359,7 +362,7 @@ GEM
     tool (0.2.3)
     travis-config (0.1.4)
       hashr (~> 0.0)
-    tzinfo (0.3.49)
+    tzinfo (0.3.50)
     uber (0.0.15)
     unicorn (5.1.0)
       kgio (~> 2.6)
@@ -370,7 +373,7 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    yard (0.8.7.6)
+    yard (0.9.0)
 
 PLATFORMS
   ruby
