@@ -20,18 +20,25 @@ module ApplicationHelper
 
   def format_config(value)
     case value
-      when Symbol
-        format_config(value.to_s)
-      when String
-        h(value)
-      when Array
-        items = value.map { |v| "<li>#{format_config(v)}</li>" }.join
-        "<ul>#{items}</ul>"
-      when Hash
-        items = value.map { |k,v| "<dt>#{format_config(k)}:</dt> <dl>#{format_config(v)}</dl>" }.join
-        "<dl>#{items}</dl>"
-      else
-        h(value.to_s)
+    when Symbol
+      format_config(value.to_s)
+    when String
+      value
+    when Array
+      content_tag(:ul) do
+        value.each do |v|
+          concat content_tag(:li, format_config(v))
+        end
+      end
+    when Hash
+      content_tag(:dl) do
+        value.each do |k,v|
+          concat content_tag(:dt, format_config(k))
+          concat content_tag(:dl, format_config(v))
+        end
+      end
+    else
+      value.to_s
     end
   end
 end
