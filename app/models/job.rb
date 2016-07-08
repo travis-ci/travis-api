@@ -1,7 +1,6 @@
 class Job < ActiveRecord::Base
-  serialize :config
-
   include StateDisplay
+  include ConfigDisplay
 
   self.inheritance_column = :_type_disabled
 
@@ -10,11 +9,14 @@ class Job < ActiveRecord::Base
   belongs_to :owner, polymorphic: true
   belongs_to :build, foreign_key: 'source_id'
 
+  serialize  :config
+
 
   scope :from_repositories, -> (repositories) { where(repository_id: repositories.map(&:id)) }
   scope :not_finished, -> { where(state: %w[started received queued created]).sort_by {|job|
                                      %w[started received queued created].index(job.state.to_s) } }
   scope :finished, -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
+
 
   def duration
     (started_at && finished_at) ? (finished_at - started_at) : nil
