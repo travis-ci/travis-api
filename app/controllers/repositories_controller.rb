@@ -13,14 +13,28 @@ class RepositoriesController < ApplicationController
   def enable
     @repository = Repository.find_by(id: params[:id])
 
-    Services::Repository::Enable.new(@repository.id).call
+    response = Services::Repository::Enable.new(@repository.id).call
+
+    if response.success?
+      flash[:notice] = "Enabled #{@repository.slug}"
+    else
+      flash[:error] = "Error: #{response.headers[:status]}"
+    end
+
     redirect_to @repository
   end
 
   def disable
     @repository = Repository.find_by(id: params[:id])
 
-    Services::Repository::Disable.new(@repository.id).call
+    response = Services::Repository::Disable.new(@repository.id).call
+
+    if response.success?
+      flash[:notice] = "Disabled #{@repository.slug}"
+    else
+      flash[:error] = "Error: #{response.headers[:status]}"
+    end
+
     redirect_to @repository
   end
 end

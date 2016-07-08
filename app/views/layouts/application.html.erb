@@ -21,7 +21,7 @@
     </header>
 
     <main class="main">
-      <section class="alert">
+      <section class="flashes">
         <% flash.each do |name, msg| -%>
           <%= content_tag :p, msg, class: name %>
         <% end -%>
