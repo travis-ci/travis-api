@@ -93,7 +93,7 @@ class Repository < Travis::Model
     end
 
     def counts_by_owner_names(owner_names)
-      query = %(SELECT owner_name, count(*) FROM repositories WHERE owner_name IN (?) AND invalidated_at IS NULL GROUP BY owner_name)
+      query = %(SELECT owner_name, count(*) FROM repositories WHERE owner_name IN (?) AND invalidated_at IS NULL AND active = 't' GROUP BY owner_name)
       query = sanitize_sql([query, owner_names])
       rows = connection.select_all(query, owner_names)
       Hash[*rows.map { |row| [row['owner_name'], row['count'].to_i] }.flatten]
