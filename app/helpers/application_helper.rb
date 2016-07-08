@@ -33,7 +33,7 @@ module ApplicationHelper
     when Hash
       content_tag(:dl) do
         value.each do |k,v|
-          concat content_tag(:dt, format_config(k))
+          concat content_tag(:dt, format_config(k), class: 'info-label')
           concat content_tag(:dl, format_config(v))
         end
       end

@@ -39,7 +39,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     it 'formats hash values a definition list' do
-      expect(helper.format_config({:ruby => 'rails', :over => 9000})).to eql '<dl><dt>ruby:</dt> <dl>rails</dl><dt>over:</dt> <dl>9000</dl></dl>'
+      expect(helper.format_config({:ruby => 'rails', :over => 9000})).to eql "<dl><dt class=\"info-label\">ruby</dt><dl>rails</dl><dt class=\"info-label\">over</dt><dl>9000</dl></dl>"
     end
 
     it 'formats array values into a list' do
