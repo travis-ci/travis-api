@@ -48,7 +48,7 @@
     <dd><%= build.commit.author_name %></dd>
 
     <dt class="info-label">Config Status:</dt>
-    <dd><%= "#{build.config? ? 'Configured' : 'Not Configured'}" %></dd>
+    <dd><%= build.config ? build.config_result : 'pending' %></dd>
   </dl>
 </section>
 

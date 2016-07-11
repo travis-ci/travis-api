@@ -48,6 +48,6 @@
     <dd><%= job.commit.author_name %></dd>
 
     <dt class="info-label">Config Status:</dt>
-    <dd></dd>
+    <dd><%= job.config ? job.config_result : 'pending' %></dd>
   </dl>
 </section>
