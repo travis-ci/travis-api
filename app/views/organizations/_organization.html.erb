@@ -22,7 +22,7 @@
     <dt class="info-label">GitHub Login</dt>
     <dd>
       <% if organization.avatar_url %>
-        <img class="avatar" src="<%= organization.avatar_url %>?s=20" alt="organization avatar" />
+        <%= image_tag(organization.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
       <% end %>
       <%= organization.login %>
     </dd>

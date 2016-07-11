@@ -55,9 +55,9 @@
       <ul class="inline-list organization-item">
         <li>
           <% if org.avatar_url %>
-            <img class="avatar" src="<%= org.avatar_url %>?s=20">
+            <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
           <% end %>
-          <%= org.name.present? ? "#{org.name} (#{org.login})" : org.login %>
+          <%= org.name.present? ? describe(org) : org.login %>
         </li>
         <li><%= link_to "View", org, class: "button" %></li>
       </ul>

@@ -5,14 +5,14 @@
   <% else %>
     <% repositories.each do |repo| %>
       <ul class="inline-list repository-item">
-        <li class="repo-name"><%= repo.slug %></li>
+        <li class="repo-name"><%= describe(repo) %></li>
         <% if repo.active? %>
           <li class="repo-active">enabled</li>
         <% else %>
           <li class="repo-active">disabled</li>
         <% end %>
         <% if repo.last_build_id %>
-          <li class="repo-build"><a href="/build/<%= repo.last_build_id %>"> build # <%= repo.last_build_number %></a><%= " #{repo.last_build_state.to_s} (#{repo.last_build_finished_at || repo.last_build_started_at})" %></li>
+          <li class="repo-build"><a href="/build/<%= repo.last_build_id %>"> build #<%= repo.last_build_number %></a><%= " #{repo.last_build_state.to_s} (#{repo.last_build_finished_at || repo.last_build_started_at})" %></li>
         <% else %>
           <li class="repo-build">no build</li>
         <% end %>

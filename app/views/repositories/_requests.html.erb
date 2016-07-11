@@ -12,10 +12,10 @@
     </ul>
     <% requests.each do |request| %>
       <ul class="inline-list request-item state_<%= request.state %>">
-        <li><%= link_to "##{request.id}", request %></li>
+        <li><%= link_to describe(request), request %></li>
         <li>
           <% request.builds.each do |build| %>
-            <%= "#{repository.slug} ##{build.number}" %>
+            <%= describe(build) %>
           <% end %>
           <%= request.message %>
         </li>

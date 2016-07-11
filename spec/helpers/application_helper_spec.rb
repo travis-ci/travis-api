@@ -7,6 +7,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     let(:repository) { create(:repository, owner_name: 'travis') }
     let(:build) { create(:build, repository: repository, number: 123) }
     let(:job) { create(:job, repository: repository, number: 125) }
+    let(:request) { create(:request, id: 12345) }
 
     it 'returns String to describe a user' do
       expect(helper.describe(user)).to eql 'Katrin (katrina)'
@@ -26,6 +27,10 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     it 'returns String to describe an job' do
       expect(helper.describe(job)).to eql 'travis/travis-admin#125'
+    end
+
+    it 'returns String to describe a request' do
+      expect(helper.describe(request)).to eql '#12345'
     end
   end
 

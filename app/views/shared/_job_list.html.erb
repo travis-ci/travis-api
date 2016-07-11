@@ -9,7 +9,7 @@
   </ul>
   <% jobs.each do |job| %>
     <ul class="inline-list job-item">
-      <li><%= link_to "#{job.repository.slug} ##{job.number}", job %></li>
+      <li><%= link_to describe(job), job %></li>
       <li><%= "#{job.state} at #{job.state_time}" %></li>
       <li><%= job.queue %></li>
       <li></li>

@@ -13,7 +13,7 @@
     </ul>
     <% builds.each do |build| %>
       <ul class="inline-list build-item state_<%= build.state %>">
-        <li class="build-name"><%= link_to "#{repository.slug}##{build.number}", build %></li>
+        <li class="build-name"><%= link_to describe(build), build %></li>
         <li class="build-branch"><%= build.commit.branch %></li>
         <li class="build-type"><%= build.event_type %></li>
         <li class="build-state"><%= "#{build.state} at #{build.state_time}" %></li>

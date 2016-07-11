@@ -14,10 +14,10 @@
     <dd><%= @request.message %></dd>
 
     <dt class="info-label">Repository:</dt>
-    <dd><%= link_to @request.repository.slug, @request.repository %></dd>
+    <dd><%= link_to describe(@request.repository), @request.repository %></dd>
 
     <dt class="info-label">Owner:</dt>
-    <dd><%= link_to "#{@request.owner.name} (#{@request.owner.login})", @request.owner %></dd>
+    <dd><%= link_to describe(@request.owner), @request.owner %></dd>
 
     <dt class="info-label">Event Type:</dt>
     <dd><%= @request.event_type %></dd>
