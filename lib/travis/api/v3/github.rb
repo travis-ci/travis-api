@@ -49,5 +49,15 @@ module Travis::API::V3
         gh.post(hooks_url, payload)
       end
     end
+
+    def upload_key(repository)
+      keys_path = "repos/#{repository.slug}/keys"
+      key = gh[keys_path].
+        detect { |e| e['key'] == repository.key.encoded_public_key }
+
+      unless key
+        gh.post keys_path, title: Travis.config.host.to_s, key: repository.key.encoded_public_key
+      end
+    end
   end
 end
