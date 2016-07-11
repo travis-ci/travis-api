@@ -1,5 +1,6 @@
 require 'travis/api/app'
 require 'travis/api/app/services/schedule_request'
+require 'travis/api/enqueue/services/restart_model'
 
 class Travis::Api::App
   class Endpoint
@@ -35,10 +36,10 @@ class Travis::Api::App
           if !Travis::Features.enabled_for_all?(:enqueue_to_hub) && !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
             respond_with service(:reset_model, params)
           elsif service.respond_to?(:push)
-            payload = {id: params[:build_id], user_id: current_user.id}
-            service.push("job:restart", payload)
-            status 202
-            true
+            payload = { id: params[:build_id], user_id: repository_owner.id }
+            service.push("build:restart", payload)
+
+            respond_with(result: true, flash: service.messages)
           end
         end
       end
