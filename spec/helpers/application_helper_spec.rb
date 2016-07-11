@@ -29,8 +29,30 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe 'format_config' do
+    it 'prints the string value' do
+      expect(helper.format_config('ruby')).to eql 'ruby'
+    end
+
+    it 'processes symbols as strings' do
+      expect(helper.format_config(:ruby)).to eql 'ruby'
+    end
+
+    it 'formats hash values a definition list' do
+      expect(helper.format_config({:ruby => 'rails', :over => 9000})).to eql "<dl><dt class=\"info-label\">ruby</dt><dl>rails</dl><dt class=\"info-label\">over</dt><dl>9000</dl></dl>"
+    end
+
+    it 'formats array values into a list' do
+      expect(helper.format_config([:ruby,'rails',true])).to eql '<ul><li>ruby</li><li>rails</li><li>true</li></ul>'
+    end
+
+    it 'prints all other classes as strings' do
+      expect(helper.format_config(true)).to eql 'true'
+    end
+  end
+
   describe 'format_duration' do
-    it 'returns nicely formated time' do
+    it 'returns nicely formatted time' do
       expect(helper.format_duration(0)).to eq('0 sec')
       expect(helper.format_duration(30)).to eq('30 sec')
       expect(helper.format_duration(60)).to eq('1 min 00 sec')
@@ -40,7 +62,7 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   describe 'format_short_duration' do
-    it 'returns short version of nicely formated time' do
+    it 'returns short version of nicely formatted time' do
       expect(helper.format_short_duration(0)).to eq('0s')
       expect(helper.format_short_duration(30)).to eq('30s')
       expect(helper.format_short_duration(60)).to eq('1m 00s')

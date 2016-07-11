@@ -20,18 +20,25 @@ module ApplicationHelper
 
   def format_config(value)
     case value
-      when Symbol
-        format_config(value.to_s)
-      when String
-        h(value.inspect == "\"#{value.strip}\"" ? value : value.inspect)
-      when Array
-        items = value.map { |v| "<li>#{format_config(v)}</li>" }.join
-        "<ul>#{items}</ul>"
-      when Hash
-        items = value.map { |k,v| "<li><b>#{format_config(k)}:</b> #{format_config(v)}</li>" }.join
-        "<ul>#{items}</ul>"
-      else
-        h(value.inspect)
+    when Symbol
+      format_config(value.to_s)
+    when String
+      value
+    when Array
+      content_tag(:ul) do
+        value.each do |v|
+          concat content_tag(:li, format_config(v))
+        end
+      end
+    when Hash
+      content_tag(:dl) do
+        value.each do |k,v|
+          concat content_tag(:dt, format_config(k), class: 'info-label')
+          concat content_tag(:dl, format_config(v))
+        end
+      end
+    else
+      value.to_s
     end
   end
 end
