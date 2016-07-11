@@ -48,7 +48,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: f7b3a76b3f39c28bb5cf7b9dc24acec13908a11a
+  revision: 32d57b1b4d2c236d4a36becfbd6f5555065b92bc
+  branch: te-dev
   specs:
     travis-core (0.0.1)
       actionmailer (~> 3.2.19)
@@ -56,7 +57,7 @@ GIT
       coder (~> 0.4.0)
       data_migrations (~> 0.0.1)
       gh
-      hashr (~> 0.0.19)
+      hashr
       metriks (~> 0.9.7)
       multi_json
       pusher (~> 0.14.0)
@@ -193,11 +194,11 @@ GEM
       net-http-pipeline
     hashr (0.0.22)
     hike (1.2.3)
-    hitimes (1.2.3)
+    hitimes (1.2.4)
     httparty (0.11.0)
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
-    httpclient (2.7.1)
+    httpclient (2.8.0)
     i18n (0.7.0)
     ice_nine (0.11.2)
     jemalloc (1.0.1)
@@ -224,7 +225,7 @@ GEM
     mime-types (1.25.1)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.11.2)
+    multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
@@ -267,7 +268,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     redcarpet (2.3.0)
-    redis (3.2.2)
+    redis (3.3.0)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
     rerun (0.8.2)
@@ -331,7 +332,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.47)
+    tzinfo (0.3.51)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
@@ -388,3 +389,6 @@ DEPENDENCIES
   travis-yaml!
   unicorn
   yard-sinatra!
+
+BUNDLED WITH
+   1.12.4
