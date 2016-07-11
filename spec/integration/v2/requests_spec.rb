@@ -37,7 +37,7 @@ describe 'Requests', set_app: true do
       Travis::Features.activate_owner(:enqueue_to_hub, repo.owner)
 
       response = post "/requests", { build_id: build.id }, headers
-      response.status.should be(202)
+      response.status.should be(200)
     end
   end
 end
