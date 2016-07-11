@@ -30,7 +30,8 @@
     <dt class="info-label">Last Build:</dt>
     <dd>
       <% if repository.last_build_id %>
-        <%= "##{repository.last_build_number} #{repository.last_build_state.to_s} at <time>#{repository.last_build_finished_at || repository.last_build_started_at}</time>".html_safe %>
+        <%= link_to "##{repository.last_build_number}", repository.last_build %>
+        <%= "(#{repository.last_build.state} at #{repository.last_build.state_time})" %>
       <% else %>
         No Build.
       <% end %>

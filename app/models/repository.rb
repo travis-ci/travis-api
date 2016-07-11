@@ -9,6 +9,7 @@ class Repository < ActiveRecord::Base
   has_many :broadcasts, as:      :recipient
 
   belongs_to :owner, polymorphic: true
+  belongs_to :last_build, class_name: 'Build'
 
   def slug
     @slug ||= "#{owner_name}/#{name}"

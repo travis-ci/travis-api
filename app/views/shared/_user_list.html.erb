@@ -1,22 +1,24 @@
 <% if users.empty? %>
   <p>No users.</p>
 <% else %>
-  <ul class="inline-list user-item">
-    <li class="info-label">Name</li>
-    <li class="info-label">Subscription</li>
-    <li class="info-label"></li>
-  </ul>
-  <% users.each do |user| %>
-    <ul class="inline-list user-item">
-      <li><%= link_to describe(user), user %></li>
-      <li>
-        <% if user.subscription %>
-          <%= link_to format_subscription(user.subscription), user.subscription %>
-        <% else %>
-          none
-        <% end %>
+  <ul>
+    <li class="inline-list user-item">
+      <p class="info-label">Name</p>
+      <p class="info-label">Subscription</p>
+      <p class="info-label"></p>
+    </li>
+    <% users.each do |user| %>
+      <li class="inline-list user-item">
+        <p><%= link_to describe(user), user %></p>
+        <p>
+          <% if user.subscription %>
+            <%= link_to format_subscription(user.subscription), user.subscription %>
+          <% else %>
+            none
+          <% end %>
+        </p>
+        <p></p>
       </li>
-      <li></li>
-     </ul>
-  <% end %>
+    <% end %>
+  </ul>
 <% end %>

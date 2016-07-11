@@ -1,18 +1,20 @@
 <% if jobs.empty? %>
   <p>No jobs.</p>
 <% else %>
-  <ul class="inline-list job-item">
-    <li class="info-label">Job ID</li>
-    <li class="info-label">State</li>
-    <li class="info-label">Queue</li>
-    <li class="info-label"></li>
+  <ul>
+    <li class="inline-list job-item">
+      <p class="info-label">Job ID</p>
+      <p class="info-label">State</p>
+      <p class="info-label">Queue</p>
+      <p class="info-label"></p>
+    </li>
+    <% jobs.each do |job| %>
+      <li class="inline-list job-item">
+        <p><%= link_to describe(job), job %></p>
+        <p><%= "#{job.state} at #{job.state_time}" %></p>
+        <p><%= job.queue %></p>
+        <p></p>
+      </li>
+    <% end %>
   </ul>
-  <% jobs.each do |job| %>
-    <ul class="inline-list job-item">
-      <li><%= link_to describe(job), job %></li>
-      <li><%= "#{job.state} at #{job.state_time}" %></li>
-      <li><%= job.queue %></li>
-      <li></li>
-    </ul>
-  <% end %>
 <% end %>

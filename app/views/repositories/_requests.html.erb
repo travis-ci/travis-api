@@ -3,26 +3,28 @@
   <% if requests.empty? %>
     <p>No requests exist for this repository.</p>
   <% else %>
-    <ul class="inline-list request-item">
-      <li class="info-label">Request</li>
-      <li class="info-label">Build</li>
-      <li class="info-label">Result</li>
-      <li class="info-label">Event Type</li>
-      <li class="info-label">State</li>
-    </ul>
-    <% requests.each do |request| %>
-      <ul class="inline-list request-item state_<%= request.state %>">
-        <li><%= link_to describe(request), request %></li>
-        <li>
-          <% request.builds.each do |build| %>
-            <%= describe(build) %>
-          <% end %>
-          <%= request.message %>
+    <ul>
+      <li class="inline-list request-item">
+        <p class="info-label">Request</p>
+        <p class="info-label">Build</p>
+        <p class="info-label">Result</p>
+        <p class="info-label">Event Type</p>
+        <p class="info-label">State</p>
+      </li>
+      <% requests.each do |request| %>
+        <li class="inline-list request-item state_<%= request.state %>">
+          <p><%= link_to describe(request), request %></p>
+          <p>
+            <% request.builds.each do |build| %>
+              <%= describe(build) %>
+            <% end %>
+            <%= request.message %>
+          </p>
+          <p><%= request.result %></p>
+          <p><%= request.event_type %></p>
+          <p><%= request.state %></p>
         </li>
-        <li><%= request.result %></li>
-        <li><%= request.event_type %></li>
-        <li><%= request.state %></li>
-      </ul>
-    <% end %>
+      <% end %>
+    </ul>
   <% end %>
 </section>
