@@ -39,6 +39,12 @@ describe 'Requests', set_app: true do
         response = post "/requests", payload, headers
         response.status.should be(200)
       end
+
+      it 'triggers a job request' do
+        payload = { job_id: build.matrix.first.id, user_id: repo.owner.id }
+        response = post "/requests", payload, headers
+        response.status.should be(200)
+      end
     end
   end
 end
