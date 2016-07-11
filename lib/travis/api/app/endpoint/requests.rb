@@ -36,7 +36,7 @@ class Travis::Api::App
           if !Travis::Features.enabled_for_all?(:enqueue_to_hub) && !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
             respond_with service(:reset_model, params)
           elsif service.respond_to?(:push)
-            payload = { id: params[:build_id], user_id: current_user.id }
+            payload = { id: params[:build_id], user_id: repository_owner.id }
             service.push("build:restart", payload)
 
             respond_with(result: true, flash: service.messages)
