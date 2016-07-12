@@ -7,11 +7,13 @@ describe Travis::API::V3::Models::Cron do
   describe "next build time is calculated correctly on year changes" do
 
     before do
+      Timecop.return
       Timecop.travel(DateTime.new(2015, 12, 31, 16))
     end
 
     after do
       Timecop.return
+      Timecop.freeze(Time.now.utc)
     end
 
     it "for daily builds" do
