@@ -3,7 +3,7 @@ class OrganizationsController < ApplicationController
     @organization = Organization.find_by(id: params[:id])
     return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
 
-    @repositories = @organization.repositories
+    @repositories = @organization.repositories.includes(:last_build)
 
     @users = @organization.users.includes(:subscription)
 
