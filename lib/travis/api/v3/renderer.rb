@@ -10,7 +10,7 @@ module Travis::API::V3
     extend self
 
     def clear(**args)
-      args.select { |key, value| !value.nil? }
+      args.compact
     end
 
     def href(type, string_args = nil, script_name: nil, **args)
@@ -49,6 +49,7 @@ module Travis::API::V3
       when Model                  then render_model(value, **options)
       when ActiveRecord::Relation then render_value(value.to_a, **options)
       when ActiveRecord::Associations::CollectionProxy then render_value(value.to_a, **options)
+      when Travis::Settings::EncryptedValue then value # Should this be value.decrypt ?? If so do we want to add if options[:included].first.public? so we ensure we only decrypt public values?
       else raise ArgumentError, 'cannot render %p (%p)' % [value.class, value]
       end
     end

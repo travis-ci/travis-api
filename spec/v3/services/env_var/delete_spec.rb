@@ -28,6 +28,6 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
     end
 
     example { expect(last_response.status).to eq 200 }
-    example { pending 'should we return an empty body here?' }
+    example { expect(JSON.parse(last_response.body)["id"]).to eq(env_var[:id]) }
   end
 end

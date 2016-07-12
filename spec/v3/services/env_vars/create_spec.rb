@@ -13,7 +13,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
 
   describe 'authenticated, repo missing' do
     before { post("/v3/repo/99999999/env_vars", {}, auth_headers) }
-    include_examples 'missing repo' 
+    include_examples 'missing repo'
   end
 
   describe 'authenticated, existing repo, env var already exists' do
@@ -58,7 +58,6 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
         '@type' => 'env_var',
         '@representation' => 'standard',
         'name' => 'FOO',
-        'value' => 'bar',
         'public' => false
       )
       expect(response).to include('@href', 'id')

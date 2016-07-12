@@ -2,7 +2,7 @@ module Travis::API::V3
   class Models::EnvVar < Travis::Settings::Model
     attribute :id, Integer
     attribute :name, String
-    attribute :value, String
+    attribute :value, Travis::Settings::EncryptedValue
     attribute :public, Boolean
     attribute :repository_id, Integer
 
@@ -11,7 +11,7 @@ module Travis::API::V3
     end
 
     validates_each :id, :name do |record, attr, value|
-      others = record.repository.env_vars.select { |ev| ev.id != record.id } 
+      others = record.repository.env_vars.select { |ev| ev.id != record.id }
       record.errors.add(:base, :duplicate_resource) if others.find { |ev| ev.send(attr) == record.send(attr) }
     end
   end
