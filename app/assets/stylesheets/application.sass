@@ -94,8 +94,8 @@ dd
   flex-flow: row nowrap
   justify-content: space-between
   align-items: left
-  li
-    list-style: none
+  p
+    margin: 0.5em
 
 .repo-active, .repo-view
   flex: 1 1 10%
@@ -103,7 +103,7 @@ dd
 .repo-name, .repo-build
   flex: 1 1 30%
 
-.job-item > li
+.job-item > p
   flex: 1 1 25%
 
 .build-name, .build-branch
@@ -118,14 +118,26 @@ dd
 .build-duration
   text-align: right
 
-.request-item > li
+.request-item > p
   flex: 1 1 20%
 
-.user-item > li
+.user-item > p
   flex: 1 1 30%
 
-.broadcast-item > li
+.broadcast-item > p
   flex: 1 1 20%
+
+.invoice-item > p
+  flex: 1 1 30%
+
+.org-list
+  list-style: none
+
+.org-item
+  .org-name
+    width: 60%
+    display: inline-block
+    margin: 0
 
 
 /* Button styles */

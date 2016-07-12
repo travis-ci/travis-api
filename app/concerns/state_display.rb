@@ -9,6 +9,8 @@ module StateDisplay
       finished_at
     when 'started'
       started_at
+    when 'received'
+      received_at
     when 'queued'
       queued_at
     when 'created'

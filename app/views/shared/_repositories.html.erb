@@ -3,21 +3,32 @@
   <% if repositories.empty? %>
     <p>No repositories.</p>
   <% else %>
-    <% repositories.each do |repo| %>
-      <ul class="inline-list repository-item">
-        <li class="repo-name"><%= repo.slug %></li>
-        <% if repo.active? %>
-          <li class="repo-active">enabled</li>
-        <% else %>
-          <li class="repo-active">disabled</li>
-        <% end %>
-        <% if repo.last_build_id %>
-          <li class="repo-build"><a href="/build/<%= repo.last_build_id %>"> build # <%= repo.last_build_number %></a><%= " #{repo.last_build_state.to_s} (#{repo.last_build_finished_at || repo.last_build_started_at})" %></li>
-        <% else %>
-          <li class="repo-build">no build</li>
-        <% end %>
-        <li class="repo-view"><%= link_to "View", repository_path(repo), class: "button" %></li>
-      </ul>
-    <% end %>
+    <ul>
+      <li class="inline-list repository-item">
+        <p class="info-label repo-name">Repository</p>
+        <p class="info-label repo-active">Active?</p>
+        <p class="info-label repo-build">Last Build</p>
+        <p class="info-label repo-view"></p>
+      </li>
+      <% repositories.each do |repo| %>
+        <li class="inline-list repository-item">
+          <p class="repo-name"><%= describe(repo) %></p>
+          <% if repo.active? %>
+            <p class="repo-active">&#10004; enabled</p>
+          <% else %>
+            <p class="repo-active">&#10008; disabled</p>
+          <% end %>
+          <% if repo.last_build_id %>
+            <p class="repo-build">
+              <%= link_to "build ##{repo.last_build_number}", repo.last_build %>
+              <%= "(#{repo.last_build.state} at #{repo.last_build.state_time})" %>
+            </p>
+          <% else %>
+            <p class="repo-build">no build</p>
+          <% end %>
+          <p class="repo-view"><%= link_to "View", repository_path(repo), class: "button" %></p>
+        </li>
+      <% end %>
+    </ul>
   <% end %>
 </section>

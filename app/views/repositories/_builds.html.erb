@@ -3,23 +3,25 @@
   <% if builds.empty? %>
     <p>No builds exist for this repository.</p>
   <% else %>
-    <ul class="inline-list build-item">
-      <li class="info-label build-name">Build</li>
-      <li class="info-label build-branch">Branch</li>
-      <li class="info-label build-type">Type</li>
-      <li class="info-label build-state"> State</li>
-      <li class="info-label build-duration">Duration</li>
-      <li class="info-label build-reset"></li>
+    <ul>
+      <li class="inline-list build-item">
+        <p class="info-label build-name">Build</p>
+        <p class="info-label build-branch">Branch</p>
+        <p class="info-label build-type">Type</p>
+        <p class="info-label build-state"> State</p>
+        <p class="info-label build-duration">Duration</p>
+        <p class="info-label build-reset"></p>
+      </li>
+      <% builds.each do |build| %>
+        <li class="inline-list build-item state_<%= build.state %>">
+          <p class="build-name"><%= link_to describe(build), build %></p>
+          <p class="build-branch"><%= build.commit.branch %></p>
+          <p class="build-type"><%= build.event_type %></p>
+          <p class="build-state"><%= "#{build.state} at #{build.state_time}" %></p>
+          <p class="build-duration"><%= format_short_duration(build.duration) %></p>
+          <p class="build-reset"></p>
+        </li>
+      <% end %>
     </ul>
-    <% builds.each do |build| %>
-      <ul class="inline-list build-item state_<%= build.state %>">
-        <li class="build-name"><%= link_to "#{repository.slug}##{build.number}", build %></li>
-        <li class="build-branch"><%= build.commit.branch %></li>
-        <li class="build-type"><%= build.event_type %></li>
-        <li class="build-state"><%= "#{build.state} at #{build.state_time}" %></li>
-        <li class="build-duration"><%= format_short_duration(build.duration) %></li>
-        <li class="build-reset"></li>
-      </ul>
-    <% end %>
   <% end %>
 </section>

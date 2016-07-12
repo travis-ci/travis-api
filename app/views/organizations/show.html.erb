@@ -1,4 +1,4 @@
-<h1 class="info-header"><%= "Organization - #{@organization.name} (#{@organization.login})" %></h1>
+<h1 class="info-header"><%= "Organization - #{describe(@organization)}" %></h1>
 
 <div id="tabs">
   <span id="organization" class="tab-switch"></span>
@@ -25,9 +25,9 @@
     <%= render partial: 'shared/repositories', locals: {repositories: @repositories} %>
   </section>
 
-  <span id="queue" class="tab-switch"></span>
-  <a href="#queue" class="tab-link">Queue</a>
+  <span id="jobs" class="tab-switch"></span>
+  <a href="#jobs" class="tab-link">Jobs</a>
   <section class="tab-content">
-    <%= render partial: 'shared/queue' %>
+    <%= render partial: 'shared/jobs' %>
   </section>
 </div>

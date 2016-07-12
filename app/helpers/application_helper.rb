@@ -4,6 +4,7 @@ module ApplicationHelper
     when ::User, ::Organization then object.name.present? ? "#{object.name} (#{object.login})" : object.login
     when ::Repository           then object.slug
     when ::Build, ::Job         then "#{object.repository.slug}##{object.number}"
+    when ::Request              then "##{object.id}"
     else object.inspect
     end
   end

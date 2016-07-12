@@ -1,0 +1,17 @@
+<% if organizations.empty? %>
+  <p>No organizations.</p>
+<% else %>
+  <% organizations.each do |org| %>
+    <ul class="org-list">
+      <li class="org-item">
+        <p class="org-name">
+          <% if org.avatar_url %>
+            <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
+          <% end %>
+          <%= org.name.present? ? describe(org) : org.login %>
+        </p>
+        <%= link_to "View", org, class: "button" %>
+      </li>
+    </ul>
+  <% end %>
+<% end %>

@@ -47,20 +47,5 @@
 
 <section class="info-block">
   <h2 class="info-header">Organizations</h2>
-
-  <% if user.organizations.empty? %>
-    <p>No organizations.</p>
-  <% else %>
-    <% user.organizations.each do |org| %>
-      <ul class="inline-list organization-item">
-        <li>
-          <% if org.avatar_url %>
-            <img class="avatar" src="<%= org.avatar_url %>?s=20">
-          <% end %>
-          <%= org.name.present? ? "#{org.name} (#{org.login})" : org.login %>
-        </li>
-        <li><%= link_to "View", org, class: "button" %></li>
-      </ul>
-    <% end %>
-  <% end %>
+  <%= render partial: 'organization_list', locals: {organizations: user.organizations} %>
 </section>

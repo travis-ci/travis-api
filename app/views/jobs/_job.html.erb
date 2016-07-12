@@ -6,13 +6,13 @@
     <dd><%= job.state %></dd>
 
     <dt class="info-label">Repository:</dt>
-    <dd><%= link_to job.repository.slug, job.repository %></dd>
+    <dd><%= link_to describe(job.repository), job.repository %></dd>
 
     <dt class="info-label">Owner:</dt>
-    <dd><%= link_to "#{job.owner.name} (#{job.owner.login})", job.owner %></dd>
+    <dd><%= link_to describe(job.owner), job.owner %></dd>
 
     <dt class="info-label">Build:</dt>
-    <dd><%= link_to "##{job.build.number}", job.build %></dd>
+    <dd><%= link_to describe(job.build), job.build %></dd>
 
     <dt class="info-label">Created:</dt>
     <dd><time><%= job.created_at %></time></dd>
@@ -48,6 +48,6 @@
     <dd><%= job.commit.author_name %></dd>
 
     <dt class="info-label">Config Status:</dt>
-    <dd></dd>
+    <dd><%= job.config ? job.config_result : 'pending' %></dd>
   </dl>
 </section>
