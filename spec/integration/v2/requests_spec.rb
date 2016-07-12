@@ -33,11 +33,18 @@ describe 'Requests', set_app: true do
       response.status.should be(200)
     end
 
-    it 'triggers a build request using Hub' do
-      Travis::Features.activate_owner(:enqueue_to_hub, repo.owner)
+    describe 'enqueues for Hub' do
+      it 'triggers a build request' do
+        payload = { build_id: build.id, user_id: repo.owner.id }
+        response = post "/requests", payload, headers
+        response.status.should be(200)
+      end
 
-      response = post "/requests", { build_id: build.id }, headers
-      response.status.should be(202)
+      it 'triggers a job request' do
+        payload = { job_id: build.matrix.first.id, user_id: repo.owner.id }
+        response = post "/requests", payload, headers
+        response.status.should be(200)
+      end
     end
   end
 end
