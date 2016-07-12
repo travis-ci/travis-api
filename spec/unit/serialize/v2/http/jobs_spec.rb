@@ -2,6 +2,7 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
   include Travis::Testing::Stubs, Support::Formats
 
   let(:data) { described_class.new([test]).data }
+  let!(:time) { Time.now.utc }
 
   it 'jobs' do
     data['jobs'].first.should == {
@@ -13,8 +14,8 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
       'log_id' => 1,
       'number' => '2.1',
       'state' => 'passed',
-      'started_at' => json_format_time(Time.now.utc - 1.minute),
-      'finished_at' => json_format_time(Time.now.utc),
+      'started_at' => json_format_time(time - 1.minute),
+      'finished_at' => json_format_time(time),
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'queue' => 'builds.linux',
       'allow_failure' => false,
@@ -28,7 +29,7 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
       'message' => 'the commit message',
-      'committed_at' => json_format_time(Time.now.utc - 1.hour),
+      'committed_at' => json_format_time(time - 1.hour),
       'committer_name' => 'Sven Fuchs',
       'committer_email' => 'svenfuchs@artweb-design.de',
       'author_name' => 'Sven Fuchs',
@@ -50,4 +51,3 @@ describe Travis::Api::Serialize::V2::Http::Jobs, 'using Travis::Services::Jobs::
     lambda { data }.should issue_queries(4)
   end
 end
-
