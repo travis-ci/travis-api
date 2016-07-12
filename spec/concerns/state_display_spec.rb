@@ -27,6 +27,10 @@ RSpec.describe StateDisplay do
       def created_at
         :created_time
       end
+
+      def received_at
+        :received_time
+      end
     end
   end
 
@@ -75,6 +79,11 @@ RSpec.describe StateDisplay do
     it 'returns value for created_at if state is created' do
       allow(subject).to receive(:state) { 'created' }
       expect(subject.state_time).to eq(:created_time)
+    end
+
+    it 'returns value for received_at if state is received' do
+      allow(subject).to receive(:state) { 'received' }
+      expect(subject.state_time).to eq(:received_time)
     end
   end
 end
