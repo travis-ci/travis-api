@@ -14,9 +14,9 @@
         <li class="inline-list repository-item">
           <p class="repo-name"><%= describe(repo) %></p>
           <% if repo.active? %>
-            <p class="repo-active">enabled</p>
+            <p class="repo-active">&#10004; enabled</p>
           <% else %>
-            <p class="repo-active">disabled</p>
+            <p class="repo-active">&#10008; disabled</p>
           <% end %>
           <% if repo.last_build_id %>
             <p class="repo-build">
