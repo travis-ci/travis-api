@@ -16,7 +16,7 @@
 
     <dt class="info-label">Repository Owner:</dt>
     <dd>
-      <% if repository.owner.respond_to? :avatar_url && repository.owner.avatar_url %>
+      <% if repository.owner.respond_to?(:avatar_url) && repository.owner.avatar_url %>
         <%= image_tag(repository.owner.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
       <% end %>
       <%= link_to describe(repository.owner), repository.owner %></dd>

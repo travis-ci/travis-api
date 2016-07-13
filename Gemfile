@@ -45,6 +45,7 @@ group :test do
   gem 'webmock', '~> 2.1.0'
   gem 'capybara', '~> 2.7.0'
   gem 'poltergeist'
+  gem 'launchy'
 end
 
 group :development do
