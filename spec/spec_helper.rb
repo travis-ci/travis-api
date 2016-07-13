@@ -62,3 +62,12 @@ RSpec.configure do |c|
     end
   end
 end
+
+require 'timecop'
+Timecop.freeze(Time.now.utc)
+
+describe Time do
+  let(:time) { Time.now.utc }
+  example { expect(Time.now.utc).to eq(time) }
+  example { expect(Time.now.utc + 5.minutes ).to eq(time + 5.minutes) }
+end
