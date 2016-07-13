@@ -64,6 +64,7 @@
 dl, dt, dd
   margin: 0
   padding: 0
+  line-height: 28px
 
 dl
   width: 100%
@@ -151,3 +152,25 @@ dd
   &:hover
     color: $white
     background-color: $cement-grey
+
+
+/* Flashes */
+
+@mixin notice($background)
+  background: $background
+  color: white
+  padding-left: .5em
+  margin-bottom: .8em
+  border-radius: 2px
+  overflow: hidden
+  p
+    display: inline-block
+    margin: 0
+    vertical-align: middle
+
+.flashes
+  .notice
+    @include notice($green-dark)
+
+  .error
+    @include notice($brick-red)
