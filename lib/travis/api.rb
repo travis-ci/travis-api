@@ -1,8 +1,7 @@
 require 'faraday'
 
 module Travis
-  module API
-
+  module Api
     def token
       ENV['TRAVIS_API_TOKEN']
     end
@@ -29,3 +28,5 @@ module Travis
     end
   end
 end
+
+Travis::API = Travis::Api

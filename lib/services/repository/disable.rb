@@ -1,4 +1,4 @@
-require 'travis/a_p_i'
+require 'travis/api'
 
 module Services
   module Repository
