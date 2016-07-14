@@ -49,7 +49,7 @@ module Travis::API::V3
       when Model                  then render_model(value, **options)
       when ActiveRecord::Relation then render_value(value.to_a, **options)
       when ActiveRecord::Associations::CollectionProxy then render_value(value.to_a, **options)
-      when Travis::Settings::EncryptedValue then value # Should this be value.decrypt ?? If so do we want to add if options[:included].first.public? so we ensure we only decrypt public values?
+      when Travis::Settings::EncryptedValue then value.decrypt
       else raise ArgumentError, 'cannot render %p (%p)' % [value.class, value]
       end
     end
