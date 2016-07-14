@@ -3,8 +3,7 @@ module Travis::API::V3
     #params :id
 
     def run!
-      raise LoginRequired unless access_control.logged_in? or access_control.full_access?
-      cron = find
+      cron = check_login_and_find
       access_control.permissions(cron).delete!
       cron.destroy
     end

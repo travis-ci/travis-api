@@ -110,6 +110,7 @@ module Travis::API::V3
       end
 
       fields.each do |field|
+        next if field == :value && !@model.public?
         value  = Renderer.render_value(send(field),
                    access_control: access_control,
                    script_name:    script_name,

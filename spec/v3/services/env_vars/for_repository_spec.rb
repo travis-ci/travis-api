@@ -3,9 +3,9 @@ require 'spec_helper'
 describe Travis::API::V3::Services::EnvVars::ForRepository, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first_or_create }
   let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-  let(:env_var) { { id: 'abc', name: 'FOO', value: 'bar', public: true, repository_id: repo.id } }
+  let(:env_var) { { id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: true, repository_id: repo.id } }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
-  
+
   describe 'not authenticated' do
     before { get("/v3/repo/#{repo.id}/env_vars") }
     include_examples 'not authenticated'
@@ -13,7 +13,7 @@ describe Travis::API::V3::Services::EnvVars::ForRepository, set_app: true do
 
   describe 'authenticated, missing repo' do
     before { get("/v3/repo/999999999/env_vars", {}, auth_headers) }
-    include_examples 'missing repo'  
+    include_examples 'missing repo'
   end
 
   describe 'authenticated, existing repo, no env vars' do
@@ -49,7 +49,7 @@ describe Travis::API::V3::Services::EnvVars::ForRepository, set_app: true do
             '@representation' => 'standard',
             'id' => env_var[:id],
             'name' => env_var[:name],
-            'value' => env_var[:value],
+            'value' => env_var[:value].decrypt,
             'public' => env_var[:public]
           }
         ]

@@ -13,7 +13,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
 
   describe 'authenticated, repo missing' do
     before { post("/v3/repo/99999999/env_vars", {}, auth_headers) }
-    include_examples 'missing repo' 
+    include_examples 'missing repo'
   end
 
   describe 'authenticated, existing repo, env var already exists' do
@@ -26,7 +26,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
     end
 
     before do
-      repo.update_attributes(settings: JSON.generate(env_vars: [{ id: 'abc', name: 'FOO', value: 'bar', public: false }]))
+      repo.update_attributes(settings: JSON.generate(env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }]))
       post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers))
     end
 
@@ -41,27 +41,53 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
   end
 
   describe 'authenticated, existing repo, env var is new' do
-    let(:params) do
-      {
-        'env_var.name' => 'FOO',
-        'env_var.value' => 'bar',
-        'env_var.public' => false
-      }
+    describe 'private' do
+      let(:params) do
+        {
+          'env_var.name' => 'FOO',
+          'env_var.value' => 'bar',
+          'env_var.public' => false
+        }
+      end
+
+      before { post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers)) }
+
+      example { expect(last_response.status).to eq 201 }
+      example do
+        response = JSON.load(body)
+        expect(response).to include(
+          '@type' => 'env_var',
+          '@representation' => 'standard',
+          'name' => 'FOO',
+          'public' => false
+        )
+        expect(response).to include('@href', 'id')
+      end
     end
 
-    before { post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers)) }
+    describe 'public' do
+      let(:params) do
+        {
+          'env_var.name' => 'FOO',
+          'env_var.value' => 'bar',
+          'env_var.public' => true
+        }
+      end
 
-    example { expect(last_response.status).to eq 201 }
-    example do
-      response = JSON.load(body)
-      expect(response).to include(
-        '@type' => 'env_var',
-        '@representation' => 'standard',
-        'name' => 'FOO',
-        'value' => 'bar',
-        'public' => false
-      )
-      expect(response).to include('@href', 'id')
+      before { post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers)) }
+
+      example { expect(last_response.status).to eq 201 }
+      example do
+        response = JSON.load(body)
+        expect(response).to include(
+          '@type' => 'env_var',
+          '@representation' => 'standard',
+          'name' => 'FOO',
+          'value' => 'bar',
+          'public' => true
+        )
+        expect(response).to include('@href', 'id')
+      end
     end
   end
 end
