@@ -11,7 +11,7 @@ RSpec.feature "Enable a Repository", :js => true, :type => :feature do
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Authorization'=>'token', 'Content-Length'=>'0', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3', 'User-Agent'=>'Faraday v0.9.2'}).
       to_return(:status => 200, :body => "", :headers => {})
 
-    click_link('Enable')
+    find_link('Enable').trigger('click')
 
     expect(page).to have_text("Enabled #{repository.slug}")
   end
