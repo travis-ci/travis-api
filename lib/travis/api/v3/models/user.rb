@@ -9,7 +9,7 @@ module Travis::API::V3
     has_many :stars
     has_one  :subscription,  as:        :owner
 
-    serialize :github_oauth_token, Extensions::EncryptedColumn.new(disable: true)
+    serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
 
     def token
       tokens.first_or_create.token

@@ -30,6 +30,10 @@ module Travis::API::V3
       false
     end
 
+    def full_access_or_logged_in?
+      full_access? || logged_in?
+    end
+
     def visible_repositories(list)
       # naïve implementation, replaced with smart implementation in specific subclasses
       return list if full_access?
@@ -92,13 +96,14 @@ module Travis::API::V3
       private_repository_visible?(repository)
     end
 
-    def settings_visible?(settings)
-      repository_visible?(settings.repository)
-    end
-
     def private_repository_visible?(repository)
       false
     end
+
+    def repository_attr_visible?(record)
+      repository_visible?(record.repository)
+    end
+    [:settings_visible?, :env_vars_visible?, :env_var_visible?].each { |m| alias_method m, :repository_attr_visible? }
 
     def public_api?
       !Travis.config.private_api

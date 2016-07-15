@@ -5,8 +5,7 @@ module Travis::API::V3
     attr_reader :job
 
     def run
-      raise LoginRequired unless access_control.logged_in? or access_control.full_access?
-      raise NotFound      unless @job = find(:job)
+      @job = check_login_and_find(:job)
       raise WrongCredentials unless Travis.config.debug_tools_enabled or Travis::Features.active?(:debug_tools, job.repository)
       access_control.permissions(job).debug!
 

@@ -11,6 +11,7 @@ gem 'travis-settings', github: 'travis-ci/travis-settings'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs'
 
 gem 'travis-yaml',     github: 'travis-ci/travis-yaml'
+gem 'travis-settings', github: 'travis-ci/travis-settings'
 gem 'mustermann',      github: 'rkh/mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil

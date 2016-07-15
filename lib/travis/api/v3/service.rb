@@ -66,6 +66,11 @@ module Travis::API::V3
       object
     end
 
+    def check_login_and_find(*args)
+      raise LoginRequired unless access_control.full_access_or_logged_in?
+      find(*args) or raise NotFound 
+    end
+
     def not_found(actually_not_found = false, type = nil)
       type, actually_not_found = actually_not_found, false if actually_not_found.is_a? Symbol
       error = actually_not_found ? EntityMissing : NotFound

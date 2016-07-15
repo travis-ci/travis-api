@@ -8,8 +8,7 @@ module Travis::API::V3
     params "request", "user", :config, :message, :branch, :token
 
     def run
-      raise LoginRequired unless access_control.logged_in? or access_control.full_access?
-      raise NotFound      unless repository = find(:repository)
+      repository = check_login_and_find(:repository)
       access_control.permissions(repository).create_request!
 
       user      = find(:user) if access_control.full_access? and params_for? 'user'.freeze
@@ -23,11 +22,7 @@ module Travis::API::V3
     end
 
     def limit(repository)
-      if repository.settings.nil?
-        Travis.config.requests_create_api_limit || LIMIT
-      else
-        repository.settings["api_builds_rate_limit"] || Travis.config.requests_create_api_limit || LIMIT
-      end
+      repository.admin_settings.api_builds_rate_limit || Travis.config.requests_create_api_limit || LIMIT
     end
 
     def remaining_requests(repository)

@@ -66,7 +66,21 @@ module Travis::API::V3
     end
 
     def settings
-      @settings ||= JSON.load(super)
+      @settings ||= JSON.load(super || '{}'.freeze)
+    end
+
+    def user_settings
+      @user_settings ||= Models::UserSettings.new(settings)
+    end
+
+    def admin_settings
+      @admin_settings ||= Models::AdminSettings.new(settings)
+    end
+
+    def env_vars
+      @env_vars ||= Models::EnvVars.new.tap do |vars|
+        vars.load(settings.fetch('env_vars', []), repository_id: self.id)
+      end
     end
   end
 end

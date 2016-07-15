@@ -2,7 +2,7 @@ module Travis::API::V3
   class Models::SSLKey < Model
     belongs_to :repository
 
-    serialize :private_key, Travis::API::V3::Extensions::EncryptedColumn.new
+    serialize :private_key, Travis::Settings::EncryptedColumn.new
 
     def encoded_public_key
       key = build_key.public_key
