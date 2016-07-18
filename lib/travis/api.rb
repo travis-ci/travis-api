@@ -13,7 +13,7 @@ module Travis
     def conn
       @conn ||= Faraday.new(url: endpoint) do |faraday|
         faraday.request  :url_encoded
-        faraday.response :logger
+        faraday.response :logger if !Rails.env.test?
         faraday.adapter  Faraday.default_adapter
       end
     end
