@@ -64,11 +64,12 @@
 dl, dt, dd
   margin: 0
   padding: 0
-  line-height: 28px
+  position: relative
 
 dl
   width: 100%
   overflow: hidden
+  line-height: 28px
 
 dt
   float: left
@@ -78,6 +79,10 @@ dt
 dd
   float: left
   width: 75%
+  > .button_to
+    display: inline
+    position: absolute
+    right: 0
 
 .config-item
   ul
@@ -135,15 +140,19 @@ dd
   list-style: none
 
 .org-item
+  position: relative
   .org-name
-    width: 60%
-    display: inline-block
-    margin: 0
+    display: inline
+  > .button
+    display: inline
+    position: absolute
+    right: 0
 
 
 /* Button styles */
 
 .button
+  border-width: 0
   padding: 5px 10px
   border-radius: 4px
   background-color: lighten($cement-grey, 20)
@@ -152,7 +161,10 @@ dd
   &:hover
     color: $white
     background-color: $cement-grey
-
+  &:disabled
+    cursor: not-allowed
+    color: $white
+    background-color: lighten($cement-grey, 25)
 
 /* Flashes */
 

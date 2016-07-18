@@ -46,8 +46,8 @@
         Currently syncing
       <% else %>
         <%= user.synced_at ? user.synced_at : "Never" %>
-        <%= link_to 'Sync', sync_user_path(user), method: :post, class: 'button' %>
       <% end %>
+      <%= button_to 'Sync', sync_user_path(user), disabled: user.is_syncing?, class: 'button' %>
     </dd>
   </dl>
 </section>
