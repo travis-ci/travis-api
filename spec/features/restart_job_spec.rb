@@ -13,6 +13,6 @@ RSpec.feature "Restart a Job", :js => true, :type => :feature do
     find_link('Restart').trigger('click')
 
     expect(page).to have_text('Job successfully restarted.')
-    expect(page).to_not have_text('finished', 'canceled', 'errored')
+    %w(finished canceled errored).each{|state| expect(page).to_not have_text(state) }
   end
 end
