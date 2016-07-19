@@ -2,7 +2,7 @@ require 'travis/api'
 
 module Services
   module Build
-    class Restart
+    class Cancel
       include Travis::API
       attr_reader :build_id
 
