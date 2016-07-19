@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.feature "Cancel a Build", :js => true, :type => :feature do
-  let(:build) { create(:build, started_at: '2016-06-29 11:06:01', finished_at: nil) }
+  let!(:build) { create(:build, started_at: '2016-06-29 11:06:01', finished_at: nil) }
 
   scenario "User cancels a build" do
     visit "/build/#{build.id}"
