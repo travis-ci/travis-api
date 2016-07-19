@@ -13,6 +13,6 @@ RSpec.feature "Cancel a Build", :js => true, :type => :feature do
     find_link('Cancel').trigger('click')
 
     expect(page).to have_text('Build successfully canceled.')
-    expect(page).to have_text('State: canceled')
+    expect(page).to have_text('canceled', count: 2)
   end
 end
