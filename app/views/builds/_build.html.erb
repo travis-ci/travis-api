@@ -3,7 +3,14 @@
 
   <dl class="simple-info">
     <dt class="info-label">State:</dt>
-    <dd><%= build.state %></dd>
+    <dd>
+      <%= build.state %>
+      <% if build.finished_at && build.canceled_at == nil %>
+          <%= link_to "Cancel", cancel_build_path(build), :method => :post, class: "button" %>
+      <% else %>
+          <%= link_to "Restart", restart_build_path(build), :method => :post, class: "button" %>
+      <% end %>
+    </dd>
 
     <dt class="info-label">Previous State:</dt>
     <dd><%= build.previous_state %></dd>
