@@ -35,7 +35,7 @@ class UsersController < ApplicationController
     user_ids.split(',').each do |id|
       next unless user = User.find_by(id: id)
       logins << user.login
-      Services::User::Sync.new(user.id).call
+      SyncWorker.perform_async(user.id)
     end
     flash[:notice] = "Triggered sync with GitHub for #{logins.join(', ')}."
     redirect_to back_link
