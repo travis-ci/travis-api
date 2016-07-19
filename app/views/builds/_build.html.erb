@@ -6,9 +6,9 @@
     <dd>
       <%= build.state %>
       <% if build.finished_at && build.canceled_at == nil %>
-          <%= link_to "Cancel", cancel_build_path(build), :method => :post, class: "button" %>
+          <%= button_to "Cancel", cancel_build_path(build), class: "button" %>
       <% else %>
-          <%= link_to "Restart", restart_build_path(build), :method => :post, class: "button" %>
+          <%= button_to "Restart", restart_build_path(build), class: "button" %>
       <% end %>
     </dd>
 
