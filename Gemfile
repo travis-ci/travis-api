@@ -11,6 +11,11 @@ gem 'jquery-rails'
 # Use postgresql as the database for Active Record
 gem 'pg'
 
+# Server & Worker
+gem 'puma'
+gem 'sidekiq'
+gem 'foreman'
+
 # API stuffs
 gem 'faraday', '~> 0.9.0'
 
