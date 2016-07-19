@@ -43,6 +43,11 @@ module Travis::API::V3
       post :cancel, '/cancel'
       post :restart, '/restart'
       post :debug, '/debug'
+
+      resource :log do
+        route '/log'
+        get   :find
+      end
     end
 
     resource :lint do
