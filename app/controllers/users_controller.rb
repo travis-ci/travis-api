@@ -25,4 +25,19 @@ class UsersController < ApplicationController
 
     redirect_to @user
   end
+
+  def sync_all
+    back_link = params[:sync_all][:back_link]
+    user_ids = params[:sync_all][:user_ids]
+
+    logins = []
+
+    user_ids.split(',').each do |id|
+      next unless user = User.find_by(id: id)
+      logins << user.login
+      Services::User::Sync.new(user.id).call
+    end
+    flash[:notice] = "Triggered sync with GitHub for #{logins.join(', ')}."
+    redirect_to back_link
+  end
 end
