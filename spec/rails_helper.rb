@@ -3,6 +3,8 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
+abort("The DATABASE_URL is set. Remove it and try again.") if ENV['DATABASE_URL'].present?
+
 require 'spec_helper'
 require 'rspec/rails'
 require 'support/factory_girl'
