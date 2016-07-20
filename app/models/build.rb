@@ -9,4 +9,12 @@ class Build < ActiveRecord::Base
   has_many   :jobs,     as: :source
 
   serialize :config
+
+  scope :not_finished, -> { where(state: %w[started received queued created]).sort_by {|build|
+    %w[started received queued created].index(build.state.to_s) } }
+  scope :finished, -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
+
+  def not_finished?
+    %w[started received queued created].any? { |not_finished_states| state.include?(not_finished_states) }
+  end
 end
