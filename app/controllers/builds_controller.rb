@@ -23,7 +23,7 @@ class BuildsController < ApplicationController
   def restart
     @build = Build.find_by(id: params[:id])
 
-    response = Services::Build::Restart.new(@job.id).call
+    response = Services::Build::Restart.new(@build.id).call
 
     if response.success?
       flash[:notice] = "Build successfully restarted."
