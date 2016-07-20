@@ -16,8 +16,8 @@ Rails.application.routes.draw do
   post 'build/:id/restart' => 'builds#restart', as: :restart_build
 
   get 'job/:id' => 'jobs#show', as: :job
-  post 'job/:id/cancel' => 'job#cancel', as: :cancel_job
-  post 'job/:id/restart' => 'job#restart', as: :restart_job
+  post 'job/:id/cancel' => 'jobs#cancel', as: :cancel_job
+  post 'job/:id/restart' => 'jobs#restart', as: :restart_job
 
   get 'subscription/:id' => 'subscriptions#show', as: :subscription
   
