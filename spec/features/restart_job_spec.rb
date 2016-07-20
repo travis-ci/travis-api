@@ -10,7 +10,7 @@ RSpec.feature "Restart a Job", :js => true, :type => :feature do
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
       to_return(:status => 200, :body => '', :headers => {})
 
-    find_link('Restart').trigger('click')
+    click_button('Restart')
 
     expect(page).to have_text('Job successfully restarted.')
     %w(finished canceled errored).each{|state| expect(page).to_not have_text(state) }
