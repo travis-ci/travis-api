@@ -10,7 +10,7 @@ RSpec.feature "Cancel a Job", :js => true, :type => :feature do
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
       to_return(:status => 200, :body => '', :headers => {})
 
-    click_button('Cancel')
+    find_button('Cancel').trigger('click')
 
     expect(page).to have_text('Job successfully canceled.')
     expect(page).to_not have_text('started')
