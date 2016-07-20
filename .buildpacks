@@ -1,2 +1,3 @@
 https://github.com/heroku/heroku-buildpack-ruby.git
 https://github.com/drogus/last-commit-sha-buildpack.git
+https://dl.signalsciences.net/heroku/sigsci-buildpack-nginx.tgz
