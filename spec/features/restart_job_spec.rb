@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.feature "Restart a Job", :js => true, :type => :feature do
-  let!(:job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:09:09', config: {}) }
+  let!(:job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:09:09', state: 'failed', config: {}) }
 
   scenario "User restarts a job" do
     visit "/job/#{job.id}"
@@ -13,6 +13,6 @@ RSpec.feature "Restart a Job", :js => true, :type => :feature do
     click_button('Restart')
 
     expect(page).to have_text('Job successfully restarted.')
-    %w(finished canceled errored).each{|state| expect(page).to_not have_text(state) }
+    expect(page).to_not have_text('failed')
   end
 end
