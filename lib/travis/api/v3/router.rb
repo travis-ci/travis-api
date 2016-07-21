@@ -1,14 +1,14 @@
 
-require 'sentry-raven'
+# require 'sentry-raven'
 
 module Travis::API::V3
   class Router
     include Travis::API::V3
     attr_accessor :routes, :metrics_processor
 
-    Raven.configure do |config|
-      config.dsn = Travis.config.sentry.dsn
-    end
+    # Raven.configure do |config|
+    #   config.dsn = Travis.config.sentry.dsn
+    # end
 
     def initialize(routes = Routes)
       @routes            = routes
@@ -44,7 +44,7 @@ module Travis::API::V3
       response
     rescue Error => error
       Raven.capture do
-        1 / 0
+        # 1 / 0
         metrics.tick(:service)
 
         result   = Result.new(access_control, :error, error)
