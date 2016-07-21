@@ -12,7 +12,7 @@ class BuildsController < ApplicationController
     response = Services::Build::Cancel.new(@build.id).call
 
     if response.success?
-      flash[:notice] = "Build successfully canceled."
+      flash[:notice] = 'Build successfully canceled.'
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end
@@ -26,7 +26,7 @@ class BuildsController < ApplicationController
     response = Services::Build::Restart.new(@build.id).call
 
     if response.success?
-      flash[:notice] = "Build successfully restarted."
+      flash[:notice] = 'Build successfully restarted.'
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end

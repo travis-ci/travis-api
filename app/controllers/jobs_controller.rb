@@ -10,7 +10,7 @@ class JobsController < ApplicationController
     response = Services::Job::Cancel.new(@job.id).call
 
     if response.success?
-      flash[:notice] = "Job successfully canceled."
+      flash[:notice] = 'Job successfully canceled.'
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end
@@ -24,7 +24,7 @@ class JobsController < ApplicationController
     response = Services::Job::Restart.new(@job.id).call
 
     if response.success?
-      flash[:notice] = "Job successfully restarted."
+      flash[:notice] = 'Job successfully restarted.'
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end
