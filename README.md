@@ -19,8 +19,8 @@ Use Staging database in development:
 
 1. create a `.env` file in the root directory of travis-admin-v2
 2. add `export GITHUB_LOGIN=[your case-sensitive github login]` to this file
-3. find the current postgres_url for travis-staging database: `heroku config:get DATABASE_URL -a travis-pro-api-staging`
-4. add `export DATABASE_URL=[DATABASE_URL]` to the `.env` file
+3. find the current postgres_url for travis-staging database: `heroku config:get DATABASE_URL -a travis-pro-staging`
+4. add `export STAGING_DATABASE_URL=[postgres_url]` to the `.env` file
 5. run `source .env`
 6. IN THE SAME SHELL run the server: `rails s`
 7. Go to <http://localhost:3000>
