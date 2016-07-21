@@ -3,6 +3,10 @@ module Travis::API::V3
     include Travis::API::V3
     attr_accessor :routes, :metrics_processor
 
+    Raven.configure do |config|
+      config.dsn = Travis.config.sentry.dsn
+    end
+
     def initialize(routes = Routes)
       @routes            = routes
       @metrics_processor = Metrics::Processor.new
@@ -12,39 +16,44 @@ module Travis::API::V3
     end
 
     def call(env)
-      return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
-      metrics         = @metrics_processor.create
-      access_control  = AccessControl.new(env)
-      env_params      = params(env)
-      factory, params = routes.factory_for(env['REQUEST_METHOD'.freeze], env['PATH_INFO'.freeze])
+      Raven.capture do
+        # capture any exceptions which happen during execution of this block
+        1 / 0
+
+        return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
+        metrics         = @metrics_processor.create
+        access_control  = AccessControl.new(env)
+        env_params      = params(env)
+        factory, params = routes.factory_for(env['REQUEST_METHOD'.freeze], env['PATH_INFO'.freeze])
 
 
-      raise NotFound unless factory
-      metrics.name_after(factory)
+        raise NotFound unless factory
+        metrics.name_after(factory)
 
-      filtered = factory.filter_params(env_params)
-      service  = factory.new(access_control, filtered.merge(params), env['rack.input'.freeze])
+        filtered = factory.filter_params(env_params)
+        service  = factory.new(access_control, filtered.merge(params), env['rack.input'.freeze])
 
-      metrics.tick(:prepare)
-      result   = service.run
-      metrics.tick(:service)
+        metrics.tick(:prepare)
+        result   = service.run
+        metrics.tick(:service)
 
-      env_params.each_key { |key| result.ignored_param(key, reason: "not safelisted".freeze) unless filtered.include?(key) }
-      response = render(result, env_params, env)
+        env_params.each_key { |key| result.ignored_param(key, reason: "not safelisted".freeze) unless filtered.include?(key) }
+        response = render(result, env_params, env)
 
-      metrics.tick(:renderer)
-      metrics.success(status: response[0])
-      response
-    rescue Error => error
-      metrics.tick(:service)
+        metrics.tick(:renderer)
+        metrics.success(status: response[0])
+        response
+      rescue Error => error
+        metrics.tick(:service)
 
-      result   = Result.new(access_control, :error, error)
-      response = V3.response(result.render(env_params, env), {}, status: error.status)
+        result   = Result.new(access_control, :error, error)
+        response = V3.response(result.render(env_params, env), {}, status: error.status)
 
-      metrics.tick(:rendered)
-      metrics.failure(status: error.status)
+        metrics.tick(:rendered)
+        metrics.failure(status: error.status)
 
-      response
+        response
+      end
     end
 
     def render(result, env_params, env)
