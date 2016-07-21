@@ -1,4 +1,7 @@
 require 'webmock/rspec'
+require 'sidekiq/testing'
+
+Sidekiq::Testing.inline!
 
 RSpec.configure do |config|
   WebMock.disable_net_connect!(allow_localhost: true)
