@@ -5,7 +5,7 @@
     <dt class="info-label">State:</dt>
     <dd>
       <%= build.state %>
-      <% if build.finished_at && build.canceled_at == nil %>
+      <% if build.not_finished? %>
           <%= button_to "Cancel", cancel_build_path(build), class: "button" %>
       <% else %>
           <%= button_to "Restart", restart_build_path(build), class: "button" %>
