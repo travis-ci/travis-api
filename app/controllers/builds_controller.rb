@@ -9,7 +9,7 @@ class BuildsController < ApplicationController
   def cancel
     @build = Build.find_by(id: params[:id])
 
-    response = Services::Build::Cancel.new(@job.id).call
+    response = Services::Build::Cancel.new(@build.id).call
 
     if response.success?
       flash[:notice] = "Build successfully canceled."
