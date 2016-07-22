@@ -41,7 +41,14 @@
     </dd>
 
     <dt class="info-label">Last Sync:</dt>
-    <dd><%= user.synced_at ? user.synced_at : "Never" %></dd>
+    <dd>
+      <% if user.is_syncing? %>
+        Currently syncing
+      <% else %>
+        <%= user.synced_at ? user.synced_at : "Never" %>
+      <% end %>
+      <%= button_to 'Sync', sync_user_path(user), disabled: user.is_syncing?, class: 'button' %>
+    </dd>
   </dl>
 </section>
 

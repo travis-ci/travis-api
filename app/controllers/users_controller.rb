@@ -11,4 +11,33 @@ class UsersController < ApplicationController
     @active_broadcasts = Broadcast.active.for(@user)
     @inactive_broadcasts = Broadcast.inactive.for(@user)
   end
+
+  def sync
+    @user = User.find_by(id: params[:id])
+
+    response = Services::User::Sync.new(@user.id).call
+
+    if response.success?
+      flash[:notice] = "Triggered sync with GitHub."
+    else
+      flash[:error] = "Error: #{response.headers[:status]}"
+    end
+
+    redirect_to @user
+  end
+
+  def sync_all
+    back_link = params[:sync_all][:back_link]
+    user_ids = params[:sync_all][:user_ids]
+
+    logins = []
+
+    user_ids.split(',').each do |id|
+      next unless user = User.find_by(id: id)
+      logins << user.login
+      SyncWorker.perform_async(user.id)
+    end
+    flash[:notice] = "Triggered sync with GitHub for #{logins.join(', ')}."
+    redirect_to back_link
+  end
 end
