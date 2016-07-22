@@ -11,3 +11,6 @@
 
 # Ignore ENVs
 .env
+
+# Travis.yml
+config/travis.yml

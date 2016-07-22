@@ -38,4 +38,15 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  Travis::Config.class_eval do
+    define admins: []
+  end
+
+  configuration = Travis::Config.load
+
+  config.middleware.use Travis::SSO,
+    mode: :session,
+    authorized?: -> u { configuration.admins.include? u['login'] },
+    endpoint: configuration.api_endpoint
 end
