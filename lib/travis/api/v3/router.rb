@@ -43,18 +43,16 @@ module Travis::API::V3
       metrics.success(status: response[0])
       response
     rescue Error => error
-      Raven.capture do
-        # 1 / 0
-        metrics.tick(:service)
+      Raven.new(error)
+      metrics.tick(:service)
 
-        result   = Result.new(access_control, :error, error)
-        response = V3.response(result.render(env_params, env), {}, status: error.status)
+      result   = Result.new(access_control, :error, error)
+      response = V3.response(result.render(env_params, env), {}, status: error.status)
 
-        metrics.tick(:rendered)
-        metrics.failure(status: error.status)
+      metrics.tick(:rendered)
+      metrics.failure(status: error.status)
 
-        response
-      end
+      response
     end
 
     def render(result, env_params, env)
