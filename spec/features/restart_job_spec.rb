@@ -6,7 +6,7 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
   scenario 'User restarts a job' do
     visit "/job/#{job.id}"
 
-    WebMock.stub_request(:post, "https://api.travis-ci.com/job/#{job.id}/restart").
+    WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
       to_return(:status => 200, :body => '', :headers => {})
 
