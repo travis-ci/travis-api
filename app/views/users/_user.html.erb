@@ -1,6 +1,10 @@
 <section class="info-block">
   <h2 class="info-header">Basic Information</h2>
 
+  <% if user.travis_admin? %>
+    <p>This user has admin access.</p>
+  <% end %>
+
   <dl class="simple-info">
     <dt class="info-label">Name:</dt>
     <dd><%= user.name %></dd>
