@@ -1,14 +1,9 @@
-
-# require 'sentry-raven'
+# require 'raven'
 
 module Travis::API::V3
   class Router
     include Travis::API::V3
     attr_accessor :routes, :metrics_processor
-
-    # Raven.configure do |config|
-    #   config.dsn = Travis.config.sentry.dsn
-    # end
 
     def initialize(routes = Routes)
       @routes            = routes
@@ -24,7 +19,6 @@ module Travis::API::V3
       access_control  = AccessControl.new(env)
       env_params      = params(env)
       factory, params = routes.factory_for(env['REQUEST_METHOD'.freeze], env['PATH_INFO'.freeze])
-
 
       raise NotFound unless factory
       metrics.name_after(factory)
@@ -43,18 +37,16 @@ module Travis::API::V3
       metrics.success(status: response[0])
       response
     rescue Error => error
-      Raven.capture do
-        # 1 / 0
-        metrics.tick(:service)
+      Raven.capture_exception(error)
+      metrics.tick(:service)
 
-        result   = Result.new(access_control, :error, error)
-        response = V3.response(result.render(env_params, env), {}, status: error.status)
+      result   = Result.new(access_control, :error, error)
+      response = V3.response(result.render(env_params, env), {}, status: error.status)
 
-        metrics.tick(:rendered)
-        metrics.failure(status: error.status)
+      metrics.tick(:rendered)
+      metrics.failure(status: error.status)
 
-        response
-      end
+      response
     end
 
     def render(result, env_params, env)
