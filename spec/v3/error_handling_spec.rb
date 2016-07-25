@@ -13,17 +13,30 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
 end
 
 describe Travis::API::V3::Router, set_app: true do
+  class FixRaven < Struct.new(:app)
+    def call(env)
+      requested_at = env['requested_at']
+      env['requested_at'] = env['requested_at'].to_s if env.key?('requested_at')
+      app.call(env)
+    rescue Exception => e
+      env['requested_at'] = requested_at
+      raise e
+    end
+  end
+
   class TestError < StandardError
   end
 
   before do
+    set_app Raven::Rack.new(FixRaven.new(app))
     Travis.config.sentry.dsn = "test"
+    Travis::Api::App.setup_monitoring
   end
 
   it 'Sentry captures router errors' do
     error = TestError.new('Konstantin broke all the thingz!')
     Travis::API::V3::Models::Repository.any_instance.stubs(:service).raises(error)
-    Raven.expects(:capture).with do |event|
+    Raven.expects(:send_event).with do |event|
       event.message == "#{error.class}: #{error.message}"
     end
     expect { get "/v3/repo/1" }.to raise_error(TestError)
