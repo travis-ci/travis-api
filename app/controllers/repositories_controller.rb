@@ -58,4 +58,7 @@ class RepositoriesController < ApplicationController
   def feature_params
     params.require(:features).permit(Features.for(@repository).keys)
   end
+
+  def settings
+  end
 end

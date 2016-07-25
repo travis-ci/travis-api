@@ -1,0 +1,21 @@
+<section class="info-block">
+  <h2 class="info-header">Settings</h2>
+
+  <%= form_for :settings, url: repository_settings_url do |f| %>
+    <% repository.binary_settings.each do |key| %>
+      <p>
+        <%= f.check_box key, checked: settings[key] %>
+        <%= f.label key %>
+      </p>
+    <% end %>
+
+    <% repository.integer_settings.each do |key| %>
+      <p>
+        <%= f.text_field key, value: settings[key] %>
+        <%= f.label key %>
+      </p>
+    <% end %>
+
+    <%= f.submit('Update', class: 'button') %>
+  <% end %>
+</section>
