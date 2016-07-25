@@ -31,7 +31,7 @@ module Travis::API::V3
       ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => [{type: 'cron'.freeze, payload: JSON.dump(payload), credentials: {}}])
       true
     rescue => e
-      puts e.message, e.backtrace
+      Raven.capture_exception(e)
     end
   end
 end

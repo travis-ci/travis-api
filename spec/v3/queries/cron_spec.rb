@@ -22,4 +22,20 @@ describe Travis::API::V3::Queries::Crons do
     end
   end
 
+  #TODO - mock any instance of cron branch (line 15) - cron branch re
+  # Travis::API::V3::Models::Cron.any_instance.stubs(:branch).raises(error)
+
+  # describe Travis::API::V3::Router, set_app: true do
+  #
+  #   it 'Sentry captures router errors' do
+  #     error = StandardError.new('Konstantin broke all the thingz!')
+  #     Travis::API::V3::Services::Repository::Find.any_instance.stubs(:run!).raises(error)
+  #     Raven.expects(:capture_exception).with do |event|
+  #       event.message == "#{error.class}: #{error.message}"
+  #     end
+  #     expect { get "/v3/repo/1" }.to raise_error(error)
+  #   end
+  # end
+
+
 end

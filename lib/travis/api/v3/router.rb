@@ -37,7 +37,6 @@ module Travis::API::V3
       metrics.success(status: response[0])
       response
     rescue Error => error
-      Raven.capture_exception(error)
       metrics.tick(:service)
 
       result   = Result.new(access_control, :error, error)
