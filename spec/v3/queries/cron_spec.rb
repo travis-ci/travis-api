@@ -33,7 +33,8 @@ describe Travis::API::V3::Queries::Crons do
 
     it 'enques error into a thread' do
       error = StandardError.new('Konstantin broke all the thingz!')
-      Travis::API::V3::Models::Cron.any_instance.stubs(:branch).raises(error)
+      Travis::API::V3::Services::Crons::ForRepository.any_instance.stubs(:run!).raises(error)
+
       Raven.expects(:send_event).with do |event|
         event.message == "#{error.class}: #{error.message}"
       end
