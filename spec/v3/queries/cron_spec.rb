@@ -26,9 +26,7 @@ describe Travis::API::V3::Queries::Crons do
       cron = Travis::API::V3::Models::Cron.create(branch_id: existing_branch.id, interval: 'daily', disable_by_build: false)
       error = StandardError.new('Konstantin broke all the thingz!')
       Travis::API::V3::Models::Cron.any_instance.stubs(:branch).raises(error)
-      Raven.expects(:capture_exception).with do |event|
-        event.message == "#{error.class}: #{error.message}"
-      end
+      Raven.expects(:capture_exception).with(error)
       query.start_all
     end
   end
