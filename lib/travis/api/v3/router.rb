@@ -1,5 +1,3 @@
-# require 'raven'
-
 module Travis::API::V3
   class Router
     include Travis::API::V3
