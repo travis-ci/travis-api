@@ -37,6 +37,10 @@ class Repository < ApplicationRecord
     }
   end
 
+  def settings
+    @settings ||= super || {}
+  end
+
   def slug
     @slug ||= "#{owner_name}/#{name}"
   end
