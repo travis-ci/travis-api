@@ -23,6 +23,7 @@ describe Travis::API::V3::Queries::Crons do
     end
 
     it 'enques error into a thread' do
+      cron = Travis::API::V3::Models::Cron.create(branch_id: existing_branch.id, interval: 'daily', disable_by_build: false)
       error = StandardError.new('Konstantin broke all the thingz!')
       Travis::API::V3::Models::Cron.any_instance.stubs(:branch).raises(error)
       Raven.expects(:capture_exception).with do |event|
