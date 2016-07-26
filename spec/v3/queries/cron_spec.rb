@@ -22,19 +22,10 @@ describe Travis::API::V3::Queries::Crons do
       expect(query.start_all).to_not include(cron)
       expect(Travis::API::V3::Models::Cron.where(id: cron.id).length).to equal(0)
     end
-  end
-
-  describe 'Exception', set_app: true do
-    before do
-      set_app Raven::Rack.new(app)
-      Travis.config.sentry.dsn = "test"
-      Travis::Api::App.setup_monitoring
-    end
-
+    
     it 'enques error into a thread' do
       error = StandardError.new('Konstantin broke all the thingz!')
-      Travis::API::V3::Services::Crons::ForRepository.any_instance.stubs(:run!).raises(error)
-
+      Travis::API::V3::Models::Cron.any_instance.stubs(:branch).raises(error)
       Raven.expects(:send_event).with do |event|
         event.message == "#{error.class}: #{error.message}"
       end
