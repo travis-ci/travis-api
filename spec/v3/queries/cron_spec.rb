@@ -1,3 +1,5 @@
+require 'sentry-raven'
+
 describe Travis::API::V3::Queries::Crons do
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
@@ -22,20 +24,20 @@ describe Travis::API::V3::Queries::Crons do
     end
   end
 
-  #TODO - mock any instance of cron branch (line 15) - cron branch re
-  # Travis::API::V3::Models::Cron.any_instance.stubs(:branch).raises(error)
+  describe 'Exception', set_app: true do
+    before do
+      set_app Raven::Rack.new(app)
+      Travis.config.sentry.dsn = "test"
+      Travis::Api::App.setup_monitoring
+    end
 
-  # describe Travis::API::V3::Router, set_app: true do
-  #
-  #   it 'Sentry captures router errors' do
-  #     error = StandardError.new('Konstantin broke all the thingz!')
-  #     Travis::API::V3::Services::Repository::Find.any_instance.stubs(:run!).raises(error)
-  #     Raven.expects(:capture_exception).with do |event|
-  #       event.message == "#{error.class}: #{error.message}"
-  #     end
-  #     expect { get "/v3/repo/1" }.to raise_error(error)
-  #   end
-  # end
-
-
+    it 'enques error into a thread' do
+      error = StandardError.new('Konstantin broke all the thingz!')
+      Travis::API::V3::Models::Cron.any_instance.stubs(:branch).raises(error)
+      Raven.expects(:send_event).with do |event|
+        event.message == "#{error.class}: #{error.message}"
+      end
+      expect { get "/repo/#{repo.id}/crons" }.to raise_error(error)
+    end
+  end
 end
