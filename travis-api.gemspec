@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rack-contrib',           '~> 1.1'
   s.add_dependency 'memcachier'
   s.add_dependency 'useragent'
+  s.add_dependency 'tool'
 
   # from travis-core gemspec
 
@@ -36,4 +37,3 @@ Gem::Specification.new do |s|
   s.add_dependency 'multi_json'
   s.add_dependency 'google-api-client', '~> 0.9.4'
 end
-
