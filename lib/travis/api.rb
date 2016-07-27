@@ -20,6 +20,16 @@ module Travis
         req.headers['Travis-API-Version'] = '3'
       end
     end
+
+    def patch(url, type, body = {})
+      conn.patch do |req|
+        req.url url
+        req.headers['Content-Type'] = 'application/json'
+        req.headers['Authorization'] = "token #{token}"
+        req.headers['Travis-API-Version'] = '3'
+        req.body = JSON.dump({"@type": type}.merge(body))
+      end
+    end
   end
 end
 

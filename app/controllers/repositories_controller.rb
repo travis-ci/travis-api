@@ -46,6 +46,8 @@ class RepositoriesController < ApplicationController
     @inactive_broadcasts = Broadcast.inactive.for(@repository).includes(:recipient)
 
     @features = Features.for(@repository)
+
+    @settings = Setting.new(@repository).get
   end
 
   private
@@ -57,8 +59,5 @@ class RepositoriesController < ApplicationController
 
   def feature_params
     params.require(:features).permit(Features.for(@repository).keys)
-  end
-
-  def settings
   end
 end
