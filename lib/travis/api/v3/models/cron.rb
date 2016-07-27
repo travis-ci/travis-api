@@ -13,7 +13,7 @@ module Travis::API::V3
       elsif last_cron_build_date >= planned_time(LastBuild)
         planned_time(ThisBuild)
       else
-        Time.now
+        Time.nowt
       end
     end
 
