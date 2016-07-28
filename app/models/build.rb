@@ -15,6 +15,6 @@ class Build < ActiveRecord::Base
   scope :finished, -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
 
   def not_finished?
-    %w[started received queued created].any? { |not_finished_states| state.include?(not_finished_states) }
+    %w[started received queued created].include? state
   end
 end
