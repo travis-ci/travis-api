@@ -101,29 +101,6 @@ PATH
       useragent
       virtus (~> 1.0.0)
 
-PATH
-  remote: vendor/travis-core
-  specs:
-    travis-core (0.0.1)
-      activerecord (~> 3.2.19)
-      coder (~> 0.4.0)
-      data_migrations (~> 0.0.1)
-      gh
-      google-api-client (~> 0.9.4)
-      hashr
-      metriks (~> 0.9.7)
-      multi_json
-      pusher (~> 0.14.0)
-      railties (~> 3.2.19)
-      rake
-      redis (~> 3.0)
-      rollout (~> 1.1.0)
-      s3 (~> 0.3)
-      simple_states (~> 1.0.0)
-      thor
-      travis-config (~> 0.1.0)
-      virtus (~> 1.0.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -172,9 +149,6 @@ GEM
     customerio (1.0.0)
       multi_json (~> 1.0)
     dalli (2.7.6)
-    data_migrations (0.0.1)
-      activerecord
-      rake
     database_cleaner (0.8.0)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
@@ -412,7 +386,6 @@ DEPENDENCIES
   travis-amqp!
   travis-api!
   travis-config (~> 0.1.0)
-  travis-core!
   travis-migrations!
   travis-settings!
   travis-sidekiqs!

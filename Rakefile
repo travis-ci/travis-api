@@ -18,7 +18,7 @@ end
 #     t.pattern = 'spec_core/**{,/*/**}/*_spec.rb'
 #   end
 #
-#   task :default => [:spec, :spec_core]
+#   task :default => [:spec]
 # rescue LoadError => e
 #   puts e.inspect
 # end
@@ -27,17 +27,7 @@ end
 namespace :spec do
   desc 'Run all specs'
   task :all do
-    sh 'bundle exec rspec -r spec_helper spec spec_core'
-  end
-
-  desc 'Run api specs'
-  task :api do
     sh 'bundle exec rspec -r spec_helper spec'
-  end
-
-  desc 'Run core specs'
-  task :core do
-    sh 'bundle exec rspec -r spec_helper spec_core'
   end
 end
 

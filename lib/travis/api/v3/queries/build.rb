@@ -12,26 +12,19 @@ module Travis::API::V3
 
     def cancel(user)
       raise BuildNotCancelable if %w(passed failed canceled errored).include? find.state
+
       payload = { id: id, user_id: user.id, source: 'api' }
-      if Travis::Features.enabled_for_all?(:enqueue_to_hub) || Travis::Features.owner_active?(:enqueue_to_hub, find.repository.owner)
-        service = Travis::Enqueue::Services::CancelModel.new(user, { build_id: id })
-        service.push("build:cancel", payload)
-      else
-        perform_async(:build_cancellation, payload)
-      end
+      service = Travis::Enqueue::Services::CancelModel.new(user, { build_id: id })
+      service.push("build:cancel", payload)
       payload
     end
 
     def restart(user)
       raise BuildAlreadyRunning if %w(received queued started).include? find.state
-      if Travis::Features.enabled_for_all?(:enqueue_to_hub) || Travis::Features.owner_active?(:enqueue_to_hub, find.repository.owner)
-        service = Travis::Enqueue::Services::RestartModel.new(user, { build_id: id })
-        payload = { id: id, user_id: user.id }
-        service.push("build:restart", payload)
-      else
-        payload = { id: id, user_id: user.id, source: 'api' }
-        perform_async(:build_restart, payload)
-      end
+
+      service = Travis::Enqueue::Services::RestartModel.new(user, { build_id: id })
+      payload = { id: id, user_id: user.id }
+      service.push("build:restart", payload)
       payload
     end
   end
