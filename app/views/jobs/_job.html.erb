@@ -3,7 +3,14 @@
 
   <dl class="simple-info">
     <dt class="info-label">State:</dt>
-    <dd><%= job.state %></dd>
+    <dd>
+      <%= job.state %>
+      <% if job.not_finished? %>
+          <%= button_to "Cancel", cancel_job_path(job), class: "button" %>
+      <% else %>
+          <%= button_to "Restart", restart_job_path(job), class: "button" %>
+      <% end %>
+    </dd>
 
     <dt class="info-label">Repository:</dt>
     <dd><%= link_to describe(job.repository), job.repository %></dd>

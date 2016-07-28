@@ -17,6 +17,10 @@ class Job < ActiveRecord::Base
                                      %w[started received queued created].index(job.state.to_s) } }
   scope :finished, -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
 
+  def not_finished?
+    %w[started received queued created].include? state
+  end
+
 
   def duration
     (started_at && finished_at) ? (finished_at - started_at) : nil

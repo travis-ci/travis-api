@@ -5,4 +5,32 @@ class BuildsController < ApplicationController
 
     @jobs = @build.jobs.includes(:repository)
   end
+
+  def cancel
+    @build = Build.find_by(id: params[:id])
+
+    response = Services::Build::Cancel.new(@build.id).call
+
+    if response.success?
+      flash[:notice] = 'Build successfully canceled.'
+    else
+      flash[:error] = "Error: #{response.headers[:status]}"
+    end
+
+    redirect_to @build
+  end
+
+  def restart
+    @build = Build.find_by(id: params[:id])
+
+    response = Services::Build::Restart.new(@build.id).call
+
+    if response.success?
+      flash[:notice] = 'Build successfully restarted.'
+    else
+      flash[:error] = "Error: #{response.headers[:status]}"
+    end
+
+    redirect_to @build
+  end
 end

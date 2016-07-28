@@ -12,8 +12,16 @@ Rails.application.routes.draw do
   post 'repository/:id/disable' => 'repositories#disable', as: :disable_repository
 
   get 'request/:id' => 'requests#show', as: :request
+
   get 'build/:id' => 'builds#show', as: :build
+  post 'build/:id/cancel' => 'builds#cancel', as: :cancel_build
+  post 'build/:id/restart' => 'builds#restart', as: :restart_build
+
   get 'job/:id' => 'jobs#show', as: :job
+  post 'job/:id/cancel' => 'jobs#cancel', as: :cancel_job
+  post 'job/:id/restart' => 'jobs#restart', as: :restart_job
+
   get 'subscription/:id' => 'subscriptions#show', as: :subscription
+
   get 'broadcast' => 'broadcasts#index', as: :broadcast
 end
