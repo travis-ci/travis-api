@@ -4,8 +4,8 @@ config/nginx.conf
 config/skylight.yml
 
 tmp/
-log/
-logs/
+/log/
+/logs/
 !vendor/travis-core/lib/travis/logs/
 !vendor/travis-core/lib/travis/model/log/
 
