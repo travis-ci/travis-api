@@ -1,3 +1,5 @@
+require 'sentry-raven'
+
 describe Travis::API::V3::Queries::Crons do
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
@@ -12,7 +14,6 @@ describe Travis::API::V3::Queries::Crons do
     it "starts crons on existing branches" do
       cron = Travis::API::V3::Models::Cron.create(branch_id: existing_branch.id, interval: 'daily', disable_by_build: false)
       expect(query.start_all).to include(cron)
-
     end
 
     it "delete crons on branches not existing on GitHub" do
@@ -20,6 +21,13 @@ describe Travis::API::V3::Queries::Crons do
       expect(query.start_all).to_not include(cron)
       expect(Travis::API::V3::Models::Cron.where(id: cron.id).length).to equal(0)
     end
-  end
 
+    it 'enques error into a thread' do
+      cron = Travis::API::V3::Models::Cron.create(branch_id: existing_branch.id, interval: 'daily', disable_by_build: false)
+      error = StandardError.new('Konstantin broke all the thingz!')
+      Travis::API::V3::Models::Cron.any_instance.stubs(:branch).raises(error)
+      Raven.expects(:capture_exception).with(error)
+      query.start_all
+    end
+  end
 end

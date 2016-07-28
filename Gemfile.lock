@@ -96,6 +96,7 @@ PATH
       simple_states (~> 1.0.0)
       sinatra (~> 1.3)
       sinatra-contrib (~> 1.3)
+      tool
       travis-support
       useragent
       virtus (~> 1.0.0)

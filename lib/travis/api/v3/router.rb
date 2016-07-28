@@ -18,7 +18,6 @@ module Travis::API::V3
       env_params      = params(env)
       factory, params = routes.factory_for(env['REQUEST_METHOD'.freeze], env['PATH_INFO'.freeze])
 
-
       raise NotFound unless factory
       metrics.name_after(factory)
 
