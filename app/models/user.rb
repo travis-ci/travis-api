@@ -7,4 +7,10 @@ class User < ActiveRecord::Base
   has_many :permitted_repositories, through: :permissions, source: :repository
   has_many :broadcasts,             as:      :recipient
   has_one  :subscription,           as:      :owner
+
+  def travis_admin?
+    travis_config = Travis::Config.load
+    admins = travis_config.admins
+    admins.respond_to?(:include?) && admins.include?(login)
+  end
 end

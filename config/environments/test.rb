@@ -1,7 +1,5 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  ENV['ADMIN_NAME'] = 'admin'
-  ENV['ADMIN_PASSWORD'] = 'password'
   ENV['TRAVIS_API_ENDPOINT'] = 'https://api-fake.travis-ci.com'
 
   # The test environment is used exclusively to run your application's
