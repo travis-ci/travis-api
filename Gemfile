@@ -19,13 +19,12 @@ gem 'foreman'
 # API stuffs
 gem 'faraday', '~> 0.9.0'
 
-# Travis Migrations for the db
+# Travis Gems
 gem 'travis-migrations', github: 'travis-ci/travis-migrations'
 gem 'travis-pro-migrations',  git: "https://fba4602ab138c5b2c8d48ae32a67aedeefc5e939:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git", require: 'travis/pro/migrations'
-
-# Travis SSO
 gem 'travis-sso', github:'travis-ci/travis-sso'
 gem 'travis-config', github:'travis-ci/travis-config'
+gem 'travis-topaz',      github: 'travis-ci/travis-topaz-gem', ref: 'c0002fc2a'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
