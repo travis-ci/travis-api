@@ -30,10 +30,6 @@ class Travis::Api::App
         Metriks.meter("api.request.cancel_job").mark
 
         service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
-        repository_owner = service.target.repository.owner
-        if !Travis::Features.enabled_for_all?(:enqueue_to_hub) && !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
-          service = self.service(:cancel_job, params.merge(source: 'api'))
-        end
 
         if !service.authorized?
           json = { error: {
@@ -54,11 +50,7 @@ class Travis::Api::App
           respond_with json
         else
           payload = { id: params[:id], user_id: current_user.id, source: 'api' }
-          if service.respond_to?(:push)
-            service.push("job:cancel", payload)
-          else
-            Travis::Sidekiq::JobCancellation.perform_async(payload)
-          end
+          service.push("job:cancel", payload)
 
           Metriks.meter("api.request.cancel_job.success").mark
           status 204
@@ -69,23 +61,15 @@ class Travis::Api::App
         Metriks.meter("api.request.restart_job").mark
 
         service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
-        repository_owner = service.target.repository.owner
-        if !Travis::Features.enabled_for_all?(:enqueue_to_hub) && !Travis::Features.owner_active?(:enqueue_to_hub, repository_owner)
-          service = self.service(:reset_model, job_id: params[:id])
-        end
 
         result = if !service.accept?
           status 400
           false
-        elsif service.respond_to?(:push)
+        else
           payload = {id: params[:id], user_id: current_user.id}
           service.push("job:restart", payload)
           status 202
           true
-        else
-          Travis::Sidekiq::JobRestart.perform_async(id: params[:id], user_id: current_user.id)
-          status 202
-          result = true
         end
 
         respond_with(result: result, flash: service.messages)

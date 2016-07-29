@@ -28,23 +28,9 @@ describe 'Requests', set_app: true do
   end
 
   describe 'POST /requests' do
-    it 'triggers a build request using Core code' do
+    it 'triggers a build request using Hub' do
       response = post "/requests", { build_id: build.id }, headers
-      response.status.should be(200)
-    end
-
-    describe 'enqueues for Hub' do
-      it 'triggers a build request' do
-        payload = { build_id: build.id, user_id: repo.owner.id }
-        response = post "/requests", payload, headers
-        response.status.should be(200)
-      end
-
-      it 'triggers a job request' do
-        payload = { job_id: build.matrix.first.id, user_id: repo.owner.id }
-        response = post "/requests", payload, headers
-        response.status.should be(200)
-      end
+      response.status.should be(202)
     end
   end
 end

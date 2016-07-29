@@ -3,7 +3,6 @@ gemspec
 
 gem 's3',              github: 'travis-ci/s3'
 
-gem 'travis-core',     path:   'vendor/travis-core'
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-amqp',     github: 'travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
@@ -11,7 +10,6 @@ gem 'travis-settings', github: 'travis-ci/travis-settings'
 gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs'
 
 gem 'travis-yaml',     github: 'travis-ci/travis-yaml'
-gem 'travis-settings', github: 'travis-ci/travis-settings'
 gem 'mustermann',      github: 'rkh/mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil

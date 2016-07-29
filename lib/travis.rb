@@ -1,7 +1,6 @@
 require 'pusher'
 require 'travis/support'
 require 'travis/support/database'
-require 'travis/version'
 require 'travis/redis_pool'
 require 'travis/errors'
 
@@ -19,7 +18,6 @@ module Travis
   require 'travis/model'
   require 'travis/task'
   require 'travis/event'
-  require 'travis/addons'
   require 'travis/api/serialize'
   require 'travis/config/defaults'
   require 'travis/features'
@@ -43,7 +41,6 @@ module Travis
       Travis.logger.info('Setting up Travis::Core')
 
       Github.setup
-      Addons.register
       Services.register
       Github::Services.register
     end
