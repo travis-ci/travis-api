@@ -273,6 +273,7 @@ DEPENDENCIES
   puma
   rails (= 4.2.6)
   rake
+  redis
   rspec-rails (~> 3.4)
   sass-rails (~> 5.0)
   sidekiq
