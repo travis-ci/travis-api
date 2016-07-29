@@ -26,6 +26,7 @@ gem 'travis-pro-migrations',  git: "https://fba4602ab138c5b2c8d48ae32a67aedeefc5
 gem 'travis-sso', github:'travis-ci/travis-sso'
 gem 'travis-config', github:'travis-ci/travis-config'
 gem 'travis-topaz',      github: 'travis-ci/travis-topaz-gem', ref: 'c0002fc2a'
+gem 'travis-support',    github: 'travis-ci/travis-support'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
