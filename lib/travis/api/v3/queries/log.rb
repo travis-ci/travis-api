@@ -6,9 +6,7 @@ module Travis::API::V3
       #if the log exists and has not bee archived yet, then collect the log_parts and return the contents
       unless log.nil? || !log.archived_at.nil?
         log_parts = Models::Log::Part.where(log_id: log.id)
-        contents = log_parts.each do |log_part|
-          log_part.content
-        end
+        log_parts.each { |log_part| contents << log_part.content }
         contents
       else
         #go look in S3
