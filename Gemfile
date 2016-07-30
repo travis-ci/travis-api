@@ -28,6 +28,8 @@ gem 'travis-config', github:'travis-ci/travis-config'
 gem 'travis-topaz',      github: 'travis-ci/travis-topaz-gem', ref: 'c0002fc2a'
 gem 'travis-support',    github: 'travis-ci/travis-support'
 
+gem 'metriks'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 

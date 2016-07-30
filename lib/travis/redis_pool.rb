@@ -1,5 +1,6 @@
 require 'connection_pool'
 require 'redis'
+require 'metriks'
 
 module Travis
   class RedisPool
@@ -14,11 +15,14 @@ module Travis
       end
     end
 
-    def method_missing(name, *args, &block)
-      pool.with do |redis|
-
+    def method_missing(name, *args)
+      timer = Metriks.timer('redis.pool.wait').time
+      @pool.with do |redis|
+        timer.stop
         if redis.respond_to?(name)
-          redis.send(name, *args, &block)
+          Metriks.timer('redis.operations').time do
+            redis.send(name, *args)
+          end
         else
           super
         end
