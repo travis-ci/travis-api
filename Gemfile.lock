@@ -29,10 +29,9 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-topaz-gem.git
-  revision: c0002fc2a847eddaec63c8dea9d9ea8eddcdcb24
-  ref: c0002fc2a
+  revision: 0bd248089607583cc4dfe82cb4b84fd3fe1a84bd
   specs:
-    travis-topaz (0.0.1)
+    travis-topaz (0.0.2)
       faraday
       thread
 
@@ -247,6 +246,7 @@ GEM
     thread (0.2.2)
     thread_safe (0.3.5)
     tilt (2.0.5)
+    timecop (0.8.1)
     turbolinks (5.0.0)
       turbolinks-source (~> 5)
     turbolinks-source (5.0.0)
@@ -295,6 +295,7 @@ DEPENDENCIES
   rspec-rails (~> 3.4)
   sass-rails (~> 5.0)
   sidekiq
+  timecop
   travis-config!
   travis-migrations!
   travis-pro-migrations!
