@@ -1,7 +1,3 @@
-require 'connection_pool'
-require 'redis'
-require 'metriks'
-
 module Travis
   class RedisPool
     attr_reader :pool

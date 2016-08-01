@@ -1,6 +1,3 @@
-require 'travis/config'
-require 'travis/redis_pool'
-
 module Travis
     def redis
       @redis ||= Travis::RedisPool.new(Travis::Config.load.redis.to_h)
