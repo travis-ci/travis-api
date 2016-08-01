@@ -3,11 +3,13 @@ class Setting
 
   BINARY = %w[builds_only_with_travis_yml build_pushes build_pull_requests]
   INTEGER = %w[maximum_number_of_builds]
-
-  attr_reader :repository
+  PERMITTED = BINARY.concat(INTEGER)
 
   def initialize(repository)
-    @repository = repository
+    defaults.merge(repository.settings).each do |setting_name, setting_value|
+      self.class.send(:attr_accessor, setting_name)
+      instance_variable_set("@#{setting_name}", setting_value)
+    end
   end
 
   def defaults
@@ -17,9 +19,5 @@ class Setting
       "build_pull_requests" => true,
       "maximum_number_of_builds" => 0
     }
-  end
-
-  def get
-    defaults.merge(@repository.settings)
   end
 end

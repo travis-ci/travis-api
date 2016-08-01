@@ -4,14 +4,14 @@
   <%= form_for :setting, url: {controller: "settings", action: "update"} do |f| %>
     <% Setting::BINARY.each do |key| %>
       <p>
-        <%= f.check_box key, checked: settings[key] %>
+        <%= f.check_box key, checked: settings.send(key) %>
         <%= f.label key %>
       </p>
     <% end %>
 
     <% Setting::INTEGER.each do |key| %>
       <p>
-        <%= f.text_field key, value: settings[key] %>
+        <%= f.text_field key, value: settings.send(key) %>
         <%= f.label key %>
       </p>
     <% end %>
