@@ -1,4 +1,4 @@
-class Setting
+class Settings
   include ActiveModel::Model
 
   BINARY = %w[builds_only_with_travis_yml build_pushes build_pull_requests]

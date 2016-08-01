@@ -1,7 +1,7 @@
 require 'travis/api'
 
 module Services
-  module Setting
+  module Settings
     class Update
       include Travis::API
       attr_reader :repository_id, :settings

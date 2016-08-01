@@ -2,7 +2,7 @@ class SettingsController < ApplicationController
   def update
     @repository = Repository.find_by(id: params[:id])
 
-    response = Services::Setting::Update.new(@repository.id, setting_params).call
+    response = Services::Settings::Update.new(@repository.id, setting_params).call
 
     if response.success?
       flash[:notice] = "Updates settings for #{@repository.slug}"
@@ -15,6 +15,6 @@ class SettingsController < ApplicationController
 
   private
     def setting_params
-      params.require(:setting).permit(*Setting::PERMITTED)
+      params.require(:setting).permit(*Settings::PERMITTED)
     end
 end
