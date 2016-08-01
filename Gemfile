@@ -11,6 +11,7 @@ gem 'jquery-rails'
 # Databases
 gem 'pg'
 gem 'redis'
+gem 'redis-namespace'
 
 # Server & Worker
 gem 'puma'

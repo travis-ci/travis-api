@@ -198,6 +198,8 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (11.2.2)
     redis (3.3.1)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
     rotp (3.1.0)
     rspec-core (3.5.1)
       rspec-support (~> 3.5.0)
@@ -289,6 +291,7 @@ DEPENDENCIES
   rails (= 4.2.6)
   rake
   redis
+  redis-namespace
   rspec-rails (~> 3.4)
   sass-rails (~> 5.0)
   sidekiq
