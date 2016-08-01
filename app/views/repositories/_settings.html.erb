@@ -1,7 +1,7 @@
 <section class="info-block">
   <h2 class="info-header">Settings</h2>
 
-  <%= form_for :setting, url: {controller: "settings", action: "update"} do |f| %>
+  <%= form_for :settings, url: {controller: "settings", action: "update"} do |f| %>
     <% Settings::BINARY.each do |key| %>
       <p>
         <%= f.check_box key, checked: settings.send(key) %>
