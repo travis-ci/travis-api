@@ -48,7 +48,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-core.git
-  revision: 32d57b1b4d2c236d4a36becfbd6f5555065b92bc
+  revision: 2d7714edb82507173514bb9aa762e732626aa732
   branch: te-dev
   specs:
     travis-core (0.0.1)
@@ -268,7 +268,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     redcarpet (2.3.0)
-    redis (3.3.0)
+    redis (3.3.1)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
     rerun (0.8.2)
