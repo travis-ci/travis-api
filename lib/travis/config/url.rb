@@ -19,6 +19,8 @@ module Travis
         end
       end
 
+      Ampqs = Amqp
+
       class << self
         def parse(url)
           return Generic.new if url.nil? || url.empty?
