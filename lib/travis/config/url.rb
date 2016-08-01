@@ -19,7 +19,7 @@ module Travis
         end
       end
 
-      Ampqs = Amqp
+      Amqps = Amqp
 
       class << self
         def parse(url)
