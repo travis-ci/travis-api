@@ -43,11 +43,13 @@ describe Travis::API::V3::Models::Cron do
   describe "push build is ignored if disable by build is false" do
 
     before do
+      Timecop.return
       Timecop.travel(DateTime.new(2015, 12, 31, 16))
     end
 
     after do
       Timecop.return
+      Timecop.freeze(Time.now.utc)
     end
 
     it "for daily builds" do
@@ -85,11 +87,13 @@ describe Travis::API::V3::Models::Cron do
   describe "disable by build works with build" do
 
     before do
+      Timecop.return
       Timecop.travel(DateTime.new(2015, 12, 31, 16))
     end
 
     after do
       Timecop.return
+      Timecop.freeze(Time.now.utc)
     end
 
     it "for daily builds" do
@@ -121,11 +125,13 @@ describe Travis::API::V3::Models::Cron do
   describe "disable by build works without build" do
 
     before do
+      Timecop.return
       Timecop.travel(DateTime.new(2015, 12, 31, 16))
     end
 
     after do
       Timecop.return
+      Timecop.freeze(Time.now.utc)
     end
 
     it "for daily builds" do
@@ -157,12 +163,12 @@ describe Travis::API::V3::Models::Cron do
   describe "build starts now if next build time is in the past" do
 
     before do
-      # nothing, this time
-      # time freeze is performed in examples
+      Timecop.return
     end
 
     after do
       Timecop.return
+      Timecop.freeze(Time.now.utc)
     end
 
     it "for daily builds with disable_by_build true" do
@@ -170,7 +176,7 @@ describe Travis::API::V3::Models::Cron do
       cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'daily', disable_by_build: true)
       build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
       Timecop.freeze(DateTime.new(2016, 1, 1, 19))
-      expect(cron.next_enqueuing).to be == DateTime.now
+      expect(cron.next_enqueuing).to be == DateTime.now - 5.minutes
       build.destroy
       cron.destroy
     end
@@ -180,7 +186,7 @@ describe Travis::API::V3::Models::Cron do
       cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'daily', disable_by_build: false)
       build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
       Timecop.freeze(DateTime.new(2016, 1, 1, 19))
-      expect(cron.next_enqueuing).to be == DateTime.now
+      expect(cron.next_enqueuing).to be == DateTime.now - 5.minutes
       build.destroy
       cron.destroy
     end
@@ -190,7 +196,7 @@ describe Travis::API::V3::Models::Cron do
       cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'weekly', disable_by_build: true)
       build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
       Timecop.freeze(DateTime.new(2016, 1, 7, 19))
-      expect(cron.next_enqueuing).to be == DateTime.now
+      expect(cron.next_enqueuing).to be == DateTime.now - 5.minutes
       build.destroy
       cron.destroy
     end
@@ -200,7 +206,7 @@ describe Travis::API::V3::Models::Cron do
       cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'weekly', disable_by_build: false)
       build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
       Timecop.freeze(DateTime.new(2016, 1, 7, 19))
-      expect(cron.next_enqueuing).to be == DateTime.now
+      expect(cron.next_enqueuing).to be == DateTime.now - 5.minutes
       build.destroy
       cron.destroy
     end
@@ -210,7 +216,7 @@ describe Travis::API::V3::Models::Cron do
       cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'monthly', disable_by_build: true)
       build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
       Timecop.freeze(DateTime.new(2016, 1, 31, 19))
-      expect(cron.next_enqueuing).to be == DateTime.now
+      expect(cron.next_enqueuing).to be == DateTime.now - 5.minutes
       build.destroy
       cron.destroy
     end
@@ -220,7 +226,7 @@ describe Travis::API::V3::Models::Cron do
       cron = Travis::API::V3::Models::Cron.create(branch_id: branch.id, interval: 'monthly', disable_by_build: false)
       build = Travis::API::V3::Models::Build.create(:repository_id => repo.id, :branch_name => branch.name, :event_type => 'cron')
       Timecop.freeze(DateTime.new(2016, 1, 31, 19))
-      expect(cron.next_enqueuing).to be == DateTime.now
+      expect(cron.next_enqueuing).to be == DateTime.now - 5.minutes
       build.destroy
       cron.destroy
     end

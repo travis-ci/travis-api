@@ -7,10 +7,11 @@ module Travis::API::V3
 
     def start_all()
       Models::Cron.all.select do |cron|
+        @cron = cron
         start(cron) if cron.next_enqueuing <= Time.now
       end
       rescue => e
-        Raven.capture_exception(e)
+        Raven.capture_exception(e, tags: { 'cron_id' => @cron.try(:id) })
     end
 
     def start(cron)
