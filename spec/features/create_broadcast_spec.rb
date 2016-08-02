@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "Creat Broadcast", :js => true, :type => :feature do
+RSpec.feature "Create Broadcast", :js => true, :type => :feature do
   let!(:user)         { create(:user) }
   let!(:organization) { create(:organization) }
   let!(:repository)   { create(:repository) }
