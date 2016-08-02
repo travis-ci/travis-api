@@ -13,6 +13,15 @@ module Travis::API::V3
         ## if it's not there then fetch it from S3, and return it wrapped as a compatible log_parts object with a hard coded #number (log_parts have a number) and the parts chunked (not sure how to do this)
         archived_log_path = archive_url("/jobs/#{params[:job.id]}/log.txt")
         content = open(Net::HTTP.get(URI.parse(archived_log_path)))
+
+        ## log_part model:
+        ## id: nil,
+        ## log_id: log.id,
+        ## content: {"[INFO] Fetching org.eclipse.jface_3.11.1.v20160128-...}",
+        ## number: start at 0, increment by 1,
+        ## final: false,
+        ## created_at: log.created_at
+
         # log_parts = []
         # content.each_line do |line|
         #   log_parts << line.chop
