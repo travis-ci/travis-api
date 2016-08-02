@@ -1,4 +1,9 @@
 <section class="info-block">
+  <h2>Broadcast to <%= describe(recipient) %></h2>
+  <%= render partial: 'shared/broadcast_new', locals: {recipient: recipient} %>
+</section>
+
+<section class="info-block">
   <h2 class="info-header">Active</h2>
   <%= render partial: 'shared/broadcast_list', locals: {broadcasts: @active_broadcasts} %>
 </section>
