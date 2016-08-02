@@ -32,7 +32,7 @@ class Travis::Api::App
           service = Travis::Enqueue::Services::RestartModel.new(current_user, params)
           params[:user_id] = service.target.repository.owner.id
 
-          type ||= params[:build_id] ? 'build' : 'job'
+          type = params[:build_id] ? 'build' : 'job'
           params[:id] = params[:build_id] || params[:job_id]
 
           service.push("#{type}:restart", params)
