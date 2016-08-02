@@ -1,6 +1,5 @@
 require 'webmock/rspec'
 require 'sidekiq/testing'
-require 'travis/topaz'
 
 Sidekiq::Testing.inline!
 
