@@ -11,8 +11,8 @@ module Travis::API::V3
         log_parts = Models::LogPart.where(log_id: log.id).to_a
       elsif log.archived_at?
         ## if it's not there then fetch it from S3, and return it wrapped as a compatible log_parts object with a hard coded #number (log_parts have a number) and the parts chunked (not sure how to do this)
-        # archived_log_path = archive_url("/jobs/#{params[:job.id]}/log.txt")
-        # content = open(Net::HTTP.get(URI.parse(archived_log_path)))
+        archived_log_path = archive_url("/jobs/#{params[:job.id]}/log.txt")
+        content = open(Net::HTTP.get(URI.parse(archived_log_path)))
         # log_parts = []
         # content.each_line do |line|
         #   log_parts << line.chop
