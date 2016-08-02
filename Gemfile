@@ -32,11 +32,11 @@ gem 'sass-rails', '~> 5.0'
 # Not sure if I need this
 gem 'turbolinks'
 
-group :server do
-  gem 'puma'
-  gem 'sidekiq'
-  gem 'foreman'
-end
+# Sidekiq
+gem 'puma'
+gem 'sidekiq'
+gem 'foreman'
+
 
 group :console, :test do
   gem 'pry'
@@ -56,7 +56,6 @@ group :test do
   gem 'capybara', '~> 2.7.0'
   gem 'poltergeist'
   gem 'launchy'
-  gem 'timecop'
 end
 
 group :development do
