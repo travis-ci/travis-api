@@ -4,24 +4,22 @@ module Travis::API::V3
     require 'uri'
 
     def find(job)
-      #check for the log in the DB
+      #check for the log in the Logs DB
       log = Models::Log.find_by_job_id
-      #if the log exists and has not been archived yet, then collect the log_parts and return the contents
-      unless log.nil? || !log.archived_at.nil?
-        log_parts = Models::Log::Part.where(log_id: log.id)
-        log_data = []
-        log_parts.each { |log_part| log_data << log_part.content }
-        log_data
+      #if the log exists and has not been archived yet, then collect the log_parts and return the Log query object
+      unless !log.archived_at.nil?
+        log_parts = Models::LogPart.where(log_id: log.id).to_a
       elsif log.archived_at?
-        # if it's not there then fetch it from S3.
-        archived_log_path = archive_url("/jobs/#{params[:job.id]}/log.txt")
-
-        content = open(Net::HTTP.get(URI.parse(archived_log_path)))
-        archived_log_data = []
-        content.each_line do |line|
-          archived_log_data << line.chop
-        end
-        archived_log_data
+        ## if it's not there then fetch it from S3, and return it wrapped as a compatible log_parts object with a hard coded #number (log_parts have a number) and the parts chunked (not sure how to do this)
+        # archived_log_path = archive_url("/jobs/#{params[:job.id]}/log.txt")
+        # content = open(Net::HTTP.get(URI.parse(archived_log_path)))
+        # log_parts = []
+        # content.each_line do |line|
+        #   log_parts << line.chop
+        # end
+        # log_parts
+      else
+        raise EntityMissing, 'log not found'.freeze
       end
     end
 

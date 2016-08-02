@@ -5,6 +5,7 @@ module Travis::API::V3
     def run!
       job = find(:job)
       query.find(job)
+      result(log, parts: log_parts)
     end
   end
 end
