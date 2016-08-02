@@ -2,4 +2,3 @@
 :concurrency: 6
 :queues:
   - admin-v2
-  - default
