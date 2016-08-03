@@ -6,12 +6,12 @@ module Travis::API::V3
     end
 
     def start_all()
-      puts "starting #{Models::Cron.count} crons."
+      puts "reviewing #{Models::Cron.count} crons."
       Models::Cron.all.select do |cron|
         @cron = cron
-        puts cron.next_enqueuing
-        puts Time.now
-        start(cron) if cron.next_enqueuing <= Time.now
+        ne = cron.next_enqueuing
+        puts "Next enqueuing: #{ne}, time now: #{Time.now}, will it run? #{ne <= Time.now}"
+        start(cron) if ne <= Time.now
       end
       rescue => e
         puts "bad things happened"
