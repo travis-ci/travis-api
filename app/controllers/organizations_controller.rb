@@ -12,5 +12,7 @@ class OrganizationsController < ApplicationController
 
     @active_broadcasts = Broadcast.active.for(@organization)
     @inactive_broadcasts = Broadcast.inactive.for(@organization)
+
+    @trials_remaining = Travis::DataStores.redis.get("trial:#{@organization.login}")
   end
 end

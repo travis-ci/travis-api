@@ -10,6 +10,8 @@ class UsersController < ApplicationController
 
     @active_broadcasts = Broadcast.active.for(@user)
     @inactive_broadcasts = Broadcast.inactive.for(@user)
+
+    @trials_remaining = Travis::DataStores.redis.get("trial:#{@user.login}")
   end
 
   def admins
