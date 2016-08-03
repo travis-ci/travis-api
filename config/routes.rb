@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
   get 'broadcast' => 'broadcasts#index', as: :broadcast
   post 'broadcast' => 'broadcasts#create'
+  patch 'broadcast/:id/expire' => 'broadcasts#expire', as: :expire_broadcast
 
   get 'admins' => 'users#admins', as: :admins
 end

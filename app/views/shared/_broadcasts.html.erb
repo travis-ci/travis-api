@@ -5,10 +5,10 @@
 
 <section class="info-block">
   <h2 class="info-header">Active</h2>
-  <%= render partial: 'shared/broadcast_list', locals: {broadcasts: @active_broadcasts} %>
+  <%= render partial: 'shared/broadcast_list', locals: {broadcasts: @active_broadcasts, recipient: recipient} %>
 </section>
 
 <section class="info-block">
   <h2 class="info-header">Expired</h2>
-  <%= render partial: 'shared/broadcast_list', locals: {broadcasts: @inactive_broadcasts} %>
+  <%= render partial: 'shared/broadcast_list', locals: {broadcasts: @inactive_broadcasts, recipient: recipient} %>
 </section>

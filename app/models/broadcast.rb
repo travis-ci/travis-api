@@ -40,4 +40,16 @@ class Broadcast < ActiveRecord::Base
     else where('recipient_type IS NULL OR recipient_type = ? AND recipient_id = ?', object.class, object.id)
     end
   end
+
+  def active?
+    !expired? && created_at >= EXPIRY_TIME.ago
+  end
+
+  def explicit_expired?
+    expired? && created_at >= EXPIRY_TIME.ago
+  end
+
+  def inactive?
+    created_at < EXPIRY_TIME.ago
+  end
 end

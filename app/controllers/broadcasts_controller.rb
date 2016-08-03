@@ -14,7 +14,22 @@ class BroadcastsController < ApplicationController
       flash[:error] = "Could not create broadcast."
     end
 
-    redirect_to_broadcast_view(@broadcast.recipient_type)
+    redirect_to_broadcast_view(@recipient)
+  end
+
+  def expire
+    @broadcast = Broadcast.find(params[:id])
+
+    if params['broadcast'] && params['broadcast']['recipient_type']
+      @recipient = Object.const_get(params['broadcast']['recipient_type']).find(params['broadcast']['recipient_id'])
+    else
+      @recipient = 'everybody'
+    end
+
+    @broadcast.toggle(:expired)
+    @broadcast.save
+
+    redirect_to_broadcast_view(@recipient)
   end
 
   private
@@ -22,14 +37,14 @@ class BroadcastsController < ApplicationController
       params.require(:broadcast).permit(:recipient_type, :recipient_id, :message, :category)
     end
 
-    def redirect_to_broadcast_view(recipient_type)
-      case recipient_type
-      when 'User'
-        redirect_to user_path(@recipient, anchor: "broadcast")
-      when 'Organization'
-        redirect_to organization_path(@recipient, anchor: "broadcast")
-      when 'Repository'
-        redirect_to repository_path(@recipient, anchor: "broadcast")
+    def redirect_to_broadcast_view(recipient)
+      case recipient
+      when User
+        redirect_to user_path(recipient, anchor: "broadcast")
+      when Organization
+        redirect_to organization_path(recipient, anchor: "broadcast")
+      when Repository
+        redirect_to repository_path(recipient, anchor: "broadcast")
       else
         redirect_to broadcast_path
       end

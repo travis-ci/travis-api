@@ -1,6 +1,5 @@
 <%= form_for :broadcast, url: {controller: "broadcasts", action: "create"}, html: {class: "broadcast-form"} do |f| %>
   <% if defined? recipient %>
-    <%= f.hidden_field :recipient, value: recipient %>
     <%= f.hidden_field :recipient_type, value: recipient.class.name %>
     <%= f.hidden_field :recipient_id, value: recipient.id %>
   <% end %>

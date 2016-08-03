@@ -12,8 +12,9 @@ RSpec.feature "Create Broadcast", :js => true, :type => :feature do
     choose("Warning")
     find_button('Create').trigger('click')
 
+
     expect(page).to have_text("Broadcast created.")
-    expect(page).to have_text("Broadcast to everybody")
+    expect(page).to have_text("This is a message.")
   end
 
   scenario "Create broadcast for user" do
