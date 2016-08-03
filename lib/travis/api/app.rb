@@ -195,7 +195,7 @@ module Travis::Api
           end
         end
 
-        if use_monitoring? #&& !console?
+        if use_monitoring? && !console?
           setup_monitoring
         end
       end
