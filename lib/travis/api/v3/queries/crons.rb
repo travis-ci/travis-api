@@ -6,16 +6,13 @@ module Travis::API::V3
     end
 
     def start_all()
-      puts "reviewing #{Models::Cron.count} crons."
       Models::Cron.all.select do |cron|
         begin
           @cron = cron
-          ne = cron.next_enqueuing
-          puts "Next enqueuing: #{ne}, time now: #{Time.now}, will it run? #{ne <= Time.now}"
-          start(cron) if ne <= Time.now
+          start(cron) if cron.next_enqueuing <= Time.now
         rescue => e
           Raven.capture_exception(e, tags: { 'cron_id' => @cron.try(:id) })
-          sleep(10)
+          sleep(10) # This ensures the dyno does not spin down before the http request to send the error to sentry completes
           next
         end
       end
