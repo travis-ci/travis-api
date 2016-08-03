@@ -8,16 +8,17 @@ module Travis::API::V3
     def start_all()
       puts "reviewing #{Models::Cron.count} crons."
       Models::Cron.all.select do |cron|
-        @cron = cron
-        ne = cron.next_enqueuing
-        puts "Next enqueuing: #{ne}, time now: #{Time.now}, will it run? #{ne <= Time.now}"
-        start(cron) if ne <= Time.now
+        begin
+          @cron = cron
+          ne = cron.next_enqueuing
+          puts "Next enqueuing: #{ne}, time now: #{Time.now}, will it run? #{ne <= Time.now}"
+          start(cron) if ne <= Time.now
+        rescue => e
+          Raven.capture_exception(e, tags: { 'cron_id' => @cron.try(:id) })
+          sleep(10)
+          next
+        end
       end
-      rescue => e
-        puts "bad things happened"
-        puts e.inspect
-        puts Raven.capture_exception(e, tags: { 'cron_id' => @cron.try(:id) })
-        sleep(10)
     end
 
     def start(cron)
