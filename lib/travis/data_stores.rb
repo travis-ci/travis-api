@@ -6,7 +6,7 @@ module Travis
     module_function :redis
 
     def topaz
-      @topaz ||= Travis::Topaz.new(Travis::Config.topaz.url)
+      @topaz ||= Travis::Topaz.new(Travis::Config.load.topaz.url)
     end
     module_function :topaz
   end
