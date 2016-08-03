@@ -3,10 +3,6 @@ module ApplicationHelper
     Travis::DataStores.redis.hgetall("builds:#{owner.github_id}").sort_by(&:first).map { |e| e.last.to_i }
   end
 
-  def builds_provided_for(owner)
-    Travis::DataStores.topaz.builds_provided_for(owner.id)
-  end
-
   def describe(object)
     case object
     when ::User, ::Organization then object.name.present? ? "#{object.name} (#{object.login})" : object.login
@@ -51,6 +47,11 @@ module ApplicationHelper
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
 
+
+  def trials_provided_for(owner)
+    Travis::DataStores.topaz.builds_provided_for(owner.id)
+  end
+
   def update_topaz(owner, builds, previous_builds)
     event = {
       timestamp: Time.now,
@@ -68,5 +69,4 @@ module ApplicationHelper
     }
     Travis::DataStores.topaz.update(event)
   end
-
 end
