@@ -14,7 +14,8 @@ module Travis::API::V3
         archived_log_path = archive_url("/jobs/#{params[:job.id]}/log.txt")
         content = open(Net::HTTP.get(URI.parse(archived_log_path)))
 
-        ## log_part model:
+        ## log_part
+        #<LogPart id: 7215210, log_id: 433715, content: "", number: 272, final: true, created_at: "2016-01-14 19:55:01">,
         ## id: nil,
         ## log_id: log.id,
         ## content: {"[INFO] Fetching org.eclipse.jface_3.11.1.v20160128-...}",
