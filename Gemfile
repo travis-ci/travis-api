@@ -8,24 +8,23 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 gem 'jquery-rails'
 
-# Use postgresql as the database for Active Record
+# Databases
 gem 'pg'
-
-# Server & Worker
-gem 'puma'
-gem 'sidekiq'
-gem 'foreman'
+gem 'redis'
+gem 'redis-namespace'
 
 # API stuffs
 gem 'faraday', '~> 0.9.0'
 
-# Travis Migrations for the db
+# Travis Gems
 gem 'travis-migrations', github: 'travis-ci/travis-migrations'
 gem 'travis-pro-migrations',  git: "https://fba4602ab138c5b2c8d48ae32a67aedeefc5e939:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git", require: 'travis/pro/migrations'
-
-# Travis SSO
 gem 'travis-sso', github:'travis-ci/travis-sso'
 gem 'travis-config', github:'travis-ci/travis-config'
+gem 'travis-topaz',      github: 'travis-ci/travis-topaz-gem'
+gem 'travis-support',    github: 'travis-ci/travis-support'
+
+gem 'metriks'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -33,9 +32,11 @@ gem 'sass-rails', '~> 5.0'
 # Not sure if I need this
 gem 'turbolinks'
 
-group :server do
-  # stuff will go here eventually
-end
+# Sidekiq
+gem 'puma'
+gem 'sidekiq'
+gem 'foreman'
+
 
 group :console, :test do
   gem 'pry'

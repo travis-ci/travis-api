@@ -1,5 +1,3 @@
-require 'faraday'
-
 module Travis
   module Api
     def token
