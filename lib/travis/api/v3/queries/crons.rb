@@ -11,7 +11,6 @@ module Travis::API::V3
         @cron = cron
         puts cron.next_enqueuing
         puts Time.now
-        bad_things
         start(cron) if cron.next_enqueuing <= Time.now
       end
       rescue => e
