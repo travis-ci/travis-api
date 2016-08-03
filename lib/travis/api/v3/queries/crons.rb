@@ -15,7 +15,9 @@ module Travis::API::V3
         start(cron) if cron.next_enqueuing <= Time.now
       end
       rescue => e
-        Raven.capture_exception(e, tags: { 'cron_id' => @cron.try(:id) })
+        puts "bad things happened"
+        puts e.inspect
+        puts Raven.capture_exception(e, tags: { 'cron_id' => @cron.try(:id) })
     end
 
     def start(cron)
