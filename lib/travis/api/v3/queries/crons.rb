@@ -8,6 +8,7 @@ module Travis::API::V3
     def start_all()
       Models::Cron.all.select do |cron|
         @cron = cron
+        bad_things
         start(cron) if cron.next_enqueuing <= Time.now
       end
       rescue => e
