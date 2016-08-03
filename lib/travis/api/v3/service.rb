@@ -68,7 +68,7 @@ module Travis::API::V3
 
     def check_login_and_find(*args)
       raise LoginRequired unless access_control.full_access_or_logged_in?
-      find(*args) or raise NotFound 
+      find(*args) or raise NotFound
     end
 
     def not_found(actually_not_found = false, type = nil)

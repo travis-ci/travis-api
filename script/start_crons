@@ -6,4 +6,8 @@ require 'travis/api/app'
 
 Travis::Api::App.setup
 
+puts "start"
+
 Travis::API::V3::Services::Crons::Start.new(nil,nil,nil).run!
+
+puts "done"

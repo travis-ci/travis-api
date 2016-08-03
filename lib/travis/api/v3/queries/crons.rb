@@ -6,8 +6,11 @@ module Travis::API::V3
     end
 
     def start_all()
+      puts "starting #{Models::Cron.count} crons."
       Models::Cron.all.select do |cron|
         @cron = cron
+        puts cron.next_enqueuing
+        puts Time.now
         bad_things
         start(cron) if cron.next_enqueuing <= Time.now
       end
