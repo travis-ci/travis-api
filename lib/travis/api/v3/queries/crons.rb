@@ -18,6 +18,7 @@ module Travis::API::V3
         puts "bad things happened"
         puts e.inspect
         puts Raven.capture_exception(e, tags: { 'cron_id' => @cron.try(:id) })
+        sleep(10)
     end
 
     def start(cron)
