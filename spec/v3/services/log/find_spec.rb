@@ -10,26 +10,25 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:parsed_body) { JSON.load(body) }
 
   context 'when log stored in db' do
-    describe 'returns log as array of Log Parts' do
-      let(:log) { job.log }
+    describe 'returns the Log with an array of Log Parts' do
+      let(:log)       { job.log }
 
-      p log
-      
-      before { get("/v3/job/#{job.id}/log", {}, headers) }
-
-      example { expect(last_response).to be_ok }
       example do
+        log_part = log.log_parts.create(content: "logging it", number: 0)
+        get("/v3/job/#{job.id}/log", {}, headers)
         expect(parsed_body).to eq(
           '@href' => "/v3/job/#{job.id}/log",
           '@representation' => 'standard',
           '@type' => 'log',
           'content' => nil,
-          'id' => log.id
-        )
+          'id' => log.id,
+          'log_parts'       => [{
+          "@type"           => "log_part",
+          "@representation" => "minimal",
+          "content"         => log_part.content,
+          "number"          => log_part.number }])
       end
     end
-
-    describe 'returns log as chunked json'
   end
 
   context 'when log not found in db but stored on S3' do

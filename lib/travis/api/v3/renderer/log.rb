@@ -1,7 +1,6 @@
-require 'travis/api/v3/renderer/model_renderer'
-
 module Travis::API::V3
   class Renderer::Log < Renderer::ModelRenderer
-    representation(:standard, :id, :content)
+    representation(:minimal, :id, :content)
+    representation(:standard, *representations[:minimal], :log_parts)
   end
 end
