@@ -10,9 +10,8 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:parsed_body) { JSON.load(body) }
 
   context 'when log stored in db' do
-    describe 'returns log as plain text' do
+    describe 'returns log as array of Log Parts' do
       let(:log) { job.log }
-
       before { get("/v3/job/#{job.id}/log", {}, headers) }
 
       example { expect(last_response).to be_ok }

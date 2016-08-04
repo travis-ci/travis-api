@@ -5,9 +5,9 @@ module Travis::API::V3
 
     def find(job)
       #check for the log in the Logs DB
-      log = Models::Log.find_by_job_id
+      log = Models::Log.find_by_job_id(job.id)
       #if the log exists and has not been archived yet, then collect the log_parts and return the Log query object
-      unless !log.archived_at.nil?
+      if !log.archived_at.nil?
         log_parts = Models::LogPart.where(log_id: log.id).to_a
       elsif log.archived_at?
         ## if it's not there then fetch it from S3, and return it wrapped as a compatible log_parts object with a hard coded #number (log_parts have a number) and the parts chunked (not sure how to do this)
