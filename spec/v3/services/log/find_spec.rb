@@ -12,6 +12,9 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   context 'when log stored in db' do
     describe 'returns log as array of Log Parts' do
       let(:log) { job.log }
+
+      p log
+      
       before { get("/v3/job/#{job.id}/log", {}, headers) }
 
       example { expect(last_response).to be_ok }
