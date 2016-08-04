@@ -26,7 +26,8 @@ module Travis::API::V3
         return false
       end
 
-      user_id = branch.repository.users.detect { |u| u.github_oauth_token }.id
+      user_id = branch.repository.users.detect { |u| u.github_oauth_token }.try(:id)
+      user_id ||= branch.repository.owner.id
 
       payload = {
         repository: { id: branch.repository.github_id, owner_name: branch.repository.owner_name, name: branch.repository.name },
