@@ -37,13 +37,14 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
 
   context 'when log not found in db but stored on S3' do
     describe 'returns log with an array of Log Parts' do
+      before do
+        stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{s3job.id}/log.txt").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'s3.amazonaws.com', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch", :headers => {})
+      end
       example do
-        s3log.update_attribute(:archived_at, Time.now)
+        s3log.update_attributes(archived_at: Time.now)
         get("/v3/job/#{s3job.id}/log", {}, headers)
-        p s3job
-        p s3job.id
-        p s3log
-        p s3log.archived_at
 
         expect(parsed_body).to eq(
           '@href' => "/v3/job/#{s3job.id}/log",
@@ -51,7 +52,19 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
           '@type' => 'log',
           'content' => 'minimal log 1',
           'id' => s3log.id,
-          'log_parts'       => [])
+          'log_parts'       => [{
+            "@type"=>"log_part",
+            "@representation"=>"minimal",
+            "content"=>"$ git clean -fdx",
+            "number"=>0}, {
+            "@type"=>"log_part",
+            "@representation"=>"minimal",
+            "content"=>"Removing Gemfile.lock",
+            "number"=>1}, {
+            "@type"=>"log_part",
+            "@representation"=>"minimal",
+            "content"=>"$ git fetch",
+            "number"=>2}])
       end
     end
     describe 'returns log as plain text'
