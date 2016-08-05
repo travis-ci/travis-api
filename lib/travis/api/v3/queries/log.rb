@@ -9,12 +9,15 @@ module Travis::API::V3
 
       raise EntityMissing, 'log not found'.freeze if log.nil?
 
-      #if the log exists and has not been archived yet, then collect the log_parts and return the Log query object
+      p log.archived_at
+
+      #if the log has been archived, go to s3
       if log.archived_at
         ## if it's not there then fetch it from S3, and return it wrapped as a compatible log_parts object with a hard coded #number (log_parts have a number) and the parts chunked (not sure how to do this)
         archived_log_path = archive_url("/jobs/#{params[:job.id]}/log.txt")
+        p archived_log_path
         content = open(Net::HTTP.get(URI.parse(archived_log_path)))
-
+        p content
         log_parts = []
 
         content.each_line.with_index do |line, number|
