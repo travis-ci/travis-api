@@ -7,10 +7,15 @@ module Travis::API::V3
 
     def start_all()
       Models::Cron.all.select do |cron|
-        start(cron) if cron.next_enqueuing <= Time.now
+        begin
+          @cron = cron
+          start(cron) if cron.next_enqueuing <= Time.now
+        rescue => e
+          Raven.capture_exception(e, tags: { 'cron_id' => @cron.try(:id) })
+          sleep(10) # This ensures the dyno does not spin down before the http request to send the error to sentry completes
+          next
+        end
       end
-      rescue => e
-        Raven.capture_exception(e)
     end
 
     def start(cron)
@@ -21,7 +26,8 @@ module Travis::API::V3
         return false
       end
 
-      user_id = branch.repository.users.detect { |u| u.github_oauth_token }.id
+      user_id = branch.repository.users.detect { |u| u.github_oauth_token }.try(:id)
+      user_id ||= branch.repository.owner.id
 
       payload = {
         repository: { id: branch.repository.github_id, owner_name: branch.repository.owner_name, name: branch.repository.name },

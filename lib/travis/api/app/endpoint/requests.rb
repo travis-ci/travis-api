@@ -29,11 +29,14 @@ class Travis::Api::App
           #
           # I think we need to properly deprecate this by publishing a blog post.
           Metriks.meter("api.request.restart").mark
+          service = Travis::Enqueue::Services::RestartModel.new(current_user, params)
+          params[:user_id] = service.target.repository.owner.id
 
-          service = Travis::Enqueue::Services::RestartModel.new(current_user, { build_id: params[:build_id] })
-          payload = {id: params[:build_id], user_id: current_user.id}
-          service.push("job:restart", payload)
-          status 202
+          type = params[:build_id] ? 'build' : 'job'
+          params[:id] = params[:build_id] || params[:job_id]
+
+          service.push("#{type}:restart", params)
+          respond_with(result: true, flash: service.messages)
         end
       end
     end

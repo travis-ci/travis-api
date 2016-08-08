@@ -30,7 +30,14 @@ describe 'Requests', set_app: true do
   describe 'POST /requests' do
     it 'triggers a build request using Hub' do
       response = post "/requests", { build_id: build.id }, headers
-      response.status.should be(202)
+      response.status.should be(200)
     end
   end
+
+  it 'triggers a job request' do
+    payload = { job_id: build.matrix.first.id, user_id: repo.owner.id }
+    response = post "/requests", payload, headers
+    response.status.should be(200)
+  end
+
 end
