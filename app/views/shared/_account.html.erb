@@ -12,19 +12,22 @@
       </time>
     </dd>
 
-    <% if trials_remaining %>
-      <dt class="info-label">Trials Remaining:</dt>
-      <dd>
-        <%= trials_remaining %>
-      </dd>
 
-      <dt class="info-label">Trials Provided:</dt>
-      <dd><%= trials_provided_for(owner) %></dd>
+    <dt class="info-label">Trial: </dt>
+    <dd>
+      <dl>
+        <% if trials_remaining %>
+          <dt class="info-label">Builds Provided:</dt>
+          <dd><%= trials_provided_for(owner) %></dd>
 
-    <% else %>
-      <dt class="info-label">Trial: </dt>
-      <dd>Not currently activated.</dd>
-    <% end %>
+          <dt class="info-label">Builds Remaining:</dt>
+          <dd><%= trials_remaining %></dd>
+
+        <% else %>
+          <dd>Not currently activated.</dd>
+        <% end %>
+      </dl>
+    </dd>
 
     <dt class="info-label">Subscription:</dt>
     <dd>
