@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  include TopazHelper
+
   def show
     @user = User.find_by(id: params[:id])
     return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
@@ -11,7 +13,8 @@ class UsersController < ApplicationController
     @active_broadcasts = Broadcast.active.for(@user)
     @inactive_broadcasts = Broadcast.inactive.for(@user)
 
-    @trials_remaining = Travis::DataStores.redis.get("trial:#{@user.login}")
+    @builds_remaining = Travis::DataStores.redis.get("trial:#{@user.login}")
+    @builds_provided = builds_provided_for(@user)
   end
 
   def admins
@@ -48,6 +51,9 @@ class UsersController < ApplicationController
   end
 
   def update_trials
+    @user = User.find_by(id: params[:id])
+    update_topaz(@user, params[:builds_remaining])
 
+    redirect_to @user
   end
 end

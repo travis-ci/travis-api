@@ -46,27 +46,4 @@ module ApplicationHelper
   def format_short_duration(seconds)
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
-
-
-  def trials_provided_for(owner)
-    Travis::DataStores.topaz.builds_provided_for(owner.id)
-  end
-
-  def update_topaz(owner, builds, previous_builds)
-    event = {
-      timestamp: Time.now,
-      owner: {
-        id: owner.id,
-        name: owner.name,
-        login: owner.login,
-        type: owner.class.name
-      },
-      data: {
-        trial_builds_added: builds.to_i,
-        previous_builds: previous_builds.to_i
-      },
-      type: :trial_builds_added
-    }
-    Travis::DataStores.topaz.update(event)
-  end
 end

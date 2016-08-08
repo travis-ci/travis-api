@@ -1,4 +1,6 @@
 class OrganizationsController < ApplicationController
+  include TopazHelper
+
   def show
     @organization = Organization.find_by(id: params[:id])
     return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
@@ -13,10 +15,12 @@ class OrganizationsController < ApplicationController
     @active_broadcasts = Broadcast.active.for(@organization)
     @inactive_broadcasts = Broadcast.inactive.for(@organization)
 
-    @trials_remaining = Travis::DataStores.redis.get("trial:#{@organization.login}")
+    @builds_remaining = Travis::DataStores.redis.get("trial:#{@organization.login}")
+    @builds_provided = builds_provided_for(@organization)
   end
 
   def update_trials
-
+    @organization = Organization.find_by(id: params[:id])
+    update_topaz(@organization, params[:builds_remaining])
   end
 end

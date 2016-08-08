@@ -15,13 +15,16 @@
 
     <dt class="info-label">Trial: </dt>
     <dd>
-      <% if trials_remaining %>
-        <%= form_for :trials do |f| %>
+      <% if builds_remaining %>
+        <%= form_tag action: 'update_trials', controller: "#{owner.class.table_name}" do %>
           <dl>
             <dt class="info-label">Builds Provided:</dt>
-            <dd><%= trials_provided_for(owner) %></dd>
-            <dt class="info-label"><%= f.label :builds_remaining, 'Builds Remaining:' %></dt>
-            <dd><%= f.text_field :builds_remaining, value: trials_remaining %></dd>
+            <dd><%= @builds_provided %></dd>
+            <dt class="info-label"><%= label_tag 'Builds Remaining:' %></dt>
+            <dd>
+              <%= text_field_tag "builds_remaining", builds_remaining %>
+              <%= button_to "Update", class: "button" %></dd>
+
           </dl>
         <% end %>
       <% else %>
