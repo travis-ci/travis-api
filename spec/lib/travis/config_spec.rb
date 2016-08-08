@@ -69,6 +69,7 @@ describe Travis::Config do
         :adapter => 'postgresql',
         :database => 'travis_test',
         :encoding => 'unicode',
+        :host     => 'localhost',
         :min_messages => 'warning',
         :variables => { :statement_timeout => 10000 }
       }
