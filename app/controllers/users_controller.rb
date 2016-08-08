@@ -46,4 +46,8 @@ class UsersController < ApplicationController
     flash[:notice] = "Triggered sync with GitHub for #{logins.join(', ')}."
     redirect_to back_link
   end
+
+  def update_trials
+
+  end
 end

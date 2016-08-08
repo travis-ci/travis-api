@@ -15,4 +15,8 @@ class OrganizationsController < ApplicationController
 
     @trials_remaining = Travis::DataStores.redis.get("trial:#{@organization.login}")
   end
+
+  def update_trials
+
+  end
 end
