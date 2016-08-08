@@ -15,18 +15,19 @@
 
     <dt class="info-label">Trial: </dt>
     <dd>
-      <dl>
+      <%= form_for :trials do |f| %>
         <% if trials_remaining %>
-          <dt class="info-label">Builds Provided:</dt>
-          <dd><%= trials_provided_for(owner) %></dd>
-
-          <dt class="info-label">Builds Remaining:</dt>
-          <dd><%= trials_remaining %></dd>
+          <dl>
+            <dt class="info-label">Builds Provided:</dt>
+            <dd><%= trials_provided_for(owner) %></dd>
+            <dt class="info-label"><%= f.label :builds_remaining, 'Builds Remaining:' %></dt>
+            <dd><%= f.text_field :builds_remaining, :value => trials_remaining %></dd>
+          </dl>
 
         <% else %>
-          <dd>Not currently activated.</dd>
+          Not currently activated.
         <% end %>
-      </dl>
+      <% end %>
     </dd>
 
     <dt class="info-label">Subscription:</dt>
