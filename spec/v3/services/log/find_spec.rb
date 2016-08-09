@@ -1,27 +1,28 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::Log::Find, set_app: true do
-  let(:user)        { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
-  let(:repo)        { Travis::API::V3::Models::Repository.where(owner_name: user.login, name: 'minimal').first }
-  let(:build)       { repo.builds.last }
-  let(:job)         { Travis::API::V3::Models::Build.find(build.id).jobs.last }
-  let(:job2)        { Travis::API::V3::Models::Job.create}
-  let(:s3job)       { Travis::API::V3::Models::Build.find(build.id).jobs.first }
+  let(:user)        { Factory.create(:user) }
+  let(:repo)        { Factory.create(:repository, owner_name: user.login, name: 'minimal', owner: user)}
+  let(:build)       { Factory.create(:build, repository: repo) }
+  let(:job)         { Travis::API::V3::Models::Job.create(build: build) }
+  let(:job2)        { Travis::API::V3::Models::Job.create(build: build)}
+  let(:s3job)       { Travis::API::V3::Models::Job.create(build: build) }
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:parsed_body) { JSON.load(body) }
-  let(:log)         { job.log }
-  let(:log2)        { job2.log }
-  let(:s3log)       { s3job.log }
+  let(:log)         { Travis::API::V3::Models::Log.create(job: job) }
+  let(:log2)        { Travis::API::V3::Models::Log.create(job: job2) }
+  let(:s3log)       { Travis::API::V3::Models::Log.create(job: s3job, content: 'minimal log 1') }
 
+  before { Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true) }
 
   context 'when log stored in db' do
     describe 'returns log with an array of Log Parts' do
       example do
         log_part = log.log_parts.create(content: "logging it", number: 0)
-        get("/v3/job/#{job.id}/log", {}, headers)
+        get("/v3/job/#{log.job.id}/log", {}, headers)
         expect(parsed_body).to eq(
-          '@href' => "/v3/job/#{job.id}/log",
+          '@href' => "/v3/job/#{log.job.id}/log",
           '@representation' => 'standard',
           '@type' => 'log',
           'content' => nil,

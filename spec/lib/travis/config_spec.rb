@@ -69,7 +69,16 @@ describe Travis::Config do
         :adapter => 'postgresql',
         :database => 'travis_test',
         :encoding => 'unicode',
-        :host     => 'localhost',
+        :min_messages => 'warning',
+        :variables => { :statement_timeout => 10000 }
+      }
+    end
+
+    it 'logs database' do
+      config.logs_database.should == {
+        :adapter => 'postgresql',
+        :database => 'travis_logs_test',
+        :encoding => 'unicode',
         :min_messages => 'warning',
         :variables => { :statement_timeout => 10000 }
       }
