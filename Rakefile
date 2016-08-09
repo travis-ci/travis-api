@@ -6,7 +6,7 @@ namespace :db do
       sh "createdb travis_#{env}" rescue nil
       sh "createdb travis_logs_#{env}" rescue nil
       sh "psql -q travis_#{env} < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/structure.sql"
-      sh "psql -q travis_#{env} < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/travis_logs_structure.sql"
+      sh "psql -q travis_logs_#{env} < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/travis_logs_structure.sql"
     end
   end
 end
