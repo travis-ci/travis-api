@@ -7,10 +7,10 @@ Rails.application.routes.draw do
   get 'user/:id' => 'users#show', as: :user
   post 'user/:id/sync' => 'users#sync', as: :sync_user
   post 'user/sync_all' => 'users#sync_all', as: :sync_all
-  post 'user/:id/update_trials' => 'users#update_trials', as: :user_update_trials
+  post 'user/:id/update_builds_remaining' => 'users#update_builds_remaining', as: :user_update_builds_remaining
 
   get 'organization/:id' => 'organizations#show', as: :organization
-  post 'organization/:id/update_trials' => 'organizations#update_trials', as: :organization_update_trials
+  post 'organization/:id/update_builds_remaining' => 'organizations#update_builds_remaining', as: :organization_update_builds_remaining
 
   get 'repository/:id' => 'repositories#show', as: :repository
   post 'repository/:id/enable' => 'repositories#enable', as: :enable_repository
