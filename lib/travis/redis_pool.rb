@@ -11,14 +11,14 @@ module Travis
       end
     end
 
-    def method_missing(name, *args)
-      timer = Metriks.timer('redis.pool.wait').time
-      @pool.with do |redis|
-        timer.stop
+    def method_missing(name, *args, &block)
+      # timer = Metriks.timer('redis.pool.wait').time
+      pool.with do |redis|
+        # timer.stop
         if redis.respond_to?(name)
-          Metriks.timer('redis.operations').time do
-            redis.send(name, *args)
-          end
+          # Metriks.timer("redis.operations").time do
+            redis.send(name, *args, &block)
+          # end
         else
           super
         end
