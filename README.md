@@ -38,7 +38,7 @@ NB detail for how `rake` sets up the database can be found in the `Rakefile`. In
 $ RAILS_ENV=development bundle exec rake db:create
 $ RAILS_ENV=test bundle exec rake db:create
 ```
-#### Optional
+#### Travis Logs DB setup
 Clone `travis-logs` and copy the `logs` database (assume the PostgreSQL user is `postgres`):
 ```sh-session
 $ cd ..

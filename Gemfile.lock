@@ -41,7 +41,8 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-migrations.git
-  revision: dc432e45354287c617c3ae07a72e9e3c4be012cd
+  revision: cfc5b94d9380d945d42e743beb0bc2433d846c93
+  branch: add_travis_logs_structure
   specs:
     travis-migrations (0.0.2)
 
