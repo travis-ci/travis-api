@@ -24,6 +24,6 @@ class OrganizationsController < ApplicationController
     Travis::DataStores.redis.set("trial:#{@organization.login}", params[:builds_remaining])
     flash[:notice] = "Reset #{@organization.login}'s trial to #{params[:builds_remaining]} builds."
     update_topaz(@organization, params[:builds_remaining], params[:previous_builds])
-    redirect_to @organization, anchor 'account'
+    redirect_to @organization
   end
 end

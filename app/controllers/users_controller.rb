@@ -55,6 +55,6 @@ class UsersController < ApplicationController
     Travis::DataStores.redis.set("trial:#{@user.login}", params[:builds_remaining])
     flash[:notice] = "Reset #{@user.login}'s trial to #{params[:builds_remaining]} builds."
     update_topaz(@user, params[:builds_remaining], params[:previous_builds])
-    redirect_to @user, anchor: 'account'
+    redirect_to @user
   end
 end
