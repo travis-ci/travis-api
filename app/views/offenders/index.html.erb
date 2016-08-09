@@ -1,0 +1,11 @@
+<h1>Blocked for Abuse</h1>
+
+<section class="info-block">
+  <h2 class="info-header">User Accounts</h2>
+  <%= render partial: 'shared/user_list', locals: {users: @offending_users} %>
+</section>
+
+<section class="info-block">
+  <h2 class="info-header">Organization Accounts</h2>
+  <%= render partial: 'shared/organization_list', locals: {organizations: @offending_organizations} %>
+</section>

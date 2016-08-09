@@ -26,4 +26,6 @@ Rails.application.routes.draw do
   get 'broadcast' => 'broadcasts#index', as: :broadcast
 
   get 'admins' => 'users#admins', as: :admins
+
+  get 'abuse' => 'offenders#index', as: :abuse
 end

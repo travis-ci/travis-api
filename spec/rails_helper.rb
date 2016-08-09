@@ -42,6 +42,7 @@ RSpec.configure do |config|
 
   config.after(:each) do
     DatabaseCleaner.clean
+    Travis::DataStores.redis.flushall
   end
 
   config.infer_spec_type_from_file_location!
