@@ -4,6 +4,6 @@ test:
   api_endpoint:
     'https://api-fake.travis-ci.com'
   topaz:
-    url: https://topaz-staging.travis-ci.com
+    url: https://topaz-fake.travis-ci.com
   redis:
     url: redis://localhost:6379
