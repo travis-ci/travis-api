@@ -50,7 +50,7 @@ class UsersController < ApplicationController
     redirect_to back_link
   end
 
-  def update_trials
+  def update_builds_remaining
     @user = User.find_by(id: params[:id])
     update_topaz(@user, params[:builds_remaining])
 

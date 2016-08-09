@@ -19,7 +19,7 @@ class OrganizationsController < ApplicationController
     @builds_provided = builds_provided_for(@organization)
   end
 
-  def update_trials
+  def update_builds_remaining
     @organization = Organization.find_by(id: params[:id])
     update_topaz(@organization, params[:builds_remaining])
   end
