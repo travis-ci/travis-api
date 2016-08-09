@@ -14,22 +14,16 @@ class BroadcastsController < ApplicationController
       flash[:error] = "Could not create broadcast."
     end
 
-    redirect_to_broadcast_view(@recipient)
+    redirect_to_broadcast_view
   end
 
   def expire
-    @broadcast = Broadcast.find(params[:id])
-
-    if params['broadcast'] && params['broadcast']['recipient_type']
-      @recipient = Object.const_get(params['broadcast']['recipient_type']).find(params['broadcast']['recipient_id'])
-    else
-      @recipient = 'everybody'
-    end
+    @broadcast = Broadcast.find_by(id: params[:id])
 
     @broadcast.toggle(:expired)
     @broadcast.save
 
-    redirect_to_broadcast_view(@recipient)
+    redirect_to_broadcast_view
   end
 
   private
@@ -37,16 +31,13 @@ class BroadcastsController < ApplicationController
       params.require(:broadcast).permit(:recipient_type, :recipient_id, :message, :category)
     end
 
-    def redirect_to_broadcast_view(recipient)
-      case recipient
-      when User
-        redirect_to user_path(recipient, anchor: "broadcast")
-      when Organization
-        redirect_to organization_path(recipient, anchor: "broadcast")
-      when Repository
-        redirect_to repository_path(recipient, anchor: "broadcast")
-      else
-        redirect_to broadcast_path
+    def redirect_to_broadcast_view
+      if params[:broadcast] && broadcast_params[:recipient_type]
+        recipient_class = Object.const_get(broadcast_params[:recipient_type])
+        recipient = recipient_class.find_by(id: broadcast_params[:recipient_id])
       end
+
+      return redirect_to broadcast_path unless recipient
+      redirect_to :controller => recipient_class.to_s.downcase.pluralize, :action => 'show', :id => recipient, anchor: 'broadcast'
     end
 end
