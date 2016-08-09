@@ -21,6 +21,9 @@ class OrganizationsController < ApplicationController
 
   def update_builds_remaining
     @organization = Organization.find_by(id: params[:id])
-    update_topaz(@organization, params[:builds_remaining])
+    Travis.redis.set("trial:#{@organization.login}", params[:builds_remaining])
+    flash[:notice] = "Reset #{@organization.login}'s trial to #{params[:builds_remaining]} builds."
+    update_topaz(@organization, params[:builds_remaining], params[:previous_builds])
+    redirect_to @organization, anchor 'account'
   end
 end

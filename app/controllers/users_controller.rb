@@ -52,8 +52,9 @@ class UsersController < ApplicationController
 
   def update_builds_remaining
     @user = User.find_by(id: params[:id])
-    update_topaz(@user, params[:builds_remaining])
-
-    redirect_to @user
+    Travis.redis.set("trial:#{@user.login}", params[:builds_remaining])
+    flash[:notice] = "Reset #{@user.login}'s trial to #{params[:builds_remaining]} builds."
+    update_topaz(@user, params[:builds_remaining], params[:previous_builds])
+    redirect_to @user, anchor: 'account'
   end
 end
