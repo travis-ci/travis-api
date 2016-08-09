@@ -16,7 +16,7 @@
     <dt class="info-label">Trial: </dt>
     <dd>
       <% if builds_remaining %>
-        <%= form_tag action: 'update_builds_remaining', controller: "#{owner.class.table_name}", method: 'post' do %>
+        <%= form_tag action: 'update_trial_builds', controller: "#{owner.class.table_name}", method: 'post' do %>
           <dl>
             <dt class="info-label">Builds Provided:</dt>
             <dd><%= @builds_provided %></dd>

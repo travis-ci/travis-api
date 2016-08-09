@@ -19,7 +19,7 @@ class OrganizationsController < ApplicationController
     @builds_provided = builds_provided_for(@organization)
   end
 
-  def update_builds_remaining
+  def update_trial_builds
     @organization = Organization.find_by(id: params[:id])
     Travis::DataStores.redis.set("trial:#{@organization.login}", params[:builds_remaining])
     flash[:notice] = "Reset #{@organization.login}'s trial to #{params[:builds_remaining]} builds."

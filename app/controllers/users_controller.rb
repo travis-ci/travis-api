@@ -50,7 +50,7 @@ class UsersController < ApplicationController
     redirect_to back_link
   end
 
-  def update_builds_remaining
+  def update_trial_builds
     @user = User.find_by(id: params[:id])
     Travis::DataStores.redis.set("trial:#{@user.login}", params[:builds_remaining])
     flash[:notice] = "Reset #{@user.login}'s trial to #{params[:builds_remaining]} builds."
