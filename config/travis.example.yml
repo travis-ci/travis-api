@@ -1,0 +1,9 @@
+test:
+  admins:
+    - travisbot
+  api_endpoint:
+    'https://api-fake.travis-ci.com'
+  topaz:
+    url: https://topaz-staging.travis-ci.com
+  redis:
+    url: redis://localhost:6379
