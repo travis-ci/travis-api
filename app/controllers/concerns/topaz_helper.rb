@@ -4,7 +4,7 @@ module TopazHelper
     Travis::DataStores.topaz.builds_provided_for(owner.id).try(:to_i)
   end
 
-  def update_topaz(owner, builds)
+  def update_topaz(owner, builds_remaining, previous_builds)
     event = {
       timestamp: Time.now,
       owner: {
@@ -14,8 +14,8 @@ module TopazHelper
         type: owner.class.name
       },
       data: {
-        trial_builds_added: builds.to_i,
-        previous_builds: builds_provided_for(owner)
+        trial_builds_added: builds_remaining.to_i,
+        previous_builds: previous_builds.to_i
       },
       type: :trial_builds_added
     }
