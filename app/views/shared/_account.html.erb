@@ -47,6 +47,12 @@
 
 <section class="info-block">
   <h2 class="info-header">Abuse Flags</h2>
-  <form>
-  </form>
+  <%= form_for :offender, url: {controller: "offenders", action: "update"}, html: {class: "abuse-form"}, method: :put do |f| %>
+    <% Offender::LISTS.each do |key, description| %>
+      <%= f.check_box key, checked: Travis::DataStores.redis.sismember("abuse:#{key}", owner.login) %>
+      <%= f.label description %>
+    <% end %>
+    <%= f.hidden_field :login, value: owner.login %>
+    <%= f.submit('Update', class: 'button') %>
+  <% end %>
 </section>

@@ -1,6 +1,8 @@
 class Offender
   include ActiveModel::Model
 
+  LISTS = {trusted: "trusted account", offenders: "known offender", not_fishy: "not fishy"}
+
   def self.logins
     Travis::DataStores.redis.smembers("abuse:offenders")
   end

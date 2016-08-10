@@ -28,4 +28,5 @@ Rails.application.routes.draw do
   get 'admins' => 'users#admins', as: :admins
 
   get 'abuse' => 'offenders#index', as: :abuse
+  put 'abuse' => 'offenders#update'
 end
