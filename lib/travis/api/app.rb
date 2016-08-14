@@ -26,6 +26,7 @@ require 'metriks/reporter/logger'
 require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
+require 'securerandom'
 
 module Travis::Api
 end
@@ -81,11 +82,7 @@ module Travis::Api
     end
 
     def self.deploy_sha
-      @deploy_sha ||= File.exist?(deploy_sha_path) ? File.read(deploy_sha_path)[0..7] : 'deploy-sha'
-    end
-
-    def self.deploy_sha_path
-      File.expand_path('../../../../.deploy-sha', __FILE__)
+      @deploy_sha ||= ENV['HEROKU_SLUG_COMMIT'] || SecureRandom.hex(5)
     end
 
     attr_accessor :app

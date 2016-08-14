@@ -179,7 +179,8 @@ class Travis::Api::App
             :created_at => user.created_at.to_i,
             :github_id => user.github_id,
             :education => user.education,
-            :first_logged_in_at => user.first_logged_in_at.to_i
+            :first_logged_in_at => user.first_logged_in_at.to_i,
+            :travis_domain => Travis.config.client_domain
           }
 
           customerio.identify(payload)
