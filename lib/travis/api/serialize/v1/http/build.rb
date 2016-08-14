@@ -17,6 +17,8 @@ module Travis
             end
 
             def data
+              puts "***DEBUG1:*** #{build.matrix.first.inspect}"
+              puts "***DEBUG2:*** #{Job.new(build.matrix.first).inspect}"
               {
                 'id' => build.id,
                 'repository_id' => build.repository_id,
