@@ -36,6 +36,8 @@ gem 'netaddr'
 gem 'jemalloc'
 gem 'customerio'
 
+gem 'newrelic_rpm'
+
 group :development, :test do
   gem 'travis-migrations', github: 'travis-ci/travis-migrations'
 end
