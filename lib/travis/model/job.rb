@@ -174,7 +174,7 @@ class Job < Travis::Model
     end
 
     def normalize_config(config)
-      puts "**DEBUG:*** #{config.inspect}"
+      config = YAML.load(config) if config.is_a? String
       config = config ? config.deep_symbolize_keys : {}
 
       if config[:deploy]
