@@ -15,4 +15,7 @@ skip   = ['Travis::Memory', 'GH::ResponseWrapper', 'Travis::Helpers::Legacy', 'G
   target.load_constants! :only => only, :skip => skip, :debug => false
 end
 
+require 'newrelic_rpm'
+NewRelic::Agent.after_fork(force_reconnect: true)
+
 run Travis::Api::App.new
