@@ -42,6 +42,7 @@ test:
 staging:
   <<: *default_settings
   app_name: Travis API (Staging)
+  developer_mode: true
 
 production:
   <<: *default_settings
