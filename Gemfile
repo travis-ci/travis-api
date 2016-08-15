@@ -3,10 +3,11 @@ source 'https://rubygems.org'
 # Magic Makers
 gem 'rails', '4.2.6'
 
-# JS Stuff
+# CSS/JS Stuff
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 gem 'jquery-rails'
+gem 'font-awesome-rails'
 
 # Databases
 gem 'pg'
