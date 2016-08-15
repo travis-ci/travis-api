@@ -6,6 +6,8 @@ timeout 30 # restarts workers that hang for 30 seconds
 tmp_dir = ENV.fetch("tmp_dir", "/tmp")
 listen File.expand_path("nginx.socket", tmp_dir), backlog: 1024
 
+preload_app true
+
 require 'fileutils'
 before_fork do |server, worker|
   # preload travis so we can have copy on write
