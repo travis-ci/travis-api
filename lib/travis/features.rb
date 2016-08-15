@@ -123,7 +123,7 @@ module Travis
     end
 
     def owner_key(feature, owner)
-      suffix = owner.class.table_name
+      suffix = owner.class.table_name if owner
       "#{key(feature)}:#{suffix}"
     end
 
