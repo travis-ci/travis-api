@@ -111,6 +111,7 @@ module Travis
     #
     # By default, this return false.
     def owner_active?(feature, owner)
+      return false unless owner
       redis.sismember(owner_key(feature, owner), owner.id)
     end
 
@@ -123,7 +124,7 @@ module Travis
     end
 
     def owner_key(feature, owner)
-      suffix = owner.class.table_name
+      suffix = owner.class.table_name if owner
       "#{key(feature)}:#{suffix}"
     end
 

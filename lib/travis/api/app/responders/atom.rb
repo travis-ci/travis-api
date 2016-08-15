@@ -4,15 +4,15 @@ module Travis::Api::App::Responders
   class Atom < Base
     ATOM_FEED_ERB = ERB.new <<-EOF
 <?xml version="1.0" encoding="utf-8"?>
- 
+
 <feed xmlns="http://www.w3.org/2005/Atom">
- 
+
   <title><%= resource.first.repository.slug %> Builds</title>
   <link href="<%= endpoint.url %>" type="application/atom+xml" rel = "self" />
   <id>repo:<%= resource.first.repository.id %></id>
   <rights>Copyright (c) <%= DateTime.now.strftime("%Y") %> Travis CI GmbH</rights>
   <updated><%= DateTime.now.rfc3339 %></updated>
- 
+
   <% resource.each do |build| %>
   <entry>
     <title><%= build.repository.slug %> Build #<%= build.number %></title>
@@ -21,7 +21,7 @@ module Travis::Api::App::Responders
     <updated><%= ::DateTime.parse(build.updated_at.to_s).rfc3339 %></updated>
     <summary type="html">
     &lt;p&gt;
-      <%= build.commit.message.encode(:xml => :text) %> (<%= build.commit.committer_name %>)
+      <%= build.commit.message.encode(:xml => :text) if build.commit.message %> (<%= build.commit.committer_name %>)
       &lt;br/&gt;&lt;br/&gt;
       State: <%= build.state %>
       &lt;br/&gt;
@@ -36,7 +36,7 @@ module Travis::Api::App::Responders
     </author>
   </entry>
   <% end %>
- 
+
 </feed>
     EOF
 
