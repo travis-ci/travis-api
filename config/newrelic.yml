@@ -29,10 +29,7 @@ common: &default_settings
 development:
   <<: *default_settings
   app_name: Travis API (Development)
-
-  # NOTE: There is substantial overhead when running in developer mode.
-  # Do not use for production or load testing.
-  developer_mode: true
+  log_level: debug
 
 test:
   <<: *default_settings
@@ -42,7 +39,7 @@ test:
 staging:
   <<: *default_settings
   app_name: Travis API (Staging)
-  developer_mode: true
+  log_level: debug
 
 production:
   <<: *default_settings

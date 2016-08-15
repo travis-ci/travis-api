@@ -1,9 +1,9 @@
 require 'sinatra/base'
-require 'newrelic_rpm'
 require 'mustermann'
 require 'travis/api/app'
 require 'travis/api/app/extensions'
 require 'travis/api/app/helpers'
+require 'newrelic_rpm'
 
 class Travis::Api::App
   # Superclass for any endpoint and middleware.

@@ -27,6 +27,7 @@ require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'securerandom'
+require 'newrelic_rpm'
 
 module Travis::Api
 end
