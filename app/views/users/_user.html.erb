@@ -2,7 +2,7 @@
   <h2 class="info-header">Basic Information</h2>
 
   <% if user.travis_admin? %>
-    <p>This user has admin access.</p>
+    <p>This user has <%= link_to "admin access", admins_path %>.</p>
   <% end %>
 
   <dl class="simple-info">

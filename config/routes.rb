@@ -24,4 +24,6 @@ Rails.application.routes.draw do
   get 'subscription/:id' => 'subscriptions#show', as: :subscription
 
   get 'broadcast' => 'broadcasts#index', as: :broadcast
+
+  get 'admins' => 'admins#index', as: :admins
 end

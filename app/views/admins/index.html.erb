@@ -1,0 +1,12 @@
+<h1 class="info-header">Users with Admin Access</h1>
+<section class="info-block">
+  <ul>
+    <% @admins.each do |admin| %>
+      <li class="inline-list">
+        <p><%= link_to describe(admin), admin %></p>
+        <p></p>
+        <p></p>
+      </li>
+    <% end %>
+  </ul>
+</section>
