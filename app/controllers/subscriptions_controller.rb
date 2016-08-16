@@ -6,4 +6,22 @@ class SubscriptionsController < ApplicationController
     @plan = @subscription.plans.current
     @invoices = @subscription.invoices.order('id DESC')
   end
+
+  def update
+    @subscription = Subscription.find_by(id: params[:id])
+
+    @subscription.attributes = params.slice('billing_email', 'vat_id', 'valid_to').reject do |name, value|
+      if name == 'valid_to'
+        @subscription['valid_to'].strftime("%Y-%m-%d") ==  value
+      end
+    end
+
+    changes = @subscription.changes
+
+    @subscription.save
+
+    flash[:notice] = "Updated #{subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first.inspect} to #{change.last.inspect}"}.join(", ")}"
+
+    redirect_to @subscription
+  end
 end
