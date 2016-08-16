@@ -84,14 +84,14 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # Travis::Config.class_eval do
-  #   define admins: []
-  # end
+  Travis::Config.class_eval do
+    define admins: []
+  end
 
-  # configuration = Travis::Config.load
+  configuration = Travis::Config.load
 
-  # config.middleware.use Travis::SSO,
-  #   mode: :session,
-  #   authorized?: -> u { configuration.admins.include? u['login'] },
-  #   endpoint: configuration.api_endpoint
+  config.middleware.use Travis::SSO,
+    mode: :session,
+    authorized?: -> u { configuration.admins.include? u['login'] },
+    endpoint: configuration.api_endpoint
 end
