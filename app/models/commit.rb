@@ -1,4 +1,4 @@
-class Commit < ActiveRecord::Base
+class Commit < ApplicationRecord
   belongs_to :repository
   belongs_to :last_build, class_name: 'Build'
   has_many   :builds

@@ -1,18 +1,18 @@
 source 'https://rubygems.org'
 
 # Magic Makers
-gem 'rails', '4.2.6'
+gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
 
 # CSS/JS Stuff
 gem 'uglifier', '>= 1.3.0'
-gem 'coffee-rails', '~> 4.1.0'
+gem 'coffee-rails', '~> 4.2'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'font-awesome-rails'
 
 # Databases
 gem 'pg'
-gem 'redis'
+gem 'redis', '~> 3.0'
 gem 'redis-namespace'
 
 # API stuffs
@@ -32,7 +32,7 @@ gem 'metriks'
 gem 'sass-rails', '~> 5.0'
 
 # Sidekiq
-gem 'puma'
+gem 'puma', '~> 3.0'
 gem 'sidekiq'
 gem 'foreman'
 
@@ -64,5 +64,5 @@ end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
+  gem 'web-console', '~> 3.3'
 end

@@ -1,3 +1,3 @@
-class Email < ActiveRecord::Base
+class Email < ApplicationRecord
   belongs_to :user
 end
