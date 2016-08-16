@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   post 'job/:id/restart' => 'jobs#restart', as: :restart_job
 
   get 'subscription/:id' => 'subscriptions#show', as: :subscription
+  post 'subscription/:id/update' => 'subscriptions#update'
 
   get 'admins' => 'users#admins', as: :admins
 end
