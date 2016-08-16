@@ -12,6 +12,10 @@ class UsersController < ApplicationController
     @inactive_broadcasts = Broadcast.inactive.for(@user)
   end
 
+  def admins
+    @admins = User.where(login: Travis::Config.load.admins).order(:name)
+  end
+
   def sync
     @user = User.find_by(id: params[:id])
 
