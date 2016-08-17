@@ -17,7 +17,7 @@ class BroadcastsController < ApplicationController
     redirect_to_broadcast_view
   end
 
-  def expire
+  def update
     @broadcast = Broadcast.find_by(id: params[:id])
 
     @broadcast.toggle(:expired)
@@ -37,7 +37,7 @@ class BroadcastsController < ApplicationController
         recipient = recipient_class.find_by(id: broadcast_params[:recipient_id])
       end
 
-      return redirect_to broadcast_path unless recipient
-      redirect_to :controller => recipient_class.to_s.downcase.pluralize, :action => 'show', :id => recipient, anchor: 'broadcast'
+      return redirect_to broadcasts_path unless recipient
+      redirect_to :controller => recipient_class.table_name, :action => 'show', :id => recipient, anchor: 'broadcast'
     end
 end

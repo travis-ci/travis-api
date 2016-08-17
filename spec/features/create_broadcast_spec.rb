@@ -6,7 +6,7 @@ RSpec.feature "Create Broadcast", :js => true, :type => :feature do
   let!(:repository)   { create(:repository) }
 
   scenario "Create broadcast for everybody" do
-    visit "/broadcast"
+    visit "/broadcasts"
 
     fill_in('broadcast_message', :with => 'This is a message.')
     choose("Warning")

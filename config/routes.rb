@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   root 'home#home'
 
-  resources :offenders, only: [:index, :update]
+  resources :offenders,  only: [:index, :update]
+  resources :broadcasts, only: [:index, :create, :update]
 
   get 'user/:id' => 'users#show', as: :user
   post 'user/:id/sync' => 'users#sync', as: :sync_user
@@ -24,10 +25,6 @@ Rails.application.routes.draw do
   post 'job/:id/restart' => 'jobs#restart', as: :restart_job
 
   get 'subscription/:id' => 'subscriptions#show', as: :subscription
-
-  get 'broadcast' => 'broadcasts#index', as: :broadcast
-  post 'broadcast' => 'broadcasts#create'
-  patch 'broadcast/:id/expire' => 'broadcasts#expire', as: :expire_broadcast
 
   get 'admins' => 'users#admins', as: :admins
 end

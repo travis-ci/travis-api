@@ -4,7 +4,7 @@ RSpec.feature "Hide Broadcast", :js => true, :type => :feature do
   let!(:broadcast) { create(:broadcast, message: 'Some message text.') }
 
   scenario "Hide broadcast for everybody" do
-    visit "/broadcast"
+    visit "/broadcasts"
 
     find_button('Hide').trigger('click')
 
