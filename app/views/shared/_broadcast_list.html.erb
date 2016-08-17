@@ -5,7 +5,6 @@
     <li class="inline-list broadcast-item">
       <p class="info-label">Recipient</p>
       <p class="info-label">Date</p>
-      <p class="info-label">Kind</p>
       <p class="info-label">Message</p>
       <p class="info-label"></p>
     </li>
@@ -13,7 +12,6 @@
       <li class="inline-list broadcast-item">
         <p><%= broadcast.recipient ? link_to(describe(broadcast.recipient), broadcast.recipient) : "everybody" %></p>
         <p><time><%= broadcast.created_at.to_date %></time></p>
-        <p><%= broadcast.kind %></p>
         <p><%= sanitize broadcast.message %></p>
         <p>
           <%= form_for broadcast do |f| %>

@@ -3,6 +3,8 @@ class Broadcast < ActiveRecord::Base
 
   belongs_to :recipient, polymorphic: true
 
+  validates :message, presence: true
+
   scope :active,         -> { where('created_at >= ? AND (expired IS NULL OR expired <> ?)', EXPIRY_TIME.ago, true).order('id DESC') }
   scope :recent_expired, -> { where('created_at >= ? AND expired = ?', EXPIRY_TIME.ago, true).order('id DESC') }
   scope :inactive,       -> { where('created_at < ? OR (expired = ?)', EXPIRY_TIME.ago, true).order('id DESC') }

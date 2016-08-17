@@ -38,6 +38,6 @@ class BroadcastsController < ApplicationController
       end
 
       return redirect_to broadcasts_path unless recipient
-      redirect_to :controller => recipient_class.table_name, :action => 'show', :id => recipient, anchor: 'broadcast'
+      redirect_to controller: recipient_class.table_name, action: 'show', id: recipient, anchor: 'broadcast'
     end
 end
