@@ -1,0 +1,19 @@
+<%= form_for :broadcast, url: {controller: "broadcasts", action: "create"}, html: {class: "broadcast-form"} do |f| %>
+  <% if defined? recipient %>
+    <%= f.hidden_field :recipient_type, value: recipient.class.name %>
+    <%= f.hidden_field :recipient_id, value: recipient.id %>
+  <% end %>
+
+  <p><%= f.text_area :message %></p>
+
+  <p>
+    <%= label_tag do %>
+      <%= f.radio_button(:category, 'announcement', checked: 'checked') %> Announcement
+    <% end %>
+    <%= label_tag do %>
+      <%= f.radio_button(:category, 'warning') %> Warning
+    <% end %>
+  </p>
+
+  <p><%= f.submit('Create', class: 'button') %></p>
+<% end %>

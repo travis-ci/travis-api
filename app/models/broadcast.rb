@@ -3,6 +3,8 @@ class Broadcast < ActiveRecord::Base
 
   belongs_to :recipient, polymorphic: true
 
+  validates :message, presence: true
+
   scope :active,         -> { where('created_at >= ? AND (expired IS NULL OR expired <> ?)', EXPIRY_TIME.ago, true).order('id DESC') }
   scope :recent_expired, -> { where('created_at >= ? AND expired = ?', EXPIRY_TIME.ago, true).order('id DESC') }
   scope :inactive,       -> { where('created_at < ? OR (expired = ?)', EXPIRY_TIME.ago, true).order('id DESC') }
@@ -39,5 +41,17 @@ class Broadcast < ActiveRecord::Base
     when ::Organization then for_org(object)
     else where('recipient_type IS NULL OR recipient_type = ? AND recipient_id = ?', object.class, object.id)
     end
+  end
+
+  def active?
+    !expired? && created_at >= EXPIRY_TIME.ago
+  end
+
+  def explicit_expired?
+    expired? && created_at >= EXPIRY_TIME.ago
+  end
+
+  def inactive?
+    created_at < EXPIRY_TIME.ago
   end
 end
