@@ -100,7 +100,6 @@ dd
   display: flex
   flex-flow: row nowrap
   justify-content: space-between
-  align-items: left
   p
     margin: 0.5em
 
@@ -128,25 +127,18 @@ dd
 .request-item > p
   flex: 1 1 20%
 
-.user-item > p
-  flex: 1 1 30%
+.org-list, .user-list
+  list-style: none
+
+.org-item, .user-item
+  p
+    flex: 1 1 30%
 
 .broadcast-item > p
   flex: 1 1 20%
 
 .invoice-item > p
   flex: 1 1 30%
-
-.org-list
-  list-style: none
-
-.org-item
-  position: relative
-  .org-name
-    display: inline
-  > .button
-    position: absolute
-    right: 0
 
 
 /* Button styles */
@@ -187,7 +179,14 @@ dd
   .error
     @include notice($brick-red)
 
+
 /* Navigation */
 
 .menu
   float: right
+
+
+/* Forms */
+
+form.abuse-form label
+  margin-right: .8em

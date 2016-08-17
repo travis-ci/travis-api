@@ -1,0 +1,36 @@
+<h1>Blocked for Abuse</h1>
+
+<section class="info-block">
+  <h2 class="info-header">User Accounts</h2>
+  <% if @offending_users.empty? %>
+    <p>No users marked as offenders.</p>
+  <% else %>
+    <ul class="user-list">
+      <% @offending_users.each do |user| %>
+        <li>
+          <p><%= link_to describe(user), user %></p>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
+
+<section class="info-block">
+  <h2 class="info-header">Organization Accounts</h2>
+  <% if @offending_organizations.empty? %>
+    <p>No organizations marked as offenders.</p>
+  <% else %>
+    <ul class="org-list">
+      <% @offending_organizations.each do |org| %>
+        <li>
+          <p>
+            <% if org.avatar_url %>
+              <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
+            <% end %>
+            <%= link_to org.name.present? ? describe(org) : org.login, org %>
+          </p>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
