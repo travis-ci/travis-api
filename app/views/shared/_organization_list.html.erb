@@ -1,17 +1,29 @@
 <% if organizations.empty? %>
   <p>No organizations.</p>
 <% else %>
-  <% organizations.each do |org| %>
-    <ul class="org-list">
-      <li class="org-item">
-        <p class="org-name">
+  <ul>
+    <li class="inline-list org-item">
+      <p class="info-label">Name</p>
+      <p class="info-label">Subscription</p>
+      <p class="info-label">Trial Builds</p>
+    </li>
+    <% organizations.each do |org| %>
+      <li class="inline-list org-item">
+        <p>
           <% if org.avatar_url %>
             <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
           <% end %>
-          <%= org.name.present? ? describe(org) : org.login %>
+          <%= link_to org.name.present? ? describe(org) : org.login, org %>
         </p>
-        <%= link_to "View", org, class: "button" %>
+        <p>
+          <% if org.subscription %>
+            <%= link_to format_subscription(org.subscription), org.subscription %>
+          <% else %>
+            none
+          <% end %>
+        </p>
+        <p></p>
       </li>
-    </ul>
-  <% end %>
+    <% end %>
+  </ul>
 <% end %>

@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   root 'home#home'
 
+  resources :offenders, only: [:index, :update]
+
   get 'user/:id' => 'users#show', as: :user
   post 'user/:id/sync' => 'users#sync', as: :sync_user
   post 'user/sync_all' => 'users#sync_all', as: :sync_all
@@ -26,7 +28,4 @@ Rails.application.routes.draw do
   get 'broadcast' => 'broadcasts#index', as: :broadcast
 
   get 'admins' => 'users#admins', as: :admins
-
-  get 'abuse' => 'offenders#index', as: :abuse
-  put 'abuse' => 'offenders#update'
 end

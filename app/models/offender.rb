@@ -1,6 +1,4 @@
-class Offender
-  include ActiveModel::Model
-
+module Offender
   LISTS = {trusted: "trusted account", offenders: "known offender", not_fishy: "not fishy"}
 
   def self.logins

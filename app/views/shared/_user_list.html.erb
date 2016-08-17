@@ -1,18 +1,16 @@
 <% if users.empty? %>
   <p>No users.</p>
 <% else %>
-  <% unless controller_name == 'offenders' %>
-    <%= form_for :sync_all, url: {action: 'sync_all', controller: 'users'} do |f| %>
-      <%= f.hidden_field :back_link, value: request.fullpath %>
-      <%= f.hidden_field :user_ids, value: users.map(&:id).join(',') %>
-      <%= f.submit 'Sync all', class: 'button' %>
-    <% end %>
+  <%= form_for :sync_all, url: {action: 'sync_all', controller: 'users'} do |f| %>
+    <%= f.hidden_field :back_link, value: request.fullpath %>
+    <%= f.hidden_field :user_ids, value: users.map(&:id).join(',') %>
+    <%= f.submit 'Sync all', class: 'button' %>
   <% end %>
   <ul>
     <li class="inline-list user-item">
       <p class="info-label">Name</p>
       <p class="info-label">Subscription</p>
-      <p class="info-label"></p>
+      <p class="info-label">Trial Builds</p>
     </li>
     <% users.each do |user| %>
       <li class="inline-list user-item">
