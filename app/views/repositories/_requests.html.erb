@@ -16,7 +16,7 @@
           <p><%= link_to describe(request), request %></p>
           <p>
             <% request.builds.each do |build| %>
-              <%= describe(build) %>
+              <%= link_to describe(build), build %>
             <% end %>
             <%= request.message %>
           </p>

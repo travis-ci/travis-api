@@ -3,7 +3,10 @@
 
   <dl class="simple-info">
     <dt class="info-label">Name:</dt>
-    <dd><%= repository.name %></dd>
+    <dd>
+      <%= describe(repository) %>
+      <%= link_to fa_icon("github"), "https://github.com/#{describe(repository)}", target: "_blank" %>
+    </dd>
 
     <dt class="info-label">Description:</dt>
     <dd><%= repository.description %></dd>
