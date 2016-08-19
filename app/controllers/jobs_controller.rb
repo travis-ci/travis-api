@@ -9,13 +9,27 @@ class JobsController < ApplicationController
 
     response = Services::Job::Cancel.new(@job.id).call
 
-    if response.success?
-      flash[:notice] = 'Job successfully canceled.'
-    else
-      flash[:error] = "Error: #{response.headers[:status]}"
-    end
+    respond_to do |format|
+      format.html do
+        if response.success?
+          flash[:notice] = "Job successfully canceled."
+        else
+          flash[:error] = "Error: #{response.headers[:status]}"
+        end
 
-    redirect_to @job
+        redirect_to @job
+      end
+
+      format.json do
+        if response.success?
+          render json: {"success": true,
+            "message": "Job successfully canceled."}
+        else
+          render json: {"success": false,
+            "message": "Error: #{response.headers[:status]}"}
+        end
+      end
+    end
   end
 
   def restart

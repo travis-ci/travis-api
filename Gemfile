@@ -30,9 +30,6 @@ gem 'metriks'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 
-# Not sure if I need this
-gem 'turbolinks'
-
 # Sidekiq
 gem 'puma'
 gem 'sidekiq'
