@@ -36,7 +36,7 @@ GIT
       thread
 
 GIT
-  remote: https://fba4602ab138c5b2c8d48ae32a67aedeefc5e939:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git
+  remote: https://5ea7c640ac0e16b75cf5f0277a38f16ba534b333:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git
   revision: 3472c745355bc2818ddf6ebfaaa1e425512f880c
   specs:
     travis-pro-migrations (0.0.1)
