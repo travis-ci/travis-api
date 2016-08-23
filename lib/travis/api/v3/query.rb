@@ -35,7 +35,7 @@ module Travis::API::V3
     @@prefixed_params_accessor = <<-RUBY
       def %<prefix>s_params
         @%<prefix>s ||= begin
-          params = @params.select { |key, _| key.start_with?('%<prefix>s.'.freeze) }
+          params.select { |key, _| key.start_with?('%<prefix>s.'.freeze) }
           Hash[params.map { |key, value| [key.split('.'.freeze).last, value] }]
         end
       end
