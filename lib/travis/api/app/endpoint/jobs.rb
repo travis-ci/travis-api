@@ -11,6 +11,7 @@ class Travis::Api::App
 
       get '/' do
         prefer_follower do
+          params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
           respond_with service(:find_jobs, params)
         end
       end
