@@ -12,6 +12,6 @@ RSpec.feature 'Cancel a Job', :js => true, :type => :feature do
 
     find_button('Cancel').trigger('click')
 
-    expect(page).to have_text('Job successfully canceled.')
+    expect(page).to have_text('Job travis-pro/travis-admin#123 successfully canceled.')
   end
 end

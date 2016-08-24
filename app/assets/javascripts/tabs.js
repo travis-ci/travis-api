@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function(){
-  if (!!location.hash) return;
-
-  var link = document.querySelector('#tabs > .tab-link');
-  if (link) link.click();
+  if (!window.location.hash && document.querySelector('.tab-link')) {
+    var hash = document.querySelector('.tab-link').href;
+    window.history.replaceState(undefined, undefined, hash);
+    window.location = hash;
+  }
 }, false);

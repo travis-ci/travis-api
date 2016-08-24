@@ -12,6 +12,6 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
 
     find_button('Restart').trigger('click')
 
-    expect(page).to have_text('Job successfully restarted.')
+    expect(page).to have_text('Job travis-pro/travis-admin#123 successfully restarted.')
   end
 end

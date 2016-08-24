@@ -1,5 +1,5 @@
-$(document).ready(function(){
-  setTimeout(function(){
-    $('.flashes').fadeOut("slow");
-  }, 5000);
+$(document).ready(function() {
+  $('a, .button').click(function() {
+    $('.flashes > p').fadeOut();
+  });
 })

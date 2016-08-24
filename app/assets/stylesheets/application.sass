@@ -154,9 +154,15 @@ dd
     color: $white
     background-color: $cement-grey
   &:disabled
-    cursor: not-allowed
     color: $white
     background-color: lighten($cement-grey, 25)
+    pointer-events: none
+
+.disabled
+  color: $white
+  background-color: lighten($cement-grey, 25)
+  pointer-events: none
+
 
 /* Flashes */
 

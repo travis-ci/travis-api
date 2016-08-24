@@ -17,7 +17,7 @@
           <% if job.not_finished? %>
             <%= link_to "Cancel", cancel_job_path(job), method: "post", class: "button cancel-job", remote: true, 'data-type': 'json' %>
           <% else %>
-            <%= link_to "Restart", restart_job_path(job), method: "post", class: "button" %>
+            <%= link_to "Restart", restart_job_path(job), method: "post", class: "button restart-job", remote: true, 'data-type': 'json' %>
           <% end %>
         </p>
       </li>
