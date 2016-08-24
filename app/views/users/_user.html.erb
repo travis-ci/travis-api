@@ -10,13 +10,19 @@
     <dd><%= user.name %></dd>
 
     <dt class="info-label">Primary E-mail Address:</dt>
-    <dd><%= user.email %></dd>
+    <dd>
+      <%= user.email %>
+      <%= mail_to user.email, fa_icon("envelope-o") %>
+    </dd>
 
     <dt class="info-label">Additional E-Mail Addresses:</dt>
     <dd>
       <% user.emails.each do |entry| %>
         <% if entry.email != user.email %>
-          <div><%= entry.email %></div>
+          <div>
+            <%= entry.email %>
+            <%= mail_to entry.email, fa_icon("envelope-o") %>
+          </div>
         <% end %>
       <% end %>
     </dd>
@@ -27,7 +33,10 @@
   <h2 class="info-header">GitHub Information</h2>
   <dl class="simple-info">
     <dt class="info-label">GitHub Login:</dt>
-    <dd><%= user.login %></dd>
+    <dd>
+      <%= user.login %>
+      <%= link_to fa_icon("github"), "https://github.com/#{user.login}", target: "_blank" %>
+    </dd>
 
     <dt class="info-label">GitHub ID:</dt>
     <dd><%= user.github_id %></dd>

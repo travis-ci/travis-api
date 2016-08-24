@@ -8,11 +8,10 @@
         <p class="info-label repo-name">Repository</p>
         <p class="info-label repo-active">Active?</p>
         <p class="info-label repo-build">Last Build</p>
-        <p class="info-label repo-view"></p>
       </li>
       <% repositories.each do |repo| %>
         <li class="inline-list repository-item">
-          <p class="repo-name"><%= describe(repo) %></p>
+          <p class="repo-name"><%= link_to describe(repo), repository_path(repo) %></p>
           <% if repo.active? %>
             <p class="repo-active">&#10004; enabled</p>
           <% else %>
@@ -26,7 +25,6 @@
           <% else %>
             <p class="repo-build">no build</p>
           <% end %>
-          <p class="repo-view"><%= link_to "View", repository_path(repo), class: "button" %></p>
         </li>
       <% end %>
     </ul>

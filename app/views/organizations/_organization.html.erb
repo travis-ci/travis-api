@@ -6,10 +6,13 @@
     <dd><%= organization.name %></dd>
 
     <dt class="info-label">Primary E-mail Address:</dt>
-    <dd><%= organization.email %></dd>
+    <dd>
+      <%= organization.email %>
+      <%= mail_to organization.email, fa_icon("envelope-o") %>
+    </dd>
 
     <dt class="info-label">Homepage:</dt>
-    <dd><%= organization.homepage %></dd>
+    <dd><%= link_to organization.homepage, organization.homepage, target: "_blank" %></dd>
 
     <dt class="info-label">Location:</dt>
     <dd><%= organization.location %></dd>
@@ -25,6 +28,7 @@
         <%= image_tag(organization.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
       <% end %>
       <%= organization.login %>
+      <%= link_to fa_icon("github"), "https://github.com/#{organization.login}", target: "_blank" %>
     </dd>
 
     <dt class="info-label">GitHub ID</dt>
