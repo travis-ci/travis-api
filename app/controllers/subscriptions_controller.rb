@@ -20,7 +20,7 @@ class SubscriptionsController < ApplicationController
 
     @subscription.save
 
-    flash[:notice] = "Updated #{subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first.inspect} to #{change.last.inspect}"}.join(", ")}"
+    flash[:notice] = "Updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first.inspect} to #{change.last.inspect}"}.join(", ")}"
 
     redirect_to @subscription
   end
