@@ -46,4 +46,14 @@ module ApplicationHelper
   def format_short_duration(seconds)
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
+
+  def trial_builds_checker(owner)
+    builds_remaining = Travis::DataStores.redis.get("trial:#{owner.login}")
+    
+    if builds_remaining
+      "#{builds_remaining} trial builds"
+    else
+      'not in trial'
+    end
+  end
 end
