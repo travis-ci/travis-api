@@ -10,7 +10,7 @@ class SubscriptionsController < ApplicationController
   def update
     @subscription = Subscription.find_by(id: params[:id])
 
-    @subscription.attributes = params.slice('billing_email', 'vat_id', 'valid_to').reject do |name, value|
+    @subscription.attributes = subscription_params.slice('billing_email', 'vat_id', 'valid_to').reject do |name, value|
       if name == 'valid_to'
         @subscription['valid_to'].strftime("%Y-%m-%d") ==  value
       end
@@ -24,4 +24,9 @@ class SubscriptionsController < ApplicationController
 
     redirect_to @subscription
   end
+
+  private
+    def subscription_params
+      params.require(:subscription).permit(:valid_to, :billing_email, :vat_id)
+    end
 end
