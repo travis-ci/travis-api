@@ -1,9 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe ApplicationHelper, type: :helper do
+  let!(:user) { create(:user, name: 'Katrin', login: 'katrina') }
+  let!(:organization) { create(:organization, name: 'travis', login: 'travis-pro') }
+
+  describe 'check_trial_builds' do
+    let(:redis) { Travis::DataStores.redis }
+    before { redis.set("trial:#{user.login}", '75') }
+
+    it 'returns formatted trial builds when they exist' do
+      expect(helper.check_trial_builds(user)).to eq('75 trial builds')
+    end
+
+    it 'returns not in trial when trial does not exist' do
+      expect(helper.check_trial_builds(organization)).to eq('75 trial builds')
+    end
+  end
+
   describe 'describe' do
-    let(:user) { create(:user, name: 'Katrin', login: 'katrina') }
-    let(:organization) { create(:organization, name: 'travis', login: 'travis-pro') }
     let(:repository) { create(:repository, owner_name: 'travis') }
     let(:build) { create(:build, repository: repository, number: 123) }
     let(:job) { create(:job, repository: repository, number: 125) }

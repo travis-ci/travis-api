@@ -3,6 +3,16 @@ module ApplicationHelper
     Travis::DataStores.redis.hgetall("builds:#{owner.github_id}").sort_by(&:first).map { |e| e.last.to_i }
   end
 
+  def check_trial_builds(owner)
+    builds_remaining = Travis::DataStores.redis.get("trial:#{owner.login}")
+
+    if builds_remaining
+      "#{builds_remaining} trial builds"
+    else
+      'not in trial'
+    end
+  end
+
   def describe(object)
     case object
     when ::User, ::Organization then object.name.present? ? "#{object.name} (#{object.login})" : object.login
@@ -45,15 +55,5 @@ module ApplicationHelper
 
   def format_short_duration(seconds)
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
-  end
-
-  def trial_builds_checker(owner)
-    builds_remaining = Travis::DataStores.redis.get("trial:#{owner.login}")
-    
-    if builds_remaining
-      "#{builds_remaining} trial builds"
-    else
-      'not in trial'
-    end
   end
 end
