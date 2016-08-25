@@ -8,12 +8,12 @@ module Services
 
       def initialize(repository_id, settings)
         @repository_id = repository_id
-        @settings = settings
+        @settings = settings.map {|k, v| [k.dup.prepend("settings."), v]}.to_h
       end
 
       def call
         url = "/repo/#{@repository_id}/settings"
-        patch(url, "settings", settings)
+        patch(url, settings)
       end
     end
   end

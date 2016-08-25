@@ -47,7 +47,7 @@ class RepositoriesController < ApplicationController
 
     @features = Features.for(@repository)
 
-    @settings = Settings.new(@repository)
+    @settings = Settings.new(@repository.settings)
   end
 
   private
