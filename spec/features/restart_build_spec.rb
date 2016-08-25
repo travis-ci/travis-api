@@ -12,6 +12,6 @@ RSpec.feature 'Restart a Build', :js => true, :type => :feature do
 
     find_button('Restart').trigger('click')
 
-    expect(page).to have_text('Build successfully restarted.')
+    expect(page).to have_text('Build travis-pro/travis-admin#456 successfully restarted.')
   end
 end

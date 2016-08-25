@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  $(".cancel-job").on("ajax:success", function(e, data, status, xhr) {
+  $(".cancel-job, .cancel-build").on("ajax:success", function(e, data, status, xhr) {
     if (data.success) {
       $(this).html('Canceled').addClass('disabled');
       $(".flashes").html('<p class="notice">' + data.message + '</p>');
@@ -12,7 +12,7 @@ $(document).ready(function() {
   });
 
 
-  $(".restart-job").on("ajax:success", function(e, data, status, xhr) {
+  $(".restart-job, .restart-build").on("ajax:success", function(e, data, status, xhr) {
     if (data.success) {
       $(this).html('Restarted').addClass('disabled');
       $(".flashes").html('<p class="notice">' + data.message + '</p>');

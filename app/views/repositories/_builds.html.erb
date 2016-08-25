@@ -19,7 +19,13 @@
           <p class="build-type"><%= build.event_type %></p>
           <p class="build-state"><%= "#{build.state} at #{build.state_time}" %></p>
           <p class="build-duration"><%= format_short_duration(build.duration) %></p>
-          <p class="build-reset"></p>
+          <p class="build-reset">
+          <% if build.not_finished? %>
+              <%= link_to "Cancel", cancel_build_path(build), method: "post", class: "button cancel-build", remote: true, 'data-type': 'json' %>
+            <% else %>
+              <%= link_to "Restart", restart_build_path(build), method: "post", class: "button restart-build", remote: true, 'data-type': 'json' %>
+            <% end %>
+          </p>
         </li>
       <% end %>
     </ul>

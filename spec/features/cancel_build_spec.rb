@@ -12,6 +12,6 @@ RSpec.feature 'Cancel a Build', :js => true, :type => :feature do
 
     find_button('Cancel').trigger('click')
 
-    expect(page).to have_text('Build successfully canceled.')
+    expect(page).to have_text('Build travis-pro/travis-admin#456 successfully canceled.')
   end
 end
