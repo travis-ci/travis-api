@@ -10,11 +10,7 @@ class SubscriptionsController < ApplicationController
   def update
     @subscription = Subscription.find_by(id: params[:id])
 
-    @subscription.attributes = subscription_params.slice('billing_email', 'vat_id', 'valid_to').reject do |name, value|
-      if name == 'valid_to'
-        @subscription['valid_to'].strftime("%Y-%m-%d") ==  value
-      end
-    end
+    @subscription.attributes = subscription_params.slice('billing_email', 'vat_id', 'valid_to(1i)', 'valid_to(2i)', 'valid_to(3i)').reject
 
     changes = @subscription.changes
 
