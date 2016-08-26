@@ -25,9 +25,9 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
       to_return(:status => 200, :body => '', :headers => {})
 
-    find_link('Restart').trigger('click')
+    find_button('Restart').trigger('click')
 
     expect(page).to have_text('Job travis-pro/travis-admin#123 successfully restarted.')
-    expect(page).to have_link('Restarted')
+    expect(page).to have_button('Restarted', disabled: true)
   end
 end
