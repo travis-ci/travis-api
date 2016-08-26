@@ -109,17 +109,20 @@ dd
 .repo-name, .repo-build
   flex: 1 1 30%
 
-.job-item > p
-  flex: 1 1 25%
+.job-id, .job-state
+  flex: 0 0 35%
 
-.build-name, .build-branch
-  flex: 0 0 22%
+.job-queue, .job-reset
+  flex: 0 0 15%
 
-.build-state
-  flex: 1 1 27%
+.build-name, .build-state
+  flex: 0 0 27%
+
+.build-branch
+  flex: 0 0 19%
 
 .build-type, .build-duration, .build-reset
-  flex: 1 1 9%
+  flex: 0 0 9%
 
 .build-duration
   text-align: right
@@ -154,9 +157,10 @@ dd
     color: $white
     background-color: $cement-grey
   &:disabled
-    cursor: not-allowed
     color: $white
     background-color: lighten($cement-grey, 25)
+    pointer-events: none
+
 
 /* Flashes */
 

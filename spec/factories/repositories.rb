@@ -1,6 +1,8 @@
 FactoryGirl.define do
   factory :repository do
     name 'travis-admin'
+    association :owner, factory: :organization
+    owner_name 'travis-pro'
 
     factory :repo_with_users do
       after(:create) do |repo|

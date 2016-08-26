@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :organization do
     name 'Travis'
+    login 'travis-pro'
 
     factory :organization_with_repositories do
       transient do
