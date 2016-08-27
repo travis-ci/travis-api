@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.feature 'Update subscription information', :js => true, :type => :feature do
   let(:user) { create :user, login: 'travis-ci' }
-  let(:subscription) { create :subscription, cc_token: 'tok_1076247Biz', valid_to: 1.week.from_now, vat_id: 'DE999999999', billing_email: 'contact@travis-ci.com', owner: user}
-
+  let(:subscription) { create :subscription, cc_token: 'tok_1076247Biz', valid_to: 1.week.from_now, vat_id: 'DE999999999', billing_email: 'contact@travis-ci.com', owner: user, plan: plan}
+  let(:plan) {create :plan }
   scenario 'Update Expiration Date' do
     visit "/subscription/#{subscription.id}"
 
@@ -19,7 +19,7 @@ RSpec.feature 'Update subscription information', :js => true, :type => :feature 
     find_button('Update').trigger('click')
 
     expect(page).to have_text("Updated travis-ci's subscription:")
-    expect(page).to have_text('changed from DE999999999 to DE999999998')
-    expect(page).to have_text ('changed from contact@travis-ci.com to contact@travis-ci.org')
+    expect(page).to have_text('changed from "DE999999999" to "DE999999998"')
+    expect(page).to have_text ('changed from "contact@travis-ci.com" to "contact@travis-ci.org"')
   end
 end
