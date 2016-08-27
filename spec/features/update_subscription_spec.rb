@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.feature 'Update subscription information', :js => true, :type => :feature do
   let(:user) { create :user, login: 'travis-ci' }
-  let(:subscription) { create :subscription, cc_token: 'tok_1076247Biz', valid_to: 1.week.from_now, vat_id: 'DE999999999', billing_email: 'contact@travis-ci.com', owner: user, plan: plan}
-  let(:plan) {create :plan }
+  let(:subscription) { create :subscription, cc_token: 'tok_1076247Biz', valid_to: 1.week.from_now, vat_id: 'DE999999999', billing_email: 'contact@travis-ci.com', owner: user}
+  let(:plan) {create :plan, amount: 249, selected_plan: 'travis-ci-five-builds', subscription: subscription }
   scenario 'Update Expiration Date' do
     visit "/subscription/#{subscription.id}"
 
