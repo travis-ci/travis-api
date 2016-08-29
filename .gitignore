@@ -4,6 +4,7 @@ config/nginx.conf
 config/skylight.yml
 
 tmp/
+log/
 logs/
 
 .yardoc
