@@ -39,6 +39,8 @@ gem 'foreman'
 # Address formatting
 gem 'biggs'
 
+# Date validator
+gem 'date_validator'
 
 group :console, :test do
   gem 'pry'

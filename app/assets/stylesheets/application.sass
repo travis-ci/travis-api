@@ -175,7 +175,10 @@ dd
   margin-bottom: .8em
   border-radius: 2px
   overflow: hidden
+  ul
+    margin: .2em
   p
+    color: white
     display: inline-block
     margin: 0
     vertical-align: middle
@@ -209,6 +212,9 @@ form.broadcast-form
     height: 25px
   label
     margin-right: 0.7em
+
+#form-errors
+  @include notice($brick-red)
 
 
 /* Icons */

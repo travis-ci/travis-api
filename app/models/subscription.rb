@@ -4,6 +4,8 @@ class Subscription < ActiveRecord::Base
   belongs_to :contact, class_name: "User"
   has_many   :invoices
 
+  validates :valid_to, date: true, allow_blank: true
+
   biggs :postal_address,
         recipient:  :recipient,
         zip:        :zip_code,

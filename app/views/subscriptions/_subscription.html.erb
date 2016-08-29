@@ -1,5 +1,17 @@
 <section class="info-block">
   <h2 class="info-header">General Information</h2>
+
+  <% if subscription.errors.any? %>
+    <div id="form-errors">
+      <p><%= pluralize(subscription.errors.count, "error") %> prohibited this subscription from being updated:</p>
+      <ul>
+      <% subscription.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <%= form_for subscription do |f| %>
     <dl class="simple-info">
       <dt class="info-label">Plan:</dt>
