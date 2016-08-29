@@ -36,6 +36,9 @@ gem 'puma'
 gem 'sidekiq'
 gem 'foreman'
 
+# Address formatting
+gem 'biggs'
+
 
 group :console, :test do
   gem 'pry'
