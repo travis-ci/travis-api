@@ -48,7 +48,7 @@ module Travis
                              rate_limit: { defaults: { api_builds: 10 }, maximums: { api_builds: 200 } } },
             endpoints:     {},
             oauth2:        {},
-            webhook:       { signing_public_key: nil }
+            webhook:       { public_key: nil }
 
     default :_access => [:key]
 
