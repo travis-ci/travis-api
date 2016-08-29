@@ -9,11 +9,13 @@ class SubscriptionsController < ApplicationController
 
   def update
     @subscription = Subscription.find_by(id: params[:id])
-    @subscription.attributes = subscription_params.slice('billing_email', 'vat_id', 'valid_to(1i)', 'valid_to(2i)', 'valid_to(3i)').reject
-    changes = @subscription.changes
-    @subscription.save
 
-    flash[:notice] = "Updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first.inspect} to #{change.last.inspect}"}.join(", ")}"
+    if @subscription.update(subscription_params)
+      flash[:notice] = "Updated #{@subscription.owner.login}'s subscription."
+    else
+      flash[:error] = "Unable to save changes."
+    end
+
     redirect_to @subscription
   end
 

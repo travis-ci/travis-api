@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   resources :offenders,  only: [:index, :update]
   resources :broadcasts, only: [:index, :create, :update]
+  resources :subscriptions,  only: [:show, :update]
 
   get 'user/:id' => 'users#show', as: :user
   post 'user/:id/sync' => 'users#sync', as: :sync_user
@@ -23,9 +24,6 @@ Rails.application.routes.draw do
   get 'job/:id' => 'jobs#show', as: :job
   post 'job/:id/cancel' => 'jobs#cancel', as: :cancel_job
   post 'job/:id/restart' => 'jobs#restart', as: :restart_job
-
-  get 'subscription/:id' => 'subscriptions#show', as: :subscription
-  post 'subscription/:id/update' => 'subscriptions#update'
 
   get 'admins' => 'users#admins', as: :admins
 end

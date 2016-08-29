@@ -1,10 +1,10 @@
 <section class="info-block">
   <h2 class="info-header">General Information</h2>
-  <%= form_for :subscription, url: {controller: 'subscriptions', action: 'update'} do |f| %>
+  <%= form_for subscription do |f| %>
     <dl class="simple-info">
       <dt class="info-label">Plan:</dt>
       <dd>
-        <% if plan %>
+        <% if plan.present? %>
           <%= "#{plan.name} (#{format_price(plan.amount)}/month)" %>
         <% else %>
           No Plan.
@@ -21,7 +21,7 @@
       <dt class="info-label"><%= subscription.active? ? 'Expires:' : 'Expired:' %></dt>
       <dd>
         <time>
-          <%= f.date_select :valid_to, value: subscription.valid_to %>
+          <%= f.text_field :valid_to, value: (subscription.valid_to.to_date if subscription.valid_to), class: "datepicker" %>
         </time>
       </dd>
       <dt class="info-label">Owner:</dt>
@@ -33,10 +33,10 @@
       <% end %>
 
       <dt class="info-label">Billing E-mail:</dt>
-      <dd><%= f.text_field :billing_email, value: subscription.billing_email %></dd>
+      <dd><%= f.text_field :billing_email %></dd>
 
       <dt class="info-label">VAT ID:</dt>
-      <dd><%= f.text_field :vat_id, value: subscription.vat_id %></dd>
+      <dd><%= f.text_field :vat_id %></dd>
 
       <dt class="info-label">Address:</dt>
       <dd>
