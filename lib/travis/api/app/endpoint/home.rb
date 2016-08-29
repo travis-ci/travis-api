@@ -12,7 +12,8 @@ class Travis::Api::App
         shorten_host: Travis.config.shorten_host,
         assets: Travis.config.assets,
         pusher: (Travis.config.pusher_ws || Travis.config.pusher || {}).to_hash.slice(:scheme, :host, :port, :path, :key, :secure, :private),
-        github: { api_url: GH.current.api_host.to_s, scopes: Travis.config.oauth2.try(:scope).to_s.split(?,) }
+        github: { api_url: GH.current.api_host.to_s, scopes: Travis.config.oauth2.try(:scope).to_s.split(?,) },
+        webhook: { signing_public_key: Travis.config.webhook.signing_public_key }
 
       # Landing point. Redirects web browsers to [API documentation](#/docs/).
       get '/' do
