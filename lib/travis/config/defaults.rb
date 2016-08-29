@@ -47,7 +47,8 @@ module Travis
             settings:      { timeouts: { defaults: { hard_limit: 50, log_silence: 10 }, maximums: { hard_limit: 180, log_silence: 60 } },
                              rate_limit: { defaults: { api_builds: 10 }, maximums: { api_builds: 200 } } },
             endpoints:     {},
-            oauth2:        {}
+            oauth2:        {},
+            webhook:       { public_key: nil }
 
     default :_access => [:key]
 
