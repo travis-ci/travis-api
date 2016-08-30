@@ -13,5 +13,9 @@ module Travis::API::V3
     def debug?
       write?
     end
+
+    def delete_log?
+      write?
+    end
   end
 end
