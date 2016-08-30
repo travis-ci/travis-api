@@ -1,33 +1,52 @@
 Rails.application.routes.draw do
   root 'home#home'
 
-  resources :offenders,  only: [:index, :update]
+
   resources :broadcasts, only: [:index, :create, :update]
+
+  resources :builds, only: [:show] do
+    member do
+      post 'cancel'
+      post 'restart'
+    end
+  end
+
+  resources :jobs, only: [:show] do
+    member do
+      post 'cancel'
+      post 'restart'
+    end
+  end
+
+  resources :offenders,  only: [:index, :update]
+
+  resources :organizations, only: [:show] do
+    member do
+      post 'update_trial_builds'
+      post 'boost'
+    end
+  end
+
+  resources :repositories, only: [:show] do
+    member do
+      post 'enable'
+      post 'disable'
+      post 'settings', to: 'settings#update', as: :repository_settings
+    end
+  end
+
+  resources :requests, only: [:show]
+
   resources :subscriptions,  only: [:show, :update]
 
-  get 'user/:id' => 'users#show', as: :user
-  post 'user/:id/sync' => 'users#sync', as: :sync_user
-  post 'user/:id/boost' => 'users#boost', as: :user_job_boost
-  post 'user/sync_all' => 'users#sync_all', as: :sync_all
-  post 'user/:id/update_trial_builds' => 'users#update_trial_builds', as: :user_update_trial_builds
-
-  get 'organization/:id' => 'organizations#show', as: :organization
-  post 'organization/:id/boost' => 'organizations#boost', as: :organization_job_boost
-  post 'organization/:id/update_trial_builds' => 'organizations#update_trial_builds', as: :organization_update_trial_builds
-
-  get 'repository/:id' => 'repositories#show', as: :repository
-  post 'repository/:id/enable' => 'repositories#enable', as: :enable_repository
-  post 'repository/:id/disable' => 'repositories#disable', as: :disable_repository
-
-  get 'request/:id' => 'requests#show', as: :request
-
-  get 'build/:id' => 'builds#show', as: :build
-  post 'build/:id/cancel' => 'builds#cancel', as: :cancel_build
-  post 'build/:id/restart' => 'builds#restart', as: :restart_build
-
-  get 'job/:id' => 'jobs#show', as: :job
-  post 'job/:id/cancel' => 'jobs#cancel', as: :cancel_job
-  post 'job/:id/restart' => 'jobs#restart', as: :restart_job
+  resources :users, only: [:show] do
+    member do
+      post 'sync'
+      post 'update_trial_builds'
+      post 'boost'
+    end
+    post 'sync_all', on: :collection
+  end
 
   get 'admins' => 'users#admins', as: :admins
 end
