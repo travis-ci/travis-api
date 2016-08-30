@@ -16,20 +16,20 @@
     <dt class="info-label">Trial: </dt>
     <dd>
       <dl>
-        <dt>Builds Provided:</dt>
-        <dd><%= @builds_provided %></dd>
-        <dt>Builds Remaining:</dt>
-        <dd>
-          <% if builds_remaining %>
+        <% if builds_remaining %>
+          <dt>Builds Provided:</dt>
+          <dd><%= @builds_provided %></dd>
+          <dt>Builds Remaining:</dt>
+          <dd>
             <%= form_tag action: 'update_trial_builds', controller: "#{owner.class.table_name}", method: 'post' do %>
               <%= text_field_tag 'builds_remaining', builds_remaining %>
               <%= hidden_field_tag 'previous_builds', builds_remaining %>
               <%= submit_tag 'Update', class: 'button', id: 'update-trial-builds' %>
             <% end %>
-          <% else %>
-            Not currently activated.
-          <% end %>
-        </dd>
+          </dd>
+        <% else %>
+          Not currently activated.
+        <% end %>
       </dl>
     </dd>
 
