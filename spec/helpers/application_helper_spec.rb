@@ -13,7 +13,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     it 'returns not in trial when trial does not exist' do
-      expect(helper.check_trial_builds(organization)).to eq('75 trial builds')
+      expect(helper.check_trial_builds(organization)).to eq('not in trial')
     end
   end
 

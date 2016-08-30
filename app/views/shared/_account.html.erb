@@ -24,7 +24,7 @@
             <%= form_tag action: 'update_trial_builds', controller: "#{owner.class.table_name}", method: 'post' do %>
               <%= text_field_tag 'builds_remaining', builds_remaining %>
               <%= hidden_field_tag 'previous_builds', builds_remaining %>
-              <%= submit_tag 'Update', class: 'button' %>
+              <%= submit_tag 'Update', class: 'button', id: 'update-trial-builds' %>
             <% end %>
           <% else %>
             Not currently activated.
@@ -65,6 +65,6 @@
       <%= f.label description %>
     <% end %>
     <%= f.hidden_field :login, value: owner.login %>
-    <%= f.submit('Update', class: 'button') %>
+    <%= f.submit('Update', class: 'button', id: 'update-abuse-status') %>
   <% end %>
 </section>
