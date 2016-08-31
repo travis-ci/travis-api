@@ -32,8 +32,13 @@
 
     <dt class="info-label">Job Boost:</dt>
     <dd>
-      <form>
-      </form>
+      <%= form_for :boost, url: {action: 'boost', controller: "#{owner.class.table_name}"} do |f| %>
+        <%= f.label :owner_limit, "Limit" %>
+        <%= f.number_field :owner_limit, value: @existing_boost_limit %>
+        <%= f.label :expires_after, "Expires in (hours)" %>
+        <%= f.number_field :expires_after, value: @normalized_boost_time %>
+        <%= f.submit 'Update', class: 'button', id: 'update-job-boost' %>
+      <% end %>
     </dd>
   </dl>
 </section>
@@ -53,6 +58,6 @@
       <%= f.label description %>
     <% end %>
     <%= f.hidden_field :login, value: owner.login %>
-    <%= f.submit('Update', class: 'button') %>
+    <%= f.submit('Update', class: 'button', id: 'update-abuse-status') %>
   <% end %>
 </section>

@@ -7,9 +7,11 @@ Rails.application.routes.draw do
 
   get 'user/:id' => 'users#show', as: :user
   post 'user/:id/sync' => 'users#sync', as: :sync_user
+  post 'user/:id/boost' => 'users#boost', as: :user_job_boost
   post 'user/sync_all' => 'users#sync_all', as: :sync_all
 
   get 'organization/:id' => 'organizations#show', as: :organization
+  post 'organization/:id/boost' => 'organizations#boost', as: :organization_job_boost
 
   get 'repository/:id' => 'repositories#show', as: :repository
   post 'repository/:id/enable' => 'repositories#enable', as: :enable_repository
