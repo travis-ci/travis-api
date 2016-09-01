@@ -4,11 +4,11 @@ module Services
       attr_reader :login
 
       def initialize(owner)
-        @owner = owner.login
+        @owner = owner
       end
 
       def call(builds_remaining, previous_builds)
-        Travis::DataStores.redis.set("trial:#{@owner}", builds_remaining)
+        Travis::DataStores.redis.set("trial:#{@owner.login}", builds_remaining)
         update_topaz(@owner, builds_remaining, previous_builds)
       end
 

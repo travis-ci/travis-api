@@ -67,7 +67,7 @@ class UsersController < ApplicationController
   end
 
   def update_trial_builds
-    Services::TrialBuilds::Update.new(@organization).call(params[:builds_remaining],params[:previous_builds])
+    Services::TrialBuilds::Update.new(@user).call(params[:builds_remaining],params[:previous_builds])
     flash[:notice] = "Reset #{@user.login}'s trial to #{params[:builds_remaining]} builds."
     redirect_to user_path(@user, anchor: "account")
   end
