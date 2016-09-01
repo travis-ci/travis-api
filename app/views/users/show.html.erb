@@ -10,7 +10,7 @@
   <span id="account" class="tab-switch"></span>
   <a href="#account" class="tab-link">Account</a>
   <section class="tab-content">
-    <%= render partial: 'shared/account', locals: {owner: @user} %>
+    <%= render partial: 'shared/account', locals: {owner: @user, builds_remaining: @builds_remaining} %>
   </section>
 
   <span id="broadcast" class="tab-switch"></span>

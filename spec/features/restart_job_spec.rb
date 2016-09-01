@@ -18,6 +18,8 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
   end
 
   scenario 'User restarts a job via jobs tab in organization view' do
+    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
+
     visit "/organization/#{organization.id}#jobs"
     click_on("Jobs")
 

@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :get_user, only: [:show, :sync, :boost]
+  include TopazHelper
 
   def show
     return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
@@ -14,6 +15,9 @@ class UsersController < ApplicationController
 
     @existing_boost_limit = @user.existing_boost_limit
     @normalized_boost_time = @user.normalized_boost_time
+
+    @builds_remaining = Travis::DataStores.redis.get("trial:#{@user.login}")
+    @builds_provided = builds_provided_for(@user)
   end
 
   def admins
@@ -60,6 +64,14 @@ class UsersController < ApplicationController
     end
 
     redirect_to user_path(@user, anchor: 'account')
+  end
+
+  def update_trial_builds
+    @user = User.find_by(id: params[:id])
+    Travis::DataStores.redis.set("trial:#{@user.login}", params[:builds_remaining])
+    flash[:notice] = "Reset #{@user.login}'s trial to #{params[:builds_remaining]} builds."
+    update_topaz(@user, params[:builds_remaining], params[:previous_builds])
+    redirect_to user_path(@user, anchor: "account")
   end
 
   private

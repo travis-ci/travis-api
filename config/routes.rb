@@ -9,9 +9,11 @@ Rails.application.routes.draw do
   post 'user/:id/sync' => 'users#sync', as: :sync_user
   post 'user/:id/boost' => 'users#boost', as: :user_job_boost
   post 'user/sync_all' => 'users#sync_all', as: :sync_all
+  post 'user/:id/update_trial_builds' => 'users#update_trial_builds', as: :user_update_trial_builds
 
   get 'organization/:id' => 'organizations#show', as: :organization
   post 'organization/:id/boost' => 'organizations#boost', as: :organization_job_boost
+  post 'organization/:id/update_trial_builds' => 'organizations#update_trial_builds', as: :organization_update_trial_builds
 
   get 'repository/:id' => 'repositories#show', as: :repository
   post 'repository/:id/enable' => 'repositories#enable', as: :enable_repository

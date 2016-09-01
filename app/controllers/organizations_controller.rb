@@ -1,5 +1,6 @@
 class OrganizationsController < ApplicationController
   before_action :get_organization, only: [:show, :boost]
+  include TopazHelper
 
   def show
     return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
@@ -16,6 +17,17 @@ class OrganizationsController < ApplicationController
 
     @existing_boost_limit = @organization.existing_boost_limit
     @normalized_boost_time = @organization.normalized_boost_time
+
+    @builds_remaining = Travis::DataStores.redis.get("trial:#{@organization.login}")
+    @builds_provided = builds_provided_for(@organization)
+  end
+
+  def update_trial_builds
+    @organization = Organization.find_by(id: params[:id])
+    Travis::DataStores.redis.set("trial:#{@organization.login}", params[:builds_remaining])
+    flash[:notice] = "Reset #{@organization.login}'s trial to #{params[:builds_remaining]} builds."
+    update_topaz(@organization, params[:builds_remaining], params[:previous_builds])
+    redirect_to organization_path(@organization, anchor: "account")
   end
 
   def boost
