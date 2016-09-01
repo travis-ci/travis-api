@@ -1,5 +1,21 @@
 class OrganizationsController < ApplicationController
-  before_action :get_organization, only: [:show, :boost]
+  before_action :get_organization
+  include TopazHelper
+
+  def boost
+    limit = params[:boost][:owner_limit].to_i
+    hours = params[:boost][:expires_after]
+    hours = 24 if hours.blank?
+
+    if limit > 0
+      Services::JobBoost::Update.new(@user.login).call(hours, limit)
+      flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
+    else
+      flash[:error] = "Owner limit must be greater than 0."
+    end
+
+    redirect_to user_path(@organization, anchor: 'account')
+  end
 
   def show
     return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
@@ -16,21 +32,15 @@ class OrganizationsController < ApplicationController
 
     @existing_boost_limit = @organization.existing_boost_limit
     @normalized_boost_time = @organization.normalized_boost_time
+
+    @builds_remaining = Travis::DataStores.redis.get("trial:#{@organization.login}")
+    @builds_provided = builds_provided_for(@organization)
   end
 
-  def boost
-    limit = params[:boost][:owner_limit].to_i
-    hours = params[:boost][:expires_after]
-    hours = 24 if hours.blank?
-
-    if limit > 0
-      Services::JobBoost::Update.new(@user.login).call(hours, limit)
-      flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
-    else
-      flash[:error] = "Owner limit must be greater than 0."
-    end
-
-    redirect_to user_path(@organization, anchor: 'account')
+  def update_trial_builds
+    Services::TrialBuilds::Update.new(@organization).call(params[:builds_remaining],params[:previous_builds])
+    flash[:notice] = "Reset #{@organization.login}'s trial to #{params[:builds_remaining]} builds."
+    redirect_to organization_path(@organization, anchor: "account")
   end
 
   private
