@@ -1,5 +1,6 @@
 FactoryGirl.define do
   factory :subscription do
+    association :owner, factory: :user
 
     trait :active do
       cc_token 'kbfse87t3'

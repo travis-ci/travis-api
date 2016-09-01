@@ -22,25 +22,34 @@ class Subscription < ActiveRecord::Base
     valid_to && valid_to < Time.now
   end
 
-  def name
-    if first_name || last_name
-      [first_name.presence, last_name.presence].compact.join(" ")
-    elsif contact && contact.name.present?
-      contact.name
-    elsif owner.is_a?(User) && owner.name.present?
-      owner.name
-    end
+  def valid_to
+    super.to_date unless super.nil?
   end
 
-  def recipient
-    if company.present?
-      name ? "#{name}, #{company}" : company
-    else
-      name || owner.login
-    end
+  def valid_to=(date)
+    super(date.to_date)
   end
 
-  def iso_code
-    Biggs.country_names.key(country)
-  end
+  private
+    def name
+      if first_name || last_name
+        [first_name.presence, last_name.presence].compact.join(" ")
+      elsif contact && contact.name.present?
+        contact.name
+      elsif owner.is_a?(User) && owner.name.present?
+        owner.name
+      end
+    end
+
+    def recipient
+      if company.present?
+        name ? "#{name}, #{company}" : company
+      else
+        name || owner.login
+      end
+    end
+
+    def iso_code
+      Biggs.country_names.key(country)
+    end
 end

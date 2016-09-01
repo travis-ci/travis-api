@@ -5,9 +5,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def update
-    @subscription.attributes = subscription_params.reject do |name, value|
-      name == 'valid_to' && @subscription.valid_to.to_date == value.to_date
-    end
+    @subscription.attributes = subscription_params
     changes = @subscription.changes
 
     if changes.any? && @subscription.save
