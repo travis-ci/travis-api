@@ -1,6 +1,25 @@
 class UsersController < ApplicationController
-  before_action :get_user, only: [:show, :sync, :boost]
+  before_action :get_user, except: [:admins, :sync_all]
   include TopazHelper
+
+  def admins
+    @admins = User.where(login: Travis::Config.load.admins).order(:name)
+  end
+
+  def boost
+    limit = params[:boost][:owner_limit].to_i
+    hours = params[:boost][:expires_after]
+    hours = 24 if hours.blank?
+
+    if limit > 0
+      Services::JobBoost::Update.new(@user.login).call(hours, limit)
+      flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
+    else
+      flash[:error] = "Owner limit must be greater than 0."
+    end
+
+    redirect_to user_path(@user, anchor: 'account')
+  end
 
   def show
     return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
@@ -18,10 +37,6 @@ class UsersController < ApplicationController
 
     @builds_remaining = Travis::DataStores.redis.get("trial:#{@user.login}")
     @builds_provided = builds_provided_for(@user)
-  end
-
-  def admins
-    @admins = User.where(login: Travis::Config.load.admins).order(:name)
   end
 
   def sync
@@ -49,21 +64,6 @@ class UsersController < ApplicationController
     end
     flash[:notice] = "Triggered sync with GitHub for #{logins.join(', ')}."
     redirect_to back_link
-  end
-
-  def boost
-    limit = params[:boost][:owner_limit].to_i
-    hours = params[:boost][:expires_after]
-    hours = 24 if hours.blank?
-
-    if limit > 0
-      Services::JobBoost::Update.new(@user.login).call(hours, limit)
-      flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
-    else
-      flash[:error] = "Owner limit must be greater than 0."
-    end
-
-    redirect_to user_path(@user, anchor: 'account')
   end
 
   def update_trial_builds
