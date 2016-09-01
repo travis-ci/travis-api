@@ -9,6 +9,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:s3job)       { Travis::API::V3::Models::Job.create(build: build) }
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
+
   let(:parsed_body) { JSON.load(body) }
   let(:log)         { Travis::API::V3::Models::Log.create(job: job) }
   let(:log2)        { Travis::API::V3::Models::Log.create(job: job2) }
@@ -34,7 +35,17 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
           "number"          => log_part.number }])
       end
     end
-    describe 'returns log as plain text'
+
+    describe 'returns log as plain text' do
+      example do
+        log_part = log.log_parts.create(content: "logging it", number: 0)
+        log_part2 = log.log_parts.create(content: "logging more", number: 1)
+
+        get("/v3/job/#{log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+        expect(body).to eq(
+          '@href' => "/v3/job/#{log.job.id}/log")
+      end
+    end
   end
 
   context 'when log not found in db but stored on S3' do
@@ -49,24 +60,16 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         get("/v3/job/#{s3job.id}/log", {}, headers)
 
         expect(parsed_body).to eq(
+          '@type' => 'log',
           '@href' => "/v3/job/#{s3job.id}/log",
           '@representation' => 'standard',
-          '@type' => 'log',
-          'content' => 'minimal log 1',
           'id' => s3log.id,
+          'content' => 'minimal log 1',
           'log_parts'       => [{
             "@type"=>"log_part",
             "@representation"=>"minimal",
-            "content"=>"$ git clean -fdx",
-            "number"=>0}, {
-            "@type"=>"log_part",
-            "@representation"=>"minimal",
-            "content"=>"Removing Gemfile.lock",
-            "number"=>1}, {
-            "@type"=>"log_part",
-            "@representation"=>"minimal",
-            "content"=>"$ git fetch",
-            "number"=>2}])
+            "content"=>"$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch",
+            "number"=>0}])
       end
     end
     describe 'returns log as plain text'

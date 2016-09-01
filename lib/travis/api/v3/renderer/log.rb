@@ -13,6 +13,10 @@ module Travis::API::V3
     end
 
     def text(log)
+      content_unsorted = {}
+      log.log_parts.each do |log_part|
+         content_unsorted[:log_part.number] = log_part.content
+      end
       log.log_parts.join("\n".freeze)
     end
 
