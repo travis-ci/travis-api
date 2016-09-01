@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  include JobBoost
+
   has_many :emails
   has_many :memberships
   has_many :permissions

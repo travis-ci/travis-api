@@ -8,7 +8,7 @@ RSpec.feature "Update Offender", :js => true, :type => :feature do
     click_on("Account")
 
     find("#offender_offenders").trigger('click')
-    find_button("Update").trigger('click')
+    find_button("update-abuse-status").trigger('click')
 
     expect(page).to have_text("Abuse settings for Klaus (klaus_maus) updated.")
 

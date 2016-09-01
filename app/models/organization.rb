@@ -1,4 +1,6 @@
 class Organization < ActiveRecord::Base
+  include JobBoost
+
   has_many :memberships
   has_many :users,    through: :memberships
   has_many :repositories,  as: :owner

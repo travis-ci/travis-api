@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
+  before_action :get_user, only: [:show, :sync, :boost]
+
   def show
-    @user = User.find_by(id: params[:id])
     return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
 
     @repositories = @user.permitted_repositories.includes(:last_build).order(:owner_name, :name)
@@ -10,6 +11,9 @@ class UsersController < ApplicationController
 
     @active_broadcasts = Broadcast.active.for(@user)
     @inactive_broadcasts = Broadcast.inactive.for(@user)
+
+    @existing_boost_limit = @user.existing_boost_limit
+    @normalized_boost_time = @user.normalized_boost_time
   end
 
   def admins
@@ -17,8 +21,6 @@ class UsersController < ApplicationController
   end
 
   def sync
-    @user = User.find_by(id: params[:id])
-
     response = Services::User::Sync.new(@user.id).call
 
     if response.success?
@@ -44,4 +46,24 @@ class UsersController < ApplicationController
     flash[:notice] = "Triggered sync with GitHub for #{logins.join(', ')}."
     redirect_to back_link
   end
+
+  def boost
+    limit = params[:boost][:owner_limit].to_i
+    hours = params[:boost][:expires_after]
+    hours = 24 if hours.blank?
+
+    if limit > 0
+      Services::JobBoost::Update.new(@user.login).call(hours, limit)
+      flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
+    else
+      flash[:error] = "Owner limit must be greater than 0."
+    end
+
+    redirect_to user_path(@user, anchor: 'account')
+  end
+
+  private
+    def get_user
+      @user = User.find_by(id: params[:id])
+    end
 end
