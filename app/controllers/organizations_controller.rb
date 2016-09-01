@@ -1,6 +1,7 @@
 class OrganizationsController < ApplicationController
+  before_action :get_organization, only: [:show, :boost]
+
   def show
-    @organization = Organization.find_by(id: params[:id])
     return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
 
     @repositories = @organization.repositories.includes(:last_build).order(:name)
@@ -18,8 +19,6 @@ class OrganizationsController < ApplicationController
   end
 
   def boost
-    @organization = Organization.find_by(id: params[:id])
-
     limit = params[:boost][:owner_limit].to_i
     hours = params[:boost][:expires_after]
     hours = 24 if hours.blank?
@@ -33,4 +32,9 @@ class OrganizationsController < ApplicationController
 
     redirect_to user_path(@organization, anchor: 'account')
   end
+
+  private
+    def get_organization
+      @organization = Organization.find_by(id: params[:id])
+    end
 end
