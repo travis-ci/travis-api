@@ -3,8 +3,8 @@ module Services
     class Update
       attr_reader :login
 
-      def initialize(offender_params)
-        @login = offender_params[:login]
+      def initialize(login, offender_params)
+        @login = login
 
         Offender::LISTS.each_key do |key|
           instance_variable_set("@#{key}", offender_params[key])

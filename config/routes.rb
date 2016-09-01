@@ -18,7 +18,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :offenders,  only: [:index, :update]
+  resources :offenders, only: [:index, :update], param: :login
 
   resources :organizations, only: [:show] do
     member do
