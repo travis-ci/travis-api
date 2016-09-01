@@ -1,6 +1,4 @@
 class UsersController < ApplicationController
-  include JobBoost
-
   def show
     @user = User.find_by(id: params[:id])
     return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
@@ -13,8 +11,8 @@ class UsersController < ApplicationController
     @active_broadcasts = Broadcast.active.for(@user)
     @inactive_broadcasts = Broadcast.inactive.for(@user)
 
-    @existing_boost_limit = existing_boost_limit(@user)
-    @normalized_boost_time = normalized_boost_time(@user)
+    @existing_boost_limit = @user.existing_boost_limit
+    @normalized_boost_time = @user.normalized_boost_time
   end
 
   def admins
@@ -58,7 +56,7 @@ class UsersController < ApplicationController
     hours = 24 if hours.blank?
 
     if limit > 0
-      set_boost_limit(@user, hours, limit)
+      Services::JobBoost::Update.new(@user.login).call(hours, limit)
       flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
     else
       flash[:error] = "Owner limit must be greater than 0."

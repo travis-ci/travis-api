@@ -1,6 +1,4 @@
 class OrganizationsController < ApplicationController
-  include JobBoost
-
   def show
     @organization = Organization.find_by(id: params[:id])
     return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
@@ -15,8 +13,8 @@ class OrganizationsController < ApplicationController
     @active_broadcasts = Broadcast.active.for(@organization)
     @inactive_broadcasts = Broadcast.inactive.for(@organization)
 
-    @existing_boost_limit = existing_boost_limit(@organization)
-    @normalized_boost_time = normalized_boost_time(@organization)
+    @existing_boost_limit = @organization.existing_boost_limit
+    @normalized_boost_time = @organization.normalized_boost_time
   end
 
   def boost
@@ -27,7 +25,7 @@ class OrganizationsController < ApplicationController
     hours = 24 if hours.blank?
 
     if limit > 0
-      set_boost_limit(@organization, hours, limit)
+      Services::JobBoost::Update.new(@user.login).call(hours, limit)
       flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
     else
       flash[:error] = "Owner limit must be greater than 0."
