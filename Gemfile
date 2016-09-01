@@ -7,6 +7,7 @@ gem 'rails', '4.2.6'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 gem 'font-awesome-rails'
 
 # Databases
@@ -35,6 +36,11 @@ gem 'puma'
 gem 'sidekiq'
 gem 'foreman'
 
+# Address formatting
+gem 'biggs'
+
+# Date validator
+gem 'date_validator'
 
 group :console, :test do
   gem 'pry'
