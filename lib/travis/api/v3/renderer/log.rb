@@ -1,6 +1,28 @@
 module Travis::API::V3
-  class Renderer::Log < Renderer::ModelRenderer
-    representation(:minimal, :id, :content)
-    representation(:standard, *representations[:minimal], :log_parts)
+  module Renderer::Log
+    extend self
+
+    def render(log, **options)
+      text?(options) ? text(log) : json(log, **options)
+    end
+
+    private
+
+    def text?(options)
+      options[:accept] == 'text/plain'.freeze
+    end
+
+    def text(log)
+      log.log_parts.join("\n".freeze)
+    end
+
+    def json(log, **options)
+      Json.new(log, **options).render(:standard)
+    end
+
+    class Json < Renderer::ModelRenderer
+      type :log
+      representation :standard, :id, :content, :log_parts
+    end
   end
 end

@@ -29,7 +29,8 @@ module Travis::API::V3
         script_name:    env['SCRIPT_NAME'.freeze],
         include:        include,
         access_control: access_control,
-        meta_data:      meta_data)
+        meta_data:      meta_data,
+        accept:         env.fetch('HTTP_ACCEPT'.freeze, 'application/json'.freeze))
     end
 
     def add_info(payload)
