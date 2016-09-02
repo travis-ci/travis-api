@@ -1,4 +1,4 @@
-class Broadcast < ActiveRecord::Base
+class Broadcast < ApplicationRecord
   EXPIRY_TIME = 14.days
 
   belongs_to :recipient, polymorphic: true

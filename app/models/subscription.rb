@@ -1,4 +1,4 @@
-class Subscription < ActiveRecord::Base
+class Subscription < ApplicationRecord
   belongs_to :owner,   polymorphic: true
   has_many   :plans
   belongs_to :contact, class_name: "User"

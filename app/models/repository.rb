@@ -1,4 +1,4 @@
-class Repository < ActiveRecord::Base
+class Repository < ApplicationRecord
   has_many :jobs
   has_many :permissions
   has_many :users,      through: :permissions

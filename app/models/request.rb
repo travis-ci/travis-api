@@ -1,4 +1,4 @@
-class Request < ActiveRecord::Base
+class Request < ApplicationRecord
   belongs_to :owner, polymorphic: true
   belongs_to :commit
   belongs_to :repository

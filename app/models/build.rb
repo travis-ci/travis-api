@@ -1,4 +1,4 @@
-class Build < ActiveRecord::Base
+class Build < ApplicationRecord
   include StateDisplay
   include ConfigDisplay
 
