@@ -89,7 +89,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
       expect(parsed_body).to eq({
         "@type"=>"error",
         "error_type"=>"job_unfinished",
-        "error_message"=>"job for this log is not finished, please wait until job has finished before retrieving log"})
+        "error_message"=>"job for this log is not finished, please wait until job has finished before removing log"})
     end
   end
 
