@@ -38,12 +38,14 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
 
     describe 'returns log as plain text' do
       example do
-        log_part = log.log_parts.create(content: "logging it", number: 0)
-        log_part2 = log.log_parts.create(content: "logging more", number: 1)
+        log_part = log.log_parts.create(content: "logging it", number: 1)
+        log_part2 = log.log_parts.create(content: "logging more", number: 2)
+        log_part3 = log.log_parts.create(content: "logging forever", number: 3)
+
 
         get("/v3/job/#{log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
         expect(body).to eq(
-          '@href' => "/v3/job/#{log.job.id}/log")
+          "logging it\nlogging more\nlogging forever\n")
       end
     end
   end
@@ -72,7 +74,18 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             "number"=>0}])
       end
     end
-    describe 'returns log as plain text'
+    describe 'returns log as plain text' do
+      before do
+        stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{s3job.id}/log.txt").
+         with(:headers => {'Accept'=>'text', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'s3.amazonaws.com', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch", :headers => {})
+      end
+      example do
+        get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+        expect(body).to eq(
+          '@href' => "/v3/job/#{s3log.job.id}/log/loggy")
+      end
+    end
   end
 
   context 'when log not found anywhere' do

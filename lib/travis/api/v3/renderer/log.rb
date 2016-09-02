@@ -13,11 +13,16 @@ module Travis::API::V3
     end
 
     def text(log)
-      content_unsorted = {}
+      unsorted_content = {}
       log.log_parts.each do |log_part|
-         content_unsorted[:log_part.number] = log_part.content
+        unsorted_content[log_part.number] = log_part.content
       end
-      log.log_parts.join("\n".freeze)
+      sorted_content = Hash[unsorted_content.sort]
+      text = ""
+      sorted_content.each_value do |value|
+        text << value + "\n"
+      end
+      text
     end
 
     def json(log, **options)
