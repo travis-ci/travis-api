@@ -1,8 +1,6 @@
 module Services
   module TrialBuilds
     class Update
-      attr_reader :login
-
       def initialize(owner)
         @owner = owner
       end

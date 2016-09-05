@@ -1,6 +1,7 @@
 class OrganizationsController < ApplicationController
-  before_action :get_organization
   include TopazHelper
+
+  before_action :get_organization
 
   def boost
     limit = params[:boost][:owner_limit].to_i
@@ -15,6 +16,12 @@ class OrganizationsController < ApplicationController
     end
 
     redirect_to user_path(@organization, anchor: 'account')
+  end
+
+  def features
+    Services::Features::Update.new(@organization).call(feature_params)
+    flash[:notice] = "Updated feature flags for #{@organization.login}."
+    redirect_to organization_path(@organization, anchor: "account")
   end
 
   def show
@@ -35,6 +42,8 @@ class OrganizationsController < ApplicationController
 
     @builds_remaining = Travis::DataStores.redis.get("trial:#{@organization.login}")
     @builds_provided = builds_provided_for(@organization)
+
+    @features = Features.for(@organization)
   end
 
   def update_trial_builds
@@ -44,7 +53,12 @@ class OrganizationsController < ApplicationController
   end
 
   private
-    def get_organization
-      @organization = Organization.find_by(id: params[:id])
-    end
+
+  def get_organization
+    @organization = Organization.find_by(id: params[:id])
+  end
+
+  def feature_params
+    params.require(:features).permit(Features.for(@organization).keys)
+  end
 end

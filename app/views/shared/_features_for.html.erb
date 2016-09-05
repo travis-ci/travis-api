@@ -1,0 +1,13 @@
+<% if @features.any? %>
+  <%= form_for :features, url: {action: 'features', controller: "#{owner.class.table_name}"} do |f| %>
+    <% @features.each do |feature, flag| %>
+      <p>
+        <%= f.check_box feature, checked: flag %>
+        <%= f.label format_feature(feature) %>
+      </p>
+    <% end %>
+    <%= f.submit('Update', class: 'button', id: 'update-features') %>
+  <% end %>
+<% else %>
+  <p>No features.</p>
+<% end %>

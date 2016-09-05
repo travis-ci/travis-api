@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   root 'home#home'
 
-
   resources :broadcasts, only: [:index, :create, :update]
 
   resources :builds, only: [:show] do
@@ -10,6 +9,8 @@ Rails.application.routes.draw do
       post 'restart'
     end
   end
+
+  resources :features, only: [:index]
 
   resources :jobs, only: [:show] do
     member do
@@ -24,6 +25,7 @@ Rails.application.routes.draw do
     member do
       post 'update_trial_builds'
       post 'boost'
+      post 'features'
     end
   end
 
@@ -31,6 +33,7 @@ Rails.application.routes.draw do
     member do
       post 'enable'
       post 'disable'
+      post 'features'
       post 'settings', to: 'settings#update', as: :repository_settings
     end
   end
@@ -44,11 +47,10 @@ Rails.application.routes.draw do
       post 'sync'
       post 'update_trial_builds'
       post 'boost'
+      post 'features'
     end
     post 'sync_all', on: :collection
   end
 
   get 'admins' => 'users#admins', as: :admins
-
-  resources :features, only: [:index]
 end

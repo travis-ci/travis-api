@@ -31,6 +31,11 @@ module Features
       ids(kind, feature).size
     end
 
+    def for(object)
+      results = for_kind(object.class).map { |key| [key, owner_active?(key, object)] }
+      Hash[results].reject { |key, value| !value && HIDDEN.include?(key) }
+    end
+
     def for_kind(kind)
       kind      = kind.table_name unless kind.is_a?(String)
       features  = feature_keys.grep(/feature:([^:]+):#{kind}/) { $1 }.sort
@@ -46,7 +51,7 @@ module Features
     private
 
     def feature_keys
-      @feature_keys ||= redis.keys("feature:*") - OBSOLETE + ALWAYS
+      redis.keys("feature:*") - OBSOLETE + ALWAYS
     end
 
     def ids(kind, feature)
