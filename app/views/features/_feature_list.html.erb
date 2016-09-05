@@ -1,0 +1,18 @@
+<% if features.empty? %>
+  <p>No known feature flags for <%= kind %>.</p>
+<% else %>
+  <ul>
+    <% features.each do |feature| %>
+      <li class="inline-list">
+        <p><%= format_feature(feature) %></p>
+        <p>
+          <% if (count = Features.count(kind, feature)) && (count != 1) %>
+            <%= "#{count} #{kind}" %>
+          <% else %>
+            <%= "#{count} #{kind.singularize}" %>
+          <% end %>
+        </p>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

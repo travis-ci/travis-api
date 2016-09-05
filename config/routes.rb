@@ -49,4 +49,6 @@ Rails.application.routes.draw do
   end
 
   get 'admins' => 'users#admins', as: :admins
+
+  resources :features, only: [:index]
 end

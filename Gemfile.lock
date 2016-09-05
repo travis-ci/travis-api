@@ -205,6 +205,7 @@ GEM
     redis (3.3.1)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
+    rollout (2.3.0)
     rotp (3.1.0)
     rspec-core (3.5.2)
       rspec-support (~> 3.5.0)
@@ -293,6 +294,7 @@ DEPENDENCIES
   rake
   redis (~> 3.0)
   redis-namespace
+  rollout
   rspec-rails (~> 3.4)
   sass-rails (~> 5.0)
   sidekiq
