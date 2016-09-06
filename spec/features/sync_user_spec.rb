@@ -6,7 +6,7 @@ RSpec.feature "Sync with GitHub for a single user", :js => true, :type => :featu
   scenario "Syncing a user" do
     allow_any_instance_of(UsersController).to receive(:builds_provided_for).and_return(1)
 
-    visit "/user/#{user.id}"
+    visit "/users/#{user.id}"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/user/#{user.id}/sync").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
@@ -26,7 +26,7 @@ RSpec.feature "Sync with GitHub for all users in an organization", :js => true, 
   scenario "Syncing several users" do
     allow_any_instance_of(OrganizationsController).to receive(:builds_provided_for).and_return(1)
 
-    visit "/organization/#{organization.id}"
+    visit "/organizations/#{organization.id}"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/user/#{katrin.id}/sync").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).

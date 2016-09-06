@@ -20,7 +20,7 @@ RSpec.feature "Create Broadcast", :js => true, :type => :feature do
   scenario "Create broadcast for user" do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
-    visit "/user/#{user.id}#broadcast"
+    visit "/users/#{user.id}#broadcast"
 
     fill_in('broadcast_message', :with => 'This is a message.')
     find_button('Create').trigger('click')
@@ -31,7 +31,7 @@ RSpec.feature "Create Broadcast", :js => true, :type => :feature do
   scenario "Create broadcast for organization" do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
-    visit "/organization/#{organization.id}#broadcast"
+    visit "/organizations/#{organization.id}#broadcast"
 
     fill_in('broadcast_message', :with => 'This is a message.')
     find_button('Create').trigger('click')
@@ -40,7 +40,7 @@ RSpec.feature "Create Broadcast", :js => true, :type => :feature do
   end
 
   scenario "Create broadcast for repository" do
-    visit "/repository/#{repository.id}#broadcast"
+    visit "/repositories/#{repository.id}#broadcast"
 
     fill_in('broadcast_message', :with => 'This is a message.')
     find_button('Create').trigger('click')

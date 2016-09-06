@@ -6,7 +6,7 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
   let!(:job) { create(:job, repository: repository, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:09:09', state: 'failed', config: {}) }
 
   scenario 'User restarts a job' do
-    visit "/job/#{job.id}"
+    visit "/jobs/#{job.id}"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
@@ -20,7 +20,7 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
   scenario 'User restarts a job via jobs tab in organization view' do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
-    visit "/organization/#{organization.id}#jobs"
+    visit "/organizations/#{organization.id}#jobs"
     click_on("Jobs")
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").

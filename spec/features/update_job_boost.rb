@@ -4,7 +4,7 @@ RSpec.feature "Update Job Boost", :js => true, :type => :feature do
   let!(:user) { create(:user, name: "Klaus", login: "klaus_maus") }
 
   scenario "Update job boost limit and time for a user" do
-    visit "/user/#{user.id}"
+    visit "/users/#{user.id}"
     click_on("Account")
 
     fill_in('boost_owner_limit', :with => '2')
@@ -17,7 +17,7 @@ RSpec.feature "Update Job Boost", :js => true, :type => :feature do
   end
 
   scenario "Update job boost limit for a user" do
-    visit "/user/#{user.id}"
+    visit "/users/#{user.id}"
     click_on("Account")
 
     fill_in('boost_owner_limit', :with => '2')
