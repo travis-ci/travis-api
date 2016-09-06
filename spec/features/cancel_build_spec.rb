@@ -5,7 +5,7 @@ RSpec.feature 'Cancel a Build', :js => true, :type => :feature do
   let!(:build) { create(:build, repository: repository, started_at: '2016-06-29 11:06:01', finished_at: nil, state: 'started', config: {}) }
 
   scenario 'User cancels a build' do
-    visit "/build/#{build.id}"
+    visit "/builds/#{build.id}"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/build/#{build.id}/cancel").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
@@ -17,7 +17,7 @@ RSpec.feature 'Cancel a Build', :js => true, :type => :feature do
   end
 
   scenario 'User cancels a build via builds tab in repository view' do
-    visit "/repository/#{repository.id}#builds"
+    visit "/repositories/#{repository.id}#builds"
     click_on("Builds")
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/build/#{build.id}/cancel").

@@ -6,7 +6,7 @@ RSpec.feature 'Cancel a Job', :js => true, :type => :feature do
   let!(:job) { create(:job, repository: repository, started_at: '2016-06-29 11:06:01', finished_at: nil, state: 'started', config: {}) }
 
   scenario 'User cancels a job' do
-    visit "/job/#{job.id}"
+    visit "/jobs/#{job.id}"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/cancel").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
@@ -20,7 +20,7 @@ RSpec.feature 'Cancel a Job', :js => true, :type => :feature do
   scenario 'User cancels a job via jobs tab in organization view' do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
-    visit "/organization/#{organization.id}"
+    visit "/organizations/#{organization.id}"
     click_on("Jobs")
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/cancel").

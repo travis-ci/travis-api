@@ -11,7 +11,7 @@ RSpec.feature "Update trial builds", :js => true, :type => :feature do
 
     # for Capybara to work, we need both here #account in the link and the click_on("Account"),
     # otherwise save_and_open_screenshot will give an empty page that only has the tabs on the top
-    visit "/user/#{user.id}#account"
+    visit "/users/#{user.id}#account"
     click_on("Account")
 
     expect(page).to have_text("Builds Provided:20")
