@@ -4,7 +4,7 @@
   <ul>
     <% features.each do |feature| %>
       <li class="inline-list feature-for-item">
-        <p><%= format_feature(feature) %></p>
+        <p><%= link_to format_feature(feature), feature_path(kind, feature) %></p>
         <p>
           <% if (count = Features.count(kind, feature)) && (count != 1) %>
             <%= "#{count} #{kind}" %>

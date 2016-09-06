@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       post 'enable'
     end
   end
+  get 'features/:kind/:feature' => 'features#show', as: :feature
 
   resources :jobs, only: [:show] do
     member do

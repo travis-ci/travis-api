@@ -48,6 +48,11 @@ module Features
       Hash[results]
     end
 
+    def members(kind, feature)
+      kind = kind.singularize.camelize.constantize if kind.is_a?(String)
+      kind.where(id: ids(kind, feature))
+    end
+
     private
 
     def feature_keys

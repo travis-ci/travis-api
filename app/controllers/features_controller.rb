@@ -19,4 +19,10 @@ class FeaturesController < ApplicationController
     flash[:notice] = "Feature #{format_feature(params[:feature])} enabled."
     redirect_to features_path
   end
+
+  def show
+    @kind = params[:kind]
+    @feature = params[:feature]
+    @members = Features.members(@kind, @feature)
+  end
 end

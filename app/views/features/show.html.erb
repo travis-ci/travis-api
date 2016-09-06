@@ -1,0 +1,21 @@
+<h1 class="info-header">Feature Flag: <%= format_feature(@feature) %></h1>
+
+<section class="info-block">
+  <p><%= "#{@kind.capitalize} with feature #{format_feature(@feature)} enabled:" %></p>
+  <% if @members.empty? %>
+    <p>None.</p>
+  <% else %>
+    <ul class="member-list">
+      <% @members.each do |member| %>
+        <li>
+          <p>
+            <% if member.respond_to?(:avatar_url) && member.avatar_url %>
+              <%= image_tag(member.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
+            <% end %>
+            <%= link_to describe(member), member %>
+          </p>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
