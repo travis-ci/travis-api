@@ -10,7 +10,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :features, only: [:index]
+  resources :features, only: [:index], param: :feature do
+    member do
+      post 'disable'
+      post 'enable'
+    end
+  end
 
   resources :jobs, only: [:show] do
     member do

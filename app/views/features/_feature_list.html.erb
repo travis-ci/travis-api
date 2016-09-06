@@ -3,7 +3,7 @@
 <% else %>
   <ul>
     <% features.each do |feature| %>
-      <li class="inline-list">
+      <li class="inline-list feature-for-item">
         <p><%= format_feature(feature) %></p>
         <p>
           <% if (count = Features.count(kind, feature)) && (count != 1) %>

@@ -2,15 +2,15 @@
   <h2 class="info-header">Global Features</h2>
   <ul>
     <% @global_features.each do |feature, flag| %>
-      <li class="inline-list job-item">
+      <li class="inline-list feature-item">
         <p><%= format_feature(feature) %></p>
-        <p>
-          <% if flag %>
-            enabled
-          <% else %>
-            disabled
-          <% end %>
-        </p>
+        <% if flag %>
+          <p>&#10004; enabled</p>
+          <p><%= button_to "Disable", disable_feature_path(feature), class: "button", id: "disable_#{feature}" %></p>
+        <% else %>
+          <p>&#10008; disabled</p>
+          <p><%= button_to "Enable", enable_feature_path(feature), class: "button", id: "enable_#{feature}" %></p>
+        <% end %>
       </li>
     <% end %>
   </ul>
