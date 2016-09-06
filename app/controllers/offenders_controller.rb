@@ -7,9 +7,9 @@ class OffendersController < ApplicationController
   end
 
   def update
-    @offender = Organization.find_by(login: offender_params[:login]) || User.find_by(login: offender_params[:login])
+    @offender = Organization.find_by(login: params[:login]) || User.find_by(login: params[:login])
 
-    Services::Abuse::Update.new(offender_params).call
+    Services::Abuse::Update.new(@offender.login, offender_params).call
 
     flash[:notice] = "Abuse settings for #{describe(@offender)} updated."
     redirect_to controller: @offender.class.table_name, action: 'show', id: @offender, anchor: "account"
@@ -17,6 +17,6 @@ class OffendersController < ApplicationController
 
   private
     def offender_params
-      params.require(:offender).permit(:login, *Offender::LISTS.keys)
+      params.require(:offender).permit(*Offender::LISTS.keys)
     end
 end
