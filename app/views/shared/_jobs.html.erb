@@ -1,3 +1,10 @@
+<% if @build_counts.any? { |i| i > 0 } %>
+  <section class="info-block">
+    <h2 class="info-header">Job History</h2>
+    <%= render partial: 'shared/build_chart' %>
+  </section>
+<% end %>
+
 <section class="info-block">
   <h2 class="info-header">Job Queue</h2>
   <%= render partial: 'shared/job_list', locals: {jobs: @pending_jobs} %>
