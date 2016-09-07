@@ -45,6 +45,9 @@ class OrganizationsController < ApplicationController
     @builds_provided = builds_provided_for(@organization)
 
     @features = Features.for(@organization)
+
+    @build_counts = build_counts(@organization)
+
   end
 
   def update_trial_builds
