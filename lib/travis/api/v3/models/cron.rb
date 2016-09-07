@@ -1,75 +1,87 @@
 module Travis::API::V3
   class Models::Cron < Model
+    SCHEDULER_INTERVAL = 1.minute
 
     belongs_to :branch
+    after_create :schedule_first_build
 
-    LastBuild = -1
-    ThisBuild = 0
-    NextBuild = 1
+    scope :scheduled, -> { where("next_run <= '#{DateTime.now.utc}'") }
 
-    def next_enqueuing
-      if disable_by_build && last_non_cron_build_date > planned_time(LastBuild)
-        planned_time(NextBuild)
-      elsif last_cron_build_date >= planned_time(LastBuild)
-        planned_time(ThisBuild)
-      else
-        Time.now - 5.minutes
+    TIME_INTERVALS = {
+      "daily"   => :day,
+      "weekly"  => :week,
+      "monthly" => :month
+    }
+
+    def schedule_next_build(from: nil)
+      # Make sure the next build will always be in the future
+      if (from && (from <= (DateTime.now.utc - 1.send(TIME_INTERVALS[interval]))))
+        from = DateTime.now.utc
       end
+
+      update_attribute(:next_run, (from || last_run || DateTime.now.utc) + 1.send(TIME_INTERVALS[interval]))
     end
 
-    def planned_time(in_builds = ThisBuild)
-      case interval
-      when 'daily'
-        planned_time_daily(in_builds)
-      when 'weekly'
-        planned_time_weekly(in_builds)
-      when 'monthly'
-        planned_time_monthly(in_builds)
+    def schedule_first_build
+      update_attribute(:next_run, DateTime.now.utc + SCHEDULER_INTERVAL)
+    end
+
+    def needs_new_build?
+      always_run? || (last_non_cron_build_time < (24.hour.ago))
+    end
+
+    def skip_and_schedule_next_build
+      # Update last_run also, because this build wasn't enqueued through Queries::Crons
+      last_build_time = last_non_cron_build_time
+      update_attribute(:last_run, last_build_time)
+
+      schedule_next_build(from: DateTime.now)
+    end
+
+    def enqueue
+      if !branch.repository.github_id
+        raise StandardError, "Repository does not have a github_id"
       end
+
+      if !branch.exists_on_github
+        self.destroy
+        return false
+      end
+
+      user_id = branch.repository.users.detect { |u| u.github_oauth_token }.try(:id)
+      user_id ||= branch.repository.owner.id
+
+      payload = {
+        repository: {
+          id:         branch.repository.github_id,
+          owner_name: branch.repository.owner_name,
+          name:       branch.repository.name },
+        branch:     branch.name,
+        user:       { id: user_id }
+      }
+
+      class_name, queue = Query.sidekiq_queue(:build_request)
+
+      ::Sidekiq::Client.push(
+          'queue'.freeze => queue,
+          'class'.freeze => class_name,
+          'args'.freeze  => [{
+            type:        'cron'.freeze,
+            payload:     JSON.dump(payload),
+            credentials: {}
+            }])
+
+      update_attribute(:last_run, DateTime.now.utc)
+      schedule_next_build
     end
 
-    def planned_time_daily(in_builds)
-      now = DateTime.now
-      build_today = DateTime.new(now.year, now.month, now.day, created_at.hour)
-      return build_today + 1 + in_builds if (now > build_today)
-      build_today + in_builds
+    private
+    def always_run?
+      !dont_run_if_recent_build_exists
     end
 
-    def planned_time_weekly(in_builds)
-      now = DateTime.now
-      build_today = DateTime.new(now.year, now.month, now.day, created_at.hour)
-      next_time = build_today + ((created_at.wday - now.wday) % 7)
-      return build_today + 7 * (1 + in_builds) if (now > next_time)
-      next_time + 7 * in_builds
+    def last_non_cron_build_time
+      Build.find_by_id(branch.last_build_id).finished_at.to_datetime.utc
     end
-
-    def planned_time_monthly(in_builds)
-      now = DateTime.now
-      created = DateTime.new(created_at.year, created_at.month, created_at.day, created_at.hour)
-      month_since_creation = (now.year * 12 + now.month) - (created_at.year * 12 + created_at.month)
-      this_month = created >> month_since_creation
-      return created >> (month_since_creation + 1 + in_builds) if (now > this_month)
-      created >> (month_since_creation + in_builds)
-    end
-
-    def last_cron_build_date
-      last_cron_build = Models::Build.where(
-          :repository_id => branch.repository.id,
-          :branch => branch.name,
-          :event_type => 'cron'
-      ).order("id DESC").first
-      return last_cron_build.created_at unless last_cron_build.nil?
-      Time.at(0)
-    end
-
-    def last_non_cron_build_date
-      last_build = Models::Build.where(
-          :repository_id => branch.repository.id,
-          :branch => branch.name
-      ).where(['event_type NOT IN (?)', ['cron']]).order("id DESC").first
-      return last_build.created_at unless last_build.nil?
-      Time.at(0)
-    end
-
   end
 end

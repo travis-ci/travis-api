@@ -20,7 +20,7 @@ describe Travis::API::V3::Services::Cron::Find, set_app: true do
   end
 
   describe "fetching a cron job by id" do
-    before     { get("/v3/cron/#{cron.id}")     }
+    before     { get("/v3/cron/#{cron.id}") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
         "@type"               => "cron",
@@ -44,8 +44,9 @@ describe Travis::API::V3::Services::Cron::Find, set_app: true do
             "@representation" => "minimal",
             "name"            => branch.name },
         "interval"            => "daily",
-        "disable_by_build"    => true,
-        "next_enqueuing"      => cron.next_enqueuing.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        "dont_run_if_recent_build_exists"    => false,
+        "last_run"            => cron.last_run,
+        "next_run"            => cron.next_run.strftime('%Y-%m-%dT%H:%M:%SZ'),
         "created_at"          => cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
     }}
   end
@@ -104,8 +105,9 @@ describe Travis::API::V3::Services::Cron::Find, set_app: true do
           "@representation" => "minimal",
           "name"            => branch.name },
       "interval"            => "daily",
-      "disable_by_build"    => true,
-      "next_enqueuing"      => cron.next_enqueuing.strftime('%Y-%m-%dT%H:%M:%SZ'),
+      "dont_run_if_recent_build_exists"    => false,
+      "last_run"            => cron.last_run,
+      "next_run"            => cron.next_run.strftime('%Y-%m-%dT%H:%M:%SZ'),
       "created_at"          => cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
     }}
   end
