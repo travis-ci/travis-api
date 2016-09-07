@@ -96,6 +96,8 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    chart-js-rails (0.1.0)
+      railties (> 3.1)
     cliver (0.3.2)
     coderay (1.1.1)
     coffee-rails (4.2.1)
@@ -274,6 +276,7 @@ PLATFORMS
 DEPENDENCIES
   biggs
   capybara (~> 2.7.0)
+  chart-js-rails
   coffee-rails (~> 4.2)
   database_cleaner
   date_validator
