@@ -39,7 +39,7 @@
       <dt class="info-label">Owner:</dt>
       <dd><%= link_to describe(@subscription.owner), @subscription.owner %></dd>
 
-      <% if subscription.contact %>
+      <% if @subscription.contact %>
         <dt class="info-label">Contact:</dt>
         <dd><%= link_to describe(@subscription.contact), @subscription.contact %></dd>
       <% end %>
