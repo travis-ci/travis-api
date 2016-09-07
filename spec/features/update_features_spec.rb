@@ -11,7 +11,7 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
            redis.sadd("feature:cron:organizations", "#{organization.id}") }
 
   scenario "Update features for a repository" do
-    visit "/repository/#{repository.id}"
+    visit "/repositories/#{repository.id}"
     click_on("Settings")
 
     expect(page.has_checked_field?("features_multi_os")).to be false
@@ -32,7 +32,7 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
   scenario "Update features for a user" do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
-    visit "/user/#{user.id}"
+    visit "/users/#{user.id}"
     click_on("Account")
 
     expect(page.has_checked_field?("features_cron")).to be true
@@ -50,7 +50,7 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
   scenario "Update features for an organization" do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
-    visit "/organization/#{organization.id}"
+    visit "/organizations/#{organization.id}"
     click_on("Account")
 
     expect(page.has_checked_field?("features_cron")).to be true
