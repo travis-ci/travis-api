@@ -18,7 +18,7 @@
     <dt class="info-label">Additional E-Mail Addresses:</dt>
     <dd>
       <% @user.emails.each do |entry| %>
-        <% if entry.email != user.email %>
+        <% if entry.email != @user.email %>
           <div>
             <%= entry.email %>
             <%= mail_to entry.email, fa_icon("envelope-o") %>
@@ -58,7 +58,7 @@
       <% if @user.is_syncing? %>
         Currently syncing
       <% else %>
-        <%= @user.synced_at ? user.synced_at : "Never" %>
+        <%= @user.synced_at ? @user.synced_at : "Never" %>
       <% end %>
       <%= button_to 'Sync', sync_user_path(@user), disabled: @user.is_syncing?, class: 'button' %>
     </dd>
