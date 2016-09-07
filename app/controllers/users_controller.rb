@@ -47,6 +47,8 @@ class UsersController < ApplicationController
     @builds_provided = builds_provided_for(@user)
 
     @features = Features.for(@user)
+
+    @build_counts = build_counts(@user)
   end
 
   def sync
