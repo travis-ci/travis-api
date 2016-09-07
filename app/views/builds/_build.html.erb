@@ -4,8 +4,8 @@
   <dl class="simple-info">
     <dt class="info-label">State:</dt>
     <dd>
-      <%= build.state %>
-      <% if build.not_finished? %>
+      <%= @build.state %>
+      <% if @build.not_finished? %>
           <%= button_to "Cancel", cancel_build_path(@build), class: "button" %>
       <% else %>
           <%= button_to "Restart", restart_build_path(@build), class: "button" %>
@@ -13,7 +13,7 @@
     </dd>
 
     <dt class="info-label">Previous State:</dt>
-    <dd><%= build.previous_state %></dd>
+    <dd><%= @build.previous_state %></dd>
 
     <dt class="info-label">Repository:</dt>
     <dd><%= link_to describe(@build.repository), @build.repository %></dd>
