@@ -4,58 +4,58 @@
   <dl class="simple-info">
     <dt class="info-label">State:</dt>
     <dd>
-      <%= build.state %>
-      <% if build.not_finished? %>
-          <%= button_to "Cancel", cancel_build_path(build), class: "button" %>
+      <%= @build.state %>
+      <% if @build.not_finished? %>
+          <%= button_to "Cancel", cancel_build_path(@build), class: "button" %>
       <% else %>
-          <%= button_to "Restart", restart_build_path(build), class: "button" %>
+          <%= button_to "Restart", restart_build_path(@build), class: "button" %>
       <% end %>
     </dd>
 
     <dt class="info-label">Previous State:</dt>
-    <dd><%= build.previous_state %></dd>
+    <dd><%= @build.previous_state %></dd>
 
     <dt class="info-label">Repository:</dt>
-    <dd><%= link_to describe(build.repository), build.repository %></dd>
+    <dd><%= link_to describe(@build.repository), @build.repository %></dd>
 
     <dt class="info-label">Request:</dt>
-    <dd><%= link_to describe(build.request), build.request %></dd>
+    <dd><%= link_to describe(@build.request), @build.request %></dd>
 
     <dt class="info-label">Owner:</dt>
-    <dd><%= link_to describe(build.owner), build.owner %></dd>
+    <dd><%= link_to describe(@build.owner), @build.owner %></dd>
 
     <dt class="info-label">Event Type:</dt>
-    <dd><%= build.event_type %></dd>
+    <dd><%= @build.event_type %></dd>
 
     <dt class="info-label">Created:</dt>
-    <dd><time><%= build.created_at %></time></dd>
+    <dd><time><%= @build.created_at %></time></dd>
 
     <dt class="info-label">Started:</dt>
-    <dd><time><%= build.started_at %></time></dd>
+    <dd><time><%= @build.started_at %></time></dd>
 
     <dt class="info-label">Finished:</dt>
-    <dd><time><%= build.finished_at %></time></dd>
+    <dd><time><%= @build.finished_at %></time></dd>
 
     <dt class="info-label">Duration:</dt>
-    <dd><%= format_duration(build.duration) %></dd>
+    <dd><%= format_duration(@build.duration) %></dd>
 
     <dt class="info-label">Branch:</dt>
-    <dd><%= build.branch %></dd>
+    <dd><%= @build.branch %></dd>
 
     <dt class="info-label">Commit:</dt>
-    <dd><%= build.commit.commit %></dd>
+    <dd><%= @build.commit.commit %></dd>
 
     <dt class="info-label">Message:</dt>
-    <dd><%= build.commit.message %></dd>
+    <dd><%= @build.commit.message %></dd>
 
     <dt class="info-label">Committer:</dt>
-    <dd><%= build.commit.committer_name %></dd>
+    <dd><%= @build.commit.committer_name %></dd>
 
     <dt class="info-label">Author:</dt>
-    <dd><%= build.commit.author_name %></dd>
+    <dd><%= @build.commit.author_name %></dd>
 
     <dt class="info-label">Config Status:</dt>
-    <dd><%= build.config ? build.config_result : 'pending' %></dd>
+    <dd><%= @build.config ? @build.config_result : 'pending' %></dd>
   </dl>
 </section>
 
