@@ -1,5 +1,6 @@
 class OrganizationsController < ApplicationController
-  include TopazHelper
+  before_action :get_organization
+  include BuildCounters
 
   before_action :get_organization
 
