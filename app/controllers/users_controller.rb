@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  include TopazHelper
+  before_action :get_user, except: [:admins, :sync_all]
+  include BuildCounters
 
   before_action :get_user, except: [:admins, :sync_all]
 
