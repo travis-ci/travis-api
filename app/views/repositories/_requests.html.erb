@@ -1,6 +1,6 @@
 <section class="info-block">
   <h2 class="info-header">Requests</h2>
-  <% if requests.empty? %>
+  <% if @requests.empty? %>
     <p>No requests exist for this repository.</p>
   <% else %>
     <ul>
@@ -11,7 +11,7 @@
         <p class="info-label">Event Type</p>
         <p class="info-label">State</p>
       </li>
-      <% requests.each do |request| %>
+      <% @requests.each do |request| %>
         <li class="inline-list request-item state_<%= request.state %>">
           <p><%= link_to describe(request), request %></p>
           <p>

@@ -1,18 +1,18 @@
 <section class="info-block">
   <h2 class="info-header">General Information</h2>
 
-  <% if subscription.errors.any? %>
+  <% if @subscription.errors.any? %>
     <div id="form-errors">
-      <p><%= pluralize(subscription.errors.count, "error") %> prohibited this subscription from being updated:</p>
+      <p><%= pluralize(@subscription.errors.count, "error") %> prohibited this subscription from being updated:</p>
       <ul>
-      <% subscription.errors.full_messages.each do |msg| %>
+      <% @subscription.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
       </ul>
     </div>
   <% end %>
 
-  <%= form_for subscription do |f| %>
+  <%= form_for @subscription do |f| %>
     <dl class="simple-info">
       <dt class="info-label">Plan:</dt>
       <dd>
@@ -24,24 +24,24 @@
       </dd>
       <dt class="info-label">Coupon:</dt>
       <dd>
-        <% if subscription.coupon %>
-          <%= subscription.coupon %>
+        <% if @subscription.coupon %>
+          <%= @subscription.coupon %>
         <% else %>
           No Coupon.
         <% end %>
       </dd>
-      <dt class="info-label"><%= subscription.active? ? 'Expires:' : 'Expired:' %></dt>
+      <dt class="info-label"><%= @subscription.active? ? 'Expires:' : 'Expired:' %></dt>
       <dd>
         <time>
-          <%= f.text_field :valid_to, value: (subscription.valid_to.to_date if subscription.valid_to), class: "datepicker" %>
+          <%= f.text_field :valid_to, value: (@subscription.valid_to.to_date if @subscription.valid_to), class: "datepicker" %>
         </time>
       </dd>
       <dt class="info-label">Owner:</dt>
-      <dd><%= link_to describe(subscription.owner), subscription.owner %></dd>
+      <dd><%= link_to describe(@subscription.owner), @subscription.owner %></dd>
 
       <% if subscription.contact %>
         <dt class="info-label">Contact:</dt>
-        <dd><%= link_to describe(subscription.contact), subscription.contact %></dd>
+        <dd><%= link_to describe(@subscription.contact), @subscription.contact %></dd>
       <% end %>
 
       <dt class="info-label">Billing E-mail:</dt>
@@ -53,7 +53,7 @@
       <dt class="info-label">Address:</dt>
       <dd>
         <address>
-        <%= subscription.postal_address %>
+        <%= @subscription.postal_address %>
         </address>
       </dd>
     </dl>

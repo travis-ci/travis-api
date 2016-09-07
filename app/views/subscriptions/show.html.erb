@@ -4,12 +4,12 @@
   <span id="subscription" class="tab-switch"></span>
   <a href="#subscription" class="tab-link">General Information</a>
   <section class="tab-content">
-    <%= render partial: 'subscription', locals: {subscription: @subscription, plan: @plan} %>
+    <%= render partial: 'subscription' %>
   </section>
 
   <span id="invoices" class="tab-switch"></span>
   <a href="#invoices" class="tab-link">Invoices</a>
   <section class="tab-content">
-    <%= render partial: 'invoices', locals: {invoices: @invoices} %>
+    <%= render partial: 'invoices' %>
   </section>
 </div>

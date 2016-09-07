@@ -3,19 +3,19 @@
 
   <dl class="simple-info">
     <dt class="info-label">Name:</dt>
-    <dd><%= organization.name %></dd>
+    <dd><%= @organization.name %></dd>
 
     <dt class="info-label">Primary E-mail Address:</dt>
     <dd>
-      <%= organization.email %>
-      <%= mail_to organization.email, fa_icon("envelope-o") %>
+      <%= @organization.email %>
+      <%= mail_to @organization.email, fa_icon("envelope-o") %>
     </dd>
 
     <dt class="info-label">Homepage:</dt>
-    <dd><%= link_to organization.homepage, organization.homepage, target: "_blank" %></dd>
+    <dd><%= link_to @organization.homepage, @organization.homepage, target: "_blank" %></dd>
 
     <dt class="info-label">Location:</dt>
-    <dd><%= organization.location %></dd>
+    <dd><%= @organization.location %></dd>
   </dl>
 </section>
 
@@ -24,15 +24,15 @@
   <dl class="simple-info">
     <dt class="info-label">GitHub Login</dt>
     <dd>
-      <% if organization.avatar_url %>
-        <%= image_tag(organization.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
+      <% if @organization.avatar_url %>
+        <%= image_tag(@organization.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
       <% end %>
-      <%= organization.login %>
-      <%= link_to fa_icon("github"), "https://github.com/#{organization.login}", target: "_blank" %>
+      <%= @organization.login %>
+      <%= link_to fa_icon("github"), "https://github.com/#{@organization.login}", target: "_blank" %>
     </dd>
 
     <dt class="info-label">GitHub ID</dt>
-    <dd><%= organization.github_id %></dd>
+    <dd><%= @organization.github_id %></dd>
   </dl>
 </section>
 

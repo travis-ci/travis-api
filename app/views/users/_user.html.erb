@@ -1,23 +1,23 @@
 <section class="info-block">
   <h2 class="info-header">Basic Information</h2>
 
-  <% if user.travis_admin? %>
+  <% if @user.travis_admin? %>
     <p>This user has <%= link_to "admin access", admins_path %>.</p>
   <% end %>
 
   <dl class="simple-info">
     <dt class="info-label">Name:</dt>
-    <dd><%= user.name %></dd>
+    <dd><%= @user.name %></dd>
 
     <dt class="info-label">Primary E-mail Address:</dt>
     <dd>
-      <%= user.email %>
-      <%= mail_to user.email, fa_icon("envelope-o") %>
+      <%= @user.email %>
+      <%= mail_to @user.email, fa_icon("envelope-o") %>
     </dd>
 
     <dt class="info-label">Additional E-Mail Addresses:</dt>
     <dd>
-      <% user.emails.each do |entry| %>
+      <% @user.emails.each do |entry| %>
         <% if entry.email != user.email %>
           <div>
             <%= entry.email %>
@@ -35,19 +35,19 @@
     <dt class="info-label">GitHub Login:</dt>
     <dd>
       <%= user.login %>
-      <%= link_to fa_icon("github"), "https://github.com/#{user.login}", target: "_blank" %>
+      <%= link_to fa_icon("github"), "https://github.com/#{@user.login}", target: "_blank" %>
     </dd>
 
     <dt class="info-label">GitHub ID:</dt>
-    <dd><%= user.github_id %></dd>
+    <dd><%= @user.github_id %></dd>
 
     <dt class="info-label">Token:</dt>
-    <dd><%= hidden(user, :github_oauth_token) %></dd>
+    <dd><%= hidden(@user, :github_oauth_token) %></dd>
 
     <dt class="info-label">Scopes:</dt>
     <dd>
-      <% if user.github_scopes.present? %>
-        <%= user.github_scopes %>
+      <% if @user.github_scopes.present? %>
+        <%= @user.github_scopes %>
       <% else %>
         none
       <% end %>
@@ -55,17 +55,17 @@
 
     <dt class="info-label">Last Sync:</dt>
     <dd>
-      <% if user.is_syncing? %>
+      <% if @user.is_syncing? %>
         Currently syncing
       <% else %>
-        <%= user.synced_at ? user.synced_at : "Never" %>
+        <%= @user.synced_at ? user.synced_at : "Never" %>
       <% end %>
-      <%= button_to 'Sync', sync_user_path(user), disabled: user.is_syncing?, class: 'button' %>
+      <%= button_to 'Sync', sync_user_path(@user), disabled: @user.is_syncing?, class: 'button' %>
     </dd>
   </dl>
 </section>
 
 <section class="info-block">
   <h2 class="info-header">Organizations</h2>
-  <%= render partial: 'shared/organization_list', locals: {organizations: user.organizations} %>
+  <%= render partial: 'shared/organization_list', locals: {organizations: @user.organizations} %>
 </section>

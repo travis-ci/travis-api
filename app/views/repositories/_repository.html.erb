@@ -4,25 +4,25 @@
   <dl class="simple-info">
     <dt class="info-label">Name:</dt>
     <dd>
-      <%= describe(repository) %>
-      <%= link_to fa_icon("github"), "https://github.com/#{describe(repository)}", target: "_blank" %>
+      <%= describe(@repository) %>
+      <%= link_to fa_icon("github"), "https://github.com/#{describe(@repository)}", target: "_blank" %>
     </dd>
 
     <dt class="info-label">Description:</dt>
-    <dd><%= repository.description %></dd>
+    <dd><%= @repository.description %></dd>
 
     <dt class="info-label">Visibility:</dt>
-    <dd><%= repository.private? ? "private" : "public" %></dd>
+    <dd><%= @repository.private? ? "private" : "public" %></dd>
 
     <dt class="info-label">Default Branch:</dt>
-    <dd><%= repository.default_branch %></dd>
+    <dd><%= @repository.default_branch %></dd>
 
     <dt class="info-label">Repository Owner:</dt>
     <dd>
-      <% if repository.owner.respond_to?(:avatar_url) && repository.owner.avatar_url %>
-        <%= image_tag(repository.owner.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
+      <% if @repository.owner.respond_to?(:avatar_url) && @repository.owner.avatar_url %>
+        <%= image_tag(@repository.owner.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
       <% end %>
-      <%= link_to describe(repository.owner), repository.owner %></dd>
+      <%= link_to describe(@repository.owner), @repository.owner %></dd>
   </dl>
 </section>
 
@@ -32,9 +32,9 @@
   <dl class="simple-info">
     <dt class="info-label">Last Build:</dt>
     <dd>
-      <% if repository.last_build_id %>
-        <%= link_to "##{repository.last_build_number}", repository.last_build %>
-        <%= "(#{repository.last_build.state} at #{repository.last_build.state_time})" %>
+      <% if @repository.last_build_id %>
+        <%= link_to "##{@repository.last_build_number}", @repository.last_build %>
+        <%= "(#{@repository.last_build.state} at #{@repository.last_build.state_time})" %>
       <% else %>
         No Build.
       <% end %>
@@ -42,11 +42,11 @@
 
     <dt class="info-label">Activation:</dt>
     <dd>
-      <%= repository.active? ? "enabled" : "disabled" %>
-      <% if repository.active? %>
-        <%= button_to "Disable", disable_repository_path(repository), class: "button" %>
+      <%= @repository.active? ? "enabled" : "disabled" %>
+      <% if @repository.active? %>
+        <%= button_to "Disable", disable_repository_path(@repository), class: "button" %>
       <% else %>
-        <%= button_to "Enable", enable_repository_path(repository), class: "button" %>
+        <%= button_to "Enable", enable_repository_path(@repository), class: "button" %>
       <% end %>
     </dd>
   </dl>
