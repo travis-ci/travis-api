@@ -23,6 +23,7 @@ gem 'faraday', '~> 0.9.0'
 gem 'travis-sso', github:'travis-ci/travis-sso'
 gem 'travis-config', github:'travis-ci/travis-config'
 gem 'travis-topaz', github: 'travis-ci/travis-topaz-gem'
+gem 'travis-support', github: 'travis-ci/travis-support'
 
 gem 'rollout'
 
