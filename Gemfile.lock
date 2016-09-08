@@ -112,7 +112,19 @@ GEM
       activesupport
     debug_inspector (0.0.2)
     diff-lcs (1.2.5)
+    elasticsearch (2.0.0)
+      elasticsearch-api (= 2.0.0)
+      elasticsearch-transport (= 2.0.0)
+    elasticsearch-api (2.0.0)
+      multi_json
+    elasticsearch-model (0.1.9)
+      activesupport (> 3)
+      elasticsearch (> 0.4)
+      hashie
     elasticsearch-rails (0.1.9)
+    elasticsearch-transport (2.0.0)
+      faraday
+      multi_json
     erubis (2.7.0)
     execjs (2.7.0)
     factory_girl (4.7.0)
@@ -129,6 +141,7 @@ GEM
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     hashdiff (0.3.0)
+    hashie (3.4.4)
     hashr (2.0.0)
     hitimes (1.2.4)
     i18n (0.7.0)
@@ -279,6 +292,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   database_cleaner
   date_validator
+  elasticsearch-model
   elasticsearch-rails
   factory_girl_rails (~> 4.0)
   faraday (~> 0.9.0)

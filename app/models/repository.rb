@@ -1,4 +1,12 @@
 class Repository < ApplicationRecord
+  include Elasticsearch::Model
+
+  settings index: { number_of_shards: 1 } do
+    mappings dynamic: 'false' do
+      indexes :name, analyzer: 'english', index_options: 'offsets'
+    end
+  end
+
   has_many :jobs
   has_many :permissions
   has_many :users,      through: :permissions

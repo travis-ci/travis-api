@@ -16,6 +16,7 @@ gem 'pg'
 gem 'redis', '~> 3.0'
 gem 'redis-namespace'
 gem 'elasticsearch-rails'
+gem 'elasticsearch-model'
 
 # API stuffs
 gem 'faraday', '~> 0.9.0'
