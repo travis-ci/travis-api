@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
-  before_action :get_user, except: [:admins, :sync_all]
   include TopazHelper
+
+  before_action :get_user, except: [:admins, :sync_all]
 
   def admins
     @admins = User.where(login: Travis::Config.load.admins).order(:name)
@@ -21,6 +22,12 @@ class UsersController < ApplicationController
     redirect_to user_path(@user, anchor: 'account')
   end
 
+  def features
+    Services::Features::Update.new(@user).call(feature_params)
+    flash[:notice] = "Updated feature flags for #{@user.login}."
+    redirect_to user_path(@user, anchor: "account")
+  end
+
   def show
     return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
 
@@ -37,6 +44,8 @@ class UsersController < ApplicationController
 
     @builds_remaining = Travis::DataStores.redis.get("trial:#{@user.login}")
     @builds_provided = builds_provided_for(@user)
+
+    @features = Features.for(@user)
   end
 
   def sync
@@ -73,7 +82,12 @@ class UsersController < ApplicationController
   end
 
   private
-    def get_user
-      @user = User.find_by(id: params[:id])
-    end
+
+  def get_user
+    @user = User.find_by(id: params[:id])
+  end
+
+  def feature_params
+    params.require(:features).permit(Features.for(@user).keys)
+  end
 end

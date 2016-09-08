@@ -53,6 +53,10 @@ module ApplicationHelper
     time.gsub(/\b00#{hrs_suffix} 00#{min_suffix} 0?|\b00#{hrs_suffix} 0?|\A0/, '')
   end
 
+  def format_feature(feature)
+    feature.gsub(/[\-_]/, ' ').gsub('travis yml', '.travis.yml')
+  end
+
   def format_short_duration(seconds)
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end

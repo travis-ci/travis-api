@@ -16,6 +16,7 @@
   <span id="settings" class="tab-switch"></span>
   <a href="#settings" class="tab-link">Settings</a>
   <section class="tab-content">
+    <%= render partial: 'settings', locals: {owner: @repository} %>
   </section>
 
   <span id="broadcast" class="tab-switch"></span>

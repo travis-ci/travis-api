@@ -1,0 +1,34 @@
+<h1 class="info-header">Feature Flags</h1>
+
+<section class="info-block">
+  <h2 class="info-header">Global Features</h2>
+  <ul>
+    <% @global_features.each do |feature, flag| %>
+      <li class="inline-list feature-item">
+        <p><%= format_feature(feature) %></p>
+        <% if flag %>
+          <p>&#10004; enabled</p>
+          <p><%= button_to "Disable", disable_feature_path(feature), class: "button", id: "disable_#{feature}" %></p>
+        <% else %>
+          <p>&#10008; disabled</p>
+          <p><%= button_to "Enable", enable_feature_path(feature), class: "button", id: "enable_#{feature}" %></p>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</section>
+
+<section class="info-block">
+  <h2 class="info-header">User Features</h2>
+  <%= render partial: 'feature_list', locals: { kind: 'users', features: @user_features } %>
+</section>
+
+<section class="info-block">
+  <h2 class="info-header">Organization Features</h2>
+  <%= render partial: 'feature_list', locals: { kind: 'organizations', features: @organization_features } %>
+</section>
+
+<section class="info-block">
+  <h2 class="info-header">Repository Features</h2>
+  <%= render partial: 'feature_list', locals: { kind: 'repositories', features: @repository_features } %>
+</section>

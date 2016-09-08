@@ -1,0 +1,12 @@
+<% if features.empty? %>
+  <p>No known feature flags for <%= kind %>.</p>
+<% else %>
+  <ul>
+    <% features.each do |feature| %>
+      <li class="inline-list feature-for-item">
+        <p><%= link_to format_feature(feature), feature_path(kind, feature) %></p>
+        <p><%= pluralize(Features.count(kind, feature), kind.singularize) %></p>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
