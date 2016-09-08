@@ -41,13 +41,13 @@ class OrganizationsController < ApplicationController
     @existing_boost_limit = @organization.existing_boost_limit
     @normalized_boost_time = @organization.normalized_boost_time
 
-    @builds_remaining = Travis::DataStores.redis.get("trial:#{@organization.login}")
+    @builds_remaining = builds_remaining(@organization)
     @builds_provided = builds_provided_for(@organization)
 
     @features = Features.for(@organization)
 
     @build_counts = build_counts(@organization)
-
+    @build_months = build_months(@user)
   end
 
   def update_trial_builds
