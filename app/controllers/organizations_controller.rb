@@ -47,7 +47,7 @@ class OrganizationsController < ApplicationController
     @features = Features.for(@organization)
 
     @build_counts = build_counts(@organization)
-    @build_months = build_months(@user)
+    @build_months = build_months(@organization)
   end
 
   def update_trial_builds
