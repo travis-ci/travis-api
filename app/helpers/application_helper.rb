@@ -1,11 +1,5 @@
 module ApplicationHelper
-  def build_counts(owner)
-    Travis::DataStores.redis.hgetall("builds:#{owner.github_id}").sort_by(&:first).map { |e| e.last.to_i }
-  end
-
-  def check_trial_builds(owner)
-    builds_remaining = Travis::DataStores.redis.get("trial:#{owner.login}")
-
+  def check_trial_builds(builds_remaining)
     if builds_remaining
       "#{builds_remaining} trial builds"
     else
