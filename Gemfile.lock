@@ -112,6 +112,7 @@ GEM
       activesupport
     debug_inspector (0.0.2)
     diff-lcs (1.2.5)
+    elasticsearch-rails (0.1.9)
     erubis (2.7.0)
     execjs (2.7.0)
     factory_girl (4.7.0)
@@ -278,6 +279,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   database_cleaner
   date_validator
+  elasticsearch-rails
   factory_girl_rails (~> 4.0)
   faraday (~> 0.9.0)
   font-awesome-rails
