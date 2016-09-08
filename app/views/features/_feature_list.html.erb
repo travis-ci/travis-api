@@ -5,13 +5,7 @@
     <% features.each do |feature| %>
       <li class="inline-list feature-for-item">
         <p><%= link_to format_feature(feature), feature_path(kind, feature) %></p>
-        <p>
-          <% if (count = Features.count(kind, feature)) && (count != 1) %>
-            <%= "#{count} #{kind}" %>
-          <% else %>
-            <%= "#{count} #{kind.singularize}" %>
-          <% end %>
-        </p>
+        <p><%= pluralize(Features.count(kind, feature), kind.singularize) %></p>
       </li>
     <% end %>
   </ul>
