@@ -43,12 +43,13 @@ class UsersController < ApplicationController
     @existing_boost_limit = @user.existing_boost_limit
     @normalized_boost_time = @user.normalized_boost_time
 
-    @builds_remaining = Travis::DataStores.redis.get("trial:#{@user.login}")
+    @builds_remaining = builds_remaining(@user)
     @builds_provided = builds_provided_for(@user)
 
     @features = Features.for(@user)
 
     @build_counts = build_counts(@user)
+    @build_months = build_months(@user)
   end
 
   def sync
