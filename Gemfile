@@ -20,12 +20,9 @@ gem 'redis-namespace'
 gem 'faraday', '~> 0.9.0'
 
 # Travis Gems
-gem 'travis-migrations', github: 'travis-ci/travis-migrations'
-gem 'travis-pro-migrations',  git: "https://5ea7c640ac0e16b75cf5f0277a38f16ba534b333:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git", require: 'travis/pro/migrations'
 gem 'travis-sso', github:'travis-ci/travis-sso'
 gem 'travis-config', github:'travis-ci/travis-config'
-gem 'travis-topaz',      github: 'travis-ci/travis-topaz-gem'
-gem 'travis-support',    github: 'travis-ci/travis-support'
+gem 'travis-topaz', github: 'travis-ci/travis-topaz-gem'
 
 gem 'rollout'
 
@@ -54,6 +51,8 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.4'
   gem 'factory_girl_rails', '~> 4.0'
   gem 'pry-rails'
+  gem 'travis-migrations', github: 'travis-ci/travis-migrations'
+  gem 'travis-pro-migrations',  git: "https://5ea7c640ac0e16b75cf5f0277a38f16ba534b333:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git", require: 'travis/pro/migrations'
 end
 
 group :test do
