@@ -22,12 +22,6 @@ GIT
       yubikey
 
 GIT
-  remote: git://github.com/travis-ci/travis-support.git
-  revision: 2cd02d2a06fdd1e2fc2f129148c168b56f7c190f
-  specs:
-    travis-support (0.0.1)
-
-GIT
   remote: git://github.com/travis-ci/travis-topaz-gem.git
   revision: 0bd248089607583cc4dfe82cb4b84fd3fe1a84bd
   specs:
@@ -35,6 +29,15 @@ GIT
       faraday
       thread
 
+<<<<<<< HEAD
+=======
+GIT
+  remote: https://5ea7c640ac0e16b75cf5f0277a38f16ba534b333:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git
+  revision: 5041db15ae68ba6b606ca9ea374ec653a629e995
+  specs:
+    travis-pro-migrations (0.0.1)
+
+>>>>>>> fix gemfile
 GEM
   remote: https://rubygems.org/
   specs:
@@ -301,7 +304,6 @@ DEPENDENCIES
   travis-config!
   travis-migrations!
   travis-sso!
-  travis-support!
   travis-topaz!
   uglifier (>= 1.3.0)
   web-console (~> 3.3)

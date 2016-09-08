@@ -53,6 +53,8 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.4'
   gem 'factory_girl_rails', '~> 4.0'
   gem 'pry-rails'
+  gem 'travis-migrations', github: 'travis-ci/travis-migrations'
+  gem 'travis-pro-migrations',  git: "https://5ea7c640ac0e16b75cf5f0277a38f16ba534b333:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git", require: 'travis/pro/migrations'
 end
 
 group :test do
