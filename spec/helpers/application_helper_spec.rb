@@ -5,12 +5,15 @@ RSpec.describe ApplicationHelper, type: :helper do
   let!(:organization) { create(:organization, name: 'travis', login: 'travis-pro') }
 
   describe 'check_trial_builds' do
+    let(:redis) { Travis::DataStores.redis }
+    before { redis.set("trial:#{user.login}", '75') }
+
     it 'returns formatted trial builds when they exist' do
-      expect(helper.check_trial_builds(75)).to eq('75 trial builds')
+      expect(helper.check_trial_builds(user)).to eq('75 trial builds')
     end
 
     it 'returns not in trial when trial does not exist' do
-      expect(helper.check_trial_builds(nil)).to eq('not in trial')
+      expect(helper.check_trial_builds(organization)).to eq('not in trial')
     end
   end
 
