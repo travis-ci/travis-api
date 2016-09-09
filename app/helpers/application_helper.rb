@@ -1,5 +1,7 @@
 module ApplicationHelper
-  def check_trial_builds(builds_remaining)
+  def check_trial_builds(owner)
+    builds_remaining = Travis::DataStores.redis.get("trial:#{owner.login}")
+
     if builds_remaining
       "#{builds_remaining} trial builds"
     else
