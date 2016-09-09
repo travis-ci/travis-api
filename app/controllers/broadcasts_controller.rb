@@ -12,7 +12,7 @@ class BroadcastsController < ApplicationController
 
     if @broadcast.save
       flash[:notice] = "Broadcast created."
-      Services::AuditTrail::Add.new(current_user, "created a broadcast for #{describe(@recipient)}: \"#{@broadcast.message}\"").call
+      Services::AuditTrail::Add.new(current_user, "created a broadcast for #{@recipient ? describe(@recipient) : 'everybody'}: \"#{@broadcast.message}\"").call
     else
       flash[:error] = "Could not create broadcast."
     end
@@ -22,10 +22,11 @@ class BroadcastsController < ApplicationController
 
   def update
     @broadcast = Broadcast.find_by(id: params[:id])
+    @recipient = @broadcast.recipient
 
     @broadcast.toggle(:expired)
     if @broadcast.save
-      Services::AuditTrail::Add.new(current_user, "#{@broadcast.expired ? 'disabled' : 'enabled'} a broadcast for #{describe(@broadcast.recipient)}: \"#{@broadcast.message}\"").call
+      Services::AuditTrail::Add.new(current_user, "#{@broadcast.expired ? 'disabled' : 'enabled'} a broadcast for #{@recipient ? describe(@recipient) : 'everybody'}: \"#{@broadcast.message}\"").call
     end
 
     redirect_to_broadcast_view
