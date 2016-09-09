@@ -1,4 +1,4 @@
-require_relative '../models/user'
+require(File.expand_path('../models/user', File.dirname(__FILE__)))
 
 class ApplicationController < ActionController::Base
   include Travis::SSO::Helpers

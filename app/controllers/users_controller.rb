@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   include BuildCounters
+  include ApplicationHelper
 
   before_action :get_user, except: [:admins, :sync_all]
 
@@ -13,7 +14,7 @@ class UsersController < ApplicationController
     hours = 24 if hours.blank?
 
     if limit > 0
-      Services::JobBoost::Update.new(@user.login).call(hours, limit)
+      Services::JobBoost::Update.new(@user.login, current_user).call(hours, limit)
       flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
     else
       flash[:error] = "Owner limit must be greater than 0."
@@ -23,7 +24,7 @@ class UsersController < ApplicationController
   end
 
   def features
-    Services::Features::Update.new(@user).call(feature_params)
+    Services::Features::Update.new(@user, current_user).call(feature_params)
     flash[:notice] = "Updated feature flags for #{@user.login}."
     redirect_to user_path(@user, anchor: "account")
   end
@@ -56,6 +57,7 @@ class UsersController < ApplicationController
 
     if response.success?
       flash[:notice] = "Triggered sync with GitHub."
+      Services::EventLogs::Add.new(current_user, "triggered sync for #{describe(@user)}").call
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end
@@ -75,11 +77,12 @@ class UsersController < ApplicationController
       SyncWorker.perform_async(user.id)
     end
     flash[:notice] = "Triggered sync with GitHub for #{logins.join(', ')}."
+    Services::EventLogs::Add.new(current_user, "triggered sync for #{logins.join(', ')}").call
     redirect_to back_link
   end
 
   def update_trial_builds
-    Services::TrialBuilds::Update.new(@user).call(params[:builds_remaining],params[:previous_builds])
+    Services::TrialBuilds::Update.new(@user, current_user).call(params[:builds_remaining],params[:previous_builds])
     flash[:notice] = "Reset #{@user.login}'s trial to #{params[:builds_remaining]} builds."
     redirect_to user_path(@user, anchor: "account")
   end

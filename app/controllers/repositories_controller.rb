@@ -28,7 +28,7 @@ class RepositoriesController < ApplicationController
   end
 
   def features
-    Services::Features::Update.new(@repository).call(feature_params)
+    Services::Features::Update.new(@repository, current_user).call(feature_params)
     flash[:notice] = "Updated feature flags for #{@repository.slug}."
     redirect_to repository_path(@repository, anchor: "settings")
   end

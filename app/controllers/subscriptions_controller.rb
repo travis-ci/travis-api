@@ -9,7 +9,9 @@ class SubscriptionsController < ApplicationController
     changes = @subscription.changes
 
     if changes.any? && @subscription.save
-      flash[:notice] = "Updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
+      message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
+      flash[:notice] = message.sub(/./) {$&.upcase}
+      Services::EventLogs::Add.new(current_user, message).call
       redirect_to @subscription
     else
       render :show
@@ -17,15 +19,16 @@ class SubscriptionsController < ApplicationController
   end
 
   private
-    def subscription_params
-      params.require(:subscription).permit(:valid_to, :billing_email, :vat_id)
-    end
 
-    def get_subscription
-      @subscription = Subscription.find_by(id: params[:id])
-      return redirect_to root_path, alert: 'There is no subscription associated with that ID.' if @subscription.nil?
+  def subscription_params
+    params.require(:subscription).permit(:valid_to, :billing_email, :vat_id)
+  end
 
-      @plan = @subscription.plans.current
-      @invoices = @subscription.invoices.order('id DESC')
-    end
+  def get_subscription
+    @subscription = Subscription.find_by(id: params[:id])
+    return redirect_to root_path, alert: 'There is no subscription associated with that ID.' if @subscription.nil?
+
+    @plan = @subscription.plans.current
+    @invoices = @subscription.invoices.order('id DESC')
+  end
 end

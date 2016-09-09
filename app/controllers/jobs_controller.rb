@@ -13,6 +13,7 @@ class JobsController < ApplicationController
 
     if response.success?
       message = "Job #{describe(@job)} successfully canceled."
+      Services::EventLogs::Add.new(current_user, "canceled job #{describe(@job)}").call
     else
       message = "Error: #{response.headers[:status]}"
     end
@@ -43,12 +44,19 @@ class JobsController < ApplicationController
 
     response = Services::Job::Restart.new(@job.id).call
 
+    if response.success?
+      message = "Job #{describe(@job)} successfully restarted."
+      Services::EventLogs::Add.new(current_user, "restarted job #{describe(@job)}").call
+    else
+      message = "Error: #{response.headers[:status]}"
+    end
+
     respond_to do |format|
       format.html do
         if response.success?
-          flash[:notice] = "Job #{describe(@job)} successfully restarted."
+          flash[:notice] = message
         else
-          flash[:error] = "Error: #{response.headers[:status]}"
+          flash[:error] = message
         end
 
         redirect_to @job
@@ -56,11 +64,9 @@ class JobsController < ApplicationController
 
       format.json do
         if response.success?
-          render json: {"success": true,
-            "message": "Job #{describe(@job)} successfully restarted."}
+          render json: {"success": true, "message": message}
         else
-          render json: {"success": false,
-            "message": "Error: #{response.headers[:status]}"}
+          render json: {"success": false, "message": message}
         end
       end
     end
