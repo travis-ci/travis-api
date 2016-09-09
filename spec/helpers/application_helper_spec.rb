@@ -6,7 +6,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
   describe 'check_trial_builds' do
     let(:redis) { Travis::DataStores.redis }
-    let(:builds_remaining) { redis.set("trial:#{user.login}", '75') }
+    before { redis.set("trial:#{user.login}", '75') }
 
     it 'returns formatted trial builds when they exist' do
       expect(helper.check_trial_builds(builds_remaining)).to eq('75 trial builds')
