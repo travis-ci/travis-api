@@ -112,6 +112,11 @@ module Travis::API::V3
         get  :find
       end
 
+      resource :caches do
+        route '/caches'
+        get :find
+      end
+
       resource :crons do
         route '/crons'
         get  :for_repository

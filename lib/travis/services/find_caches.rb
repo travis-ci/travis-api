@@ -1,6 +1,6 @@
 require 's3'
 require 'travis/services/base'
-require 'google/apis/storage_v1'
+#require 'google/apis/storage_v1'
 
 module Travis
   module Services
