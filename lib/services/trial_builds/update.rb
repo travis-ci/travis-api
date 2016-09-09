@@ -8,7 +8,7 @@ module Services
 
       def call(builds_remaining, previous_builds)
         Travis::DataStores.redis.set("trial:#{@owner.login}", builds_remaining)
-        Services::EventLogs::Add.new(@current_user, "reset #{@owner.login}'s trial to #{builds_remaining} builds").call
+        Services::AuditTrail::Add.new(@current_user, "reset #{@owner.login}'s trial to #{builds_remaining} builds").call
         update_topaz(@owner, builds_remaining, previous_builds)
       end
 

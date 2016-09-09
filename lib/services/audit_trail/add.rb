@@ -1,5 +1,5 @@
 module Services
-  module EventLogs
+  module AuditTrail
     class Add
       def initialize(current_user, message)
         @message = message

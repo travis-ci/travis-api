@@ -17,10 +17,10 @@ module Services
 
           if wanted?(key)
             Travis::DataStores.redis.sadd("abuse:#{key}", @login)
-            Services::EventLogs::Add.new(@current_user, "marked #{@login} as #{Offender::LISTS[key]}").call
+            Services::AuditTrail::Add.new(@current_user, "marked #{@login} as #{Offender::LISTS[key]}").call
           else
             Travis::DataStores.redis.srem("abuse:#{key}", @login)
-            Services::EventLogs::Add.new(@current_user, "removed #{@login} as #{Offender::LISTS[key]}").call
+            Services::AuditTrail::Add.new(@current_user, "removed #{@login} as #{Offender::LISTS[key]}").call
           end
         end
       end
