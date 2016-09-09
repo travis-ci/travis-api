@@ -1,8 +1,7 @@
 <section class="info-block">
-    <h2 class="info-header">Job History</h2>
-    <%= render partial: 'shared/build_chart' %>
+  <h2 class="info-header">Job History</h2>
+  <%= render partial: 'shared/build_chart', locals: {owner: owner} %>
 </section>
-
 
 <section class="info-block">
   <h2 class="info-header">Job Queue</h2>
