@@ -17,17 +17,8 @@ module Travis::API::V3
         google = Fog::Storage::Google.new(google_json_key_string: config[:gcs].try(:[], :json_key), google_project: config[:gcs].try(:[], :google_project))
         caches = google.directories.get(config[:gcs].try(:[], :bucket_name), prefix: repo.github_id).files.to_a
       end
-
-      caches.map! do |c|
-        {
-          repository_id: repo.id,
-          size: Integer(c.content_length),
-          branch: c.key[%r{^\d+/(.*)/[^/]+$}, 1],
-          last_modified: c.last_modified
-        }
-      end
-
-      caches
+      
+      Models::Cache.new(caches, repo)
     end
 
     #might want this for branch name and slug
