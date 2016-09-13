@@ -1,24 +1,9 @@
 module Travis::API::V3
-  class Queries::Caches < Query
-    require 'fog/aws'
-
-    require 'fog/google'
-    require 'openssl'
-    OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+  class Queries::Caches < RemoteQuery
 
     def find(repo)
-      config = Travis.config.to_h.try(:[], :cache_options).to_h
-
-      s3 = Fog::Storage.new(aws_access_key_id: config[:s3].try(:[], :access_key_id), aws_secret_access_key: config[:s3].try(:[], :secret_access_key), provider: 'AWS')
-
-      caches = s3.directories.get(config[:s3].try(:[], :bucket_name), prefix: repo.github_id).files.to_a
-
-      if caches.empty?
-        google = Fog::Storage::Google.new(google_json_key_string: config[:gcs].try(:[], :json_key), google_project: config[:gcs].try(:[], :google_project))
-        caches = google.directories.get(config[:gcs].try(:[], :bucket_name), prefix: repo.github_id).files.to_a
-      end
-      
-      Models::Cache.new(caches, repo)
+      caches = fetch
+      Models::Cache.factory(caches, repo)
     end
 
     #might want this for branch name and slug

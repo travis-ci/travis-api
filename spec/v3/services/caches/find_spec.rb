@@ -5,15 +5,36 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   let(:s3_bucket_name) { "travis-cache-staging-org" }
   let(:result) { [
     {
-    "repository_id"=>repo.id,
-    "size"=>20308738,
-    "branch"=>"ha-bug-rm_rf",
-    "last_modified"=>"2009-10-12T17:50:30Z"},
+      "@type"=>"cache",
+      "@representation"=>"standard",
+      "repository_id"=>1,
+      "size"=>20308738,
+      "branch"=>"ha-bug-rm_rf",
+      "last_modified"=>"2009-10-12T17:50:30Z",
+      "repo"=>{
+        "@type"=>"repository",
+        "@href"=>"/v3/repo/#{repo.id}",
+        "@representation"=>"minimal",
+        "id"=>repo.id,
+        "name"=>repo.name,
+        "slug"=>repo.slug
+        }
+    },
     {
-      "repository_id"=>repo.id,
+      "@type"=>"cache",
+      "@representation"=>"standard",
+      "repository_id"=>1,
       "size"=>64994,
       "branch"=>"master",
-      "last_modified"=>"2009-10-12T17:50:30Z"
+      "last_modified"=>"2009-10-12T17:50:30Z",
+      "repo"=>{
+        "@type"=>"repository",
+        "@href"=>"/v3/repo/#{repo.id}",
+        "@representation"=>"minimal",
+        "id"=>repo.id,
+        "name"=>repo.name,
+        "slug"=>repo.slug
+        }
       }
     ]
   }
@@ -63,7 +84,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
   describe "existing cache on s3" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.github_id}").
+      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/").
          to_return(:status => 200, :body => xml_content, :headers => {})
     end
     before     { get("/v3/repo/#{repo.id}/caches") }
@@ -79,12 +100,12 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   end
   describe "existing cache on gcs" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.github_id}").
+      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/").
          to_return(:status => 200, :body => empty_xml_content, :headers => {})
       stub_request(:post, "https://accounts.google.com/o/oauth2/token").
          to_return(:status => 200, :body => {authorization: 'skdjfhdkfh'}.to_json, :headers => {content_type: 'application/json'})
 
-      stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-staging-org-gce?prefix=1").
+      stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-staging-org-gce").
          to_return(:status => 200, :body => xml_content, :headers => {})
 
     end
