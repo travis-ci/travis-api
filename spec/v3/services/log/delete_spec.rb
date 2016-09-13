@@ -62,7 +62,11 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   end
 
   context 's3 log, authenticated' do
-    before { s3job.update_attributes(finished_at: Time.now)}
+    before do
+      s3job.update_attributes(finished_at: Time.now)
+      AWS.stub!
+    end
+
     describe 'updates log, inserts new log part' do
       example do
         s3log.update_attributes(archived_at: Time.now)
