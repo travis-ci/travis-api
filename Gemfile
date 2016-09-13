@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 gemspec
 
 gem 's3',              github: 'travis-ci/s3'
+# api v3 uses 'aws-sdk-v1' instead of 's3'
+gem 'aws-sdk-v1'
 
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-amqp',     github: 'travis-ci/travis-amqp'

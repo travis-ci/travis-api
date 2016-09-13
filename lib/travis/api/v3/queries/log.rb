@@ -2,6 +2,7 @@ module Travis::API::V3
   class Queries::Log < Query
     require 'net/http'
     require 'uri'
+    require 'aws/s3'
 
     FORMAT = "Log removed by %s at %s"
 
@@ -38,6 +39,13 @@ module Travis::API::V3
       raise EntityMissing, 'log not found'.freeze if log.nil?
       raise LogAlreadyRemoved if log.removed_at || log.removed_by
       raise JobUnfinished unless job.finished_at?
+
+      if log.archived_at
+        AWS.config(Travis::Logs.config.s3.to_hash.slice(:access_key_id, :secret_access_key))
+        s3 = AWS::S3.new
+        obj = s3.buckets["#{hostname('archive')}"].objects["jobs/#{job.id}/log.txt"]
+        obj.delete
+      end
 
       removed_at = Time.now
 

@@ -3,9 +3,9 @@ require 'spec_helper'
 describe Travis::API::V3::Services::Log::Delete, set_app: true do
   let(:user)        { Factory.create(:user) }
   let(:repo)        { Factory.create(:repository, owner_name: user.login, name: 'minimal', owner: user)}
-  let(:repo2)        { Factory.create(:repository, owner_name: user.login, name: 'minimal2', owner: user)}
+  let(:repo2)       { Factory.create(:repository, owner_name: user.login, name: 'minimal2', owner: user)}
   let(:build)       { Factory.create(:build, repository: repo) }
-  let(:build2)       { Factory.create(:build, repository: repo2) }
+  let(:build2)      { Factory.create(:build, repository: repo2) }
   let(:job)         { Travis::API::V3::Models::Job.create(build: build) }
   let(:job2)        { Travis::API::V3::Models::Job.create(build: build2) }
   let(:s3job)       { Travis::API::V3::Models::Job.create(build: build) }
