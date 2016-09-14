@@ -64,7 +64,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   context 's3 log, authenticated' do
     before do
       s3job.update_attributes(finished_at: Time.now)
-      AWS.stub!
+      Travis::API::V3::Queries::Log::S3.any_instance.expects(:delete_log)
     end
 
     describe 'updates log, inserts new log part' do

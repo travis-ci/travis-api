@@ -41,10 +41,7 @@ module Travis::API::V3
       raise JobUnfinished unless job.finished_at?
 
       if log.archived_at
-        AWS.config(Travis.config.s3.to_hash.slice(:access_key_id, :secret_access_key))
-        s3 = AWS::S3.new
-        obj = s3.buckets["#{hostname('archive')}"].objects["jobs/#{job.id}/log.txt"]
-        obj.delete
+        s3.delete_log(job.id)
       end
 
       removed_at = Time.now
@@ -53,5 +50,23 @@ module Travis::API::V3
       log.clear!(user, message)
       log
     end
+
+    def s3
+      @s3 ||= S3.new(hostname('archive'))
+    end
+
+    class S3
+      def initialize(bucket_name)
+        AWS.config(Travis.config.s3.to_hash.slice(:access_key_id, :secret_access_key))
+        @s3 = AWS::S3.new
+        @bucket_name = bucket_name
+      end
+
+      def delete_log(job_id)
+        obj = @s3.buckets["#{@bucket_name}"].objects["jobs/#{job_id}/log.txt"]
+        obj.delete
+      end
+    end
+
   end
 end
