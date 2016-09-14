@@ -1,4 +1,3 @@
-require 'travis/sidekiq/synchronize_user'
 require 'travis/services/base'
 
 module Travis
@@ -12,7 +11,11 @@ module Travis
 
       def trigger_sync
         logger.info("Synchronizing via Sidekiq for user: #{user.login}")
-        Travis::Sidekiq::SynchronizeUser.perform_async(user.id)
+        ::Sidekiq::Client.push(
+          'queue' => 'sync',
+          'class' => 'Travis::GithubSync::Worker',
+          'args'  => [:sync_user, { user_id: user.id }]
+        )
         user.update_column(:is_syncing, true)
         true
       end
