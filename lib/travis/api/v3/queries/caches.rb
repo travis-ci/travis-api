@@ -1,8 +1,9 @@
 module Travis::API::V3
   class Queries::Caches < RemoteQuery
+    params :match, :branch
 
     def find(repo)
-      caches = fetch
+      caches = fetch(repo)
       Models::Cache.factory(caches, repo)
     end
 
