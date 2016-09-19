@@ -11,7 +11,11 @@ describe Travis::Services::SyncUser do
     end
 
     it 'enqueues a sync job' do
-      Travis::Sidekiq::SynchronizeUser.expects(:perform_async).with(user.id)
+      Sidekiq::Client.expects(:push).with(
+        'queue' => 'sync',
+        'class' => 'Travis::GithubSync::Worker',
+        'args'  => [:sync_user, { user_id: user.id }]
+      )
       service.run
     end
 
