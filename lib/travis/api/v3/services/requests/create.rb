@@ -13,9 +13,10 @@ module Travis::API::V3
 
       user      = find(:user) if access_control.full_access? and params_for? 'user'.freeze
       user    ||= access_control.user
-      remaining = remaining_requests(repository)
+      max       = limit(repository)
+      remaining = remaining_requests(max, repository)
 
-      raise RequestLimitReached, repository: repository if remaining == 0
+      raise RequestLimitReached, repository: repository, max_requests: max, per_seconds: TIME_FRAME.to_i if remaining == 0
 
       payload = query.schedule(repository, user)
       accepted(remaining_requests: remaining, repository: repository, request: payload)
@@ -25,8 +26,7 @@ module Travis::API::V3
       repository.admin_settings.api_builds_rate_limit || Travis.config.requests_create_api_limit || LIMIT
     end
 
-    def remaining_requests(repository)
-      api_builds_rate_limit = limit(repository)
+    def remaining_requests(api_builds_rate_limit, repository)
       return api_builds_rate_limit if access_control.full_access?
       count = query(:requests).count(repository, TIME_FRAME)
       count > api_builds_rate_limit ? 0 : api_builds_rate_limit - count

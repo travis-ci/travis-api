@@ -233,7 +233,9 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
         "representation",
         "minimal",
         "slug",
-        "svenfuchs/minimal")
+        "svenfuchs/minimal",
+        "max_requests",
+        "per_seconds")
       }
     end
 
