@@ -11,6 +11,7 @@ module Travis
       def run
         run_service(:github_set_hook, id: repo.id, active: active?)
         repo.update_column(:active, active?)
+        sync_repo if active?
         true
       end
       instrument :run
@@ -31,6 +32,15 @@ module Travis
         active = params[:active]
         active = { 'true' => true, 'false' => false }[active] if active.is_a?(String)
         !!active
+      end
+
+      def sync_repo
+        logger.info("Synchronizing repo via Sidekiq: #{repo.slug} id=#{repo.id}")
+        ::Sidekiq::Client.push(
+          'queue' => 'sync',
+          'class' => 'Travis::GithubSync::Worker',
+          'args'  => [:sync_repo, { repo_id: repo.id }]
+        )
       end
 
       class Instrument < Notification::Instrument

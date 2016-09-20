@@ -8,6 +8,7 @@ module Travis::API::V3
         github(admin).upload_key(repository)
       end
 
+      query.sync(access_control.user)
       repository
     end
 
