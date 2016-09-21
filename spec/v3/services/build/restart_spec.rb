@@ -127,7 +127,14 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
       Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(true)
     end
 
+    shared_examples 'clears debug_options for all jobs' do
+      before  { build.jobs.each { |j| j.update_attribute(:debug_options, { 'foo' => 'bar' }) } }
+      example { build.jobs.each { |j| expect(j.reload.debug_options).to be_nil } }
+    end
+
     describe "errored state" do
+      include_examples 'clears debug_options for all jobs'
+
       before do
         build.update_attribute(:state, "errored")
         post("/v3/build/#{build.id}/restart", params, headers)
@@ -156,6 +163,8 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
     end
 
     describe "passed state" do
+      include_examples 'clears debug_options for all jobs'
+
       before        { build.update_attribute(:state, "passed")                                                  }
       before        { post("/v3/build/#{build.id}/restart", params, headers)                                    }
 
@@ -182,6 +191,8 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
     end
 
     describe "failed state" do
+      include_examples 'clears debug_options for all jobs'
+
       before        { build.update_attribute(:state, "failed")                                                  }
       before        { post("/v3/build/#{build.id}/restart", params, headers)                                    }
 
@@ -208,6 +219,8 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
     end
 
     describe "canceled state" do
+      include_examples 'clears debug_options for all jobs'
+
       before        { build.update_attribute(:state, "canceled")                                                  }
       before        { post("/v3/build/#{build.id}/restart", params, headers)                                      }
 
