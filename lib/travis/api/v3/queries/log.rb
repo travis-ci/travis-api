@@ -63,7 +63,7 @@ module Travis::API::V3
 
       def find_log(job_id)
         obj = @s3.buckets["#{@bucket_name}"].objects["jobs/#{job_id}/log.txt"]
-        obj.body.read
+        obj.read
       end
 
       def delete_log(job_id)
