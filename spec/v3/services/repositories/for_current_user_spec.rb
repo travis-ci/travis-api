@@ -43,7 +43,9 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "star"             => true,
           "unstar"           => true,
           "create_request"   => true,
-          "create_cron"      => false},
+          "create_cron"      => false,
+          "change_settings"  => true
+        },
         "id"                 =>  repo.id,
         "name"               =>  "minimal",
         "slug"               =>  "svenfuchs/minimal",
