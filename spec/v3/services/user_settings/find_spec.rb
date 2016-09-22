@@ -9,6 +9,8 @@ describe Travis::API::V3::Services::UserSettings::Find, set_app: true do
     include_examples 'not authenticated'
   end
 
+  describe 'authenticated as wrong user'
+
   describe 'authenticated, missing repo' do
     before { get('/v3/repo/9999999999/settings', {}, auth_headers) }
 
@@ -23,7 +25,7 @@ describe Travis::API::V3::Services::UserSettings::Find, set_app: true do
     end
   end
 
-  describe 'authenticated, existing repo, repo has no settings', focus: true do
+  describe 'authenticated, existing repo, repo has no settings, return defaults' do
     before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
 
     example { expect(last_response.status).to eq(200) }
