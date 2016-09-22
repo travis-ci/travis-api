@@ -39,7 +39,7 @@ module Travis
         ::Sidekiq::Client.push(
           'queue' => 'sync',
           'class' => 'Travis::GithubSync::Worker',
-          'args'  => [:sync_repo, { repo_id: repo.id }]
+          'args'  => [:sync_repo, { repo_id: repo.id, user_id: current_user.id }]
         )
       end
 

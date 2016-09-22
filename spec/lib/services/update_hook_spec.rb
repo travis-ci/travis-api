@@ -51,7 +51,7 @@ describe Travis::Services::UpdateHook do
     Sidekiq::Client.expects(:push).with(
       'queue' => 'sync',
       'class' => 'Travis::GithubSync::Worker',
-      'args'  => [:sync_repo, repo_id: 1]
+      'args'  => [:sync_repo, repo_id: 1, user_id: user.id]
     )
     service.run
   end
