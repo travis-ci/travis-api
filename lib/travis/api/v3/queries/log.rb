@@ -16,8 +16,7 @@ module Travis::API::V3
         ## if it's not there then fetch it from S3, and return it wrapped as a
         ## compatible log_parts object with a hard coded number (log_parts have a number)
         ## and a single log_part that contains all the log content
-        archived_log_path = archive_url("/jobs/#{job.id}/log.txt")
-        content = Net::HTTP.get(URI.parse(archived_log_path))
+        content = Net::HTTP.get(URI.parse(s3.find_log(job.id)))
         log_part = Models::LogPart.new(log_id: log.id, content: content.force_encoding("utf-8"), number: 0, created_at: log.created_at)
         log_parts = []
         log_parts << log_part
@@ -60,6 +59,10 @@ module Travis::API::V3
         AWS.config(Travis.config.s3.to_hash.slice(:access_key_id, :secret_access_key))
         @s3 = AWS::S3.new
         @bucket_name = bucket_name
+      end
+
+      def find_log(job_id)
+        @s3.buckets["#{@bucket_name}"].objects["jobs/#{job_id}/log.txt"]
       end
 
       def delete_log(job_id)
