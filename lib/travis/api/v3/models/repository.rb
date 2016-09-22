@@ -74,7 +74,7 @@ module Travis::API::V3
     end
 
     def admin_settings
-      @admin_settings ||= Models::AdminSettings.new(settings)
+      @admin_settings ||= Models::AdminSettings.new(settings).tap { |as| as.sync(self, :settings) }
     end
 
     def env_vars
