@@ -85,7 +85,14 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(true)
     end
 
+    shared_examples 'clears debug_options' do
+      before  { job.update_attribute(:debug_options, { 'foo' => 'bar' }) }
+      example { expect(job.reload.debug_options).to be_nil }
+    end
+
     describe "canceled state" do
+      include_examples 'clears debug_options'
+
       before        { job.update_attribute(:state, "canceled")                                                }
       before        { post("/v3/job/#{job.id}/restart", params, headers)                                      }
 
@@ -110,7 +117,10 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
     end
+
     describe "errored state" do
+      include_examples 'clears debug_options'
+
       before        { job.update_attribute(:state, "errored")                                                }
       before        { post("/v3/job/#{job.id}/restart", params, headers)                                      }
 
@@ -135,7 +145,10 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
     end
+
     describe "failed state" do
+      include_examples 'clears debug_options'
+
       before        { job.update_attribute(:state, "failed")                                                }
       before        { post("/v3/job/#{job.id}/restart", params, headers)                                      }
 
@@ -160,7 +173,10 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
     end
+
     describe "passed state" do
+      include_examples 'clears debug_options'
+
       before        { job.update_attribute(:state, "passed")                                                }
       before        { post("/v3/job/#{job.id}/restart", params, headers)                                      }
 

@@ -258,7 +258,6 @@ class Travis::Api::App
             super
 
             @user = ::User.find_by_github_id(data['id'])
-
           end
 
           def info(attributes = {})
@@ -288,6 +287,7 @@ class Travis::Api::App
               if user
                 rename_repos_owner(user.login, info['login'])
                 user.update_attributes info
+                Travis.run_service(:sync_user, user) if user.previous_changes[:github_oauth_token]
               else
                 self.user = ::User.create! info
                 Travis.run_service(:sync_user, user)
