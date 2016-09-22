@@ -70,7 +70,7 @@ module Travis::API::V3
     end
 
     def user_settings
-      @user_settings ||= Models::UserSettings.new(settings)
+      @user_settings ||= Models::UserSettings.new(settings).tap { |us| us.sync(self, :settings) }
     end
 
     def admin_settings
