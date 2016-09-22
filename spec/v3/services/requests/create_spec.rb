@@ -218,8 +218,8 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     end
 
     describe "when request limit is reached" do
-      before { 10.times { repo.requests.create(event_type: 'api', result: 'accepted') } }
-      before { post("/v3/repo/#{repo.id}/requests", params, headers)                    }
+      before { 10.times { repo.requests.create(event_type: 'api') } }
+      before { post("/v3/repo/#{repo.id}/requests", params, headers) }
 
       example { expect(last_response.status).to be == 429 }
       example { expect(JSON.load(body).to_s).to include(
@@ -242,7 +242,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "overrides default request limit if included in repository.settings" do
       before { repo.update_attribute(:settings, { api_builds_rate_limit: 12 }.to_json) }
 
-      before { 10.times { repo.requests.create(event_type: 'api', result: 'accepted') } }
+      before { 10.times { repo.requests.create(event_type: 'api') } }
       before { post("/v3/repo/#{repo.id}/requests", {}, headers) }
 
       example { expect(last_response.status).to be == 202 }
