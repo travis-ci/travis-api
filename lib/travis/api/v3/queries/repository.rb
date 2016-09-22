@@ -1,5 +1,6 @@
 module Travis::API::V3
   class Queries::Repository < Query
+    setup_sidekiq(:repo_sync, queue: :sync, class_name: "Travis::GithubSync::Worker")
     params :id, :slug
 
     def find
@@ -17,6 +18,12 @@ module Travis::API::V3
       repository = find
       starred = Models::Star.where(repository_id: repository.id, user_id: current_user.id).first
       starred.delete if starred
+      repository
+    end
+
+    def sync(current_user)
+      repository = find
+      perform_async(:repo_sync, :sync_repo, repo_id: repository.id, user_id: current_user.id)
       repository
     end
 
