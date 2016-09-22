@@ -3,6 +3,8 @@ module Travis::API::V3
     include Enumerable
     include Virtus.model
 
+    attr_reader :parent, :attr
+
     def self.pair(klass)
       @@pair = klass
     end
@@ -19,7 +21,7 @@ module Travis::API::V3
 
     def read(name)
       value = send(name)
-      pair.new(name, value) unless value.nil?
+      pair.new(name, value, parent) unless value.nil?
     end
 
     def update(name, value)
@@ -36,10 +38,11 @@ module Travis::API::V3
       to_h.to_json
     end
 
-    def sync(parent, attr)
+    def parent_attr(parent, attr)
+      @parent, @attr = parent, attr
       @sync = -> do
-        parent.send(:"#{attr}=", to_json)
-        parent.save!
+        @parent.send(:"#{@attr}=", to_json)
+        @parent.save!
       end
     end
   end

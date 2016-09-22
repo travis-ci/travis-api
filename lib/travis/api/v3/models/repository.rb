@@ -70,11 +70,11 @@ module Travis::API::V3
     end
 
     def user_settings
-      @user_settings ||= Models::UserSettings.new(settings).tap { |us| us.sync(self, :settings) }
+      @user_settings ||= Models::UserSettings.new(settings).tap { |us| us.parent_attr(self, :settings) }
     end
 
     def admin_settings
-      @admin_settings ||= Models::AdminSettings.new(settings).tap { |as| as.sync(self, :settings) }
+      @admin_settings ||= Models::AdminSettings.new(settings).tap { |as| as.parent_attr(self, :settings) }
     end
 
     def env_vars

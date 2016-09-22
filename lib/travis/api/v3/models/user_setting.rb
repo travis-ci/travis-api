@@ -3,5 +3,9 @@ module Travis::API::V3
     def public?
       true
     end
+
+    def repository_id
+      parent && parent.id
+    end
   end
 end

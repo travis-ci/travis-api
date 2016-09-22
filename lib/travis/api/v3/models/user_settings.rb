@@ -6,5 +6,9 @@ module Travis::API::V3
     attribute :build_pushes, Boolean, default: true
     attribute :build_pull_requests, Boolean, default: true
     attribute :maximum_number_of_builds, Integer, default: 0
+
+    def repository_id
+      parent && parent.id
+    end
   end
 end

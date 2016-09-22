@@ -49,6 +49,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
       expect(JSON.load(body)).to eq(
         '@type' => 'user_setting',
         '@representation' => 'standard',
+        '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",
         'name' => 'build_pushes',
         'value' => false
       )
