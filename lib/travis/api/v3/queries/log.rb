@@ -16,7 +16,7 @@ module Travis::API::V3
         ## if it's not there then fetch it from S3, and return it wrapped as a
         ## compatible log_parts object with a hard coded number (log_parts have a number)
         ## and a single log_part that contains all the log content
-        content = Net::HTTP.get(URI.parse(s3.find_log(job.id)))
+        content = s3.find_log(job.id)
         log_part = Models::LogPart.new(log_id: log.id, content: content.force_encoding("utf-8"), number: 0, created_at: log.created_at)
         log_parts = []
         log_parts << log_part
@@ -62,7 +62,8 @@ module Travis::API::V3
       end
 
       def find_log(job_id)
-        @s3.buckets["#{@bucket_name}"].objects["jobs/#{job_id}/log.txt"]
+        obj = @s3.buckets["#{@bucket_name}"].objects["jobs/#{job_id}/log.txt"]
+        obj.body.read
       end
 
       def delete_log(job_id)
