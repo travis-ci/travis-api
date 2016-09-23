@@ -61,24 +61,6 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
         User.any_instance.expects(:update_attributes).with(attributes)
         manager.fetch.should == user
       end
-
-      describe 'the oauth token has not changed' do
-        let(:token) { 'abc123' }
-
-        it 'syncs the user' do
-          Travis.expects(:run_service).with(:sync_user, user).never
-          manager.fetch
-        end
-      end
-
-      describe 'the oauth token has changed' do
-        let(:token) { 'xyz890' }
-
-        it 'syncs the user' do
-          Travis.expects(:run_service).with(:sync_user, user)
-          manager.fetch
-        end
-      end
     end
 
     context 'without existing user' do
@@ -93,11 +75,6 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
       it 'creates new user' do
         User.expects(:create!).with(attrs).returns(user)
         manager.fetch.should == user
-      end
-
-      it 'syncs the user' do
-        Travis.expects(:run_service).with(:sync_user, user)
-        manager.fetch
       end
     end
   end

@@ -296,17 +296,12 @@ class Travis::Api::App
               nullify_logins(user.github_id, user.login)
             end
 
-            Travis.run_service(:sync_user, user) if sync_user?(user)
             user
           rescue ActiveRecord::RecordNotUnique
             unless retried
               retried = true
               retry
             end
-          end
-
-          def sync_user?(user)
-            user.recently_signed_up? || user.previous_changes[:github_oauth_token]
           end
         end
 
@@ -326,6 +321,9 @@ class Travis::Api::App
 
           user   = manager.fetch
           halt 403, 'not a Travis user' if user.nil?
+
+          Travis.run_service(:sync_user, user)
+
           user
         rescue GH::Error
           # not a valid token actually, but we don't want to expose that info
