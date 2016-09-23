@@ -3,11 +3,11 @@ require 'travis/api/v3/permissions/generic'
 module Travis::API::V3
   class Permissions::Build < Permissions::Generic
     def cancel?
-      write?
+      read?
     end
 
     def restart?
-      write?
+      read?
     end
   end
 end
