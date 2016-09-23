@@ -20,8 +20,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "@representation"   => "standard",
       "@permissions"      => {
         "read"            => true,
-        "cancel"          => false,
-        "restart"         => false,
+        "cancel"          => true,
+        "restart"         => true,
         "debug"           => false },
       "id"                => job.id,
       "number"            => job.number,
@@ -91,8 +91,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "@representation"   => "standard",
       "@permissions"      => {
         "read"            => true,
-        "cancel"          => false,
-        "restart"         => false,
+        "cancel"          => true,
+        "restart"         => true,
         "debug"           => false },
       "id"                => job.id,
       "number"            => job.number,

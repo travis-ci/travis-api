@@ -41,21 +41,16 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     }}
   end
 
-  describe "existing repository, no push access" do
+  describe "existing repository, pull access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { post("/v3/job/#{job.id}/restart", {}, headers)                 }
 
-    example { expect(last_response.status).to be == 403 }
+    example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",
-      "error_type",
-      "insufficient_access",
-      "error_message",
-      "operation requires restart access to job",
-      "resource_type",
+      "pending",
       "job",
-      "permission",
       "restart")
     }
   end

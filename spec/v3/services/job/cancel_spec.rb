@@ -41,21 +41,16 @@ describe Travis::API::V3::Services::Job::Cancel, set_app: true do
     }}
   end
 
-  describe "existing repository, no push access" do
+  describe "existing repository, pull access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { post("/v3/job/#{job.id}/cancel", {}, headers)                 }
 
-    example { expect(last_response.status).to be == 403 }
+    example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",
-      "error_type",
-      "insufficient_access",
-      "error_message",
-      "operation requires cancel access to job",
-      "resource_type",
-      "job",
-      "permission",
+      "pending",
+      "state_change",
       "cancel")
     }
   end
