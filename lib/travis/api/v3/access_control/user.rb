@@ -41,6 +41,10 @@ module Travis::API::V3
       permission?(:push, repository)
     end
 
+    def job_restartable?(repository)
+      permission?(:pull, repository)
+    end
+
     def private_repository_visible?(repository)
       permission?(:pull, repository)
     end
