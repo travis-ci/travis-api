@@ -67,7 +67,6 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { post("/v3/job/#{job.id}/restart", {}, headers)                 }
-    before        { puts repo.owner.permissions.inspect }
     example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",
@@ -98,7 +97,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
     before do
-      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true)
       Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(true)
     end
 
@@ -237,7 +236,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
-    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true) }
 
     describe "started state" do
       before        { job.update_attribute(:state, "started")                                                   }

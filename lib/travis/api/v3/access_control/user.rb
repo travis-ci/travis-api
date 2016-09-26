@@ -25,6 +25,22 @@ module Travis::API::V3
 
     protected
 
+    def build_cancelable?(build)
+      permission?(:pull, build.repository)
+    end
+
+    def build_restartable?(build)
+      permission?(:pull, build.repository)
+    end
+
+    def job_cancelable?(job)
+      permission?(:pull, job.repository)
+    end
+
+    def job_restartable?(job)
+      permission?(:pull, job.repository)
+    end
+
     def organization_visible?(organization)
       super or organization_writable?(organization)
     end
@@ -39,10 +55,6 @@ module Travis::API::V3
 
     def repository_writable?(repository)
       permission?(:push, repository)
-    end
-
-    def job_restartable?(repository)
-      permission?(:pull, repository)
     end
 
     def private_repository_visible?(repository)
