@@ -29,8 +29,8 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "@representation"  => "standard",
       "@permissions"     => {
         "read"           => true,
-        "cancel"         => true,
-        "restart"        => true},
+        "cancel"         => false,
+        "restart"        => false},
       "id"               => build.id,
       "number"           => build.number,
       "state"            => build.state,
