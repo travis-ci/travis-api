@@ -12,6 +12,14 @@
         <h1 id="logo" class="logo">
           <%= link_to "Travis Admin", root_path %>
         </h1>
+
+        <%= form_tag(search_path, method: :get, id: "search") do %>
+          <%= text_field_tag(:q, params[:q]) %>
+          <%= button_to options = nil, class: "button" do %>
+            <%= fa_icon("search") %>
+          <% end %>
+        <% end %>
+
         <nav>
           <ul class="navigation menu">
             <li><%= link_to fa_icon("bullhorn", title: "Broadcast"), broadcasts_path %></li>

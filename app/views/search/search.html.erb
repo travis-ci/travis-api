@@ -1,12 +1,4 @@
-<h1>Search</h1>
-
-<%= form_for search_path, method: :get do |f| %>
-  <p>
-    <%= f.label "Search for" %>
-    <%= text_field_tag :q, params[:q] %>
-    <%= submit_tag "Go", name: nil %>
-  </p>
-<% end %>
+<h1>Search Results</h1>
 
 <% if @results %>
   <ul>
@@ -17,4 +9,6 @@
       </li>
     <% end %>
   </ul>
+<% else %>
+  <p>No results.</p>
 <% end %>
