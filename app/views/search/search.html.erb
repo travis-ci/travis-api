@@ -11,8 +11,9 @@
 <% if @results %>
   <ul>
     <% @results.each do |result| %>
-      <li>
-        <%= link_to result.slug, controller: "repositories", action: "show", id: result._id %>
+      <li class="inline-list search-results">
+        <p><%= result.class %></p>
+        <p><%= link_to describe(result), result %></p>
       </li>
     <% end %>
   </ul>

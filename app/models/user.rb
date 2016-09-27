@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   include JobBoost
+  include Searchable
 
   has_many :emails
   has_many :memberships
@@ -9,6 +10,10 @@ class User < ApplicationRecord
   has_many :permitted_repositories, through: :permissions, source: :repository
   has_many :broadcasts,             as:      :recipient
   has_one  :subscription,           as:      :owner
+
+  def as_indexed_json(options = nil)
+    self.as_json(only: [:name, :login])
+  end
 
   def travis_admin?
     travis_config = Travis::Config.load

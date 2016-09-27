@@ -11,11 +11,10 @@ module ApplicationHelper
 
   def describe(object)
     case object
-    when ::User, ::Organization then object.name.present? ? "#{object.name} (#{object.login})" : object.login
-    when ::Repository           then object.slug
-    when ::Build, ::Job         then "#{object.repository.slug}##{object.number}"
-    when ::Request              then "##{object.id}"
-    when ::NullRecipient        then "everybody"
+    when ::User, ::Organization       then object.name.present? ? "#{object.name} (#{object.login})" : object.login
+    when ::Repository, ::Build, ::Job then object.slug
+    when ::Request                    then "##{object.id}"
+    when ::NullRecipient              then "everybody"
     else object.inspect
     end
   end

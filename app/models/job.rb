@@ -1,6 +1,7 @@
 class Job < ApplicationRecord
   include StateDisplay
   include ConfigDisplay
+  include Searchable
 
   self.inheritance_column = :_type_disabled
 
@@ -17,12 +18,19 @@ class Job < ApplicationRecord
                                      %w[started received queued created].index(job.state.to_s) } }
   scope :finished, -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
 
+  def as_indexed_json(options = nil)
+    self.as_json(only: [:id, :number], methods: :slug)
+  end
+
+  def duration
+    (started_at && finished_at) ? (finished_at - started_at) : nil
+  end
+
   def not_finished?
     %w[started received queued created].include? state
   end
 
-
-  def duration
-    (started_at && finished_at) ? (finished_at - started_at) : nil
+  def slug
+    @slug ||= repository ? "#{repository.slug}##{number}" : "##{number}"
   end
 end
