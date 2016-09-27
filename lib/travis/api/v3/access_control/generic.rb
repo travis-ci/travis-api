@@ -11,6 +11,14 @@ module Travis::API::V3
       full_access? or dispatch(object, :visible?)
     end
 
+    def cancelable?(object)
+      full_access? or dispatch(object, :cancelable?)
+    end
+
+    def restartable?(object)
+      full_access? or dispatch(object, :restartable?)
+    end
+
     def writable?(object)
       full_access? or dispatch(object, :writable?)
     end
@@ -73,6 +81,14 @@ module Travis::API::V3
 
     def job_visible?(job)
       visible? job.repository
+    end
+
+    def job_cancelable?(job)
+      cancelable? job.repository
+    end
+
+    def job_restartable?(job)
+      restartable? job.repository
     end
 
     def job_writable?(job)
