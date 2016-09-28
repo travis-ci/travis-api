@@ -5,8 +5,6 @@ require 'active_record_postgres_variables'
 # now actually load travis
 require 'travis'
 require 'travis/amqp'
-require 'travis/model'
-require 'travis/states_cache'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib/config'
@@ -31,13 +29,7 @@ require 'securerandom'
 module Travis::Api
 end
 
-require 'travis/api/app/endpoint'
-require 'travis/api/app/middleware'
-require 'travis/api/instruments'
-require 'travis/api/serialize/v2'
 require 'travis/api/v3'
-require 'travis/api/app/stack_instrumentation'
-require 'travis/api/app/error_handling'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -48,13 +40,12 @@ require 'travis/api/app/error_handling'
 module Travis::Api
   class App
     autoload :AccessToken,  'travis/api/app/access_token'
+
+    # TODO: RKH: Everything that follows has interdependancies - what do we actually need?
     autoload :Base,         'travis/api/app/base'
-    autoload :Endpoint,     'travis/api/app/endpoint'
     autoload :Extensions,   'travis/api/app/extensions'
     autoload :Helpers,      'travis/api/app/helpers'
     autoload :Middleware,   'travis/api/app/middleware'
-    autoload :Responders,   'travis/api/app/responders'
-    autoload :Cors,         'travis/api/app/cors'
 
     Rack.autoload :SSL, 'rack/ssl'
 
@@ -72,7 +63,6 @@ module Travis::Api
     # the environment, so no biggy.
     def self.setup(options = {})
       setup! unless setup?
-      Endpoint.set(options) if options
       FileUtils.touch('/tmp/app-initialized') if ENV['DYNO'] # Heroku
     end
 

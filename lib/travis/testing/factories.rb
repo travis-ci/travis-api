@@ -1,6 +1,11 @@
 require 'factory_girl'
 
 FactoryGirl.define do
+  factory :branch do
+    sequence(:name){|n| "master#{n}" }
+    association :repository
+  end
+
   factory :build do
     owner { User.first || Factory(:user) }
     repository { Repository.first || Factory(:repository) }
@@ -14,7 +19,7 @@ FactoryGirl.define do
 
   factory :commit do
     commit '62aae5f70ceee39123ef'
-    branch 'master'
+    association :branch
     message 'the commit message'
     committed_at '2011-11-11T11:11:11Z'
     committer_name 'Sven Fuchs'
@@ -132,4 +137,3 @@ FactoryGirl.define do
     api_key "0123456789abcdef"
   end
 end
-

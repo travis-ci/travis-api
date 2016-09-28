@@ -1,7 +1,5 @@
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 
-require 'support/coverage' unless ENV['SKIP_COVERAGE']
-
 require 'rspec'
 require 'rspec/its'
 require 'database_cleaner'
@@ -12,21 +10,12 @@ require 'pry'
 require 'stackprof'
 
 require 'travis/api/app'
-require 'travis/testing'
-require 'travis/testing/scenario'
 require 'travis/testing/factories'
-require 'travis/testing/matchers'
-require 'support/formats'
-require 'support/gcs'
-require 'support/matchers'
-require 'support/payloads'
-require 'support/private_key'
-require 'support/s3'
-require 'support/test_helpers'
+require 'travis/testing/scenario'
 require 'support/shared_examples'
 
 module TestHelpers
-  include Sinatra::TestHelpers
+  #include Sinatra::TestHelpers
 
   def custom_endpoints
     @custom_endpoints ||= []

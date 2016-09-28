@@ -11,6 +11,10 @@ module Travis::API::V3
 
     serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
 
+    def self.find_by_login(login)
+      where(login: login).first
+    end
+
     def token
       tokens.first_or_create.token
     end
@@ -29,6 +33,5 @@ module Travis::API::V3
       scope = scope.by_roles(roles) if roles
       scope.any?
     end
-
   end
 end

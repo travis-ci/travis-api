@@ -1,8 +1,7 @@
 require 'pusher'
 require 'travis/support'
-require 'travis/support/database'
 require 'travis/redis_pool'
-require 'travis/errors'
+require 'travis/support/database'
 
 module Travis
   class << self
@@ -15,15 +14,11 @@ module Travis
     end
   end
 
-  require 'travis/model'
-  require 'travis/task'
-  require 'travis/event'
-  require 'travis/api/serialize'
   require 'travis/config/defaults'
   require 'travis/features'
-  require 'travis/github'
-  require 'travis/notification'
-  require 'travis/services'
+  require 'core_ext/hash/compact'
+  require 'travis/settings'
+  require 'travis/settings/encrypted_value'
 
   class UnknownRepository < StandardError; end
   class GithubApiError    < StandardError; end
@@ -39,10 +34,6 @@ module Travis
       @redis = Travis::RedisPool.new(config.redis.to_h)
 
       Travis.logger.info("Setting up module Travis")
-
-      Github.setup
-      Services.register
-      Github::Services.register
     end
 
     attr_accessor :redis, :config

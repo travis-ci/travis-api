@@ -91,15 +91,16 @@ module Scenario
     end
 
     def repositories(*names)
-      names.map { |name| Factory(name) }
+      names.map { |name| Factory(name) } # TODO: There is strangness here Factory(:minimal)
     end
 
     def build(attributes)
       commit = attributes.delete(:commit)
       jobs  = attributes.delete(:jobs)
+      commit[:branch] = { name: commit[:branch], repository_id: 1 }
       commit = Factory(:commit, commit)
 
-      build  = Factory(:build, attributes.merge(:commit => commit))
+      build  = Factory(:build, attributes.merge(commit: commit))
       build.matrix.each_with_index do |job, ix|
         job.update_attributes!(jobs[ix] || {})
       end
@@ -112,4 +113,3 @@ module Scenario
     end
   end
 end
-
