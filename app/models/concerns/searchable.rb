@@ -9,22 +9,13 @@ module Searchable
         indexes :name,   type: 'string',  index_options: 'docs'
         indexes :slug,   type: 'string',  index_options: 'docs'
         indexes :login,  type: 'string',  index_options: 'docs'
+        indexes :email,  type: 'string',  index_options: 'docs'
         indexes :id,     type: 'integer', index_options: 'docs'
-        indexes :number, type: 'float',   index_options: 'docs'
+        indexes :number, type: 'string',   index_options: 'docs'
+        indexes :emails, type: 'nested' do
+          indexes :email
+        end
       end
-    end
-
-    def self.search(query)
-      __elasticsearch__.search(
-        {
-          query: {
-            multi_match: {
-              query: query,
-              fields: ['login^10', 'name', 'slug', 'id', 'number']
-            }
-          }
-        }
-      )
     end
   end
 end

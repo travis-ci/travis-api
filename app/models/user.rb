@@ -12,7 +12,10 @@ class User < ApplicationRecord
   has_one  :subscription,           as:      :owner
 
   def as_indexed_json(options = nil)
-    self.as_json(only: [:name, :login])
+    self.as_json({only: [:name, :login, :email],
+      include: {
+        emails: { only: :email },
+      }})
   end
 
   def travis_admin?
