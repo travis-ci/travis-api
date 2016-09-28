@@ -12,5 +12,15 @@ module Travis::API::V3
       # sort list
       list
     end
+
+    private
+
+    def s3_config
+      config.cache_options.try(:s3) || {}
+    end
+
+    def gcs_config
+      config.cache_options.try(:gcs) || {}
+    end
   end
 end

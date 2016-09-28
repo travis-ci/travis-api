@@ -19,6 +19,7 @@ module Travis::API::V3
     end
 
     def remove
+      #get or fetch then destroy
     end
 
     private
@@ -34,7 +35,7 @@ module Travis::API::V3
     end
 
     def prefix
-      binding.pry
+      # The params don't seem to be working correctly! failing test.
       name = params[:match].to_s
       name = "#{@repo.id}/#{params[:branch]}" if name.empty?
       name
@@ -55,11 +56,11 @@ module Travis::API::V3
     end
 
     def s3_config
-      config.s3 || []
+      raise NotImplemented
     end
 
     def gcs_config
-      config.gcs || []
+      raise NotImplemented
     end
   end
 end
