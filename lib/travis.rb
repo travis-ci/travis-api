@@ -38,7 +38,7 @@ module Travis
       @config = Config.load(*options[:configs])
       @redis = Travis::RedisPool.new(config.redis.to_h)
 
-      Travis.logger.info('Setting up Travis::Core')
+      Travis.logger.info("Setting up module Travis")
 
       Github.setup
       Services.register

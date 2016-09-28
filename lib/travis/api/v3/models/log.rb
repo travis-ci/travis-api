@@ -3,6 +3,19 @@ module Travis::API::V3
     establish_connection(Travis.config.logs_database)
     belongs_to :job
     belongs_to :removed_by, class_name: 'User', foreign_key: :removed_by
-    has_many  :log_parts, dependent: :destroy
+    has_many  :log_parts, dependent: :destroy, order: 'number ASC'
+
+    def clear!(user, message)
+      update_attributes!(
+        :content => nil,
+        :aggregated_at => nil,
+        :archived_at => nil,
+        :removed_at => removed_at,
+        :removed_by => user
+      )
+      log_parts.destroy_all
+      log_parts.create(content: message, number: 1, final: true)
+    end
+
   end
 end

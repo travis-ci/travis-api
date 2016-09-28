@@ -56,5 +56,13 @@ module Travis::API::V3
     def write?
       access_control.writable? object
     end
+
+    def cancelable?
+      access_control.cancelable? object
+    end
+
+    def restartable?
+      access_control.restartable? object
+    end
   end
 end

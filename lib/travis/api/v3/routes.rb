@@ -47,7 +47,9 @@ module Travis::API::V3
       resource :log do
         route '/log'
         get   :find
+        delete :delete
       end
+
     end
 
     resource :lint do

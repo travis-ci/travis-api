@@ -33,5 +33,9 @@ module Travis::API::V3
     def branch_name=(value)
       write_attribute(:branch, value)
     end
+
+    def clear_debug_options!
+      jobs.each { |j| j.update_attribute(:debug_options, nil) }
+    end
   end
 end

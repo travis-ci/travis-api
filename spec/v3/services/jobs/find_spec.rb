@@ -20,7 +20,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "read"           => true,
           "cancel"         => false,
           "restart"        => false,
-          "debug"          => false },
+          "debug"          => false,
+          "delete_log"     => false },
         "id"               => jobs[0].id,
         "number"           => "#{jobs[0].number}",
         "state"            => "configured",
@@ -68,7 +69,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "read"           => true,
           "cancel"         => false,
           "restart"        => false,
-          "debug"          => false },
+          "debug"          => false,
+          "delete_log"     => false},
         "id"               => jobs[1].id,
         "number"           => "#{jobs[1].number}",
         "state"            => "configured",
@@ -116,7 +118,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "read"           => true,
           "cancel"         => false,
           "restart"        => false,
-          "debug"          => false },
+          "debug"          => false,
+          "delete_log"     => false},
         "id"               => jobs[2].id,
         "number"           => "#{jobs[2].number}",
         "state"            => "configured",
@@ -164,7 +167,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "read"           => true,
           "cancel"         => false,
           "restart"        => false,
-          "debug"          => false },
+          "debug"          => false,
+          "delete_log"     => false},
         "id"               => jobs[3].id,
         "number"           => "#{jobs[3].number}",
         "state"            => "configured",
@@ -214,6 +218,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+    before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { get("/v3/build/#{build.id}/jobs", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
@@ -228,9 +233,10 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
-          "cancel"         => false,
-          "restart"        => false,
-          "debug"          => false },
+          "cancel"         => true,
+          "restart"        => true,
+          "debug"          => false,
+          "delete_log"     => true },
         "id"               => jobs[0].id,
         "number"           => "#{jobs[0].number}",
         "state"            => "configured",
@@ -276,9 +282,16 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
+<<<<<<< HEAD
           "cancel"         => false,
           "restart"        => false,
+          "debug"          => false,
+          "delete_log"     => true },
+=======
+          "cancel"         => true,
+          "restart"        => true,
           "debug"          => false },
+>>>>>>> master
         "id"               => jobs[1].id,
         "number"           => "#{jobs[1].number}",
         "state"            => "configured",
@@ -324,9 +337,16 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
+<<<<<<< HEAD
           "cancel"         => false,
           "restart"        => false,
+          "debug"          => false,
+          "delete_log"     => true },
+=======
+          "cancel"         => true,
+          "restart"        => true,
           "debug"          => false },
+>>>>>>> master
         "id"               => jobs[2].id,
         "number"           => "#{jobs[2].number}",
         "state"            => "configured",
@@ -372,9 +392,16 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
+<<<<<<< HEAD
           "cancel"         => false,
           "restart"        => false,
+          "debug"          => false,
+          "delete_log"     => true },
+=======
+          "cancel"         => true,
+          "restart"        => true,
           "debug"          => false },
+>>>>>>> master
         "id"               => jobs[3].id,
         "number"           => "#{jobs[3].number}",
         "state"            => "configured",
