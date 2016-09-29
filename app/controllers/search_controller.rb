@@ -5,10 +5,16 @@ class SearchController < ApplicationController
       payload = {
         from: 0, size: 20,
         query: {
-          multi_match: {
-            query: query,
-            fuzziness: 2,
-            fields: ['login^10', '_all']
+          bool: {
+            should: [
+              { multi_match: {
+                query: query,
+                fuzziness: 2,
+                fields: ['login^10', 'name', 'slug', 'email', 'emails']
+              }},
+              { match: { 'id': query }},
+              { match: { 'number': query }}
+            ]
           }
         }
       }

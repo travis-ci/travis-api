@@ -10,8 +10,8 @@ module Searchable
         indexes :slug,   type: 'string',  index_options: 'docs'
         indexes :login,  type: 'string',  index_options: 'docs'
         indexes :email,  type: 'string',  index_options: 'docs'
-        indexes :id,     type: 'integer', index_options: 'docs'
-        indexes :number, type: 'string',   index_options: 'docs'
+        indexes :id,     type: 'string',  index_options: 'docs'
+        indexes :number, type: 'string',  index_options: 'docs'
         indexes :emails, type: 'nested' do
           indexes :email
         end

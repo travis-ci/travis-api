@@ -17,6 +17,7 @@ class Job < ApplicationRecord
   scope :not_finished, -> { where(state: %w[started received queued created]).sort_by {|job|
                                      %w[started received queued created].index(job.state.to_s) } }
   scope :finished, -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
+  scope :with_dependencies, -> { includes(:repository) }
 
   def as_indexed_json(options = nil)
     self.as_json(only: [:id, :number], methods: :slug)

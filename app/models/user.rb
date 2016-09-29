@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_many :broadcasts,             as:      :recipient
   has_one  :subscription,           as:      :owner
 
+  scope :with_dependencies, -> { includes(:emails) }
+
   def as_indexed_json(options = nil)
     self.as_json({only: [:name, :login, :email],
       include: {
