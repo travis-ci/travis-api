@@ -32,9 +32,10 @@ GIT
   revision: 0bd248089607583cc4dfe82cb4b84fd3fe1a84bd
   specs:
     travis-topaz (0.0.2)
+      
       faraday
       thread
-      
+
 GEM
   remote: https://rubygems.org/
   specs:
