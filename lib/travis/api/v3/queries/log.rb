@@ -60,7 +60,7 @@ module Travis::API::V3
 
     class S3
       def initialize(bucket_name)
-        AWS.config(Travis.config.s3.to_hash.slice(:access_key_id, :secret_access_key))
+        AWS.config(Travis.config.log_options.s3.to_hash.slice(:access_key_id, :secret_access_key))
         @s3 = AWS::S3.new
         @bucket_name = bucket_name
       end
