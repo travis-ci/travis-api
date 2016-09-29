@@ -13,7 +13,7 @@ class JobsController < ApplicationController
 
     if response.success?
       message = "Job #{describe(@job)} successfully canceled."
-      Services::AuditTrail::Add.new(current_user, "canceled job #{describe(@job)}").call
+      Services::AuditTrail::CancelJob.new(current_user, @job).call
     else
       message = "Error: #{response.headers[:status]}"
     end
@@ -46,7 +46,7 @@ class JobsController < ApplicationController
 
     if response.success?
       message = "Job #{describe(@job)} successfully restarted."
-      Services::AuditTrail::Add.new(current_user, "restarted job #{describe(@job)}").call
+      Services::AuditTrail::RestartJob.new(current_user, @job).call
     else
       message = "Error: #{response.headers[:status]}"
     end

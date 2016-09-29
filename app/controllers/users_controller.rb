@@ -57,7 +57,7 @@ class UsersController < ApplicationController
 
     if response.success?
       flash[:notice] = "Triggered sync with GitHub."
-      Services::AuditTrail::Add.new(current_user, "triggered sync for #{describe(@user)}").call
+      Services::AuditTrail::Sync.new(current_user, @user).call
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end
@@ -77,7 +77,7 @@ class UsersController < ApplicationController
       SyncWorker.perform_async(user.id)
     end
     flash[:notice] = "Triggered sync with GitHub for #{logins.join(', ')}."
-    Services::AuditTrail::Add.new(current_user, "triggered sync for #{logins.join(', ')}").call
+    Services::AuditTrail::Sync.new(current_user, logins).call
     redirect_to back_link
   end
 

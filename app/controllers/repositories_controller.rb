@@ -6,7 +6,7 @@ class RepositoriesController < ApplicationController
 
     if response.success?
       flash[:notice] = "Disabled #{@repository.slug}"
-      Services::AuditTrail::Add.new(current_user, "disabled hook for #{@repository.slug}").call
+      Services::AuditTrail::DisableRepository.new(current_user, @repository).call
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end
@@ -19,7 +19,7 @@ class RepositoriesController < ApplicationController
 
     if response.success?
       flash[:notice] = "Enabled #{@repository.slug}"
-      Services::AuditTrail::Add.new(current_user, "enabled hook for #{@repository.slug}").call
+      Services::AuditTrail::EnableRepository.new(current_user, @repository).call
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end

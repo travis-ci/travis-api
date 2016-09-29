@@ -11,14 +11,14 @@ class FeaturesController < ApplicationController
 
   def disable
     Features.disable_for_all(params[:feature])
-    Services::AuditTrail::Add.new(current_user, "disabled feature #{format_feature(params[:feature])} globally").call
+    Services::AuditTrail::DisableFeature.new(current_user, params[:feature]).call
     flash[:notice] = "Feature #{format_feature(params[:feature])} disabled."
     redirect_to features_path
   end
 
   def enable
     Features.enable_for_all(params[:feature])
-    Services::AuditTrail::Add.new(current_user, "enabled feature #{format_feature(params[:feature])} globally").call
+    Services::AuditTrail::EnableFeature.new(current_user, params[:feature]).call
     flash[:notice] = "Feature #{format_feature(params[:feature])} enabled."
     redirect_to features_path
   end

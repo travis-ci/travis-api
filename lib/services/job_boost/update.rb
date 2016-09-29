@@ -8,7 +8,7 @@ module Services
 
       def call(hours, limit)
         Travis::DataStores.redis.setex("scheduler.owner.limit.#{@login}", (hours.to_f * 3600).to_i, limit)
-        Services::AuditTrail::Add.new(@current_user, "set job boost to #{limit}, expires after #{hours} hours").call
+        Services::AuditTrail::JobBoost.new(@current_user, hours, limit).call
       end
     end
   end

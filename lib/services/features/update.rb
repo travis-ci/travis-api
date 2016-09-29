@@ -15,10 +15,10 @@ module Services
 
           if features[key] == "0"
             ::Features.deactivate_owner(key, @owner)
-            Services::AuditTrail::Add.new(@current_user, "disabled feature flag #{key} for #{describe(@owner)}").call
+            Services::AuditTrail::DisableFeature.new(@current_user, key, @owner).call
           else
             ::Features.activate_owner(key, @owner)
-            Services::AuditTrail::Add.new(@current_user, "enabled feature flag #{key} for #{describe(@owner)}").call
+            Services::AuditTrail::EnableFeature.new(@current_user, key, @owner).call
           end
         end
       end

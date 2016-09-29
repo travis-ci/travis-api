@@ -15,7 +15,7 @@ class BuildsController < ApplicationController
 
     if response.success?
       message = "Build #{describe(@build)} successfully canceled."
-      Services::AuditTrail::Add.new(current_user, "canceled build #{describe(@build)}").call
+      Services::AuditTrail::CancelBuild.new(current_user, @build).call
     else
       message = "Error: #{response.headers[:status]}"
     end
@@ -48,7 +48,7 @@ class BuildsController < ApplicationController
 
     if response.success?
       message = "Build #{describe(@build)} successfully restarted."
-      Services::AuditTrail::Add.new(current_user, "restarted build #{describe(@build)}").call
+      Services::AuditTrail::RestartBuild.new(current_user, @build).call
     else
       message = "Error: #{response.headers[:status]}"
     end
