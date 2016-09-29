@@ -34,16 +34,7 @@ GIT
     travis-topaz (0.0.2)
       faraday
       thread
-
-<<<<<<< HEAD
-=======
-GIT
-  remote: https://5ea7c640ac0e16b75cf5f0277a38f16ba534b333:x-oauth-basic@github.com/travis-pro/travis-pro-migrations.git
-  revision: 5041db15ae68ba6b606ca9ea374ec653a629e995
-  specs:
-    travis-pro-migrations (0.0.1)
-
->>>>>>> fix gemfile
+      
 GEM
   remote: https://rubygems.org/
   specs:
