@@ -1,8 +1,7 @@
 module Services
   module AuditTrail
-    class DisableFeature < Struct.new(:current_user, :feature, :recipient)
-      include ApplicationHelper
-      include Services::AuditTrail
+    class DisableFeature
+      include Services::AuditTrail::Base
 
       attr_reader :current_user, :feature, :recipient
 

@@ -1,8 +1,7 @@
 module Services
   module AuditTrail
     class RestartJob < Struct.new(:current_user, :job)
-      include ApplicationHelper
-      include Services::AuditTrail
+      include Services::AuditTrail::Base
 
       private
 

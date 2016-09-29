@@ -1,8 +1,7 @@
 module Services
   module AuditTrail
     class DisableRepository < Struct.new(:current_user, :repository)
-      include ApplicationHelper
-      include Services::AuditTrail
+      include Services::AuditTrail::Base
 
       private
 

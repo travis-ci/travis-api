@@ -1,8 +1,7 @@
 module Services
   module AuditTrail
     class JobBoost < Struct.new(:current_user, :hours, :limit)
-      include ApplicationHelper
-      include Services::AuditTrail
+      include Services::AuditTrail::Base
 
       private
 

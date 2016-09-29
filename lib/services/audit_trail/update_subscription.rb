@@ -1,8 +1,7 @@
 module Services
   module AuditTrail
     class UpdateSubscription < Struct.new(:current_user, :message)
-      include ApplicationHelper
-      include Services::AuditTrail
+      include Services::AuditTrail::Base
     end
   end
 end

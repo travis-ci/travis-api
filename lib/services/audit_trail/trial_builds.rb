@@ -1,8 +1,7 @@
 module Services
   module AuditTrail
     class TrialBuilds < Struct.new(:current_user, :owner, :trial_builds)
-      include ApplicationHelper
-      include Services::AuditTrail
+      include Services::AuditTrail::Base
 
       private
 

@@ -1,8 +1,7 @@
 module Services
   module AuditTrail
     class UpdateBroadcast < Struct.new(:current_user, :broadcast)
-      include ApplicationHelper
-      include Services::AuditTrail
+      include Services::AuditTrail::Base
 
       private
 

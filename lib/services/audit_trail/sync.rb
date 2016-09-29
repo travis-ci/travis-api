@@ -1,8 +1,7 @@
 module Services
   module AuditTrail
     class Sync < Struct.new(:current_user, :user)
-      include ApplicationHelper
-      include Services::AuditTrail
+      include Services::AuditTrail::Base
 
       private
 
