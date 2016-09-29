@@ -9,17 +9,28 @@ module Travis::API::V3
     def find(job)
       #check for the log in the Logs DB
       log = Models::Log.find_by_job_id(job.id)
-
       raise EntityMissing, 'log not found'.freeze if log.nil?
+      #if log has been aggregated, look at log.content
+      if log.aggregated_at
+        create_log_parts(log, log.content)
       #if the log has been archived, go to s3
-      if log.archived_at
-        content = s3.find_log(job.id).force_encoding("utf-8")
-        log_part = Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
-        log_parts = []
-        log_parts << log_part
-        log.log_parts = log_parts
+      elsif log.archived_at
+        archived_log_path = archive_url("/jobs/#{job.id}/log.txt")
+        content = Net::HTTP.get(URI.parse(archived_log_path))
+        create_log_parts(log, content)
       end
       log
+    end
+
+    def create_log_parts(log, content)
+      log_part = Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
+      log_parts = []
+      log_parts << log_part
+      log.log_parts = log_parts
+    end
+
+    def archive_url(path)
+      "https://s3.amazonaws.com/#{hostname('archive')}#{path}"
     end
 
     def hostname(name)
@@ -54,16 +65,10 @@ module Travis::API::V3
         @bucket_name = bucket_name
       end
 
-      def find_log(job_id)
-        obj = @s3.buckets["#{@bucket_name}"].objects["jobs/#{job_id}/log.txt"]
-        obj.read
-      end
-
       def delete_log(job_id)
         obj = @s3.buckets["#{@bucket_name}"].objects["jobs/#{job_id}/log.txt"]
         obj.delete
       end
     end
-
   end
 end

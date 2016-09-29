@@ -39,6 +39,25 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       end
     end
 
+    describe 'returns aggregated log with an array of Log Parts' do
+      before { log2.update_attributes(aggregated_at: Time.now, content: "aggregating!")}
+      example do
+        # log_part = log2.log_parts.create(content: "logging it", number: 0)
+        get("/v3/job/#{log2.job.id}/log", {}, headers)
+        expect(parsed_body).to eq(
+          '@type' => 'log',
+          '@href' => "/v3/job/#{log2.job.id}/log",
+          '@representation' => 'standard',
+          'content' => "aggregating!",
+          'id' => log2.id,
+          'log_parts'       => [{
+          "@type"           => "log_part",
+          "@representation" => "minimal",
+          "content"         => "aggregating!",
+          "number"          => 0 }])
+      end
+    end
+
     describe 'returns log as plain text' do
       example do
         log_part = log.log_parts.create(content: "logging it", number: 1)
@@ -55,7 +74,9 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   context 'when log not found in db but stored on S3' do
     describe 'returns log with an array of Log Parts' do
       before do
-        Travis::API::V3::Queries::Log::S3.any_instance.stubs(:find_log).returns("$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch")
+        stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{s3job.id}/log.txt").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'s3.amazonaws.com', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch", :headers => {})
       end
       example do
         s3log.update_attributes(archived_at: Time.now)
@@ -76,8 +97,11 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
     describe 'returns log as plain text' do
       before do
-        Travis::API::V3::Queries::Log::S3.any_instance.stubs(:find_log).returns("$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch")
+        stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{s3job.id}/log.txt").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'s3.amazonaws.com', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch", :headers => {})
       end
+
       example do
         s3log.update_attributes(archived_at: Time.now)
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
