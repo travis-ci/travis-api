@@ -103,7 +103,7 @@ module Travis
       private
 
         def setup?
-          return true if entries.any? { |entry| valid?(entry) }
+          return true if valid_cache_options?
 
           logger.warn "[services:find-caches] cache settings incomplete"
           false
@@ -138,28 +138,25 @@ module Travis
 
           c = []
 
-          entries.map do |entry|
-            if config = entry[:s3]
-              svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
-              bucket = svc.buckets.find(config.fetch(:bucket_name))
+          config = cache_options[:s3]
+          svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
+          bucket = svc.buckets.find(config.to_h[:bucket_name])
+          if bucket
+            c += bucket.objects(options).map { |object| S3Wrapper.new(repo, object) }
+          else
+            config = cache_options[:gcs]
+            storage     = ::Google::Apis::StorageV1::StorageService.new
+            json_key_io = StringIO.new(config.to_h[:json_key])
+            bucket_name = config[:bucket_name]
 
-              next unless bucket
+            storage.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
+              json_key_io: json_key_io,
+              scope: [
+                'https://www.googleapis.com/auth/devstorage.read_write'
+              ]
+            )
 
-              c += bucket.objects(options).map { |object| S3Wrapper.new(repo, object) }
-            elsif config = entry[:gcs]
-              storage     = ::Google::Apis::StorageV1::StorageService.new
-              json_key_io = StringIO.new(config.to_h[:json_key])
-              bucket_name = config[:bucket_name]
-
-              storage.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
-                json_key_io: json_key_io,
-                scope: [
-                  'https://www.googleapis.com/auth/devstorage.read_write'
-                ]
-              )
-
-              next unless items = storage.list_objects(bucket_name, prefix: prefix).items
-
+            if items = storage.list_objects(bucket_name, prefix: prefix).items
               items.map do |object|
                 c << GcsWrapper.new(storage, bucket_name, repo, object)
               end
@@ -169,22 +166,20 @@ module Travis
           @caches = c.compact
         end
 
-        def entries
-          collection = Travis.config.to_h.fetch(:cache_options) { [] }
-          collection = [collection] unless collection.is_a? Array
-          collection
+        def cache_options
+          Travis.config.to_h.fetch(:cache_options) { {} }
         end
 
-        def valid?(entry)
-          valid_s3?(entry) or valid_gcs?(entry)
+        def valid_cache_options?
+          valid_s3? || valid_gcs?
         end
 
-        def valid_s3?(entry)
-          (s3_config  = entry[:s3]) && s3_config[:access_key_id] && s3_config[:secret_access_key] && s3_config[:bucket_name]
+        def valid_s3?
+          (s3_config  = cache_options[:s3]) && s3_config[:access_key_id] && s3_config[:secret_access_key] && s3_config[:bucket_name]
         end
 
-        def valid_gcs?(entry)
-          (gcs_config = entry[:gcs]) && gcs_config[:json_key] && gcs_config[:bucket_name]
+        def valid_gcs?
+          (gcs_config = cache_options[:gcs]) && gcs_config[:json_key] && gcs_config[:bucket_name]
         end
     end
   end
