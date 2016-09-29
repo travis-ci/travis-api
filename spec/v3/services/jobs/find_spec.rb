@@ -214,11 +214,10 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     }
   end
 
-  describe "jobs private repository, private API, authenticated as user with access" do
+  describe "jobs private repository, private API, authenticated as user with pull access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
-    before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { get("/v3/build/#{build.id}/jobs", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
@@ -236,7 +235,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "cancel"         => true,
           "restart"        => true,
           "debug"          => false,
-          "delete_log"     => true },
+          "delete_log"     => false },
         "id"               => jobs[0].id,
         "number"           => "#{jobs[0].number}",
         "state"            => "configured",
@@ -285,7 +284,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "cancel"         => true,
           "restart"        => true,
           "debug"          => false,
-          "delete_log"     => true },
+          "delete_log"     => false },
         "id"               => jobs[1].id,
         "number"           => "#{jobs[1].number}",
         "state"            => "configured",
@@ -383,6 +382,222 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "cancel"         => true,
           "restart"        => true,
           "debug"          => false,
+          "delete_log"     => false },
+        "id"               => jobs[3].id,
+        "number"           => "#{jobs[3].number}",
+        "state"            => "configured",
+        "started_at"       => "2010-11-12T13:00:00Z",
+        "finished_at"      => nil,
+        "build"            => {
+          "@type"          => "build",
+          "@href"          => "/v3/build/#{build.id}",
+          "@representation"=> "minimal",
+          "id"             => build.id,
+          "number"         => build.number,
+          "state"          => "configured",
+          "duration"       => nil,
+          "event_type"     => "push",
+          "previous_state" => "passed",
+          "started_at"     => "2010-11-12T13:00:00Z",
+          "finished_at"    => nil},
+        "queue"            => "builds.linux",
+        "repository"       =>{
+          "@type"          => "repository",
+          "@href"          => "/v3/repo/1",
+          "@representation"=>"minimal",
+          "id"             => repo.id,
+          "name"           => "minimal",
+          "slug"           => "svenfuchs/minimal"},
+        "commit"           =>{
+          "@type"          => "commit",
+          "@representation"=> "minimal",
+          "id"             => commit.id,
+          "sha"            => commit.commit,
+          "ref"            => commit.ref,
+          "message"        => commit.message,
+          "compare_url"    => commit.compare_url,
+          "committed_at"   =>"2010-11-12T12:55:00Z"},
+        "owner"            =>{
+          "@type"          => "user",
+          "@href"          => "/v3/user/1",
+          "@representation"=> "minimal",
+          "id"             =>  1,
+          "login"          => "svenfuchs"}}
+        ]
+      }
+    }
+  end
+
+describe "jobs private repository, private API, authenticated as user with push access" do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true) }
+    before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true) }
+    before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:debug?).returns(true) }
+    before        { repo.update_attribute(:private, true)                             }
+    before        { get("/v3/build/#{build.id}/jobs", {}, headers)                           }
+    after         { repo.update_attribute(:private, false)                            }
+    example       { expect(last_response).to be_ok                                    }
+    example    { expect(parsed_body).to be == {
+      "@type"              => "jobs",
+      "@href"              => "/v3/build/#{build.id}/jobs",
+      "@representation"    => "standard",
+      "jobs"             => [{
+        "@type"            => "job",
+        "@href"            => "/v3/job/#{jobs[0].id}",
+        "@representation"  => "standard",
+        "@permissions"     => {
+          "read"           => true,
+          "cancel"         => true,
+          "restart"        => true,
+          "debug"          => true,
+          "delete_log"     => true },
+        "id"               => jobs[0].id,
+        "number"           => "#{jobs[0].number}",
+        "state"            => "configured",
+        "started_at"       => "2010-11-12T13:00:00Z",
+        "finished_at"      => nil,
+        "build"            => {
+          "@type"          => "build",
+          "@href"          => "/v3/build/#{build.id}",
+          "@representation"=> "minimal",
+          "id"             => build.id,
+          "number"         => build.number,
+          "state"          => "configured",
+          "duration"       => nil,
+          "event_type"     => "push",
+          "previous_state" => "passed",
+          "started_at"     => "2010-11-12T13:00:00Z",
+          "finished_at"    => nil},
+        "queue"            => "builds.linux",
+        "repository"       =>{
+          "@type"          => "repository",
+          "@href"          => "/v3/repo/1",
+          "@representation"=>"minimal",
+          "id"             => repo.id,
+          "name"           => "minimal",
+          "slug"           => "svenfuchs/minimal"},
+        "commit"           =>{
+          "@type"          => "commit",
+          "@representation"=> "minimal",
+          "id"             => commit.id,
+          "sha"            => commit.commit,
+          "ref"            => commit.ref,
+          "message"        => commit.message,
+          "compare_url"    => commit.compare_url,
+          "committed_at"   =>"2010-11-12T12:55:00Z"},
+        "owner"            =>{
+          "@type"          => "user",
+          "@href"          => "/v3/user/1",
+          "@representation"=> "minimal",
+          "id"             =>  1,
+          "login"          => "svenfuchs"}},
+        {"@type"            => "job",
+        "@href"            => "/v3/job/#{jobs[1].id}",
+        "@representation"  => "standard",
+        "@permissions"     => {
+          "read"           => true,
+          "cancel"         => true,
+          "restart"        => true,
+          "debug"          => true,
+          "delete_log"     => true },
+        "id"               => jobs[1].id,
+        "number"           => "#{jobs[1].number}",
+        "state"            => "configured",
+        "started_at"       => "2010-11-12T13:00:00Z",
+        "finished_at"      => nil,
+        "build"            => {
+          "@type"          => "build",
+          "@href"          => "/v3/build/#{build.id}",
+          "@representation"=> "minimal",
+          "id"             => build.id,
+          "number"         => build.number,
+          "state"          => "configured",
+          "duration"       => nil,
+          "event_type"     => "push",
+          "previous_state" => "passed",
+          "started_at"     => "2010-11-12T13:00:00Z",
+          "finished_at"    => nil},
+        "queue"            => "builds.linux",
+        "repository"       =>{
+          "@type"          => "repository",
+          "@href"          => "/v3/repo/1",
+          "@representation"=>"minimal",
+          "id"             => repo.id,
+          "name"           => "minimal",
+          "slug"           => "svenfuchs/minimal"},
+        "commit"           =>{
+          "@type"          => "commit",
+          "@representation"=> "minimal",
+          "id"             => commit.id,
+          "sha"            => commit.commit,
+          "ref"            => commit.ref,
+          "message"        => commit.message,
+          "compare_url"    => commit.compare_url,
+          "committed_at"   =>"2010-11-12T12:55:00Z"},
+        "owner"            =>{
+          "@type"          => "user",
+          "@href"          => "/v3/user/1",
+          "@representation"=> "minimal",
+          "id"             =>  1,
+          "login"          => "svenfuchs"}},
+        {"@type"            => "job",
+        "@href"            => "/v3/job/#{jobs[2].id}",
+        "@representation"  => "standard",
+        "@permissions"     => {
+          "read"           => true,
+          "cancel"         => true,
+          "restart"        => true,
+          "debug"          => true,
+          "delete_log"     => true },
+        "id"               => jobs[2].id,
+        "number"           => "#{jobs[2].number}",
+        "state"            => "configured",
+        "started_at"       => "2010-11-12T13:00:00Z",
+        "finished_at"      => nil,
+        "build"            => {
+          "@type"          => "build",
+          "@href"          => "/v3/build/#{build.id}",
+          "@representation"=> "minimal",
+          "id"             => build.id,
+          "number"         => build.number,
+          "state"          => "configured",
+          "duration"       => nil,
+          "event_type"     => "push",
+          "previous_state" => "passed",
+          "started_at"     => "2010-11-12T13:00:00Z",
+          "finished_at"    => nil},
+        "queue"            => "builds.linux",
+        "repository"       =>{
+          "@type"          => "repository",
+          "@href"          => "/v3/repo/1",
+          "@representation"=>"minimal",
+          "id"             => repo.id,
+          "name"           => "minimal",
+          "slug"           => "svenfuchs/minimal"},
+        "commit"           =>{
+          "@type"          => "commit",
+          "@representation"=> "minimal",
+          "id"             => commit.id,
+          "sha"            => commit.commit,
+          "ref"            => commit.ref,
+          "message"        => commit.message,
+          "compare_url"    => commit.compare_url,
+          "committed_at"   =>"2010-11-12T12:55:00Z"},
+        "owner"            =>{
+          "@type"          => "user",
+          "@href"          => "/v3/user/1",
+          "@representation"=> "minimal",
+          "id"             =>  1,
+          "login"          => "svenfuchs"}},
+        {"@type"            => "job",
+        "@href"            => "/v3/job/#{jobs[3].id}",
+        "@representation"  => "standard",
+        "@permissions"     => {
+          "read"           => true,
+          "cancel"         => true,
+          "restart"        => true,
+          "debug"          => true,
           "delete_log"     => true },
         "id"               => jobs[3].id,
         "number"           => "#{jobs[3].number}",
