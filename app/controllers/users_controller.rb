@@ -43,6 +43,7 @@ class UsersController < ApplicationController
     @normalized_boost_time = @user.normalized_boost_time
 
     @builds_provided = builds_provided_for(@user)
+    @builds_remaining = builds_remaining_for(@user)
 
     @features = Features.for(@user)
 

@@ -12,4 +12,8 @@ module BuildCounters
   def builds_provided_for(owner)
     Travis::DataStores.topaz.builds_provided_for(owner.id).try(:to_i)
   end
+
+  def builds_remaining_for(owner)
+    Travis::DataStores.redis.get("trial:#{owner.login}")
+  end
 end
