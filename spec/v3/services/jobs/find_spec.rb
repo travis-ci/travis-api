@@ -282,16 +282,10 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
-<<<<<<< HEAD
-          "cancel"         => false,
-          "restart"        => false,
-          "debug"          => false,
-          "delete_log"     => true },
-=======
           "cancel"         => true,
           "restart"        => true,
-          "debug"          => false },
->>>>>>> master
+          "debug"          => false,
+          "delete_log"     => true },
         "id"               => jobs[1].id,
         "number"           => "#{jobs[1].number}",
         "state"            => "configured",
@@ -337,16 +331,10 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
-<<<<<<< HEAD
-          "cancel"         => false,
-          "restart"        => false,
-          "debug"          => false,
-          "delete_log"     => true },
-=======
           "cancel"         => true,
           "restart"        => true,
-          "debug"          => false },
->>>>>>> master
+          "debug"          => false,
+          "delete_log"     => false },
         "id"               => jobs[2].id,
         "number"           => "#{jobs[2].number}",
         "state"            => "configured",
@@ -392,16 +380,10 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
-<<<<<<< HEAD
-          "cancel"         => false,
-          "restart"        => false,
-          "debug"          => false,
-          "delete_log"     => true },
-=======
           "cancel"         => true,
           "restart"        => true,
-          "debug"          => false },
->>>>>>> master
+          "debug"          => false,
+          "delete_log"     => true },
         "id"               => jobs[3].id,
         "number"           => "#{jobs[3].number}",
         "state"            => "configured",
