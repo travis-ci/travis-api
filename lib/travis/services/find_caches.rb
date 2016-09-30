@@ -149,7 +149,7 @@ module Travis
           bucket = svc.buckets.find(config.to_h[:bucket_name])
 
           if bucket
-            cache_objects += bucket.objects(options).map { |object| S3Wrapper.new(repo, object) }
+             bucket.objects(options).each { |object| cache_objects << S3Wrapper.new(repo, object) }
           end
         end
 
@@ -167,7 +167,7 @@ module Travis
           )
 
           if items = storage.list_objects(bucket_name, prefix: prefix).items
-            items.map do |object|
+            items.each do |object|
               cache_objects << GcsWrapper.new(storage, bucket_name, repo, object)
             end
           end
