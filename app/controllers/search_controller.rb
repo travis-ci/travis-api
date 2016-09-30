@@ -11,14 +11,12 @@ class SearchController < ApplicationController
                 query: query,
                 fuzziness: 2,
                 fields: ['login^10', 'name', 'slug', 'email', 'emails']
-              }},
-              { match: { 'id': query }},
-              { match: { 'number': query }}
+              }}
             ]
           }
         }
       }
-      @results = Elasticsearch::Model.search(payload, [User, Organization, Repository, Job, Build, Request]).records.to_a
+      @results = Elasticsearch::Model.search(payload, [User, Organization, Repository]).records.to_a
     end
   end
 end

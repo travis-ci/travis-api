@@ -83,6 +83,9 @@ GEM
       atomic (~> 1.1)
     biggs (0.3.3)
       activerecord (>= 3.0)
+    bonsai-elasticsearch-rails (0.1.0)
+      elasticsearch-model (~> 0)
+      elasticsearch-rails (~> 0)
     builder (3.2.2)
     capybara (2.7.1)
       addressable
@@ -287,6 +290,7 @@ PLATFORMS
 
 DEPENDENCIES
   biggs
+  bonsai-elasticsearch-rails
   capybara (~> 2.7.0)
   chart-js-rails
   coffee-rails (~> 4.2)

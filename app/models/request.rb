@@ -1,5 +1,5 @@
 class Request < ApplicationRecord
-  include Searchable
+  # include Searchable
 
   belongs_to :owner, polymorphic: true
   belongs_to :commit
@@ -8,7 +8,7 @@ class Request < ApplicationRecord
 
   serialize  :payload
 
-  def as_indexed_json(options = nil)
-    self.as_json(only: [:id])
-  end
+  # def as_indexed_json(options = nil)
+  #   self.as_json(only: [:id])
+  # end
 end
