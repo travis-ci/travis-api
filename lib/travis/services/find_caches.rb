@@ -167,9 +167,7 @@ module Travis
           )
 
           if items = storage.list_objects(bucket_name, prefix: prefix).items
-            items.each do |object|
-              cache_objects << GcsWrapper.new(storage, bucket_name, repo, object)
-            end
+            items.each { |object| cache_objects << GcsWrapper.new(storage, bucket_name, repo, object) }
           end
         end
 
