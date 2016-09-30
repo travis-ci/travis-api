@@ -137,13 +137,13 @@ module Travis
           end
 
           cache_objects = []
-          fetch_s3(cache_objects) if valid_s3?
-          fetch_gcs(cache_objects) if valid_gcs?
+          fetch_s3(cache_objects, options) if valid_s3?
+          fetch_gcs(cache_objects, options) if valid_gcs?
 
           @caches = cache_objects.compact
         end
 
-        def fetch_s3(cache_objects)
+        def fetch_s3(cache_objects, options)
           config = cache_options[:s3]
           svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
           bucket = svc.buckets.find(config.to_h[:bucket_name])
@@ -153,7 +153,7 @@ module Travis
           end
         end
 
-        def fetch_gcs(cache_objects)
+        def fetch_gcs(cache_objects, options)
           config = cache_options[:gcs]
           storage     = ::Google::Apis::StorageV1::StorageService.new
           json_key_io = StringIO.new(config.to_h[:json_key])
