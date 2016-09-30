@@ -138,7 +138,7 @@ module Travis
 
           c = []
           c = fetch_s3 if valid_s3?
-          c = fetch_gcs if valid_gcs?
+          c = fetch_gcs if valid_gcs? && c.empty?
 
           @caches = c.compact
         end
