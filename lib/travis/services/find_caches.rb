@@ -137,33 +137,46 @@ module Travis
           end
 
           c = []
+          c = fetch_s3 if valid_s3?
+          c = fetch_gcs if valid_gcs?
+
+          @caches = c.compact
+        end
+
+        def fetch_s3
+          cache_objects = []
 
           config = cache_options[:s3]
           svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
           bucket = svc.buckets.find(config.to_h[:bucket_name])
+
           if bucket
             c += bucket.objects(options).map { |object| S3Wrapper.new(repo, object) }
-          else
-            config = cache_options[:gcs]
-            storage     = ::Google::Apis::StorageV1::StorageService.new
-            json_key_io = StringIO.new(config.to_h[:json_key])
-            bucket_name = config[:bucket_name]
+          end
+          cache_objects
+        end
 
-            storage.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
-              json_key_io: json_key_io,
-              scope: [
-                'https://www.googleapis.com/auth/devstorage.read_write'
-              ]
-            )
+        def fetch_gcs
+          cache_objects = []
 
-            if items = storage.list_objects(bucket_name, prefix: prefix).items
-              items.map do |object|
-                c << GcsWrapper.new(storage, bucket_name, repo, object)
-              end
+          config = cache_options[:gcs]
+          storage     = ::Google::Apis::StorageV1::StorageService.new
+          json_key_io = StringIO.new(config.to_h[:json_key])
+          bucket_name = config[:bucket_name]
+
+          storage.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
+            json_key_io: json_key_io,
+            scope: [
+              'https://www.googleapis.com/auth/devstorage.read_write'
+            ]
+          )
+
+          if items = storage.list_objects(bucket_name, prefix: prefix).items
+            items.map do |object|
+              c << GcsWrapper.new(storage, bucket_name, repo, object)
             end
           end
-
-          @caches = c.compact
+          cache_objects
         end
 
         def cache_options
