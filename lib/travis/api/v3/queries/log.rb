@@ -10,14 +10,14 @@ module Travis::API::V3
       #check for the log in the Logs DB
       log = Models::Log.find_by_job_id(job.id)
       raise EntityMissing, 'log not found'.freeze if log.nil?
-      #if log has been aggregated, look at log.content
-      if log.aggregated_at
-        create_log_parts(log, log.content)
       #if the log has been archived, go to s3
-      elsif log.archived_at
+      if log.archived_at
         archived_log_path = archive_url("/jobs/#{job.id}/log.txt")
         content = Net::HTTP.get(URI.parse(archived_log_path))
         create_log_parts(log, content)
+      #if log has been aggregated, look at log.content
+      elsif log.aggregated_at
+        create_log_parts(log, log.content)
       end
       log
     end

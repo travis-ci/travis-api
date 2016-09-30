@@ -8,12 +8,14 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   let(:build2)      { Factory.create(:build, repository: repo2) }
   let(:job)         { Travis::API::V3::Models::Job.create(build: build) }
   let(:job2)        { Travis::API::V3::Models::Job.create(build: build2) }
+  let(:job3)        { Travis::API::V3::Models::Job.create(build: build2) }
   let(:s3job)       { Travis::API::V3::Models::Job.create(build: build) }
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:parsed_body) { JSON.load(body) }
   let(:log)         { Travis::API::V3::Models::Log.create(job: job) }
   let(:log2)        { Travis::API::V3::Models::Log.create(job: job2) }
+  # let(:log3)        { Travis::API::V3::Models::Log.create(job: job3) }
   let(:s3log)       { Travis::API::V3::Models::Log.create(job: s3job, content: 'minimal log 1') }
 
   before do
@@ -32,15 +34,18 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   end
 
   describe "missing log, authenticated" do
-    before        { log.delete }
-    before        { delete("/v3/job/#{log.job.id}/log", {}, headers)                 }
+    before { job3.update_attributes(finished_at: Time.now, state: "passed")}
+    # before { log3.delete }
 
-    example { expect(last_response.status).to be == 404 }
-    example { expect(JSON.load(body)).to      be ==     {
-      "@type"         => "error",
-      "error_type"    => "not_found",
-      "error_message" => "log not found"
-    }}
+    example do
+      delete("/v3/job/#{job3.id}/log", {}, headers)
+      expect(last_response.status).to be == 404
+      expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "not_found",
+        "error_message" => "log not found"
+      }
+    end
   end
 
   describe 'existing db log, authenticated' do
