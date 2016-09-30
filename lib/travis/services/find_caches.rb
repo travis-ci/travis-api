@@ -136,16 +136,14 @@ module Travis
             return @caches
           end
 
-          c = []
-          c = fetch_s3 if valid_s3?
-          c = fetch_gcs if valid_gcs? && c.empty?
+          cache_objects = []
+          fetch_s3(cache_objects) if valid_s3?
+          fetch_gcs(cache_objects) if valid_gcs?
 
-          @caches = c.compact
+          @caches = cache_objects.compact
         end
 
-        def fetch_s3
-          cache_objects = []
-
+        def fetch_s3(cache_objects)
           config = cache_options[:s3]
           svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
           bucket = svc.buckets.find(config.to_h[:bucket_name])
@@ -153,12 +151,9 @@ module Travis
           if bucket
             cache_objects += bucket.objects(options).map { |object| S3Wrapper.new(repo, object) }
           end
-          cache_objects
         end
 
-        def fetch_gcs
-          cache_objects = []
-
+        def fetch_gcs(cache_objects)
           config = cache_options[:gcs]
           storage     = ::Google::Apis::StorageV1::StorageService.new
           json_key_io = StringIO.new(config.to_h[:json_key])
@@ -176,7 +171,6 @@ module Travis
               cache_objects << GcsWrapper.new(storage, bucket_name, repo, object)
             end
           end
-          cache_objects
         end
 
         def cache_options
