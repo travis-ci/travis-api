@@ -35,10 +35,7 @@ module Travis::API::V3
     end
 
     def prefix
-      # The params don't seem to be working correctly! failing test.
-      name = params[:match].to_s
-      name = "#{@repo.id}/#{params[:branch]}" if name.empty?
-      name
+      ''
     end
 
     def s3_bucket

@@ -70,6 +70,29 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
       </Contents>
     </ListBucketResult>"
   }
+
+  let(:xml_content_single_repo) {
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+    <ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">
+    <Name>bucket</Name>
+    <Prefix/>
+    <Marker/>
+    <MaxKeys>1000</MaxKeys>
+    <IsTruncated>false</IsTruncated>
+      <Contents>
+          <Key>#{repo.github_id}/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz</Key>
+          <LastModified>2009-10-12T17:50:30.000Z</LastModified>
+          <ETag>&quot;hgb9dede5f27731c9771645a39863328&quot;</ETag>
+          <Size>20308738</Size>
+          <StorageClass>STANDARD</StorageClass>
+          <Owner>
+              <ID>75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a</ID>
+              <DisplayName>mtd@amazon.com</DisplayName>
+          </Owner>
+      </Contents>
+    </ListBucketResult>"
+  }
+
   let(:empty_xml_content) {
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">
@@ -97,18 +120,25 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
         "caches"=> result
       }
     end
-    describe "filter by branch" do
-      example do
-        get("/v3/repo/#{repo.id}/caches", branch: result[0]["branch"])
-        expect(JSON.load(body)).to be == {
-          "@type"=>"caches",
-          "@href"=>"/v3/repo/#{repo.id}/caches",
-          "@representation"=>"standard",
-          "caches"=> [result[0]]
-        }
-      end
+  end
+
+  describe "filter by branch" do
+    before     do
+      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}").
+         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
+    end
+
+    example do
+      get("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"] } )
+      expect(JSON.load(body)).to be == {
+        "@type"=>"caches",
+        "@href"=>"/v3/repo/1/caches?branch=#{result[0]["branch"]}",
+        "@representation"=>"standard",
+        "caches"=> [result[0]]
+      }
     end
   end
+
   describe "existing cache on gcs" do
     before     do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
@@ -121,7 +151,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
     end
     before     { get("/v3/repo/#{repo.id}/caches") }
-    pending    do
+    skip    do
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
         "@href"=>"/v3/repo/#{repo.id}/caches",

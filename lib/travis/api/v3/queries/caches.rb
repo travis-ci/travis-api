@@ -15,6 +15,12 @@ module Travis::API::V3
 
     private
 
+    def prefix
+      name = match.to_s
+      name = "#{@repo.id}/#{branch}" if name.empty?
+      name
+    end
+
     def s3_config
       config.cache_options.try(:s3) || {}
     end
