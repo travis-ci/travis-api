@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Caches::Find, set_app: true do
+describe Travis::API::V3::Services::Caches::Delete, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
@@ -107,12 +107,16 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   }
   before { repo.default_branch.save! }
 
-  describe "existing cache on s3" do
+  describe "delete all on s3" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
-         to_return(:status => 200, :body => xml_content, :headers => {})
+      stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
+        to_return(:status => 200, :body => xml_content, :headers => {})
+      stub_request(:get, "https://travis-cache-staging-org.s3.amazonaws.com/?prefix=#{repo.id}/").
+        to_return(:status => 200, :body => xml_content, :headers => {})
+      stub_request(:delete, "https://bucket.s3.amazonaws.com/#{repo.id}/#{result[0]["branch"]}/#{result[0]["slug"]}").
+        to_return(:status => 200, :body => xml_content, :headers => {})
     end
-    before     { get("/v3/repo/#{repo.id}/caches") }
+    before     { delete("/v3/repo/#{repo.id}/caches") }
     example    { expect(last_response).to be_ok }
     example    do
       expect(JSON.load(body)).to be == {
@@ -124,14 +128,14 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     end
   end
 
-  describe "filter by branch" do
+  describe "delete for branch" do
     before     do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}").
          to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
     end
 
     example do
-      get("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"] } )
+      delete("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"] } )
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
         "@href"=>"/v3/repo/1/caches?branch=#{result[0]["branch"]}",
@@ -141,14 +145,14 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     end
   end
 
-  describe "filter by match" do
+  describe "delete for match" do
     before     do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}").
          to_return(:status => 200, :body => xml_content, :headers => {})
     end
 
     example do
-      get("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"], match: 'dhfsod8fu4' } )
+      delete("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"], match: 'dhfsod8fu4' } )
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
         "@href"=>"/v3/repo/1/caches?branch=#{result[0]["branch"]}&match=dhfsod8fu4",
@@ -158,7 +162,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     end
   end
 
-  describe "existing cache on gcs" do
+  describe "delete all on gcs" do
     before     do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
          to_return(:status => 200, :body => empty_xml_content, :headers => {})
@@ -169,7 +173,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
          to_return(:status => 200, :body => xml_content, :headers => {})
 
     end
-    before     { get("/v3/repo/#{repo.id}/caches") }
+    before     { delete("/v3/repo/#{repo.id}/caches") }
     skip    do
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",

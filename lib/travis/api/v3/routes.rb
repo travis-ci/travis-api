@@ -117,6 +117,7 @@ module Travis::API::V3
       resource :caches do
         route '/caches'
         get :find
+        delete :delete
       end
 
       resource :crons do
