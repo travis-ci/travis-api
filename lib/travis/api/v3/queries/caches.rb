@@ -4,21 +4,23 @@ module Travis::API::V3
 
     def find(repo)
       caches = fetch(repo)
-      Models::Cache.factory(caches, repo)
+      filter Models::Cache.factory(caches, repo)
     end
 
-    #might want this for branch name and slug
+    def delete(repo)
+      destroyed_caches = remove(repo)
+      filter Models::Cache.factory(destroyed_caches, repo)
+    end
+
     def filter(list)
-      # sort list
-      list
+      return list unless match
+      list.select{|c| c.slug.include? match}
     end
 
     private
 
     def prefix
-      name = match.to_s
-      name = "#{@repo.id}/#{branch}" if name.empty?
-      name
+      "#{@repo.id}/#{branch}"
     end
 
     def s3_config

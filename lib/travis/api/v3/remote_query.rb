@@ -15,11 +15,11 @@ module Travis::API::V3
       storage_files
     end
 
-    def get(key)
-    end
-
-    def remove
-      #get or fetch then destroy
+    def remove(repo)
+      caches = fetch(repo)
+      caches.each do |cache|
+        cache.destroy
+      end
     end
 
     private
@@ -35,6 +35,7 @@ module Travis::API::V3
     end
 
     def prefix
+      warn 'prefix in RemoteQuery called. If you wanted a prefix filter please impliment it in the subclass.'
       ''
     end
 
