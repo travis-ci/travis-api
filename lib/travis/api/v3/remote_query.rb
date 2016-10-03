@@ -10,13 +10,12 @@ module Travis::API::V3
     def set
     end
 
-    def fetch(repo)
-      @repo = repo
+    def fetch
       storage_files
     end
 
-    def remove(repo)
-      caches = fetch(repo)
+    def remove
+      caches = fetch
       caches.each do |cache|
         cache.destroy
       end
