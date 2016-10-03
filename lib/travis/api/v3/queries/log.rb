@@ -4,8 +4,9 @@ module Travis::API::V3
     FORMAT = "Log removed by %s at %s"
 
     def find(job)
+      @job = job
       #check for the log in the Logs DB
-      log = Models::Log.find_by_job_id(job.id)
+      log = Models::Log.find_by_job_id(@job.id)
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
       if log.archived_at
@@ -23,13 +24,14 @@ module Travis::API::V3
     end
 
     def delete(user, job)
-      log = Models::Log.find_by_job_id(job.id)
+      @job = job
+      log = Models::Log.find_by_job_id(@job.id)
       raise EntityMissing, 'log not found'.freeze if log.nil?
       raise LogAlreadyRemoved if log.removed_at || log.removed_by
-      raise JobUnfinished unless job.finished_at?
+      raise JobUnfinished unless @job.finished_at?
 
       remove if log.archived_at
-      
+
       removed_at = Time.now
 
       message = FORMAT % [user.name, removed_at.utc]
@@ -45,7 +47,7 @@ module Travis::API::V3
     end
 
     def prefix
-      "jobs/#{job_id}/log.txt"
+      "jobs/#{@job.id}/log.txt"
     end
 
     def bucket_name
