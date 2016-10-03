@@ -11,7 +11,8 @@ module Travis::API::V3
     end
 
     def update(settings = {})
-      repository.user_settings.update(settings)
+      repository.settings = repository.user_settings.update(settings).to_json
+      repository.settings_will_change!
       repository.save!
     end
   end
