@@ -1,4 +1,8 @@
 module SubscriptionsHelper
+  def format_plan(plan)
+    plan.gsub(/-/, ' ').remove('travis ci ')
+  end
+
   def format_price(amount)
     number_to_currency(amount.to_f/100)
   end
@@ -13,7 +17,8 @@ module SubscriptionsHelper
     end
   end
 
-  def format_plan(plan)
-    plan.gsub(/-/, ' ').remove('travis ci ')
+  def invoice_url(invoice)
+    invoice_id = Digest::SHA1.hexdigest(invoice.stripe_id + invoice.invoice_id)
+    "#{Travis::Config.billing_endpoint}/invoices/#{invoice_id}.pdf"
   end
 end
