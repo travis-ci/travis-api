@@ -32,7 +32,7 @@ describe Travis::API::V3::Services::UserSettings::Find, set_app: true do
     example do
       expect(JSON.load(body)).to eq(
         '@type' => 'user_settings',
-        '@href' => '/v3/repo/1/settings',
+        '@href' => "/v3/repo/#{repo.id}/settings",
         '@representation' => 'standard',
         'user_settings' => [
           { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/builds_only_with_travis_yml", '@representation' => 'standard', 'name' => 'builds_only_with_travis_yml', 'value' => false },
@@ -54,7 +54,7 @@ describe Travis::API::V3::Services::UserSettings::Find, set_app: true do
     example do
       expect(JSON.load(body)).to eq(
         '@type' => 'user_settings',
-        '@href' => '/v3/repo/1/settings',
+        '@href' => "/v3/repo/#{repo.id}/settings",
         '@representation' => 'standard',
         'user_settings' => [
           { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/builds_only_with_travis_yml", '@representation' => 'standard', 'name' => 'builds_only_with_travis_yml', 'value' => false },

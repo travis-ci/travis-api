@@ -74,9 +74,9 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
         'resource_type' => 'repository',
         'repository' => {
           '@type' => 'repository',
-          '@href' => '/v3/repo/1',
+          '@href' => "/v3/repo/#{repo.id}",
           '@representation' => 'minimal',
-          'id' => 1,
+          'id' => repo.id,
           'name' => 'minimal',
           'slug' => 'svenfuchs/minimal'
         }
