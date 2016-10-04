@@ -19,6 +19,6 @@ module SubscriptionsHelper
 
   def invoice_url(invoice)
     invoice_id = Digest::SHA1.hexdigest(invoice.stripe_id + invoice.invoice_id)
-    "#{Travis::Config.billing_endpoint}/invoices/#{invoice_id}.pdf"
+    "#{Travis::Config.load.billing_endpoint}/invoices/#{invoice_id}.pdf"
   end
 end
