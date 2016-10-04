@@ -1,0 +1,35 @@
+<canvas id="<%= "builds-#{owner.login}" %>" width="900" height="250"></canvas>
+<script>
+  var ctx = document.getElementById("<%= "builds-#{owner.login}" %>");
+  var myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    <%= raw "labels: #{@build_months.inspect}," %>
+    datasets: [{
+      label: 'Builds',
+      <%= raw "data: #{@build_counts.inspect}," %>
+      fillColor:
+        'rgba(151,187,205,0.5)',
+      strokeColor:
+        'rgba(151,187,205,0.8)',
+      highlightFill:
+        'rgba(151,187,205,0.75)',
+      highlightStroke:
+        'rgba(151,187,205,1)'
+      }]
+    },
+    options: {
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            min: 0,
+            suggestedMax: 1
+          }
+        }]
+      }
+    }
+  });
+</script>

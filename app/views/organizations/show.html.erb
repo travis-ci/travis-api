@@ -28,6 +28,6 @@
   <span id="jobs" class="tab-switch"></span>
   <a href="#jobs" class="tab-link">Jobs</a>
   <section class="tab-content">
-    <%= render partial: 'shared/jobs' %>
+    <%= render partial: 'shared/jobs', locals: {owner: @organization} %>
   </section>
 </div>
