@@ -35,5 +35,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'simple_states',     '~> 1.0.0'
   s.add_dependency 'pusher',            '~> 0.14.0'
   s.add_dependency 'multi_json'
-  s.add_dependency 'google-api-client', '~> 0.9.4'
 end

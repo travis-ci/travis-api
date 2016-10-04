@@ -3,6 +3,14 @@ gemspec
 
 gem 's3',              github: 'travis-ci/s3'
 
+gem 'fog-aws'
+gem 'fog-google'
+gem 'google-api-client', '~> 0.8.6'
+gem 'mime-types'
+
+# api v3 uses 'aws-sdk-v1' instead of 's3'
+gem 'aws-sdk-v1'
+
 gem 'travis-support',  github: 'travis-ci/travis-support'
 gem 'travis-amqp',     github: 'travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
@@ -37,7 +45,7 @@ gem 'jemalloc'
 gem 'customerio'
 
 group :development, :test do
-  gem 'travis-migrations', github: 'travis-ci/travis-migrations'
+  gem 'travis-migrations', github: 'travis-ci/travis-migrations', branch: 'add_travis_logs_structure'
 end
 
 group :test do
@@ -47,6 +55,7 @@ group :test do
   gem 'mocha',         '~> 0.12'
   gem 'database_cleaner', '~> 0.8.0'
   gem 'timecop',       '~> 0.8.0'
+  gem 'webmock'
 end
 
 group :development do

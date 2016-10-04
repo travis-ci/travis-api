@@ -43,6 +43,13 @@ module Travis::API::V3
       post :cancel, '/cancel'
       post :restart, '/restart'
       post :debug, '/debug'
+
+      resource :log do
+        route '/log'
+        get   :find
+        delete :delete
+      end
+
     end
 
     resource :lint do
@@ -105,6 +112,12 @@ module Travis::API::V3
       resource :builds do
         route '/builds'
         get  :find
+      end
+
+      resource :caches do
+        route '/caches'
+        get :find
+        delete :delete
       end
 
       resource :crons do

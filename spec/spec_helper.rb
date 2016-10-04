@@ -10,6 +10,7 @@ require 'gh'
 require 'multi_json'
 require 'pry'
 require 'stackprof'
+require 'webmock/rspec'
 
 require 'travis/api/app'
 require 'travis/testing'
