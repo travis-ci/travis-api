@@ -6,6 +6,7 @@ module BuildCounters
   def build_months(owner)
     Travis::DataStores.redis.hgetall("builds:#{owner.github_id}").keys.sort.map do |key|
       key.sub(/(\d{4})(\d{2})/, '\1-\2')
+      # Converts "123456" to "3456-12"
     end
   end
 
