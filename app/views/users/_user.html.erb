@@ -65,6 +65,8 @@
   </dl>
 </section>
 
+<%= render partial: 'shared/account', locals: {owner: @user} %>
+
 <section class="info-block">
   <h2 class="info-header">Organizations</h2>
   <%= render partial: 'shared/organization_list', locals: {organizations: @user.organizations} %>

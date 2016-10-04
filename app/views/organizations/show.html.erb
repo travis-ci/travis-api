@@ -7,18 +7,6 @@
     <%= render partial: 'organization' %>
   </section>
 
-  <span id="account" class="tab-switch"></span>
-  <a href="#account" class="tab-link">Account</a>
-  <section   class="tab-content">
-    <%= render partial: 'shared/account', locals: {owner: @organization} %>
-  </section>
-
-  <span id="broadcast" class="tab-switch"></span>
-  <a href="#broadcast" class="tab-link">Broadcast</a>
-  <section   class="tab-content">
-    <%= render partial: 'shared/broadcasts', locals: {recipient: @organization} %>
-  </section>
-
   <span id="repositories" class="tab-switch"></span>
   <a href="#repositories" class="tab-link">Repositories</a>
   <section class="tab-content">
@@ -29,5 +17,11 @@
   <a href="#jobs" class="tab-link">Jobs</a>
   <section class="tab-content">
     <%= render partial: 'shared/jobs', locals: {owner: @organization} %>
+  </section>
+
+  <span id="broadcast" class="tab-switch"></span>
+  <a href="#broadcast" class="tab-link">Broadcast</a>
+  <section   class="tab-content">
+    <%= render partial: 'shared/broadcasts', locals: {recipient: @organization} %>
   </section>
 </div>

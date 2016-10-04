@@ -7,7 +7,6 @@ RSpec.feature "Update Offender", :js => true, :type => :feature do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
     visit "/users/#{user.id}"
-    click_on("Account")
 
     find("#offender_offenders").trigger('click')
     find_button("update-abuse-status").trigger('click')
@@ -15,7 +14,8 @@ RSpec.feature "Update Offender", :js => true, :type => :feature do
     expect(page).to have_text("Abuse settings for Klaus (klaus_maus) updated.")
 
     # rethink this (is not working without)
-    click_on("Account")
+    click_on("User")
+
     expect(page.has_checked_field?("offender[offenders]")).to be true
   end
 end
