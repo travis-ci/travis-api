@@ -1,4 +1,4 @@
-<h1 class="info-header">Feature Flag: <%= format_feature(@feature) %></h1>
+<% title "Feature Flag: #{format_feature(@feature)}" %>
 
 <section class="info-block">
   <p><%= "#{@kind.capitalize} with feature #{format_feature(@feature)} enabled:" %></p>

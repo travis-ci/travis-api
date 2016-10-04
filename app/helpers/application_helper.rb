@@ -56,4 +56,8 @@ module ApplicationHelper
   def format_short_duration(seconds)
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
+
+  def title(page_title)
+    content_for(:title) { page_title }
+  end
 end
