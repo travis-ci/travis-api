@@ -77,7 +77,7 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
         "permission"          => "delete",
         "cron"                => {
             "@type"           => "cron",
-            "@href"           => "/cron/#{cron.id}", # should be /v3/cron/#{cron.id}
+            "@href"           => "/v3/cron/#{cron.id}",
             "@representation" => "minimal",
             "id"              => cron.id }
     }}

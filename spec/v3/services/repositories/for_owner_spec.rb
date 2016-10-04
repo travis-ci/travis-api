@@ -44,7 +44,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "star"             => false,
           "unstar"           => false,
           "create_request"   => false,
-          "create_cron"      => false},
+          "create_cron"      => false,
+          "change_settings"  => false
+        },
         "id"                 => repo.id,
         "name"               => "minimal",
         "slug"               => "svenfuchs/minimal",
@@ -121,7 +123,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "star"          => false,
           "unstar"        => false,
           "create_request"=> false,
-          "create_cron"   => false },
+          "create_cron"   => false,
+          "change_settings" => false
+        },
         "id"              => 1,
         "name"            => "minimal",
         "slug"            => "svenfuchs/minimal",
@@ -150,7 +154,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "star"          => false,
           "unstar"        => false,
           "create_request"=> false,
-          "create_cron"   => false },
+          "create_cron"   => false,
+          "change_settings" => false
+        },
         "id"              => repo2.id,
         "name"            => "maximal",
         "slug"            => "svenfuchs/maximal",

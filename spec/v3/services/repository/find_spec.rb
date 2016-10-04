@@ -35,7 +35,9 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "star"             => false,
         "unstar"           => false,
         "create_request"   => false,
-        "create_cron"      => false},
+        "create_cron"      => false,
+        "change_settings"  => false
+      },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -113,7 +115,9 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "star"             => false,
         "unstar"           => false,
         "create_request"   => false,
-        "create_cron"      => false},
+        "create_cron"      => false,
+        "change_settings"  => false
+      },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -176,7 +180,9 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
-        "create_cron"      => false},
+        "create_cron"      => false,
+        "change_settings"  => true
+      },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
@@ -245,7 +251,9 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
-        "create_cron"      => false},
+        "create_cron"      => false,
+        "change_settings"  => true
+      },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
       "slug"               =>  "svenfuchs/minimal",
