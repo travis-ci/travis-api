@@ -126,8 +126,19 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
     describe 'returns log as plain text' do
       before do
-        stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{s3job.id}/log.txt").
-         to_return(status: 200, body: xml_content, headers: {})
+        Fog.mock!
+        storage = Fog::Storage.new({
+          :aws_access_key_id => "asdf",
+          :aws_secret_access_key => "asdf",
+          :provider => "AWS"
+        })
+        storage.data[:foo] = '25'
+        Fog::Storage.any_instance.stub(:fetch).and_return(storage.data)
+        # stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{s3job.id}/log.txt").
+        #  to_return(status: 200, body: xml_content, headers: {})
+      end
+      after do
+        Fog::Mock.reset
       end
 
       example do

@@ -41,11 +41,6 @@ module Travis::API::V3
 
     private
 
-    def s3_config
-      return {} unless conf = config.log_options.try(:s3)
-      conf.merge!(bucket_name: bucket_name)
-    end
-
     def prefix
       "jobs/#{@job.id}/log.txt"
     end
