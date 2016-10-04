@@ -2,6 +2,10 @@
   <p>No known feature flags for <%= kind %>.</p>
 <% else %>
   <ul>
+    <li class="inline-list feature-for-item">
+      <p class="info-label">Feature</p>
+      <p class="info-label">Enabled for</p>
+    </li>
     <% features.each do |feature| %>
       <li class="inline-list feature-for-item">
         <p><%= link_to format_feature(feature), feature_path(kind, feature) %></p>

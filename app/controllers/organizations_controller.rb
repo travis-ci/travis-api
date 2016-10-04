@@ -29,7 +29,7 @@ class OrganizationsController < ApplicationController
 
     @repositories = @organization.repositories.includes(:last_build).order(:name)
 
-    @users = @organization.users.includes(:subscription)
+    @users = @organization.users.includes(:subscription).order(:name)
 
     @pending_jobs = Job.from_repositories(@repositories).not_finished
     @finished_jobs = Job.from_repositories(@repositories).finished.take(10)

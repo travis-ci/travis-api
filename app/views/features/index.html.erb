@@ -3,15 +3,20 @@
 <section class="info-block">
   <h2 class="info-header">Global Features</h2>
   <ul>
+    <li class="inline-list feature-item">
+      <p class="info-label">Feature</p>
+      <p class="info-label">Status</p>
+      <p class="info-label"></p>
+    </li>
     <% @global_features.each do |feature, flag| %>
       <li class="inline-list feature-item">
         <p><%= format_feature(feature) %></p>
         <% if flag %>
           <p>&#10004; enabled</p>
-          <p><%= button_to "Disable", disable_feature_path(feature), class: "button", id: "disable_#{feature}" %></p>
+          <div class="call-to-action"><%= button_to "Disable", disable_feature_path(feature), class: "button", id: "disable_#{feature}" %></div>
         <% else %>
           <p>&#10008; disabled</p>
-          <p><%= button_to "Enable", enable_feature_path(feature), class: "button", id: "enable_#{feature}" %></p>
+          <div class="call-to-action"><%= button_to "Enable", enable_feature_path(feature), class: "button", id: "enable_#{feature}" %></div>
         <% end %>
       </li>
     <% end %>

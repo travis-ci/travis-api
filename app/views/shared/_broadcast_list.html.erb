@@ -13,7 +13,7 @@
         <p><%= broadcast.recipient ? link_to(describe(broadcast.recipient), broadcast.recipient) : "everybody" %></p>
         <p><time><%= broadcast.created_at.to_date %></time></p>
         <p><%= sanitize broadcast.message %></p>
-        <p>
+        <div class="call-to-action">
           <%= form_for broadcast do |f| %>
             <% if defined? recipient %>
               <%= f.hidden_field :recipient_type, value: recipient.class.name %>
@@ -21,7 +21,7 @@
             <% end %>
             <%= f.submit(expire_broadcast_btn_text(broadcast), disabled: broadcast.inactive?, class: 'button') %>
           <% end %>
-        </p>
+        </div>
       </li>
     <% end %>
   </ul>

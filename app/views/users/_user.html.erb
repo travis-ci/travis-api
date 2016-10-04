@@ -60,7 +60,7 @@
       <% else %>
         <%= @user.synced_at ? @user.synced_at : "Never" %>
       <% end %>
-      <%= button_to 'Sync', sync_user_path(@user), disabled: @user.is_syncing?, class: 'button' %>
+      <%= button_to 'Sync', sync_user_path(@user), disabled: @user.is_syncing?, form_class: "sync-button", class: 'button' %>
     </dd>
   </dl>
 </section>
