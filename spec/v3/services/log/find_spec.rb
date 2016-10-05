@@ -9,7 +9,6 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:s3job)       { Travis::API::V3::Models::Job.create(build: build) }
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
-
   let(:parsed_body) { JSON.load(body) }
   let(:log)         { Travis::API::V3::Models::Log.create(job: job) }
   let(:log2)        { Travis::API::V3::Models::Log.create(job: job2) }
@@ -42,10 +41,21 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
 
   before do
     Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true)
-    stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
-      to_return(:status => 200, :body => xml_content, :headers => {})
-    stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/?prefix=jobs/#{s3job.id}/log.txt").
-      to_return(status: 200, body: xml_content, headers: {})
+    # stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
+    #   to_return(:status => 200, :body => xml_content, :headers => {})
+    # stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/?prefix=jobs/#{s3job.id}/log.txt").
+    #   to_return(status: 200, body: xml_content, headers: {})
+    Fog.mock!
+    storage = Fog::Storage.new({
+      :aws_access_key_id => "asdf",
+      :aws_secret_access_key => "asdf",
+      :provider => "AWS"
+    })
+    storage.data[:body] = '$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch'
+  end
+
+  after do
+    Fog::Mock.reset
   end
 
   context 'when log stored in db' do
@@ -70,7 +80,6 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     describe 'returns aggregated log with an array of Log Parts' do
       before { log2.update_attributes(aggregated_at: Time.now, content: "aggregating!")}
       example do
-        # log_part = log2.log_parts.create(content: "logging it", number: 0)
         get("/v3/job/#{log2.job.id}/log", {}, headers)
         expect(parsed_body).to eq(
           '@type' => 'log',
@@ -101,12 +110,6 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
 
   context 'when log not found in db but stored on S3' do
     describe 'returns log with an array of Log Parts' do
-      before do
-        stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
-          to_return(:status => 200, :body => xml_content, :headers => {})
-        stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{s3job.id}/log.txt").
-         to_return(status: 200, body: xml_content, headers: {})
-      end
       example do
         s3log.update_attributes(archived_at: Time.now)
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
@@ -125,28 +128,13 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       end
     end
     describe 'returns log as plain text' do
-      before do
-        Fog.mock!
-        storage = Fog::Storage.new({
-          :aws_access_key_id => "asdf",
-          :aws_secret_access_key => "asdf",
-          :provider => "AWS"
-        })
-        storage.data[:foo] = '25'
-        Fog::Storage.any_instance.stub(:fetch).and_return(storage.data)
-        # stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{s3job.id}/log.txt").
-        #  to_return(status: 200, body: xml_content, headers: {})
-      end
-      after do
-        Fog::Mock.reset
-      end
-
       example do
         s3log.update_attributes(archived_at: Time.now)
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
         expect(last_response.headers).to include("Content-Type" => "text/plain")
         expect(body).to eq(
           "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch")
+        # expect(storage.create_instance).with(:fetch).returns(storage.data)
       end
     end
   end
