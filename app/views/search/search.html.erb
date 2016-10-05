@@ -1,6 +1,6 @@
 <h1>Search Results</h1>
 
-<% if @results %>
+<% if @results.any? %>
   <ul>
     <% @results.each do |result| %>
       <li class="inline-list search-results">
