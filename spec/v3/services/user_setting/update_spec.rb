@@ -40,6 +40,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
 
   describe 'authenticated, existing repo' do
     before do
+      repo.update_attribute(:settings, JSON.dump('env_vars' => ['something']))
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
       patch("/v3/repo/#{repo.id}/setting/build_pushes", params, json_headers.merge(auth_headers))
     end
@@ -56,6 +57,9 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
     end
     example 'value is persisted' do
       expect(repo.reload.user_settings.build_pushes).to eq false
+    end
+    example 'does not clobber other things in the settings hash' do
+      expect(repo.reload.settings['env_vars']).to eq(['something'])
     end
   end
 

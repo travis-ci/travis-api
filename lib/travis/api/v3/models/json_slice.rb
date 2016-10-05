@@ -34,14 +34,11 @@ module Travis::API::V3
       Hash[map { |x| [x.name, x.value] }]
     end
 
-    def to_json
-      to_h.to_json
-    end
-
     def parent_attr(parent, attr)
       @parent, @attr = parent, attr
       @sync = -> do
-        @parent.send(:"#{@attr}=", to_json)
+        previous = @parent.send(:"#{@attr}")
+        @parent.send(:"#{@attr}=", previous.merge(to_h).to_json)
         @parent.save!
       end
     end
