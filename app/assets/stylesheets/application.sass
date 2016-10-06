@@ -41,18 +41,30 @@
 
 .tab-switch
   position: fixed
-
   &:target
     + .tab-link
       color: $oxide-blue
-      font-weight: $font-weight-bold
+      &::after
+        border-bottom: 2px solid $oxide-blue
       + .tab-content
         display: block
 
 .tab-link
+  position: relative
   display: inline-block
   text-decoration: none
-  padding: 0 10px
+  padding: .5em 0.8em
+  &::after
+    content: ""
+    position: absolute
+    left: -3%
+    display: block
+    width: 106%
+    height: 8px
+    border-bottom: 1px solid lighten($cement-grey, 20%)
+  &:hover
+    &::after
+      border-bottom: 2px solid $oxide-blue
 
 .tab-content
   box-sizing: border-box
@@ -68,7 +80,7 @@ address
 
 dl, dt, dd
   margin: 0
-  padding: 0
+  padding: 0.2em 0
   position: relative
 
 dl
@@ -84,15 +96,20 @@ dt
 dd
   float: left
   width: 75%
-  > .button_to
+  > .button_to, .button
     display: inline
-    position: absolute
-    right: 0
+    margin-left: 1em
+
+.config
+  > dl:nth-child(even)
+    background-color: #f3f3f3
 
 .config-item
   ul
     margin: 0
     list-style-type: disc
+  dl, dt, dd
+    line-height: 16px
   dl
     > dl
       padding-left: 2%
@@ -104,8 +121,15 @@ dd
   display: flex
   flex-flow: row nowrap
   justify-content: space-between
-  p
-    margin: 0.5em
+  > *
+    margin: 0.5em 0
+    padding: 0 0.5em
+  &:nth-child(odd)
+    background-color: #f3f3f3
+  &:first-child
+    background-color: #eee
+  .call-to-action
+    text-align: right
 
 .repo-active, .repo-view
   flex: 1 1 10%
@@ -120,19 +144,22 @@ dd
   flex: 0 0 15%
 
 .build-name, .build-state
-  flex: 0 0 27%
+  flex: 1 1 25%
 
 .build-branch
-  flex: 0 0 19%
+  flex: 1 1 20%
 
 .build-type, .build-duration, .build-reset
-  flex: 0 0 9%
+  flex: 0 0 10%
 
 .build-duration
   text-align: right
 
-.request-item > p
-  flex: 1 1 20%
+.request-item
+  > *
+    flex: 1 1 12%
+  > .build-name
+    flex: 1 1 25%
 
 .org-list, .user-list, .member-list
   list-style: none
@@ -149,17 +176,21 @@ dd
       flex-shrink: 0
 
 .org-item, .user-item, .feature-item
-  p
-    flex: 1 1 30%
+  > *
+    flex: 1 1 33%
 
-.feature-for-item > p
+.feature-for-item > *
   flex: 1 1 50%
 
-.broadcast-item > p
+.broadcast-item > *
   flex: 1 1 25%
 
-.invoice-item > p
-  flex: 1 1 30%
+.invoice-item > *
+  flex: 1 1 33%
+
+.reset-button, .sync-button, .disable-button, .enable-button
+  display: inline
+  margin-left: 300px
 
 
 /* Button styles */
@@ -221,18 +252,18 @@ form.broadcast-form
   p
     margin-right: 1em
   textarea
-    width: 300px
+    width: 400px
     min-height: auto
-    height: 25px
+    height: 150px
   label
     margin-right: 0.7em
 
 #form-errors
   @include notice($brick-red)
 
-.job-boost input[type="text"]
-  width: 60px
-  margin-right: 0.7em
+.job-boost, .trial-builds
+  input[type="text"]
+    width: 60px
 
 
 /* Icons */

@@ -26,7 +26,7 @@ RSpec.feature "Sync with GitHub for all users in an organization", :js => true, 
   scenario "Syncing several users" do
     allow_any_instance_of(OrganizationsController).to receive(:builds_provided_for).and_return(1)
 
-    visit "/organizations/#{organization.id}"
+    visit "/organizations/#{organization.id}#members"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/user/#{katrin.id}/sync").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).

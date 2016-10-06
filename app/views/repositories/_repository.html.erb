@@ -44,10 +44,15 @@
     <dd>
       <%= @repository.active? ? "enabled" : "disabled" %>
       <% if @repository.active? %>
-        <%= button_to "Disable", disable_repository_path(@repository), class: "button" %>
+        <%= button_to "Disable", disable_repository_path(@repository), form_class: "disable-button", class: "button" %>
       <% else %>
-        <%= button_to "Enable", enable_repository_path(@repository), class: "button" %>
+        <%= button_to "Enable", enable_repository_path(@repository), form_class: "enable-button", class: "button" %>
       <% end %>
     </dd>
   </dl>
+</section>
+
+<section class="info-block">
+  <h2 class="info-header">Feature Flags</h2>
+  <%= render partial: 'shared/features_for', locals: {owner: @repository} %>
 </section>

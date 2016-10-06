@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>TravisAdmin</title>
+    <title>Admin | <%= yield(:title) || 'Travis CI Support' %></title>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
@@ -24,12 +24,14 @@
       </div>
     </header>
 
-    <main class="main">
+    <main class="row main">
       <section class="flashes">
         <% flash.each do |name, msg| -%>
           <%= content_tag :p, msg, class: name %>
         <% end -%>
       </section>
+
+      <h1 class="info-header"><%= yield(:title) %></h1>
 
       <%= yield %>
 

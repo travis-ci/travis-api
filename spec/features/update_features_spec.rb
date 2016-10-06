@@ -12,7 +12,6 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
 
   scenario "Update features for a repository" do
     visit "/repositories/#{repository.id}"
-    click_on("Settings")
 
     expect(page.has_checked_field?("features_multi_os")).to be false
     expect(page.has_checked_field?("features_annotations")).to be true
@@ -24,7 +23,8 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
     expect(page).to have_text("Updated feature flags for travis-pro/travis-admin.")
 
     # rethink this (is not working without)
-    click_on("Settings")
+    click_on("Repository")
+
     expect(page.has_checked_field?("features_multi_os")).to be true
     expect(page.has_checked_field?("features_annotations")).to be false
   end
@@ -33,7 +33,6 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
     visit "/users/#{user.id}"
-    click_on("Account")
 
     expect(page.has_checked_field?("features_cron")).to be true
 
@@ -41,9 +40,6 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
     find_button("update-features").trigger('click')
 
     expect(page).to have_text("Updated feature flags for sinthetix.")
-
-    # rethink this (is not working without)
-    click_on("Account")
     expect(page.has_checked_field?("features_cron")).to be false
   end
 
@@ -51,7 +47,6 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
     visit "/organizations/#{organization.id}"
-    click_on("Account")
 
     expect(page.has_checked_field?("features_cron")).to be true
 
@@ -59,9 +54,6 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
     find_button("update-features").trigger('click')
 
     expect(page).to have_text("Updated feature flags for travis-pro.")
-
-    # rethink this (is not working without)
-    click_on("Account")
     expect(page.has_checked_field?("features_cron")).to be false
   end
 end

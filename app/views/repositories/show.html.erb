@@ -1,4 +1,4 @@
-<h1 class="info-header"><%= "Repository - #{describe(@repository)}" %></h1>
+<% title "Repository - #{describe(@repository)}" %>
 
 <div id="tabs">
   <span id="repository" class="tab-switch"></span>
@@ -13,23 +13,6 @@
     <%= render partial: 'users' %>
   </section>
 
-  <span id="settings" class="tab-switch"></span>
-  <a href="#settings" class="tab-link">Settings</a>
-  <section class="tab-content">
-    <%= render partial: 'settings', locals: {owner: @repository} %>
-  </section>
-
-  <span id="broadcast" class="tab-switch"></span>
-  <a href="#broadcast" class="tab-link">Broadcast</a>
-  <section   class="tab-content">
-    <%= render partial: 'shared/broadcasts', locals: {recipient: @repository} %>
-  </section>
-
-  <span id="caches" class="tab-switch"></span>
-  <a href="#caches" class="tab-link">Caches</a>
-  <section class="tab-content">
-  </section>
-
   <span id="builds" class="tab-switch"></span>
   <a href="#builds" class="tab-link">Builds</a>
   <section class="tab-content">
@@ -40,5 +23,11 @@
   <a href="#requests" class="tab-link">Requests</a>
   <section class="tab-content">
     <%= render partial: 'requests' %>
+  </section>
+
+  <span id="broadcast" class="tab-switch"></span>
+  <a href="#broadcast" class="tab-link">Broadcast</a>
+  <section   class="tab-content">
+    <%= render partial: 'shared/broadcasts', locals: {recipient: @repository} %>
   </section>
 </div>
