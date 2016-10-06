@@ -6,11 +6,7 @@ module Services
       private
 
       def message
-        "created a broadcast for #{recipient}: \"#{broadcast.message}\""
-      end
-
-      def recipient
-        broadcast.recipient ? describe(broadcast.recipient) : 'everybody'
+        "created a broadcast for #{describe(broadcast.recipient)}: \"#{broadcast.message}\""
       end
     end
   end

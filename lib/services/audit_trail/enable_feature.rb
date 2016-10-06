@@ -5,7 +5,7 @@ module Services
 
       attr_reader :current_user, :feature, :recipient
 
-      def initialize(current_user, feature, recipient=nil)
+      def initialize(current_user, feature, recipient = NullRecipient.new)
         @current_user = current_user
         @feature = feature
         @recipient = recipient
@@ -14,7 +14,7 @@ module Services
       private
 
       def message
-        "enabled feature #{format_feature(feature)} #{recipient ? "globally" : "for " + describe(recipient)}"
+        "enabled feature #{format_feature(feature)} for #{describe(recipient)}"
       end
     end
   end

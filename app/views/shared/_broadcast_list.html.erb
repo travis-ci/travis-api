@@ -10,7 +10,11 @@
     </li>
     <% broadcasts.each do |broadcast| %>
       <li class="inline-list broadcast-item">
-        <p><%= broadcast.recipient ? link_to(describe(broadcast.recipient), broadcast.recipient) : "everybody" %></p>
+        <p>
+          <%= link_to_if broadcast.recipient.persisted?, describe(broadcast.recipient), broadcast.recipient do %>
+            <%= describe(broadcast.recipient) %>
+          <% end %>
+        </p>
         <p><time><%= broadcast.created_at.to_date %></time></p>
         <p><%= sanitize broadcast.message %></p>
         <p>

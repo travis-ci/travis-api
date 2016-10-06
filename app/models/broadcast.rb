@@ -54,4 +54,8 @@ class Broadcast < ApplicationRecord
   def inactive?
     created_at < EXPIRY_TIME.ago
   end
+
+  def recipient
+    super || NullRecipient.new
+  end
 end
