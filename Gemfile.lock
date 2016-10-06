@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/textacular/textacular.git
+  revision: 9905e65fe9efbc1d6a7c75ddf2d051a469939c3b
+  specs:
+    textacular (4.0.0)
+      activerecord (>= 3.0, < 5.1)
+
+GIT
   remote: git://github.com/travis-ci/travis-config.git
   revision: bc457b6d36119d42edf3a72e2cc13cdc770a2843
   specs:
@@ -32,7 +39,6 @@ GIT
   revision: 0bd248089607583cc4dfe82cb4b84fd3fe1a84bd
   specs:
     travis-topaz (0.0.2)
-      
       faraday
       thread
 
@@ -299,6 +305,7 @@ DEPENDENCIES
   rspec-rails (~> 3.4)
   sass-rails (~> 5.0)
   sidekiq
+  textacular!
   travis-config!
   travis-migrations!
   travis-sso!
