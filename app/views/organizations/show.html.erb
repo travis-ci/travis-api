@@ -3,8 +3,14 @@
 <div id="tabs">
   <span id="organization" class="tab-switch"></span>
   <a href="#organization" class="tab-link">Organization</a>
-  <section   class="tab-content">
+  <section class="tab-content">
     <%= render partial: 'organization' %>
+  </section>
+
+  <span id="members" class="tab-switch"></span>
+  <a href="#members" class="tab-link">Members</a>
+  <section class="tab-content">
+    <%= render partial: 'members' %>
   </section>
 
   <span id="repositories" class="tab-switch"></span>
