@@ -1,6 +1,4 @@
 class Repository < ApplicationRecord
-  include Searchable
-
   has_many :jobs
   has_many :permissions
   has_many :users,      through: :permissions
@@ -12,10 +10,6 @@ class Repository < ApplicationRecord
 
   belongs_to :owner, polymorphic: true
   belongs_to :last_build, class_name: 'Build'
-
-  def as_indexed_json(options = nil)
-    self.as_json(only: [:name], methods: :slug)
-  end
 
   def permissions_sorted
     @permissions_sorted ||=

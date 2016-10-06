@@ -15,8 +15,6 @@ gem 'chart-js-rails'
 gem 'pg'
 gem 'redis', '~> 3.0'
 gem 'redis-namespace'
-gem 'elasticsearch-rails'
-gem 'elasticsearch-model'
 
 # API stuffs
 gem 'faraday', '~> 0.9.0'
@@ -69,8 +67,4 @@ end
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 3.3'
-end
-
-group :production do
-  gem 'bonsai-elasticsearch-rails'
 end
