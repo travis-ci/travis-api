@@ -137,6 +137,17 @@ dd
 .org-list, .user-list, .member-list
   list-style: none
 
+.log-list
+  list-style: none
+  li
+    padding: 0.5em
+    display: flex
+    flex-direction: row-reverse
+    justify-content: space-between
+    time
+      font-weight: $font-weight-bold
+      flex-shrink: 0
+
 .org-item, .user-item, .feature-item
   p
     flex: 1 1 30%

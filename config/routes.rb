@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   end
   get 'features/:kind/:feature' => 'features#show', as: :feature
 
+  resources :audit_trail, only: [:index]
+
   resources :jobs, only: [:show] do
     member do
       post 'cancel'

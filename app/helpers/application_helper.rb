@@ -15,6 +15,7 @@ module ApplicationHelper
     when ::Repository           then object.slug
     when ::Build, ::Job         then "#{object.repository.slug}##{object.number}"
     when ::Request              then "##{object.id}"
+    when ::NullRecipient        then "everybody"
     else object.inspect
     end
   end

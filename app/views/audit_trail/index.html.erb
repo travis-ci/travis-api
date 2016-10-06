@@ -1,0 +1,9 @@
+<h1 class="info-header">Event Logs</h1>
+
+<section class="info-block">
+  <ul class="log-list">
+    <% @logs.each do |log| %>
+      <li><%= raw(log) %></li>
+    <% end %>
+  </ul>
+</section>

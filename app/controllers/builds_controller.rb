@@ -15,6 +15,7 @@ class BuildsController < ApplicationController
 
     if response.success?
       message = "Build #{describe(@build)} successfully canceled."
+      Services::AuditTrail::CancelBuild.new(current_user, @build).call
     else
       message = "Error: #{response.headers[:status]}"
     end
@@ -45,12 +46,19 @@ class BuildsController < ApplicationController
 
     response = Services::Build::Restart.new(@build.id).call
 
+    if response.success?
+      message = "Build #{describe(@build)} successfully restarted."
+      Services::AuditTrail::RestartBuild.new(current_user, @build).call
+    else
+      message = "Error: #{response.headers[:status]}"
+    end
+
     respond_to do |format|
       format.html do
         if response.success?
-          flash[:notice] = "Build #{describe(@build)} successfully restarted."
+          flash[:notice] = message
         else
-          flash[:error] = "Error: #{response.headers[:status]}"
+          flash[:error] = message
         end
 
         redirect_to @build
@@ -58,11 +66,9 @@ class BuildsController < ApplicationController
 
       format.json do
         if response.success?
-          render json: {"success": true,
-            "message": "Build #{describe(@build)} successfully restarted."}
+          render json: {"success": true, "message": message}
         else
-          render json: {"success": false,
-            "message": "Error: #{response.headers[:status]}"}
+          render json: {"success": false, "message": message}
         end
       end
     end
