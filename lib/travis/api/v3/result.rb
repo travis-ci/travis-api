@@ -23,7 +23,8 @@ module Travis::API::V3
     def render(params, env)
       href    = self.href
       href    = V3.location(env) if href.nil? and env['REQUEST_METHOD'.freeze] == 'GET'.freeze
-      include = params['include'.freeze].to_s.split(?,.freeze)
+      include = (params ? params['include'.freeze] : nil)
+      include = include.to_s.split(?,.freeze)
       add_info Renderer[type].render(resource,
         href:           href,
         script_name:    env['SCRIPT_NAME'.freeze],
