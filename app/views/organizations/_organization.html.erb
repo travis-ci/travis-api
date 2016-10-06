@@ -16,19 +16,23 @@
 
     <dt class="info-label">GitHub ID</dt>
     <dd><%= @organization.github_id %></dd>
-
-    <dt class="info-label">Primary E-mail Address:</dt>
-    <dd>
-      <%= @organization.email %>
-      <%= mail_to @organization.email, fa_icon("envelope-o") %>
-    </dd>
-
-    <dt class="info-label">Homepage:</dt>
-    <dd><%= link_to @organization.homepage, @organization.homepage, target: "_blank" %></dd>
-
-    <dt class="info-label">Location:</dt>
-    <dd><%= @organization.location %></dd>
   </dl>
 </section>
 
 <%= render partial: 'shared/account', locals: {owner: @organization} %>
+
+<h2 class="info-header">Contact Information</h2>
+
+<dl class="simple-info">
+  <dt class="info-label">Primary E-mail Address:</dt>
+  <dd>
+    <%= @organization.email %>
+    <%= mail_to @organization.email, fa_icon("envelope-o") %>
+  </dd>
+
+  <dt class="info-label">Homepage:</dt>
+  <dd><%= link_to @organization.homepage, @organization.homepage, target: "_blank" %></dd>
+
+  <dt class="info-label">Location:</dt>
+  <dd><%= @organization.location %></dd>
+</dl>
