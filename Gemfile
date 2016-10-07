@@ -44,9 +44,6 @@ gem 'biggs'
 # Date validator
 gem 'date_validator'
 
-# Search
-gem 'textacular', github: 'textacular/textacular'
-
 group :console, :test do
   gem 'pry'
   # gem 'pry-byebug'
