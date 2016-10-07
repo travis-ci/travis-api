@@ -3,7 +3,11 @@ module Travis::Model::EnvHelpers
     vars = [vars] unless vars.is_a?(Array)
     vars.compact.map do |var|
       repository.key.secure.decrypt(var) do |decrypted|
-        Travis::Helpers.obfuscate_env_vars(decrypted)
+        if decrypted.include?('=')
+          "#{decrypted.to_s.split('=').first}=[secure]"
+        else
+          '[secure]'
+        end
       end
     end
   end
