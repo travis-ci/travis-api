@@ -11,6 +11,9 @@ class Repository < ApplicationRecord
   belongs_to :owner, polymorphic: true
   belongs_to :last_build, class_name: 'Build'
 
+  scope :by_slug,             -> (slug) { without_invalidated.where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC') }
+  scope :without_invalidated, -> { where(invalidated_at: nil) }
+
   def permissions_sorted
     @permissions_sorted ||=
     {
