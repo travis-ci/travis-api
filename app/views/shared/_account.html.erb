@@ -42,12 +42,12 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Last Build:</dt>
-    <dd>
-      <time>
+    <% if @last_build %>
+      <dt class="info-label">Last Build:</dt>
+      <dd>
         <%= link_to describe(@last_build), @last_build %>
-      </time>
-    </dd>
+      </dd>
+    <% end %>
 
     <dt class="info-label">Job Boost:</dt>
     <dd>
