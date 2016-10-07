@@ -215,11 +215,18 @@ dd
     background-color: lighten($cement-grey, 25)
     pointer-events: none
 
-.search-buttons > form
-  display: inline
-  margin-left: 5px
-  .button
-    padding: 0 10px
+.author, .committer
+  > p, div
+    margin: 0
+    padding: 0
+  a
+    border-bottom: none
+  div
+    form
+      display: inline
+      .button
+        padding: 0 10px
+        margin-left: 0.2em
 
 
 /* Flashes */

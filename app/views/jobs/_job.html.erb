@@ -49,13 +49,13 @@
     <dd><%= @job.commit.message %></dd>
 
     <dt class="info-label">Committer:</dt>
-    <dd class="inline-list">
+    <dd class="inline-list committer">
       <p>
         <%= @job.commit.committer_name %>
         <%= mail_to @job.commit.committer_email, fa_icon("envelope-o") %>
       </p>
 
-      <div class="search-buttons">
+      <div>
         <%= form_tag(search_path, method: :get) do %>
           <%= hidden_field_tag(:q, @job.commit.committer_email) %>
           <%= button_to options = nil, class: "button" do %>
@@ -73,13 +73,13 @@
     </dd>
 
     <dt class="info-label">Author:</dt>
-    <dd class="inline-list">
+    <dd class="inline-list author">
       <p>
         <%= @job.commit.author_name %>
         <%= mail_to @job.commit.author_email, fa_icon("envelope-o") %>
       </p>
 
-      <div class="search-buttons">
+      <div>
         <%= form_tag(search_path, method: :get) do %>
           <%= hidden_field_tag(:q, @job.commit.author_name) %>
           <%= button_to options = nil, class: "button" do %>
