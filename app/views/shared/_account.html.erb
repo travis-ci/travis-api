@@ -42,6 +42,13 @@
       <% end %>
     </dd>
 
+    <dt class="info-label">Last Build:</dt>
+    <dd>
+      <time>
+        <%= describe(@last_build) %>
+      </time>
+    </dd>
+
     <dt class="info-label">Job Boost:</dt>
     <dd>
       <%= form_for :boost, url: {action: 'boost', controller: "#{owner.class.table_name}"}, html: {class: 'job-boost'} do |f| %>

@@ -37,6 +37,8 @@ class UsersController < ApplicationController
     @pending_jobs = Job.from_repositories(@repositories).not_finished
     @finished_jobs = Job.from_repositories(@repositories).finished.take(10)
 
+    @last_build = @finished_jobs.first.build
+
     @active_broadcasts = Broadcast.active.for(@user)
     @inactive_broadcasts = Broadcast.inactive.for(@user)
 
