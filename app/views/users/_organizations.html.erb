@@ -1,4 +1,35 @@
 <section class="info-block">
   <h2 class="info-header">Organizations</h2>
-  <%= render partial: 'shared/organization_list', locals: {organizations: @user.organizations} %>
+
+  <% if organizations.empty? %>
+      <p>No organizations.</p>
+  <% else %>
+      <ul>
+        <li class="inline-list org-item">
+          <p class="info-label">Name</p>
+          <p class="info-label">Subscription</p>
+          <p class="info-label">Trial Builds</p>
+        </li>
+        <% organizations.each do |org| %>
+            <li class="inline-list org-item">
+              <p>
+                <% if org.avatar_url %>
+                    <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
+                <% end %>
+                <%= link_to org.name.present? ? describe(org) : org.login, org %>
+              </p>
+              <p>
+                <% if org.subscription %>
+                    <%= link_to format_subscription(org.subscription), org.subscription %>
+                <% else %>
+                    none
+                <% end %>
+              </p>
+              <p>
+                <%= check_trial_builds(org) %>
+              </p>
+            </li>
+        <% end %>
+      </ul>
+  <% end %>
 </section>
