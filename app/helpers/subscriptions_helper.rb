@@ -16,9 +16,4 @@ module SubscriptionsHelper
       "not active"
     end
   end
-
-  def invoice_url(invoice)
-    invoice_id = Digest::SHA1.hexdigest(invoice.stripe_id + invoice.invoice_id)
-    "#{Travis::Config.load.billing_endpoint}/invoices/#{invoice_id}.pdf"
-  end
 end
