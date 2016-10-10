@@ -18,6 +18,7 @@ module Travis
       include Travis::Logging
 
       def student?
+        p "log student response #{data.inspect}"
         data['student']
       end
 
@@ -29,6 +30,7 @@ module Travis
         Timeout::timeout(timeout) do
           remote = GH::Remote.new
           remote.setup('https://education.github.com/api', token: github_oauth_token)
+          p "remote #{remote}"
           response = remote.fetch_resource('/user')
           JSON.parse(response.body)
         end
