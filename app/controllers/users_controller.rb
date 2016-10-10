@@ -20,13 +20,13 @@ class UsersController < ApplicationController
       flash[:error] = "Owner limit must be greater than 0."
     end
 
-    redirect_to user_path(@user, anchor: 'account')
+    redirect_to @user
   end
 
   def features
     Services::Features::Update.new(@user, current_user).call(feature_params)
     flash[:notice] = "Updated feature flags for #{@user.login}."
-    redirect_to user_path(@user, anchor: "account")
+    redirect_to @user
   end
 
   def show
@@ -84,7 +84,7 @@ class UsersController < ApplicationController
   def update_trial_builds
     Services::TrialBuilds::Update.new(@user, current_user).call(params[:builds_remaining],params[:previous_builds])
     flash[:notice] = "Reset #{@user.login}'s trial to #{params[:builds_remaining]} builds."
-    redirect_to user_path(@user, anchor: "account")
+    redirect_to @user
   end
 
   private
