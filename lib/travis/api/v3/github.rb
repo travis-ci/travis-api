@@ -14,6 +14,10 @@ module Travis::API::V3
     }
     private_constant :DEFAULT_OPTIONS
 
+    HOOK_EVENTS = [:push, :pull_request, :issue_comment, :public, :member,
+      :create, :delete, :membership, :repository]
+    private_constant :HOOK_EVENTS
+
     def self.client_config
       {
         api_url: DEFAULT_OPTIONS[:api_url],
@@ -38,7 +42,7 @@ module Travis::API::V3
       hooks_url = "repos/#{repository.slug}/hooks"
       payload   = {
         name:   'travis'.freeze,
-        events: [:push, :pull_request, :issue_comment, :public, :member],
+        events: HOOK_EVENTS,
         active: flag,
         config: { domain: Travis.config.service_hook_url || '' }
       }
