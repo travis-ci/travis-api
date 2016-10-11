@@ -1,4 +1,8 @@
 module SubscriptionsHelper
+  def format_plan(plan)
+    plan.gsub(/-/, ' ').remove('travis ci ')
+  end
+
   def format_price(amount)
     number_to_currency(amount.to_f/100)
   end
@@ -11,9 +15,5 @@ module SubscriptionsHelper
     else
       "not active"
     end
-  end
-
-  def format_plan(plan)
-    plan.gsub(/-/, ' ').remove('travis ci ')
   end
 end
