@@ -9,19 +9,19 @@ class OrganizationsController < ApplicationController
     hours = 24 if hours.blank?
 
     if limit > 0
-      Services::JobBoost::Update.new(@user.login, current_user).call(hours, limit)
+      Services::JobBoost::Update.new(@organization.login, current_user).call(hours, limit)
       flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
     else
       flash[:error] = "Owner limit must be greater than 0."
     end
 
-    redirect_to user_path(@organization, anchor: 'account')
+    redirect_to @organization
   end
 
   def features
     Services::Features::Update.new(@organization, current_user).call(feature_params)
     flash[:notice] = "Updated feature flags for #{@organization.login}."
-    redirect_to organization_path(@organization, anchor: "account")
+    redirect_to @organization
   end
 
   def show
@@ -52,7 +52,7 @@ class OrganizationsController < ApplicationController
   def update_trial_builds
     Services::TrialBuilds::Update.new(@organization, current_user).call(params[:builds_remaining],params[:previous_builds])
     flash[:notice] = "Reset #{@organization.login}'s trial to #{params[:builds_remaining]} builds."
-    redirect_to organization_path(@organization, anchor: "account")
+    redirect_to @organization
   end
 
   private

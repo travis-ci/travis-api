@@ -5,7 +5,6 @@ RSpec.feature "Update Job Boost", :js => true, :type => :feature do
 
   scenario "Update job boost limit and time for a user" do
     visit "/users/#{user.id}"
-    click_on("Account")
 
     fill_in('boost_owner_limit', :with => '2')
     fill_in('boost_expires_after', :with => '12')
@@ -18,7 +17,6 @@ RSpec.feature "Update Job Boost", :js => true, :type => :feature do
 
   scenario "Update job boost limit for a user" do
     visit "/users/#{user.id}"
-    click_on("Account")
 
     fill_in('boost_owner_limit', :with => '2')
     find_button("update-job-boost").trigger('click')

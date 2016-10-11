@@ -22,7 +22,7 @@ RSpec.feature "Update Features", :js => true, :type => :feature do
 
     expect(page).to have_text("Updated feature flags for travis-pro/travis-admin.")
 
-    # rethink this (is not working without)
+    # Capybara needs this extra click
     click_on("Repository")
 
     expect(page.has_checked_field?("features_multi_os")).to be true

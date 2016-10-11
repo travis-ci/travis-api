@@ -20,7 +20,9 @@ RSpec.feature 'Cancel a Job', :js => true, :type => :feature do
   scenario 'User cancels a job via jobs tab in organization view' do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
-    visit "/organizations/#{organization.id}"
+    visit "/organizations/#{organization.id}#jobs"
+
+    # Capybara needs this extra click
     click_on("Jobs")
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/cancel").

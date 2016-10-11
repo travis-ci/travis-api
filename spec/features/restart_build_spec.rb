@@ -18,7 +18,6 @@ RSpec.feature 'Restart a Build', :js => true, :type => :feature do
 
   scenario 'User restarts a build via builds tab in repository view' do
     visit "/repositories/#{repository.id}#builds"
-    click_on("Builds")
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/build/#{build.id}/restart").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).

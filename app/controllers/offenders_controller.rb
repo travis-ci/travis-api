@@ -12,7 +12,7 @@ class OffendersController < ApplicationController
     Services::Abuse::Update.new(@offender.login, offender_params, current_user).call
 
     flash[:notice] = "Abuse settings for #{describe(@offender)} updated."
-    redirect_to controller: @offender.class.table_name, action: 'show', id: @offender, anchor: "account"
+    redirect_to @offender
   end
 
   private
