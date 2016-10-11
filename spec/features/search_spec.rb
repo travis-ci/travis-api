@@ -46,4 +46,13 @@ RSpec.feature 'Search', :js => true, :type => :feature do
 
     expect(page).to have_text('No results.')
   end
+
+  scenario "User searches for 'help' and gets the search help page" do
+    visit "/"
+
+    fill_in('q', :with => 'help')
+    find_button('search-submit').trigger('click')
+
+    expect(page).to have_text('Search Help')
+  end
 end
