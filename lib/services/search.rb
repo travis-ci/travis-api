@@ -30,10 +30,10 @@ module Services
     private
 
     def results
-      results = [explicit_result].flatten.compact
-      results = [users, orgs, repos, builds, jobs].flatten.compact if results.empty?
-      results = ::User.where("lower(name) = ?", q.downcase) if results.empty?
-      results.compact
+      results = [explicit_result]
+      results = [users, orgs, repos, builds, jobs] if results.all?(&:blank?)
+      results = [::User.where("lower(name) = ?", q.downcase), ::Organization.where("lower(name) = ?", q.downcase)] if results.all?(&:blank?)
+      results.flatten.compact
     end
 
     def find(klass, field, value = q)

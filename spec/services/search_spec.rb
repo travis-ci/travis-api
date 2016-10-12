@@ -4,9 +4,10 @@ RSpec.describe Services::Search do
   let!(:user)          { create(:user, id: 162, login: 'lisbethmarianne', name: 'Katrin', email: 'katrin@example.com') }
   let!(:user2)         { create(:user, id: 12, github_id: 12324) }
   let!(:email)         { create(:email, user_id: 162, email: 'lisbethmarianne@example.com') }
-  let!(:organization)  { create(:organization, id: 46, login: 'rubymonstas', homepage: 'http://rubymonstas.org/') }
-  let!(:organization2) { create(:organization, id: 16, github_id: 9267) }
+  let!(:organization)  { create(:organization, id: 46, login: 'rubymonstas', name: 'Ruby Monstas', homepage: 'http://rubymonstas.org/') }
+  let!(:organization2) { create(:organization, id: 16, github_id: 9267, login: 'travis-ci') }
   let!(:repository)    { create(:repository, id: 416, owner_name: organization.login, name: 'diversitytickets') }
+  let!(:repository2)   { create(:repository, id: 361, owner_name: organization.login, name: 'travis-ci') }
   let!(:request)       { create(:request, id: 4567) }
   let!(:build)         { create(:build, id: 6397, repository: repository, number: 567) }
   let!(:job)           { create(:job, id: 35465, repository: repository, number: 567.1) }
@@ -90,14 +91,36 @@ RSpec.describe Services::Search do
 
       expect(results).to eq([organization])
     end
+
+    it "finds organization with login='travis-ci' as well as repo with name='travis-ci' for 'travis-ci'" do
+      query = 'travis-ci'
+      results = Services::Search.new(query).call
+
+      expect(results).to include organization2
+      expect(results).to include repository2
+    end
   end
 
-  context "search for user name" do
+  context "search for name" do
     it "finds user with name='Katrin' for 'Katrin'" do
       query = 'Katrin'
       results = Services::Search.new(query).call
 
       expect(results).to eq([user])
+    end
+
+    it "finds organization with name='Ruby Monstas' for 'Ruby Monstas'" do
+      query = 'Ruby Monstas'
+      results = Services::Search.new(query).call
+
+      expect(results).to eq([organization])
+    end
+
+    it "finds repository with name='diversitytickets' for 'diversitytickets'" do
+      query = 'diversitytickets'
+      results = Services::Search.new(query).call
+
+      expect(results).to eq([repository])
     end
   end
 
@@ -123,15 +146,6 @@ RSpec.describe Services::Search do
       results = Services::Search.new(query).call
 
       expect(results).to eq([organization])
-    end
-  end
-
-  context "search for repository name" do
-    it "finds repository with name='diversitytickets' for 'diversitytickets'" do
-      query = 'diversitytickets'
-      results = Services::Search.new(query).call
-
-      expect(results).to eq([repository])
     end
   end
 
