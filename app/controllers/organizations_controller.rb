@@ -27,7 +27,7 @@ class OrganizationsController < ApplicationController
   def show
     return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
 
-    @repositories = @organization.repositories.includes(:last_build).order(:name)
+    @repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :name)
 
     @users = @organization.users.includes(:subscription).order(:name)
 
