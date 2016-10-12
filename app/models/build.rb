@@ -17,8 +17,4 @@ class Build < ApplicationRecord
   def not_finished?
     %w[started received queued created].include? state
   end
-
-  def slug
-    @slug ||= "#{repository.slug}##{number}"
-  end
 end

@@ -24,8 +24,4 @@ class Job < ApplicationRecord
   def not_finished?
     %w[started received queued created].include? state
   end
-
-  def slug
-    @slug ||= repository ? "#{repository.slug}##{number}" : "##{number}"
-  end
 end
