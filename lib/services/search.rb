@@ -37,12 +37,12 @@ module Services
     end
 
     def find(klass, field, value = q)
-      klass.find_by(field => value)
+      "::#{klass}".constantize.find_by(field => value)
     end
 
     def explicit_result
       case q
-      when EX_BY_ID then find($1.capitalize.constantize, :id, $2)
+      when EX_BY_ID then find($1.capitalize, :id, $2)
       when EX_REPO  then ::Repository.find_by(id: $2)
       when EX_USER  then ::User.find_by(id: $1) || ::User.where(github_id: $1)
       when EX_ORG   then ::Organization.find_by(id: $1) || ::Organization.where(github_id: $1)

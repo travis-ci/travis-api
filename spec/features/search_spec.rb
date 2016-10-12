@@ -9,9 +9,9 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   let!(:build)        { create(:build, commit: commit, config: {}) }
   let!(:job)          { create(:job, commit: commit, config: {}) }
 
-  scenario "User searches for user login 'lisbethmarianne' and gets redirected to the user view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
+  before(:each) { allow(Travis::DataStores.topaz).to receive(:builds_provided_for) }
 
+  scenario "User searches for user login 'lisbethmarianne' and gets redirected to the user view" do
     visit "/"
     fill_in('q', :with => 'lisbethmarianne')
     find_button('search-submit').trigger('click')
@@ -20,8 +20,6 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   end
 
   scenario "User searches for organization login 'rubymonstas' and gets redirected to the organization view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/"
     fill_in('q', :with => 'rubymonstas')
     find_button('search-submit').trigger('click')
@@ -56,8 +54,6 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   end
 
   scenario "User searches for Committer Name via button on Build view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/builds/#{build.id}"
     find_button('search-committer_name').trigger('click')
 
@@ -65,8 +61,6 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   end
 
   scenario "User searches for Committer Email via button on Build view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/builds/#{build.id}"
     find_button('search-committer_email').trigger('click')
 
@@ -74,8 +68,6 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   end
 
   scenario "User searches for Author Name via button on Build view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/builds/#{build.id}"
     find_button('search-author_name').trigger('click')
 
@@ -83,8 +75,6 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   end
 
   scenario "User searches for Author Email via button on Build view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/builds/#{build.id}"
     find_button('search-author_email').trigger('click')
 
@@ -92,8 +82,6 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   end
 
   scenario "User searches for Committer Name via button on Job view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/jobs/#{job.id}"
     find_button('search-committer_name').trigger('click')
 
@@ -101,8 +89,6 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   end
 
   scenario "User searches for Committer Email via button on Job view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/jobs/#{job.id}"
     find_button('search-committer_email').trigger('click')
 
@@ -110,8 +96,6 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   end
 
   scenario "User searches for Author Name via button on Job view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/jobs/#{job.id}"
     find_button('search-author_name').trigger('click')
 
@@ -119,8 +103,6 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   end
 
   scenario "User searches for Author Email via button on Job view" do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/jobs/#{job.id}"
     find_button('search-author_email').trigger('click')
 
