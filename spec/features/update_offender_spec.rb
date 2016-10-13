@@ -8,7 +8,6 @@ RSpec.feature "Update Offender", :js => true, :type => :feature do
 
     visit "/users/#{user.id}"
 
-
     find("#offender_offenders").trigger('click')
     find_button("update-abuse-status").trigger('click')
 

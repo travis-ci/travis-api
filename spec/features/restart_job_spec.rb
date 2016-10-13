@@ -8,6 +8,7 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
 
   scenario 'User restarts a job' do
     visit "/jobs/#{job.id}"
+    click('Job')
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
@@ -23,8 +24,7 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
 
     visit "/organizations/#{organization.id}#jobs"
 
-    # Capybara needs this extra click
-    click_on("Jobs")
+    click_on('Jobs')
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
