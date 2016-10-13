@@ -8,7 +8,6 @@ RSpec.feature 'Cancel a Job', :js => true, :type => :feature do
 
   scenario 'User cancels a job' do
     visit "/jobs/#{job.id}"
-    click('Job')
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/cancel").
       with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
