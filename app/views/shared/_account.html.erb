@@ -36,7 +36,7 @@
     <dt class="info-label">Subscription:</dt>
     <dd>
       <% if owner.subscription %>
-        <%= link_to format_subscription(owner.subscription), owner.subscription %>
+        <a href='#subscription'><%=format_subscription(owner.subscription) %></a>
       <% else %>
         None.
       <% end %>
