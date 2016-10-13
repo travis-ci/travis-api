@@ -34,7 +34,7 @@ class OrganizationsController < ApplicationController
     @pending_jobs = Job.from_repositories(@repositories).not_finished
     @finished_jobs = Job.from_repositories(@repositories).finished.take(10)
 
-    @last_build = @finished_jobs.first.build
+    @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
 
     subscription = Subscription.find_by(owner_id: params[:id])
     @subscription = present(subscription) unless subscription.nil?
