@@ -63,6 +63,10 @@ RSpec.describe Services::Search do
       expect(search('rubymonstas')).to eq([organization])
     end
 
+    it "finds organization with login='rubymonstas' for 'Rubymonstas'" do
+      expect(search('Rubymonstas')).to eq([organization])
+    end
+
     it "finds organization with login='travis-ci' as well as repo with name='travis-ci' for 'travis-ci'" do
       expect(search('travis-ci')).to include organization2
       expect(search('travis-ci')).to include repository2
@@ -76,6 +80,10 @@ RSpec.describe Services::Search do
 
     it "finds organization with name='Ruby Monstas' for 'Ruby Monstas'" do
       expect(search('Ruby Monstas')).to eq([organization])
+    end
+
+    it "finds organization with name='Ruby Monstas' for 'ruby monstas'" do
+      expect(search('ruby monstas')).to eq([organization])
     end
 
     it "finds repository with name='diversitytickets' for 'diversitytickets'" do
@@ -122,6 +130,10 @@ RSpec.describe Services::Search do
       expect(search('https://github.com/lisbethmarianne')).to eq([user])
     end
 
+    it "finds user with login='lisbethmarianne' for 'https://github.com/LisbethMarianne'" do
+      expect(search('https://github.com/LisbethMarianne')).to eq([user])
+    end
+
     it "finds organization with login='rubymonstas' for 'https://github.com/rubymonstas'" do
       expect(search('https://github.com/rubymonstas')).to eq([organization])
     end
@@ -134,6 +146,10 @@ RSpec.describe Services::Search do
   context "search with travis-ci url" do
     it "finds user with login='lisbethmarianne' for 'https://travis-ci.com/profile/lisbethmarianne'" do
       expect(search('https://travis-ci.com/profile/lisbethmarianne')).to eq([user])
+    end
+
+    it "finds user with login='lisbethmarianne' for 'https://travis-ci.com/profile/LisbethMarianne'" do
+      expect(search('https://travis-ci.com/profile/LisbethMarianne')).to eq([user])
     end
 
     it "finds organization with login='rubymonstas' for 'https://travis-ci.com/profile/rubymonstas'" do
