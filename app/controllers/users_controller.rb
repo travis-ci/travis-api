@@ -43,6 +43,10 @@ class UsersController < ApplicationController
     subscription = Subscription.find_by(owner_id: params[:id])
     @subscription = present(subscription) unless subscription.nil?
 
+    # @requests = Request.from_owner('User', params[:id])
+    # It's not that simple, as this only gets the requests from a user
+    # Not the ones that a user made from an organization as well.
+
     @active_broadcasts = Broadcast.active.for(@user)
     @inactive_broadcasts = Broadcast.inactive.for(@user)
 

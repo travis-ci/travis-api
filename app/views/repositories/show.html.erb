@@ -22,7 +22,7 @@
   <span id="requests" class="tab-switch"></span>
   <a href="#requests" class="tab-link">Requests</a>
   <section class="tab-content">
-    <%= render partial: 'requests' %>
+    <%= render partial: 'shared/requests', locals: {origin: @repository } %>
   </section>
 
   <span id="broadcasts" class="tab-switch"></span>

@@ -40,6 +40,8 @@ class OrganizationsController < ApplicationController
     subscription = Subscription.find_by(owner_id: params[:id])
     @subscription = present(subscription) unless subscription.nil?
 
+    @requests = Request.from_owner('Organization', params[:id])
+
     @active_broadcasts = Broadcast.active.for(@organization)
     @inactive_broadcasts = Broadcast.inactive.for(@organization)
 

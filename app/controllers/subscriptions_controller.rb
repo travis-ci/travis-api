@@ -1,6 +1,6 @@
 class SubscriptionsController < ApplicationController
   include Presenters
-  
+
   before_action :get_subscription
 
   def show
