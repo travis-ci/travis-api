@@ -7,6 +7,14 @@
     <%= render partial: 'user' %>
   </section>
 
+  <% if @subscription %>
+    <span id="subscription" class="tab-switch"></span>
+    <a href="#subscription" class="tab-link">Subscription</a>
+    <section class="tab-content">
+      <%= render partial: 'subscriptions/subscription' %>
+    </section>
+  <% end %>
+
   <span id="organizations" class="tab-switch"></span>
   <a href="#organizations" class="tab-link">Organizations</a>
   <section class="tab-content">

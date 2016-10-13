@@ -39,6 +39,9 @@ class UsersController < ApplicationController
 
     @last_build = @finished_jobs.first.build
 
+    subscription = Subscription.find_by(owner_id: params[:id])
+    @subscription = present(subscription) unless subscription.nil?
+
     @active_broadcasts = Broadcast.active.for(@user)
     @inactive_broadcasts = Broadcast.inactive.for(@user)
 
