@@ -1,5 +1,6 @@
 class OrganizationsController < ApplicationController
   include BuildCounters
+  include Presenters
 
   before_action :get_organization
 

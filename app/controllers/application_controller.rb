@@ -7,8 +7,4 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   helper_method :current_user
-
-  def present(model)
-    "#{model.class}Presenter".constantize.new(model, self)
-  end
 end

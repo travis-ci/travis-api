@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   include BuildCounters
+  include Presenters
   include ApplicationHelper
 
   before_action :get_user, except: [:admins, :sync_all]
