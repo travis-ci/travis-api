@@ -45,7 +45,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "unstar"           => false,
           "create_request"   => false,
           "create_cron"      => false,
-          "change_settings"  => false
+          "change_settings"  => false,
+          "change_env_vars"  => false
         },
         "id"                 => repo.id,
         "name"               => "minimal",
@@ -124,7 +125,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "unstar"        => false,
           "create_request"=> false,
           "create_cron"   => false,
-          "change_settings" => false
+          "change_settings" => false,
+          "change_env_vars" => false
         },
         "id"              => 1,
         "name"            => "minimal",
@@ -155,7 +157,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "unstar"        => false,
           "create_request"=> false,
           "create_cron"   => false,
-          "change_settings" => false
+          "change_settings" => false,
+          "change_env_vars" => false
         },
         "id"              => repo2.id,
         "name"            => "maximal",

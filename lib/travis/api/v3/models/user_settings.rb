@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Models::UserSettings < Models::JsonSlice
-    pair Models::UserSetting
+    child Models::UserSetting
 
     attribute :builds_only_with_travis_yml, Boolean, default: false
     attribute :build_pushes, Boolean, default: true

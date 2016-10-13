@@ -36,7 +36,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => false,
         "create_request"   => false,
         "create_cron"      => false,
-        "change_settings"  => false
+        "change_settings"  => false,
+        "change_env_vars"  => false
       },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
@@ -116,7 +117,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => false,
         "create_request"   => false,
         "create_cron"      => false,
-        "change_settings"  => false
+        "change_settings"  => false,
+        "change_env_vars"  => false
       },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
@@ -181,7 +183,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => true,
         "create_request"   => true,
         "create_cron"      => false,
-        "change_settings"  => true
+        "change_settings"  => true,
+        "change_env_vars"  => true
       },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
@@ -252,7 +255,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => true,
         "create_request"   => true,
         "create_cron"      => false,
-        "change_settings"  => true
+        "change_settings"  => true,
+        "change_env_vars"  => true
       },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",

@@ -89,6 +89,14 @@ module Travis::API::V3
       Result.new(access_control, *args)
     end
 
+    def head(*args)
+      Result::Head.new(access_control, *args)
+    end
+
+    def deleted
+      head result_type, nil, status: 204
+    end
+
     def run
       not_found unless result = run!
       result = result(result_type, result) unless result.is_a? Result

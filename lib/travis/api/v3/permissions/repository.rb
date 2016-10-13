@@ -29,5 +29,9 @@ module Travis::API::V3
     def change_settings?
       write?
     end
+
+    def change_env_vars?
+      write?
+    end
   end
 end

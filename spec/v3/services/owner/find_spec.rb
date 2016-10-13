@@ -66,7 +66,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "unstar"          => false,
             "create_request"  => false,
             "create_cron"     => false,
-            "change_settings" => false
+            "change_settings" => false,
+            "change_env_vars" => false
           },
           "id"                => repo.id,
           "name"              => "example-repo",
@@ -116,7 +117,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "unstar"        => false,
             "create_request"=> false,
             "create_cron"   => false,
-            "change_settings" => false
+            "change_settings" => false,
+            "change_env_vars" => false
           },
           "id"              => repo.id,
           "name"            => "example-repo",
