@@ -10,7 +10,7 @@ RSpec.describe Services::Search do
   let!(:repository2)   { create(:repository, id: 361, owner: organization, owner_name: organization.login, name: 'travis-ci') }
   let!(:request)       { create(:request, id: 4567) }
   let!(:build)         { create(:build, id: 6397, owner: organization, repository: repository, number: 567) }
-  let!(:job)           { create(:job, id: 35465, owner: organization, repository: repository, number: 567.1) }
+  let!(:job)           { create(:job, id: 35465, owner: organization, repository: repository, build: build, number: 567.1) }
 
   let(:search) { Services::Search.new(query).call }
 
