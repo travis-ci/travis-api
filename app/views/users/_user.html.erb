@@ -7,7 +7,13 @@
 
   <dl class="simple-info">
     <dt class="info-label">Name:</dt>
-    <dd><%= @user.name %></dd>
+    <dd>
+      <%= @user.name %>
+      <%= form_tag("#{Travis::Config.load.become_endpoint}/#{@user.login}", class: 'become-button') do %>
+        <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
+        <%= submit_tag("Log in as", class: "button") %>
+      <% end %>
+    </dd>
 
     <dt class="info-label">GitHub Login:</dt>
     <dd>
