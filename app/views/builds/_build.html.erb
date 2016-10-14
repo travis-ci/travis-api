@@ -22,7 +22,12 @@
     <dd><%= link_to describe(@build.request), @build.request %></dd>
 
     <dt class="info-label">Owner:</dt>
-    <dd><%= link_to describe(@build.owner), @build.owner %></dd>
+    <dd>
+      <% if @build.owner.avatar_url %>
+        <%= image_tag(@build.owner.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
+      <% end %>
+      <%= link_to describe(@build.owner), @build.owner %>
+    </dd>
 
     <dt class="info-label">Event Type:</dt>
     <dd><%= @build.event_type %></dd>

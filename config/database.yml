@@ -13,9 +13,9 @@ defaults: &defaults
 
 development:
   <<: *defaults
-  database: travis_pro_development
+  database: travis_development
   url: <%= ENV['STAGING_DATABASE_URL'] %>
 
 test:
   <<: *defaults
-  database: travis_pro_test
+  database: travis_test

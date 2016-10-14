@@ -197,6 +197,10 @@ dd
   display: inline
   margin-left: 300px
 
+.sync-button, .disable-button, .enable-button
+  display: inline
+  margin-left: 10px
+
 
 /* Button styles */
 
@@ -307,3 +311,16 @@ form.broadcast-form
 
 .fa-github, .fa-envelope-o
   margin-left: 0.3em
+
+
+/* 2 Columns Layout */
+
+.two-columns
+  column-count: 2
+  section
+    break-inside: avoid
+    h2
+      margin-top: 0
+      padding-top: 2.5em
+  .break
+    column-span: all

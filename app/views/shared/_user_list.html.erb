@@ -14,7 +14,11 @@
     </li>
     <% users.each do |user| %>
       <li class="inline-list user-item">
-        <p><%= link_to describe(user), user %></p>
+        <p>
+          <% if user.avatar_url %>
+            <%= image_tag(user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
+          <% end %>
+          <%= link_to describe(user), user %></p>
         <p>
           <% if user.subscription %>
             <%= link_to format_subscription(user.subscription), user.subscription %>
