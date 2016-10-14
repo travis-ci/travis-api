@@ -193,18 +193,11 @@ dd
 .invoice-item > *
   flex: 1 1 33%
 
-.reset-button, .sync-button, .disable-button, .enable-button
-  display: inline
-  margin-left: 300px
-
-.sync-button, .disable-button, .enable-button, .become-button
-  display: inline
-  margin-left: 10px
-
 
 /* Button styles */
 
 .button
+  height: 28px
   border-width: 0
   padding: 5px 10px
   border-radius: 4px
@@ -219,10 +212,7 @@ dd
     background-color: lighten($cement-grey, 25)
     pointer-events: none
 
-.author, .committer
-  > p, div
-    margin: 0
-    padding: 0
+.author, .committer, .become
   a
     border-bottom: none
   div
@@ -305,6 +295,7 @@ form.broadcast-form
 .job-boost, .trial-builds
   input[type="text"]
     width: 60px
+    margin-left: 5px
 
 
 /* Icons */
@@ -317,6 +308,7 @@ form.broadcast-form
 
 .two-columns
   column-count: 2
+  column-gap: 60px
   section
     break-inside: avoid
     h2
@@ -324,3 +316,13 @@ form.broadcast-form
       padding-top: 2.5em
   .break
     column-span: all
+
+.inline
+  display: flex
+  flex-flow: row nowrap
+  justify-content: space-between
+  > *
+    flex: 0 1 auto
+    margin: 0
+    &:last-child
+      text-align: right

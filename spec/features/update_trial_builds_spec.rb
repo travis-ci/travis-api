@@ -15,7 +15,7 @@ RSpec.feature "Update trial builds", :js => true, :type => :feature do
     # otherwise save_and_open_screenshot will give an empty page that only has the tabs on the top
     click_on("User")
 
-    expect(page).to have_text("Builds Provided:20")
+    expect(page).to have_text("Builds Provided: 20")
     expect(page).to have_selector("input#builds_remaining[value='10']")
 
     fill_in "builds_remaining", with: "60"
@@ -26,7 +26,7 @@ RSpec.feature "Update trial builds", :js => true, :type => :feature do
     # Capybara needs this extra click
     click_on("User")
 
-    expect(page).to have_text("Builds Provided:80")
+    expect(page).to have_text("Builds Provided: 80")
     expect(page).to have_selector("input#builds_remaining[value='60']")
   end
 end

@@ -16,18 +16,18 @@
     <dt class="info-label">Trial: </dt>
     <dd>
       <% if @builds_remaining %>
-        <dl>
-          <dt>Builds Provided:</dt>
-          <dd><%= @builds_provided %></dd>
-          <dt>Builds Remaining:</dt>
-          <dd>
-            <%= form_tag({action: 'update_trial_builds', controller: "#{owner.class.table_name}", method: 'post'}, {class: 'trial-builds'}) do %>
-              <%= text_field_tag 'builds_remaining', @builds_remaining %>
-              <%= hidden_field_tag 'previous_builds', @builds_remaining %>
-              <%= submit_tag 'Update', class: 'button', id: 'update-trial-builds' %>
-            <% end %>
-          </dd>
-        </dl>
+        <div>
+          Builds Provided:
+          <%= @builds_provided %>
+        </div>
+        <%= form_tag({action: 'update_trial_builds', controller: "#{owner.class.table_name}", method: 'post'}, {class: 'trial-builds inline'}) do %>
+          <div>
+            <%= label_tag 'Builds Remaining:' %>
+            <%= text_field_tag 'builds_remaining', @builds_remaining %>
+            <%= hidden_field_tag 'previous_builds', @builds_remaining %>
+          </div>
+          <%= submit_tag 'Update', class: 'button', id: 'update-trial-builds' %>
+        <% end %>
       <% else %>
         Not currently activated.
       <% end %>
@@ -44,11 +44,13 @@
 
     <dt class="info-label">Job Boost:</dt>
     <dd>
-      <%= form_for :boost, url: {action: 'boost', controller: "#{owner.class.table_name}"}, html: {class: 'job-boost'} do |f| %>
-        <%= f.label :owner_limit, "Limit" %>
-        <%= f.text_field :owner_limit, value: @existing_boost_limit %>
-        <%= f.label :expires_after, "Expires in (hours)" %>
-        <%= f.text_field :expires_after, value: @normalized_boost_time %>
+      <%= form_for :boost, url: {action: 'boost', controller: "#{owner.class.table_name}"}, html: {class: 'job-boost inline'} do |f| %>
+        <div>
+          <%= f.label :owner_limit, "Limit" %>
+          <%= f.text_field :owner_limit, value: @existing_boost_limit %>
+          <%= f.label :expires_after, "Expires in (hours)" %>
+          <%= f.text_field :expires_after, value: @normalized_boost_time %>
+        </div>
         <%= f.submit 'Update', class: 'button', id: 'update-job-boost' %>
       <% end %>
     </dd>
@@ -64,11 +66,13 @@
 
 <section class="info-block">
   <h2 class="info-header">Abuse Flags</h2>
-  <%= form_for :offender, url: {controller: "offenders", action: "update", login: owner.login}, html: {class: "abuse-form"}, method: :put do |f| %>
-    <% Offender::LISTS.each do |key, description| %>
-      <%= f.check_box key, checked: Travis::DataStores.redis.sismember("abuse:#{key}", owner.login) %>
-      <%= f.label description %>
-    <% end %>
+  <%= form_for :offender, url: {controller: "offenders", action: "update", login: owner.login}, html: {class: "abuse-form inline"}, method: :put do |f| %>
+    <div>
+      <% Offender::LISTS.each do |key, description| %>
+        <%= f.check_box key, checked: Travis::DataStores.redis.sismember("abuse:#{key}", owner.login) %>
+        <%= f.label description %>
+      <% end %>
+    </div>
     <%= f.submit('Update', class: 'button', id: 'update-abuse-status') %>
   <% end %>
 </section>

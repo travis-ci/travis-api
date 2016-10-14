@@ -1,11 +1,13 @@
 <% if @features.any? %>
-  <%= form_for :features, url: {action: 'features', controller: "#{owner.class.table_name}"} do |f| %>
+  <%= form_for :features, url: {action: 'features', controller: "#{owner.class.table_name}"}, html: {class: "inline-list"} do |f| %>
+    <div>
     <% @features.each do |feature, flag| %>
       <p>
         <%= f.check_box feature, checked: flag %>
         <%= f.label format_feature(feature) %>
       </p>
     <% end %>
+    </div>
     <%= f.submit('Update', class: 'button', id: 'update-features') %>
   <% end %>
 <% else %>

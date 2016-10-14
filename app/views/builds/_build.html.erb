@@ -3,12 +3,12 @@
 
   <dl class="simple-info">
     <dt class="info-label">State:</dt>
-    <dd>
-      <%= @build.state %>
+    <dd class="inline">
+      <p><%= @build.state %></p>
       <% if @build.not_finished? %>
-          <%= button_to "Cancel", cancel_build_path(@build), form_class: "reset-button", class: "button" %>
+        <%= button_to "Cancel", cancel_build_path(@build), form_class: "reset-button", class: "button" %>
       <% else %>
-          <%= button_to "Restart", restart_build_path(@build), form_class: "reset-button", class: "button" %>
+        <%= button_to "Restart", restart_build_path(@build), form_class: "reset-button", class: "button" %>
       <% end %>
     </dd>
 
@@ -54,7 +54,7 @@
     <dd><%= @build.commit.message %></dd>
 
     <dt class="info-label">Committer:</dt>
-    <dd class="inline-list committer">
+    <dd class="inline committer">
       <p>
         <%= @build.commit.committer_name %>
         <%= mail_to @build.commit.committer_email, fa_icon("envelope-o") %>
@@ -78,7 +78,7 @@
     </dd>
 
     <dt class="info-label">Author:</dt>
-    <dd class="inline-list author">
+    <dd class="inline author">
       <p>
         <%= @build.commit.author_name %>
         <%= mail_to @build.commit.author_email, fa_icon("envelope-o") %>
