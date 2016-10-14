@@ -11,6 +11,9 @@
 
     <dt class="info-label">GitHub Login:</dt>
     <dd>
+      <% if @user.avatar_url %>
+        <%= image_tag(@user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
+      <% end %>
       <%= @user.login %>
       <%= link_to fa_icon("github"), "https://github.com/#{@user.login}", target: "_blank" %>
     </dd>
@@ -46,7 +49,8 @@
 
 <section class="info-block">
   <h2 class="info-header">Contact Information</h2>
-  <dt class="info-label">Primary E-mail Address:</dt>
+  <dl class="simple-info">
+    <dt class="info-label">Primary E-mail Address:</dt>
     <dd>
       <%= @user.email %>
       <%= mail_to @user.email, fa_icon("envelope-o") %>
@@ -63,4 +67,5 @@
         <% end %>
       <% end %>
     </dd>
+  </dl>
 </section>

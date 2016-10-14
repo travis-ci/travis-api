@@ -9,8 +9,8 @@
       <% @members.each do |member| %>
         <li>
           <p>
-            <% if member.respond_to?(:avatar_url) && member.avatar_url %>
-              <%= image_tag(member.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
+            <% if member.avatar_url %>
+              <%= image_tag(member.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
             <% end %>
             <%= link_to describe(member), member %>
           </p>

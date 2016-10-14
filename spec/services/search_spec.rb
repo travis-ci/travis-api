@@ -3,14 +3,14 @@ require 'rails_helper'
 RSpec.describe Services::Search do
   let!(:user)          { create(:user, id: 162, login: 'lisbethmarianne', name: 'Katrin', email: 'katrin@example.com') }
   let!(:user2)         { create(:user, id: 12, github_id: 12324) }
-  let!(:email)         { create(:email, user_id: 162, email: 'lisbethmarianne@example.com') }
+  let!(:email)         { create(:email, user: user, email: 'lisbethmarianne@example.com') }
   let!(:organization)  { create(:organization, id: 46, login: 'rubymonstas', name: 'Ruby Monstas', homepage: 'http://rubymonstas.org/') }
   let!(:organization2) { create(:organization, id: 16, github_id: 9267, login: 'travis-ci') }
-  let!(:repository)    { create(:repository, id: 416, owner_name: organization.login, name: 'diversitytickets') }
-  let!(:repository2)   { create(:repository, id: 361, owner_name: organization.login, name: 'travis-ci') }
+  let!(:repository)    { create(:repository, owner: organization, id: 416, owner_name: organization.login, name: 'diversitytickets') }
+  let!(:repository2)   { create(:repository, id: 361, owner: organization, owner_name: organization.login, name: 'travis-ci') }
   let!(:request)       { create(:request, id: 4567) }
-  let!(:build)         { create(:build, id: 6397, repository: repository, number: 567) }
-  let!(:job)           { create(:job, id: 35465, repository: repository, number: 567.1) }
+  let!(:build)         { create(:build, id: 6397, owner: organization, repository: repository, number: 567) }
+  let!(:job)           { create(:job, id: 35465, owner: organization, repository: repository, number: 567.1) }
 
   let(:search) { Services::Search.new(query).call }
 
