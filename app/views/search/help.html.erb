@@ -1,0 +1,75 @@
+<% title "Search Help" %>
+
+<section class="info-block">
+  <h2 class="info-header"><%= current_user ? "Welcome #{current_user.name || current_user.login}!" : "Welcome!" %></h2>
+  <p>Enter whatever you're searching for in the search field above.</p>
+  <p>Currently supported values include:</p>
+
+  <ul>
+    <li class="inline-list search-info">
+      <p class="info-label">Field</p>
+      <p class="info-label">Type</p>
+      <p class="info-label">Example</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Type & ID</p>
+      <p>User, Organization, Repository, Build, Job, Request</p>
+      <p>user 124, organization 46, repo 25, repository 25, build 566, job 456, request 2354</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Github ID</p>
+      <p>User, Organization</p>
+      <p>user 124, organization 46</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Login</p>
+      <p>User, Organization</p>
+      <p>travis-ci</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Email</p>
+      <p>User</p>
+      <p>travis@example.com</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Homepage</p>
+      <p>Organization</p>
+      <p>https://example.com</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Name</p>
+      <p>User, Organization, Repository</p>
+      <p>Travis CI</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Slug</p>
+      <p>Repository</p>
+      <p>travis-ci/emerald</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Slug & Number</p>
+      <p>Build, Job</p>
+      <p>travis-ci/emerald#123, travis-ci/emerald#123.3</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Github Urls</p>
+      <p>User, Organization, Repository</p>
+      <p>https://github.com/travis-ci</p>
+    </li>
+
+    <li class="inline-list search-info">
+      <p>Travis CI Urls</p>
+      <p>User, Organization, Repository, Build, Job</p>
+      <p>https://travis-ci.com/travis-ci/emerald/builds/6397</p>
+    </li>
+  </ul>
+</section>

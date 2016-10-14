@@ -61,4 +61,7 @@ Rails.application.routes.draw do
   end
 
   get 'admins' => 'users#admins', as: :admins
+
+  get 'search', to: 'search#search'
+  get 'help',   to: 'search#help'
 end

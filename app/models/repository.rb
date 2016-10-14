@@ -11,9 +11,8 @@ class Repository < ApplicationRecord
   belongs_to :owner, polymorphic: true
   belongs_to :last_build, class_name: 'Build'
 
-  def slug
-    @slug ||= "#{owner_name}/#{name}"
-  end
+  scope :by_slug,             -> (slug) { without_invalidated.where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC') }
+  scope :without_invalidated, -> { where(invalidated_at: nil) }
 
   def permissions_sorted
     @permissions_sorted ||=
@@ -22,5 +21,9 @@ class Repository < ApplicationRecord
       push: permissions.push_access.includes(user: :subscription).map(&:user),
       pull: permissions.pull_access.includes(user: :subscription).map(&:user)
     }
+  end
+
+  def slug
+    @slug ||= "#{owner_name}/#{name}"
   end
 end

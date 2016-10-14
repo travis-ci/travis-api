@@ -1,0 +1,15 @@
+<% title "Search Results" %>
+
+<% if @results.present? %>
+  <ul>
+    <li class="inline-list search-results"></li>
+    <% @results.each do |result| %>
+      <li class="inline-list search-results">
+        <p><%= result.class %></p>
+        <p><%= link_to describe(result), result %></p>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No results.</p>
+<% end %>

@@ -49,10 +49,52 @@
     <dd><%= @build.commit.message %></dd>
 
     <dt class="info-label">Committer:</dt>
-    <dd><%= @build.commit.committer_name %></dd>
+    <dd class="inline-list committer">
+      <p>
+        <%= @build.commit.committer_name %>
+        <%= mail_to @build.commit.committer_email, fa_icon("envelope-o") %>
+      </p>
+
+      <div>
+        <%= form_tag(search_path, method: :get) do %>
+          <%= hidden_field_tag(:q, @build.commit.committer_email) %>
+          <%= button_to options = nil, class: "button", id: "search-committer_email" do %>
+            <%= fa_icon("search") %> Email
+          <% end %>
+        <% end %>
+
+        <%= form_tag(search_path, method: :get) do %>
+          <%= hidden_field_tag(:q, @build.commit.committer_name) %>
+          <%= button_to options = nil, class: "button", id: "search-committer_name" do %>
+            <%= fa_icon("search") %> Name
+          <% end %>
+        <% end %>
+      </div>
+    </dd>
 
     <dt class="info-label">Author:</dt>
-    <dd><%= @build.commit.author_name %></dd>
+    <dd class="inline-list author">
+      <p>
+        <%= @build.commit.author_name %>
+        <%= mail_to @build.commit.author_email, fa_icon("envelope-o") %>
+      </p>
+
+      <div>
+        <%= form_tag(search_path, method: :get) do %>
+          <%= hidden_field_tag(:q, @build.commit.author_name) %>
+          <%= button_to options = nil, class: "button", id: "search-author_email" do %>
+            <%= fa_icon("search") %> Email
+          <% end %>
+        <% end %>
+
+        <%= form_tag(search_path, method: :get) do %>
+          <%= hidden_field_tag(:q, @build.commit.author_name) %>
+          <%= button_to options = nil, class: "button", id: "search-author_name" do %>
+            <%= fa_icon("search") %> Name
+          <% end %>
+        <% end %>
+      </div>
+    </dd>
 
     <dt class="info-label">Config Status:</dt>
     <dd><%= @build.config ? @build.config_result : 'pending' %></dd>
