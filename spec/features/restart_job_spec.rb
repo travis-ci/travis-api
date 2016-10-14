@@ -4,7 +4,7 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
   let!(:organization) { create(:organization) }
   let!(:repository) { create(:repository, owner: organization) }
   let!(:build) { create(:build, repository: repository, number: 1)}
-  let!(:job) { create(:job, build: build, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:09:09', state: 'failed', config: {}) }
+  let!(:job) { create(:job, repository: repository, build: build, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:09:09', state: 'failed', config: {}) }
 
   scenario 'User restarts a job' do
     visit "/jobs/#{job.id}"
@@ -23,6 +23,7 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
 
     visit "/organizations/#{organization.id}#jobs"
 
+    # Capybara needs this extra click
     click_on('Jobs')
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").

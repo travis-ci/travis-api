@@ -15,13 +15,13 @@
         <p class="job-build"><%= link_to "##{job.build.number}", job.build %></p>
         <p class="job-state"><%= "#{job.state} at #{job.state_time}" %></p>
         <p class="job-queue"><%= job.queue %></p>
-        <p class="job-reset call-to-action">
+        <div class="job-reset call-to-action">
           <% if job.not_finished? %>
             <%= button_to "Cancel", cancel_job_path(job), method: "post", remote: true, form: { "data-type" => "json" }, class: "button", form_class: "cancel-job" %>
           <% else %>
             <%= button_to "Restart", restart_job_path(job), method: "post", remote: true, form: { "data-type" => "json" }, class: "button", form_class: "restart-job" %>
           <% end %>
-        </p>
+        </div>
       </li>
     <% end %>
   </ul>

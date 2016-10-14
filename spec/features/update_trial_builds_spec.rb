@@ -9,10 +9,10 @@ RSpec.feature "Update trial builds", :js => true, :type => :feature do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for).and_return(20, 80)
     allow(Travis::DataStores.topaz).to receive(:update)
 
-    # for Capybara to work, we need the click_on("User"),
-    # otherwise save_and_open_screenshot will give an empty page that only has the tabs on the top
-    # Not sure why it is required here and not elsewhere but will fail without
     visit "/users/#{user.id}"
+
+    # for Capybara to work, we need the extra click: click_on("User"),
+    # otherwise save_and_open_screenshot will give an empty page that only has the tabs on the top
     click_on("User")
 
     expect(page).to have_text("Builds Provided:20")
@@ -23,7 +23,7 @@ RSpec.feature "Update trial builds", :js => true, :type => :feature do
 
     expect(page).to have_text("Reset sinthetix's trial to 60 builds.")
 
-    visit "/users/#{user.id}"
+    # Capybara needs this extra click
     click_on("User")
 
     expect(page).to have_text("Builds Provided:80")
