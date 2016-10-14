@@ -20,7 +20,7 @@
               </p>
               <p>
                 <% if org.subscription %>
-                    <%= link_to format_subscription(org.subscription), org.subscription %>
+                    <%= link_to format_subscription(org.subscription), organization_path(org, anchor: 'subscription') %>
                 <% else %>
                     none
                 <% end %>
