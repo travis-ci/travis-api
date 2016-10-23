@@ -25,10 +25,13 @@ gem 'travis-sso',        github: 'travis-ci/travis-sso'
 gem 'travis-config',     github: 'travis-ci/travis-config'
 gem 'travis-topaz',      github: 'travis-ci/travis-topaz-gem'
 gem 'travis-support',    github: 'travis-ci/travis-support'
+gem 'travis',            github: 'travis-ci/travis.rb'
 
 gem 'rollout'
 
 gem 'metriks'
+
+gem 'bcat'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
