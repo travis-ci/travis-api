@@ -137,7 +137,7 @@ module Travis::API::V3
       end
 
       resource :user_setting do
-        route '/setting/{setting.name}'
+        route '/setting/{user_setting.name}'
         get  :find
         patch :update
       end

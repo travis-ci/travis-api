@@ -5,7 +5,7 @@ module Travis::API::V3
     def href
       Renderer.href(:user_setting,
         :"repository.id" => model.repository_id,
-        :"setting.name" => name,
+        :"user_setting.name" => name,
         :"script_name" => script_name
       )
     end

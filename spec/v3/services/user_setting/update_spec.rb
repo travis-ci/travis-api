@@ -5,11 +5,13 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
   let(:other_token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 2) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
-  let(:params) { JSON.dump('setting.value' => false) }
+
+  let(:old_params) { JSON.dump('setting.value' => false) }
+  let(:new_params) { JSON.dump('user_setting.value' => false) }
 
   describe 'not authenticated' do
     before do
-      patch("/v3/repo/#{repo.id}/setting/build_pushes", params, json_headers)
+      patch("/v3/repo/#{repo.id}/setting/build_pushes", new_params, json_headers)
     end
 
     example { expect(last_response.status).to eq(403) }
@@ -24,7 +26,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
 
   describe 'authenticated, missing repo' do
     before do
-      patch('/v3/repo/9999999999/setting/build_pushes', params, json_headers.merge(auth_headers))
+      patch('/v3/repo/9999999999/setting/build_pushes', new_params, json_headers.merge(auth_headers))
     end
 
     example { expect(last_response.status).to eq(404) }
@@ -38,12 +40,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
     end
   end
 
-  describe 'authenticated, existing repo' do
-    before do
-      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
-      patch("/v3/repo/#{repo.id}/setting/build_pushes", params, json_headers.merge(auth_headers))
-    end
-
+  shared_examples 'successful patch' do
     example { expect(last_response.status).to eq(200) }
     example do
       expect(JSON.load(body)).to eq(
@@ -57,11 +54,32 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
     example 'value is persisted' do
       expect(repo.reload.user_settings.build_pushes).to eq false
     end
+    example 'does not clobber other things in the settings hash' do
+      expect(repo.reload.settings['env_vars']).to eq(['something'])
+    end
+  end
+
+  describe 'authenticated, existing repo, old params' do
+    before do
+      repo.update_attribute(:settings, JSON.dump('env_vars' => ['something']))
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
+      patch("/v3/repo/#{repo.id}/setting/build_pushes", old_params, json_headers.merge(auth_headers))
+    end
+    include_examples 'successful patch'
+  end
+
+  describe 'authenticated, existing repo, new params' do
+    before do
+      repo.update_attribute(:settings, JSON.dump('env_vars' => ['something']))
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
+      patch("/v3/repo/#{repo.id}/setting/build_pushes", new_params, json_headers.merge(auth_headers))
+    end
+    include_examples 'successful patch'
   end
 
   describe 'authenticated, existing repo, user does not have correct permissions' do
     before do
-      patch("/v3/repo/#{repo.id}/setting/build_pushes", params, json_headers.merge('HTTP_AUTHORIZATION' => "token #{other_token}"))
+      patch("/v3/repo/#{repo.id}/setting/build_pushes", new_params, json_headers.merge('HTTP_AUTHORIZATION' => "token #{other_token}"))
     end
 
     example { expect(last_response.status).to eq(403) }
