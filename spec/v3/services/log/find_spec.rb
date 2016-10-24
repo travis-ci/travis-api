@@ -112,8 +112,8 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   context 'when log not found in db but stored on S3' do
     describe 'returns log with an array of Log Parts' do
       example do
-        storage = Fog::Storage.new(aws_access_key_id: 'my_bucket', aws_secret_access_key: 'asdf', provider: 'AWS')
-        storage.data[:body] = '$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch'
+        # storage = Fog::Storage.new(aws_access_key_id: 'my_bucket', aws_secret_access_key: 'asdf', provider: 'AWS')
+        # storage.data[:body] = '$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch'
         s3log.update_attributes(archived_at: Time.now)
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
 

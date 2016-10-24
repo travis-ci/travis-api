@@ -53,7 +53,7 @@ module Travis::API::V3
     end
 
     def s3_config
-      return {} unless conf = config.log_options.try(:s3)
+      return {} unless conf = config.logs_options.try(:s3)
       conf.merge!(bucket_name: bucket_name)
       # raise NotImplemented
     end
