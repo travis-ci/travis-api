@@ -10,11 +10,11 @@
     <dd class="inline become">
       <p><%= @user.name %></p>
       <div>
-        <%= form_tag("#{Travis::Config.load.become_endpoint}/#{@user.login}", class: 'become-button') do %>
+        <%= form_tag(become_url(@user), class: 'become-button') do %>
           <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
           <%= submit_tag("Log in as", class: "button") %>
         <% end %>
-        <%= form_tag("#{Travis::Config.load.become_endpoint}/#{@user.login}?billing=true", class: 'billing-button') do %>
+        <%= form_tag("#{become_url(@user)}?billing=true", class: 'billing-button') do %>
           <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
           <%= submit_tag("Billing", class: "button") %>
         <% end %>
