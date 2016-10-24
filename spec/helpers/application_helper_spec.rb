@@ -4,6 +4,21 @@ RSpec.describe ApplicationHelper, type: :helper do
   let!(:user) { create(:user, name: 'Katrin', login: 'katrina') }
   let!(:organization) { create(:organization, name: 'travis', login: 'travis-pro') }
 
+  let(:redis) { Travis::DataStores.redis }
+
+  describe 'access_token' do
+    it 'generates an access token' do
+      expect(helper.access_token(user)).to be_instance_of(Travis::AccessToken)
+    end
+
+    it 'sets correct values in redis' do
+      access_token = helper.access_token(user).token
+
+      expect(access_token).to eq(redis.get("r:#{user.id}:2"))
+      expect(redis.lrange("t:#{access_token}", 0, -1)).to eq(["#{user.id}", "2", "public", "private"])
+    end
+  end
+
   describe 'check_trial_builds' do
     let(:redis) { Travis::DataStores.redis }
     before { redis.set("trial:#{user.login}", '75') }
