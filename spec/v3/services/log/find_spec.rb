@@ -6,12 +6,14 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:build)       { Factory.create(:build, repository: repo) }
   let(:job)         { Travis::API::V3::Models::Job.create(build: build) }
   let(:job2)        { Travis::API::V3::Models::Job.create(build: build)}
+  let(:job3)        { Travis::API::V3::Models::Job.create(build: build)}
   let(:s3job)       { Travis::API::V3::Models::Job.create(build: build) }
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:parsed_body) { JSON.load(body) }
   let(:log)         { Travis::API::V3::Models::Log.create(job: job) }
   let(:log2)        { Travis::API::V3::Models::Log.create(job: job2) }
+  let(:log3)        { Travis::API::V3::Models::Log.create(job: job3) }
   let(:s3log)       { Travis::API::V3::Models::Log.create(job: s3job, content: 'minimal log 1') }
   let(:find_log)    { "string" }
   let(:xml_content) {
@@ -40,19 +42,24 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
 
 
   before do
+    log3.delete
     Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true)
     stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
       to_return(:status => 200, :body => xml_content, :headers => {})
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job.id}/log.txt").
       to_return(status: 200, body: xml_content, headers: {})
     Fog.mock!
+    Travis.config.logs_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
     storage = Fog::Storage.new({
-      :aws_access_key_id => "asdf",
-      :aws_secret_access_key => "asdf",
+      :aws_access_key_id => "key",
+      :aws_secret_access_key => "secret",
       :provider => "AWS"
     })
-    storage.directories.create(:key => 'my-bucket')
-    storage.data[:body] = '$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch'
+    bucket = storage.directories.create(:key => 'archive.travis-ci.org')
+    file = bucket.files.create(
+      :key  => "jobs/#{s3job.id}/log.txt",
+      :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch"
+    )
   end
 
   after do
@@ -135,25 +142,20 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         expect(last_response.headers).to include("Content-Type" => "text/plain")
         expect(body).to eq(
           "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch")
-        # expect(storage.create_instance).with(:fetch).returns(storage.data)
       end
     end
   end
 
   context 'when log not found anywhere' do
-    before { log.delete }
     describe 'does not return log - returns error' do
       example do
-        get("/v3/job/#{job.id}/log", {}, headers)
+        log3.delete
+        get("/v3/job/#{job3.id}/log", {}, headers)
         expect(parsed_body).to eq({
           "@type"=>"error",
           "error_type"=>"not_found",
           "error_message"=>"log not found"})
         end
     end
-  end
-
-  context 'when log removed by user' do
-    describe 'does not return log'
   end
 end
