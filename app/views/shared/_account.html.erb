@@ -34,11 +34,26 @@
     </dd>
 
     <dt class="info-label">Subscription:</dt>
-    <dd>
-      <% if owner.subscription %>
-        <a href='#subscription'><%=format_subscription(owner.subscription) %></a>
-      <% else %>
-        None.
+    <dd class="inline">
+      <p>
+        <% if owner.subscription %>
+          <a href='#subscription'><%=format_subscription(owner.subscription) %></a>
+        <% else %>
+          None.
+        <% end %>
+      </p>
+
+      <% unless owner.subscription && owner.subscription.active? %>
+        <%= form_for :subscription, url: {controller: 'subscriptions', action: 'create'}, html: {class: 'create-subscription'} do |f| %>
+          <%= f.hidden_field :owner_type, value: owner.class %>
+          <%= f.hidden_field :owner_id, value: owner.id %>
+          <%= f.select(:selected_plan) do %>
+            <% [['one build', 'travis-ci-one-build'], ['two builds', 'travis-ci-two-builds']].each do |c| -%>
+              <%= content_tag(:option, c.first, value: c.last) %>
+            <% end %>
+          <% end %>
+          <%= f.submit 'Create Free', class: 'button', id: 'create-subscription' %>
+        <% end %>
       <% end %>
     </dd>
 
