@@ -15,7 +15,6 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   let(:parsed_body) { JSON.load(body) }
   let(:log)         { Travis::API::V3::Models::Log.create(job: job) }
   let(:log2)        { Travis::API::V3::Models::Log.create(job: job2) }
-  # let(:log3)        { Travis::API::V3::Models::Log.create(job: job3) }
   let(:s3log)       { Travis::API::V3::Models::Log.create(job: s3job, content: 'minimal log 1') }
   let(:xml_content) {
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -62,7 +61,6 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
 
   describe "missing log, authenticated" do
     before { job3.update_attributes(finished_at: Time.now, state: "passed")}
-    # before { log3.delete }
 
     example do
       delete("/v3/job/#{job3.id}/log", {}, headers)
