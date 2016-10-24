@@ -41,21 +41,21 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
 
   before do
     Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true)
-    # stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
-    #   to_return(:status => 200, :body => xml_content, :headers => {})
-    # stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job.id}/log.txt").
-    #   to_return(status: 200, body: xml_content, headers: {})
-    # Fog.mock!
-    # storage = Fog::Storage.new({
-    #   :aws_access_key_id => "asdf",
-    #   :aws_secret_access_key => "asdf",
-    #   :provider => "AWS"
-    # })
-    # storage.data[:body] = '$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch'
+    stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
+      to_return(:status => 200, :body => xml_content, :headers => {})
+    stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job.id}/log.txt").
+      to_return(status: 200, body: xml_content, headers: {})
+    Fog.mock!
+    storage = Fog::Storage.new({
+      :aws_access_key_id => "asdf",
+      :aws_secret_access_key => "asdf",
+      :provider => "AWS"
+    })
+    storage.directories.create(:key => 'my-bucket')
+    storage.data[:body] = '$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch'
   end
 
-  before(:each) do
-    Fog.mock!
+  after do
     Fog::Mock.reset
   end
 
@@ -112,8 +112,6 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   context 'when log not found in db but stored on S3' do
     describe 'returns log with an array of Log Parts' do
       example do
-        # storage = Fog::Storage.new(aws_access_key_id: 'my_bucket', aws_secret_access_key: 'asdf', provider: 'AWS')
-        # storage.data[:body] = '$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch'
         s3log.update_attributes(archived_at: Time.now)
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
 

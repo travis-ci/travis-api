@@ -39,6 +39,8 @@ module Travis::API::V3
     end
 
     def s3_bucket
+      puts log.inspect
+      puts config.logs_options
       s3 = Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], provider: 'AWS')
       s3.directories.get(s3_config[:bucket_name], prefix: prefix)
     end
