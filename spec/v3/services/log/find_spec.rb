@@ -140,8 +140,8 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   end
 
   context 'when log not found anywhere' do
+    before { log.delete }
     describe 'does not return log - returns error' do
-      before { log.delete }
       example do
         get("/v3/job/#{job.id}/log", {}, headers)
         expect(parsed_body).to eq({
