@@ -7,12 +7,12 @@ module Travis::API::V3
       AVAILABLE_ATTRIBUTES
     end
 
-    def render(error, **)
+    def render(error, **options)
       {
         :@type         => 'error'.freeze,
         :error_type    => error.type,
         :error_message => error.message,
-        **Renderer.render_value(error.payload)
+        **Renderer.render_value(error.payload, script_name: options[:script_name])
       }
     end
   end

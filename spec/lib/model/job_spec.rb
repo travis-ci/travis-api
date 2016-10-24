@@ -87,17 +87,18 @@ describe Job do
       }
     end
 
-    it 'obfuscates env vars' do
+    it 'obfuscates env vars, including accidents' do
       job = Job.new(repository: repo)
+      secure = job.repository.key.secure
       job.expects(:secure_env_enabled?).at_least_once.returns(true)
       config = { rvm: '1.8.7',
-                 env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+                 env: [secure.encrypt('BAR=barbaz'), secure.encrypt('PROBLEM'), 'FOO=foo']
                }
       job.config = config
 
       job.obfuscated_config.should == {
         rvm: '1.8.7',
-        env: 'BAR=[secure] FOO=foo'
+        env: 'BAR=[secure] [secure] FOO=foo'
       }
     end
 

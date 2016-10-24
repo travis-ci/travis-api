@@ -25,7 +25,7 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
         "permission"          => "create_cron",
         "repository"          => {
             "@type"           => "repository",
-            "@href"           => "/repo/#{repo.id}", # should be /v3/repo/#{repo.id}
+            "@href"           => "/v3/repo/#{repo.id}",
             "@representation" => "minimal",
             "id"              => repo.id,
             "name"            => "minimal",
@@ -117,7 +117,7 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
         "permission"          => "create_cron",
         "repository"          => {
             "@type"           => "repository",
-            "@href"           => "/repo/#{repo.id}", # should be /v3/repo/#{repo.id}
+            "@href"           => "/v3/repo/#{repo.id}",
             "@representation" => "minimal",
             "id"              => repo.id,
             "name"            => "minimal",

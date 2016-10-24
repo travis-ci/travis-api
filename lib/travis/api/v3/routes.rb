@@ -125,9 +125,14 @@ module Travis::API::V3
         post :create
       end
 
-      resource :settings do
+      resource :user_settings do
         route '/settings'
         get   :find
+      end
+
+      resource :user_setting do
+        route '/setting/{user_setting.name}'
+        get  :find
         patch :update
       end
 
