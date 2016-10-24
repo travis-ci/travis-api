@@ -36,11 +36,18 @@
     <dt class="info-label">Subscription:</dt>
     <dd>
       <% if owner.subscription %>
-        <%= link_to format_subscription(owner.subscription), owner.subscription %>
+        <a href='#subscription'><%=format_subscription(owner.subscription) %></a>
       <% else %>
         None.
       <% end %>
     </dd>
+
+    <% if @last_build %>
+      <dt class="info-label">Last Build:</dt>
+      <dd>
+        <%= link_to describe(@last_build), @last_build %>
+      </dd>
+    <% end %>
 
     <dt class="info-label">Job Boost:</dt>
     <dd>

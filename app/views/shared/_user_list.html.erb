@@ -21,7 +21,7 @@
           <%= link_to describe(user), user %></p>
         <p>
           <% if user.subscription %>
-            <%= link_to format_subscription(user.subscription), user.subscription %>
+            <%= link_to format_subscription(user.subscription), user_path(user, anchor: 'subscription') %>
           <% else %>
             none
           <% end %>

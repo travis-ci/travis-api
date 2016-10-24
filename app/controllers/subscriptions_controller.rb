@@ -1,4 +1,6 @@
 class SubscriptionsController < ApplicationController
+  include Presenters
+
   before_action :get_subscription
 
   def show
@@ -25,10 +27,8 @@ class SubscriptionsController < ApplicationController
   end
 
   def get_subscription
-    @subscription = Subscription.find_by(id: params[:id])
-    return redirect_to root_path, alert: 'There is no subscription associated with that ID.' if @subscription.nil?
-
-    @plan = @subscription.plans.current
-    @invoices = @subscription.invoices.order('id DESC')
+    subscription = Subscription.find_by(id: params[:id])
+    return redirect_to root_path, alert: 'There is no subscription associated with that ID.' if subscription.nil?
+    @subscription = present(subscription)
   end
 end

@@ -1,6 +1,6 @@
 <section class="info-block">
   <h2 class="info-header">Invoices</h2>
-  <% if @invoices.empty? %>
+  <% if @subscription.invoices.empty? %>
     <p>No invoices exist for this subscription.</p>
   <% else %>
     <ul>
@@ -9,7 +9,7 @@
         <p class="info-label">Invoice Date</p>
         <p class="info-label">Total</p>
       </li>
-      <% @invoices.each do |invoice| %>
+      <% @subscription.invoices.each do |invoice| %>
         <li class="inline-list invoice-item">
           <p><%= link_to invoice.invoice_id, invoice.as_pdf %></p>
           <p><time><%= invoice.created_at.to_date %></time></p>
