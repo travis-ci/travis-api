@@ -5,9 +5,7 @@ class JobsController < ApplicationController
     @job = Job.find_by(id: params[:id])
     return redirect_to root_path, alert: "There is no job associated with that ID." if @job.nil?
 
-    @log = api.job(@job.id).log.body
-  rescue Travis::Client::NotLoggedIn => e
-    puts e.message
+    @log = Services::Job::Log.new(@job.id, current_user).call
   end
 
   def cancel
@@ -73,18 +71,6 @@ class JobsController < ApplicationController
           render json: {"success": false, "message": message}
         end
       end
-    end
-  end
-
-  private
-
-  def api
-    @api ||= begin
-      options = { 'uri' => Travis::Config.load.api_endpoint }
-      #user    = self.user if respond_to? :user
-      #user  ||= repository.admin if respond_to? :repository && repository
-      options['access_token'] = access_token(user).to_s if user
-      Travis::Client.new(options)
     end
   end
 end
