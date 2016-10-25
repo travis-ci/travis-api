@@ -1,7 +1,23 @@
 class SubscriptionsController < ApplicationController
   include Presenters
+  include ApplicationHelper
 
-  before_action :get_subscription
+  before_action :get_subscription, only: [:show, :update]
+
+  def create
+    @subscription = Subscription.new(subscription_params)
+    @subscription.cc_token      = "void"
+    @subscription.valid_to      = 1.year.from_now
+    @subscription.billing_email = "support@travis-ci.com"
+
+    if @subscription.save
+      flash[:notice] = "Created a new subscription for #{describe(@subscription.owner)}"
+      Services::AuditTrail::CreateSubscription.new(current_user, @subscription).call
+    else
+      flash[:error]  = "Could not create subscription"
+    end
+    redirect_to @subscription.owner
+  end
 
   def show
   end
@@ -23,7 +39,7 @@ class SubscriptionsController < ApplicationController
   private
 
   def subscription_params
-    params.require(:subscription).permit(:valid_to, :billing_email, :vat_id)
+    params.require(:subscription).permit(:valid_to, :billing_email, :vat_id, :owner_type, :owner_id, :selected_plan)
   end
 
   def get_subscription

@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   root 'home#home'
 
+  resources :audit_trail, only: [:index]
+
   resources :broadcasts, only: [:index, :create, :update]
 
   resources :builds, only: [:show] do
@@ -17,8 +19,6 @@ Rails.application.routes.draw do
     end
   end
   get 'features/:kind/:feature' => 'features#show', as: :feature
-
-  resources :audit_trail, only: [:index]
 
   resources :jobs, only: [:show] do
     member do
@@ -48,7 +48,7 @@ Rails.application.routes.draw do
 
   resources :requests, only: [:show]
 
-  resources :subscriptions,  only: [:show, :update]
+  resources :subscriptions,  only: [:create, :show, :update]
 
   resources :users, only: [:show] do
     member do
