@@ -3,7 +3,7 @@ class CachesController < ApplicationController
     @caches = Travis::Services::Repository::Caches::Find.call
   end
 
-  def destroy
+  def delete
 
   end
 end
