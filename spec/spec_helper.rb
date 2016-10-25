@@ -6,6 +6,8 @@ Sidekiq::Testing.inline!
 RSpec.configure do |config|
   WebMock.disable_net_connect!(allow_localhost: true)
 
+  WebMock.stub_request(:head, "https://api.travis-ci.org/")
+
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end

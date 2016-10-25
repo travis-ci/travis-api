@@ -6,6 +6,8 @@ class JobsController < ApplicationController
     return redirect_to root_path, alert: "There is no job associated with that ID." if @job.nil?
 
     @log = api.job(@job.id).log.body
+  rescue Travis::Client::NotLoggedIn => e
+    puts e.message
   end
 
   def cancel
@@ -79,8 +81,8 @@ class JobsController < ApplicationController
   def api
     @api ||= begin
       options = { 'uri' => Travis::Config.load.api_endpoint }
-      user    = self.user if respond_to? :user
-      user  ||= repository.admin if respond_to? :repository and repository
+      #user    = self.user if respond_to? :user
+      #user  ||= repository.admin if respond_to? :repository && repository
       options['access_token'] = access_token(user).to_s if user
       Travis::Client.new(options)
     end
