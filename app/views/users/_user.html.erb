@@ -7,7 +7,19 @@
 
   <dl class="simple-info">
     <dt class="info-label">Name:</dt>
-    <dd><%= @user.name %></dd>
+    <dd class="inline become">
+      <p><%= @user.name %></p>
+      <div>
+        <%= form_tag(become_url(@user), class: 'become-button') do %>
+          <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
+          <%= submit_tag("Log in as", class: "button") %>
+        <% end %>
+        <%= form_tag("#{become_url(@user)}?billing=true", class: 'billing-button') do %>
+          <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
+          <%= submit_tag("Billing", class: "button") %>
+        <% end %>
+      </div>
+    </dd>
 
     <dt class="info-label">GitHub Login:</dt>
     <dd>
@@ -34,12 +46,14 @@
     </dd>
 
     <dt class="info-label">Last Sync:</dt>
-    <dd>
-      <% if @user.is_syncing? %>
-        Currently syncing
-      <% else %>
-        <%= @user.synced_at ? @user.synced_at : "Never" %>
-      <% end %>
+    <dd class="inline">
+      <p>
+        <% if @user.is_syncing? %>
+          Currently syncing
+        <% else %>
+          <%= @user.synced_at ? @user.synced_at : "Never" %>
+        <% end %>
+      </p>
       <%= button_to 'Sync', sync_user_path(@user), disabled: @user.is_syncing?, form_class: "sync-button", class: 'button' %>
     </dd>
   </dl>

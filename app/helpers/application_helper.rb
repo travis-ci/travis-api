@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def access_token(user)
+    Travis::AccessToken.create(user: user, app_id: 2) if user
+  end
+
   def check_trial_builds(owner)
     builds_remaining = Travis::DataStores.redis.get("trial:#{owner.login}")
 

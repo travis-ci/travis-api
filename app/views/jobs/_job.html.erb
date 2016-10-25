@@ -3,8 +3,8 @@
 
   <dl class="simple-info">
     <dt class="info-label">State:</dt>
-    <dd>
-      <%= @job.state %>
+    <dd class="inline">
+      <p><%= @job.state %></p>
       <% if @job.not_finished? %>
         <%= button_to "Cancel", cancel_job_path(@job), form_class: "reset-button", class: "button" %>
       <% else %>
@@ -54,7 +54,7 @@
     <dd><%= @job.commit.message %></dd>
 
     <dt class="info-label">Committer:</dt>
-    <dd class="inline-list committer">
+    <dd class="inline committer">
       <p>
         <%= @job.commit.committer_name %>
         <%= mail_to @job.commit.committer_email, fa_icon("envelope-o") %>
@@ -78,7 +78,7 @@
     </dd>
 
     <dt class="info-label">Author:</dt>
-    <dd class="inline-list author">
+    <dd class="inline author">
       <p>
         <%= @job.commit.author_name %>
         <%= mail_to @job.commit.author_email, fa_icon("envelope-o") %>

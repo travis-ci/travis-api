@@ -41,8 +41,8 @@
     </dd>
 
     <dt class="info-label">Activation:</dt>
-    <dd>
-      <%= @repository.active? ? "enabled" : "disabled" %>
+    <dd class="inline">
+      <p><%= @repository.active? ? "enabled" : "disabled" %></p>
       <% if @repository.active? %>
         <%= button_to "Disable", disable_repository_path(@repository), form_class: "disable-button", class: "button" %>
       <% else %>
