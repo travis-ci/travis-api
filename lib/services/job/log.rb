@@ -11,7 +11,7 @@ module Services
       def call
         @log = api.job(job_id).log.body
       rescue Travis::Client::NotLoggedIn => e
-        puts e.message
+        puts "Getting job log failed: #{e.message}"
       end
 
       private
