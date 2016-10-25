@@ -61,6 +61,7 @@ Rails.application.routes.draw do
       post 'settings', to: 'settings#update', as: :repository_settings
       post 'test_hook'
     end
+    resources :caches, only: [:index, :destroy]
   end
 
   resources :requests, only: [:show]
