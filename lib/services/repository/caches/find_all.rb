@@ -1,7 +1,7 @@
 module Services
   module Repository
     module Caches
-      class Find
+      class FindAll
         def initialize
 
         end
