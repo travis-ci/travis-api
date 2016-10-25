@@ -1,11 +1,15 @@
 module Travis
   module Api
     def token
-      ENV['TRAVIS_API_TOKEN']
+      if Rails.env.development?
+        ENV['TRAVIS_API_TOKEN']
+      else
+        Travis::AccessToken.create(user: user, app_id: 2) if user
+      end
     end
 
     def endpoint
-      ENV['TRAVIS_API_ENDPOINT']
+      Travis::Config.load.api_endpoint
     end
 
     def conn

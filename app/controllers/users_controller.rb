@@ -61,7 +61,7 @@ class UsersController < ApplicationController
   end
 
   def sync
-    response = Services::User::Sync.new(@user.id).call
+    response = Services::User::Sync.new(@user).call
 
     if response.success?
       flash[:notice] = "Triggered sync with GitHub."

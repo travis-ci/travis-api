@@ -30,7 +30,7 @@ class OrganizationsController < ApplicationController
 
     @repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :name)
 
-    @users = @organization.users.includes(:subscription).order(:name)
+    @users = @organization.users.includes(:subscription).order(:name).uniq
 
     @pending_jobs = Job.from_repositories(@repositories).not_finished
     @finished_jobs = Job.from_repositories(@repositories).finished.take(10)
