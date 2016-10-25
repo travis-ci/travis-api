@@ -94,12 +94,18 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   context 's3 log, authenticated' do
     before do
       s3job.update_attributes(finished_at: Time.now)
-      stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
-        to_return(:status => 200, :body => xml_content, :headers => {})
-      stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/?prefix=jobs/#{s3job.id}/log.txt").
-        to_return(:status => 200, :body => xml_content, :headers => {})
-      stub_request(:delete, "https://bucket.s3.amazonaws.com/jobs/#{s3log.job.id}/log.txt").
-        to_return(:status => 200, :body => xml_content, :headers => {})
+      Fog.mock!
+      Travis.config.logs_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
+      storage = Fog::Storage.new({
+        :aws_access_key_id => "key",
+        :aws_secret_access_key => "secret",
+        :provider => "AWS"
+      })
+      bucket = storage.directories.create(:key => 'archive.travis-ci.org')
+      file = bucket.files.create(
+        :key  => "jobs/#{s3job.id}/log.txt",
+        :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch"
+      )
     end
 
     describe 'updates log, inserts new log part' do
