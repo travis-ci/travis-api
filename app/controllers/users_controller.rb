@@ -75,7 +75,7 @@ class UsersController < ApplicationController
 
   def sync_all
     back_link = params[:sync_all][:back_link]
-    user_ids = params[:sync_all][:user_ids]
+    user_ids  = params[:sync_all][:user_ids]
 
     logins = []
 
@@ -90,7 +90,7 @@ class UsersController < ApplicationController
   end
 
   def update_trial_builds
-    Services::TrialBuilds::Update.new(@user, current_user).call(params[:builds_remaining],params[:previous_builds])
+    Services::TrialBuilds::Update.new(@user, current_user).call(params[:builds_remaining], params[:previous_builds])
     flash[:notice] = "Reset #{@user.login}'s trial to #{params[:builds_remaining]} builds."
     redirect_to @user
   end

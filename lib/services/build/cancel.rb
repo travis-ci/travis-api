@@ -10,9 +10,13 @@ module Services
         @build_id = build_id
       end
 
+      def access_token
+        ENV['TRAVIS_API_TOKEN']
+      end
+
       def call
-        url = "/build/#{@build_id}/cancel"
-        post(url)
+        url = "/build/#{build_id}/cancel"
+        post(url, access_token)
       end
     end
   end
