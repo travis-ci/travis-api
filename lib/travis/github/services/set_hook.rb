@@ -5,7 +5,8 @@ module Travis
   module Github
     module Services
       class SetHook < Travis::Services::Base
-        EVENTS = [:push, :pull_request, :issue_comment, :public, :member]
+        EVENTS = %i(push pull_request issue_comment public member create delete
+          membership repository)
 
         register :github_set_hook
 
