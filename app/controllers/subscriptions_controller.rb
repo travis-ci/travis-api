@@ -30,9 +30,10 @@ class SubscriptionsController < ApplicationController
       message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
       flash[:notice] = message.sub(/./) {$&.upcase}
       Services::AuditTrail::UpdateSubscription.new(current_user, message).call
-      redirect_to @subscription
+      redirect_back fallback_location: @subscription
     else
-      render :show
+      flash[:error] = "No changes were made to #{@subscription.owner.login}'s subscription."
+      redirect_back fallback_location: @subscription
     end
   end
 
