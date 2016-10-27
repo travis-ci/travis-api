@@ -22,8 +22,10 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
   scenario 'Update VAT ID and billing email for Organization' do
     visit "/organizations/#{organization.id}#subscription"
 
-    fill_in('subscription_vat_id', with: 'DE999999998')
-    fill_in('subscription_billing_email', with: 'contact@travis-ci.org')
+    click_on('Subscription')
+    fill_in('subscription_vat_id', :with => 'DE999999998')
+    fill_in('subscription_billing_email', :with => 'contact@travis-ci.org')
+
     find_button('Update').trigger('click')
 
     expect(page).to have_text("Updated travis-pro's subscription: billing_email changed from contact@travis-ci.com to contact@travis-ci.org, vat_id changed from DE999999999 to DE999999998")
@@ -39,7 +41,7 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
   end
 
   scenario 'No changes made to Organization subscription' do
-    visit "/organizations/#{user.id}#subscription"
+    visit "/organizations/#{organization.id}#subscription"
     find_button('Update').trigger('click')
     expect(page).to have_text ('No subscription changes were made.')
     expect(page).to have_field('subscription_vat_id', with: 'DE999999998')
