@@ -24,7 +24,7 @@ class SubscriptionsController < ApplicationController
     changes = @subscription.changes
 
     if changes.any? && @subscription.save
-      message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}."}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
+      message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
       flash[:notice] = message.sub(/./) {$&.upcase}
       Services::AuditTrail::UpdateSubscription.new(current_user, message).call
     else
