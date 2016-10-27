@@ -4,18 +4,19 @@ module Services
   module Job
     class Restart
       include Travis::API
-      attr_reader :job_id
+      attr_reader :job
 
-      def initialize(job_id)
-        @job_id = job_id
+      def initialize(job)
+        @job = job
       end
 
       def access_token
-        ENV['TRAVIS_API_TOKEN']
+        admin = job.repository.find_admin
+        Travis::AccessToken.create(user: admin, app_id: 2).token if admin
       end
 
       def call
-        url = "/job/#{job_id}/restart"
+        url = "/job/#{job.id}/restart"
         post(url, access_token)
       end
     end

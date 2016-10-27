@@ -9,7 +9,7 @@ class JobsController < ApplicationController
   def cancel
     @job = Job.find_by(id: params[:id])
 
-    response = Services::Job::Cancel.new(@job.id).call
+    response = Services::Job::Cancel.new(@job).call
 
     if response.success?
       message = "Job #{describe(@job)} successfully canceled."
@@ -42,7 +42,7 @@ class JobsController < ApplicationController
   def restart
     @job = Job.find_by(id: params[:id])
 
-    response = Services::Job::Restart.new(@job.id).call
+    response = Services::Job::Restart.new(@job).call
 
     if response.success?
       message = "Job #{describe(@job)} successfully restarted."

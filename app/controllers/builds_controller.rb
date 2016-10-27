@@ -11,7 +11,7 @@ class BuildsController < ApplicationController
   def cancel
     @build = Build.find_by(id: params[:id])
 
-    response = Services::Build::Cancel.new(@build.id).call
+    response = Services::Build::Cancel.new(@build).call
 
     if response.success?
       message = "Build #{describe(@build)} successfully canceled."
@@ -44,7 +44,7 @@ class BuildsController < ApplicationController
   def restart
     @build = Build.find_by(id: params[:id])
 
-    response = Services::Build::Restart.new(@build.id).call
+    response = Services::Build::Restart.new(@build).call
 
     if response.success?
       message = "Build #{describe(@build)} successfully restarted."

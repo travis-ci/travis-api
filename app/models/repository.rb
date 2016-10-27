@@ -14,6 +14,11 @@ class Repository < ApplicationRecord
   scope :by_slug,             -> (slug) { without_invalidated.where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC') }
   scope :without_invalidated, -> { where(invalidated_at: nil) }
 
+
+  def find_admin
+    permissions.admin_access.includes(:user).map(&:user).first
+  end
+
   def permissions_sorted
     @permissions_sorted ||=
     {
