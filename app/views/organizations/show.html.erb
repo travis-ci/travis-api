@@ -11,7 +11,7 @@
     <span id="subscription" class="tab-switch"></span>
     <a href="#subscription" class="tab-link">Subscription</a>
     <section class="tab-content">
-      <%= render partial: 'subscriptions/subscription' %>
+      <%= render partial: 'subscriptions/subscription', locals: {owner: @organization} %>
       <%= render partial: 'subscriptions/invoices' %>
     </section>
   <% end %>

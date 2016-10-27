@@ -14,7 +14,7 @@ class SubscriptionsController < ApplicationController
       flash[:notice] = "Created a new subscription for #{describe(@subscription.owner)}"
       Services::AuditTrail::CreateSubscription.new(current_user, @subscription).call
     else
-      flash[:error]  = "Could not create subscription"
+      flash[:error]  = 'Could not create subscription.'
     end
     redirect_to @subscription.owner
   end
@@ -24,17 +24,18 @@ class SubscriptionsController < ApplicationController
 
   def update
     @subscription.attributes = subscription_params
+
     changes = @subscription.changes
 
     if changes.any? && @subscription.save
       message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
       flash[:notice] = message.sub(/./) {$&.upcase}
       Services::AuditTrail::UpdateSubscription.new(current_user, message).call
-      redirect_back fallback_location: @subscription
     else
-      flash[:error] = "No changes were made to #{@subscription.owner.login}'s subscription."
-      redirect_back fallback_location: @subscription
+      flash[:error] = 'No subscription changes were made.'
     end
+
+    redirect_to_subscription
   end
 
   private
@@ -47,5 +48,15 @@ class SubscriptionsController < ApplicationController
     subscription = Subscription.find_by(id: params[:id])
     return redirect_to root_path, alert: 'There is no subscription associated with that ID.' if subscription.nil?
     @subscription = present(subscription)
+  end
+
+  def redirect_to_subscription
+    if params[:subscription] && subscription_params[:owner_type]
+      owner_class = Object.const_get(subscription_params[:owner_type])
+      owner = owner_class.find_by(id: subscription_params[:owner_id])
+    end
+
+    return redirect_to subscription_path unless owner
+    redirect_to controller: owner_class.table_name, action: 'show', id: owner, anchor: 'subscription'
   end
 end
