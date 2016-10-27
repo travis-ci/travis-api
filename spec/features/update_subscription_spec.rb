@@ -5,7 +5,7 @@ RSpec.feature 'update subscription information', :js => true, :type => :feature 
   let!(:organization) { create :organization, login: 'travis-pro' }
   let!(:user_subscription) { create :subscription, owner: user, cc_token: 'tok_1076247Biz', valid_to: 1.week.from_now, vat_id: 'DE999999999', billing_email: 'contact@travis-ci.com', selected_plan: 'travis-ci-five-builds'}
   let!(:user_plan) { create :plan, amount: 249, subscription: user_subscription }
-  let!(:org_subscription) { create :subscription, owner: organization, cc_token: 'tok_1076247Biz', valid_to: 1.week.from_now, vat_id: 'DE999999999', billing_email: 'contact@travis-ci.com', selected_plan: 'travis-ci-five-builds'}
+  let!(:org_subscription) { create :subscription, owner: organization, cc_token: 'tok_1079247Biz', valid_to: 1.week.from_now, vat_id: 'DE999999999', billing_email: 'contact@travis-ci.com', selected_plan: 'travis-ci-five-builds'}
   let!(:org_plan) { create :plan, amount: 249, subscription: org_subscription }
 
   before { allow(Travis::DataStores.topaz).to receive(:builds_provided_for) }
@@ -22,7 +22,7 @@ RSpec.feature 'update subscription information', :js => true, :type => :feature 
 
   scenario 'Update VAT ID and billing email for Organization' do
     visit "/organizations/#{organization.id}#subscription"
-
+    click_on('Subscription')
     fill_in('subscription_vat_id', :with => 'DE999999998')
     fill_in('subscription_billing_email', :with => 'contact@travis-ci.org')
     find_button('Update').trigger('click')
@@ -40,7 +40,7 @@ RSpec.feature 'update subscription information', :js => true, :type => :feature 
   end
 
   scenario 'No changes made to Organization subscription' do
-    visit "/organizations/#{user.id}#subscription"
+    visit "/organizations/#{organization.id}#subscription"
     find_button('Update').trigger('click')
     expect(page).to have_text ('No subscription changes were made.')
     expect(page).to have_field('subscription_vat_id', with: 'DE999999998')
