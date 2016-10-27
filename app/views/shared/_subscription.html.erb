@@ -13,11 +13,6 @@
   <% end %>
 
   <%= form_for @subscription do |f| %>
-      <% if defined? owner %>
-        <%= f.hidden_field :owner_type, value: owner.class.name %>
-        <%= f.hidden_field :owner_id, value: owner.id %>
-      <% end %>
-
     <dl class="simple-info">
       <dt class="info-label">Plan:</dt>
       <dd>

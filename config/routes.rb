@@ -48,7 +48,7 @@ Rails.application.routes.draw do
 
   resources :requests, only: [:show]
 
-  resources :subscriptions,  only: [:create, :show, :update]
+  resources :subscriptions,  only: [:create, :update]
 
   resources :users, only: [:show] do
     member do

@@ -1,6 +1,5 @@
 class OrganizationsController < ApplicationController
   include BuildCounters
-  include Presenters
 
   before_action :get_organization
 
@@ -40,7 +39,7 @@ class OrganizationsController < ApplicationController
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
 
     subscription = Subscription.find_by(owner_id: params[:id])
-    @subscription = present(subscription) unless subscription.nil?
+    @subscription = SubscriptionPresenter.new(subscription, self) unless subscription.nil?
 
     @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').take(30)
 
