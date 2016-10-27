@@ -17,7 +17,7 @@ RSpec.feature "Create Broadcast", js: true, type: :feature do
     expect(page).to have_text('This is a message.')
   end
 
-  scenario "Create broadcast for user" do
+  scenario 'Create broadcast for user' do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
     visit "/users/#{user.id}#broadcasts"
@@ -26,6 +26,8 @@ RSpec.feature "Create Broadcast", js: true, type: :feature do
     find_button('Create').trigger('click')
 
     expect(page).to have_text('Broadcast created.')
+
+    click_on('Broadcasts')
     expect(page).to have_text('This is a message.')
   end
 
@@ -38,6 +40,8 @@ RSpec.feature "Create Broadcast", js: true, type: :feature do
     find_button('Create').trigger('click')
 
     expect(page).to have_text('Broadcast created.')
+
+    click_on('Broadcasts')
     expect(page).to have_text('This is a message.')
   end
 
@@ -48,6 +52,8 @@ RSpec.feature "Create Broadcast", js: true, type: :feature do
     find_button('Create').trigger('click')
 
     expect(page).to have_text('Broadcast created.')
+
+    click_on('Broadcasts')
     expect(page).to have_text('This is a message.')
   end
 end
