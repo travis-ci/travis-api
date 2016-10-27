@@ -7,7 +7,7 @@ RSpec.feature 'Cancel a Job', :js => true, :type => :feature do
   let!(:job) { create(:job, repository: repository, build: build, started_at: '2016-06-29 11:06:01', finished_at: nil, state: 'started', config: {}) }
 
   scenario 'User cancels a job' do
-    allow_any_instance_of(Services::Job::Log).to receive(:call)
+    allow_any_instance_of(Services::Job::GetLog).to receive(:call)
 
     visit "/jobs/#{job.id}"
 

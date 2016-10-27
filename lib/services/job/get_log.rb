@@ -1,20 +1,27 @@
 module Services
   module Job
-    class Log
-      attr_reader :job_id, :user
+    class GetLog
+      attr_reader :job
 
-      def initialize(job_id, user)
-        @job_id = job_id
-        @user = user
+      def initialize(job)
+        @job = job
       end
 
       def call
-        @log = api.job(job_id).log.body
+        @log = api.job(job.id).log.body
       rescue Travis::Client::NotLoggedIn => e
         puts "Getting job log failed: #{e.message}"
       end
 
       private
+
+      def access_token
+        Travis::AccessToken.create(user: admin, app_id: 2) if admin
+      end
+
+      def admin
+        job.repository.find_admin
+      end
 
       def api_endpoint
         Travis::Config.load.api_endpoint
@@ -23,13 +30,9 @@ module Services
       def api
         @api ||= begin
           options = { 'uri' => api_endpoint }
-          options['access_token'] = access_token.to_s if user
+          options['access_token'] = access_token.to_s if admin
           Travis::Client.new(options)
         end
-      end
-
-      def access_token
-        Travis::AccessToken.create(user: user, app_id: 2) if user
       end
     end
   end

@@ -5,7 +5,7 @@ class JobsController < ApplicationController
     @job = Job.find_by(id: params[:id])
     return redirect_to root_path, alert: "There is no job associated with that ID." if @job.nil?
 
-    @log = Services::Job::Log.new(@job.id, current_user).call
+    @log = Services::Job::GetLog.new(@job).call
   end
 
   def cancel

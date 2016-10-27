@@ -10,7 +10,7 @@ RSpec.feature 'Search', :js => true, :type => :feature do
   let!(:job)          { create(:job, commit: commit, config: {}) }
 
   before(:each) { allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-                  allow_any_instance_of(Services::Job::Log).to receive(:call) }
+                  allow_any_instance_of(Services::Job::GetLog).to receive(:call) }
 
   scenario "User searches for user login 'lisbethmarianne' and gets redirected to the user view" do
     visit "/"
