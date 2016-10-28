@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
   include BuildCounters
-  include ApplicationHelper
 
   before_action :get_user, except: [:admins, :sync_all]
 
@@ -44,7 +43,9 @@ class UsersController < ApplicationController
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
 
     subscription = Subscription.find_by(owner_id: params[:id])
-    @subscription = SubscriptionPresenter.new(subscription, self) unless subscription.nil?
+    plan = subscription.plans.current
+    @subscription = SubscriptionPresenter.new(subscription, plan, self) unless subscription.nil?
+    @invoices = subscription.invoices.order('id DESC')
 
     @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').take(30)
 
