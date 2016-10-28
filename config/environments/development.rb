@@ -60,6 +60,8 @@ Rails.application.configure do
 
   config.middleware.use Travis::SSO,
     mode: :session,
-    authorized?: -> u { configuration.admins.include? u['login'] },
-    endpoint: configuration.api_endpoint
+    endpoint: configuration.api_endpoint,
+    authorized?:    -> u { configuration.admins.include? u['login'] },
+    get_otp_secret: -> u   { Travis::DataStores.redis.get("admin-v2:otp:#{u['login']}")    },
+    set_otp_secret: -> u,s { Travis::DataStores.redis.set("admin-v2:otp:#{u['login']}", s) }
 end
