@@ -56,6 +56,7 @@ Rails.application.routes.draw do
       post 'update_trial_builds'
       post 'boost'
       post 'features'
+      post 'reset_2fa'
     end
     post 'sync_all', on: :collection
   end

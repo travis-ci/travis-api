@@ -10,6 +10,10 @@ class User < ApplicationRecord
   has_many :broadcasts,             as:      :recipient
   has_one  :subscription,           as:      :owner
 
+  def has_2fa?
+    Travis::DataStores.redis.get("admin-v2:otp:#{login}")
+  end
+
   def travis_admin?
     travis_config = Travis::Config.load
     admins = travis_config.admins

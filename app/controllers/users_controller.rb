@@ -30,6 +30,13 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def reset_2fa
+    Travis::DataStores.redis.del("admin-v2:otp:#{@user.login}")
+    Services::AuditTrail::ResetTwoFa.new(current_user, @user).call
+    flash[:notice] = "Secret for #{@user.login} has been reset"
+    redirect_to admins_path
+  end
+
   def show
     # there is a bug, so that @user.organizations.includes(:subscription) is not working and we get N+1 queries for subscriptions,
     # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)

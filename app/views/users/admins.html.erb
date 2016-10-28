@@ -2,16 +2,18 @@
 
 <section class="info-block">
   <ul>
-    <li class="inline-list">
+    <li class="inline-list admin">
       <p class="info-label">Name</p>
-      <p></p>
+      <p class="info-label">Two Factor Authentication</p>
       <p></p>
     </li>
     <% @admins.each do |admin| %>
-      <li class="inline-list">
+      <li class="inline-list admin">
         <p><%= link_to describe(admin), admin %></p>
-        <p></p>
-        <p></p>
+        <p><%= admin.has_2fa? ? "has two-factor auth set up" : "not set up yet" %></p>
+        <div class="call-to-action">
+          <%= button_to 'Reset Secret', reset_2fa_user_path(admin), class: "button", form_class: "reset-2fa" if admin.has_2fa? %>
+        </div>
       </li>
     <% end %>
   </ul>
