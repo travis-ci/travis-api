@@ -1,7 +1,4 @@
 class SubscriptionsController < ApplicationController
-  include ApplicationHelper
-
-  before_action :get_subscription, only: [:show, :update]
 
   def create
     @subscription = Subscription.new(subscription_params)
@@ -19,6 +16,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def update
+    @subscription = Subscription.find_by(id: params[:id])
     @subscription.attributes = subscription_params
 
     changes = @subscription.changes
@@ -40,9 +38,11 @@ class SubscriptionsController < ApplicationController
     params.require(:subscription).permit(:valid_to, :billing_email, :vat_id, :owner_type, :owner_id, :selected_plan)
   end
 
-  def get_subscription
-    subscription = Subscription.find_by(id: params[:id])
-    return redirect_to root_path, alert: 'There is no subscription associated with that ID.' if subscription.nil?
-    @subscription = SubscriptionPresenter.new(subscription, self)
-  end
+  # def get_subscription
+    # subscription = Subscription.find_by(id: params[:id])
+    # return redirect_to root_path, alert: 'There is no subscription associated with that ID.' if subscription.nil?
+    # plan = subscription.plans.current
+    # @subscription = SubscriptionPresenter.new(subscription, plan, self) unless subscription.nil?
+    # @invoices = subscription.invoices.order('id DESC')
+  # end
 end

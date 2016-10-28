@@ -22,7 +22,7 @@
       <dd>
         <%= @subscription.coupon %>
       </dd>
-      <dt class="info-label"><%= @subscription.active? ? 'Expires:' : 'Expired:' %></dt>
+      <dt class="info-label"><%= @subscription.expiration_status %></dt>
       <dd>
         <time>
           <%= f.text_field :valid_to, value: (@subscription.valid_to.to_date if @subscription.valid_to), class: "datepicker" %>
