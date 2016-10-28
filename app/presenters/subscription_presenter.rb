@@ -1,6 +1,4 @@
 class SubscriptionPresenter < SimpleDelegator
-  include SubscriptionsHelper
-
   def initialize(subscription, plan, view)
     @subscription = subscription
     @plan = plan
@@ -23,7 +21,6 @@ class SubscriptionPresenter < SimpleDelegator
   def plan_title
     if @plan.present?
       "#{h.format_plan(@plan.name)} (#{h.format_price(@plan.amount)})"
-      # (#{format_price(@plan.amount)}/month)"
     else
       'No Plan.'
     end
