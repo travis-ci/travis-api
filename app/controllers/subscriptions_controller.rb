@@ -37,12 +37,4 @@ class SubscriptionsController < ApplicationController
   def subscription_params
     params.require(:subscription).permit(:valid_to, :billing_email, :vat_id, :owner_type, :owner_id, :selected_plan)
   end
-
-  # def get_subscription
-    # subscription = Subscription.find_by(id: params[:id])
-    # return redirect_to root_path, alert: 'There is no subscription associated with that ID.' if subscription.nil?
-    # plan = subscription.plans.current
-    # @subscription = SubscriptionPresenter.new(subscription, plan, self) unless subscription.nil?
-    # @invoices = subscription.invoices.order('id DESC')
-  # end
 end

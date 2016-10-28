@@ -58,10 +58,6 @@ module ApplicationHelper
     feature.gsub(/[\-_]/, ' ').gsub('travis yml', '.travis.yml')
   end
 
-  def format_price(amount)
-    number_to_currency(amount.to_f/100)
-  end
-
   def format_short_duration(seconds)
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
