@@ -10,8 +10,8 @@ FactoryGirl.define do
       selected_plan 'travis-ci-twenty-builds-annual'
 
       after(:create) do |subscription|
-        create(:plan, subscription: subscription, updated_at: '2016-02-01')
-        create(:plan, subscription: subscription, updated_at: '2015-02-01')
+        create(:plan, subscription: subscription, updated_at: 1.week.ago)
+        create(:plan, subscription: subscription, updated_at: 1.year.ago)
       end
     end
 
