@@ -39,7 +39,7 @@ RSpec.feature "Update Features", js: true, type: :feature do
     find("#features_cron").trigger('click')
     find_button("update-features").trigger('click')
 
-    expect(page).to have_text("Updated feature flags for sinthetix.")
+    expect(page).to have_text("Updated feature flags for travisbot.")
     expect(page.has_checked_field?("features_cron")).to be false
   end
 

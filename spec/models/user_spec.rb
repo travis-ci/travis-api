@@ -6,19 +6,19 @@ RSpec.describe User, type: :model do
 
   describe '.login' do
     it 'retrieves login name' do
-      expect(user.login).to eql 'sinthetix'
+      expect(user.login).to eql 'travisbot'
     end
   end
 
   describe '.email' do
     it 'retrieves primary email address' do
-      expect(user.email).to eql 'aly@example.com'
+      expect(user.email).to eql 'travis@example.com'
     end
   end
 
   describe '.emails' do
     it 'finds additional email associated with a user' do
-      expect(user.emails.first.email).to eql 'sinthetix@example.com'
+      expect(user.emails.first.email).to eql 'example@example.com'
     end
   end
 
@@ -56,7 +56,7 @@ RSpec.describe User, type: :model do
   end
 
   describe '.subscription' do
-    let(:user_with_subscription) { create(:user, :with_subscription) }
+    let(:user_with_subscription) { create(:user_with_active_subscription) }
 
     it 'finds the subscription associated with the user' do
       expect(user_with_subscription.subscription).not_to be nil

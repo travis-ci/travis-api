@@ -57,7 +57,7 @@ module ApplicationHelper
   def format_feature(feature)
     feature.gsub(/[\-_]/, ' ').gsub('travis yml', '.travis.yml')
   end
-  
+
   def format_log(log)
     log = log.force_encoding(Encoding::UTF_8)
     Timeout.timeout(5) do

@@ -1,11 +1,18 @@
 FactoryGirl.define do
   factory :subscription do
     association :owner, factory: :user
+    billing_email 'contact@travis-ci.com'
+    vat_id 'DE999999999'
 
     trait :active do
       cc_token 'kbfse87t3'
       valid_to { 1.week.from_now }
       selected_plan 'travis-ci-twenty-builds-annual'
+
+      after(:create) do |subscription|
+        create(:plan, subscription: subscription, updated_at: '2016-02-01')
+        create(:plan, subscription: subscription, updated_at: '2015-02-01')
+      end
     end
 
     trait :expired do
