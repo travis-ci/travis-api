@@ -19,10 +19,6 @@ class SubscriptionPresenter < SimpleDelegator
   end
 
   def plan_title
-    if @plan.present?
-      "#{h.format_plan(@plan.name)} (#{h.format_price(@plan.amount)})"
-    else
-      'No Plan.'
-    end
+    @subscription.active? ? "#{h.format_plan(@plan.name)} (#{h.format_price(@plan.amount)})" : 'No Plan.'
   end
 end
