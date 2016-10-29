@@ -1,4 +1,5 @@
 class SubscriptionsController < ApplicationController
+  include ApplicationHelper
 
   def create
     @subscription = Subscription.new(subscription_params)
