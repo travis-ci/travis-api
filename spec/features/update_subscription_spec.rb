@@ -7,6 +7,7 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
 
   scenario 'Update expiry date for User' do
     visit "/users/#{user.id}#subscription"
+    click_on('Subscription')
 
     fill_in('subscription_valid_to', with: 2.weeks.from_now.to_date)
     find_button('Update').trigger('click')
