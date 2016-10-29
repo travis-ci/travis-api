@@ -15,8 +15,4 @@ class User < ApplicationRecord
     admins = travis_config.admins
     admins.respond_to?(:include?) && admins.include?(login)
   end
-
-  def avatar_url
-
-  end
 end
