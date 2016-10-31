@@ -7,6 +7,8 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
   let!(:job) { create(:job, repository: repository, build: build, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:09:09', state: 'failed', config: {}) }
 
   scenario 'User restarts a job' do
+    allow_any_instance_of(Services::Job::GetLog).to receive(:call)
+
     visit "/jobs/#{job.id}"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").

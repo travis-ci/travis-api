@@ -1,0 +1,11 @@
+<section class="info-block">
+  <% if @log %>
+    <pre class="log">
+    <% format_log(@log).each_line.with_index do |line, i| %>
+      <span class="line-number"><%= i+1 %></span><span><%= raw(line) %></span>
+    <% end %>
+    </pre>
+  <% else %>
+    <p>No logs available.</p>
+  <% end %>
+</section>

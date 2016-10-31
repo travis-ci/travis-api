@@ -58,6 +58,16 @@ module ApplicationHelper
     feature.gsub(/[\-_]/, ' ').gsub('travis yml', '.travis.yml')
   end
 
+  def format_log(log)
+    log = log.force_encoding(Encoding::UTF_8)
+    Timeout.timeout(5) do
+      log_without_cr = log.to_s.gsub(/\r+/, "\r").gsub("\r\n", "\n").each_line.map { |line| line.split("\r").last }.join
+      Bcat::ANSI.new(log_without_cr).to_html
+    end
+  rescue
+    log
+  end
+
   def format_short_duration(seconds)
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
