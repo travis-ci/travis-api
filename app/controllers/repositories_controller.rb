@@ -2,7 +2,7 @@ class RepositoriesController < ApplicationController
   before_action :get_repository
 
   def disable
-    response = Services::Repository::Disable.new(@repository.id).call
+    response = Services::Repository::Disable.new(@repository).call
 
     if response.success?
       flash[:notice] = "Disabled #{@repository.slug}"
@@ -15,7 +15,7 @@ class RepositoriesController < ApplicationController
   end
 
   def enable
-    response = Services::Repository::Enable.new(@repository.id).call
+    response = Services::Repository::Enable.new(@repository).call
 
     if response.success?
       flash[:notice] = "Enabled #{@repository.slug}"

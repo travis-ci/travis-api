@@ -3,6 +3,7 @@ class SyncWorker
   sidekiq_options queue: 'admin-v2'
 
   def perform(user_id)
-    Services::User::Sync.new(user_id).call
+    user = User.find(user_id)
+    Services::User::Sync.new(user).call
   end
 end
