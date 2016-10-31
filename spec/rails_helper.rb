@@ -8,6 +8,7 @@ abort("The DATABASE_URL is set. Remove it and try again.") if ENV['DATABASE_URL'
 require 'spec_helper'
 require 'rspec/rails'
 require 'support/factory_girl'
+require 'support/auth_helper'
 
 # load up Capybara
 require 'capybara/rspec'

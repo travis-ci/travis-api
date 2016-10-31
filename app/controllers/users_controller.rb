@@ -31,9 +31,14 @@ class UsersController < ApplicationController
   end
 
   def reset_2fa
-    Travis::DataStores.redis.del("admin-v2:otp:#{@user.login}")
-    Services::AuditTrail::ResetTwoFa.new(current_user, @user).call
-    flash[:notice] = "Secret for #{@user.login} has been reset"
+    secret = Travis::DataStores.redis.get("admin-v2:otp:#{current_user.login}")
+    if ROTP::TOTP.new(secret).verify(params[:otp])
+      Travis::DataStores.redis.del("admin-v2:otp:#{@user.login}")
+      Services::AuditTrail::ResetTwoFa.new(current_user, @user).call
+      flash[:notice] = "Secret for #{@user.login} has been reset."
+    else
+      flash[:error] = "One time password did not match, please try again."
+    end
     redirect_to admins_path
   end
 
