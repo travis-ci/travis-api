@@ -16,7 +16,7 @@ class Repository < ApplicationRecord
 
 
   def find_admin
-    permissions.admin_access.includes(:user).map(&:user).first
+    permissions.admin_access.first.try(:user)
   end
 
   def permissions_sorted
