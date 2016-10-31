@@ -1,52 +1,45 @@
 GIT
-  remote: git://github.com/eric/metriks-librato_metrics.git
+  remote: https://github.com/eric/metriks-librato_metrics
   revision: 2c124f024fd2e34378260cd24b0e8687ff9bd196
   specs:
     metriks-librato_metrics (1.0.5)
       metriks (>= 0.9.9.6)
 
 GIT
-  remote: git://github.com/rkh/mustermann.git
-  revision: 9611951c5c789ad8227a740ae142c157a8bf7401
-  specs:
-    mustermann (0.4.0)
-      tool (~> 0.2)
-
-GIT
-  remote: git://github.com/rkh/yard-sinatra.git
+  remote: https://github.com/rkh/yard-sinatra
   revision: 00774d355123617ff0faa7e0ebd54c4cdcfcdf93
   specs:
     yard-sinatra (1.0.0)
       yard (~> 0.7)
 
 GIT
-  remote: git://github.com/rtomayko/rack-cache.git
+  remote: https://github.com/rtomayko/rack-cache
   revision: 2d6618172c39c53dceab2e2946d87496154f3e52
   specs:
     rack-cache (1.6.1)
       rack (>= 0.4)
 
 GIT
-  remote: git://github.com/travis-ci/s3.git
+  remote: https://github.com/travis-ci/s3
   revision: 386361c1b0ede19cde0ddaf86e41a16308575f5d
   specs:
     s3 (0.3.21)
       proxies (~> 0.2.0)
 
 GIT
-  remote: git://github.com/travis-ci/travis-amqp.git
+  remote: https://github.com/travis-ci/travis-amqp
   revision: 3966b3651adfd1c544f53d49d5986ac16cd9c4bc
   specs:
     travis-amqp (0.0.1)
 
 GIT
-  remote: git://github.com/travis-ci/travis-migrations.git
-  revision: d50bc1b1e38f5eab1550acbe753bff75602ae778
+  remote: https://github.com/travis-ci/travis-migrations
+  revision: c835ce8d2ffd310c02f3d47ed4b49de4557da58d
   specs:
     travis-migrations (0.0.3)
 
 GIT
-  remote: git://github.com/travis-ci/travis-settings.git
+  remote: https://github.com/travis-ci/travis-settings
   revision: d510e63b6c6f059cccae141c265e7a0c7236d1fd
   specs:
     travis-settings (0.0.1)
@@ -54,7 +47,7 @@ GIT
       virtus
 
 GIT
-  remote: git://github.com/travis-ci/travis-sidekiqs.git
+  remote: https://github.com/travis-ci/travis-sidekiqs
   revision: c5d4a4abc6c3737f9c43d3333efb94daa18b9fbb
   specs:
     travis-sidekiqs (0.0.1)
@@ -62,13 +55,13 @@ GIT
       sidekiq
 
 GIT
-  remote: git://github.com/travis-ci/travis-support.git
+  remote: https://github.com/travis-ci/travis-support
   revision: 2cd02d2a06fdd1e2fc2f129148c168b56f7c190f
   specs:
     travis-support (0.0.1)
 
 GIT
-  remote: git://github.com/travis-ci/travis-yaml.git
+  remote: https://github.com/travis-ci/travis-yaml
   revision: 032caed23af8ed1ed55e9204bb91316f3ada2f74
   specs:
     travis-yaml (0.2.0)
@@ -225,6 +218,8 @@ GEM
       metaclass (~> 0.0.1)
     multi_json (1.12.1)
     multipart-post (2.0.0)
+    mustermann (0.4.0)
+      tool (~> 0.2)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
     netaddr (1.5.1)
@@ -290,9 +285,10 @@ GEM
     ruby_dep (1.3.1)
     sentry-raven (1.0.0)
       faraday (>= 0.7.6)
-    sidekiq (4.1.2)
+    sidekiq (4.2.3)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
+      rack-protection (>= 1.5.0)
       redis (~> 3.2, >= 3.2.1)
     signet (0.7.2)
       addressable (~> 2.3)
@@ -345,7 +341,7 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    yard (0.8.7.6)
+    yard (0.9.5)
 
 PLATFORMS
   ruby
@@ -364,7 +360,7 @@ DEPENDENCIES
   metriks-librato_metrics!
   micro_migrations
   mocha (~> 0.12)
-  mustermann!
+  mustermann
   netaddr
   pry
   rack-attack (= 5.0.0.beta1)
