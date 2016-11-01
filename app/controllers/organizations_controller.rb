@@ -26,8 +26,6 @@ class OrganizationsController < ApplicationController
   end
 
   def show
-    return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
-
     @repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :name)
 
     # there is a bug, so that @organization.users.includes(:subscription) is not working and we get N+1 queries for subscriptions,
@@ -71,6 +69,7 @@ class OrganizationsController < ApplicationController
 
   def get_organization
     @organization = Organization.find_by(id: params[:id])
+    return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
   end
 
   def feature_params

@@ -34,8 +34,6 @@ class RepositoriesController < ApplicationController
   end
 
   def show
-    return redirect_to root_path, alert: "There is no repository associated with ID #{params[:id]}." if @repository.nil?
-
     # there is a bug, so that .includes(:subscription) is not working and we get N+1 queries for subscriptions,
     # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
     @subscriptions = Subscription.where(owner_id: @repository.users.map(&:id)).where('owner_type = ?', 'User').includes(:owner)
@@ -54,6 +52,7 @@ class RepositoriesController < ApplicationController
 
   def get_repository
     @repository = Repository.find_by(id: params[:id])
+    return redirect_to root_path, alert: "There is no repository associated with ID #{params[:id]}." if @repository.nil?
   end
 
   def feature_params

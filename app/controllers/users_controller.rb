@@ -31,8 +31,6 @@ class UsersController < ApplicationController
   end
 
   def show
-    return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
-
     # there is a bug, so that @user.organizations.includes(:subscription) is not working and we get N+1 queries for subscriptions,
     # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
     @organizations = @user.organizations
@@ -105,6 +103,7 @@ class UsersController < ApplicationController
 
   def get_user
     @user = User.find_by(id: params[:id])
+    return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
   end
 
   def feature_params
