@@ -45,8 +45,8 @@ class UsersController < ApplicationController
 
     @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').take(30)
 
-    @active_broadcasts = Broadcast.active.for(@user)
-    @inactive_broadcasts = Broadcast.inactive.for(@user)
+    @active_broadcasts = Broadcast.active.for(@user).includes(:recipient)
+    @inactive_broadcasts = Broadcast.inactive.for(@user).includes(:recipient)
 
     @existing_boost_limit = @user.existing_boost_limit
     @normalized_boost_time = @user.normalized_boost_time

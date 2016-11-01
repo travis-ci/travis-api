@@ -42,8 +42,8 @@ class OrganizationsController < ApplicationController
 
     @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').take(30)
 
-    @active_broadcasts = Broadcast.active.for(@organization)
-    @inactive_broadcasts = Broadcast.inactive.for(@organization)
+    @active_broadcasts = Broadcast.active.for(@organization).includes(:recipient)
+    @inactive_broadcasts = Broadcast.inactive.for(@organization).includes(:recipient)
 
     @existing_boost_limit = @organization.existing_boost_limit
     @normalized_boost_time = @organization.normalized_boost_time

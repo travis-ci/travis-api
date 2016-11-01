@@ -39,8 +39,8 @@ class RepositoriesController < ApplicationController
     @builds = @repository.builds.includes(:commit).order('id DESC').take(30)
     @requests = @repository.requests.includes(builds: :repository).order('id DESC').take(30)
 
-    @active_broadcasts = Broadcast.active.for(@repository)
-    @inactive_broadcasts = Broadcast.inactive.for(@repository)
+    @active_broadcasts = Broadcast.active.for(@repository).includes(:recipient)
+    @inactive_broadcasts = Broadcast.inactive.for(@repository).includes(:recipient)
 
     @features = Features.for(@repository)
   end
