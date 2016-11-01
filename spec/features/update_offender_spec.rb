@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "Update Offender", :js => true, :type => :feature do
+RSpec.feature "Update Offender", js: true, type: :feature do
   let!(:user) { create(:user, name: "Klaus", login: "klaus_maus") }
 
   scenario "Update abuse status of a user" do

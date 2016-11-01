@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "Enable a Feature", :js => true, :type => :feature do
+RSpec.feature "Enable a Feature", js: true, type: :feature do
   let(:redis) { Travis::DataStores.redis }
 
   before { redis.set("feature:resubscribe:disabled", 0) }

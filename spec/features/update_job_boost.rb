@@ -1,13 +1,13 @@
 require 'rails_helper'
 
-RSpec.feature "Update Job Boost", :js => true, :type => :feature do
+RSpec.feature "Update Job Boost", js: true, type: :feature do
   let!(:user) { create(:user, name: "Klaus", login: "klaus_maus") }
 
   scenario "Update job boost limit and time for a user" do
     visit "/users/#{user.id}"
 
-    fill_in('boost_owner_limit', :with => '2')
-    fill_in('boost_expires_after', :with => '12')
+    fill_in('boost_owner_limit', with: '2')
+    fill_in('boost_expires_after', with: '12')
     find_button("update-job-boost").trigger('click')
 
     expect(page).to have_text("Owner limit set to 2, and expires after 12 hours.")
@@ -18,7 +18,7 @@ RSpec.feature "Update Job Boost", :js => true, :type => :feature do
   scenario "Update job boost limit for a user" do
     visit "/users/#{user.id}"
 
-    fill_in('boost_owner_limit', :with => '2')
+    fill_in('boost_owner_limit', with: '2')
     find_button("update-job-boost").trigger('click')
 
     expect(page).to have_text("Owner limit set to 2, and expires after 24 hours.")

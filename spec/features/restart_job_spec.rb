@@ -1,10 +1,11 @@
 require 'rails_helper'
 
-RSpec.feature 'Restart a Job', :js => true, :type => :feature do
+RSpec.feature 'Restart a Job', js: true, type: :feature do
   let!(:organization) { create(:organization) }
-  let!(:repository) { create(:repository, owner: organization) }
-  let!(:build) { create(:build, repository: repository, number: 1)}
-  let!(:job) { create(:job, repository: repository, build: build, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:09:09', state: 'failed', config: {}) }
+  let!(:repository)   { create(:repository, owner: organization) }
+  let!(:build)        { create(:build, repository: repository, number: 1)}
+  let!(:job)          { create(:job, repository: repository, build: build, started_at: '2016-06-29 11:06:01',
+                               finished_at: '2016-06-29 11:09:09', state: 'failed', config: {}) }
 
   scenario 'User restarts a job' do
     allow_any_instance_of(Services::Job::GetLog).to receive(:call)
@@ -12,8 +13,8 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
     visit "/jobs/#{job.id}"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").
-      with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
-      to_return(:status => 200, :body => '', :headers => {})
+      with(headers: {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
+      to_return(status: 200, body: '', headers: {})
 
     find_button('Restart').trigger('click')
 
@@ -29,8 +30,8 @@ RSpec.feature 'Restart a Job', :js => true, :type => :feature do
     click_on('Jobs')
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").
-      with(:headers => {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
-      to_return(:status => 200, :body => '', :headers => {})
+      with(headers: {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
+      to_return(status: 200, body: '', headers: {})
 
     find_button('Restart').trigger('click')
 

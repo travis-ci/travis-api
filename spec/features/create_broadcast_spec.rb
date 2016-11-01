@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "Create Broadcast", :js => true, :type => :feature do
+RSpec.feature "Create Broadcast", js: true, type: :feature do
   let!(:user)         { create(:user) }
   let!(:organization) { create(:organization) }
   let!(:repository)   { create(:repository) }
@@ -22,7 +22,7 @@ RSpec.feature "Create Broadcast", :js => true, :type => :feature do
 
     visit "/users/#{user.id}#broadcasts"
 
-    fill_in('broadcast_message', :with => 'This is a message.')
+    fill_in('broadcast_message', with: 'This is a message.')
     find_button('Create').trigger('click')
 
     expect(page).to have_text("Broadcast created.")
@@ -33,7 +33,7 @@ RSpec.feature "Create Broadcast", :js => true, :type => :feature do
 
     visit "/organizations/#{organization.id}#broadcasts"
 
-    fill_in('broadcast_message', :with => 'This is a message.')
+    fill_in('broadcast_message', with: 'This is a message.')
     find_button('Create').trigger('click')
 
     expect(page).to have_text("Broadcast created.")
@@ -42,7 +42,7 @@ RSpec.feature "Create Broadcast", :js => true, :type => :feature do
   scenario "Create broadcast for repository" do
     visit "/repositories/#{repository.id}#broadcasts"
 
-    fill_in('broadcast_message', :with => 'This is a message.')
+    fill_in('broadcast_message', with: 'This is a message.')
     find_button('Create').trigger('click')
 
     expect(page).to have_text("Broadcast created.")

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.feature "Add logs to audit trial", :js => true, :type => :feature do
-  let(:redis) { Travis::DataStores.redis }
+RSpec.feature "Add logs to audit trial", js: true, type: :feature do
+  let(:redis)      { Travis::DataStores.redis }
   let!(:broadcast) { create(:broadcast, message: 'Some message text.') }
 
   before { redis.set("feature:resubscribe:disabled", 1) }

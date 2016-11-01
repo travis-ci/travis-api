@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "Update Features", :js => true, :type => :feature do
+RSpec.feature "Update Features", js: true, type: :feature do
   let!(:repository)   { create(:repository) }
   let!(:user)         { create(:user) }
   let!(:organization) { create(:organization) }
