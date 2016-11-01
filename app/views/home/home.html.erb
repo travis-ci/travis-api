@@ -1,1 +1,2 @@
-<% title current_user ? "Welcome #{current_user.name || current_user.login}!" : "Welcome!" %>
+<h1 class="welcome"><%= current_user ? "Welcome #{current_user.name || current_user.login}!" : "Welcome!" %></h1>
+<p class="welcome-sub">Great to have you here.</p>

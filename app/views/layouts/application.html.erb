@@ -12,24 +12,26 @@
         <h1 id="logo" class="logo">
           <%= link_to "Travis Admin", root_path %>
         </h1>
-
-        <%= form_tag(search_path, method: :get, id: "search") do %>
-          <%= text_field_tag(:q, params[:q]) %>
-          <%= button_to options = nil, class: "button", id: "search-submit" do %>
-            <%= fa_icon("search") %>
+        <% unless action_name == 'logout' %>
+          <%= form_tag(search_path, method: :get, id: "search") do %>
+            <%= text_field_tag(:q, params[:q]) %>
+            <%= button_to options = nil, class: "button", id: "search-submit" do %>
+              <%= fa_icon("search") %>
+            <% end %>
           <% end %>
-        <% end %>
 
-        <nav>
-          <ul class="navigation menu">
-            <li><%= link_to fa_icon("question", title: "Search help"), help_path %></li>
-            <li><%= link_to fa_icon("bullhorn", title: "Broadcast"), broadcasts_path %></li>
-            <li><%= link_to fa_icon("flag", title: "Features"), features_path %></li>
-            <li><%= link_to fa_icon("users", title: "Admins"), admins_path %></li>
-            <li><%= link_to fa_icon("ban", title: "Abuse"), offenders_path %></li>
-            <li><%= link_to fa_icon("file-text-o", title: "Audit Trail"), audit_trail_index_path, id: "audit_trail" %></li>
-          </ul>
-        </nav>
+          <nav>
+            <ul class="navigation menu">
+              <li><%= link_to fa_icon("question", title: "Search help"), help_path %></li>
+              <li><%= link_to fa_icon("bullhorn", title: "Broadcast"), broadcasts_path %></li>
+              <li><%= link_to fa_icon("flag", title: "Features"), features_path %></li>
+              <li><%= link_to fa_icon("users", title: "Admins"), admins_path %></li>
+              <li><%= link_to fa_icon("ban", title: "Abuse"), offenders_path %></li>
+              <li><%= link_to fa_icon("file-text-o", title: "Audit Trail"), audit_trail_index_path, id: "audit_trail" %></li>
+              <li><%= link_to fa_icon("chevron-circle-right", title: "Logout"), logout_path, id: "logout" %></li>
+            </ul>
+          </nav>
+        <% end %>
       </div>
     </header>
 
