@@ -1,7 +1,7 @@
 <section class="info-block">
   <h2 class="info-header">Organizations</h2>
 
-  <% if organizations.empty? %>
+  <% if @organizations.empty? %>
       <p>No organizations.</p>
   <% else %>
       <ul>
@@ -10,19 +10,19 @@
           <p class="info-label">Subscription</p>
           <p class="info-label">Trial Builds</p>
         </li>
-        <% organizations.each do |org| %>
+        <% @organizations.each do |org| %>
             <li class="inline-list org-item">
               <p>
                 <% if org.avatar_url %>
-                    <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
+                  <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
                 <% end %>
                 <%= link_to org.name.present? ? describe(org) : org.login, org %>
               </p>
               <p>
-                <% if org.subscription %>
-                    <%= link_to format_subscription(org.subscription), organization_path(org, anchor: 'subscription') %>
+                <% if @subscriptions_by_organization_id[org.id].present? %>
+                  <%= link_to format_subscription(@subscriptions_by_organization_id[org.id].first), organization_path(org, anchor: 'subscription') %>
                 <% else %>
-                    none
+                  none
                 <% end %>
               </p>
               <p>

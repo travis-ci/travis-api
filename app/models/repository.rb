@@ -21,9 +21,9 @@ class Repository < ApplicationRecord
   def permissions_sorted
     @permissions_sorted ||=
     {
-      admin: permissions.admin_access.includes(user: :subscription).map(&:user),
-      push: permissions.push_access.includes(user: :subscription).map(&:user),
-      pull: permissions.pull_access.includes(user: :subscription).map(&:user)
+      admin: permissions.admin_access.includes(:user).map(&:user),
+      push: permissions.push_access.includes(:user).map(&:user),
+      pull: permissions.pull_access.includes(:user).map(&:user)
     }
   end
 

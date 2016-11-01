@@ -33,6 +33,12 @@ class UsersController < ApplicationController
   def show
     return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
 
+    # there is a bug, so that @user.organizations.includes(:subscription) is not working and we get N+1 queries for subscriptions,
+    # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
+    @organizations = @user.organizations
+    @subscriptions = Subscription.where(owner_id: @organizations.map(&:id)).where('owner_type = ?', 'Organization').includes(:owner)
+    @subscriptions_by_organization_id = @subscriptions.group_by { |s| s.owner.id }
+
     @repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name)
 
     @pending_jobs = Job.from_repositories(@repositories).not_finished

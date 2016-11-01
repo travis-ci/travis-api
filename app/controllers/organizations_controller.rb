@@ -30,7 +30,11 @@ class OrganizationsController < ApplicationController
 
     @repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :name)
 
-    @users = @organization.users.includes(:subscription).order(:name)
+    # there is a bug, so that @organization.users.includes(:subscription) is not working and we get N+1 queries for subscriptions,
+    # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
+    @users = @organization.users.order(:name)
+    @subscriptions = Subscription.where(owner_id: @users.map(&:id)).where('owner_type = ?', 'User').includes(:owner)
+    @subscriptions_by_user_id = @subscriptions.group_by { |s| s.owner.id }
 
     @pending_jobs = Job.from_repositories(@repositories).not_finished
     @finished_jobs = Job.from_repositories(@repositories).finished.take(10)
