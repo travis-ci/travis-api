@@ -1,5 +1,7 @@
 <% title "Build - #{describe(@build)}" %>
 
+<% breadcrumbs "#{link_to describe(@build.owner), @build.owner} > #{link_to @build.repository.name, @build.repository} > #{link_to 'Request ' + describe(@build.request), @build.request} > Build ##{@build.number}" %>
+
 <div id="tabs">
   <span id="build" class="tab-switch"></span>
   <a href="#build" class="tab-link">Information</a>
