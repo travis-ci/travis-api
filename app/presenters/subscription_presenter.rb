@@ -20,6 +20,10 @@ class SubscriptionPresenter < SimpleDelegator
   end
 
   def plan_title
-    @subscription.active? ? "#{h.format_plan(@plan.name)} (#{h.format_price(@plan.try(:amount, 0) )})" : 'No active plan.'
+    @subscription.active? ? "#{h.format_plan(@plan.name)} (#{h.format_price(plan_amount)})" : 'No active plan.'
+  end
+
+  def plan_amount
+    @plan.try(:amount) || 0
   end
 end
