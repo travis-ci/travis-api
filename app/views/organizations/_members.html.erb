@@ -1,4 +1,41 @@
 <section class="info-block">
   <h2 class="info-header">Members</h2>
-  <%= render partial: 'shared/user_list', locals: {users: @users} %>
+  <% if @memberships.empty? %>
+    <p>No members.</p>
+  <% else %>
+    <%= form_for :sync_all, url: {action: 'sync_all', controller: 'users'} do |f| %>
+      <%= f.hidden_field :back_link, value: request.fullpath %>
+      <%= f.hidden_field :user_ids, value: @memberships.map(&:user_id).join(',') %>
+      <%= f.submit 'Sync all', class: 'button' %>
+    <% end %>
+    <ul>
+      <li class="inline-list member-item">
+        <p class="info-label">Name</p>
+        <p class="info-label">Role</p>
+        <p class="info-label">Subscription</p>
+        <p class="info-label">Trial Builds</p>
+      </li>
+      <% @memberships.each do |membership| %>
+        <li class="inline-list member-item">
+          <p>
+            <% if membership.user.avatar_url %>
+              <%= image_tag(membership.user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
+            <% end %>
+            <%= link_to describe(membership.user), membership.user %>
+          </p>
+          <p><%= membership.role %></p>
+          <p>
+            <% if membership.user.subscription %>
+              <%= link_to format_subscription(membership.user.subscription), membership.user.subscription %>
+            <% else %>
+              none
+            <% end %>
+          </p>
+          <p>
+            <%= check_trial_builds(membership.user) %>
+          </p>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
 </section>
