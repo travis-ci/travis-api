@@ -32,7 +32,7 @@ class UsersController < ApplicationController
 
   def reset_2fa
     secret = Travis::DataStores.redis.get("admin-v2:otp:#{current_user.login}")
-    if ROTP::TOTP.new(secret).verify(params[:otp])
+    if Travis::Config.load.disable_otp? && !Rails.env.production? || ROTP::TOTP.new(secret).verify(params[:otp])
       Travis::DataStores.redis.del("admin-v2:otp:#{@user.login}")
       Services::AuditTrail::ResetTwoFa.new(current_user, @user).call
       flash[:notice] = "Secret for #{@user.login} has been reset."

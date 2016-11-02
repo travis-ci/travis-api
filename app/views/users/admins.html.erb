@@ -15,9 +15,9 @@
         <p><%= admin.has_2fa? ? "has two-factor auth set up" : "not set up yet" %></p>
         <div class="call-to-action">
           <% if admin.has_2fa? %>
-            <%= form_tag({action: 'reset_2fa', controller: "users", id: admin.id, method: 'post'}, {class: 'reset-2fa'}) do %>
+            <%= form_tag({action: 'reset_2fa', controller: "users", id: admin.id, method: 'post'}, {class: 'otp reset-2fa'}) do %>
               <%= hidden_field_tag 'otp' %>
-              <%= submit_tag 'Reset Secret', class: 'otp button', id: 'reset-2fa' %>
+              <%= submit_tag 'Reset Secret', class: 'button', id: 'reset-2fa' %>
             <% end %>
           <% end %>
         </div>
