@@ -7,6 +7,7 @@ class SubscriptionPresenter < SimpleDelegator
   end
 
   def h
+    # Borrowed from Draper (gem); allows use of helpers.
     @view.view_context
   end
 
@@ -19,12 +20,6 @@ class SubscriptionPresenter < SimpleDelegator
   end
 
   def plan_title
-    @subscription.active? ? "#{h.format_plan(@plan.name)} (#{h.format_price(plan_amount)})" : 'No Plan.'
-  end
-
-  private
-
-  def plan_amount
-    @plan.try(:amount) ? @plan.amount : 0
+    @subscription.active? ? "#{h.format_plan(@plan.name)} (#{h.format_price(@plan.try(:amount, 0) )})" : 'No active plan.'
   end
 end

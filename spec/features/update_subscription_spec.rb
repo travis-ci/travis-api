@@ -18,8 +18,8 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
 
   scenario 'Update VAT ID and billing email' do
     visit "/users/#{user.id}#subscription"
-
     click_on('Subscription')
+
     fill_in('subscription_vat_id', :with => 'DE999999998')
     fill_in('subscription_billing_email', :with => 'contact@travis-ci.org')
 
@@ -32,6 +32,7 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
 
   scenario 'No changes made to subscription' do
     visit "/users/#{user.id}#subscription"
+
     find_button('Update').trigger('click')
     expect(page).to have_text ('No subscription changes were made.')
     expect(page).to have_field('subscription_vat_id', with: 'DE999999999')
