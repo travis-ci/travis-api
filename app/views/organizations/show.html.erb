@@ -11,8 +11,13 @@
     <span id="subscription" class="tab-switch"></span>
     <a href="#subscription" class="tab-link">Subscription</a>
     <section class="tab-content">
-      <%= render partial: 'subscriptions/subscription' %>
-      <%= render partial: 'subscriptions/invoices' %>
+      <%= render partial: 'shared/subscription' %>
+    </section>
+
+    <span id="invoices" class="tab-switch"></span>
+    <a href="#invoices" class="tab-link">Invoices</a>
+    <section class="tab-content">
+      <%= render partial: 'shared/invoices' %>
     </section>
   <% end %>
 

@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :user do
-    login 'sinthetix'
-    email 'aly@example.com'
+    login 'travisbot'
+    email 'travis@example.com'
 
     factory :user_with_organizations do
       transient do
@@ -38,10 +38,12 @@ FactoryGirl.define do
       end
     end
 
-    trait :with_subscription do
+    trait :with_active_subscription do
       after(:create) do |user|
-        user.subscription = create(:subscription)
+        user.subscription = create(:active_subscription)
       end
     end
+
+    factory :user_with_active_subscription, traits: [:with_active_subscription]
   end
 end
