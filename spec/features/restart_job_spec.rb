@@ -3,9 +3,8 @@ require 'rails_helper'
 RSpec.feature 'Restart a Job', js: true, type: :feature do
   let!(:organization) { create(:organization) }
   let!(:repository)   { create(:repository, owner: organization) }
-  let!(:build)        { create(:build, repository: repository, number: 1)}
-  let!(:job)          { create(:job, repository: repository, build: build, started_at: '2016-06-29 11:06:01',
-                               finished_at: '2016-06-29 11:09:09', state: 'failed', config: {}) }
+  let!(:build)        { create(:failed_build, repository: repository)}
+  let!(:job)          { create(:failed_job, repository: repository, build: build, config: {}) }
 
   scenario 'User restarts a job' do
     allow_any_instance_of(Services::Job::GetLog).to receive(:call)
@@ -18,7 +17,7 @@ RSpec.feature 'Restart a Job', js: true, type: :feature do
 
     find_button('Restart').trigger('click')
 
-    expect(page).to have_text('Job travis-pro/travis-admin#123 successfully restarted.')
+    expect(page).to have_text('Job travis-pro/travis-admin#123.4 successfully restarted.')
   end
 
   scenario 'User restarts a job via jobs tab in organization view' do
@@ -35,7 +34,7 @@ RSpec.feature 'Restart a Job', js: true, type: :feature do
 
     find_button('Restart').trigger('click')
 
-    expect(page).to have_text('Job travis-pro/travis-admin#123 successfully restarted.')
+    expect(page).to have_text('Job travis-pro/travis-admin#123.4 successfully restarted.')
     expect(page).to have_button('Restarted', disabled: true)
   end
 end

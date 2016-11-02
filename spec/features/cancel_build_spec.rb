@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Cancel a Build', js: true, type: :feature do
   let!(:repository) { create(:repository) }
-  let!(:build)      { create(:build, repository: repository, started_at: '2016-06-29 11:06:01', finished_at: nil, state: 'started', config: {}) }
+  let!(:build)      { create(:started_build, repository: repository, config: {}) }
 
   scenario 'User cancels a build' do
     visit "/builds/#{build.id}"

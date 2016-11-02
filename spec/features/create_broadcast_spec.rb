@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.feature "Create Broadcast", js: true, type: :feature do
+RSpec.feature 'Create a Broadcast', js: true, type: :feature do
   let!(:user)         { create(:user) }
   let!(:organization) { create(:organization) }
   let!(:repository)   { create(:repository) }
 
-  scenario 'Create broadcast for everybody' do
+  scenario 'Create a broadcast for everybody' do
     visit '/broadcasts'
 
     fill_in('broadcast_message', :with => 'This is a message.')
@@ -17,7 +17,7 @@ RSpec.feature "Create Broadcast", js: true, type: :feature do
     expect(page).to have_text('This is a message.')
   end
 
-  scenario 'Create broadcast for user' do
+  scenario 'Create a broadcast for user' do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
     visit "/users/#{user.id}#broadcasts"
@@ -31,7 +31,7 @@ RSpec.feature "Create Broadcast", js: true, type: :feature do
     expect(page).to have_text('This is a message.')
   end
 
-  scenario 'Create broadcast for organization' do
+  scenario 'Create a broadcast for organization' do
     allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
 
     visit "/organizations/#{organization.id}#broadcasts"
@@ -45,7 +45,7 @@ RSpec.feature "Create Broadcast", js: true, type: :feature do
     expect(page).to have_text('This is a message.')
   end
 
-  scenario 'Create broadcast for repository' do
+  scenario 'Create a broadcast for repository' do
     visit "/repositories/#{repository.id}#broadcasts"
 
     fill_in('broadcast_message', with: 'This is a message.')

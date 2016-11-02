@@ -14,7 +14,7 @@ RSpec.feature 'Search', js: true, type: :feature do
                   allow_any_instance_of(Services::Job::GetLog).to receive(:call) }
 
   scenario "User searches for user login 'lisbethmarianne' and gets redirected to the user view" do
-    visit "/"
+    visit '/'
     fill_in('q', with: 'lisbethmarianne')
     find_button('search-submit').trigger('click')
 
@@ -22,7 +22,7 @@ RSpec.feature 'Search', js: true, type: :feature do
   end
 
   scenario "User searches for organization login 'rubymonstas' and gets redirected to the organization view" do
-    visit "/"
+    visit '/'
     fill_in('q', with: 'rubymonstas')
     find_button('search-submit').trigger('click')
 
@@ -30,7 +30,7 @@ RSpec.feature 'Search', js: true, type: :feature do
   end
 
   scenario "User searches for repository name 'test1' and gets the search results page with 2 results" do
-    visit "/"
+    visit '/'
     fill_in('q', with: 'test1')
     find_button('search-submit').trigger('click')
 
@@ -39,7 +39,7 @@ RSpec.feature 'Search', js: true, type: :feature do
   end
 
   scenario "User searches for something that doesn't exist and gets the search results page with no results" do
-    visit "/"
+    visit '/'
     fill_in('q', with: 'hello')
     find_button('search-submit').trigger('click')
 
@@ -47,7 +47,7 @@ RSpec.feature 'Search', js: true, type: :feature do
   end
 
   scenario "User searches for 'help' and gets the search help page" do
-    visit "/"
+    visit '/'
 
     fill_in('q', with: 'help')
     find_button('search-submit').trigger('click')
@@ -55,56 +55,56 @@ RSpec.feature 'Search', js: true, type: :feature do
     expect(page).to have_text('Search Help')
   end
 
-  scenario "User searches for Committer Name via button on Build view" do
+  scenario 'User searches for Committer Name via button on Build view' do
     visit "/builds/#{build.id}"
     find_button('search-committer_name').trigger('click')
 
     expect(page).to have_text('User - Katrin (lisbethmarianne)')
   end
 
-  scenario "User searches for Committer Email via button on Build view" do
+  scenario 'User searches for Committer Email via button on Build view' do
     visit "/builds/#{build.id}"
     find_button('search-committer_email').trigger('click')
 
     expect(page).to have_text('User - Katrin (lisbethmarianne)')
   end
 
-  scenario "User searches for Author Name via button on Build view" do
+  scenario 'User searches for Author Name via button on Build view' do
     visit "/builds/#{build.id}"
     find_button('search-author_name').trigger('click')
 
     expect(page).to have_text('User - Katrin (lisbethmarianne)')
   end
 
-  scenario "User searches for Author Email via button on Build view" do
+  scenario 'User searches for Author Email via button on Build view' do
     visit "/builds/#{build.id}"
     find_button('search-author_email').trigger('click')
 
     expect(page).to have_text('User - Katrin (lisbethmarianne)')
   end
 
-  scenario "User searches for Committer Name via button on Job view" do
+  scenario 'User searches for Committer Name via button on Job view' do
     visit "/jobs/#{job.id}"
     find_button('search-committer_name').trigger('click')
 
     expect(page).to have_text('User - Katrin (lisbethmarianne)')
   end
 
-  scenario "User searches for Committer Email via button on Job view" do
+  scenario 'User searches for Committer Email via button on Job view' do
     visit "/jobs/#{job.id}"
     find_button('search-committer_email').trigger('click')
 
     expect(page).to have_text('User - Katrin (lisbethmarianne)')
   end
 
-  scenario "User searches for Author Name via button on Job view" do
+  scenario 'User searches for Author Name via button on Job view' do
     visit "/jobs/#{job.id}"
     find_button('search-author_name').trigger('click')
 
     expect(page).to have_text('User - Katrin (lisbethmarianne)')
   end
 
-  scenario "User searches for Author Email via button on Job view" do
+  scenario 'User searches for Author Email via button on Job view' do
     visit "/jobs/#{job.id}"
     find_button('search-author_email').trigger('click')
 
