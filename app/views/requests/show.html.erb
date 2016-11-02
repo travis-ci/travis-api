@@ -1,4 +1,6 @@
-<% title "Request - ##{@request.id}" %>
+<% title "Request - #{describe(@request)}" %>
+
+<% breadcrumbs "#{link_to describe(@request.owner), @request.owner} > #{link_to @request.repository.name, @request.repository} > Request #{describe(@request)}" %>
 
 <section class="info-block">
   <h2 class="info-header">Information</h2>
