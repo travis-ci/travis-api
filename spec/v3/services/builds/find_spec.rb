@@ -101,7 +101,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "id"             => 5,
           "sha"            => "add057e66c3e1d59ef1f",
           "ref"            => "refs/heads/master",
-          "message"        => "unignore Gemfile.lock",
+          "message"        => "unignore Gemfile.lock 🙃",
           "compare_url"    => "https://github.com/svenfuchs/minimal/compare/master...develop",
           "committed_at"   => "2010-11-12T12:55:00Z"},
       }]
@@ -194,7 +194,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "id"             => 5,
           "sha"            => "add057e66c3e1d59ef1f",
           "ref"            => "refs/heads/master",
-          "message"        => "unignore Gemfile.lock",
+          "message"        => "unignore Gemfile.lock 🙃",
           "compare_url"    => "https://github.com/svenfuchs/minimal/compare/master...develop",
           "committed_at"   => "2010-11-12T12:55:00Z"}
       }]
