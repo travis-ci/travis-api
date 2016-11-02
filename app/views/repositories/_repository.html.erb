@@ -22,7 +22,20 @@
       <% if @repository.owner.avatar_url %>
         <%= image_tag(@repository.owner.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
       <% end %>
-      <%= link_to describe(@repository.owner), @repository.owner %></dd>
+      <%= link_to describe(@repository.owner), @repository.owner %>
+    </dd>
+    <dt class="info-label">Active Admin</dt>
+    <dd>
+      <% if @repository.find_admin %>
+        <% if @repository.find_admin.avatar_url %>
+          <%= image_tag(@repository.find_admin.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
+        <% end %>
+        <%= link_to describe(@repository.find_admin), @repository.find_admin %>
+        <%= link_to fa_icon("users", title: "More admins"), '#users' if @repository.permissions_sorted[:admin].size > 1 %>
+      <% else %>
+        <%= fa_icon("exclamation-triangle", title: "Warning") %> no admin
+      <% end %>
+    </dd>
   </dl>
 </section>
 
