@@ -31,7 +31,11 @@ class UsersController < ApplicationController
   end
 
   def show
-    return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
+    # there is a bug, so that @user.organizations.includes(:subscription) is not working and we get N+1 queries for subscriptions,
+    # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
+    @organizations = @user.organizations
+    @subscriptions = Subscription.where(owner_id: @organizations.map(&:id)).where('owner_type = ?', 'Organization').includes(:owner)
+    @subscriptions_by_organization_id = @subscriptions.group_by { |s| s.owner.id }
 
     @repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name)
 
@@ -45,8 +49,8 @@ class UsersController < ApplicationController
 
     @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').take(30)
 
-    @active_broadcasts = Broadcast.active.for(@user)
-    @inactive_broadcasts = Broadcast.inactive.for(@user)
+    @active_broadcasts = Broadcast.active.for(@user).includes(:recipient)
+    @inactive_broadcasts = Broadcast.inactive.for(@user).includes(:recipient)
 
     @existing_boost_limit = @user.existing_boost_limit
     @normalized_boost_time = @user.normalized_boost_time
@@ -99,6 +103,7 @@ class UsersController < ApplicationController
 
   def get_user
     @user = User.find_by(id: params[:id])
+    return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
   end
 
   def feature_params

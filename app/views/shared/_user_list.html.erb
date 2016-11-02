@@ -20,8 +20,8 @@
           <% end %>
           <%= link_to describe(user), user %></p>
         <p>
-          <% if user.subscription %>
-            <%= link_to format_subscription(user.subscription), user_path(user, anchor: 'subscription') %>
+          <% if @subscriptions_by_user_id[user.id].present? %>
+            <%= link_to format_subscription(@subscriptions_by_user_id[user.id].first), user_path(user, anchor: 'subscription') %>
           <% else %>
             none
           <% end %>

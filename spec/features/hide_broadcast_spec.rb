@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "Hide Broadcast", :js => true, :type => :feature do
+RSpec.feature "Hide Broadcast", js: true, type: :feature do
   let!(:broadcast) { create(:broadcast, message: 'Some message text.') }
 
   scenario "Hide broadcast for everybody" do

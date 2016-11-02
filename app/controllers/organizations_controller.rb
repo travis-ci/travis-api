@@ -26,11 +26,13 @@ class OrganizationsController < ApplicationController
   end
 
   def show
-    return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
-
     @repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :name)
 
-    @users = @organization.users.includes(:subscription).order(:name)
+    # there is a bug, so that @organization.users.includes(:subscription) is not working and we get N+1 queries for subscriptions,
+    # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
+    @users = @organization.users.order(:name)
+    @subscriptions = Subscription.where(owner_id: @users.map(&:id)).where('owner_type = ?', 'User').includes(:owner)
+    @subscriptions_by_user_id = @subscriptions.group_by { |s| s.owner.id }
 
     @pending_jobs = Job.from_repositories(@repositories).not_finished
     @finished_jobs = Job.from_repositories(@repositories).finished.take(10)
@@ -42,8 +44,8 @@ class OrganizationsController < ApplicationController
 
     @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').take(30)
 
-    @active_broadcasts = Broadcast.active.for(@organization)
-    @inactive_broadcasts = Broadcast.inactive.for(@organization)
+    @active_broadcasts = Broadcast.active.for(@organization).includes(:recipient)
+    @inactive_broadcasts = Broadcast.inactive.for(@organization).includes(:recipient)
 
     @existing_boost_limit = @organization.existing_boost_limit
     @normalized_boost_time = @organization.normalized_boost_time
@@ -67,6 +69,7 @@ class OrganizationsController < ApplicationController
 
   def get_organization
     @organization = Organization.find_by(id: params[:id])
+    return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
   end
 
   def feature_params

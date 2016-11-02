@@ -1,16 +1,13 @@
 class BuildsController < ApplicationController
   include ApplicationHelper
 
-  def show
-    @build = Build.find_by(id: params[:id])
-    return redirect_to root_path, alert: "There is no build associated with that ID." if @build.nil?
+  before_action :get_build
 
+  def show
     @jobs = @build.jobs.includes(:repository)
   end
 
   def cancel
-    @build = Build.find_by(id: params[:id])
-
     response = Services::Build::Cancel.new(@build).call
 
     if response.success?
@@ -42,8 +39,6 @@ class BuildsController < ApplicationController
   end
 
   def restart
-    @build = Build.find_by(id: params[:id])
-
     response = Services::Build::Restart.new(@build).call
 
     if response.success?
@@ -72,5 +67,12 @@ class BuildsController < ApplicationController
         end
       end
     end
+  end
+
+  private
+
+  def get_build
+    @build = Build.find_by(id: params[:id])
+    return redirect_to root_path, alert: "There is no build associated with that ID." if @build.nil?
   end
 end

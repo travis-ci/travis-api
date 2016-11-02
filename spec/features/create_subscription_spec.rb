@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.feature 'Create a free subscription', :js => true, :type => :feature do
-  let(:user) { create :user, login: 'lisbethmarianne', name: 'Katrin' }
+RSpec.feature 'Create a free subscription', js: true, type: :feature do
+  let(:user)         { create :user, login: 'lisbethmarianne', name: 'Katrin' }
   let(:organization) { create :organization, login: 'rubymonstas', name: 'Rubymonstas'}
 
   scenario 'Create a one build subscription for user' do

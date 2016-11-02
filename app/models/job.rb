@@ -11,17 +11,16 @@ class Job < ApplicationRecord
 
   serialize  :config
 
-
-  scope :from_repositories, -> (repositories) { where(repository_id: repositories.map(&:id)).includes(:repository) }
-  scope :not_finished, -> { where(state: %w[started received queued created]).sort_by {|job|
-                                     %w[started received queued created].index(job.state.to_s) } }
-  scope :finished, -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
+  scope :from_repositories, -> (repositories) { where(repository_id: repositories.map(&:id)).includes(:repository, :build) }
+  scope :not_finished,      -> { where(state: %w[started received queued created]).sort_by {|job|
+                                   %w[started received queued created].index(job.state.to_s) } }
+  scope :finished,          -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
 
   def duration
     (started_at && finished_at) ? (finished_at - started_at) : nil
   end
 
   def not_finished?
-    %w[started received queued created].include? state
+    %w[started received queued created].include?(state)
   end
 end

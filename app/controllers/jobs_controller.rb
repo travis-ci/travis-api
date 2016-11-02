@@ -1,16 +1,13 @@
 class JobsController < ApplicationController
   include ApplicationHelper
 
-  def show
-    @job = Job.find_by(id: params[:id])
-    return redirect_to root_path, alert: "There is no job associated with that ID." if @job.nil?
+  before_action :get_job
 
+  def show
     @log = Services::Job::GetLog.new(@job).call
   end
 
   def cancel
-    @job = Job.find_by(id: params[:id])
-
     response = Services::Job::Cancel.new(@job).call
 
     if response.success?
@@ -42,8 +39,6 @@ class JobsController < ApplicationController
   end
 
   def restart
-    @job = Job.find_by(id: params[:id])
-
     response = Services::Job::Restart.new(@job).call
 
     if response.success?
@@ -72,5 +67,12 @@ class JobsController < ApplicationController
         end
       end
     end
+  end
+
+  private
+
+  def get_job
+    @job = Job.find_by(id: params[:id])
+    return redirect_to root_path, alert: "There is no job associated with that ID." if @job.nil?
   end
 end

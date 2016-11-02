@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "Update trial builds", :js => true, :type => :feature do
+RSpec.feature "Update trial builds", js: true, type: :feature do
   let!(:user) { create(:user) }
 
   before { Travis::DataStores.redis.set("trial:#{user.login}", '10') }

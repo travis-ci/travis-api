@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "Display Broadcast", :js => true, :type => :feature do
+RSpec.feature "Display Broadcast", js: true, type: :feature do
   let!(:broadcast) { create(:broadcast, message: 'Some message text.', expired: true) }
 
   scenario "Display broadcast for everybody" do
