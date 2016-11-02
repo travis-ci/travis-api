@@ -13,7 +13,7 @@ RSpec.feature 'Cancel a Build', js: true, type: :feature do
 
     find_button('Cancel').trigger('click')
 
-    expect(page).to have_text('Build travis-pro/travis-admin#456 successfully canceled.')
+    expect(page).to have_text('Build travis-pro/travis-admin#123 successfully canceled.')
   end
 
   scenario 'User cancels a build via builds tab in repository view' do
@@ -25,7 +25,7 @@ RSpec.feature 'Cancel a Build', js: true, type: :feature do
 
     find_button('Cancel').trigger('click')
 
-    expect(page).to have_text('Build travis-pro/travis-admin#456 successfully canceled.')
+    expect(page).to have_text('Build travis-pro/travis-admin#123 successfully canceled.')
     expect(page).to have_button('Canceled', disabled: true)
   end
 end
