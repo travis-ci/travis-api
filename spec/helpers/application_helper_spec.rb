@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ApplicationHelper, type: :helper do
-  let!(:user) { create(:user, name: 'Katrin', login: 'katrina') }
-  let!(:organization) { create(:organization, name: 'travis', login: 'travis-pro') }
+  let!(:user) { create(:user) }
+  let!(:organization) { create(:organization) }
 
   let(:redis) { Travis::DataStores.redis }
 
@@ -15,7 +15,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       access_token = helper.access_token(user).token
 
       expect(access_token).to eq(redis.get("r:#{user.id}:2"))
-      expect(redis.lrange("t:#{access_token}", 0, -1)).to eq(["#{user.id}", "2", "public", "private"])
+      expect(redis.lrange("t:#{access_token}", 0, -1)).to eq(["#{user.id}", '2', 'public', 'private'])
     end
   end
 
@@ -33,29 +33,29 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   describe 'describe' do
-    let(:repository) { create(:repository, owner_name: 'travis') }
-    let(:build) { create(:build, repository: repository, number: 123) }
-    let(:job) { create(:job, repository: repository, number: 125) }
-    let(:request) { create(:request, id: 12345) }
+    let(:repository) { create(:repository) }
+    let(:build) { create(:build, repository: repository) }
+    let(:job) { create(:job, repository: repository, build: build) }
+    let(:request) { create(:request) }
 
     it 'returns String to describe a user' do
-      expect(helper.describe(user)).to eql 'Katrin (katrina)'
+      expect(helper.describe(user)).to eql 'Travis (travisbot)'
     end
 
     it 'returns String to describe an organization' do
-      expect(helper.describe(organization)).to eql 'travis (travis-pro)'
+      expect(helper.describe(organization)).to eql 'Travis (travis-pro)'
     end
 
     it 'returns String to describe a repositories' do
-      expect(helper.describe(repository)).to eql 'travis/travis-admin'
+      expect(helper.describe(repository)).to eql 'travis-pro/travis-admin'
     end
 
     it 'returns String to describe an build' do
-      expect(helper.describe(build)).to eql 'travis/travis-admin#123'
+      expect(helper.describe(build)).to eql 'travis-pro/travis-admin#123'
     end
 
     it 'returns String to describe an job' do
-      expect(helper.describe(job)).to eql 'travis/travis-admin#125'
+      expect(helper.describe(job)).to eql 'travis-pro/travis-admin#123.4'
     end
 
     it 'returns String to describe a request' do
@@ -72,12 +72,12 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.format_config(:ruby)).to eql 'ruby'
     end
 
-    it 'formats hash values a definition list' do
+    it 'formats hash values as a definition list' do
       expect(helper.format_config({:ruby => 'rails', :over => 9000})).to eql "<dl><dt class=\"info-label\">ruby</dt><dl>rails</dl><dt class=\"info-label\">over</dt><dl>9000</dl></dl>"
     end
 
     it 'formats array values into a list' do
-      expect(helper.format_config([:ruby,'rails',true])).to eql '<ul><li>ruby</li><li>rails</li><li>true</li></ul>'
+      expect(helper.format_config([:ruby, 'rails', true])).to eql '<ul><li>ruby</li><li>rails</li><li>true</li></ul>'
     end
 
     it 'prints all other classes as strings' do
