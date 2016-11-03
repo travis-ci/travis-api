@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :plan do
     subscription
-    updated_at '2016-02-16'
+    updated_at 1.week.ago
     amount 249
     name 'travis-ci-five-builds'
   end

@@ -1,20 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Subscription, type: :model do
-  let!(:valid_subscription) { create :subscription,
-                              cc_token: 'tok_1076247Biz',
-                              valid_to: 1.week.from_now,
-                              first_name: 'Katrin',
-                              last_name: 'Mustermann',
-                              company: 'Travis CI',
-                              country: 'Germany',
-                              address: 'Nice Street 12',
-                              city: 'Berlin',
-                              zip_code: '12344' }
+  let!(:valid_subscription) { create :active_subscription }
 
   describe '.active?' do
-    let!(:invalid_subscription) { create :subscription, cc_token: 'tok_1076247Biz', valid_to: '2015-07-12 09:16:24' }
-    let!(:missing_token_subscription) { create :subscription, valid_to: 1.week.from_now }
+    let!(:invalid_subscription) { create :expired_subscription }
+    let!(:missing_token_subscription) { create :subscription_missing_token, valid_to: 1.week.from_now }
     let!(:missing_token_invalid_subscription) { create :subscription }
 
     it 'returns true for valid subscription with cc_token' do

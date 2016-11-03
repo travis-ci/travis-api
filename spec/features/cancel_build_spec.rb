@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Cancel a Build', js: true, type: :feature do
   let!(:repository) { create(:repository) }
-  let!(:build)      { create(:build, repository: repository, started_at: '2016-06-29 11:06:01', finished_at: nil, state: 'started', config: {}) }
+  let!(:build)      { create(:started_build, repository: repository, config: {}) }
 
   scenario 'User cancels a build' do
     visit "/builds/#{build.id}"
@@ -13,7 +13,7 @@ RSpec.feature 'Cancel a Build', js: true, type: :feature do
 
     find_button('Cancel').trigger('click')
 
-    expect(page).to have_text('Build travis-pro/travis-admin#456 successfully canceled.')
+    expect(page).to have_text('Build travis-pro/travis-admin#123 successfully canceled.')
   end
 
   scenario 'User cancels a build via builds tab in repository view' do
@@ -25,7 +25,7 @@ RSpec.feature 'Cancel a Build', js: true, type: :feature do
 
     find_button('Cancel').trigger('click')
 
-    expect(page).to have_text('Build travis-pro/travis-admin#456 successfully canceled.')
+    expect(page).to have_text('Build travis-pro/travis-admin#123 successfully canceled.')
     expect(page).to have_button('Canceled', disabled: true)
   end
 end

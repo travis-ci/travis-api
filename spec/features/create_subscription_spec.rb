@@ -10,7 +10,7 @@ RSpec.feature 'Create a free subscription', js: true, type: :feature do
     visit "/users/#{user.id}"
     find_button('create-subscription').trigger('click')
 
-    expect(page).to have_text("Created a new subscription for Katrin (lisbethmarianne)")
+    expect(page).to have_text('Created a new subscription for Katrin (lisbethmarianne)')
 
     click_on('User')
 
@@ -19,12 +19,12 @@ RSpec.feature 'Create a free subscription', js: true, type: :feature do
 
   scenario 'Create a two builds subscription for organization' do
     visit "/organizations/#{organization.id}"
+
     select('two builds', from: 'subscription_selected_plan')
     find_button('create-subscription').trigger('click')
 
-    expect(page).to have_text("Created a new subscription for Rubymonstas (rubymonstas)")
+    expect(page).to have_text('Created a new subscription for Rubymonstas (rubymonstas)')
 
-    # Capybara needs this extra click
     click_on('Organization')
 
     expect(page).to have_text("active, two builds, expires #{1.year.from_now.to_date}")

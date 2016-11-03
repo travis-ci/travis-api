@@ -4,7 +4,7 @@ RSpec.feature "Disable a Repository", js: true, type: :feature do
   let!(:user)       { create(:user) }
   let!(:repository) { create(:repository, name: 'travis-pro', description: 'test', private: true, default_branch: 'master', owner: user, active: true) }
 
-  scenario "User disables a repository" do
+  scenario 'User disables a repository' do
     visit "/repositories/#{repository.id}"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/repo/#{repository.id}/disable").

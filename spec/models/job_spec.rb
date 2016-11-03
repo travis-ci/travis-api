@@ -19,11 +19,11 @@ RSpec.describe Job, type: :model do
   end
 
   describe '.not_finished' do
-    let!(:finished_job) { create(:job, state: 'finished') }
-    let!(:queued_job)   { create(:job, state: 'queued') }
-    let!(:started_job)  { create(:job, state: 'started') }
-    let!(:received_job) { create(:job, state: 'received') }
-    let!(:created_job)  { create(:job, state: 'created') }
+    let!(:finished_job) { create(:finished_job) }
+    let!(:queued_job)   { create(:queued_job) }
+    let!(:started_job)  { create(:started_job) }
+    let!(:received_job) { create(:received_job) }
+    let!(:created_job)  { create(:created_job) }
 
     it 'gets only jobs with state started received queued and created' do
       expect(Job.all.count).to eql 5
@@ -40,17 +40,16 @@ RSpec.describe Job, type: :model do
   end
 
   describe '.finished' do
-    let!(:passed_job)   { create(:job, state: 'passed') }
-    let!(:finished_job) { create(:job, state: 'finished') }
-    let!(:failed_job)   { create(:job, state: 'failed') }
-    let!(:started_job)  { create(:job, state: 'started') }
-    let!(:canceled_job) { create(:job, state: 'canceled') }
-    let!(:errored_job)  { create(:job, state: 'errored') }
+    let!(:passed_job)   { create(:passed_job) }
+    let!(:failed_job)   { create(:failed_job) }
+    let!(:started_job)  { create(:started_job) }
+    let!(:canceled_job) { create(:canceled_job) }
+    let!(:errored_job)  { create(:errored_job) }
 
 
-    it 'gets only jobs with state passed failed finished canceled and errored' do
-      expect(Job.all.count).to eql 6
-      expect(Job.finished.count).to eql 5
+    it 'gets only jobs with state passed failed canceled and errored' do
+      expect(Job.all.count).to eql 5
+      expect(Job.finished.count).to eql 4
     end
 
     it 'doesn\'t get started job' do
@@ -63,12 +62,12 @@ RSpec.describe Job, type: :model do
   end
 
   describe '.duration' do
-    let(:finished_job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: '2016-06-29 11:07:11') }
-    let(:started_job) { create(:job, started_at: '2016-06-29 11:06:01', finished_at: nil) }
+    let(:finished_job) { create(:finished_job) }
+    let(:started_job) { create(:started_job) }
 
     context 'job is finished' do
       it 'gives the duration in seconds' do
-        expect(finished_job.duration).to eql 70.0
+        expect(finished_job.duration).to eql 188.0
       end
     end
 

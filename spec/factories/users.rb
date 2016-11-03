@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :user do
     login 'travisbot'
+    name 'Travis'
     email 'travis@example.com'
 
     factory :user_with_organizations do
