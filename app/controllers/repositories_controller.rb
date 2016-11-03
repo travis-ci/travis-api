@@ -91,8 +91,8 @@ class RepositoriesController < ApplicationController
     @subscriptions = Subscription.where(owner_id: @repository.users.map(&:id)).where('owner_type = ?', 'User').includes(:owner)
     @subscriptions_by_user_id = @subscriptions.group_by { |s| s.owner.id }
 
-    @builds = @repository.builds.includes(:commit).order('id DESC').take(30)
-    @requests = @repository.requests.includes(builds: :repository).order('id DESC').take(30)
+    @builds = @repository.builds.includes(:commit).order('id DESC').paginate(page: params[:build_page], per_page: 10)
+    @requests = @repository.requests.includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
 
     @active_broadcasts = Broadcast.active.for(@repository).includes(:recipient)
     @inactive_broadcasts = Broadcast.inactive.for(@repository).includes(:recipient)

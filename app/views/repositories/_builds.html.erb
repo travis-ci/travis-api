@@ -1,6 +1,6 @@
 <section class="info-block">
   <h2 class="info-header">Builds</h2>
-  <% if builds.empty? %>
+  <% if @builds.empty? %>
     <p>No builds exist for this repository.</p>
   <% else %>
     <ul>
@@ -12,7 +12,7 @@
         <p class="info-label build-duration">Duration</p>
         <p class="info-label build-reset"></p>
       </li>
-      <% builds.each do |build| %>
+      <% @builds.each do |build| %>
         <li class="inline-list build-item state_<%= build.state %>">
           <p class="build-name"><%= link_to describe(build), build %></p>
           <p class="build-branch"><%= build.commit.branch %></p>
@@ -30,4 +30,5 @@
       <% end %>
     </ul>
   <% end %>
+  <%= will_paginate @builds, param_name: 'build_page', params: {anchor: 'builds'}, 'data-remote': true %>
 </section>

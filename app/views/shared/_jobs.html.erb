@@ -11,4 +11,5 @@
 <section class="info-block">
   <h2 class="info-header">Recently Finished Jobs</h2>
   <%= render partial: 'shared/job_list', locals: {jobs: @finished_jobs} %>
+  <%= will_paginate @finished_jobs, param_name: 'job_page', params: {anchor: 'jobs'} %>
 </section>

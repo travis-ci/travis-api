@@ -71,7 +71,7 @@ class UsersController < ApplicationController
     @repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name)
 
     @pending_jobs = Job.from_repositories(@repositories).not_finished
-    @finished_jobs = Job.from_repositories(@repositories).finished.take(10)
+    @finished_jobs = Job.from_repositories(@repositories).finished.paginate(page: params[:job_page], per_page: 10)
 
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
 
@@ -82,7 +82,7 @@ class UsersController < ApplicationController
       @invoices = subscription.invoices.order('id DESC')
     end
 
-    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').take(30)
+    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
 
     @active_broadcasts = Broadcast.active.for(@user).includes(:recipient)
     @inactive_broadcasts = Broadcast.inactive.for(@user).includes(:recipient)

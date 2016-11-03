@@ -28,4 +28,5 @@
       <% end %>
     </ul>
   <% end %>
+  <%= will_paginate @requests, param_name: 'request_page', params: {anchor: 'requests'} %>
 </section>

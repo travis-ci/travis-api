@@ -30,7 +30,7 @@ class OrganizationsController < ApplicationController
     @memberships = @organization.memberships.includes(user: :subscription).order(:role, 'users.name')
 
     @pending_jobs = Job.from_repositories(@repositories).not_finished
-    @finished_jobs = Job.from_repositories(@repositories).finished.take(10)
+    @finished_jobs = Job.from_repositories(@repositories).finished.paginate(page: params[:job_page], per_page: 10)
 
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
 
@@ -41,7 +41,7 @@ class OrganizationsController < ApplicationController
       @invoices = subscription.invoices.order('id DESC')
     end
 
-    @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').take(30)
+    @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
 
     @active_broadcasts = Broadcast.active.for(@organization).includes(:recipient)
     @inactive_broadcasts = Broadcast.inactive.for(@organization).includes(:recipient)
