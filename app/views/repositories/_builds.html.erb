@@ -30,5 +30,5 @@
       <% end %>
     </ul>
   <% end %>
-  <%= will_paginate @builds, param_name: 'build_page', params: {anchor: 'builds'}, 'data-remote': true %>
+  <%= will_paginate @builds, param_name: 'build_page', params: {controller: 'repositories', action: 'builds', id: @repository.id, anchor: 'builds'}, 'data-remote': true %>
 </section>

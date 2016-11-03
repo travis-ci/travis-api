@@ -8,6 +8,10 @@ class RepositoriesController < ApplicationController
     redirect_to @repository
   end
 
+  def builds
+    @builds = @repository.builds.includes(:commit).order('id DESC').paginate(page: params[:build_page], per_page: 10)
+  end
+
   def check_hook
     case
     when hook.nil?
@@ -73,6 +77,10 @@ class RepositoriesController < ApplicationController
     Services::Features::Update.new(@repository, current_user).call(feature_params)
     flash[:notice] = "Updated feature flags for #{@repository.slug}."
     redirect_to repository_path(@repository, anchor: "settings")
+  end
+
+  def requests
+    @requests = @repository.requests.includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
   end
 
   def set_hook_url

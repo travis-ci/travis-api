@@ -48,6 +48,15 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def jobs
+    @repositories = @user.permitted_repositories
+    @finished_jobs = Job.from_repositories(@repositories).finished.paginate(page: params[:job_page], per_page: 10)
+  end
+
+  def requests
+    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
+  end
+
   def reset_2fa
     if otp_valid?
       Travis::DataStores.redis.del("admin-v2:otp:#{@user.login}")

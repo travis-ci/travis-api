@@ -24,6 +24,15 @@ class OrganizationsController < ApplicationController
     redirect_to @organization
   end
 
+  def jobs
+    @repositories = @organization.repositories
+    @finished_jobs = Job.from_repositories(@repositories).finished.paginate(page: params[:job_page], per_page: 10)
+  end
+
+  def requests
+    @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
+  end
+
   def show
     @repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :name)
 
