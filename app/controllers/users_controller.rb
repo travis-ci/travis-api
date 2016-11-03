@@ -43,8 +43,11 @@ class UsersController < ApplicationController
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
 
     subscription = Subscription.find_by(owner_id: params[:id])
-    @subscription = SubscriptionPresenter.new(subscription,subscription.plans.current, self) unless subscription.nil?
-    @invoices = subscription.invoices.order('id DESC') unless subscription.nil?
+
+    if subscription
+      @subscription = SubscriptionPresenter.new(subscription, subscription.plans.current, self)
+      @invoices = subscription.invoices.order('id DESC')
+    end
 
     @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').take(30)
 
