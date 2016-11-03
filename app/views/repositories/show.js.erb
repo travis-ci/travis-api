@@ -1,0 +1,2 @@
+$('.builds-ajax').html("<%= escape_javascript(render("builds"))%>")
+$('.requests-ajax').html("<%= escape_javascript(render(partial: "shared/requests", locals: {origin: @repository})) %>")
