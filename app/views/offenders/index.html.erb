@@ -24,9 +24,7 @@
       <% @offending_organizations.each do |org| %>
         <li>
           <p>
-            <% if org.avatar_url %>
-              <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
-            <% end %>
+            <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") if org.avatar_url %>
             <%= link_to org.name.present? ? describe(org) : org.login, org %>
           </p>
         </li>

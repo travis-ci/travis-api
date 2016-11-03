@@ -23,9 +23,7 @@
 
     <dt class="info-label">Owner:</dt>
     <dd>
-      <% if @build.owner.avatar_url %>
-        <%= image_tag(@build.owner.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
-      <% end %>
+      <%= image_tag(@build.owner.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if @build.owner.avatar_url %>
       <%= link_to describe(@build.owner), @build.owner %>
     </dd>
 

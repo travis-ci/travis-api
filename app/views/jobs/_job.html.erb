@@ -17,9 +17,7 @@
 
     <dt class="info-label">Owner:</dt>
     <dd>
-      <% if @job.owner.avatar_url %>
-        <%= image_tag(@job.owner.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
-      <% end %>
+      <%= image_tag(@job.owner.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if @job.owner.avatar_url %>
       <%= link_to describe(@job.owner), @job.owner %>
     </dd>
 
