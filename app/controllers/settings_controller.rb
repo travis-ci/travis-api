@@ -6,13 +6,13 @@ class SettingsController < ApplicationController
 
     settings.attributes.each do |setting_name, setting_value|
       if current_settings.attributes[setting_name] != setting_value
-        response = Services::Settings::Update.new(@repository.id, setting_name, setting_value).call
+        response = Services::Settings::Update.new(@repository, setting_name, setting_value).call
 
         if response.success?
           flash[:notice] = "Updated settings for #{@repository.slug}"
         else
           flash[:error] = "Error: #{response.headers[:status]}"
-          return
+          break
         end
       end
     end

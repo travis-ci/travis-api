@@ -21,13 +21,13 @@ module Travis
       end
     end
 
-    def patch(url, body = {})
+    def patch(url, access_token, body={})
       conn.patch do |req|
         req.url url
-        req.headers['Content-Type'] = 'application/json'
-        req.headers['Authorization'] = "token #{token}"
+        req.headers['Content-Type']       = 'application/json'
+        req.headers['Authorization']      = "token #{access_token}"
         req.headers['Travis-API-Version'] = '3'
-        req.body = body
+        req.body                          = body
       end
     end
   end
