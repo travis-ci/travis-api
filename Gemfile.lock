@@ -336,6 +336,7 @@ DEPENDENCIES
   redis (~> 3.0)
   redis-namespace
   rollout
+  rotp
   rspec-rails (~> 3.4)
   sass-rails (~> 5.0)
   sidekiq
