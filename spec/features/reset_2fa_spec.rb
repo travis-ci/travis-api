@@ -14,7 +14,7 @@ RSpec.feature 'Reset 2FA for user', js: true, type: :feature do
     find_button('Reset Secret').trigger('click')
     expect(page).to have_text('This action requires a one time password close If you are 100% certain, please verify your identity by providing a one time password:')
 
-    fill_in('ot-password', with: '123456')
+    fill_in('otp', with: '123456')
     find_button('Confirm').trigger('click')
     expect(page).to have_text('Secret for travisbot has been reset.')
   end
@@ -26,7 +26,7 @@ RSpec.feature 'Reset 2FA for user', js: true, type: :feature do
     find_button('Reset Secret').trigger('click')
     expect(page).to have_text('This action requires a one time password close If you are 100% certain, please verify your identity by providing a one time password:')
 
-    fill_in('ot-password', with: '345678')
+    fill_in('otp', with: '345678')
     find_button('Confirm').trigger('click')
     expect(page).to have_text('One time password did not match, please try again.')
   end

@@ -1,7 +1,5 @@
 <% title "Users with Admin Access" %>
 
-<%= render partial: "shared/otp" %>
-
 <section class="info-block">
   <ul>
     <li class="inline-list admin">
@@ -15,9 +13,9 @@
         <p><%= admin.has_2fa? ? "has two-factor auth set up" : "not set up yet" %></p>
         <div class="call-to-action">
           <% if admin.has_2fa? %>
-            <%= form_tag({action: 'reset_2fa', controller: "users", id: admin.id, method: 'post'}, {class: 'otp reset-2fa'}) do %>
-              <%= hidden_field_tag 'otp' %>
-              <%= submit_tag 'Reset Secret', class: 'button', id: 'reset-2fa' %>
+            <%= form_tag({action: 'reset_2fa', controller: "users", id: admin.id, method: 'post'}, {class: 'reset-2fa'}) do %>
+              <%= render partial: "shared/otp" %>
+              <%= submit_tag 'Reset Secret', class: 'button otp', id: "reset-2fa-#{admin.id}" %>
             <% end %>
           <% end %>
         </div>

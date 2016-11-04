@@ -5,13 +5,13 @@
 
     <% if current_user.has_2fa? && !Travis::Config.load.disable_otp? %>
       <p class="popup-text">If you are 100% certain, please verify your identity by providing a one time password:</p>
-      <%= text_field_tag 'ot-password' %>
+      <%= text_field_tag 'otp' %>
       <%= submit_tag 'Confirm', class: 'button', id: 'confirm-otp' %>
     <% elsif !Travis::Config.load.disable_otp? %>
       <p class="popup-text">You need to set up Two Factor Authentication in order to perform this action.</p>
     <% else %>
       <p class="popup-text">OTP is disabled, confirm if you want to continue.</p>
-      <%= hidden_field_tag 'ot-password' %>
+      <%= hidden_field_tag 'otp' %>
       <%= submit_tag 'Confirm', class: 'button', id: 'confirm-otp' %>
     <% end %>
   </div>
