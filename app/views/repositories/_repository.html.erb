@@ -56,3 +56,26 @@
   <h2 class="info-header">Feature Flags</h2>
   <%= render partial: 'shared/features_for', locals: {owner: @repository} %>
 </section>
+
+<section class="info-block">
+  <h2 class="info-header">Settings</h2>
+
+  <%= form_for :settings, url: {controller: "settings", action: "update"}, html: {class: "inline-list"} do |f| %>
+    <div>
+      <% Settings::BINARY.each do |key| %>
+        <p>
+          <%= f.check_box key, checked: @settings.send(key) %>
+          <%= f.label key %>
+        </p>
+      <% end %>
+
+      <% Settings::INTEGER.each do |key| %>
+        <p>
+          <%= f.text_field key, value: @settings.send(key) %>
+          <%= f.label key %>
+        </p>
+      <% end %>
+      </div>
+    <%= f.submit('Update', class: 'button', id: 'update-settings') %>
+  <% end %>
+</section>

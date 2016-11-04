@@ -14,6 +14,8 @@ class Repository < ApplicationRecord
   scope :by_slug,             -> (slug) { without_invalidated.where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC') }
   scope :without_invalidated, -> { where(invalidated_at: nil) }
 
+  serialize :settings
+
   def find_admin
     permissions.admin_access.first.try(:user)
   end
@@ -25,6 +27,10 @@ class Repository < ApplicationRecord
       push: permissions.push_access.includes(:user).map(&:user),
       pull: permissions.pull_access.includes(:user).map(&:user)
     }
+  end
+
+  def settings
+    @settings ||= super || {}
   end
 
   def slug
