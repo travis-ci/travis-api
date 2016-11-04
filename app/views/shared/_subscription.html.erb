@@ -28,6 +28,12 @@
           <%= f.text_field :valid_to, value: (@subscription.valid_to.to_date if @subscription.valid_to), class: "datepicker" %>
         </time>
       </dd>
+      <dt class="info-label">Subscribed:</dt>
+      <dd>
+        <time>
+          <%= @subscription.created_at %>
+        </time>
+      </dd>
       <dt class="info-label">Owner:</dt>
       <dd><%= link_to describe(@subscription.owner), @subscription.owner %></dd>
 
