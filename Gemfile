@@ -33,6 +33,8 @@ gem 'metriks'
 
 gem 'bcat'
 
+gem 'rotp'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 

@@ -56,11 +56,14 @@ Rails.application.routes.draw do
       post 'update_trial_builds'
       post 'boost'
       post 'features'
+      post 'reset_2fa'
     end
     post 'sync_all', on: :collection
   end
 
   get 'admins' => 'users#admins', as: :admins
+
+  get 'logout' => 'home#logout', as: :logout
 
   get 'search', to: 'search#search'
   get 'help',   to: 'search#help'

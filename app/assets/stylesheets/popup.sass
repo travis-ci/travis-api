@@ -1,0 +1,51 @@
+.popup
+  position: absolute
+  top: 0
+  left: 0
+  z-index: 30
+  width: 100%
+  height: 100%
+  background-color: rgba($grey-dark, 0.6)
+  &.is-hidden
+    display: none
+
+.popup-inner
+  position: relative
+  background: white
+  position: absolute
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  width: 90%
+  max-width: 700px
+  height: 20em
+  max-height: 90vh
+  margin: auto
+  padding: 3em 1.5em
+  border-radius: 4px
+  text-align: center
+
+.popup-text
+  margin-bottom: 2em
+  font-size: 18px
+
+.popup-close
+  position: absolute
+  top: 0
+  right: 0
+  width: 3em
+  text-indent: 999%
+  overflow: hidden
+  white-space: nowrap
+  border: none
+  background-color: transparent
+  &:after
+    content: "\00d7"
+    text-indent: 0
+    display: block
+    color: darken($grey-light, 20)
+    font-size: 40px
+    line-height: 0
+    width: 40px
+    height: 24px
