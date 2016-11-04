@@ -12,7 +12,7 @@ RSpec.feature 'Add logs to audit trial', js: true, type: :feature do
     expect(page).to have_text('Feature resubscribe disabled.')
 
     find_link('audit_trail').trigger('click')
-    expect(page).to have_text('Unknown user disabled feature resubscribe for everybody.')
+    expect(page).to have_text('Travis disabled feature resubscribe for everybody.')
   end
 
   scenario 'Audit trail has a new entry after user hides a broadcast for everybody' do
@@ -22,6 +22,6 @@ RSpec.feature 'Add logs to audit trial', js: true, type: :feature do
     expect(page).to have_no_button('Hide')
 
     find_link('audit_trail').trigger('click')
-    expect(page).to have_text('Unknown user disabled a broadcast for everybody: "Some message text.".')
+    expect(page).to have_text('Travis disabled a broadcast for everybody: "Some message text.".')
   end
 end

@@ -1,11 +1,9 @@
 require 'rails_helper'
 
 RSpec.feature 'Reset 2FA for user', js: true, type: :feature do
-  let!(:admin) { create(:user, login: 'travisbot') }
   let(:redis)  { Travis::DataStores.redis }
 
-  before { redis.set('admin-v2:otp:travisbot', 'secret')
-           allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(admin) }
+  before { redis.set('admin-v2:otp:travisbot', 'secret') }
 
   scenario 'Reset 2FA successfully' do
     allow_any_instance_of(ROTP::TOTP).to receive(:verify).with('123456').and_return(true)

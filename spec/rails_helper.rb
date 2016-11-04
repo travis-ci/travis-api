@@ -45,6 +45,10 @@ RSpec.configure do |config|
     Travis::DataStores.redis.flushall
   end
 
+  config.before(type: :feature) do
+    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(create(:user))
+  end
+
   config.infer_spec_type_from_file_location!
 
   config.filter_rails_from_backtrace!

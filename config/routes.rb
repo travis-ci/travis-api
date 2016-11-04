@@ -52,11 +52,12 @@ Rails.application.routes.draw do
 
   resources :users, only: [:show] do
     member do
-      post 'sync'
-      post 'update_trial_builds'
       post 'boost'
+      post 'display_token'
       post 'features'
       post 'reset_2fa'
+      post 'sync'
+      post 'update_trial_builds'
     end
     post 'sync_all', on: :collection
   end

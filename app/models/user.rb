@@ -10,6 +10,8 @@ class User < ApplicationRecord
   has_many :broadcasts,             as:      :recipient
   has_one  :subscription,           as:      :owner
 
+  serialize :github_oauth_token, Travis::EncryptedColumn.new
+
   def has_2fa?
     Travis::DataStores.redis.get("admin-v2:otp:#{login}")
   end
