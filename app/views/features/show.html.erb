@@ -9,9 +9,7 @@
       <% @members.each do |member| %>
         <li>
           <p>
-            <% if member.avatar_url %>
-              <%= image_tag(member.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
-            <% end %>
+            <%= image_tag(member.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if member.avatar_url %>
             <%= link_to describe(member), member %>
           </p>
         </li>

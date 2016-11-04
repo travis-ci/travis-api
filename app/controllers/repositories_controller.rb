@@ -34,6 +34,7 @@ class RepositoriesController < ApplicationController
   end
 
   def show
+    @active_admin = @repository.find_admin
     # there is a bug, so that .includes(:subscription) is not working and we get N+1 queries for subscriptions,
     # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
     @subscriptions = Subscription.where(owner_id: @repository.users.map(&:id)).where('owner_type = ?', 'User').includes(:owner)

@@ -7,9 +7,7 @@
 
     <dt class="info-label">GitHub Login</dt>
     <dd>
-      <% if @organization.avatar_url %>
-        <%= image_tag(@organization.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") %>
-      <% end %>
+      <%= image_tag(@organization.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") if @organization.avatar_url %>
       <%= @organization.login %>
       <%= link_to fa_icon("github"), "https://github.com/#{@organization.login}", target: "_blank" %>
     </dd>

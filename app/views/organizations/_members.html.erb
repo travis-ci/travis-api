@@ -18,9 +18,7 @@
       <% @memberships.each do |membership| %>
         <li class="inline-list member-item">
           <p>
-            <% if membership.user.avatar_url %>
-              <%= image_tag(membership.user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
-            <% end %>
+            <%= image_tag(membership.user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if membership.user.avatar_url %>
             <%= link_to describe(membership.user), membership.user %>
           </p>
           <p><%= membership.role %></p>

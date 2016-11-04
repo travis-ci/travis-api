@@ -15,9 +15,7 @@
     <% users.each do |user| %>
       <li class="inline-list user-item">
         <p>
-          <% if user.avatar_url %>
-            <%= image_tag(user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") %>
-          <% end %>
+          <%= image_tag(user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if user.avatar_url %>
           <%= link_to describe(user), user %></p>
         <p>
           <% if @subscriptions_by_user_id[user.id].present? %>
