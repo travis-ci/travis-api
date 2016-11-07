@@ -2,6 +2,11 @@
 
 <% breadcrumbs "#{link_to describe(@build.owner), @build.owner} > #{link_to @build.repository.name, @build.repository} > #{link_to 'Request ' + describe(@build.request), @build.request} > Build ##{@build.number}" %>
 
+<div class="previous-next">
+  <%= @previous_build ? link_to(fa_icon("arrow-circle-left", title: "Previous Build"), @previous_build) : fa_icon("arrow-circle-left", title: "Previous Build") %>
+  <%= @next_build ? link_to(fa_icon("arrow-circle-right", title: "Next Build"), @next_build) : fa_icon("arrow-circle-right", title: "Next Build") %>
+</div>
+
 <div id="tabs">
   <span id="build" class="tab-switch"></span>
   <a href="#build" class="tab-link">Information</a>
@@ -15,3 +20,4 @@
     <%= render partial: 'shared/config', locals: {config: @build.configuration} %>
   </section>
 </div>
+

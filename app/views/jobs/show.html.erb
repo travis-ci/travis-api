@@ -2,6 +2,11 @@
 
 <% breadcrumbs "#{link_to describe(@job.owner), @job.owner} > #{link_to @job.repository.name, @job.repository} > #{link_to 'Request ' + describe(@job.build.request), @job.build.request} > #{link_to 'Build #' + @job.build.number, @job.build} > Job ##{@job.number}" %>
 
+<div class="previous-next">
+  <%= @previous_job ? link_to(fa_icon("arrow-circle-left", title: "Previous Job"), @previous_job) : fa_icon("arrow-circle-left", title: "Previous Job") %>
+  <%= @next_job ? link_to(fa_icon("arrow-circle-right", title: "Next Job"), @next_job) : fa_icon("arrow-circle-right", title: "Next Job") %>
+</div>
+
 <div id="tabs">
   <span id="job" class="tab-switch"></span>
   <a href="#job" class="tab-link">General Information</a>

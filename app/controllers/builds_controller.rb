@@ -5,6 +5,9 @@ class BuildsController < ApplicationController
 
   def show
     @jobs = @build.jobs.includes(:repository)
+
+    @previous_build = Build.where(repository_id: @build.repository_id).where("id < ?", @build.id).last
+    @next_build = Build.where(repository_id: @build.repository_id).where("id > ?", @build.id).first
   end
 
   def cancel

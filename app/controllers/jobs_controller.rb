@@ -5,6 +5,9 @@ class JobsController < ApplicationController
 
   def show
     @log = Services::Job::GetLog.new(@job).call
+
+    @previous_job = Job.where(repository_id: @job.repository_id).where("id < ?", @job.id).last
+    @next_job = Job.where(repository_id: @job.repository_id).where("id > ?", @job.id).first
   end
 
   def cancel
