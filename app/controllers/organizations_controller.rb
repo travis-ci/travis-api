@@ -68,7 +68,7 @@ class OrganizationsController < ApplicationController
 
   def get_organization
     @organization = Organization.find_by(id: params[:id])
-    return redirect_to root_path, alert: "There is no organization associated with that ID." if @organization.nil?
+    return redirect_to not_found_path, flash: {error: "There is no organization associated with ID #{params[:id]}."} if @organization.nil?
   end
 
   def feature_params

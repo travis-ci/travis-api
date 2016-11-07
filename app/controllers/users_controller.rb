@@ -117,7 +117,7 @@ class UsersController < ApplicationController
 
   def get_user
     @user = User.find_by(id: params[:id])
-    return redirect_to root_path, alert: "There is no user associated with that ID." if @user.nil?
+    return redirect_to not_found_path, flash: {error: "There is no user associated with ID #{params[:id]}."} if @user.nil?
   end
 
   def feature_params
