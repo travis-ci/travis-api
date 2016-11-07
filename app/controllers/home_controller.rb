@@ -5,4 +5,7 @@ class HomeController < ApplicationController
   def logout
     reset_session
   end
+
+  def not_found
+  end
 end

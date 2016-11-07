@@ -73,6 +73,6 @@ class BuildsController < ApplicationController
 
   def get_build
     @build = Build.find_by(id: params[:id])
-    return redirect_to root_path, alert: "There is no build associated with that ID." if @build.nil?
+    return redirect_to not_found_path, flash: {error: "There is no build associated with ID #{params[:id]}."} if @build.nil?
   end
 end

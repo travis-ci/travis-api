@@ -73,6 +73,6 @@ class JobsController < ApplicationController
 
   def get_job
     @job = Job.find_by(id: params[:id])
-    return redirect_to root_path, alert: "There is no job associated with that ID." if @job.nil?
+    return redirect_to not_found_path, flash: {error: "There is no job associated with ID #{params[:id]}."} if @job.nil?
   end
 end
