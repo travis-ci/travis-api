@@ -10,9 +10,10 @@ class Build < ApplicationRecord
 
   serialize :config
 
-  scope :not_finished, -> { where(state: %w[started received queued created]).sort_by {|build|
+  scope :not_finished,    -> { where(state: %w[started received queued created]).sort_by {|build|
     %w[started received queued created].index(build.state.to_s) } }
-  scope :finished, -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
+  scope :finished,        -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }
+  scope :from_repository, -> (repository) { where(repository_id: repository.id) }
 
   def not_finished?
     %w[started received queued created].include? state

@@ -4,10 +4,10 @@ class BuildsController < ApplicationController
   before_action :get_build
 
   def show
-    @jobs = @build.jobs.includes(:repository)
+    @jobs = @build.jobs.includes(:repository, :build)
 
-    @previous_build = Build.where(repository_id: @build.repository_id).where("id < ?", @build.id).last
-    @next_build = Build.where(repository_id: @build.repository_id).where("id > ?", @build.id).first
+    @previous_build = Build.from_repository(@build.repository).where("id < ?", @build.id).last
+    @next_build     = Build.from_repository(@build.repository).where("id > ?", @build.id).first
   end
 
   def cancel
