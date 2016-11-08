@@ -63,6 +63,9 @@ Rails.application.routes.draw do
     end
   end
 
+  post 'repositories/:id/caches/delete' => 'caches#delete_all', as: :delete_all_caches
+  post 'repositories/:id/caches/:branch/delete' => 'caches#delete', as: :delete_branch_cache
+
   resources :requests, only: [:show]
 
   get 'search', to: 'search#search'

@@ -33,8 +33,6 @@ module Travis
         req.headers['Authorization'] = "token #{token}"
         req.headers['Travis-API-Version'] = '2'
       end
-
-      conn.response :json, :content_type => 'application/json'
     end
 
     def post(url)

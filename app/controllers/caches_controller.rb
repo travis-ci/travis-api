@@ -2,11 +2,11 @@ class CachesController < ApplicationController
   def delete
     @repository = Repository.find_by(id: params[:id])
 
-    response = Services::Repository::Caches::Delete.new(@repository.id).call(branch)
+    response = Services::Repository::Caches::Delete.new(@repository.id).call(params[:branch])
 
     if response.success?
       message = "Cache on branch '#{branch}' successfully deleted."
-      Services::AuditTrail::DeleteBranchCache.new(current_user, @repository, branch).call
+      Services::AuditTrail::DeleteBranchCache.new(current_user, @repository, params[:branch]).call
     else
       message = "Error: #{response.headers[:status]}"
     end
@@ -19,7 +19,7 @@ class CachesController < ApplicationController
           flash[:error] = message
         end
 
-        redirect_to @job
+        redirect_to repository_path(@repository, anchor: 'caches')
       end
 
       format.json do
@@ -38,7 +38,7 @@ class CachesController < ApplicationController
     response = Services::Repository::Caches::Delete.new(@repository.id).call(nil)
 
     if response.success?
-      message = "Cache on branch '#{branch}' successfully deleted."
+      message = "Caches for #{@repository.slug} successfully deleted."
       Services::AuditTrail::DeleteAllCaches.new(current_user, @repository).call
     else
       message = "Error: #{response.headers[:status]}"
@@ -52,7 +52,7 @@ class CachesController < ApplicationController
           flash[:error] = message
         end
 
-        redirect_to @job
+        redirect_to repository_path(@repository, anchor: 'caches')
       end
 
       format.json do

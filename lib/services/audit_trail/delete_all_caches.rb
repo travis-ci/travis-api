@@ -6,7 +6,7 @@ module Services
       private
 
       def message
-        "deleted all caches for #{repository} repository"
+        "deleted all caches for #{repository.slug}"
       end
     end
   end

@@ -4,6 +4,7 @@ module Services
   module Repository
     module Caches
       class Delete
+        include Travis::LegacyAPI
         def initialize(repository_id)
           @repository_id = repository_id
         end
