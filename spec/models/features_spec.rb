@@ -8,6 +8,8 @@ RSpec.describe Features, type: :model do
            redis.sadd('feature:coffee:users', "#{user.id + 1}")
            redis.set('feature:resubscribe:disabled', 1) }
 
+  before(:each) { ::Features.reload }
+
   # count, for, for_kind and members can also be used with 'repositories' and 'organizations' instead of 'users'
 
   describe 'count' do

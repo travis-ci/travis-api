@@ -53,10 +53,16 @@ module Features
       kind.where(id: ids(kind, feature))
     end
 
+    def reload
+      @feature_keys = nil
+    end
+
     private
 
     def feature_keys
-      redis.keys("feature:*") - OBSOLETE + ALWAYS
+      # scan_each call may take a few seconds, but is cached after that
+      # see also https://github.com/travis-pro/post-its/issues/172
+      @feature_keys ||= redis.scan_each(match: 'feature:*', count: 600).to_a - OBSOLETE + ALWAYS
     end
 
     def ids(kind, feature)
