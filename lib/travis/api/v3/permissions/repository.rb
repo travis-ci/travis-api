@@ -31,7 +31,7 @@ module Travis::API::V3
     end
 
     def admin?
-      access_control.admin_for(object)
+      access_control.adminable? object
     end
   end
 end

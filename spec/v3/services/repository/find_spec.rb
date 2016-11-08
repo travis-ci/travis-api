@@ -5,7 +5,6 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
 
-
   describe "fetching a public repository by slug" do
     before     { get("/v3/repo/svenfuchs%2Fminimal")     }
     example    { expect(last_response).to be_ok }
