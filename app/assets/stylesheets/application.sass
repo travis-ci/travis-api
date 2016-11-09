@@ -161,11 +161,14 @@ dd
   flex: 1 1 30%
 
 .job-id, .job-state
-  flex: 1 1 30%
+  flex: 1 1 25%
   text-align: left
 
-.job-queue, .job-reset, .job-build
+.job-queue
   flex: 1 1 10%
+
+.job-reset, .job-build, .job-duration, .job-queued
+  flex: 1 1 7%
 
 .build-name, .build-state
   flex: 1 1 25%
@@ -176,7 +179,7 @@ dd
 .build-type, .build-duration, .build-reset
   flex: 0 0 10%
 
-.build-duration
+.build-duration, .job-duration, .job-queued
   text-align: right
 
 .request-item

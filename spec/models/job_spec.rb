@@ -63,11 +63,11 @@ RSpec.describe Job, type: :model do
 
   describe '#duration' do
     let(:finished_job) { create(:finished_job) }
-    let(:started_job) { create(:started_job) }
+    let(:started_job)  { create(:started_job) }
 
     context 'job is finished' do
       it 'gives the duration in seconds' do
-        expect(finished_job.duration).to eql 188.0
+        expect(finished_job.duration).to eql 128.0
       end
     end
 
@@ -111,6 +111,46 @@ RSpec.describe Job, type: :model do
 
     it 'returns nil if there is no previous job from the same build' do
       expect(previous_job.previous).to eql nil
+    end
+  end
+
+  describe '#time_queued' do
+    let(:created_job)  { create(:created_job) }
+    let(:queued_job)   { create(:queued_job) }
+    let(:received_job) { create(:received_job) }
+    let(:started_job)  { create(:started_job) }
+    let(:canceled_job) { create(:canceled_job) }
+
+    context 'job is not queued yet' do
+      it 'returns nil' do
+        expect(created_job.time_queued).to eql nil
+      end
+    end
+
+    context 'job is queued' do
+      it 'gives the time between now and queued_at in seconds' do
+        now = Time.parse('2016-06-29 11:09:01 UTC')
+        expect(queued_job.time_queued(now)).to eql 240.0
+      end
+    end
+
+    context 'job is received' do
+      it 'gives the time between now and queued_at in seconds' do
+        now = Time.parse('2016-06-29 11:09:01 UTC')
+        expect(received_job.time_queued(now)).to eql 240.0
+      end
+    end
+
+    context 'job is started' do
+      it 'gives the time between started_at and queued_at in seconds' do
+        expect(started_job.time_queued).to eql 120.0
+      end
+    end
+
+    context 'job is canceled' do
+      it 'returns nil' do
+        expect(canceled_job.time_queued).to eql nil
+      end
     end
   end
 end
