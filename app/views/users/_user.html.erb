@@ -35,7 +35,7 @@
     <dd class="inline">
       <% if @display_gh_token %>
         <pre><%= @user.github_oauth_token %></pre>
-        <%= link_to 'Hide', user_path(@user), class: 'button' %>
+        <%= button_to 'Hide', hide_token_user_path(@user), class: 'button', form_class: 'hide_gh_token' %>
       <% else %>
         <%= hidden(@user, :github_oauth_token) %>
         <%= form_tag({action: 'display_token', controller: "users", id: @user.id, method: 'post'}, {class: 'display_gh_token'}) do %>

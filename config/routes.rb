@@ -54,6 +54,7 @@ Rails.application.routes.draw do
     member do
       post 'boost'
       post 'display_token'
+      post 'hide_token'
       post 'features'
       post 'reset_2fa'
       post 'sync'
