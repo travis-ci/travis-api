@@ -19,6 +19,8 @@ module Services
         def extract_caches(response)
           response = JSON.parse(response.body, symbolize_names: true)
           response[:caches]
+        rescue
+          []
         end
       end
     end
