@@ -32,7 +32,18 @@
     <dd><%= @user.github_id %></dd>
 
     <dt class="info-label">Token:</dt>
-    <dd><%= hidden(@user, :github_oauth_token) %></dd>
+    <dd class="inline">
+      <% if @display_gh_token %>
+        <pre><%= @user.github_oauth_token %></pre>
+        <%= button_to 'Hide', hide_token_user_path(@user), class: 'button', form_class: 'hide_gh_token' %>
+      <% else %>
+        <%= hidden(@user, :github_oauth_token) %>
+        <%= form_tag({action: 'display_token', controller: "users", id: @user.id, method: 'post'}, {class: 'display_gh_token'}) do %>
+          <%= render partial: "shared/otp" %>
+          <%= submit_tag 'Display', class: 'button otp', id: "display_gh_token" %>
+        <% end %>
+      <% end %>
+    </dd>
 
     <dt class="info-label">Scopes:</dt>
     <dd>

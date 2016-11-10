@@ -22,6 +22,27 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def display_token
+    secret = Travis::DataStores.redis.get("admin-v2:otp:#{current_user.login}")
+    if Travis::Config.load.disable_otp? && !Rails.env.production? || ROTP::TOTP.new(secret).verify(params[:otp])
+      flash[:warning] = "This page contains the user's GitHub token."
+      cookies["display_token_#{@user.login}"] = {
+        value: true,
+        expires: 15.minutes.from_now,
+      }
+      Services::AuditTrail::DisplayToken.new(current_user, @user).call
+      redirect_to @user
+    else
+      flash[:error] = "One time password did not match, please try again."
+      redirect_to @user
+    end
+  end
+
+  def hide_token
+    cookies.delete("display_token_#{@user.login}")
+    redirect_to @user
+  end
+
   def features
     Services::Features::Update.new(@user, current_user).call(feature_params)
     flash[:notice] = "Updated feature flags for #{@user.login}."
@@ -41,6 +62,8 @@ class UsersController < ApplicationController
   end
 
   def show
+    @display_gh_token = true if cookies["display_token_#{@user.login}"]
+
     # there is a bug, so that @user.organizations.includes(:subscription) is not working and we get N+1 queries for subscriptions,
     # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
     @organizations = @user.organizations

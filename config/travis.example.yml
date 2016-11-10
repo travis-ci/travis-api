@@ -9,3 +9,5 @@ test:
     url: https://topaz-fake.travis-ci.com
   redis:
     url: redis://localhost:6379
+  encryption:
+    key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
