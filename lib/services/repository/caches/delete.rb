@@ -5,20 +5,27 @@ module Services
     module Caches
       class Delete
         include Travis::LegacyAPI
-        def initialize(repository_id)
-          @repository_id = repository_id
+        attr_reader :repository
+
+        def initialize(repository)
+          @repository = repository
         end
 
-        def call(branch)
-          url = "/repos/#{@repository_id}/caches"
+        def access_token
+          admin = repository.find_admin
+          Travis::AccessToken.create(user: admin, app_id: 2).token if admin
+        end
+
+        def call(branch = nil)
+          url = "/repos/#{repository.id}/caches"
           if branch.nil?
             body = nil
             # Will delete all caches
           else
-            body = "{'branch':'#{branch}'}"
+            body = "{\"branch\":\"#{branch}\"}"
             # Will delete branch cache
           end
-          delete(url, body)
+          delete(url, access_token, body)
         end
       end
     end

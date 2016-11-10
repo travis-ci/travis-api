@@ -109,7 +109,7 @@ class RepositoriesController < ApplicationController
 
     @settings = Settings.new(@repository.settings)
 
-    @caches = Services::Repository::Caches::FindAll.new(@repository.id).call
+    @caches = Services::Repository::Caches::FindAll.new(@repository).call
   end
 
   def test_hook

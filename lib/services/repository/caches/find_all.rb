@@ -5,13 +5,20 @@ module Services
     module Caches
       class FindAll
         include Travis::LegacyAPI
-        def initialize(repository_id)
-          @repository_id = repository_id
+        attr_reader :repository
+
+        def initialize(repository)
+          @repository = repository
+        end
+
+        def access_token
+          admin = repository.find_admin
+          Travis::AccessToken.create(user: admin, app_id: 2).token if admin
         end
 
         def call
-          url = "/repos/#{@repository_id}/caches"
-          extract_caches(get(url))
+          url = "/repos/#{repository.id}/caches"
+          extract_caches(get(url, access_token))
         end
 
         private
