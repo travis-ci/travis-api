@@ -1,0 +1,9 @@
+<h2>Hook check</h2>
+
+<% if @hook_url %>
+  <%= render partial: 'hook_wrong_url' %>
+<% elsif @event %>
+  <%= render partial: 'hook_event_missing' %>
+<% else %>
+  <%= render partial: 'hook_active_mismatch' %>
+<% end %>

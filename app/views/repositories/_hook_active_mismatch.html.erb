@@ -1,0 +1,12 @@
+<% if @repository.active? %>
+  <p><%= link_to describe(@repository), @repository %> is marked active in our database but the GitHub hook is disabled.</p>
+<% else %>
+  <p><%= link_to describe(@repository), @repository %> is marked inactive in our database but the GitHub hook is enabled.</p>
+<% end %>
+
+<p>What should we do about it?</p>
+
+<div class="inline left">
+  <%= button_to "Enable", enable_repository_path(@repository), class: "button" %>
+  <%= button_to "Disable", disable_repository_path(@repository), class: "button" %>
+</div>

@@ -10,6 +10,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'font-awesome-rails'
 gem 'chart-js-rails'
+gem 'sass-rails', '~> 5.0'
 
 # Databases
 gem 'pg'
@@ -27,31 +28,22 @@ gem 'travis-topaz',      github: 'travis-ci/travis-topaz-gem'
 gem 'travis-support',    github: 'travis-ci/travis-support'
 gem 'travis',            github: 'travis-ci/travis.rb'
 
-gem 'rollout'
-
-gem 'metriks'
-
-gem 'bcat'
-
-gem 'rotp'
-
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
-
 # Sidekiq
 gem 'puma', '~> 3.0'
 gem 'sidekiq'
 gem 'foreman'
 
-# Address formatting
+# Others
+gem 'bcat'
 gem 'biggs'
-
-# Date validator
 gem 'date_validator'
+gem 'gh'
+gem 'metriks'
+gem 'rollout'
+gem 'rotp'
 
 group :console, :test do
   gem 'pry'
-  # gem 'pry-byebug'
 end
 
 group :development, :test do
@@ -70,6 +62,5 @@ group :test do
 end
 
 group :development do
-  # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 3.3'
 end

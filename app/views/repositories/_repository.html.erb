@@ -58,11 +58,15 @@
     <dt class="info-label">Activation:</dt>
     <dd class="inline">
       <p><%= @repository.active? ? "enabled" : "disabled" %></p>
-      <% if @repository.active? %>
-        <%= button_to "Disable", disable_repository_path(@repository), form_class: "disable-button", class: "button" %>
-      <% else %>
-        <%= button_to "Enable", enable_repository_path(@repository), form_class: "enable-button", class: "button" %>
-      <% end %>
+      <div class="inline">
+        <%= button_to "Check Hook", check_hook_repository_path(@repository), form_class: "check-hook", disabled: !@repository.find_admin, class: "button" %>
+        <% if @repository.active? %>
+          <%= button_to "Disable", disable_repository_path(@repository), form_class: "disable-button", class: "button" %>
+
+        <% else %>
+          <%= button_to "Enable", enable_repository_path(@repository), form_class: "enable-button", class: "button" %>
+        <% end %>
+      </div>
     </dd>
   </dl>
 </section>

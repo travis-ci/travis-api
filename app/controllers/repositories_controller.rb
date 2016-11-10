@@ -1,6 +1,32 @@
 class RepositoriesController < ApplicationController
   before_action :get_repository
 
+  def add_hook_event
+    Services::Repository::AddHookEvent.new(@repository, params[:event], hook_link).call
+    flash[:notice] = "Added #{params[:event].gsub('_', ' ')} event to #{@repository.slug}."
+    redirect_to @repository
+  end
+
+  def check_hook
+    if hook.nil?
+      flash[:error] = 'No hook found on GitHub.'
+      redirect_to @repository
+    elsif hook['active'] != @repository.active?
+      render :check_hook
+    elsif !hook['events'].include?('pull_request')
+      @event = 'pull_request'
+      render :check_hook
+    elsif !hook['events'].include?('push')
+      @event = 'push'
+      render :check_hook
+    elsif hook_url != hook_url(Travis::Config.load.service_hook_url)
+      @hook_url = hook_url(hook['config']['domain'])
+    else
+      flash[:notice] = 'That hook seems legit.'
+      redirect_to @repository
+    end
+  end
+
   def delete_last_build
     if otp_valid?
       keys       = @repository.attributes.keys.select { |k| k.start_with? 'last_build_' }
@@ -47,6 +73,13 @@ class RepositoriesController < ApplicationController
     redirect_to repository_path(@repository, anchor: "settings")
   end
 
+  def set_hook_url
+    config = hook['config'].merge('domain' => hook_url(Travis::Config.load.service_hook_url))
+    Services::Repository::SetHookUrl.new(@repository, config, hook_link).call
+    flash[:notice] = "Set notification target to #{Travis::Config.load.service_hook_url}."
+    redirect_to @repository
+  end
+
   def show
     @active_admin = @repository.find_admin
 
@@ -75,5 +108,18 @@ class RepositoriesController < ApplicationController
 
   def feature_params
     params.require(:features).permit(Features.for(@repository).keys)
+  end
+
+  def hook
+    Services::Repository::CheckHook.new(@repository).call
+  end
+
+  def hook_url(domain = hook['config']['domain'])
+    return "https://notify.travis-ci.org" unless domain
+    domain =~ /^https?:/ ? domain : "https://#{domain}"
+  end
+
+  def hook_link
+    hook["_links"]["self"]["href"]
   end
 end
