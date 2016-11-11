@@ -6,8 +6,8 @@ class JobsController < ApplicationController
   def show
     @log = Services::Job::GetLog.new(@job).call
 
-    @previous_job = Job.from_build(@job.build).where("id < ?", @job.id).last
-    @next_job     = Job.from_build(@job.build).where("id > ?", @job.id).first
+    @previous_job = @job.previous
+    @next_job     = @job.next
   end
 
   def cancel

@@ -6,8 +6,8 @@ class BuildsController < ApplicationController
   def show
     @jobs = @build.jobs.includes(:repository, :build)
 
-    @previous_build = Build.from_repository(@build.repository).where("id < ?", @build.id).last
-    @next_build     = Build.from_repository(@build.repository).where("id > ?", @build.id).first
+    @previous_build = @build.previous
+    @next_build     = @build.next
   end
 
   def cancel
