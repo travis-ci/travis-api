@@ -29,5 +29,9 @@ module Travis::API::V3
     def change_settings?
       write?
     end
+
+    def admin?
+      access_control.adminable? object
+    end
   end
 end
