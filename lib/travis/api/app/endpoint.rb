@@ -19,14 +19,20 @@ class Travis::Api::App
 
     error(ActiveRecord::RecordNotFound, Sinatra::NotFound) { not_found }
     not_found {
-      if content_type =~ /json/
-        if body && !body.empty?
-          body
-        else
-          { 'file' => 'not found' }
-        end
+      if env['sinatra.route'] == 'GET /:owner_name/:name' && (env['travis.format'] == 'png' || env['travis.format'] == 'svg')
+        root = File.expand_path('.')
+        filename = "#{root}/public/images/result/unknown.#{env['travis.format']}"
+        send_file(filename, type: :png)
       else
-        'file not found'
+        if content_type =~ /json/
+          if body && !body.empty?
+            body
+          else
+            { 'file' => 'not found' }
+          end
+        else
+          'file not found'
+        end
       end
     }
 
