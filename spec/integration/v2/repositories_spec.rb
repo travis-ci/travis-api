@@ -149,6 +149,7 @@ describe 'Repos', set_app: true do
     result.status.should == 200
     result.headers['Content-Type'].should == 'image/png'
     result.body.should_not == ''
+    result.should deliver_result_image_for('unknown')
   end
 
   it 'responds with 404 when repo can\'t be found and format is other than png' do
