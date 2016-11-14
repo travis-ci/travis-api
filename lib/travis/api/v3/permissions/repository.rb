@@ -25,5 +25,13 @@ module Travis::API::V3
     def create_cron?
       Travis::Features.owner_active?(:cron, object.owner) and write?
     end
+
+    def change_settings?
+      write?
+    end
+
+    def admin?
+      access_control.adminable? object
+    end
   end
 end

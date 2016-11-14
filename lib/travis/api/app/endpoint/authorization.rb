@@ -258,7 +258,6 @@ class Travis::Api::App
             super
 
             @user = ::User.find_by_github_id(data['id'])
-
           end
 
           def info(attributes = {})
@@ -290,7 +289,6 @@ class Travis::Api::App
                 user.update_attributes info
               else
                 self.user = ::User.create! info
-                Travis.run_service(:sync_user, user)
               end
 
               Travis::Github::Oauth.update_scopes(user) # unless Travis.env == 'test'
@@ -323,6 +321,9 @@ class Travis::Api::App
 
           user   = manager.fetch
           halt 403, 'not a Travis user' if user.nil?
+
+          Travis.run_service(:sync_user, user)
+
           user
         rescue GH::Error
           # not a valid token actually, but we don't want to expose that info
@@ -381,8 +382,6 @@ class Travis::Api::App
           if allowed_https_targets.include?(uri.host)
             uri.scheme == 'https'
           elsif uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
-            uri.scheme == 'https'
-          elsif uri.host =~ /\A(.+\.)?travis-lite\.com\Z/
             uri.scheme == 'https'
           elsif uri.host == 'localhost' or uri.host == '127.0.0.1'
             uri.port > 1023

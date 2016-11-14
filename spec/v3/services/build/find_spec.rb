@@ -20,7 +20,8 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
     }}
   end
 
-  describe "build on public repository" do
+  describe "build on public repository, no pull access" do
+    before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/build/#{build.id}") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
@@ -98,8 +99,8 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "@representation"  => "standard",
       "@permissions"     => {
         "read"           => true,
-        "cancel"         => false,
-        "restart"        => false},
+        "cancel"         => true,
+        "restart"        => true},
       "id"               => build.id,
       "number"           => build.number,
       "state"            => build.state,

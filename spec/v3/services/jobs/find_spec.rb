@@ -228,8 +228,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
-          "cancel"         => false,
-          "restart"        => false,
+          "cancel"         => true,
+          "restart"        => true,
           "debug"          => false },
         "id"               => jobs[0].id,
         "number"           => "#{jobs[0].number}",
@@ -276,8 +276,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
-          "cancel"         => false,
-          "restart"        => false,
+          "cancel"         => true,
+          "restart"        => true,
           "debug"          => false },
         "id"               => jobs[1].id,
         "number"           => "#{jobs[1].number}",
@@ -324,8 +324,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
-          "cancel"         => false,
-          "restart"        => false,
+          "cancel"         => true,
+          "restart"        => true,
           "debug"          => false },
         "id"               => jobs[2].id,
         "number"           => "#{jobs[2].number}",
@@ -372,8 +372,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"  => "standard",
         "@permissions"     => {
           "read"           => true,
-          "cancel"         => false,
-          "restart"        => false,
+          "cancel"         => true,
+          "restart"        => true,
           "debug"          => false },
         "id"               => jobs[3].id,
         "number"           => "#{jobs[3].number}",

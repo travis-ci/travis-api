@@ -146,5 +146,10 @@ describe Travis::Api::App::Endpoint::Authorization do
       body.should_not include("access_token")
       body.should include("not a Travis user")
     end
+
+    it 'syncs the user' do
+      Travis.expects(:run_service).with(:sync_user, instance_of(User))
+      post('/auth/github', github_token: 'public repos').should be_ok
+    end
   end
 end

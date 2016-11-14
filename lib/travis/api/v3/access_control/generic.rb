@@ -11,8 +11,20 @@ module Travis::API::V3
       full_access? or dispatch(object, :visible?)
     end
 
+    def cancelable?(object)
+      full_access? or dispatch(object, :cancelable?)
+    end
+
+    def restartable?(object)
+      full_access? or dispatch(object, :restartable?)
+    end
+
     def writable?(object)
       full_access? or dispatch(object, :writable?)
+    end
+
+    def adminable?(object)
+      dispatch(object, :adminable?)
     end
 
     def admin_for(repository)
@@ -75,6 +87,14 @@ module Travis::API::V3
       visible? job.repository
     end
 
+    def job_cancelable?(job)
+      cancelable? job.repository
+    end
+
+    def job_restartable?(job)
+      restartable? job.repository
+    end
+
     def job_writable?(job)
       writable? job.repository
     end
@@ -89,6 +109,10 @@ module Travis::API::V3
 
     def user_writable?(user)
       self.user == user
+    end
+
+    def repository_adminable?(repository)
+      false
     end
 
     def repository_visible?(repository)

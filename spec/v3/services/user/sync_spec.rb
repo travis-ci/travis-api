@@ -1,7 +1,7 @@
 describe Travis::API::V3::Services::User::Sync, set_app: true do
   let(:user)  { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
   let(:user2) { Travis::API::V3::Models::User.create(login: 'carlad', is_syncing: true) }
-  let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last.to_json) }
+  let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].to_json) }
   let(:sidekiq_params)  { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
 
   before do
@@ -60,10 +60,10 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
       "true")
     }
 
-    example { expect(sidekiq_payload).to be == user.id }
+    example { expect(sidekiq_payload).to be == ['sync_user', 'user_id' => 1] }
 
-    example { expect(Sidekiq::Client.last['queue']).to be == :user_sync                }
-    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::GithubSync::Workers::SyncUser' }
+    example { expect(Sidekiq::Client.last['queue']).to be == :sync                        }
+    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::GithubSync::Worker' }
   end
 
   describe "existing user, current user does not have sync access " do
@@ -82,7 +82,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
       "permission"    => "sync",
       "user"          => {
         "@type"       => "user",
-        "@href"       => "/user/#{user2.id}",
+        "@href"       => "/v3/user/#{user2.id}",
         "@representation"=> "minimal",
         "id"          => user2.id,
         "login"       => "carlad"

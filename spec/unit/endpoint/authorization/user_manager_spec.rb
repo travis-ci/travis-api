@@ -35,7 +35,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
      }
 
     it 'drops the token when drop_token is set to true' do
-      user = stub('user', login: 'drogus', github_id: 456)
+      user = stub('user', login: 'drogus', github_id: 456, previous_changes: {}, recently_signed_up?: false)
       User.expects(:find_by_github_id).with(456).returns(user)
 
       manager = described_class.new(data, 'abc123', true)
@@ -49,25 +49,31 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
     end
 
     context 'with existing user' do
-      it 'updates user data' do
-        user = stub('user', login: 'drogus', github_id: 456)
-        User.expects(:find_by_github_id).with(456).returns(user)
-        attributes = { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false }.stringify_keys
-        user.expects(:update_attributes).with(attributes)
-        manager.stubs(:education).returns(false)
+      let!(:user) { FactoryGirl.create(:user, login: 'drogus', github_id: 456, github_oauth_token: token) }
+      let(:token) { nil }
 
+      before do
+        manager.stubs(:education).returns(false)
+      end
+
+      it 'updates user data' do
+        attributes = { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false }.stringify_keys
+        User.any_instance.expects(:update_attributes).with(attributes)
         manager.fetch.should == user
       end
     end
 
     context 'without existing user' do
-      it 'creates new user' do
-        User.expects(:find_by_github_id).with(456).returns(nil)
-        attributes = { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false }.stringify_keys
-        user = User.create(id: 1, login: 'drogus', github_id: 456)
-        User.expects(:create!).with(attributes).returns(user)
-        manager.stubs(:education).returns(false)
+      let(:user)  { User.create(id: 1, login: 'drogus', github_id: 456) }
+      let(:attrs) { { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false }.stringify_keys }
 
+      before do
+        manager.stubs(:education).returns(false)
+        User.stubs(:create!).with(attrs).returns(user)
+      end
+
+      it 'creates new user' do
+        User.expects(:create!).with(attrs).returns(user)
         manager.fetch.should == user
       end
     end

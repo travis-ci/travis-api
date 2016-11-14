@@ -45,6 +45,22 @@ describe Travis::Services::UpdateHook do
       service.run
     end
   end
+
+  it 'syncs the repo when activated' do
+    service.params.update(active: true)
+    Sidekiq::Client.expects(:push).with(
+      'queue' => 'sync',
+      'class' => 'Travis::GithubSync::Worker',
+      'args'  => [:sync_repo, repo_id: 1, user_id: user.id]
+    )
+    service.run
+  end
+
+  it 'does not sync the repo when deactivated' do
+    service.params.update(active: false)
+    Sidekiq::Client.expects(:push).never
+    service.run
+  end
 end
 
 describe Travis::Services::UpdateHook::Instrument do

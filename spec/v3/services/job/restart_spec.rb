@@ -1,8 +1,9 @@
 describe Travis::API::V3::Services::Job::Restart, set_app: true do
-  let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:build) { repo.builds.first }
-  let(:job)   { build.jobs.first }
-  let(:payload) { { 'id'=> "#{job.id}", 'user_id' => 1 } }
+  let(:user)        { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
+  let(:repo)        { Travis::API::V3::Models::Repository.where(owner_name: user.login, name: 'minimal').first }
+  let(:build)       { repo.builds.first }
+  let(:job)         { build.jobs.first }
+  let(:payload)     { { 'id'=> "#{job.id}", 'user_id' => 1 } }
 
   before do
     Travis::Features.stubs(:owner_active?).returns(true)
@@ -41,21 +42,36 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     }}
   end
 
-  describe "existing repository, no push access" do
+  describe "existing repository, no push or pull access" do
+      let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+      let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+      before        { post("/v3/job/#{job.id}/cancel", {}, headers)                 }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body).to_s).to include(
+        "@type",
+        "error_type",
+        "error_message",
+        "operation requires cancel access to job",
+        "resource_type",
+        "job",
+        "insufficient_access",
+        "permission",
+        "cancel")
+      }
+    end
+
+
+  describe "existing repository, pull access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { post("/v3/job/#{job.id}/restart", {}, headers)                 }
-
-    example { expect(last_response.status).to be == 403 }
+    example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",
-      "error_type",
-      "insufficient_access",
-      "error_message",
-      "operation requires restart access to job",
-      "resource_type",
+      "pending",
       "job",
-      "permission",
       "restart")
     }
   end
@@ -81,11 +97,18 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
     before do
-      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true)
       Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(true)
     end
 
+    shared_examples 'clears debug_options' do
+      before  { job.update_attribute(:debug_options, { 'foo' => 'bar' }) }
+      example { expect(job.reload.debug_options).to be_nil }
+    end
+
     describe "canceled state" do
+      include_examples 'clears debug_options'
+
       before        { job.update_attribute(:state, "canceled")                                                }
       before        { post("/v3/job/#{job.id}/restart", params, headers)                                      }
 
@@ -110,7 +133,10 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
     end
+
     describe "errored state" do
+      include_examples 'clears debug_options'
+
       before        { job.update_attribute(:state, "errored")                                                }
       before        { post("/v3/job/#{job.id}/restart", params, headers)                                      }
 
@@ -135,7 +161,10 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
     end
+
     describe "failed state" do
+      include_examples 'clears debug_options'
+
       before        { job.update_attribute(:state, "failed")                                                }
       before        { post("/v3/job/#{job.id}/restart", params, headers)                                      }
 
@@ -160,7 +189,10 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
     end
+
     describe "passed state" do
+      include_examples 'clears debug_options'
+
       before        { job.update_attribute(:state, "passed")                                                }
       before        { post("/v3/job/#{job.id}/restart", params, headers)                                      }
 
@@ -204,7 +236,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
-    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true) }
 
     describe "started state" do
       before        { job.update_attribute(:state, "started")                                                   }

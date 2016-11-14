@@ -11,7 +11,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   let(:commit)      { job.commit }
   let(:parsed_body) { JSON.load(body) }
 
-  describe "fetching job on a public repository" do
+  describe "fetching job on a public repository, no pull access" do
+    before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/job/#{job.id}")     }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to be == {
@@ -91,8 +92,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "@representation"   => "standard",
       "@permissions"      => {
         "read"            => true,
-        "cancel"          => false,
-        "restart"         => false,
+        "cancel"          => true,
+        "restart"         => true,
         "debug"           => false },
       "id"                => job.id,
       "number"            => job.number,

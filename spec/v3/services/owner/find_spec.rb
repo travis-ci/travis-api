@@ -65,7 +65,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "star"            => false,
             "unstar"          => false,
             "create_request"  => false,
-            "create_cron"     => false},
+            "create_cron"     => false,
+            "change_settings" => false,
+            "admin"           => false
+          },
           "id"                => repo.id,
           "name"              => "example-repo",
           "slug"              => "example-org/example-repo",
@@ -113,7 +116,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "star"          => false,
             "unstar"        => false,
             "create_request"=> false,
-            "create_cron"   => false},
+            "create_cron"   => false,
+            "change_settings" => false,
+            "admin"         => false
+          },
           "id"              => repo.id,
           "name"            => "example-repo",
           "slug"            => "example-org/example-repo",
