@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 gemspec
 
+ruby '2.3.1'
+
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
 gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
