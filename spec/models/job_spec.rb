@@ -61,7 +61,7 @@ RSpec.describe Job, type: :model do
     end
   end
 
-  describe '.duration' do
+  describe '#duration' do
     let(:finished_job) { create(:finished_job) }
     let(:started_job) { create(:started_job) }
 
@@ -75,6 +75,42 @@ RSpec.describe Job, type: :model do
       it 'returns nil' do
         expect(started_job.duration).to be nil
       end
+    end
+  end
+
+  describe '#next' do
+    let!(:build)          { create(:build) }
+    let!(:other_build)    { create(:build) }
+    let!(:job)            { create(:job, build: build, id: 4) }
+    let!(:next_job)       { create(:job, build: build, id: 6) }
+    let!(:unrelated_job)  { create(:job, build: other_build, id: 5) }
+    let!(:unrelated_job2) { create(:job, build: other_build, id: 7) }
+
+    it 'finds next job from the same build' do
+      expect(job.next).to eql next_job
+      expect(job.next.build).to eql build
+    end
+
+    it 'returns nil if there is no next job from the same build' do
+      expect(next_job.next).to eql nil
+    end
+  end
+
+  describe '#previous' do
+    let!(:build)          { create(:build) }
+    let!(:other_build)    { create(:build) }
+    let!(:job)            { create(:job, build: build, id: 4) }
+    let!(:previous_job)   { create(:job, build: build, id: 2) }
+    let!(:unrelated_job)  { create(:job, build: other_build, id: 3) }
+    let!(:unrelated_job2) { create(:job, build: other_build, id: 1) }
+
+    it 'finds previous job from the same build' do
+      expect(job.previous).to eql previous_job
+      expect(job.previous.build).to eql build
+    end
+
+    it 'returns nil if there is no previous job from the same build' do
+      expect(previous_job.previous).to eql nil
     end
   end
 end

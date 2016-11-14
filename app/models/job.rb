@@ -20,7 +20,15 @@ class Job < ApplicationRecord
     (started_at && finished_at) ? (finished_at - started_at) : nil
   end
 
+  def next
+    build.jobs.where("id > ?", id).first
+  end
+
   def not_finished?
     %w[started received queued created].include?(state)
+  end
+
+  def previous
+    build.jobs.where("id < ?", id).last
   end
 end

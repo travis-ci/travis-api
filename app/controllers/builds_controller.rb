@@ -4,7 +4,10 @@ class BuildsController < ApplicationController
   before_action :get_build
 
   def show
-    @jobs = @build.jobs.includes(:repository)
+    @jobs = @build.jobs.includes(:repository, :build)
+
+    @previous_build = @build.previous
+    @next_build     = @build.next
   end
 
   def cancel

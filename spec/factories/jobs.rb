@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :job do
     association :owner, factory: :organization
+    source_type 'Build'
     build
     repository
     commit
