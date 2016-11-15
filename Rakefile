@@ -7,6 +7,7 @@ namespace :db do
       sh "psql -q travis_#{env} < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/structure.sql"
 
       # logs database
+      require 'sequel'
       Sequel.extension(:migration)
       db = Sequel.connect(:adapter => 'postgres')
       db.timezone = :utc
