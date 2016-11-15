@@ -1,34 +1,36 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 's3',              github: 'travis-ci/s3'
+ruby '2.3.1'
+
+gem 's3',              git: 'https://github.com/travis-ci/s3'
 # api v3 uses 'aws-sdk-v1' instead of 's3'
 gem 'aws-sdk-v1'
 
-gem 'travis-support',  github: 'travis-ci/travis-support'
-gem 'travis-amqp',     github: 'travis-ci/travis-amqp'
+gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
+gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
-gem 'travis-settings', github: 'travis-ci/travis-settings'
-gem 'travis-sidekiqs', github: 'travis-ci/travis-sidekiqs'
+gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
+gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
 
-gem 'travis-yaml',     github: 'travis-ci/travis-yaml'
-gem 'mustermann',      github: 'rkh/mustermann'
+gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
+gem 'mustermann'
 gem 'sinatra'
-gem 'sinatra-contrib', require: nil #github: 'sinatra/sinatra-contrib', require: nil
+gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
 
 gem 'active_model_serializers'
 gem 'unicorn'
 gem 'sentry-raven'
-gem 'yard-sinatra',    github: 'rkh/yard-sinatra'
+gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack-contrib'
-gem 'rack-cache',      github: 'rtomayko/rack-cache'
+gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
 gem 'rack-attack', '5.0.0.beta1'
 gem 'gh'
 gem 'bunny',           '~> 0.8.0'
 gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.6'
-gem 'metriks-librato_metrics', github: 'eric/metriks-librato_metrics'
+gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
 gem 'micro_migrations'
 gem 'simplecov'
 gem 'skylight', '~> 0.6.0.beta.1'
@@ -39,7 +41,7 @@ gem 'jemalloc'
 gem 'customerio'
 
 group :development, :test do
-  gem 'travis-migrations', github: 'travis-ci/travis-migrations', branch: 'add_travis_logs_structure'
+  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations', branch: 'add_travis_logs_structure'
 end
 
 group :test do

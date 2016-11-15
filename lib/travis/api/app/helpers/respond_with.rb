@@ -16,10 +16,12 @@ class Travis::Api::App
 
       def respond_with(resource, options = {})
         result = respond(resource, options)
+
         if result && response.content_type =~ /application\/json/
           status STATUS[result[:result]] if result.is_a?(Hash) && result[:result].is_a?(Symbol)
           result = prettify_result? ? JSON.pretty_generate(result) : result.to_json
         end
+
         halt result || 404
       end
 

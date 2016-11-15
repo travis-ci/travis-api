@@ -25,6 +25,9 @@ describe Travis::API::V3::Services::UserSettings::Find, set_app: true do
     end
   end
 
+  before { Travis::Features.activate_owner(:auto_cancel, repo.owner) }
+  after  { Travis::Features.deactivate_owner(:auto_cancel, repo.owner) }
+
   describe 'authenticated, existing repo, repo has no settings, return defaults' do
     before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
 
@@ -38,7 +41,9 @@ describe Travis::API::V3::Services::UserSettings::Find, set_app: true do
           { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/builds_only_with_travis_yml", '@representation' => 'standard', 'name' => 'builds_only_with_travis_yml', 'value' => false },
           { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/build_pushes", '@representation' => 'standard', 'name' => 'build_pushes', 'value' => true },
           { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/build_pull_requests", '@representation' => 'standard', 'name' => 'build_pull_requests', 'value' => true },
-          { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds", '@representation' => 'standard', 'name' => 'maximum_number_of_builds', 'value' => 0 }
+          { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds", '@representation' => 'standard', 'name' => 'maximum_number_of_builds', 'value' => 0 },
+          { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes", '@representation' => 'standard', 'name' => 'auto_cancel_pushes', 'value' => false },
+          { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests", '@representation' => 'standard', 'name' => 'auto_cancel_pull_requests', 'value' => false },
         ]
       )
     end
@@ -60,7 +65,9 @@ describe Travis::API::V3::Services::UserSettings::Find, set_app: true do
           { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/builds_only_with_travis_yml", '@representation' => 'standard', 'name' => 'builds_only_with_travis_yml', 'value' => false },
           { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/build_pushes", '@representation' => 'standard', 'name' => 'build_pushes', 'value' => false },
           { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/build_pull_requests", '@representation' => 'standard', 'name' => 'build_pull_requests', 'value' => true },
-          { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds", '@representation' => 'standard', 'name' => 'maximum_number_of_builds', 'value' => 0 }
+          { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds", '@representation' => 'standard', 'name' => 'maximum_number_of_builds', 'value' => 0 },
+          { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes", '@representation' => 'standard', 'name' => 'auto_cancel_pushes', 'value' => false },
+          { '@type' => 'user_setting','@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests", '@representation' => 'standard', 'name' => 'auto_cancel_pull_requests', 'value' => false },
         ]
       )
     end
