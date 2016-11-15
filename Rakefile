@@ -11,7 +11,7 @@ namespace :db do
       Sequel.extension(:migration)
       db = Sequel.connect(:adapter => 'postgres', :database => "travis_#{env}")
       db.timezone = :utc
-      Sequel::Migrator.run(db, Gem.loaded_specs['travis-migrations'].full_gem_path + '/db/migrate_logs')
+      Sequel::Migrator.run(db, Gem.loaded_specs['travis-migrations'].full_gem_path + '/db/migrate_logs', :table => 'schema_migrations_logs')
     end
   end
 end
