@@ -196,7 +196,6 @@ GEM
       atomic (~> 1.0)
       avl_tree (~> 1.1.2)
       hitimes (~> 1.1)
-    micro_migrations (0.0.1)
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
@@ -331,7 +330,6 @@ DEPENDENCIES
   jemalloc
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
-  micro_migrations
   mocha (~> 0.12)
   mustermann
   netaddr
