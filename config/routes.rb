@@ -55,6 +55,7 @@ Rails.application.routes.draw do
       post 'features'
       post 'set_hook_url'
       post 'settings', to: 'settings#update', as: :repository_settings
+      post 'test_hook'
     end
   end
 

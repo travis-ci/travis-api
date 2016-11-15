@@ -99,6 +99,12 @@ class RepositoriesController < ApplicationController
     @settings = Settings.new(@repository.settings)
   end
 
+  def test_hook
+    Services::Repository::TestHook.new(@repository, hook["_links"]["test"]["href"]).call
+    flash[:notice] = 'Test hook fired.'
+    redirect_to @repository
+  end
+
   private
 
   def get_repository
@@ -111,7 +117,7 @@ class RepositoriesController < ApplicationController
   end
 
   def hook
-    Services::Repository::CheckHook.new(@repository).call
+    @hook ||= Services::Repository::CheckHook.new(@repository).call
   end
 
   def hook_url(domain = hook['config']['domain'])
