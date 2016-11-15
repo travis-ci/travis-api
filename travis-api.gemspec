@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
   # from travis-core gemspec
 
   s.add_dependency 'activerecord',      '~> 3.2.19'
-  s.add_dependency 'railties',          '~> 3.2.19'
   s.add_dependency 'rollout',           '~> 1.1.0'
   s.add_dependency 'coder',             '~> 0.4.0'
   s.add_dependency 'virtus',            '~> 1.0.0'
