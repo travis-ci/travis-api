@@ -31,4 +31,14 @@ class Job < ApplicationRecord
   def previous
     build.jobs.where("id < ?", id).last
   end
+
+  def time_queued(now = Time.now)
+    if ['created', 'canceled'].include?(state)
+      nil
+    elsif ['queued', 'received'].include?(state)
+      now - queued_at
+    else
+      started_at - queued_at
+    end
+  end
 end

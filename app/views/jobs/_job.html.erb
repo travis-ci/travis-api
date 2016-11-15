@@ -42,6 +42,9 @@
     <dt class="info-label">Duration:</dt>
     <dd><time><%= format_duration(@job.duration) %></time></dd>
 
+    <dt class="info-label">Queued:</dt>
+    <dd><time><%= format_short_duration(@job.time_queued) %></time></dd>
+
     <dt class="info-label">Branch:</dt>
     <dd><%= @job.commit.branch %></dd>
 

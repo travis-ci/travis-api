@@ -6,14 +6,18 @@
       <p class="info-label job-id">Job ID</p>
       <p class="info-label job-build">Build</p>
       <p class="info-label job-state">State</p>
+      <p class="info-label job-duration">Duration</p>
+      <p class="info-label job-queued">Queued</p>
       <p class="info-label job-queue">Queue</p>
-      <p class="info-label job-reset"></p>
+      <div class="info-label job-reset"></div>
     </li>
     <% jobs.each do |job| %>
       <li class="inline-list job-item">
         <p class="job-id"><%= link_to describe(job), job %></p>
         <p class="job-build"><%= link_to "##{job.build.number}", job.build %></p>
         <p class="job-state"><%= "#{job.state} at #{job.state_time}" %></p>
+        <p class="job-duration"><%= format_short_duration(job.duration) %></p>
+        <p class="job-queued"><%= format_short_duration(job.time_queued) %></p>
         <p class="job-queue"><%= job.queue %></p>
         <div class="job-reset call-to-action">
           <% if job.not_finished? %>
