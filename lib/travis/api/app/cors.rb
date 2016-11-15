@@ -13,6 +13,7 @@ class Travis::Api::App
     end
 
     options // do
+      # make sure to update nginx.conf.erb when you update this
       headers['Access-Control-Allow-Methods'] = "HEAD, GET, POST, PATCH, PUT, DELETE"
       headers['Access-Control-Allow-Headers'] = "Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent, Travis-API-Version"
 

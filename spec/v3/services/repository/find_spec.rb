@@ -1,4 +1,5 @@
 describe Travis::API::V3::Services::Repository::Find, set_app: true do
+  let(:user) { User.where(login: 'svenfuchs').first }
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
@@ -37,7 +38,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_request"   => false,
         "create_cron"      => false,
         "change_settings"  => false,
-        "change_env_vars"  => false
+        "change_env_vars"  => false,
+        "admin"            => false
       },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
@@ -100,7 +102,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   describe "private repository, private API, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, admin: false) }
     before        { repo.update_attribute(:private, true)                             }
     before        { get("/v3/repo/#{repo.id}", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
@@ -118,7 +120,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_request"   => false,
         "create_cron"      => false,
         "change_settings"  => false,
-        "change_env_vars"  => false
+        "change_env_vars"  => false,
+        "admin"            => false
       },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
@@ -183,8 +186,9 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => true,
         "create_request"   => true,
         "create_cron"      => false,
-        "change_settings"  => true,
-        "change_env_vars"  => true
+        "change_settings"  => false,
+        "change_env_vars"  => false,
+        "admin"            => false
       },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",
@@ -228,19 +232,13 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
     }}
   end
 
-  describe "private repository without cron feature, authenticated as internal application with full access, scoped to the right org" do
-    let(:app_name)   { 'travis-example'                                                           }
-    let(:app_secret) { '12345678'                                                                 }
-    let(:sign_opts)  { "a=#{app_name}:s=#{repo.owner_name}"                                       }
-    let(:signature)  { OpenSSL::HMAC.hexdigest('sha256', app_secret, sign_opts)                   }
-    let(:headers)    {{ 'HTTP_AUTHORIZATION' => "signature #{sign_opts}:#{signature}"            }}
-    before { Travis.config.applications = { app_name => { full_access: true, secret: app_secret }}}
+  describe "private repository without cron feature, authenticated as user with admin access" do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 
-
+    before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true, admin: true) }
     before { repo.update_attribute(:private, true)   }
     before { get("/v3/repo/#{repo.id}", {}, headers) }
-    before { repo.update_attribute(:private, false)  }
-
 
     example { expect(last_response).to be_ok   }
     example { expect(parsed_body).to be == {
@@ -255,8 +253,9 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => true,
         "create_request"   => true,
         "create_cron"      => false,
-        "change_settings"  => true,
-        "change_env_vars"  => true
+        "change_settings"  => false,
+        "change_env_vars"  => false,
+        "admin"            => false
       },
       "id"                 =>  repo.id,
       "name"               =>  "minimal",

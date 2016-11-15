@@ -17,7 +17,9 @@ module Travis::Api::App::Responders
     end
 
     def apply?
-      super && resource.is_a?(Repository)
+      # always apply so we can return with unknown result
+      # super && resource.is_a?(Repository)
+      acceptable_format? && (resource.nil? || resource.is_a?(Repository))
     end
 
     private
@@ -31,7 +33,11 @@ module Travis::Api::App::Responders
       end
 
       def result
-        Repository::StatusImage.new(resource, params[:branch]).result
+        if resource
+          Repository::StatusImage.new(resource, params[:branch]).result
+        else
+          'unknown'
+        end
       end
 
       def root

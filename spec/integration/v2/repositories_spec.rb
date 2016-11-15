@@ -144,9 +144,12 @@ describe 'Repos', set_app: true do
     response.should deliver_cc_xml_for(Repository.timeline)
   end
 
-  it 'responds with 404 when repo can\'t be found and format is png' do
+  it 'responds with 200 and image when repo can\'t be found and format is png' do
     result = get('/repos/foo/bar.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
-    result.status.should == 404
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/png'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('unknown')
   end
 
   it 'responds with 404 when repo can\'t be found and format is other than png' do
