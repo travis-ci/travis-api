@@ -41,6 +41,10 @@ module Travis::API::V3
       permission?(:pull, job.repository)
     end
 
+    def repository_adminable?(repository)
+      permission?(:admin, repository)
+    end
+
     def organization_visible?(organization)
       super or organization_writable?(organization)
     end

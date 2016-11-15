@@ -23,6 +23,10 @@ module Travis::API::V3
       full_access? or dispatch(object, :writable?)
     end
 
+    def adminable?(object)
+      dispatch(object, :adminable?)
+    end
+
     def admin_for(repository)
       raise AdminAccessRequired, repository: repository
     end
@@ -105,6 +109,10 @@ module Travis::API::V3
 
     def user_writable?(user)
       self.user == user
+    end
+
+    def repository_adminable?(repository)
+      false
     end
 
     def repository_visible?(repository)
