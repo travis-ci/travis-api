@@ -40,6 +40,7 @@ gem 'customerio'
 
 group :development, :test do
   gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations', branch: 'igor-logs-migrations'
+  gem 'sequel'
 end
 
 group :test do
