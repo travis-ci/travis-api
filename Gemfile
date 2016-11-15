@@ -38,7 +38,7 @@ gem 'jemalloc'
 gem 'customerio'
 
 group :development, :test do
-  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations'
+  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations', ref: 'c988e9430fc3e2f06e785fcf0e1ca100bc4f5770'
 end
 
 group :test do
