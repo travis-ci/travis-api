@@ -19,4 +19,3 @@ services:
 
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
-  - 'RAILS_ENV=test bundle exec logs:db:migrate'

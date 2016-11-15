@@ -5,14 +5,8 @@ namespace :db do
     task :create do
       sh "createdb travis_#{env}" rescue nil
       sh "psql -q travis_#{env} < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/structure.sql"
-    end
-  end
-end
 
-namespace 'logs:db' do
-  env = ENV["RAILS_ENV"]
-  if env != 'production'
-    task :migrate do |_t, args|
+      # logs database
       Sequel.extension(:migration)
       db = Sequel.connect(:adapter => 'postgres')
       db.timezone = :utc
