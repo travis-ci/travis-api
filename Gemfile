@@ -39,7 +39,7 @@ gem 'jemalloc'
 gem 'customerio'
 
 group :development, :test do
-  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations'
+  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations', branch: 'igor-logs-migrations'
 end
 
 group :test do

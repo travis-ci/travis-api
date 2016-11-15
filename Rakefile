@@ -9,6 +9,18 @@ namespace :db do
   end
 end
 
+namespace 'logs:db' do
+  env = ENV["RAILS_ENV"]
+  if env != 'production'
+    task :migrate do |_t, args|
+      Sequel.extension(:migration)
+      db = Sequel.connect(:adapter => 'postgres')
+      db.timezone = :utc
+      Sequel::Migrator.run(db, Gem.loaded_specs['travis-migrations'].full_gem_path + '/db/migrate_logs')
+    end
+  end
+end
+
 # begin
 #   require 'rspec'
 #   require 'rspec/core/rake_task'

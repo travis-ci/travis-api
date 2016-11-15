@@ -34,7 +34,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-migrations
-  revision: d50bc1b1e38f5eab1550acbe753bff75602ae778
+  revision: 698162ce0ba878639e8a306745774ee4472c238c
+  branch: igor-logs-migrations
   specs:
     travis-migrations (0.0.3)
 
@@ -390,5 +391,8 @@ DEPENDENCIES
   unicorn
   yard-sinatra!
 
+RUBY VERSION
+   ruby 2.3.1p112
+
 BUNDLED WITH
-   1.12.5
+   1.13.6
