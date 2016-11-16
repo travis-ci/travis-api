@@ -4,6 +4,10 @@ RSpec.feature "Disable a Repository", js: true, type: :feature do
   let!(:user)       { create(:user) }
   let!(:repository) { create(:repository, name: 'travis-pro', description: 'test', private: true, default_branch: 'master', owner: user, active: true) }
 
+  before {
+    allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
+  }
+  
   scenario 'User disables a repository' do
     visit "/repositories/#{repository.id}"
 
