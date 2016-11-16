@@ -64,6 +64,9 @@ RSpec.configure do |c|
     Travis.config.client_domain = "www.example.com"
     Travis.config.endpoints.ssh_key = true
 
+    Travis.config.logs_database = Travis.config.database.clone
+    Travis.config.logs_database[:database] = "travis_logs_#{Travis.env}"
+
     DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
 
