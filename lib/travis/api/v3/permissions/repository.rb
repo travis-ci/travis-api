@@ -30,6 +30,10 @@ module Travis::API::V3
       write?
     end
 
+    def change_env_vars?
+      write?
+    end
+
     def admin?
       access_control.adminable? object
     end
