@@ -70,16 +70,17 @@ module Travis::API::V3
     end
 
     def user_settings
-      Models::UserSettings.new(settings).tap { |us| us.parent_attr(self, :settings) }
+      Models::UserSettings.new(settings).tap { |us| us.sync(self, :settings) }
     end
 
     def admin_settings
-      Models::AdminSettings.new(settings).tap { |as| as.parent_attr(self, :settings) }
+      Models::AdminSettings.new(settings).tap { |as| as.sync(self, :settings) }
     end
 
     def env_vars
-      Models::EnvVars.new.tap do |vars|
-        vars.load(settings.fetch('env_vars', []), repository_id: self.id)
+      Models::EnvVars.new.tap do |ev|
+        ev.load(settings.fetch('env_vars', []), repository_id: id)
+        ev.sync(self, :settings)
       end
     end
   end

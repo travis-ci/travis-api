@@ -30,7 +30,7 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
     end
 
     before do
-      repo.update_attributes(settings: JSON.generate(env_vars: [env_var]))
+      repo.update_attributes(settings: JSON.generate(env_vars: [env_var], foo: 'bar'))
       patch("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", JSON.generate(params), auth_headers.merge(json_headers))
     end
 
@@ -45,6 +45,12 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
         'value' => env_var[:value].decrypt,
         'public' => env_var[:public]
       )
+    end
+    example 'persists changes' do
+      expect(repo.reload.settings['env_vars'].first['name']).to eq 'QUX'
+    end
+    example 'does not clobber other settings' do
+      expect(repo.reload.settings['foo']).to eq 'bar'
     end
   end
 end

@@ -18,7 +18,7 @@ gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-co
 
 gem 'active_model_serializers'
 gem 'unicorn'
-gem 'sentry-raven'
+gem 'sentry-raven', '0.12.2'
 gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack-contrib'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
@@ -29,7 +29,6 @@ gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
-gem 'micro_migrations'
 gem 'simplecov'
 gem 'skylight', '~> 0.6.0.beta.1'
 gem 'stackprof'
@@ -39,7 +38,7 @@ gem 'jemalloc'
 gem 'customerio'
 
 group :development, :test do
-  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations'
+  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations', ref: 'c988e9430fc3e2f06e785fcf0e1ca100bc4f5770'
 end
 
 group :test do

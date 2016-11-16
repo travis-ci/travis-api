@@ -63,6 +63,9 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
         )
         expect(response).to include('@href', 'id')
       end
+      example 'persists changes' do
+        expect(repo.reload.settings['env_vars'].first['name']).to eq 'FOO'
+      end
     end
 
     describe 'public' do
