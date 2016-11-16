@@ -4,11 +4,6 @@
   <% if config.empty? %>
     <p>No configuration.</p>
   <% else %>
-    <% config.each do |key, value| %>
-      <dl class="config-item">
-        <dt class="info-label"><%= key %></dt>
-        <dd><%= format_config(value) %></dd>
-      </dl>
-    <% end %>
+    <pre><%= format_config(config) %></pre>
   <% end %>
 </section>

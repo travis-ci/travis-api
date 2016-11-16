@@ -28,28 +28,8 @@ module ApplicationHelper
     end
   end
 
-  def format_config(value)
-    case value
-    when Symbol
-      format_config(value.to_s)
-    when String
-      value
-    when Array
-      content_tag(:ul) do
-        value.each do |v|
-          concat content_tag(:li, format_config(v))
-        end
-      end
-    when Hash
-      content_tag(:dl) do
-        value.each do |k,v|
-          concat content_tag(:dt, format_config(k), class: 'info-label')
-          concat content_tag(:dl, format_config(v))
-        end
-      end
-    else
-      value.to_s
-    end
+  def format_config(config)
+    config.to_yaml.sub(/---/, '').gsub(/^:/, '').gsub(/\s{2}:/, '  ')
   end
 
   def format_duration(seconds, hrs_suffix: " hrs", min_suffix: " min", sec_suffix: " sec")
