@@ -1,46 +1,36 @@
+require_relative './json_sync'
+
 module Travis::API::V3
   class Models::JsonSlice
-    include Enumerable
-    include Virtus.model
+    include Virtus.model, Enumerable, Models::JsonSync
 
-    attr_reader :parent, :attr
-
-    def self.pair(klass)
-      @@pair = klass
+    def self.child(klass)
+      @@child_klass = klass
     end
 
-    def pair
-      self.class.class_variable_get(:@@pair)
+    def child_klass
+      @@child_klass
     end
 
     def each(&block)
       return enum_for(:each) unless block_given?
-      attributes.keys.each { |name| yield read(name) }
+      attributes.keys.each { |id| yield read(id) }
       self
     end
 
     def read(name)
       value = send(name)
-      pair.new(name, value, parent) unless value.nil?
+      child_klass.new(name, value, parent) unless value.nil?
     end
 
     def update(name, value)
       send(:"#{name}=", value)
-      @sync.call if @sync
+      sync!
       read(name)
     end
 
     def to_h
       Hash[map { |x| [x.name, x.value] }]
-    end
-
-    def parent_attr(parent, attr)
-      @parent, @attr = parent, attr
-      @sync = -> do
-        previous = @parent.send(:"#{@attr}")
-        @parent.send(:"#{@attr}=", previous.merge(to_h).to_json)
-        @parent.save!
-      end
     end
   end
 end

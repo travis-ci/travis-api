@@ -45,6 +45,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "create_request"   => true,
           "create_cron"      => false,
           "change_settings"  => true,
+          "change_env_vars" => true,
           "admin"            => true
         },
         "id"                 =>  repo.id,
