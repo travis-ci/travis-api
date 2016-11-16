@@ -18,7 +18,7 @@ gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-co
 
 gem 'active_model_serializers'
 gem 'unicorn'
-gem 'sentry-raven', '0.12.2'
+gem 'sentry-raven'
 gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack-contrib'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
