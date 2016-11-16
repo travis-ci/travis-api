@@ -9,19 +9,19 @@
         <p class="info-label cache-slug">Slug</p>
         <p class="info-label cache-modified">Last Modified</p>
         <p class="info-label cache-size">Size</p>
-        <p class="info-label cache-actions">
+        <div class="info-label cache-actions">
           <%= button_to 'Delete All', delete_all_caches_path(@repository), form_class: 'delete-button', class: 'button' %>
-        </p>
+        </div>
       </li>
       <% @caches.each do |cache| %>
         <li class="inline-list repository-item">
           <p class="cache-branch"><%= cache[:branch] %></p>
           <p class="cache-slug"><%= cache[:slug] %></p>
           <p class="cache-modified"><%= cache[:last_modified] %></p>
-          <p class="cache-size"><%= cache[:size] %></p>
-          <p class="cache-actions">
+          <p class="cache-size"><%= format_size(cache[:size]) %></p>
+          <div class="cache-actions">
             <%= button_to 'Delete', delete_branch_cache_path(@repository, cache[:branch]), form_class: 'delete-button', class: 'button' %>
-          </p>
+          </div>
         </li>
       <% end %>
     </ul>

@@ -56,6 +56,11 @@ module ApplicationHelper
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
 
+  def format_size(bytes)
+    mb = (bytes.to_f/1000000).round(2)
+    "#{mb} MB"
+  end
+
   def stringify_hash_keys(config)
     case config
       when Hash
