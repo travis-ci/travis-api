@@ -10,9 +10,16 @@ FileUtils.mkdir_p('log')
 config = Travis.config.database.to_h
 config.merge!('adapter' => 'jdbcpostgresql', 'username' => ENV['USER']) if RUBY_PLATFORM == 'java'
 
+logs_config = config.clone.merge(:database => "travis_logs_#{Travis.env}")
+
 ActiveRecord::Base.default_timezone = :utc
 ActiveRecord::Base.logger = Logger.new('log/test.db.log')
-ActiveRecord::Base.configurations = { 'test' => config }
+ActiveRecord::Base.configurations = {
+  'test' => config,
+  'logs_test' => logs_config,
+}
+
+Travis::LogsModel.establish_connection('logs_test')
 ActiveRecord::Base.establish_connection('test')
 
 DatabaseCleaner.clean_with :truncation
