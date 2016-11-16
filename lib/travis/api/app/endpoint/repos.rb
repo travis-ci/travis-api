@@ -122,7 +122,7 @@ class Travis::Api::App
       # json(:repository)
       get '/:owner_name/:name' do
         prefer_follower do
-          respond_with service(:find_repo, params)
+          respond_with service(:find_repo, params), type_hint: Repository
         end
       end
 

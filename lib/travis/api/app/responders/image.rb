@@ -17,9 +17,9 @@ module Travis::Api::App::Responders
     end
 
     def apply?
-      # always apply so we can return with unknown result
-      # super && resource.is_a?(Repository)
-      acceptable_format? && (resource.nil? || resource.is_a?(Repository))
+      # :type_hint is returned by repos endpoint
+      # so that we can return a 'unknown.png' image
+      (super && resource.is_a?(Repository)) || (acceptable_format? && resource.nil? && options[:type_hint] == Repository)
     end
 
     private
