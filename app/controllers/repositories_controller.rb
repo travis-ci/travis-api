@@ -2,15 +2,13 @@ class RepositoriesController < ApplicationController
   before_action :get_repository
 
   def delete_last_build
-    secret = Travis::DataStores.redis.get("admin-v2:otp:#{current_user.login}")
-    if Travis::Config.load.disable_otp? && !Rails.env.production? || ROTP::TOTP.new(secret).verify(params[:otp])
+    if otp_valid?
       keys       = @repository.attributes.keys.select { |k| k.start_with? 'last_build_' }
       attributes = Hash[keys.each_with_object(nil).to_a]
       @repository.update_attributes!(attributes)
 
-      Services::AuditTrail::DeleteLastBuild.new(current_user, @repository).call
-
       flash[:notice] = "Dropped last build reference."
+      Services::AuditTrail::DeleteLastBuild.new(current_user, @repository).call
     else
       flash[:error] = "One time password did not match, please try again."
     end
