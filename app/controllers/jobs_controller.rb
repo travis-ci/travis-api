@@ -5,6 +5,7 @@ class JobsController < ApplicationController
 
   def show
     @log = Services::Job::GetLog.new(@job).call
+    @log_url = Services::Job::GenerateLogUrl.new(@job).call
 
     @previous_job = @job.previous
     @next_job     = @job.next
