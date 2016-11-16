@@ -7,7 +7,7 @@ RSpec.feature "Disable a Repository", js: true, type: :feature do
   before {
     allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
   }
-  
+
   scenario 'User disables a repository' do
     visit "/repositories/#{repository.id}"
 
