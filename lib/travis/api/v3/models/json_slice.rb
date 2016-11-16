@@ -9,7 +9,7 @@ module Travis::API::V3
     end
 
     def child_klass
-      self.class.class_variable_get(:@@child_klass)
+      @@child_klass
     end
 
     def each(&block)
