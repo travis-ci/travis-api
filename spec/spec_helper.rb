@@ -66,6 +66,7 @@ RSpec.configure do |c|
 
     Travis.config.logs_database = Travis.config.database.clone
     Travis.config.logs_database[:database] = "travis_logs_#{Travis.env}"
+    Travis::LogsModel.establish_connection 'logs_database'
 
     DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
