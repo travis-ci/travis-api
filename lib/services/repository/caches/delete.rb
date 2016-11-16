@@ -19,10 +19,10 @@ module Services
         def call(branch = nil)
           url = "/repos/#{repository.id}/caches"
           if branch.nil?
-            body = nil
+            body = {}
             # Will delete all caches
           else
-            body = "{\"branch\":\"#{branch}\"}"
+            body = "{\"branch\": \"#{branch}\"}"
             # Will delete branch cache
           end
           delete(url, access_token, body)

@@ -5,31 +5,13 @@ class CachesController < ApplicationController
     response = Services::Repository::Caches::Delete.new(@repository).call(params[:branch])
 
     if response.success?
-      message = "The '#{params[:branch]}' cache for #{@repository.slug} was successfully deleted."
+      flash[:notice] = "The '#{params[:branch]}' cache for #{@repository.slug} was successfully deleted."
       Services::AuditTrail::DeleteBranchCache.new(current_user, @repository, params[:branch]).call
     else
-      message = "Error: #{response.headers[:status]}"
+      flash[:error]  = "Error: #{response.headers[:status]}"
     end
 
-    respond_to do |format|
-      format.html do
-        if response.success?
-          flash[:notice] = message
-        else
-          flash[:error] = message
-        end
-
-        redirect_to repository_path(@repository, anchor: 'caches')
-      end
-
-      format.json do
-        if response.success?
-          render json: {"success": true, "message": message}
-        else
-          render json: {"success": false, "message": message}
-        end
-      end
-    end
+    redirect_to repository_path(@repository, anchor: 'caches')
   end
 
   def delete_all
@@ -38,30 +20,12 @@ class CachesController < ApplicationController
     response = Services::Repository::Caches::Delete.new(@repository).call
 
     if response.success?
-      message = "Caches for #{@repository.slug} were successfully deleted."
+      flash[:notice] = "Caches for #{@repository.slug} were successfully deleted."
       Services::AuditTrail::DeleteAllCaches.new(current_user, @repository).call
     else
-      message = "Error: #{response.headers[:status]}"
+      flash[:error]  = "Error: #{response.headers[:status]}"
     end
 
-    respond_to do |format|
-      format.html do
-        if response.success?
-          flash[:notice] = message
-        else
-          flash[:error] = message
-        end
-
-        redirect_to repository_path(@repository, anchor: 'caches')
-      end
-
-      format.json do
-        if response.success?
-          render json: {"success": true, "message": message}
-        else
-          render json: {"success": false, "message": message}
-        end
-      end
-    end
+    redirect_to repository_path(@repository, anchor: 'caches')
   end
 end
