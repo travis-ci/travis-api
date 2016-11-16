@@ -4,14 +4,10 @@ namespace :db do
     desc "Create and migrate the #{env} database"
     task :create do
       sh "createdb travis_#{env}" rescue nil
-      sh "psql -q travis_#{env} < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/structure.sql"
+      sh "psql -q travis_#{env} < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/main/structure.sql"
 
-      # logs database
-      require 'sequel'
-      Sequel.extension(:migration)
-      db = Sequel.connect(:adapter => 'postgres', :database => "travis_#{env}")
-      db.timezone = :utc
-      Sequel::Migrator.run(db, Gem.loaded_specs['travis-migrations'].full_gem_path + '/db/migrate_logs', :table => 'schema_migrations_logs')
+      sh "createdb travis_logs_#{env}" rescue nil
+      sh "psql -q travis_logs_#{env} < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/logs/structure.sql"
     end
   end
 end
