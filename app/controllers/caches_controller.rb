@@ -5,7 +5,7 @@ class CachesController < ApplicationController
     response = Services::Repository::Caches::Delete.new(@repository).call(params[:branch])
 
     if response.success?
-      message = "Cache for branch '#{params[:branch]}' successfully deleted."
+      message = "The '#{params[:branch]}' cache for #{@repository.slug} was successfully deleted."
       Services::AuditTrail::DeleteBranchCache.new(current_user, @repository, params[:branch]).call
     else
       message = "Error: #{response.headers[:status]}"
@@ -38,7 +38,7 @@ class CachesController < ApplicationController
     response = Services::Repository::Caches::Delete.new(@repository).call
 
     if response.success?
-      message = "Caches for #{@repository.slug} successfully deleted."
+      message = "Caches for #{@repository.slug} were successfully deleted."
       Services::AuditTrail::DeleteAllCaches.new(current_user, @repository).call
     else
       message = "Error: #{response.headers[:status]}"

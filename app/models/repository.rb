@@ -7,7 +7,6 @@ class Repository < ApplicationRecord
   has_many :requests
   has_many :branches
   has_many :broadcasts, as:      :recipient
-  has_many :caches
 
   belongs_to :owner, polymorphic: true
   belongs_to :last_build, class_name: 'Build'

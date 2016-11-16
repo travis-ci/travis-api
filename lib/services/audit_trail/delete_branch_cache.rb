@@ -6,7 +6,7 @@ module Services
       private
 
       def message
-        "deleted #{branch} branch cache for #{repository.slug}"
+        "deleted the #{branch} cache for #{repository.slug}"
       end
     end
   end
