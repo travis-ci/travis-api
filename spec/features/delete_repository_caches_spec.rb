@@ -13,7 +13,7 @@ RSpec.feature 'Delete repository caches', js: true, type: :feature do
 
     visit "/repositories/#{repository.id}#caches"
 
-    page.find('li', text: 'test-branch').click_button('Delete')
+    page.find('li', text: 'test-branch').find_button('Delete').trigger('click')
 
     # delete cache for branch 'test-branch'
     WebMock.stub_request(:delete, "https://api-fake.travis-ci.com/repos/#{repository.id}/caches").
@@ -27,7 +27,7 @@ RSpec.feature 'Delete repository caches', js: true, type: :feature do
       to_return(status: 200, body: JSON.generate(caches: [{:repository_id => 1, :size => 49415347, :slug => "slug1.tgz", :branch => "PR.123",
           :last_modified => "2016-11-09T17:03:22Z"}]))
 
-    expect(page).to have_text('The test-branch cache for travis-pro/travis-admin was successfully deleted.')
+    expect(page).to have_text("The 'test-branch' cache for travis-pro/travis-admin was successfully deleted.")
   end
 
   scenario 'User clicks delete all caches' do
