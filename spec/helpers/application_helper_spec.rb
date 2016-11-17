@@ -63,13 +63,13 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe 'format_config' do
-    it 'removes initial ---' do
-      expect(helper.format_config("---\nruby")).to eql 'ruby'
+  describe 'stringify_hash_keys' do
+    it 'converts key symbols to key strings' do
+      expect(helper.stringify_hash_keys({:a=> "b", :c=> "d"})).to eq({"a"=>"b", "c"=>"d"})
     end
 
-    it 'removes all initial colons' do
-      expect(helper.format_config(":ruby:\n:rails:")).to eql "ruby:\nrails:"
+    it 'converts key symbols to key strings when nested in arrays' do
+      expect(helper.stringify_hash_keys([{a: :b, c: :d}])).to eq([{"a"=>:b, "c"=>:d}])
     end
   end
 
