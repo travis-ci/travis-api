@@ -24,6 +24,7 @@ require 'support/private_key'
 require 'support/s3'
 require 'support/test_helpers'
 require 'support/shared_examples'
+require 'support/active_record'
 
 module TestHelpers
   include Sinatra::TestHelpers

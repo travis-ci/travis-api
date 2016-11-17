@@ -1,5 +1,5 @@
 namespace :db do
-  env = ENV["RAILS_ENV"]
+  env = ENV["RAILS_ENV"] || 'development'
   if env != 'production'
     desc "Create and migrate the #{env} database"
     task :create do
