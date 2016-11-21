@@ -25,7 +25,7 @@ describe 'Exception', set_app: true do
     error = TestError.new('Konstantin broke all the thingz!')
     Travis::Api::App::Endpoint::Repos.any_instance.stubs(:service).raises(error)
     Raven.expects(:send_event).with do |event|
-      event.message == "#{error.class}: #{error.message}"
+      event['logentry']['message'] == "#{error.class}: #{error.message}"
     end
     expect { get "/repos" }.to raise_error(TestError)
     sleep 0.1
