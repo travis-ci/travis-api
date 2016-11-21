@@ -3,12 +3,14 @@ module Travis::API::V3
     params :match, :branch
 
     def find(repo)
-      caches = fetch(repo)
+      @repo = repo
+      caches = fetch
       filter Models::Cache.factory(caches, repo)
     end
 
     def delete(repo)
-      destroyed_caches = remove(repo)
+      @repo = repo
+      destroyed_caches = remove
       filter Models::Cache.factory(destroyed_caches, repo)
     end
 
