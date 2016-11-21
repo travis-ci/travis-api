@@ -23,8 +23,7 @@ class UsersController < ApplicationController
   end
 
   def display_token
-    secret = Travis::DataStores.redis.get("admin-v2:otp:#{current_user.login}")
-    if Travis::Config.load.disable_otp? && !Rails.env.production? || ROTP::TOTP.new(secret).verify(params[:otp])
+    if otp_valid?
       flash[:warning] = "This page contains the user's GitHub token."
       cookies["display_token_#{@user.login}"] = {
         value: true,
@@ -50,8 +49,7 @@ class UsersController < ApplicationController
   end
 
   def reset_2fa
-    secret = Travis::DataStores.redis.get("admin-v2:otp:#{current_user.login}")
-    if Travis::Config.load.disable_otp? && !Rails.env.production? || ROTP::TOTP.new(secret).verify(params[:otp])
+    if otp_valid?
       Travis::DataStores.redis.del("admin-v2:otp:#{@user.login}")
       Services::AuditTrail::ResetTwoFa.new(current_user, @user).call
       flash[:notice] = "Secret for #{@user.login} has been reset."

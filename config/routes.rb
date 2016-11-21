@@ -47,6 +47,7 @@ Rails.application.routes.draw do
 
   resources :repositories, only: [:show] do
     member do
+      post 'delete_last_build'
       post 'disable'
       post 'enable'
       post 'features'

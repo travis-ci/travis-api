@@ -40,10 +40,16 @@
 
   <dl class="simple-info">
     <dt class="info-label">Last Build:</dt>
-    <dd>
+    <dd class="inline">
       <% if @repository.last_build_id %>
-        <%= link_to "##{@repository.last_build_number}", @repository.last_build %>
-        <%= "(#{@repository.last_build.state} at #{@repository.last_build.state_time})" %>
+        <div>
+          <%= link_to "##{@repository.last_build_number}", @repository.last_build %>
+          <%= "(#{@repository.last_build.state} at #{@repository.last_build.state_time})" %>
+        </div>
+        <%= form_tag({action: 'delete_last_build', controller: "repositories", id: @repository, method: 'post'}, {class: 'drop-build-button'}) do %>
+          <%= render partial: "shared/otp" %>
+          <%= submit_tag 'Drop', class: 'button otp', id: "drop-build" %>
+        <% end %>
       <% else %>
         No Build.
       <% end %>
