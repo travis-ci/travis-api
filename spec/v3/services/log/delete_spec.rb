@@ -107,6 +107,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
         :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch"
       )
     end
+    after { Fog::Mock.reset }
 
     describe 'updates log, inserts new log part' do
       example do

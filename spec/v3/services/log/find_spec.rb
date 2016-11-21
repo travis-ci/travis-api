@@ -61,10 +61,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch"
     )
   end
-
-  after do
-    Fog::Mock.reset
-  end
+  after { Fog::Mock.reset }
 
   context 'when log stored in db' do
     describe 'returns log with an array of Log Parts' do

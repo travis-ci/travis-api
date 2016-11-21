@@ -115,7 +115,22 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
         to_return(:status => 200, :body => xml_content, :headers => {})
       stub_request(:delete, "https://bucket.s3.amazonaws.com/#{repo.id}/#{result[0]["branch"]}/#{result[0]["slug"]}").
         to_return(:status => 200, :body => xml_content, :headers => {})
+      Fog.mock!
+      Travis.config.cache_options.gcs = { json_key: 'key', google_project: 'pj', bucket_name: 'bucket' }
+      storage = Fog::Storage::Google.new({
+        google_json_key_string: 'key',
+        google_project: 'pj'
+      })
+
+      ## FIXME:
+      bucket = storage.directories.create(key: "#{repo.id}/branch")
+      file = bucket.files.create(
+        key: "some file",
+        body: "something to test"
+      )
     end
+    after { Fog::Mock.reset }
+
     before     { delete("/v3/repo/#{repo.id}/caches") }
     example    { expect(last_response).to be_ok }
     example    do
