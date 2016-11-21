@@ -8,7 +8,7 @@ module Services
       end
 
       def call
-        "#{api_endpoint}/jobs/#{job.id}/logs.txt?deansi=true&access_token=#{access_token}"
+        "#{api_endpoint}/jobs/#{job.id}/log.txt?deansi=true&access_token=#{access_token}"
       end
 
       private
