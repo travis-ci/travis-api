@@ -82,7 +82,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     <MaxKeys>1000</MaxKeys>
     <IsTruncated>false</IsTruncated>
       <Contents>
-          <Key>#{repo.github_id}/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz</Key>
+          <Key></Key>
           <LastModified>2009-10-12T17:50:30.000Z</LastModified>
           <ETag>&quot;hgb9dede5f27731c9771645a39863328&quot;</ETag>
           <Size>20308738</Size>
@@ -109,13 +109,23 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   describe "delete all on s3" do
     before     do
-      stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
-        to_return(:status => 200, :body => xml_content, :headers => {})
-      stub_request(:get, "https://travis-cache-staging-org.s3.amazonaws.com/?prefix=#{repo.id}/").
-        to_return(:status => 200, :body => xml_content, :headers => {})
-      stub_request(:delete, "https://bucket.s3.amazonaws.com/#{repo.id}/#{result[0]["branch"]}/#{result[0]["slug"]}").
-        to_return(:status => 200, :body => xml_content, :headers => {})
+      Fog.mock!
+      Travis.config.cache_options.s3 = { access_key_id: 'key', secret_access_key: 'secret', bucket_name: 'bucket' }
+      storage = Fog::Storage.new({
+        aws_access_key_id: "key",
+        aws_secret_access_key: "secret",
+        provider: "AWS"
+      })
+      bucket = storage.directories.create(key: 'bucket')
+      file = bucket.files.create(
+        key: "#{repo.github_id}/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz",
+        body: "<LastModified>2009-10-12T17:50:30.000Z</LastModified>
+        <ETag>&quot;hgb9dede5f27731c9771645a39863328&quot;</ETag>
+        <Size>20308738</Size>
+        <StorageClass>STANDARD</StorageClass>"
+      )
     end
+    after { Fog::Mock.reset }
 
     before     { delete("/v3/repo/#{repo.id}/caches") }
     example    { expect(last_response).to be_ok }
