@@ -1,10 +1,12 @@
 <section class="info-block">
   <% if @log %>
-    <p><%= link_to 'Download Log', @log_url %></p>
     <pre class="log">
-    <% format_log(@log).each_line.with_index do |line, i| %>
-      <span class="line-number"><%= i+1 %></span><span><%= raw(line) %></span>
-    <% end %>
+      <div class="log-header">
+        <%= link_to 'Raw Log', @log_url, class: "log-download" %>
+      </div>
+      <% format_log(@log).each_line.with_index do |line, i| %>
+        <span class="line-number"><%= i+1 %></span><span><%= raw(line) %></span>
+      <% end %>
     </pre>
   <% else %>
     <p>No logs available.</p>
