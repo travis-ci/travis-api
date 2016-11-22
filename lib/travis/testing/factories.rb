@@ -131,5 +131,15 @@ FactoryGirl.define do
     api_username "travis-ci"
     api_key "0123456789abcdef"
   end
+
+  factory :branch, class: Travis::API::V3::Models::Branch do
+    name Random.rand(1..1000)
+    repository_id { Factory(:repository).id }
+  end
+
+  factory :cron, class: Travis::API::V3::Models::Cron do
+    branch { Factory(:branch) }
+    interval "daily"
+  end
 end
 
