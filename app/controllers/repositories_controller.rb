@@ -3,6 +3,7 @@ class RepositoriesController < ApplicationController
 
   def add_hook_event
     Services::Repository::AddHookEvent.new(@repository, params[:event], hook_link).call
+    Services::AuditTrail::AddHookEvent.new(current_user, @repository, params[:event].gsub('_', ' ')).call
     flash[:notice] = "Added #{params[:event].gsub('_', ' ')} event to #{@repository.slug}."
     redirect_to @repository
   end
@@ -77,6 +78,7 @@ class RepositoriesController < ApplicationController
   def set_hook_url
     config = hook['config'].merge('domain' => hook_url(Travis::Config.load.service_hook_url))
     Services::Repository::SetHookUrl.new(@repository, config, hook_link).call
+    Services::AuditTrail::SetHookUrl.new(current_user, @repository, Travis::Config.load.service_hook_url).call
     flash[:notice] = "Set notification target to #{Travis::Config.load.service_hook_url}."
     redirect_to @repository
   end
