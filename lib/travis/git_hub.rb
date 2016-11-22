@@ -6,7 +6,8 @@ module Travis
 
     def github_token
       admin = repository.find_admin
-      admin.github_oauth_token if admin
+      raise "Error: No Admin for this repository." unless admin
+      admin.github_oauth_token
     end
   end
 end
