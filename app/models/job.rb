@@ -33,7 +33,7 @@ class Job < ApplicationRecord
   end
 
   def time_queued(now = Time.now)
-    if ['created', 'canceled'].include?(state)
+    if ['created', 'canceled', 'errored'].include?(state)
       nil
     elsif ['queued', 'received'].include?(state)
       now - queued_at

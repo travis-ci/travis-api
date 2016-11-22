@@ -120,6 +120,7 @@ RSpec.describe Job, type: :model do
     let(:received_job) { create(:received_job) }
     let(:started_job)  { create(:started_job) }
     let(:canceled_job) { create(:canceled_job) }
+    let(:errored_job)  { create(:errored_job) }
 
     context 'job is not queued yet' do
       it 'returns nil' do
@@ -150,6 +151,12 @@ RSpec.describe Job, type: :model do
     context 'job is canceled' do
       it 'returns nil' do
         expect(canceled_job.time_queued).to eql nil
+      end
+    end
+
+    context 'job errored' do
+      it 'returns nil' do
+        expect(errored_job.time_queued).to eql nil
       end
     end
   end
