@@ -63,25 +63,13 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe 'format_config' do
-    it 'prints the string value' do
-      expect(helper.format_config('ruby')).to eql 'ruby'
+  describe 'stringify_hash_keys' do
+    it 'converts key symbols to key strings' do
+      expect(helper.stringify_hash_keys({:a=> "b", :c=> "d"})).to eq({"a"=>"b", "c"=>"d"})
     end
 
-    it 'processes symbols as strings' do
-      expect(helper.format_config(:ruby)).to eql 'ruby'
-    end
-
-    it 'formats hash values as a definition list' do
-      expect(helper.format_config({:ruby => 'rails', :over => 9000})).to eql "<dl><dt class=\"info-label\">ruby</dt><dl>rails</dl><dt class=\"info-label\">over</dt><dl>9000</dl></dl>"
-    end
-
-    it 'formats array values into a list' do
-      expect(helper.format_config([:ruby, 'rails', true])).to eql '<ul><li>ruby</li><li>rails</li><li>true</li></ul>'
-    end
-
-    it 'prints all other classes as strings' do
-      expect(helper.format_config(true)).to eql 'true'
+    it 'converts key symbols to key strings when nested in arrays' do
+      expect(helper.stringify_hash_keys([{a: :b, c: :d}])).to eq([{"a"=>:b, "c"=>:d}])
     end
   end
 

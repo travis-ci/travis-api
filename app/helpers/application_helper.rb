@@ -28,30 +28,6 @@ module ApplicationHelper
     end
   end
 
-  def format_config(value)
-    case value
-    when Symbol
-      format_config(value.to_s)
-    when String
-      value
-    when Array
-      content_tag(:ul) do
-        value.each do |v|
-          concat content_tag(:li, format_config(v))
-        end
-      end
-    when Hash
-      content_tag(:dl) do
-        value.each do |k,v|
-          concat content_tag(:dt, format_config(k), class: 'info-label')
-          concat content_tag(:dl, format_config(v))
-        end
-      end
-    else
-      value.to_s
-    end
-  end
-
   def format_duration(seconds, hrs_suffix: " hrs", min_suffix: " min", sec_suffix: " sec")
     return "none" if seconds.nil?
     time = Time.at(seconds.to_i).utc.strftime("%H#{hrs_suffix} %M#{min_suffix} %S#{sec_suffix}")
@@ -80,7 +56,22 @@ module ApplicationHelper
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
 
+  def stringify_hash_keys(config)
+    case config
+      when Hash
+        Hash[config.map { |k,v| [k.to_s, stringify_hash_keys(v)]}]
+      when Array
+        config.map { |v| stringify_hash_keys(v)}
+      else
+        config
+    end
+  end
+
   def title(page_title)
     content_for(:title) { page_title }
+  end
+
+  def yaml_format(config)
+    stringify_hash_keys(config).to_yaml
   end
 end
