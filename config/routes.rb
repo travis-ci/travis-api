@@ -47,11 +47,15 @@ Rails.application.routes.draw do
 
   resources :repositories, only: [:show] do
     member do
+      post 'add_hook_event'
+      post 'check_hook'
       post 'delete_last_build'
       post 'disable'
       post 'enable'
       post 'features'
+      post 'set_hook_url'
       post 'settings', to: 'settings#update', as: :repository_settings
+      post 'test_hook'
     end
   end
 

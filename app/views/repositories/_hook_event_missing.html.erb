@@ -1,0 +1,7 @@
+<p><%= raw "The GitHub hook for #{link_to describe(@repository), @repository} is not listening to #{@event.gsub('_', ' ')} events." %></p>
+
+<p>What should we do about it?</p>
+
+<%= button_to "Fix it", add_hook_event_repository_path(@repository), params: { event: @event }, class: "button" %>
+
+<p><%= link_to "Go back to #{describe(@repository)}", @repository %></p>

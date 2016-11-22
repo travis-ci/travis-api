@@ -1,0 +1,7 @@
+<p><%= raw "The GitHub hook for #{link_to describe(@repository), @repository} is sending notifications to <b>#{@hook_url}</b>, but should be sending them to <b>#{Travis::Config.load.service_hook_url}</b>." %></p>
+
+<p>What should we do about it?</p>
+
+<%= button_to "Fix it", set_hook_url_repository_path(@repository), class: "button" %>
+
+<p><%= link_to "Go back to #{describe(@repository)}", @repository %></p>
