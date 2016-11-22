@@ -8,18 +8,19 @@ class RepositoriesController < ApplicationController
   end
 
   def check_hook
-    if hook.nil?
+    case
+    when hook.nil?
       flash[:error] = 'No hook found on GitHub.'
       redirect_to @repository
-    elsif hook['active'] != @repository.active?
+    when hook['active'] != @repository.active?
       render :check_hook
-    elsif !hook['events'].include?('pull_request')
+    when !hook['events'].include?('pull_request')
       @event = 'pull_request'
       render :check_hook
-    elsif !hook['events'].include?('push')
+    when !hook['events'].include?('push')
       @event = 'push'
       render :check_hook
-    elsif hook_url != hook_url(Travis::Config.load.service_hook_url)
+    when hook_url != hook_url(Travis::Config.load.service_hook_url)
       @hook_url = hook_url(hook['config']['domain'])
     else
       flash[:notice] = 'That hook seems legit.'
