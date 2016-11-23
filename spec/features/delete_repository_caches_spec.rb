@@ -8,7 +8,7 @@ RSpec.feature 'Delete repository caches', js: true, type: :feature do
     WebMock.stub_request(:get, "https://api-fake.travis-ci.com/repos/#{repository.id}/caches").
       with(headers: {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'2'}).
       to_return(status: 200, body: JSON.generate(caches: [{:repository_id => 1, :size => 49415347, :slug => "slug1.tgz", :branch => "PR.123",
-          :last_modified => "2016-11-09T17:03:22Z"}, {:repository_id => 1, :size => "49415785", :slug => "slug2.tgz",
+          :last_modified => "2016-11-09T17:03:22Z"}, {:repository_id => 1, :size => 49415785, :slug => "slug2.tgz",
           :branch => "test-branch", :last_modified => "2016-11-09T16:52:26Z"}]))
 
     visit "/repositories/#{repository.id}#caches"
@@ -35,7 +35,7 @@ RSpec.feature 'Delete repository caches', js: true, type: :feature do
     WebMock.stub_request(:get, "https://api-fake.travis-ci.com/repos/#{repository.id}/caches").
       with(headers: {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'2'}).
       to_return(status: 200, body: JSON.generate(caches: [{:repository_id => 1, :size => 49415347, :slug => "slug1.tgz", :branch => "PR.123",
-          :last_modified => "2016-11-09T17:03:22Z"}, {:repository_id => 1, :size => "49415785", :slug => "slug2.tgz",
+          :last_modified => "2016-11-09T17:03:22Z"}, {:repository_id => 1, :size => 49415785, :slug => "slug2.tgz",
           :branch => "test-branch", :last_modified => "2016-11-09T16:52:26Z"}]))
 
     visit "/repositories/#{repository.id}#caches"

@@ -18,7 +18,7 @@
           <p class="cache-branch"><%= cache[:branch] %></p>
           <p class="cache-slug"><%= cache[:slug] %></p>
           <p class="cache-modified"><%= cache[:last_modified] %></p>
-          <p class="cache-size"><%= format_size(cache[:size]) %></p>
+          <p class="cache-size"><%= format_file_size(cache[:size]) %></p>
           <div class="cache-actions call-to-action">
             <%= button_to 'Delete', delete_branch_cache_path(@repository, cache[:branch]), form_class: 'delete-button', class: 'button' %>
           </div>
