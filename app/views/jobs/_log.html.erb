@@ -1,11 +1,18 @@
 <section class="info-block">
-  <% if @log %>
-    <pre class="log">
-    <% format_log(@log).each_line.with_index do |line, i| %>
-      <span class="line-number"><%= i+1 %></span><span><%= raw(line) %></span>
+  <% if @active_admin %>
+    <% if @log %>
+      <pre class="log">
+        <div class="log-header">
+          <%= link_to 'Raw Log', @log_url, class: "log-download" %>
+        </div>
+        <% format_log(@log).each_line.with_index do |line, i| %>
+          <span class="line-number"><%= i+1 %></span><span><%= raw(line) %></span>
+        <% end %>
+      </pre>
+    <% else %>
+      <p>No logs available.</p>
     <% end %>
-    </pre>
   <% else %>
-    <p>No logs available.</p>
+    <p class="not-found-sub">Error: No Admin for this repository. Unable to get logs. See issue <a href="https://github.com/travis-pro/team-teal/issues/1436">https://github.com/travis-pro/team-teal/issues/1436</a>.</p>
   <% end %>
 </section>

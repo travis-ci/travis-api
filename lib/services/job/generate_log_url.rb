@@ -1,6 +1,6 @@
 module Services
   module Job
-    class GetLog
+    class GenerateLogUrl
       attr_reader :job
 
       def initialize(job)
@@ -8,9 +8,7 @@ module Services
       end
 
       def call
-        @log = api.job(job.id).log.body
-      rescue Travis::Client::NotLoggedIn => e
-        puts "Getting job log failed: #{e.message}"
+        "#{api_endpoint}/jobs/#{job.id}/log.txt?deansi=true&access_token=#{access_token}"
       end
 
       private
@@ -26,14 +24,6 @@ module Services
 
       def api_endpoint
         Travis::Config.load.api_endpoint
-      end
-
-      def api
-        @api ||= begin
-          options = { 'uri' => api_endpoint }
-          options['access_token'] = access_token.to_s if admin
-          Travis::Client.new(options)
-        end
       end
     end
   end
