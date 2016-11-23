@@ -1,11 +1,12 @@
 <section class="info-block">
   <h2 class="info-header">Requests</h2>
+
   <% if @requests.empty? %>
     <p><%= "No requests exist for this #{origin.class.to_s.downcase}." %></p>
   <% else %>
     <ul>
       <li class="inline-list request-item">
-        <p class="info-label">Request</p>
+        <p class="info-label loading">Request</p>
         <p class="info-label build-name">Build</p>
         <p class="info-label">Message</p>
         <p class="info-label">Result</p>
@@ -28,4 +29,5 @@
       <% end %>
     </ul>
   <% end %>
+  <%= will_paginate @requests, param_name: 'request_page', params: {controller: controller_name, action: 'requests', id: params[:id], anchor: 'requests'}, 'data-remote': true %>
 </section>

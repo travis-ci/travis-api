@@ -8,6 +8,10 @@ class RepositoriesController < ApplicationController
     redirect_to @repository
   end
 
+  def builds
+    @builds = @repository.builds.includes(:commit).order('id DESC').paginate(page: params[:build_page], per_page: 10)
+  end
+
   def check_hook
     case
     when hook.nil?
@@ -75,6 +79,10 @@ class RepositoriesController < ApplicationController
     redirect_to repository_path(@repository, anchor: "settings")
   end
 
+  def requests
+    @requests = @repository.requests.includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
+  end
+
   def set_hook_url
     config = hook['config'].merge('domain' => hook_url(Travis::Config.load.service_hook_url))
     Services::Repository::SetHookUrl.new(@repository, config, hook_link).call
@@ -91,8 +99,8 @@ class RepositoriesController < ApplicationController
     @subscriptions = Subscription.where(owner_id: @repository.users.map(&:id)).where('owner_type = ?', 'User').includes(:owner)
     @subscriptions_by_user_id = @subscriptions.group_by { |s| s.owner.id }
 
-    @builds = @repository.builds.includes(:commit).order('id DESC').take(30)
-    @requests = @repository.requests.includes(builds: :repository).order('id DESC').take(30)
+    @builds = @repository.builds.includes(:commit).order('id DESC').paginate(page: params[:build_page], per_page: 10)
+    @requests = @repository.requests.includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
 
     @active_broadcasts = Broadcast.active.for(@repository).includes(:recipient)
     @inactive_broadcasts = Broadcast.inactive.for(@repository).includes(:recipient)

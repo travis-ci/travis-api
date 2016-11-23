@@ -10,5 +10,7 @@
 
 <section class="info-block">
   <h2 class="info-header">Recently Finished Jobs</h2>
-  <%= render partial: 'shared/job_list', locals: {jobs: @finished_jobs} %>
+  <div class="jobs-ajax">
+    <%= render partial: 'shared/finished_jobs' %>
+  </div>
 </section>
