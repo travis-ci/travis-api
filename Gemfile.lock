@@ -40,8 +40,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-migrations
-  revision: ae7138cc7bc011b215945d5d0de9e386a8781349
-  branch: igor-logs-migrations
+  revision: 9df23c494c90ed64f5151d4d5009c430b2f8c010
   specs:
     travis-migrations (0.0.3)
 
