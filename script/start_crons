@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby
-# encoding: UTF-8
-
-require 'bundler/setup'
-require 'travis/api/app'
-
-Travis::Api::App.setup
-
-Travis::API::V3::Services::Crons::Start.new(nil,nil,nil).run!

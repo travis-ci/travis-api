@@ -10,6 +10,7 @@ gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
+gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 
 gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
 gem 'mustermann'
@@ -37,6 +38,9 @@ gem 'netaddr'
 gem 'jemalloc'
 gem 'customerio'
 
+gem "redlock"
+gem 'rake', '~> 0.9.2'
+
 group :development, :test do
   gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations', branch: 'igor-logs-migrations'
 end
@@ -54,8 +58,4 @@ group :development do
   gem 'foreman'
   gem 'rerun'
   gem 'rb-fsevent', '~> 0.9.1'
-end
-
-group :development, :test do
-  gem 'rake', '~> 0.9.2'
 end
