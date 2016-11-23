@@ -18,4 +18,5 @@ services:
   - redis
 
 before_script:
+  - cp config/config.yml.travis config/config.yml
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
