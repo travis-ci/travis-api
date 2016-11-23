@@ -6,10 +6,6 @@ require 'travis/testing/factories'
 
 FileUtils.mkdir_p('log')
 
-puts Travis.config.database.to_h
-puts Travis.config.logs_database.to_h
-exit 1
-
 # TODO why not make this use Travis::Database.connect ?
 config = Travis.config.database.to_h
 config.merge!('adapter' => 'jdbcpostgresql', 'username' => ENV['USER']) if RUBY_PLATFORM == 'java'
