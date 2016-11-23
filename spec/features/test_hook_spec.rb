@@ -15,6 +15,10 @@ RSpec.feature 'Check Hook', js: true, type: :feature do
     }]
   }
 
+  before {
+    allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
+  }
+
   scenario 'Hook is legit' do
     visit "/repositories/#{repository.id}"
 
