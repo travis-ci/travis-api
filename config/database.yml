@@ -9,10 +9,6 @@ defaults: &defaults
   username: <%= ENV['USER'] %>
   host: localhost
 
-production:
-  <<: *defaults
-  database: travis_development
-
 development:
   <<: *defaults
   database: travis_development
