@@ -14,7 +14,8 @@ module Services
       private
 
       def access_token
-        Travis::AccessToken.create(user: admin, app_id: 2) if admin
+        raise "Error: No Admin for this repository. See issue https://github.com/travis-pro/team-teal/issues/1436." unless admin
+        Travis::AccessToken.create(user: admin, app_id: 2)
       end
 
       def admin

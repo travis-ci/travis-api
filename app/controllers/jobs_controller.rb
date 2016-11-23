@@ -4,8 +4,12 @@ class JobsController < ApplicationController
   before_action :get_job
 
   def show
-    @log = Services::Job::GetLog.new(@job).call
-    @log_url = Services::Job::GenerateLogUrl.new(@job).call
+    @active_admin = @job.repository.find_admin
+
+    if @active_admin
+      @log = Services::Job::GetLog.new(@job).call
+      @log_url = Services::Job::GenerateLogUrl.new(@job).call
+    end
 
     @previous_job = @job.previous
     @next_job     = @job.next
