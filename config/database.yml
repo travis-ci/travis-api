@@ -12,11 +12,14 @@ defaults: &defaults
 production:
   <<: *defaults
   database: travis_development
+  logs_database: travis_logs_development
 
 development:
   <<: *defaults
   database: travis_development
+  logs_database: travis_logs_development
 
 test:
   <<: *defaults
   database: travis_test
+  logs_database: travis_logs_test
