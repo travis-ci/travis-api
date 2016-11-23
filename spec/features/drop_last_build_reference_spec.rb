@@ -3,6 +3,10 @@ require 'rails_helper'
 RSpec.feature 'Drop last build reference', js: true, type: :feature do
   let!(:repository) { create(:repository_with_last_build) }
 
+  before {
+    allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
+  }
+
   scenario 'Drop last build reference for a repository' do
     allow_any_instance_of(ROTP::TOTP).to receive(:verify).with('123456').and_return(true)
 

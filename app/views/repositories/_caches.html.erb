@@ -1,0 +1,29 @@
+<section class="info-block">
+  <h2 class="info-header">Caches</h2>
+  <% if @caches.blank? %>
+    <p>No caches found for this repository.</p>
+  <% else %>
+    <ul>
+      <li class="inline-list cache-item">
+        <p class="info-label cache-branch">Branch</p>
+        <p class="info-label cache-slug">Slug</p>
+        <p class="info-label cache-modified">Last Modified</p>
+        <p class="info-label cache-size">Size</p>
+        <div class="info-label cache-actions call-to-action">
+          <%= button_to 'Delete All', delete_all_caches_path(@repository), form_class: 'delete-button', class: 'button' %>
+        </div>
+      </li>
+      <% @caches.each do |cache| %>
+        <li class="inline-list cache-item">
+          <p class="cache-branch"><%= cache[:branch] %></p>
+          <p class="cache-slug"><%= cache[:slug] %></p>
+          <p class="cache-modified"><%= cache[:last_modified] %></p>
+          <p class="cache-size"><%= format_file_size(cache[:size]) %></p>
+          <div class="cache-actions call-to-action">
+            <%= button_to 'Delete', delete_branch_cache_path(@repository, cache[:branch]), form_class: 'delete-button', class: 'button' %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>

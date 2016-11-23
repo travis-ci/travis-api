@@ -56,6 +56,17 @@ module ApplicationHelper
     format_duration(seconds, hrs_suffix: "h", min_suffix: "m", sec_suffix: "s")
   end
 
+  def format_file_size(input)
+    format = "B"
+    iec    = %w[KiB MiB GiB TiB PiB EiB ZiB YiB]
+    while input > 512 and iec.any?
+      input /= 1024.0
+      format = iec.shift
+    end
+    input = input.round(2) if input.is_a? Float
+    "#{input} #{format}"
+  end
+
   def stringify_hash_keys(config)
     case config
       when Hash

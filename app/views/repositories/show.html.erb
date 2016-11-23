@@ -27,6 +27,12 @@
     <%= render partial: 'shared/requests', locals: {origin: @repository } %>
   </section>
 
+  <span id="caches" class="tab-switch"></span>
+  <a href="#caches" class="tab-link">Caches</a>
+  <section class="tab-content">
+    <%= render partial: 'caches' %>
+  </section>
+
   <span id="broadcasts" class="tab-switch"></span>
   <a href="#broadcasts" class="tab-link">Broadcasts</a>
   <section   class="tab-content">

@@ -4,6 +4,10 @@ RSpec.feature 'Cancel a Build', js: true, type: :feature do
   let!(:repository) { create(:repository) }
   let!(:build)      { create(:started_build, repository: repository, config: {}) }
 
+  before {
+    allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
+  }
+
   scenario 'User cancels a build' do
     visit "/builds/#{build.id}"
 

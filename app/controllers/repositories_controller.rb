@@ -108,6 +108,8 @@ class RepositoriesController < ApplicationController
     @features = Features.for(@repository)
 
     @settings = Settings.new(@repository.settings)
+
+    @caches = Services::Repository::Caches::FindAll.new(@repository).call
   end
 
   def test_hook

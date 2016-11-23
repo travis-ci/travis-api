@@ -83,6 +83,21 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe 'format_file_size' do
+    it 'returns formatted file sizes' do
+      expect(helper.format_file_size(0)).to eq('0 B')
+      expect(helper.format_file_size(123)).to eq('123 B')
+      expect(helper.format_file_size(12340)).to eq('12.05 KiB')
+      expect(helper.format_file_size(12340000)).to eq('11.77 MiB')
+      expect(helper.format_file_size(12340000000)).to eq('11.49 GiB')
+      expect(helper.format_file_size(12340000000000)).to eq('11.22 TiB')
+      expect(helper.format_file_size(12340000000000000)).to eq('10.96 PiB')
+      expect(helper.format_file_size(12340000000000000000)).to eq('10.7 EiB')
+      expect(helper.format_file_size(12340000000000000000000)).to eq('10.45 ZiB')
+      expect(helper.format_file_size(12340000000000000000000000)).to eq('10.21 YiB')
+    end
+  end
+
   describe 'format_short_duration' do
     it 'returns short version of nicely formatted time' do
       expect(helper.format_short_duration(0)).to eq('0s')

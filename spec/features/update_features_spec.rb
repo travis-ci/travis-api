@@ -9,9 +9,11 @@ RSpec.feature "Update Features", js: true, type: :feature do
   before { redis.sadd('feature:annotations:repositories', "#{repository.id}")
            redis.sadd('feature:cron:users', "#{user.id}")
            redis.sadd('feature:cron:organizations', "#{organization.id}")
-           allow(Travis::DataStores.topaz).to receive(:builds_provided_for) }
-
+           allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
+           allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([]) }
+  
   before(:each) { ::Features.reload }
+
 
   scenario 'Update features for a repository' do
     visit "/repositories/#{repository.id}"
