@@ -3,5 +3,10 @@ module Travis::API::V3
     def find(repository)
       repository.key
     end
+
+    def regenerate(repository)
+      key = repository.key || repository.create_key
+      key.tap { |key| key.generate_keys! }
+    end
   end
 end

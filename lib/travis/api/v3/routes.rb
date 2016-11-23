@@ -144,10 +144,8 @@ module Travis::API::V3
 
       resource :ssh_key do
         route '/ssh_key'
-        get     :find
-        #post   :create
-        #patch  :update
-        #delete :delete
+        get   :find
+        post  :create
       end
     end
 
