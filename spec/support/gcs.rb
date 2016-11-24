@@ -1,4 +1,4 @@
-#require 'google/apis/storage_v1'
+require 'google/apis/storage_v1'
 
 module Support
   module GCS
