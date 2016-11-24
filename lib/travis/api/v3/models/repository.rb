@@ -12,7 +12,7 @@ module Travis::API::V3
     belongs_to :last_build, class_name: 'Travis::API::V3::Models::Build'.freeze
     belongs_to :current_build, class_name: 'Travis::API::V3::Models::Build'.freeze
 
-    has_one :key, class_name: 'Travis::API::V3::Models::SSLKey'.freeze
+    has_one :key, class_name: 'Travis::API::V3::Models::SslKey'.freeze
     has_one :default_branch,
       foreign_key: [:repository_id, :name],
       primary_key: [:id,  :default_branch],
