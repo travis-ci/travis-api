@@ -4,6 +4,8 @@ gemspec
 ruby '2.3.1'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
+# api v3 uses 'aws-sdk-v1' instead of 's3'
+gem 'aws-sdk-v1'
 
 gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
@@ -42,7 +44,7 @@ gem "redlock"
 gem 'rake', '~> 0.9.2'
 
 group :development, :test do
-  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations'
+  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations', branch: 'add_travis_logs_structure'
 end
 
 group :test do
@@ -52,6 +54,7 @@ group :test do
   gem 'mocha',         '~> 0.12'
   gem 'database_cleaner', '~> 0.8.0'
   gem 'timecop',       '~> 0.8.0'
+  gem 'webmock'
 end
 
 group :development do
