@@ -114,6 +114,12 @@ module Travis::API::V3
         get  :find
       end
 
+      resource :caches do
+        route '/caches'
+        get :find
+        delete :delete
+      end
+
       resource :crons do
         route '/crons'
         get  :for_repository
@@ -147,6 +153,12 @@ module Travis::API::V3
         get    :find
         patch  :update
         delete :delete
+      end
+
+      resource :ssh_key do
+        route '/ssh_key'
+        get   :find
+        post  :create
       end
     end
 

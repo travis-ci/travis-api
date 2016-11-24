@@ -78,3 +78,13 @@ If you have problems with Nginx because the websocket is already in use, try res
 ### API documentation
 
 v3 documentation can be found at https://developer.travis-ci.org which is a repository that can be found at https://github.com/travis-pro/developer
+
+### Adding V3 Endpoints Developer Documentation
+Start with the find/get spec (for example: spec/v3/services/caches/find_spec.rb) for your new endpoint. If you don't have a find route start with whatever route you want to add first. Run the test and add the files you need to clear the errors. They should be:
+ - A service (lib/travis/api/v3/services/caches/find.rb)
+ - A query (lib/travis/api/v3/queries/caches.rb)
+ - Register the service in v3/services.rb (alphabetical order please)
+ - Add a route (v3/routes.rb)
+ Re-run the test at this point. Depending on what objects you are returning you may also need to add:
+ - Add a model (either pulls from the DB or a wrapper for the class of the objects returned from another source (s3 for example), or that structures the result you will be passing back to the client)
+ - Add a renderer (if needed to display your new model/object/collection) 

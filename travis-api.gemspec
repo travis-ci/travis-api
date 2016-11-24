@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
   # from travis-core gemspec
 
   s.add_dependency 'activerecord',      '~> 3.2.19'
-  s.add_dependency 'railties',          '~> 3.2.19'
   s.add_dependency 'rollout',           '~> 1.1.0'
   s.add_dependency 'coder',             '~> 0.4.0'
   s.add_dependency 'virtus',            '~> 1.0.0'
@@ -35,5 +34,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'simple_states',     '~> 1.0.0'
   s.add_dependency 'pusher',            '~> 0.14.0'
   s.add_dependency 'multi_json'
-  s.add_dependency 'google-api-client', '~> 0.9.4'
 end

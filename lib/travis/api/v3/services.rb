@@ -9,6 +9,7 @@ module Travis::API::V3
     Broadcasts    = Module.new { extend Services }
     Build         = Module.new { extend Services }
     Builds        = Module.new { extend Services }
+    Caches        = Module.new { extend Services }
     Cron          = Module.new { extend Services }
     Crons         = Module.new { extend Services }
     EnvVar        = Module.new { extend Services }
@@ -23,6 +24,7 @@ module Travis::API::V3
     Repositories  = Module.new { extend Services }
     Repository    = Module.new { extend Services }
     Requests      = Module.new { extend Services }
+    SshKey        = Module.new { extend Services }
     User          = Module.new { extend Services }
     UserSetting   = Module.new { extend Services }
     UserSettings  = Module.new { extend Services }
