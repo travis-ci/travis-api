@@ -43,7 +43,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   let(:xml_content) {
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">
-    <Name>bucket</Name>
+    <Name>#{s3_bucket_name}</Name>
     <Prefix/>
     <Marker/>
     <MaxKeys>1000</MaxKeys>
@@ -76,7 +76,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   let(:xml_content_single_repo) {
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">
-    <Name>bucket</Name>
+    <Name>#{s3_bucket_name}</Name>
     <Prefix/>
     <Marker/>
     <MaxKeys>1000</MaxKeys>
@@ -98,14 +98,18 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   let(:empty_xml_content) {
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">
-    <Name>bucket</Name>
+    <Name>#{s3_bucket_name}</Name>
     <Prefix/>
     <Marker/>
     <MaxKeys>1000</MaxKeys>
     <IsTruncated>false</IsTruncated>
     </ListBucketResult>"
   }
-  before { repo.default_branch.save! }
+  before do
+    repo.default_branch.save!
+    Fog.unmock!
+    Travis.config.cache_options.s3 = { access_key_id: 'key', secret_access_key: 'secret', bucket_name: s3_bucket_name }
+  end
 
   describe "existing cache on s3" do
     before     do
@@ -142,7 +146,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   end
 
   describe "filter by match" do
-    before     do
+    before do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}").
          to_return(:status => 200, :body => xml_content, :headers => {})
     end

@@ -4,8 +4,6 @@ gemspec
 ruby '2.3.1'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
-# api v3 uses 'aws-sdk-v1' instead of 's3'
-gem 'aws-sdk-v1'
 
 gem 'fog-aws'
 gem 'fog-google'
