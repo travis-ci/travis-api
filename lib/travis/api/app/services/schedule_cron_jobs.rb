@@ -11,7 +11,7 @@ class Travis::Api::App
         loop do
           begin
             Travis::Lock.exclusive("enqueue_cron_jobs", options) do
-              Metriks.timer("schedule_cron_jobs_enqueue").time { enqueue }
+              Metriks.timer("api.cron_scheduler.enqueue").time { enqueue }
             end
           rescue Travis::Lock::Redis::LockError => e
             Travis.logger.error e.message
@@ -34,13 +34,13 @@ class Travis::Api::App
 
         Travis.logger.info "Found #{count} cron jobs to enqueue"
 
-        Metriks.gauge("cron_jobs_to_be_scheduled", count)
+        Metriks.gauge("api.cron_scheduler.upcoming_jobs").set(count)
 
         scheduled.each do |cron|
           begin
             cron.needs_new_build? ? cron.enqueue : cron.skip_and_schedule_next_build
           rescue => e
-            Metriks.meter("schedule_cron_jobs_error").mark
+            Metriks.meter("api.cron_scheduler.enqueue.error").mark
             Raven.capture_exception(e, tags: { 'cron_id' => cron.try(:id) })
             next
           end
