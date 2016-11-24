@@ -13,9 +13,9 @@ module Travis::API::V3
       branch.cron
     end
 
-    def create(branch, interval, disable_by_build)
+    def create(branch, interval, dont_run_if_recent_build_exists)
       branch.cron.destroy unless branch.cron.nil?
-      Models::Cron.create(branch: branch, interval: interval, disable_by_build: disable_by_build)
+      Models::Cron.create(branch: branch, interval: interval, dont_run_if_recent_build_exists: dont_run_if_recent_build_exists)
     end
   end
 end

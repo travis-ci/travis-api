@@ -33,9 +33,14 @@ GIT
     travis-amqp (0.0.1)
 
 GIT
+  remote: https://github.com/travis-ci/travis-lock
+  revision: b418401c79e082aa53a62364f7b01a9be6f0d768
+  specs:
+    travis-lock (0.1.1)
+
+GIT
   remote: https://github.com/travis-ci/travis-migrations
-  revision: 42b220a8ae3fbf5a3103aa2052e0f7b61b5a474e
-  branch: add_travis_logs_structure
+  revision: 79f684b0e01cf2ae140701a50be0a628fa8303a0
   specs:
     travis-migrations (0.0.3)
 
@@ -277,6 +282,8 @@ GEM
     redis (3.3.1)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
+    redlock (0.1.8)
+      redis (~> 3, >= 3.0.0)
     rerun (0.11.0)
       listen (~> 3.0)
     retriable (1.4.1)
@@ -380,6 +387,7 @@ DEPENDENCIES
   rack-contrib
   rake (~> 0.9.2)
   rb-fsevent (~> 0.9.1)
+  redlock
   rerun
   rspec (~> 2.13)
   rspec-its
@@ -394,6 +402,7 @@ DEPENDENCIES
   travis-amqp!
   travis-api!
   travis-config (~> 0.1.0)
+  travis-lock!
   travis-migrations!
   travis-settings!
   travis-sidekiqs!

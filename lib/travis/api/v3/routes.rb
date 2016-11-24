@@ -154,6 +154,12 @@ module Travis::API::V3
         patch  :update
         delete :delete
       end
+
+      resource :ssh_key do
+        route '/ssh_key'
+        get   :find
+        post  :create
+      end
     end
 
     resource :user do

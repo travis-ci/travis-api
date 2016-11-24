@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+$stdout.sync = true
+
+$LOAD_PATH << 'lib'
+
+require 'bundler/setup'
+require 'travis/api/app'
+require 'travis/api/app/services/schedule_cron_jobs'
+
+Travis::Api::App.new
+Travis.logger.info "Starting cron jobs scheduler now"
+Travis::Api::App::Services::ScheduleCronJobs.run
