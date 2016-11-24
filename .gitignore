@@ -6,7 +6,8 @@ config/skylight.yml
 
 tmp/
 
-logs/
+logs/*
+log/*
 
 .yardoc
 .coverage
