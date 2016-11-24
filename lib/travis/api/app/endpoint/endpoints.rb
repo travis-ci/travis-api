@@ -10,7 +10,9 @@ class Travis::Api::App
 
       set :setup do
         endpoint_files = Dir.glob(File.expand_path("../*.rb", __FILE__))
-        YARD::Registry.load(endpoint_files, true)
+
+        # Only force reparse in development, as yardoc is generated the first run
+        YARD::Registry.load(endpoint_files, Travis.env == 'development')
 
         YARD::Sinatra.routes.each do |route|
           namespace  = route.namespace

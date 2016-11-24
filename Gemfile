@@ -12,6 +12,7 @@ gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
+gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 
 gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
 gem 'mustermann'
@@ -31,7 +32,6 @@ gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
-gem 'micro_migrations'
 gem 'simplecov'
 gem 'skylight', '~> 0.6.0.beta.1'
 gem 'stackprof'
@@ -39,6 +39,9 @@ gem 'netaddr'
 
 gem 'jemalloc'
 gem 'customerio'
+
+gem "redlock"
+gem 'rake', '~> 0.9.2'
 
 group :development, :test do
   gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations', branch: 'add_travis_logs_structure'
@@ -58,8 +61,4 @@ group :development do
   gem 'foreman'
   gem 'rerun'
   gem 'rb-fsevent', '~> 0.9.1'
-end
-
-group :development, :test do
-  gem 'rake', '~> 0.9.2'
 end

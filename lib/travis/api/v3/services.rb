@@ -23,6 +23,7 @@ module Travis::API::V3
     Repositories  = Module.new { extend Services }
     Repository    = Module.new { extend Services }
     Requests      = Module.new { extend Services }
+    SshKey        = Module.new { extend Services }
     User          = Module.new { extend Services }
     UserSetting   = Module.new { extend Services }
     UserSettings  = Module.new { extend Services }
