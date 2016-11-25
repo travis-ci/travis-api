@@ -3,10 +3,6 @@ require 'fog/google'
 
 module Travis::API::V3
   class RemoteQuery < Query
-
-    require 'openssl'
-    OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-
     def set
     end
 
