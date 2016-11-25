@@ -54,7 +54,7 @@ module Scenario
               :commit => 'add057e66c3e1d59ef1f',
               :ref => 'refs/heads/master',
               :branch => 'master',
-              :message => 'unignore Gemfile.lock',
+              :message => 'unignore Gemfile.lock 🙃',
               :committed_at => '2010-11-12 12:55:00',
               :committer_name => 'Sven Fuchs',
               :committer_email => 'svenfuchs@artweb-design.de',
