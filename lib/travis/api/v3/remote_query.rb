@@ -4,6 +4,13 @@ require 'fog/google'
 module Travis::API::V3
   class RemoteQuery < Query
     def set
+      # This is for the future when we use the API to create a file on a remote
+      raise NotImplemented
+      fetch.create(
+        key: 'file key',
+        body: File.open("path to file"),
+        public: false
+      )
     end
 
     def fetch
