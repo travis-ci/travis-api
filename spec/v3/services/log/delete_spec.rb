@@ -74,7 +74,12 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   end
 
   describe 'existing db log, authenticated' do
-    before { job.update_attributes(finished_at: Time.now)}
+    before do
+      Timecop.return
+      Timecop.freeze(Time.now.utc)
+      job.update_attributes(finished_at: Time.now)
+    end
+    after { Timecop.return }
     example do
       delete("/v3/job/#{log.job.id}/log", {}, headers)
       expect(last_response.status).to be == 200
@@ -110,6 +115,11 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     after { Fog::Mock.reset }
 
     describe 'updates log, inserts new log part' do
+      before do
+        Timecop.return
+        Timecop.freeze(Time.now.utc)
+      end
+      after { Timecop.return }
       example do
         s3log.update_attributes(archived_at: Time.now)
         delete("/v3/job/#{s3log.job.id}/log", {}, headers)
