@@ -5,10 +5,6 @@ ruby '2.3.1'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
-gem 'fog-aws'
-gem 'fog-google'
-#gem 'google-api-client', '~> 0.8.6' 
-gem 'google-api-client', '~> 0.9.4'
 gem 'mime-types'
 
 gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
