@@ -1,8 +1,6 @@
 module Travis::API::V3
   class Queries::Log < RemoteQuery
 
-    FORMAT = "Log removed by %s at %s"
-
     def find(job)
       @job = job
       #check for the log in the Logs DB
@@ -32,10 +30,7 @@ module Travis::API::V3
 
       remove if log.archived_at
 
-      removed_at = Time.now
-
-      message = FORMAT % [user.name, removed_at.utc]
-      log.clear!(user, message)
+      log.clear!(user)
       log
     end
 
