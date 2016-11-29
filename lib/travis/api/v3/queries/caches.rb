@@ -22,7 +22,6 @@ module Travis::API::V3
     private
 
     def prefix
-      
       @repo.github_id.to_s
     end
 
