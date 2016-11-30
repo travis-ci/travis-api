@@ -103,6 +103,10 @@ module Travis::API::V3
       full_access? or public_api?
     end
 
+    def ssl_key_writable?(ssl_key)
+      writable? ssl_key.repository
+    end
+
     def user_visible?(user)
       unrestricted_api?
     end
