@@ -72,8 +72,8 @@ describe Travis::API::V3::Services::SshKey::Create, set_app: true do
       example do
         result = JSON.parse(last_response.body)
         expect(result).to include *%w{@type @href @representation id public_key fingerprint}
-        expect(result['id']).to eq key.id
-        expect(result['fingerprint']).not_to eq(key.fingerprint)
+        expect(result['id']).to eq key.reload.id
+        expect(result['fingerprint']).to eq(key.reload.fingerprint)
       end
     end
   end
