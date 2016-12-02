@@ -40,7 +40,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-migrations
-  revision: 9df23c494c90ed64f5151d4d5009c430b2f8c010
+  revision: 9b9e96dbdb8f76bf8ea3c2fa1563ed51adf2e28b
+  branch: beta_features
   specs:
     travis-migrations (0.0.3)
 
