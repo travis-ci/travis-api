@@ -3,7 +3,7 @@ require "redlock"
 require "metriks"
 
 class Travis::Api::App
-  module Services
+  module Schedulers
     class ScheduleCronJobs < Travis::Services::Base
       register :schedule_cron_jobs
 
