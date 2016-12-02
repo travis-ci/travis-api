@@ -147,6 +147,19 @@ module Travis::API::V3
         get   :find
         post  :create
       end
+
+      resource :key_pairs do
+        route '/key_pairs'
+        get   :for_repository
+        #post  :create
+      end
+
+      resource :key_pair do
+        route  '/key_pair'
+        #get    :find
+        #patch  :update
+        #delete :delete
+      end
     end
 
     resource :user do

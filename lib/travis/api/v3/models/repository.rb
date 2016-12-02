@@ -83,5 +83,12 @@ module Travis::API::V3
         ev.sync(self, :settings)
       end
     end
+
+    def key_pairs
+      Models::KeyPairs.new.tap do |kp|
+        kp.load(settings.fetch('ssh_keys', []))
+        kp.sync(self, :settings)
+      end
+    end
   end
 end
