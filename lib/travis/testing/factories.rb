@@ -137,9 +137,21 @@ FactoryGirl.define do
     repository_id { Factory(:repository).id }
   end
 
+  factory :v3_build, class: Travis::API::V3::Models::Build do
+    owner { User.first || Factory(:user) }
+    repository { Repository.first || Factory(:repository) }
+    association :request
+    association :commit
+    started_at { Time.now.utc }
+    finished_at { Time.now.utc }
+    number 1
+    state :passed
+  end
+
   factory :cron, class: Travis::API::V3::Models::Cron do
     branch { Factory(:branch) }
     interval "daily"
+    dont_run_if_recent_build_exists false
   end
 end
 
