@@ -155,6 +155,17 @@ module Travis::API::V3
       get :current
       get :find, '/{user.id}'
       post :sync, '/{user.id}/sync'
+
+      resource :beta_features do
+        route '/beta_features'
+        get   :find
+      end
+
+      resource :beta_feature do
+        route  '/beta_feature/{beta_feature.id}'
+        patch  :update
+        delete :delete
+      end
     end
 
   end
