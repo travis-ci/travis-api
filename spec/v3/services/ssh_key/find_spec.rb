@@ -14,40 +14,42 @@ describe Travis::API::V3::Services::SshKey::Find, set_app: true do
     include_examples 'not authenticated'
   end
 
-  describe 'authenticated, missing repo' do
-    before { get("/v3/repo/999999999/ssh_key", {}, auth_headers) }
-    include_examples 'missing repo'
-  end
-
-  describe 'authenticated, existing repo, no key' do
-    before do
-      repo.key.destroy
-      get("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers)
+  context 'authenticated' do
+    describe 'missing repo' do
+      before { get("/v3/repo/999999999/ssh_key", {}, auth_headers) }
+      include_examples 'missing repo'
     end
 
-    example { expect(last_response.status).to eq 404 }
-    example do
-      expect(JSON.parse(last_response.body)).to eq(
-        '@type' => 'error',
-        'error_message' => 'ssh_key not found (or insufficient access)',
-        'error_type' => 'not_found',
-        'resource_type' => 'ssh_key'
-      )
-    end
-  end
+    describe 'existing repo, no key' do
+      before do
+        repo.key.destroy
+        get("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers)
+      end
 
-  describe 'authenticated, existing repo, existing key' do
-    before { get("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers) }
-    example { expect(last_response.status).to eq 200 }
-    example do
-      expect(JSON.parse(last_response.body)).to eq(
-        '@type' => 'ssh_key',
-        '@href' => "/v3/repo/#{repo.id}/ssh_key",
-        '@representation' => 'standard',
-        'id' => repo.key.id,
-        'public_key' => repo.key.public_key,
-        'fingerprint' => repo.key.fingerprint
-      )
+      example { expect(last_response.status).to eq 404 }
+      example do
+        expect(JSON.parse(last_response.body)).to eq(
+          '@type' => 'error',
+          'error_message' => 'ssh_key not found (or insufficient access)',
+          'error_type' => 'not_found',
+          'resource_type' => 'ssh_key'
+        )
+      end
+    end
+
+    describe 'existing repo, existing key' do
+      before { get("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers) }
+      example { expect(last_response.status).to eq 200 }
+      example do
+        expect(JSON.parse(last_response.body)).to eq(
+          '@type' => 'ssh_key',
+          '@href' => "/v3/repo/#{repo.id}/ssh_key",
+          '@representation' => 'standard',
+          'id' => repo.key.id,
+          'public_key' => repo.key.public_key,
+          'fingerprint' => repo.key.fingerprint
+        )
+      end
     end
   end
 end

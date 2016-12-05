@@ -7,6 +7,8 @@ describe Travis::API::V3::Services::SshKey::Create, set_app: true do
     end
   end
   let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+  let(:other_user) { FactoryGirl.create(:user) }
+  let(:other_token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 2) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
   describe 'not authenticated' do
@@ -14,34 +16,65 @@ describe Travis::API::V3::Services::SshKey::Create, set_app: true do
     include_examples 'not authenticated'
   end
 
-  describe 'authenticated, missing repo' do
-    before { post("/v3/repo/999999999/ssh_key", {}, auth_headers) }
-    include_examples 'missing repo'
+  context 'authenticated as wrong user' do
+    describe 'not allowed' do
+      before { post("/v3/repo/#{repo.id}/ssh_key", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}") }
+
+      example { expect(last_response.status).to eq(403) }
+      example do
+        expect(JSON.load(body)).to eq(
+          '@type' => 'error',
+          'error_type' => 'insufficient_access',
+          'error_message' => 'operation requires change_key access to repository',
+          'permission' => 'change_key',
+          'resource_type' => 'repository',
+          'repository' => {
+            '@type' => 'repository',
+            '@href' => "/v3/repo/#{repo.id}",
+            '@representation' => 'minimal',
+            'id' => repo.id,
+            'name' => 'minimal',
+            'slug' => 'svenfuchs/minimal'
+          }
+        )
+      end
+    end
   end
 
-  describe 'authenticated, existing repo, creates key when none exists' do
-    before do
-      repo.key.destroy
-      post("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers)
+  context 'authenticated' do
+    describe 'missing repo' do
+      before { post("/v3/repo/999999999/ssh_key", {}, auth_headers) }
+      include_examples 'missing repo'
     end
 
-    example { expect(last_response.status).to eq 201 }
-    example do
-      expect(JSON.parse(last_response.body)).to include *%w{@type @href @representation id public_key fingerprint}
+    describe 'existing repo, creates key when none exists' do
+      before do
+        Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
+        repo.key.destroy
+        post("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers)
+      end
+
+      example { expect(last_response.status).to eq 201 }
+      example do
+        expect(JSON.parse(last_response.body)).to include *%w{@type @href @representation id public_key fingerprint}
+      end
     end
-  end
 
-  describe 'authenticated, existing repo, regenerates key when one exists' do
-    let!(:key) { repo.key }
+    describe 'existing repo, regenerates key when one exists' do
+      let!(:key) { repo.key }
 
-    before { post("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers) }
+      before do
+        Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
+        post("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers)
+      end
 
-    example { expect(last_response.status).to eq 201 }
-    example do
-      result = JSON.parse(last_response.body)
-      expect(result).to include *%w{@type @href @representation id public_key fingerprint}
-      expect(result['id']).to eq key.id
-      expect(result['fingerprint']).not_to eq(key.fingerprint)
+      example { expect(last_response.status).to eq 201 }
+      example do
+        result = JSON.parse(last_response.body)
+        expect(result).to include *%w{@type @href @representation id public_key fingerprint}
+        expect(result['id']).to eq key.reload.id
+        expect(result['fingerprint']).to eq(key.reload.fingerprint)
+      end
     end
   end
 end

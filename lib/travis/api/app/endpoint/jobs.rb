@@ -1,6 +1,4 @@
 require 'travis/api/app'
-require 'travis/api/workers/job_cancellation'
-require 'travis/api/workers/job_restart'
 require 'travis/api/enqueue/services/restart_model'
 require 'travis/api/enqueue/services/cancel_model'
 
