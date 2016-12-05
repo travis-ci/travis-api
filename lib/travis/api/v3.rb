@@ -10,6 +10,7 @@ module Travis
 
       def response(payload, headers = {}, content_type: 'application/json'.freeze, status: 200)
         payload = JSON.pretty_generate(payload) unless payload.is_a? String
+        content_type = 'text/plain'.freeze if payload.is_a? String
         headers = { 'Content-Type'.freeze => content_type, 'Content-Length'.freeze => payload.bytesize.to_s }.merge!(headers)
         [status, headers, [payload]]
       end
@@ -36,6 +37,8 @@ module Travis
       InsufficientAccess  = ClientError        .create(status: 403)
       JobAlreadyRunning   = ClientError        .create('job already running, cannot restart', status: 409)
       JobNotCancelable    = ClientError        .create('job is not running, cannot cancel', status: 409)
+      JobUnfinished       = ClientError        .create('job still running, cannot remove log yet', status: 409)
+      LogAlreadyRemoved   = ClientError        .create('log has already been removed', status: 409)
       LoginRequired       = ClientError        .create('login required', status: 403)
       MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
