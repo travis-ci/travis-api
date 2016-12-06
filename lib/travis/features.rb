@@ -111,6 +111,7 @@ module Travis
     #
     # By default, this return false.
     def owner_active?(feature, owner)
+      return true if feature == :cron
       return false unless owner
       redis.sismember(owner_key(feature, owner), owner.id)
     end
