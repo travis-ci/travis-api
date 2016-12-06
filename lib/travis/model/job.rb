@@ -1,5 +1,5 @@
 require 'travis/model'
-require 'active_support/core_ext/hash/deep_dup'
+require 'active_support/core_ext/object/deep_dup'
 require 'travis/model/build/config/language'
 
 # Job models a unit of work that is run on a remote worker.
