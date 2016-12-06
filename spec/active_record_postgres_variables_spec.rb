@@ -5,6 +5,7 @@ describe "ActiveRecordPostgresVariables" do
 
   after do
     base.remove_connection
+    ActiveRecord::Base.establish_connection(Travis.config.database)
   end
 
   it "passes on variables to postgres connections" do
