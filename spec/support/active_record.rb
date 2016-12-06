@@ -12,13 +12,8 @@ logs_config = Travis.config.logs_database.to_h
 
 ActiveRecord::Base.default_timezone = :utc
 ActiveRecord::Base.logger = Logger.new('log/test.db.log')
-ActiveRecord::Base.configurations = {
-  'test' => config,
-  'logs_test' => logs_config,
-}
-
-Travis::LogsModel.establish_connection('logs_test')
-ActiveRecord::Base.establish_connection('test')
+Travis::LogsModel.establish_connection(logs_config)
+ActiveRecord::Base.establish_connection(config)
 
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :transaction
