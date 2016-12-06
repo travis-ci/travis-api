@@ -86,10 +86,6 @@ class Job < Travis::Model
     self.queue = Queue.for(self).name
   end
 
-  after_commit on: :create do
-    notify(:create)
-  end
-
   def propagate(name, *args)
     # if we propagate cancel, we can't send it as "cancel", because
     # it would trigger cancelling the entire matrix
