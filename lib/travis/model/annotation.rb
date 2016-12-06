@@ -10,7 +10,7 @@ class Annotation < ActiveRecord::Base
 
   validates :job_id, presence: true
   validates :description, presence: true
-  validates :validate_url_scheme
+  validate :validate_url_scheme
 
   private
   def validate_url_scheme

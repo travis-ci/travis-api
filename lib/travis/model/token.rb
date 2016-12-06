@@ -9,7 +9,7 @@ require 'travis/model'
 class Token < Travis::Model
   belongs_to :user
 
-  validates :token, :presence => true
+  validate :token, :presence => true
 
   before_validation :generate_token, on: :create
 

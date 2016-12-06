@@ -23,7 +23,7 @@ class Repository::Settings < Travis::Settings
     attribute :repository_id, Integer
 
     validates :value, presence: true
-    validates :validate_correctness
+    validate :validate_correctness
 
     def validate_correctness
       return unless value.decrypt
@@ -89,7 +89,7 @@ class Repository::Settings < Travis::Settings
 
   validates :maximum_number_of_builds, numericality: true
 
-  validates :api_builds_rate_limit_restriction
+  validate :api_builds_rate_limit_restriction
 
   validates_with TimeoutsValidator
 
