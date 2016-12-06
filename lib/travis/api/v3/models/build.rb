@@ -7,7 +7,7 @@ module Travis::API::V3
     belongs_to :owner, polymorphic: true
 
     has_many :jobs,
-      -> { order('id') }
+      -> { order('id') },
       as:        :source,
       dependent: :destroy
 
