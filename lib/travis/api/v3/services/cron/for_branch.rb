@@ -3,7 +3,6 @@ module Travis::API::V3
 
     def run!
       repo = find(:repository)
-      raise InsufficientAccess unless Travis::Features.owner_active?(:cron, repo.owner)
       query.find_for_branch(find(:branch, repo))
     end
   end
