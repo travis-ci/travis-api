@@ -38,9 +38,8 @@ RSpec.shared_examples 'missing beta_feature' do
   example do
     expect(JSON.load(body)).to eq(
       '@type' => 'error',
-      'error_message' => 'beta feature not found (or insufficient access)',
-      'error_type' => 'not_found',
-      'resource_type' => 'beta_feature'
+      'error_message' => 'beta feature not found',
+      'error_type' => 'not_found'
     )
   end
 end
