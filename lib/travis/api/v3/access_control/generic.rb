@@ -76,11 +76,11 @@ module Travis::API::V3
     end
 
     def cron_visible?(cron)
-      Travis::Features.owner_active?(:cron, cron.branch.repository.owner) and visible? cron.branch.repository
+      visible? cron.branch.repository
     end
 
     def cron_writable?(cron)
-      Travis::Features.owner_active?(:cron, cron.branch.repository.owner) and writable? cron.branch.repository
+      writable? cron.branch.repository
     end
 
     def job_visible?(job)
