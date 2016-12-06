@@ -23,7 +23,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "read"            => true,
         "cancel"          => false,
         "restart"         => false,
-        "debug"           => false },
+        "debug"           => false,
+        "delete_log"      => false },
       "id"                => job.id,
       "number"            => job.number,
       "state"             => job.state,
@@ -83,6 +84,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
+    before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true) }
     before        { get("/v3/job/#{job.id}", {}, headers)                             }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
@@ -94,7 +96,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "read"            => true,
         "cancel"          => true,
         "restart"         => true,
-        "debug"           => false },
+        "debug"           => false,
+        "delete_log"      => true },
       "id"                => job.id,
       "number"            => job.number,
       "state"             => job.state,
