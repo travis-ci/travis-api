@@ -164,10 +164,10 @@ module Travis::API::V3
 
     resource :user do
       capture id: :digit
-      route '/user'
+      route '/user/{user.id}'
       get :current
-      get :find, '/{user.id}'
-      post :sync, '/{user.id}/sync'
+      get :find
+      post :sync, '/sync'
 
       resource :beta_features do
         route '/beta_features'
