@@ -13,8 +13,6 @@ class Token < Travis::Model
 
   before_validation :generate_token, on: :create
 
-  attr_accessible # nothing is changable
-
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 
   protected
