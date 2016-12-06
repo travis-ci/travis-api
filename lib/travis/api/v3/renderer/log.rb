@@ -13,7 +13,7 @@ module Travis::API::V3
     end
 
     def text(log)
-      log.log_parts.map(&:content).join("\n") 
+      log.log_parts.map(&:content).join("\n")
     end
 
     def json(log, **options)

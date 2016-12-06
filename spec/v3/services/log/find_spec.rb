@@ -136,9 +136,17 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       example do
         s3log.update_attributes(archived_at: Time.now)
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
-        expect(last_response.headers).to include("Content-Type" => "application/json")
+        expect(last_response.headers).to include("Content-Type" => "text/plain")
         expect(body).to eq(
           "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch")
+      end
+    end
+
+    describe 'it returns the correct content type' do
+      example do
+        s3log.update_attributes(archived_at: Time.now)
+        get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'fun/times'))
+        expect(last_response.headers).to include("Content-Type" => "application/json")
       end
     end
   end
