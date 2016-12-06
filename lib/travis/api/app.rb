@@ -104,7 +104,6 @@ module Travis::Api
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
         use Raven::Rack if Travis::Api::App.use_monitoring?
         use Rack::SSL if Endpoint.production?
-        use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
