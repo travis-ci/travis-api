@@ -6,14 +6,10 @@ require 'travis/testing/factories'
 
 FileUtils.mkdir_p('log')
 
-# TODO why not make this use Travis::Database.connect ?
-config = Travis.config.database.to_h
-logs_config = Travis.config.logs_database.to_h
-
 ActiveRecord::Base.default_timezone = :utc
 ActiveRecord::Base.logger = Logger.new('log/test.db.log')
-Travis::LogsModel.establish_connection(logs_config)
-ActiveRecord::Base.establish_connection(config)
+Travis::LogsModel.establish_connection(Travis.config.database.to_h)
+ActiveRecord::Base.establish_connection(Travis.config.logs_database.to_h)
 
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :transaction

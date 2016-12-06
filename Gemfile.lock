@@ -62,7 +62,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 2cd02d2a06fdd1e2fc2f129148c168b56f7c190f
+  revision: b7c900c57712257408f11dd66ef2bde0227fb9a2
+  branch: igor-activerecord-5
   specs:
     travis-support (0.0.1)
 
