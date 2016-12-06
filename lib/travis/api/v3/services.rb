@@ -11,6 +11,7 @@ module Travis::API::V3
     Broadcasts    = Module.new { extend Services }
     Build         = Module.new { extend Services }
     Builds        = Module.new { extend Services }
+    Caches        = Module.new { extend Services }
     Cron          = Module.new { extend Services }
     Crons         = Module.new { extend Services }
     EnvVar        = Module.new { extend Services }
@@ -18,6 +19,7 @@ module Travis::API::V3
     Job           = Module.new { extend Services }
     Jobs          = Module.new { extend Services }
     Lint          = Module.new { extend Services }
+    Log           = Module.new { extend Services }
     Organization  = Module.new { extend Services }
     Organizations = Module.new { extend Services }
     Owner         = Module.new { extend Services }

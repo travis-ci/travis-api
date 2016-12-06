@@ -1,11 +1,11 @@
 require "sentry-raven"
-require "travis/api/app/services/schedule_cron_jobs"
+require "travis/api/app/schedulers/schedule_cron_jobs"
 
 describe "ScheduleCronJobs" do
-  let(:subject) { Travis::Api::App::Services::ScheduleCronJobs.enqueue }
+  let(:subject) { Travis::Api::App::Schedulers::ScheduleCronJobs.enqueue }
 
   before do
-    Travis::Api::App::Services::ScheduleCronJobs.stubs(:options).returns({
+    Travis::Api::App::Schedulers::ScheduleCronJobs.stubs(:options).returns({
       strategy:      :redis,
       url: 'redis://localhost:6379',
       retries: 2
