@@ -22,16 +22,17 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
     include_examples 'missing beta_feature'
   end
 
-  describe 'authenticated, existing user, existing beta feature' do
+  describe 'authenticated, existing user, existing user beta feature' do
     let(:params) do
       {
         'beta_feature.id' => beta_feature.id,
-        'beta_feature.enable' => true
+        'beta_feature.enabled' => true
       }
     end
+    let(:user_beta_feature){ Travis::API::V3::Models::UserBetaFeature.create(user: user, beta_feature: beta_feature, enabled:false) }
 
     before do
-      Travis::API::V3::Models::UserBetaFeature.create(user: user, beta_feature: beta_feature)
+      user_beta_feature
       patch("/v3/user/#{user.id}/beta_feature/#{beta_feature.id}", JSON.generate(params), auth_headers.merge(json_headers))
     end
 
@@ -39,9 +40,37 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
     example do
       expect(JSON.load(body)).to eq(
         '@type' => 'beta_feature',
-        '@href' => '/v3/user/1/beta_feature/1',
         '@representation' => 'standard',
-        'id' => beta_feature.id,
+        'id' => user_beta_feature.id,
+        'name' => beta_feature.name,
+        'description' => beta_feature.description,
+        'feedback_url' => beta_feature.feedback_url,
+        'enabled' => true
+      )
+    end
+    example 'persists changes' do
+      expect(user.reload.beta_features.first.name).to eq 'FOO2'
+    end
+  end
+
+  describe 'authenticated, existing user, existing beta feature, new user beta feature' do
+    let(:params) do
+      {
+        'beta_feature.id' => beta_feature.id,
+        'beta_feature.enabled' => true
+      }
+    end
+
+    before do
+      patch("/v3/user/#{user.id}/beta_feature/#{beta_feature.id}", JSON.generate(params), auth_headers.merge(json_headers))
+    end
+
+    example { expect(last_response.status).to eq 200 }
+    example do
+      expect(JSON.load(body)).to eq(
+        '@type' => 'beta_feature',
+        '@representation' => 'standard',
+        'id' => user.reload.user_beta_features.last.id,
         'name' => beta_feature.name,
         'description' => beta_feature.description,
         'feedback_url' => beta_feature.feedback_url,
