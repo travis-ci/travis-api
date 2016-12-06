@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::BetaFeatures::Find, set_app: true do
-  let(:user)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first_or_create }
-  let(:token) { Travis::Api::App::AccessToken.create(user: user.owner, app_id: 1) }
+  let(:user)  { Travis::API::V3::Models::User.where(login: 'svenfuchs').first_or_create }
+  let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:beta_feature) { Travis::API::V3::Models::BetaFeature.create(name: 'FOO3', description: "Bar Baz.", feedback_url: "http://thisisgreat.com")}
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
@@ -45,7 +45,6 @@ describe Travis::API::V3::Services::BetaFeatures::Find, set_app: true do
         'beta_features' => [
           {
             '@type' => 'beta_feature',
-            '@href' => "/v3/user/#{user.id}/beta_feature/",
             '@representation' => 'standard',
             'id' => beta_feature.id,
             'name' => beta_feature.name,
@@ -55,6 +54,32 @@ describe Travis::API::V3::Services::BetaFeatures::Find, set_app: true do
           }
         ]
       )
+    end
+    describe 'authenticated, existing user, existing beta features and user beta features' do
+      let(:user_beta_feature){Travis::API::V3::Models::UserBetaFeature.create(user: user, beta_feature: beta_feature, enabled: true)}
+      before do
+        user_beta_feature
+        get("/v3/user/#{user.id}/beta_features", {}, auth_headers)
+      end
+      example { expect(last_response.status).to eq(200) }
+      example do
+        expect(JSON.load(body)).to eq(
+          '@type' => 'beta_features',
+          '@href' => "/v3/user/#{user.id}/beta_features",
+          '@representation' => 'standard',
+          'beta_features' => [
+            {
+              '@type' => 'user_beta_feature',
+              '@representation' => 'standard',
+              'id' => user_beta_feature.id,
+              'name' => beta_feature.name,
+              'description' => beta_feature.description,
+              'feedback_url' => beta_feature.feedback_url,
+              'enabled' => user_beta_feature.enabled
+            }
+          ]
+        )
+      end
     end
   end
 end
