@@ -38,6 +38,8 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "duration"         => nil,
       "event_type"       => "push",
       "previous_state"   => build.previous_state,
+      "pull_request_number" => nil,
+      "pull_request_title" => nil,
       "started_at"       => "2010-11-12T13:00:00Z",
       "finished_at"      => nil,
       "jobs"             =>[
@@ -107,6 +109,8 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "duration"         => nil,
       "event_type"       => "push",
       "previous_state"   => build.previous_state,
+      "pull_request_number" => nil,
+      "pull_request_title" => nil,
       "started_at"       => "2010-11-12T13:00:00Z",
       "finished_at"      => nil,
       "jobs"             => [{
