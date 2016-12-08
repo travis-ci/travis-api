@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'virtus',            '~> 1.0.0'
   s.add_dependency 'redis',             '~> 3.0'
   s.add_dependency 'hashr'
-  s.add_dependency 'simple_states',     '~> 1.0.0'
+  s.add_dependency 'simple_states',     '~> 2.0.0'
   s.add_dependency 'pusher',            '~> 0.14.0'
   s.add_dependency 'multi_json'
 end
