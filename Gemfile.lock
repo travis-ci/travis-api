@@ -7,12 +7,11 @@ GIT
 
 GIT
   remote: https://github.com/igorwwwwwwwwwwwwwwwwwwww/simple_states
-  revision: 7d987802dbb785d34d11dae05da5f09f5ee1a668
+  revision: 3b116214373c0245418b9cdbc078cb219e4ed100
   branch: igor-v1.0.1-without-hashr
   specs:
     simple_states (1.0.1)
       activesupport
-      hashr (~> 2.0.0)
 
 GIT
   remote: https://github.com/rkh/yard-sinatra
