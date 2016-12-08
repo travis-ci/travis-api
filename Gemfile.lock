@@ -6,6 +6,15 @@ GIT
       metriks (>= 0.9.9.6)
 
 GIT
+  remote: https://github.com/igorwwwwwwwwwwwwwwwwwwww/simple_states
+  revision: 7d987802dbb785d34d11dae05da5f09f5ee1a668
+  branch: igor-v1.0.1-without-hashr
+  specs:
+    simple_states (1.0.1)
+      activesupport
+      hashr (~> 2.0.0)
+
+GIT
   remote: https://github.com/rkh/yard-sinatra
   revision: 00774d355123617ff0faa7e0ebd54c4cdcfcdf93
   specs:
@@ -70,7 +79,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 2cd02d2a06fdd1e2fc2f129148c168b56f7c190f
+  revision: e1a3c269fdd96e8e8ae8ea2b7bdd054eeb39f54d
+  branch: igor-database-config-to-h
   specs:
     travis-support (0.0.1)
 
@@ -101,7 +111,7 @@ PATH
       redcarpet (>= 3.2.3)
       redis (~> 3.0)
       rollout (~> 1.1.0)
-      simple_states (~> 2.0.0)
+      simple_states
       sinatra (~> 1.3)
       sinatra-contrib (~> 1.3)
       tool
@@ -319,7 +329,6 @@ GEM
       faraday (~> 0.9)
       jwt (~> 1.5)
       multi_json (~> 1.10)
-    simple_states (2.0.1)
     simplecov (0.12.0)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
@@ -393,6 +402,7 @@ DEPENDENCIES
   rspec-its
   s3!
   sentry-raven
+  simple_states!
   simplecov
   sinatra
   sinatra-contrib

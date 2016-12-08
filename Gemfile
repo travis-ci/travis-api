@@ -7,7 +7,7 @@ gem 's3',              git: 'https://github.com/travis-ci/s3'
 
 gem 'mime-types'
 
-gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
+gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support', branch: 'igor-database-config-to-h'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config', branch: 'igor-prepared-statements-env'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
@@ -18,6 +18,8 @@ gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
 gem 'mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
+
+gem 'simple_states',   git: 'https://github.com/igorwwwwwwwwwwwwwwwwwwww/simple_states', branch: 'igor-v1.0.1-without-hashr'
 
 gem 'active_model_serializers'
 gem 'unicorn'
