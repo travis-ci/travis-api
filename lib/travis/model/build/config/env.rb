@@ -39,7 +39,7 @@ class Build
       end
 
       def to_env_var(hash)
-        if hash.is_a?(Hash) && !hash.key?(:secure)
+        if hash.is_a?(Hash) && (!hash.key?(:secure) && !hash.key?('secure'))
           hash.map { |name, value| "#{name}=#{value}" }.join(' ')
         else
           hash
