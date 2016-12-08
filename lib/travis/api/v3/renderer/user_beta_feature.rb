@@ -4,5 +4,9 @@ module Travis::API::V3
     representation :staff_only, :standard, :staff_only
 
     type           :beta_feature
+
+    def id
+      model.beta_feature.id
+    end
   end
 end
