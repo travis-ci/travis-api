@@ -10,29 +10,6 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
   let(:wrong_options) {{ "interval" => "notExisting", "dont_run_if_recent_build_exists" => false }}
   let(:parsed_body) { JSON.load(body) }
 
-  before do
-    Travis::Features.activate_owner(:cron, repo.owner)
-  end
-
-  describe "creating a cron job with feature flag disabled" do
-    before     { Travis::Features.deactivate_owner(:cron, repo.owner)   }
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers)}
-    example    { expect(parsed_body).to be == {
-        "@type"               => "error",
-        "error_type"          => "insufficient_access",
-        "error_message"       => "operation requires create_cron access to repository",
-        "resource_type"       => "repository",
-        "permission"          => "create_cron",
-        "repository"          => {
-            "@type"           => "repository",
-            "@href"           => "/v3/repo/#{repo.id}",
-            "@representation" => "minimal",
-            "id"              => repo.id,
-            "name"            => "minimal",
-            "slug"            => "svenfuchs/minimal" }
-    }}
-  end
-
   describe "creating a cron job" do
     before     { last_cron }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }

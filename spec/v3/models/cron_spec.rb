@@ -111,6 +111,31 @@ describe Travis::API::V3::Models::Cron do
     end
   end
 
+  context "when always_run? is false" do
+    context "when no build has existed before running a cron build" do
+      let(:cron) { Factory(:cron, branch_id: Factory(:branch).id, dont_run_if_recent_build_exists: true) }
+      it "needs_new_build? returns true" do
+        cron.needs_new_build?.should be_truthy
+      end
+    end
+
+    context "when last build within has no finished_at" do
+      let(:build) { Factory(:v3_build, finished_at: nil) }
+      let(:cron) { Factory(:cron, branch_id: Factory(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
+      it "needs_new_build? returns true" do
+        cron.needs_new_build?.should be_truthy
+      end
+    end
+
+    context "when there was a build in the last 24h" do
+      let(:cron) { Factory(:cron, branch_id: Factory(:branch, last_build: Factory(:v3_build)).id, dont_run_if_recent_build_exists: true) }
+
+      it "needs_new_build? returns false" do
+        cron.needs_new_build?.should be_falsey
+      end
+    end
+  end
+
   context "when repo ownership is transferred" do
     it "enqueues a cron for the repo with the new owner" do
       subject.branch.repository.update_attribute(:owner, Factory(:user, name: "Yoda", login: "yoda", email: "yoda@yoda.com"))
