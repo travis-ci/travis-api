@@ -69,9 +69,9 @@ describe Travis::API::V3::Services::BetaFeatures::Find, set_app: true do
           '@representation' => 'standard',
           'beta_features' => [
             {
-              '@type' => 'user_beta_feature',
+              '@type' => 'beta_feature',
               '@representation' => 'standard',
-              'id' => user_beta_feature.id,
+              'id' => beta_feature.id,
               'name' => beta_feature.name,
               'description' => beta_feature.description,
               'feedback_url' => beta_feature.feedback_url,
