@@ -16,7 +16,7 @@ module Travis
       private
 
         def result
-          @result ||= scope(:repository).find_by(params)
+          @result ||= current_user.repositories.find_by(params)
         end
     end
   end
