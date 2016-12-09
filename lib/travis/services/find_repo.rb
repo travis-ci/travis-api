@@ -16,7 +16,12 @@ module Travis
       private
 
         def result
-          @result ||= current_user.repositories.find_by(params)
+          return @result ||= current_user.repositories.find_by(params) if has_current_user?
+          @result ||= scope(:repository).find_by(params)
+        end
+
+        def has_current_user?
+          !current_user.nil?
         end
     end
   end

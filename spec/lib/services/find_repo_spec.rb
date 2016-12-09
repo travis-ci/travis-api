@@ -7,9 +7,7 @@ describe Travis::Services::FindRepo do
 
   attr_reader :params
 
-  before :each do
-    user.permissions.create!(admin: true, push: true, repository_id: repo.id)
-  end
+  before { user.permissions.create!(admin: true, push: true, repository_id: repo.id) }
 
   describe 'run' do
     it 'finds a repository by the given id' do
