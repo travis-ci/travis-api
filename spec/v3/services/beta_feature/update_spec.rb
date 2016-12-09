@@ -19,7 +19,14 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
 
   describe 'authenticated, existing user, missing beta feature' do
     before { patch("/v3/user/#{user.id}/beta_feature/foo", {}, auth_headers) }
-    include_examples 'missing beta_feature'
+    example { expect(last_response.status).to eq(404) }
+    example do
+      expect(JSON.load(body)).to eq(
+        '@type' => 'error',
+        'error_message' => 'beta_feature not found',
+        'error_type' => 'not_found'
+      )
+    end
   end
 
   describe 'authenticated, existing user, existing user beta feature' do
@@ -41,7 +48,7 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
       expect(JSON.load(body)).to eq(
         '@type' => 'beta_feature',
         '@representation' => 'standard',
-        'id' => user_beta_feature.id,
+        'id' => beta_feature.id,
         'name' => beta_feature.name,
         'description' => beta_feature.description,
         'feedback_url' => beta_feature.feedback_url,
@@ -70,7 +77,7 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
       expect(JSON.load(body)).to eq(
         '@type' => 'beta_feature',
         '@representation' => 'standard',
-        'id' => user.reload.user_beta_features.last.id,
+        'id' => beta_feature.id,
         'name' => beta_feature.name,
         'description' => beta_feature.description,
         'feedback_url' => beta_feature.feedback_url,
