@@ -182,7 +182,6 @@ module Travis::API::V3
     resource :user do
       capture id: :digit
       route '/user/{user.id}'
-      get :current
       get :find
       post :sync, '/sync'
 
@@ -198,5 +197,9 @@ module Travis::API::V3
       end
     end
 
+    resource :user do
+      route '/user'
+      get :current
+    end
   end
 end
