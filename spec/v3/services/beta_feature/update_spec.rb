@@ -63,7 +63,7 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
       expect(user.reload.beta_features.first.name).to eq 'FOO2'
     end
     example 'updates last activated at' do
-      expect(user.user_beta_features.last.last_activated_at).to eq Time.now.utc
+      expect(user.user_beta_features.last.last_activated_at.to_s).to eq Time.now.utc.to_s
     end
     example 'sets last deactivated at' do
       Timecop.travel(10) do
