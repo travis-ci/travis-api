@@ -4,20 +4,6 @@ describe Travis::API::V3::Services::Crons::ForRepository, set_app: true do
   let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch, interval:'daily') }
   let(:parsed_body) { JSON.load(body) }
 
-  before do
-    Travis::Features.activate_owner(:cron, repo.owner)
-  end
-
-  describe "fetching all crons by repo id with feature disabled" do
-    before     { Travis::Features.deactivate_owner(:cron, repo.owner)   }
-    before     { get("/v3/repo/#{repo.id}/crons")   }
-    example { expect(parsed_body).to be == {
-      "@type"         => "error",
-      "error_type"    => "insufficient_access",
-      "error_message" => "forbidden"
-    }}
-  end
-
   describe "fetching all crons by repo id" do
     before     { cron }
     before     { get("/v3/repo/#{repo.id}/crons")     }
