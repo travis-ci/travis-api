@@ -36,7 +36,7 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
         'beta_feature.enabled' => true
       }
     end
-    let(:user_beta_feature){ Travis::API::V3::Models::UserBetaFeature.create(user: user, beta_feature: beta_feature, enabled:false) }
+    let(:user_beta_feature){ Travis::API::V3::Models::UserBetaFeature.create(user_id: user.id, beta_feature_id: beta_feature.id, enabled:false) }
 
     before do
       Timecop.freeze(Time.now.utc)
