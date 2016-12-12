@@ -16,12 +16,7 @@ module Travis
         end
 
         def repositories
-          return current_user.repositories if has_current_user?
-          scope(:repository)
-        end
-
-        def has_current_user?
-          !current_user.nil?
+          current_user.try(:repositories) || scope(:repository)
         end
 
         def by_ids
@@ -29,7 +24,7 @@ module Travis
         end
 
         def by_params
-          scope = repositories
+          scope = repositories.without_invalidated
           scope = scope.timeline.recent                    if timeline?
           scope = scope.by_member(params[:member])         if params[:member]
           scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]
