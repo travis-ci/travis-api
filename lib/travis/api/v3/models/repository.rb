@@ -83,5 +83,10 @@ module Travis::API::V3
         ev.sync(self, :settings)
       end
     end
+
+    def key_pair
+      return unless settings['ssh_key']
+      Models::KeyPair.new(settings['ssh_key'])
+    end
   end
 end

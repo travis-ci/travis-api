@@ -160,6 +160,14 @@ module Travis::API::V3
         get   :find
         post  :create
       end
+
+      resource :key_pair do
+        route   '/key_pair'
+        get     :find
+        #post   :create
+        #patch  :update
+        #delete :delete
+      end
     end
 
     resource :user do
