@@ -148,15 +148,10 @@ module Travis::API::V3
         post  :create
       end
 
-      resource :key_pairs do
-        route '/key_pairs'
-        get   :for_repository
-        #post  :create
-      end
-
       resource :key_pair do
-        route  '/key_pair'
-        #get    :find
+        route   '/key_pair'
+        get     :find
+        #post   :create
         #patch  :update
         #delete :delete
       end

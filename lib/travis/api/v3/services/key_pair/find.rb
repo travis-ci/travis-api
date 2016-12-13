@@ -1,8 +1,8 @@
 module Travis::API::V3
-  class Services::KeyPairs::ForRepository < Service
+  class Services::KeyPair::Find < Service
     def run!
       repository = check_login_and_find(:repository)  
-      repository.key_pairs
+      repository.key_pair
     end
   end
 end
