@@ -40,6 +40,7 @@ module Travis
       MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
       RequestLimitReached = ClientError        .create('request limit reached for resource', status: 429)
+      UnprocessableEntity = ClientError        .create('request unable to be processed due to semantic errors', status: 422)
       WrongCredentials    = ClientError        .create('access denied',  status: 403)
       WrongParams         = ClientError        .create('wrong parameters')
     end
