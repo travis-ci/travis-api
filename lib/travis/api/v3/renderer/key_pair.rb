@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Renderer::KeyPair < Renderer::ModelRenderer
-    representation :standard, :id
+    representation :standard, :description, :fingerprint
 
     def href
       Renderer.href(:key_pair,
