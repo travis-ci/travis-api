@@ -19,10 +19,6 @@ module Travis
           repositories = current_user.try(:repositories)  || scope(:repository)
           @result ||= repositories.find_by(params)
         end
-
-        def has_current_user?
-          !current_user.nil?
-        end
     end
   end
 end
