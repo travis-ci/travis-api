@@ -1,9 +1,11 @@
 require 'spec_helper'
+require 'openssl'
 
 describe Travis::API::V3::Services::KeyPair::Find, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first_or_create }
   let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-  let(:key_pair) { { 'id' => 'abc123', 'repository_id' => repo.id } }
+  let(:key) { OpenSSL::PKey::RSA.generate(4096) }
+  let(:key_pair) { { description: 'foo key pair', value: key.to_pem, repository_id: repo.id } }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
   describe 'not authenticated' do
@@ -33,7 +35,7 @@ describe Travis::API::V3::Services::KeyPair::Find, set_app: true do
 
     describe 'existing repo, existing key pair' do
       before do
-        repo.update_attribute(:settings, JSON.generate('ssh_key' => key_pair))
+        repo.update_attributes(settings: JSON.generate(ssh_key: key_pair))
         get("/v3/repo/#{repo.id}/key_pair", {}, auth_headers)
       end
 
@@ -43,7 +45,8 @@ describe Travis::API::V3::Services::KeyPair::Find, set_app: true do
           '@type' => 'key_pair',
           '@href' => "/v3/repo/#{repo.id}/key_pair",
           '@representation' => 'standard',
-          'id' => 'abc123'
+          'description' => 'foo key pair',
+          'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(key.to_pem)
         )
       end
     end
