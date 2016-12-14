@@ -19,25 +19,7 @@ describe Travis::API::V3::Services::SshKey::Create, set_app: true do
   context 'authenticated as wrong user' do
     describe 'not allowed' do
       before { post("/v3/repo/#{repo.id}/ssh_key", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}") }
-
-      example { expect(last_response.status).to eq(403) }
-      example do
-        expect(JSON.load(body)).to eq(
-          '@type' => 'error',
-          'error_type' => 'insufficient_access',
-          'error_message' => 'operation requires change_key access to repository',
-          'permission' => 'change_key',
-          'resource_type' => 'repository',
-          'repository' => {
-            '@type' => 'repository',
-            '@href' => "/v3/repo/#{repo.id}",
-            '@representation' => 'minimal',
-            'id' => repo.id,
-            'name' => 'minimal',
-            'slug' => 'svenfuchs/minimal'
-          }
-        )
-      end
+      include_examples 'insufficient access to repo', 'change_key'
     end
   end
 

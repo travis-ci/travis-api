@@ -165,7 +165,7 @@ module Travis::API::V3
         route   '/key_pair'
         get     :find
         post    :create
-        #patch  :update
+        patch   :update
         delete :delete
       end
     end

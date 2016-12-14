@@ -14,6 +14,11 @@ module Travis::API::V3
       end
     end
 
+    def update(repository)
+      key_pair = find(repository)
+      key_pair.update(key_pair_params) or handle_errors(key_pair)
+    end
+
     def delete(repository)
       key_pair = find(repository)
       key_pair.delete(repository)

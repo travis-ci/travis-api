@@ -26,6 +26,12 @@ module Travis::API::V3
       false
     end
 
+    def update(attributes = {})
+      super
+      return false unless valid?
+      self.tap { |kp| kp.sync! }
+    end
+
     def delete(repository)
       repository.settings = repository.settings.tap { |setting| setting.delete("ssh_key")}.to_json
       repository.save!
