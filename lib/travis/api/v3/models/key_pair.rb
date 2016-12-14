@@ -25,5 +25,11 @@ module Travis::API::V3
     rescue OpenSSL::PKey::RSAError
       false
     end
+
+    def update(attributes = {})
+      super
+      return false unless valid?
+      self.tap { |kp| kp.sync! }
+    end
   end
 end
