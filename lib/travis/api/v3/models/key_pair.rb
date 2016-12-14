@@ -25,5 +25,10 @@ module Travis::API::V3
     rescue OpenSSL::PKey::RSAError
       false
     end
+
+    def delete(repository)
+      repository.settings = repository.settings.tap { |setting| setting.delete("ssh_key")}.to_json
+      repository.save!
+    end
   end
 end

@@ -166,7 +166,7 @@ module Travis::API::V3
         get     :find
         post    :create
         #patch  :update
-        #delete :delete
+        delete :delete
       end
     end
 
