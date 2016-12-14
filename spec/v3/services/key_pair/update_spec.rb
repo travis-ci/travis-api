@@ -123,7 +123,9 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
               'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(new_key.to_pem)
             )
           end
-          example { expect(repo.reload.settings['ssh_key']['description']).to eq 'new description' }
+          example 'persists changes' do
+            expect(repo.reload.settings['ssh_key']['description']).to eq 'new description'
+          end
         end
       end
     end
