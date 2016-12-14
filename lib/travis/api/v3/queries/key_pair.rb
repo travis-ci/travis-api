@@ -7,7 +7,7 @@ module Travis::API::V3
     end
 
     def create(repository)
-      raise DuplicateResource if find(repository)
+      raise DuplicateResource if repository.key_pair
       Models::KeyPair.new(key_pair_params.merge(repository_id: repository.id)).tap do |key_pair|
         handle_errors(key_pair) unless key_pair.valid?
         key_pair.sync_once(repository, :settings)
