@@ -6,7 +6,7 @@ module Travis
       register :find_repos
 
       def run
-        result
+        result if current_user
       end
 
       private
@@ -16,7 +16,7 @@ module Travis
         end
 
         def repositories
-          current_user.try(:repositories) || scope(:repository)
+          current_user.try(:repositories)
         end
 
         def by_ids
