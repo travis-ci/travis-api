@@ -40,7 +40,12 @@ class Travis::Api::App
       # Retrieves repositories for a given owner.
       get '/:owner_name' do
         prefer_follower do
-          respond_with service(:find_repos, params)
+          find_repos_service = service(:find_repos, params).run
+          if find_repos_service
+            respond_with find_repos_service
+          else
+            return 404
+          end
         end
       end
 
