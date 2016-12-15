@@ -16,8 +16,13 @@ class Travis::Api::App
       # json(:repositories)
       get '/' do
         prefer_follower do
-          params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-          respond_with service(:find_repos, params)
+          find_repos_service = service(:find_repos, params).run
+          if find_repos_service
+            params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
+            respond_with find_repos_service
+          else
+            status 404
+          end
         end
       end
 
