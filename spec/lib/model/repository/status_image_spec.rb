@@ -97,5 +97,19 @@ describe Repository::StatusImage do
       image = described_class.new(repo, 'develop')
       image.result.should == :canceled
     end
+
+    context "when the branch has a cron and push build" do
+      context "the last push build failed" do
+        let!(:last_push_build) { Factory(:build, branch: "master", repository: repo, request: request, state: :failed) }
+        context "the last cron build, after the last push, passed" do
+          it "returns :passed" do
+            last_cron_build = Factory(:build, branch: "master", repository: repo, request: Factory(:request, event_type: "cron", repository: repo), state: :passed)
+
+            image = described_class.new(repo, "master")
+            image.result.should == :passing
+          end
+        end
+      end
+    end
   end
 end
