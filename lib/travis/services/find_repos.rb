@@ -6,7 +6,7 @@ module Travis
       register :find_repos
 
       def run
-        result if current_user
+        result
       end
 
       private

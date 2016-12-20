@@ -4,11 +4,11 @@ describe 'Repos', set_app: true do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
-  it 'returns 404 if not authenticated' do
+  it 'returns 403 if not authenticated' do
     repos = Repository.all
     ids = repos[0..1].map(&:id)
     response = get "/repos?ids=#{ids.join(',')}", {}, headers
-    response.status.should ==  404
+    response.status.should ==  403
   end
 
   describe 'with authenticated user' do
@@ -109,7 +109,7 @@ describe 'Repos', set_app: true do
 
   it 'GET /repos' do
     response = get '/repos', {}, headers
-    response.status.should == 404
+    response.status.should == 403
   end
 
   it 'GET /repos/1' do
@@ -135,7 +135,7 @@ describe 'Repos', set_app: true do
 
   it 'responds with cc.xml for /repos list' do
     response = get '/repos', {}, 'HTTP_ACCEPT' => 'application/xml; version=2'
-    response.status.should == 404
+    response.status.should == 403
   end
 
   it 'responds with 200 and image when repo can\'t be found and format is png' do

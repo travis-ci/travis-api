@@ -16,13 +16,9 @@ class Travis::Api::App
       # json(:repositories)
       get '/' do
         prefer_follower do
+          return 403 unless current_user
           params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-          find_repos_service = service(:find_repos, params).run
-          if find_repos_service
-            respond_with find_repos_service
-          else
-            status 404
-          end
+          respond_with service(:find_repos, params).run
         end
       end
 
@@ -40,12 +36,8 @@ class Travis::Api::App
       # Retrieves repositories for a given owner.
       get '/:owner_name' do
         prefer_follower do
-          find_repos_service = service(:find_repos, params).run
-          if find_repos_service
-            respond_with find_repos_service
-          else
-            return 404
-          end
+          return 403 unless current_user
+          respond_with service(:find_repos, params).run
         end
       end
 

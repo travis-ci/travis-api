@@ -27,7 +27,7 @@ describe 'Exception', set_app: true do
     Raven.expects(:send_event).with do |event|
       event['logentry']['message'] == "#{error.class}: #{error.message}"
     end
-    expect { get "/repos" }.to raise_error(TestError)
+    expect { get '/repos/1'}.to raise_error(TestError)
     sleep 0.1
   end
 end
