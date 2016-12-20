@@ -17,6 +17,7 @@ class Repository < Travis::Model
   has_many :commits, dependent: :delete_all
   has_many :requests, dependent: :delete_all
   has_many :builds, dependent: :delete_all
+  has_many :archived_builds, dependent: :delete_all
   has_many :events
   has_many :permissions, dependent: :delete_all
   has_many :users, through: :permissions
