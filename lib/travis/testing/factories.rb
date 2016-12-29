@@ -15,7 +15,7 @@ FactoryGirl.define do
   factory :commit do
     commit '62aae5f70ceee39123ef'
     branch 'master'
-    message 'the commit message'
+    message 'the commit message 🤔'
     committed_at '2011-11-11T11:11:11Z'
     committer_name 'Sven Fuchs'
     committer_email 'svenfuchs@artweb-design.de'
@@ -154,4 +154,3 @@ FactoryGirl.define do
     dont_run_if_recent_build_exists false
   end
 end
-
