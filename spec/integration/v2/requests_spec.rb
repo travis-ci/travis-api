@@ -10,6 +10,7 @@ describe 'Requests', set_app: true do
 
   describe 'GET /requests' do
     it 'fetches requests' do
+      user.permissions.create!(admin: true, push: true, repository_id: repo.id)
       response = get '/requests', { repository_id: repo.id }, headers
       response.should deliver_json_for(repo.requests, version: 'v2', type: 'requests')
     end
