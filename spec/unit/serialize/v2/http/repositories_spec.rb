@@ -22,15 +22,13 @@ describe Travis::Api::Serialize::V2::Http::Repositories do
 end
 
 describe Travis::Api::Serialize::V2::Http::Repositories, 'using Travis::Services::FindRepos' do
-  let(:repos) { Travis.run_service(:find_repos) }
+  let(:user)  { Factory(:user) }
+  let(:repo)  { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :active => true) }
+  let(:repos) { Travis::Services::FindRepos.new(user, {ids: [repo.id]}).run }
   let(:data)  { described_class.new(repos).data }
 
-  before :each do
-    3.times { |i| Factory(:repository, :name => i) }
-  end
-
   it 'queries' do
+    user.permissions.create!(admin: true, push: true, repository_id: repo.id)
     lambda { data }.should issue_queries(1)
   end
 end
-
