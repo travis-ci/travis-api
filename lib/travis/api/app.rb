@@ -38,6 +38,7 @@ require 'travis/api/serialize/v2'
 require 'travis/api/v3'
 require 'travis/api/app/stack_instrumentation'
 require 'travis/api/app/error_handling'
+require 'travis/api/app/errors'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -47,14 +48,15 @@ require 'travis/api/app/error_handling'
 # Requires TLS in production.
 module Travis::Api
   class App
-    autoload :AccessToken,  'travis/api/app/access_token'
-    autoload :Base,         'travis/api/app/base'
-    autoload :Endpoint,     'travis/api/app/endpoint'
-    autoload :Extensions,   'travis/api/app/extensions'
-    autoload :Helpers,      'travis/api/app/helpers'
-    autoload :Middleware,   'travis/api/app/middleware'
-    autoload :Responders,   'travis/api/app/responders'
-    autoload :Cors,         'travis/api/app/cors'
+    autoload :AccessToken,             'travis/api/app/access_token'
+    autoload :Base,                    'travis/api/app/base'
+    autoload :Endpoint,                'travis/api/app/endpoint'
+    autoload :Extensions,              'travis/api/app/extensions'
+    autoload :Helpers,                 'travis/api/app/helpers'
+    autoload :Middleware,              'travis/api/app/middleware'
+    autoload :Responders,              'travis/api/app/responders'
+    autoload :Cors,                    'travis/api/app/cors'
+    autoload :RepositoryNotFoundError, 'travis/api/app/errors'
 
     Rack.autoload :SSL, 'rack/ssl'
 

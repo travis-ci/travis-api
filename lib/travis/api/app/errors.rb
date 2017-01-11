@@ -1,4 +1,4 @@
-module Travis
+class Travis::Api::App
   class RepositoryNotFoundError < StandardError
     def initialize(params)
       details = ''

@@ -8,7 +8,7 @@ class Travis::Api::App
       get '/' do
         begin
           respond_with(service(:find_requests, params).run)
-        rescue Travis::RepositoryNotFoundError => e
+        rescue RepositoryNotFoundError => e
           status 404
           { "error" => "Repository could not be found" }
         end
