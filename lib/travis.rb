@@ -16,7 +16,6 @@ module Travis
   end
 
   require 'travis/model'
-  require 'travis/task'
   require 'travis/event'
   require 'travis/api/serialize'
   require 'travis/config/defaults'
