@@ -28,35 +28,30 @@ You will need the following packages to get travis-api to work:
 ```sh-session
 $ bundle install
 ```
-### Database setup
+### Main Database & Logs Database setup
 
 *You might need to create a role first. For this you should run the following:*
+
 ```sh-session
 $ sudo -u postgres psql -c "CREATE USER yourusername WITH SUPERUSER PASSWORD 'yourpassword'"
 ```
 
-NB detail for how `rake` sets up the database can be found in the `Rakefile`. In the `namespace :db` block you will see the database name is configured using the environment variable RAILS_ENV. If you are using a different configuration you will have to make your own adjustments.
+Databases are set up with a Rake task that uses the database schemas (`structure.sql`) in `travis-migrations` which is loaded as a Gem. Details can be found in the `Rakefile`.
+
+If there have been new migrations added to `travis-migrations` since you bundle installed, you will need to update `travis-migrations` to ensure you have the latest version with the new migrations.
+
+```sh-session
+bundle update travis-migrations
+```
+
+To create and migrate the Databases:
+
 ```sh-session
 $ RAILS_ENV=development bundle exec rake db:create
 $ RAILS_ENV=test bundle exec rake db:create
 ```
-#### Travis Logs DB setup
-Clone `travis-logs` and copy the `logs` database (assume the PostgreSQL user is `postgres`):
-```sh-session
-$ cd ..
-$ git clone https://github.com/travis-ci/travis-logs.git
-$ cd travis-logs
-$ rvm jruby do bundle exec rake db:migrate # `travis-logs` requires JRuby
-$ psql -c "DROP TABLE IF EXISTS logs CASCADE" -U postgres travis_development
-$ pg_dump -t logs travis_logs_development | psql -U postgres travis_development
 
-$ RAILS_ENV=test bundle exec rake db:create
-$ pushd ../travis-logs
-$ RAILS_ENV=test rvm jruby do bundle exec rake db:migrate
-$ psql -c "DROP TABLE IF EXISTS logs CASCADE" -U postgres travis_test
-$ pg_dump -t logs travis_logs_test | psql -U postgres travis_test
-$ popd
-```
+Please Note: The database names are configured using the environment variable RAILS_ENV. If you are using a different configuration you will have to make your own adjustments.
 
 
 ### Run tests
@@ -89,4 +84,4 @@ Start with the find/get spec (for example: spec/v3/services/caches/find_spec.rb)
  - Add a route (v3/routes.rb)
  Re-run the test at this point. Depending on what objects you are returning you may also need to add:
  - Add a model (either pulls from the DB or a wrapper for the class of the objects returned from another source (s3 for example), or that structures the result you will be passing back to the client)
- - Add a renderer (if needed to display your new model/object/collection) 
+ - Add a renderer (if needed to display your new model/object/collection)

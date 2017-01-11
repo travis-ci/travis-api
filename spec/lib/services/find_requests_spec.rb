@@ -1,10 +1,13 @@
 describe Travis::Services::FindRequests do
-  let(:repo)    { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let(:user) { Factory(:user) }
+  let(:repo) { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
   let!(:request)  { Factory(:request, :repository => repo) }
   let!(:newer_request)  { Factory(:request, :repository => repo) }
-  let(:service) { described_class.new(stub('user'), params) }
+  let(:service) { described_class.new(user, params) }
 
   attr_reader :params
+
+  before { user.permissions.create!(admin: true, push: true, repository_id: repo.id) }
 
   describe 'run' do
     it 'finds recent requests when older_than is not given' do

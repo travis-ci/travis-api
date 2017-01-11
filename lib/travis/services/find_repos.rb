@@ -15,12 +15,16 @@ module Travis
           @result ||= params[:ids] ? by_ids : by_params
         end
 
+        def repositories
+          current_user.try(:repositories)
+        end
+
         def by_ids
-          scope(:repository).where(:id => params[:ids])
+          repositories.where(:id => params[:ids])
         end
 
         def by_params
-          scope = self.scope(:repository).without_invalidated
+          scope = repositories.without_invalidated
           scope = scope.timeline.recent                    if timeline?
           scope = scope.by_member(params[:member])         if params[:member]
           scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]
