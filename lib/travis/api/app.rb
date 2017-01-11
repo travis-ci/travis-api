@@ -214,7 +214,7 @@ module Travis::Api
         Travis::Api::App::ErrorHandling.setup
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
-        Travis::Notification.setup(instrumentation: false)
+        Travis::Notification.setup
         Travis::Metrics.setup
       end
 
