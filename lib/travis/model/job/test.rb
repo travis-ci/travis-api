@@ -12,7 +12,7 @@ class Job
     FINISHED_STATES = [:passed, :failed, :errored, :canceled]
     FAILED_STATES = [:failed, :errored, :canceled]
 
-    include SimpleStates, Travis::Event
+    include SimpleStates
 
     states :created, :queued, :received, :started, :passed, :failed, :errored, :canceled
 

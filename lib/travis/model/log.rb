@@ -19,8 +19,6 @@ class Log < Travis::LogsModel
     end
   end
 
-  include Travis::Event
-
   belongs_to :job
   belongs_to :removed_by, class_name: 'User', foreign_key: :removed_by
   has_many :parts, class_name: 'Log::Part', foreign_key: :log_id, :dependent => :destroy
