@@ -64,7 +64,7 @@ describe 'Repos', set_app: true do
 
     it 'GET /repos' do
       response = get '/repos', {}, headers
-      response.should deliver_json_for(Repository.by_owner_name('svenfuchs'), version: 'v2')
+      response.should deliver_json_for(Repository.timeline, version: 'v2')
     end
 
     it 'GET /repos?owner_name=svenfuchs' do

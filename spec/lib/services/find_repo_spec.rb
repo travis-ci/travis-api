@@ -4,10 +4,7 @@ describe Travis::Services::FindRepo do
   let!(:repo)   { Factory(:repository, :owner => user, :owner_name => 'travis-ci', :name => 'travis-core') }
   let(:service) { described_class.new(user, params) }
 
-
   attr_reader :params
-
-  before { user.permissions.create!(admin: true, push: true, repository_id: repo.id) }
 
   describe 'run' do
     it 'finds a repository by the given id' do
