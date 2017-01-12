@@ -36,7 +36,6 @@ class Travis::Api::App
       # Retrieves repositories for a given owner.
       get '/:owner_name' do
         prefer_follower do
-          return 403 unless current_user
           respond_with service(:find_repos, params).run
         end
       end
