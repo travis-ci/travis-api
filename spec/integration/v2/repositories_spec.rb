@@ -135,7 +135,7 @@ describe 'Repos', set_app: true do
 
   it 'responds with cc.xml for /repos list' do
     response = get '/repos', {}, 'HTTP_ACCEPT' => 'application/xml; version=2'
-    response.status.should == 403
+    response.should deliver_cc_xml_for(Repository.timeline)
   end
 
   it 'responds with 200 and image when repo can\'t be found and format is png' do

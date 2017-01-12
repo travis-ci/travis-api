@@ -16,7 +16,7 @@ module Travis
         end
 
         def repositories
-          current_user.try(:repositories)
+          current_user.try(:repositories) || scope(:repository)
         end
 
         def by_ids
