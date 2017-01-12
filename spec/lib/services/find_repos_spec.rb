@@ -5,20 +5,16 @@ describe Travis::Services::FindRepos do
   let!(:repo)   { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :active => true) }
   let(:service) { described_class.new(user, params) }
 
-  before { user.permissions.create!(admin: true, push: true, repository_id: repo.id) }
-
   attr_reader :params
 
   it 'limits the repositories list' do
-    repo2 = Factory(:repository)
-    user.permissions.create!(admin: true, push: true, repository_id: repo2.id)
+    Factory(:repository)
     @params = { :limit => 1 }
     service.run.length.should == 1
   end
 
   it 'ignores the limit if it is not a number' do
-    repo2 = Factory(:repository)
-    user.permissions.create!(admin: true, push: true, repository_id: repo2.id)
+    Factory(:repository)
     @params = { :limit => 'a' }
     service.run.length.should == 2
   end
@@ -40,7 +36,6 @@ describe Travis::Services::FindRepos do
 
   it 'applies timeline only if no other params are given' do
     repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', :last_build_started_at => nil, :active => true)
-    user.permissions.create!(admin: true, push: true, repository_id: repo.id)
     @params = { slug: 'foo/bar' }
     service.run.should include(repo)
   end

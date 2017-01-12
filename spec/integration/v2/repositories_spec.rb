@@ -64,7 +64,7 @@ describe 'Repos', set_app: true do
 
     it 'GET /repos' do
       response = get '/repos', {}, headers
-      response.should deliver_json_for(Repository.by_owner_name('svenfuchs'), version: 'v2')
+      response.should deliver_json_for(Repository.timeline, version: 'v2')
     end
 
     it 'GET /repos?owner_name=svenfuchs' do
@@ -135,7 +135,7 @@ describe 'Repos', set_app: true do
 
   it 'responds with cc.xml for /repos list' do
     response = get '/repos', {}, 'HTTP_ACCEPT' => 'application/xml; version=2'
-    response.should deliver_cc_xml_for(Repository.timeline)
+    response.status.should == 403
   end
 
   it 'responds with 200 and image when repo can\'t be found and format is png' do
