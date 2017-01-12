@@ -1,5 +1,4 @@
 require 'active_record'
-require 'simple_states'
 require 'travis/model/encrypted_column'
 
 # Models an incoming request. The only supported source for requests currently is Github.
@@ -9,8 +8,6 @@ require 'travis/model/encrypted_column'
 # Request creates a Build.
 class Request < Travis::Model
   require 'travis/model/request/pull_request'
-
-  include SimpleStates
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 
