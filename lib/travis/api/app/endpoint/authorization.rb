@@ -109,6 +109,12 @@ class Travis::Api::App
         end
       end
 
+      get '/post_message', scope: :public do
+        content_type :html
+        data = { check_third_party_cookies: !Travis.config.auth.disable_third_party_cookies_check }
+        erb(:container, locals: data)
+      end
+
       error Faraday::Error::ClientError do
         halt 401, 'could not resolve github token'
       end
