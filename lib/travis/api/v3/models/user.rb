@@ -30,5 +30,14 @@ module Travis::API::V3
       scope.any?
     end
 
+    def repositories_as_owner
+      V3::Models::Repository.where(
+        "(repositories.owner_id = :owner_id AND repositories.owner_type = :owner_type) OR repositories.id IN (:ids)",
+        owner_id: id,
+        owner_type: 'User',
+        ids: permissions.pluck(:repository_id)
+      )
+    end
+
   end
 end

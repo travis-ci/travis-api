@@ -10,5 +10,13 @@ module Travis::API::V3
     end
 
     alias members users
+
+    def repositories_as_owner
+      V3::Models::Repository.where(
+        "repositories.owner_id = :owner_id AND repositories.owner_type = :owner_type",
+        owner_id: id,
+        owner_type: 'Organization'
+      )
+    end
   end
 end
