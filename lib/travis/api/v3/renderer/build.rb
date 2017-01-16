@@ -11,7 +11,7 @@ module Travis::API::V3
     end
 
     private def include_full_jobs?
-      return true if include? 'build.job'.freeze
+      return true if include?('build.job'.freeze) || include?('build.jobs'.freeze)
       return true if include.any?  { |i| i.start_with? 'job.'.freeze }
       return true if included.any? { |i| i.is_a? Models::Job and i.source_id == model.id }
     end

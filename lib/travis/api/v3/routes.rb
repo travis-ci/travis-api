@@ -76,6 +76,11 @@ module Travis::API::V3
         route '/repos'
         get :for_owner
       end
+
+      resource :active do
+        route '/active'
+        get :for_owner
+      end
     end
 
     resource :repositories do
