@@ -64,7 +64,7 @@ describe 'Repos', set_app: true do
 
     it 'GET /repos' do
       response = get '/repos', {}, headers
-      response.should deliver_json_for(Repository.by_owner_name('svenfuchs'), version: 'v2')
+      response.should deliver_json_for(Repository.timeline, version: 'v2')
     end
 
     it 'GET /repos?owner_name=svenfuchs' do
@@ -112,6 +112,11 @@ describe 'Repos', set_app: true do
     response.status.should == 403
   end
 
+  it 'GET /repos/:owner' do
+    response = get "repos/#{repo.owner.login}", {}, headers
+    response.should deliver_json_for(Repository.by_owner_name(repo.owner.login), version: 'v2')
+  end
+
   it 'GET /repos/1' do
     response = get "repos/#{repo.id}", {}, headers
     response.should deliver_json_for(Repository.by_slug('svenfuchs/minimal').first, version: 'v2')
@@ -133,7 +138,7 @@ describe 'Repos', set_app: true do
     response.should deliver_cc_xml_for(Repository.by_slug('svenfuchs/minimal').first)
   end
 
-  it 'responds with cc.xml for /repos list' do
+  it 'responds 403 to /repos when no token is given' do
     response = get '/repos', {}, 'HTTP_ACCEPT' => 'application/xml; version=2'
     response.status.should == 403
   end

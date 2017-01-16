@@ -12,7 +12,7 @@ describe Travis::Services::FindCaches do
   before :each do
     Travis.config.roles = {}
     Travis.config.cache_options = cache_options
-    user.permissions.create!(admin: true, push: true, repository_id: repo.id)
+    user.stubs(:permission?).returns(has_access)
   end
 
   describe 'given a repository_id' do
@@ -50,7 +50,7 @@ describe Travis::Services::FindCaches do
       end
 
       describe 'without access' do
-        before { user.stubs(:permission?).returns(false) }
+        let(:has_access) { false }
         its(:size) { should be == 0 }
       end
 

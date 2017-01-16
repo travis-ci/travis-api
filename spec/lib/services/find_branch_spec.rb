@@ -6,8 +6,6 @@ describe Travis::Services::FindBranch do
 
   attr_reader :params
 
-  before { user.permissions.create!(admin: true, push: true, repository_id: repo.id) }
-
   it 'finds the last builds of the given repository and branch' do
     @params = { :repository_id => repo.id, :branch => 'master' }
     service.run.should be == build
