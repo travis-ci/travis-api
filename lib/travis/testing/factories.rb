@@ -51,7 +51,7 @@ FactoryGirl.define do
     name 'minimal'
     owner_name 'svenfuchs'
     owner_email 'svenfuchs@artweb-design.de'
-    active true
+    enabled true
     url { |r| "http://github.com/#{r.owner_name}/#{r.name}" }
     created_at { |r| Time.utc(2011, 01, 30, 5, 25) }
     updated_at { |r| r.created_at + 5.minutes }
@@ -154,4 +154,3 @@ FactoryGirl.define do
     dont_run_if_recent_build_exists false
   end
 end
-

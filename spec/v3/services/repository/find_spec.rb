@@ -47,7 +47,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "slug"               =>  "svenfuchs/minimal",
       "description"        => nil,
       "github_language"    => nil,
-      "active"             => true,
+      "enabled"             => true,
       "private"            => false,
       "owner"              => {
         "id"               => repo.owner_id,
@@ -130,7 +130,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "slug"               =>  "svenfuchs/minimal",
       "description"        => nil,
       "github_language"    => nil,
-      "active"             => true,
+      "enabled"             => true,
       "private"            => true,
       "owner"              => {
         "id"               => repo.owner_id,
@@ -198,7 +198,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "slug"               =>  "svenfuchs/minimal",
       "description"        => nil,
       "github_language"    => nil,
-      "active"             => true,
+      "enabled"             => true,
       "private"            => true,
       "owner"              => {
         "id"               => repo.owner_id,
@@ -266,7 +266,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "slug"               =>  "svenfuchs/minimal",
       "description"        => nil,
       "github_language"    => nil,
-      "active"             => true,
+      "enabled"             => true,
       "private"            => true,
       "owner"              => {
         "id"               => repo.owner_id,

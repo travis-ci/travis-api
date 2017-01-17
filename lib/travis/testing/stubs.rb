@@ -47,7 +47,7 @@ module Travis
           api_url: 'https://api.github.com/repos/svenfuchs/minimal',
           key: stub_key,
           admin: stub_user,
-          active: true,
+          enabled: true,
           private: false,
           private?: false,
           last_build_id: 1,
@@ -352,4 +352,3 @@ module Travis
     end
   end
 end
-
