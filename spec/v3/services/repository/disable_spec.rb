@@ -2,7 +2,7 @@ describe Travis::API::V3::Services::Repository::Disable, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   before do
-    repo.update_attributes!(active: true)
+    repo.update_attributes!(enabled: true)
   end
 
   describe "not authenticated" do
