@@ -2,7 +2,7 @@ describe Travis::Services::FindRepos do
   before { DatabaseCleaner.clean_with :truncation }
 
   let(:user) { Factory(:user) }
-  let!(:repo)   { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :active => true) }
+  let!(:repo)   { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :enabled => true) }
   let(:service) { described_class.new(user, params) }
 
   attr_reader :params
@@ -35,7 +35,7 @@ describe Travis::Services::FindRepos do
   end
 
   it 'applies timeline only if no other params are given' do
-    repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', :last_build_started_at => nil, :active => true)
+    repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', :last_build_started_at => nil, :enabled => true)
     @params = { slug: 'foo/bar' }
     service.run.should include(repo)
   end
@@ -52,14 +52,14 @@ describe Travis::Services::FindRepos do
       service.run.should_not include(repo)
     end
 
-    # TODO ... we now include all :active repos (i.e. including those that haven't built yet)
+    # TODO ... we now include all :enabled repos (i.e. including those that haven't built yet)
     # and last_build_started_at is nil for them, too. since there's no easy way to detect
     # queued builds on the repo timeline i'm just disabling this for now.
     #
     # it 'sorts by latest build, putting queued (no last_build_started_at) at the front' do
     #   repo.update_column(:last_build_started_at, Time.now - 10)
-    #   queued = Factory(:repository, name: 'queued', last_build_started_at: nil, :active => true)
-    #   just_started = Factory(:repository,  name: 'just-started',last_build_started_at: Time.now, :active => true)
+    #   queued = Factory(:repository, name: 'queued', last_build_started_at: nil, :enabled => true)
+    #   just_started = Factory(:repository,  name: 'just-started',last_build_started_at: Time.now, :enabled => true)
     #   josh = Factory(:user, :login => 'joshk')
     #   [repo, queued, just_started].each { |r| r.users << josh }
     #   @params = { :member => 'joshk' }
@@ -79,11 +79,11 @@ describe Travis::Services::FindRepos do
     end
   end
 
-  describe 'given an owner_name name and active param' do
+  describe 'given an owner_name name and enabled param' do
     it 'finds a repository with that owner_name even if it does not have any builds' do
       repo.update_column(:last_build_id, nil)
-      repo.update_column(:active, true)
-      @params = { :owner_name => 'travis-ci', :active => true }
+      repo.update_column(:enabled, true)
+      @params = { :owner_name => 'travis-ci', :enabled => true }
       service.run.should include(repo)
     end
   end

@@ -54,7 +54,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "slug"               =>  "svenfuchs/minimal",
         "description"        => nil,
         "github_language"    => nil,
-        "active"             => true,
+        "enabled"             => true,
         "private"            => true,
         "owner"              => {
           "@type"            => "user",
@@ -84,8 +84,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
     example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?repository.private=false" }
   end
 
-  describe "filter: active=false" do
-    before  { get("/v3/repos", {"repository.active" => "false"}, headers)  }
+  describe "filter: enabled=false" do
+    before  { get("/v3/repos", {"repository.enabled" => "false"}, headers)  }
     example { expect(last_response)                   .to be_ok            }
     example { expect(JSON.load(body)['repositories']) .to be == []         }
   end
