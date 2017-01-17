@@ -22,6 +22,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       'name'           => user.name,
       'email'          => user.email,
       'gravatar_id'    => user.gravatar_id,
+      'avatar_url'     => user.avatar_url,
       'locale'         => user.locale,
       'is_syncing'     => user.is_syncing,
       'created_at'     => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
