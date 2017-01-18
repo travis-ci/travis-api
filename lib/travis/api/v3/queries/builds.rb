@@ -9,10 +9,10 @@ module Travis::API::V3
       sort filter(repository.builds)
     end
 
-    def active_for(owner)
+    def active_from(repositories)
       V3::Models::Build.where(
-        repository_id: owner.repositories_as_owner.pluck(:id),
-        state: %w{created started}
+        repository_id: repositories.pluck(:id),
+        state: ['created'.freeze, 'started'.freeze]
       ).includes(:jobs)
     end
 
