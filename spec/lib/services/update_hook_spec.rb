@@ -2,7 +2,7 @@ describe Travis::Services::UpdateHook do
   include Travis::Testing::Stubs
 
   let(:service) { described_class.new(user, params) }
-  let(:params)  { { id: repo.id, active: true } }
+  let(:params)  { { id: repo.id, enabled: true } }
 
   before :each do
     repo.stubs(:update_column)
@@ -15,39 +15,39 @@ describe Travis::Services::UpdateHook do
     service.run
   end
 
-  it 'sets the given :active param to the hook' do
+  it 'sets the given :enabled param to the hook' do
     service.expects(:run_service).with(:github_set_hook, is_a(Hash))
     service.run
   end
 
-  describe 'sets the repo to the active param' do
+  describe 'sets the repo to the enabled param' do
     it 'given true' do
-      service.params.update(active: true)
-      repo.expects(:update_column).with(:active, true)
+      service.params.update(enabled: true)
+      repo.expects(:update_column).with(:enabled, true)
       service.run
     end
 
     it 'given false' do
-      service.params.update(active: false)
-      repo.expects(:update_column).with(:active, false)
+      service.params.update(enabled: false)
+      repo.expects(:update_column).with(:enabled, false)
       service.run
     end
 
     it 'given "true"' do
-      service.params.update(active: 'true')
-      repo.expects(:update_column).with(:active, true)
+      service.params.update(enabled: 'true')
+      repo.expects(:update_column).with(:enabled, true)
       service.run
     end
 
     it 'given "false"' do
-      service.params.update(active: 'false')
-      repo.expects(:update_column).with(:active, false)
+      service.params.update(enabled: 'false')
+      repo.expects(:update_column).with(:enabled, false)
       service.run
     end
   end
 
   it 'syncs the repo when activated' do
-    service.params.update(active: true)
+    service.params.update(enabled: true)
     Sidekiq::Client.expects(:push).with(
       'queue' => 'sync',
       'class' => 'Travis::GithubSync::Worker',
@@ -57,7 +57,7 @@ describe Travis::Services::UpdateHook do
   end
 
   it 'does not sync the repo when deactivated' do
-    service.params.update(active: false)
+    service.params.update(enabled: false)
     Sidekiq::Client.expects(:push).never
     service.run
   end
@@ -67,7 +67,7 @@ describe Travis::Services::UpdateHook::Instrument do
   include Travis::Testing::Stubs
 
   let(:service)   { Travis::Services::UpdateHook.new(user, params) }
-  let(:params)    { { id: repository.id, active: 'true' } }
+  let(:params)    { { id: repository.id, enabled: 'true' } }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.last }
 
@@ -82,9 +82,8 @@ describe Travis::Services::UpdateHook::Instrument do
     service.run
     event.should publish_instrumentation_event(
       event: 'travis.services.update_hook.run:completed',
-      message: 'Travis::Services::UpdateHook#run:completed for svenfuchs/minimal active=true (svenfuchs)',
+      message: 'Travis::Services::UpdateHook#run:completed for svenfuchs/minimal enabled=true (svenfuchs)',
       result: true
     )
   end
 end
-

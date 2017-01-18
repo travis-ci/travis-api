@@ -8,7 +8,7 @@ class Travis::Api::App
       end
 
       put '/:id?', scope: :private do
-        respond_with service(:update_hook, id: params[:id] || params[:hook][:id], active: params[:hook][:active])
+        respond_with service(:update_hook, id: params[:id] || params[:hook][:id], enabled: params[:hook][:enabled])
       end
     end
   end

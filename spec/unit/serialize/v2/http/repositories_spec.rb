@@ -15,7 +15,7 @@ describe Travis::Api::Serialize::V2::Http::Repositories do
       'last_build_state' => 'passed',
       'last_build_language' => nil,
       'last_build_duration' => 60,
-      'active' => true,
+      'enabled' => true,
       'github_language' => 'ruby'
     }
   end
@@ -23,7 +23,7 @@ end
 
 describe Travis::Api::Serialize::V2::Http::Repositories, 'using Travis::Services::FindRepos' do
   let(:user)  { Factory(:user) }
-  let(:repo)  { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :active => true) }
+  let(:repo)  { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :enabled => true) }
   let(:repos) { Travis::Services::FindRepos.new(user, {ids: [repo.id]}).run }
   let(:data)  { described_class.new(repos).data }
 

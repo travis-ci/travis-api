@@ -158,7 +158,7 @@ PAYLOADS[:github] = {
       "public",
       "member"
     ],
-    "active": false,
+    "enabled": false,
     "updated_at": "2012-08-09T09:32:42Z",
     "name": "travis",
     "_links": {
@@ -169,7 +169,7 @@ PAYLOADS[:github] = {
     "id": 77103
   }),
 
-  :hook_active => %({
+  :hook_enabled => %({
     "last_response": {
       "status": "ok",
       "message": "",
@@ -188,7 +188,7 @@ PAYLOADS[:github] = {
       "public",
       "member"
     ],
-    "active": true,
+    "enabled": true,
     "updated_at": "2012-08-09T09:32:42Z",
     "name": "travis",
     "_links": {
@@ -245,4 +245,3 @@ PAYLOADS[:queue] = {
     :queue      => 'builds'
   }
 }
-

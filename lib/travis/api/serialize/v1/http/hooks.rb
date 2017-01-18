@@ -24,7 +24,7 @@ module Travis
                   'name' => repo.name,
                   'owner_name' => repo.owner_name,
                   'description' => repo.description,
-                  'active' => repo.active,
+                  'enabled' => repo.enabled,
                   'private' => repo.private
                 }
               end

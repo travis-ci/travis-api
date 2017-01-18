@@ -43,7 +43,7 @@ module Travis::API::V3
       payload   = {
         name:   'travis'.freeze,
         events: EVENTS,
-        active: flag,
+        enabled: flag,
         config: { domain: Travis.config.service_hook_url || '' }
       }
 

@@ -136,7 +136,7 @@ describe User do
   end
 
   describe 'service_hooks' do
-    let(:own_repo)   { Factory(:repository, :name => 'own-repo', :description => 'description', :active => true) }
+    let(:own_repo)   { Factory(:repository, :name => 'own-repo', :description => 'description', :enabled => true) }
     let(:admin_repo) { Factory(:repository, :name => 'admin-repo') }
     let(:other_repo) { Factory(:repository, :name => 'other-repo') }
     let(:push_repo) { Factory(:repository, :name => 'push-repo') }
