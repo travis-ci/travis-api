@@ -46,6 +46,7 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
     let(:user_repo)  { V3::Models::Repository.create(owner: user, name: 'Kneipe') }
     let(:user_build) { V3::Models::Build.create(repository: user_repo, owner: user, state: 'created') }
     let!(:user_job)  { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'queued') }
+    let!(:err_job)   { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'errored') }
 
     let(:private_repo)  { V3::Models::Repository.create(name: 'private-repo', owner: user, private: true) }
     let(:private_build) { V3::Models::Build.create(repository: private_repo, owner: user, state: 'created') }
@@ -64,7 +65,7 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
       example { expect(last_response).to contain_jobs user_job }
 
       example { expect(last_response).to not_contain_builds private_build }
-      example { expect(last_response).to not_contain_jobs private_job }
+      example { expect(last_response).to not_contain_jobs err_job, private_job }
     end
 
     describe 'viewing an org' do

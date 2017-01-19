@@ -4,9 +4,12 @@ module Travis::API::V3
   class Renderer::Build < Renderer::ModelRenderer
     representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at)
     representation(:standard, *representations[:minimal], :repository, :branch, :commit, :jobs)
+    representation(:active, *representations[:minimal], :repository, :branch, :commit, :jobs)
 
     def jobs
-      return model.jobs if include_full_jobs?
+      if include_full_jobs?
+        return representation?(:active) ? model.active_jobs : model.jobs
+      end
       model.job_ids.map { |id| job(id) }
     end
 
