@@ -10,6 +10,12 @@ module Travis::API::V3
       order:       :id,
       dependent:   :destroy
 
+    has_many :active_jobs,
+      foreign_key: :source_id,
+      order:       :id,
+      conditions:  "jobs.state IN ('received', 'queued', 'started')".freeze,
+      class_name:  'Travis::API::V3::Models::Job'.freeze
+
     has_one :branch,
       foreign_key: [:repository_id, :name],
       primary_key: [:repository_id, :branch],
