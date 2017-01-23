@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Repository::Disable, set_app: true do
+describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   before do
@@ -6,7 +6,7 @@ describe Travis::API::V3::Services::Repository::Disable, set_app: true do
   end
 
   describe "not authenticated" do
-    before  { post("/v3/repo/#{repo.id}/disable")      }
+    before  { post("/v3/repo/#{repo.id}/deactivate")      }
     example { expect(last_response.status).to be == 403 }
     example { expect(JSON.load(body)).to      be ==     {
       "@type"         => "error",
@@ -18,7 +18,7 @@ describe Travis::API::V3::Services::Repository::Disable, set_app: true do
   describe "missing repo, authenticated" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { post("/v3/repo/9999999999/disable", {}, headers)                 }
+    before        { post("/v3/repo/9999999999/deactivate", {}, headers)                 }
 
     example { expect(last_response.status).to be == 404 }
     example { expect(JSON.load(body)).to      be ==     {
@@ -32,7 +32,7 @@ describe Travis::API::V3::Services::Repository::Disable, set_app: true do
   describe "existing repository, no push access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { post("/v3/repo/#{repo.id}/disable", {}, headers)                 }
+    before        { post("/v3/repo/#{repo.id}/deactivate", {}, headers)                 }
 
     example { expect(last_response.status).to be == 403 }
     example { expect(JSON.load(body).to_s).to include(
@@ -40,7 +40,7 @@ describe Travis::API::V3::Services::Repository::Disable, set_app: true do
       "error_type",
       "insufficient_access",
       "error_message",
-      "operation requires disable access to repository",
+      "operation requires deactivate access to repository",
       "resource_type",
       "repository",
       "permission",
@@ -52,7 +52,7 @@ describe Travis::API::V3::Services::Repository::Disable, set_app: true do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { repo.update_attribute(:private, true)                             }
-    before        { post("/v3/repo/#{repo.id}/disable", {}, headers)                 }
+    before        { post("/v3/repo/#{repo.id}/deactivate", {}, headers)                 }
     after         { repo.update_attribute(:private, false)                            }
 
     example { expect(last_response.status).to be == 404 }
