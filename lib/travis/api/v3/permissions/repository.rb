@@ -2,11 +2,11 @@ require 'travis/api/v3/permissions/generic'
 
 module Travis::API::V3
   class Permissions::Repository < Permissions::Generic
-    def enable?
+    def active?
       write?
     end
 
-    def disable?
+    def deactivated?
       write?
     end
 

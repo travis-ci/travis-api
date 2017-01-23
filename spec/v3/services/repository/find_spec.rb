@@ -31,8 +31,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "@representation"    => "standard",
       "@permissions"       => {
         "read"             => true,
-        "enable"           => false,
-        "disable"          => false,
+        "active"           => false,
+        "deactivated"      => false,
         "star"             => false,
         "unstar"           => false,
         "create_request"   => false,
@@ -114,8 +114,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "@representation"    => "standard",
       "@permissions"       => {
         "read"             => true,
-        "enable"           => false,
-        "disable"          => false,
+        "active"           => false,
+        "deactivated"      => false,
         "star"             => false,
         "unstar"           => false,
         "create_request"   => false,
@@ -182,8 +182,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "@representation"    => "standard",
       "@permissions"       => {
         "read"             => true,
-        "enable"           => true,
-        "disable"          => true,
+        "active"           => true,
+        "deactivated"      => true,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
@@ -250,8 +250,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "@representation"    => "standard",
       "@permissions"       => {
         "read"             => true,
-        "enable"           => true,
-        "disable"          => true,
+        "active"           => true,
+        "deactivated"      => true,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,

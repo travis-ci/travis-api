@@ -53,7 +53,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       "resource_type",
       "repository",
       "permission",
-      "enable")
+      "active")
     }
   end
 

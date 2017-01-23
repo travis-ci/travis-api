@@ -60,8 +60,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "standard",
           "@permissions"      => {
             "read"            => true,
-            "enable"          => false,
-            "disable"         => false,
+            "active"          => false,
+            "deactivated"     => false,
             "star"            => false,
             "unstar"          => false,
             "create_request"  => false,
@@ -113,8 +113,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation" => "standard",
           "@permissions"    => {
             "read"          => true,
-            "enable"        => false,
-            "disable"       => false,
+            "active"        => false,
+            "deactivated"   => false,
             "star"          => false,
             "unstar"        => false,
             "create_request"=> false,
