@@ -2,7 +2,7 @@ module Travis::API::V3
   class Models::Subscription < Model
 
     def active?
-      cc_token? and valid_to.present? and valid_to >= Time.now.utc
+      valid_to.present? and valid_to + 1.day >= Time.now
     end
 
   end
