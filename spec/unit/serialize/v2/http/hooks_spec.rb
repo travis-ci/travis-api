@@ -14,7 +14,7 @@ describe Travis::Api::Serialize::V2::Http::Hooks do
         'name' => 'minimal',
         'owner_name' => 'svenfuchs',
         'description' => 'the repo description',
-        'active' => true,
+        'enabled' => true,
         'private' => false,
         'admin' => true
       }

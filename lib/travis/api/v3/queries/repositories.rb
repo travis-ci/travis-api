@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::Repositories < Query
-    params :active, :private, :starred, prefix: :repository
-    sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active),
+    params :enabled, :private, :starred, prefix: :repository
+    sortable_by :id, :github_id, :owner_name, :name, enabled: sort_condition(:enabled),
                 :'default_branch.last_build' => 'builds.started_at',
                 :current_build => "repositories.current_build_id %{order} NULLS LAST"
 
@@ -27,7 +27,7 @@ module Travis::API::V3
 
     def filter(list, user: nil)
       list = list.where(invalidated_at: nil)
-      list = list.where(active:  bool(active))  unless active.nil?
+      list = list.where(enabled:  bool(enabled))  unless enabled.nil?
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
 

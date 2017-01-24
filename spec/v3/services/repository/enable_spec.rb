@@ -3,7 +3,7 @@ describe Travis::API::V3::Services::Repository::Enable, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   before do
-    repo.update_attributes!(active: false)
+    repo.update_attributes!(enabled: false)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
@@ -92,7 +92,7 @@ describe Travis::API::V3::Services::Repository::Enable, set_app: true do
       "slug",
       "description",
       "github_language",
-      "active",
+      "enabled",
       "private",
       "owner",
       "default_branch",

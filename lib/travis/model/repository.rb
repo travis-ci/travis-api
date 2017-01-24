@@ -36,7 +36,7 @@ class Repository < Travis::Model
 
   class << self
     def timeline
-      active.order('last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC')
+      enabled.order('last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC')
     end
 
     def with_builds
@@ -68,8 +68,8 @@ class Repository < Travis::Model
       without_invalidated.where("(repositories.owner_name || chr(47) || repositories.name) ILIKE ?", "%#{query}%")
     end
 
-    def active
-      without_invalidated.where(active: true)
+    def enabled
+      without_invalidated.where(enabled: true)
     end
 
     def without_invalidated

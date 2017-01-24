@@ -23,7 +23,7 @@ describe 'Hooks', set_app: true do
       {
         :name   => 'travis',
         :events => Travis::Github::Services::SetHook::EVENTS,
-        :active => true,
+        :enabled => true,
         :config => { :user => user.login, :token => user.tokens.first.token, :domain => 'listener.travis-ci.org' }
       }
     end
@@ -34,9 +34,9 @@ describe 'Hooks', set_app: true do
 
     it 'sets the hook' do
       GH.stubs(:[]).returns([])
-      GH.expects(:post).with(target, payload).returns(GH.load(PAYLOADS[:github][:hook_active]))
-      response = put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers
-      repo.reload.active?.should == true
+      GH.expects(:post).with(target, payload).returns(GH.load(PAYLOADS[:github][:hook_enabled]))
+      response = put 'hooks', { hook: { id: hook.id, enabled: 'true' } }, headers
+      repo.reload.enabled?.should == true
       response.should be_successful
     end
   end

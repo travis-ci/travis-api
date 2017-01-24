@@ -22,8 +22,8 @@ module Travis
             @repo ||= run_service(:find_repo, id: params[:id])
           end
 
-          def active?
-            params[:active]
+          def enabled?
+            params[:enabled]
           end
 
           def hook
@@ -31,7 +31,7 @@ module Travis
           end
 
           def update
-            GH.patch(hook_url, payload) unless hook['active'] == active?
+            GH.patch(hook_url, payload) unless hook['enabled'] == enabled?
           end
 
           def find
@@ -46,7 +46,7 @@ module Travis
             {
               :name   => 'travis',
               :events => EVENTS,
-              :active => active?,
+              :enabled => enabled?,
               :config => { :user => current_user.login, :token => current_user.tokens.first.token, :domain => domain }
             }
           end

@@ -92,7 +92,7 @@ module Travis
                     'name' => repository.default_branch,
                     'last_build_id' => last_build_on_default_branch_id(repository)
                   },
-                  'active' => repository.active,
+                  'enabled' => repository.enabled,
                   'current_build_id' => repository.current_build_id
                 }
               end

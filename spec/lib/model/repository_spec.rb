@@ -70,13 +70,13 @@ describe Repository do
 
     describe 'timeline' do
       before do
-        Factory(:repository, name: 'unbuilt 1',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
-        Factory(:repository, name: 'unbuilt 2',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
-        Factory(:repository, name: 'finished 1',  active: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
-        Factory(:repository, name: 'finished 2',  active: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
-        Factory(:repository, name: 'started 1',   active: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
-        Factory(:repository, name: 'started 2',   active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
-        Factory(:repository, name: 'invalidated', active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil, invalidated_at: '2012-11-11 12:00:06')
+        Factory(:repository, name: 'unbuilt 1',   enabled: true, last_build_started_at: nil, last_build_finished_at: nil)
+        Factory(:repository, name: 'unbuilt 2',   enabled: true, last_build_started_at: nil, last_build_finished_at: nil)
+        Factory(:repository, name: 'finished 1',  enabled: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
+        Factory(:repository, name: 'finished 2',  enabled: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
+        Factory(:repository, name: 'started 1',   enabled: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
+        Factory(:repository, name: 'started 2',   enabled: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
+        Factory(:repository, name: 'invalidated', enabled: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil, invalidated_at: '2012-11-11 12:00:06')
       end
 
       it 'sorts repositories with running builds to the top, most recent builds next, un-built repos last' do
@@ -101,21 +101,21 @@ describe Repository do
       end
     end
 
-    describe 'active' do
-      let(:active)      { Factory(:repository, active: true) }
-      let(:inactive)    { Factory(:repository, active: false) }
+    describe 'enabled' do
+      let(:enabled)      { Factory(:repository, enabled: true) }
+      let(:inactive)    { Factory(:repository, enabled: false) }
       let(:invalidated) { Factory(:repository, invalidated_at: Time.now) }
 
-      it 'contains active repositories' do
-        Repository.active.should include(active)
+      it 'contains enabled repositories' do
+        Repository.enabled.should include(enabled)
       end
 
       it 'does not include inactive repositories' do
-        Repository.active.should_not include(inactive)
+        Repository.enabled.should_not include(inactive)
       end
 
       it 'does not include invalidated repositories' do
-        Repository.active.should_not include(invalidated)
+        Repository.enabled.should_not include(invalidated)
       end
     end
 
