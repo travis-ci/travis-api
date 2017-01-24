@@ -49,11 +49,11 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       "error_type",
       "insufficient_access",
       "error_message",
-      "operation requires active access to repository",
+      "operation requires enable access to repository",
       "resource_type",
       "repository",
       "permission",
-      "active")
+      "enable")
     }
   end
 
