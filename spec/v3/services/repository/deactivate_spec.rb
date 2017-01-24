@@ -40,11 +40,11 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
       "error_type",
       "insufficient_access",
       "error_message",
-      "operation requires deactivated access to repository",
+      "operation requires disable access to repository",
       "resource_type",
       "repository",
       "permission",
-      "deactivated")
+      "disable")
     }
   end
 
