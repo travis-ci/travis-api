@@ -38,8 +38,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "@representation"    => "standard",
         "@permissions"       => {
           "read"             => true,
-          "enable"           => true,
-          "disable"          => true,
+          "activate"         => true,
+          "deactivate"       => true,
           "star"             => true,
           "unstar"           => true,
           "create_request"   => true,
