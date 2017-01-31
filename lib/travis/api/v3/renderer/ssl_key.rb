@@ -6,7 +6,6 @@ module Travis::API::V3
     def href
       Renderer.href(:ssl_key,
         :"repository.id" => model.repository_id,
-        :"key_pair.slug" => 'default'.freeze,
         :"script_name" => script_name
       )
     end

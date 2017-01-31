@@ -12,20 +12,20 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
   describe 'not authenticated' do
-    before { post("/v3/repo/#{repo.id}/key_pair/default") }
+    before { post("/v3/repo/#{repo.id}/key_pair/generated") }
     include_examples 'not authenticated'
   end
 
   context 'authenticated as wrong user' do
     describe 'not allowed' do
-      before { post("/v3/repo/#{repo.id}/key_pair/default", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}") }
+      before { post("/v3/repo/#{repo.id}/key_pair/generated", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}") }
       include_examples 'insufficient access to repo', 'change_key'
     end
   end
 
   context 'authenticated' do
     describe 'missing repo' do
-      before { post("/v3/repo/999999999/key_pair/default", {}, auth_headers) }
+      before { post("/v3/repo/999999999/key_pair/generated", {}, auth_headers) }
       include_examples 'missing repo'
     end
 
@@ -33,7 +33,7 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
       before do
         Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
         repo.key.destroy
-        post("/v3/repo/#{repo.id}/key_pair/default", {}, auth_headers)
+        post("/v3/repo/#{repo.id}/key_pair/generated", {}, auth_headers)
       end
 
       example { expect(last_response.status).to eq 201 }
@@ -47,7 +47,7 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
 
       before do
         Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
-        post("/v3/repo/#{repo.id}/key_pair/default", {}, auth_headers)
+        post("/v3/repo/#{repo.id}/key_pair/generated", {}, auth_headers)
       end
 
       example { expect(last_response.status).to eq 201 }
