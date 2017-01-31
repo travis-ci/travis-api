@@ -15,7 +15,7 @@ module Travis::API::V3
     end
 
     def check_access(repository)
-      access_control.permissions(repository).enable!
+      access_control.permissions(repository).activate!
     end
   end
 end
