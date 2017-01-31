@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Repository::Enable, set_app: true do
+describe Travis::API::V3::Services::Repository::Activate, set_app: true do
   let(:sidekiq_job) { Sidekiq::Client.last.deep_symbolize_keys }
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
@@ -15,7 +15,7 @@ describe Travis::API::V3::Services::Repository::Enable, set_app: true do
   end
 
   describe "not authenticated" do
-    before  { post("/v3/repo/#{repo.id}/enable")      }
+    before  { post("/v3/repo/#{repo.id}/activate")      }
     example { expect(last_response.status).to be == 403 }
     example { expect(JSON.load(body)).to      be ==     {
       "@type"         => "error",
@@ -27,7 +27,7 @@ describe Travis::API::V3::Services::Repository::Enable, set_app: true do
   describe "missing repo, authenticated" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { post("/v3/repo/9999999999/enable", {}, headers)                 }
+    before        { post("/v3/repo/9999999999/activate", {}, headers)                 }
 
     example { expect(last_response.status).to be == 404 }
     example { expect(JSON.load(body)).to      be ==     {
@@ -41,7 +41,7 @@ describe Travis::API::V3::Services::Repository::Enable, set_app: true do
   describe "existing repository, no push access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { post("/v3/repo/#{repo.id}/enable", {}, headers)                 }
+    before        { post("/v3/repo/#{repo.id}/activate", {}, headers)                 }
 
     example { expect(last_response.status).to be == 403 }
     example { expect(JSON.load(body).to_s).to include(
@@ -61,7 +61,7 @@ describe Travis::API::V3::Services::Repository::Enable, set_app: true do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { repo.update_attribute(:private, true)                             }
-    before        { post("/v3/repo/#{repo.id}/enable", {}, headers)                 }
+    before        { post("/v3/repo/#{repo.id}/activate", {}, headers)                 }
     after         { repo.update_attribute(:private, false)                            }
 
     example { expect(last_response.status).to be == 404 }
@@ -80,7 +80,7 @@ describe Travis::API::V3::Services::Repository::Enable, set_app: true do
     before        { Travis::API::V3::GitHub.any_instance.stubs(:set_hook) }
     before        { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
 
-    before  { post("/v3/repo/#{repo.id}/enable", {}, headers)                 }
+    before  { post("/v3/repo/#{repo.id}/activate", {}, headers)                 }
     example { expect(last_response.status).to be == 200 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",

@@ -44,14 +44,14 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
           specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}{?include}") }
         end
 
-        describe "enable action" do
-          let(:action) { resource.fetch("actions").fetch("enable") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/enable") }
+        describe "activate action" do
+          let(:action) { resource.fetch("actions").fetch("activate") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/activate") }
         end
 
-        describe "disable action" do
-          let(:action) { resource.fetch("actions").fetch("disable") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/disable") }
+        describe "deactivate action" do
+          let(:action) { resource.fetch("actions").fetch("deactivate") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/deactivate") }
         end
       end
 
