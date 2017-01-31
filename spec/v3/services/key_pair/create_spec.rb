@@ -101,7 +101,8 @@ describe Travis::API::V3::Services::KeyPair::Create, set_app: true do
               '@representation' => 'standard',
               '@type' => 'key_pair',
               'description' => 'foo key pair',
-              'fingerprint' =>  fingerprint
+              'fingerprint' =>  fingerprint,
+              'public_key' => key.public_key.to_s
             )
           end
           example 'persists changes' do

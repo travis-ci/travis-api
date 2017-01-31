@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Queries::SshKey < Query
+  class Queries::SslKey < Query
     def find(repository)
       repository.key
     end

@@ -46,7 +46,8 @@ describe Travis::API::V3::Services::KeyPair::Find, set_app: true do
           '@href' => "/v3/repo/#{repo.id}/key_pair",
           '@representation' => 'standard',
           'description' => 'foo key pair',
-          'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(key.to_pem)
+          'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(key.to_pem),
+          'public_key' => key.public_key.to_s
         )
       end
     end

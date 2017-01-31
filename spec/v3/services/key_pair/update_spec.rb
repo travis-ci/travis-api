@@ -71,7 +71,8 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
                 }
               ],
               'description' => 'foo',
-              'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(key.to_pem)
+              'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(key.to_pem),
+              'public_key' => key.public_key.to_s
             )
           end
         end
@@ -120,7 +121,8 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
               '@representation' => 'standard',
               '@type' => 'key_pair',
               'description' => 'new description',
-              'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(new_key.to_pem)
+              'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(new_key.to_pem),
+              'public_key' => new_key.public_key.to_s
             )
           end
           example 'persists changes' do

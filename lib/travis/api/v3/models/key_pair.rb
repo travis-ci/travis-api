@@ -15,6 +15,11 @@ module Travis::API::V3
       value.decrypt
     end
 
+    def public_key
+      return unless value.decrypt
+      OpenSSL::PKey::RSA.new(value.decrypt).public_key.to_s
+    end
+
     def to_h
       { 'ssh_key' => attributes.slice(:description, :value).stringify_keys }
     end
