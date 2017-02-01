@@ -73,7 +73,13 @@ module Travis::API::V3
       Queries[type].new({}, type, includes: include)
     end
 
+    def representation?(name)
+      instance_variable_get(:"@representation") == name
+    end
+
     def render(representation)
+      @representation = representation
+
       if included.include? model
         return REDUNDANT unless href
         return { :@href => href }

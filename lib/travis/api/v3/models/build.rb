@@ -1,15 +1,21 @@
 module Travis::API::V3
   class Models::Build < Model
-    belongs_to :repository
     belongs_to :commit
     belongs_to :request
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
 
     has_many :jobs,
-      as:        :source,
-      order:     :id,
-      dependent: :destroy
+      foreign_key: :source_id,
+      order:       :id,
+      dependent:   :destroy,
+      class_name:  'Travis::API::V3::Models::Job'.freeze
+
+    has_many :active_jobs,
+      foreign_key: :source_id,
+      order:       :id,
+      conditions:  "jobs.state IN ('received', 'queued', 'started')".freeze,
+      class_name:  'Travis::API::V3::Models::Job'.freeze
 
     has_one :branch,
       foreign_key: [:repository_id, :name],

@@ -3,6 +3,7 @@ module Travis::API::V3
     extend ConstantResolver
 
     Accounts      = Module.new { extend Services }
+    Active        = Module.new { extend Services }
     Branch        = Module.new { extend Services }
     Branches      = Module.new { extend Services }
     Broadcast     = Module.new { extend Services }
