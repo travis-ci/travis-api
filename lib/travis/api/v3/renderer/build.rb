@@ -4,7 +4,7 @@ module Travis::API::V3
   class Renderer::Build < Renderer::ModelRenderer
     representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at)
     representation(:standard, *representations[:minimal], :repository, :branch, :commit, :jobs)
-    representation(:active, *representations[:minimal], :repository, :branch, :commit, :jobs)
+    representation(:active, *representations[:standard])
 
     def jobs
       if include_full_jobs?
@@ -14,7 +14,7 @@ module Travis::API::V3
     end
 
     private def include_full_jobs?
-      return true if include?('build.job'.freeze) || include?('build.jobs'.freeze)
+      return true if include?('build.jobs'.freeze)
       return true if include.any?  { |i| i.start_with? 'job.'.freeze }
       return true if included.any? { |i| i.is_a? Models::Job and i.source_id == model.id }
     end

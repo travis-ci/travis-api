@@ -8,7 +8,8 @@ module Travis::API::V3
     has_many :jobs,
       foreign_key: :source_id,
       order:       :id,
-      dependent:   :destroy
+      dependent:   :destroy,
+      class_name:  'Travis::API::V3::Models::Job'.freeze
 
     has_many :active_jobs,
       foreign_key: :source_id,
