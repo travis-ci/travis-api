@@ -27,6 +27,15 @@ RSpec::Matchers.define :contain_jobs do |*jobs|
   failure_message_for_should { |_| "expected response #{@returned} to contain jobs #{jobs.map(&:id)}" }
 end
 
+RSpec::Matchers.define :contain_full_jobs do
+  match do |response|
+    response = JSON.parse(response.body)
+    @response = response['builds'].flat_map { |b| b['jobs'] }
+    @response.all? { |j| j["@representation"] == "standard" }
+  end
+  failure_message_for_should { |_| "expected response #{@response} to contain for jobs: '@representation' => 'standard'"}
+end
+
 RSpec::Matchers.define :not_contain_jobs do |*jobs|
   match do |response|
     response = JSON.parse(response.body)
@@ -56,7 +65,7 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
     let(:org_repo)  { V3::Models::Repository.create(owner: org, name: 'Bionade') }
     let(:org_build) { V3::Models::Build.create(repository: org_repo, owner: org, state: 'created') }
     let!(:org_job)  { V3::Models::Job.create(source_id: org_build.id, source_type: 'Build', owner: org, state: 'queued') }
-    
+
     describe 'viewing a user' do
       before { get("/v3/owner/#{user.login}/active?include=build.jobs", {}, json_headers) }
 
@@ -134,6 +143,7 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
         example { expect(last_response).to be_ok }
         example { expect(last_response).to contain_builds perm_build }
         example { expect(last_response).to contain_jobs perm_job }
+        example { expect(last_response).to contain_full_jobs }
 
         example { expect(last_response).to not_contain_builds non_perm_build }
         example { expect(last_response).to not_contain_jobs non_perm_job }
