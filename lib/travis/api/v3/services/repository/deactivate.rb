@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Services::Repository::Disable < Service
+  class Services::Repository::Deactivate < Service
     def run!(activate = false)
       repository = check_login_and_find(:repository)
       check_access(repository)
@@ -13,7 +13,7 @@ module Travis::API::V3
     end
 
     def check_access(repository)
-      access_control.permissions(repository).disable!
+      access_control.permissions(repository).deactivate!
     end
   end
 end

@@ -39,8 +39,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "@representation"    => "standard",
         "@permissions"       => {
           "read"             => true,
-          "enable"           => false,
-          "disable"          => false,
+          "activate"         => false,
+          "deactivate"       => false,
           "star"             => false,
           "unstar"           => false,
           "create_request"   => false,
@@ -121,8 +121,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "@representation" => "standard",
         "@permissions"    => {
           "read"          => true,
-          "enable"        => false,
-          "disable"       => false,
+          "activate"      => false,
+          "deactivate"    => false,
           "star"          => false,
           "unstar"        => false,
           "create_request"=> false,
@@ -155,8 +155,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "@representation" => "standard",
         "@permissions"    => {
           "read"          => true,
-          "enable"        => false,
-          "disable"       => false,
+          "activate"      => false,
+          "deactivate"    => false,
           "star"          => false,
           "unstar"        => false,
           "create_request"=> false,

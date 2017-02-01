@@ -13,6 +13,7 @@ describe Travis::Api::Serialize::V2::Http::User do
       'login' => 'svenfuchs',
       'email' => 'svenfuchs@artweb-design.de',
       'gravatar_id' => '402602a60e500e85f2f5dc1ff3648ecb',
+      'avatar_url' => 'https://0.gravatar.com/avatar/402602a60e500e85f2f5dc1ff3648ecb',
       'locale' => 'de',
       'is_syncing' => false,
       'synced_at' => json_format_time(Time.now.utc - 1.hour),
@@ -22,4 +23,3 @@ describe Travis::Api::Serialize::V2::Http::User do
     }
   end
 end
-

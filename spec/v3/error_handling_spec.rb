@@ -1,6 +1,6 @@
 describe Travis::API::V3::ServiceIndex, set_app: true do
   let(:headers) {{  }}
-  let(:path)      { "/v3/repo/1/enable"         }
+  let(:path)      { "/v3/repo/1/activate"         }
   let(:json)      { JSON.load(response.body) }
   let(:response)  { get(path, {}, headers)   }
   let(:resources) { json.fetch('resources')  }

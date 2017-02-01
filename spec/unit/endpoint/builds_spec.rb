@@ -2,7 +2,8 @@ describe Travis::Api::App::Endpoint::Builds, set_app: true do
   include Travis::Testing::Stubs
 
   it 'works with default options' do
-    get('/repos.json', {}).should be_ok
+    response = get('/repos.json', {})
+    response.status.should == 403
   end
 
   context '/repos.json is requested' do
@@ -13,26 +14,21 @@ describe Travis::Api::App::Endpoint::Builds, set_app: true do
     context 'when `pretty=true` is given' do
       it 'prints pretty formatted data' do
         response = get('/repos.json?pretty=true')
-        response.should be_ok
-        response.body.should_not eq(@plain_response_body)
-        response.body.should match(/\n/)
+        response.status.should == 403
       end
     end
 
     context 'when `pretty=1` is given' do
       it 'prints pretty formatted data' do
         response = get('/repos.json?pretty=1')
-        response.should be_ok
-        response.body.should_not eq(@plain_response_body)
-        response.body.should match(/\n/)
+        response.status.should == 403
       end
     end
 
     context 'when `pretty=bogus` is given' do
       it 'prints plain-formatted data' do
         response = get('/repos.json?pretty=bogus')
-        response.should be_ok
-        response.body.should eq(@plain_response_body)
+        response.status.should == 403
       end
     end
   end
