@@ -1,9 +1,10 @@
 describe Travis::Services::FindBuilds do
   before { DatabaseCleaner.clean_with :truncation }
 
+  let(:user)    { Factory(:user) }
   let(:repo)    { Factory(:repository, owner_name: 'travis-ci', name: 'travis-core') }
   let!(:push)   { Factory(:build, repository: repo, event_type: 'push', state: :failed, number: 1) }
-  let(:service) { described_class.new(stub('user'), params) }
+  let(:service) { described_class.new(user, params) }
 
   attr_reader :params
 

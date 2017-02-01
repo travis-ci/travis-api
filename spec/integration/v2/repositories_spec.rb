@@ -4,22 +4,11 @@ describe 'Repos', set_app: true do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
-  it 'returns repositories by ids with ids=1,2,3 format' do
+  it 'returns 403 if not authenticated' do
     repos = Repository.all
     ids = repos[0..1].map(&:id)
     response = get "/repos?ids=#{ids.join(',')}", {}, headers
-    body = JSON.parse(response.body)
-
-    body['repos'].map { |r| r['id'] }.should == ids
-  end
-
-  it 'returns repositories by ids with ids[] format' do
-    repos = Repository.all
-    ids = repos[0..1].map(&:id)
-    response = get "/repos?ids[]=#{ids[0]}&ids[]=#{ids[1]}", {}, headers
-    body = JSON.parse(response.body)
-
-    body['repos'].map { |r| r['id'] }.should == ids
+    response.status.should ==  403
   end
 
   describe 'with authenticated user' do
@@ -72,6 +61,26 @@ describe 'Repos', set_app: true do
       JSON.parse(response.body)['settings'].should have_key('build_pushes')
       JSON.parse(response.body)['settings'].should_not have_key('env_vars')
     end
+
+    it 'GET /repos' do
+      response = get '/repos', {}, headers
+      response.should deliver_json_for(Repository.timeline, version: 'v2')
+    end
+
+    it 'GET /repos?owner_name=svenfuchs' do
+      response = get '/repos', { owner_name: 'svenfuchs' }, headers
+      response.should deliver_json_for(Repository.by_owner_name('svenfuchs'), version: 'v2')
+    end
+
+    it 'GET /repos?member=svenfuchs' do
+      response = get '/repos', { member: 'svenfuchs' }, headers
+      response.should deliver_json_for(Repository.by_member('svenfuchs'), version: 'v2')
+    end
+
+    it 'GET /repos?slug=svenfuchs/name=minimal' do
+      response = get '/repos', { slug: 'svenfuchs/minimal' }, headers
+      response.should deliver_json_for(Repository.by_slug('svenfuchs/minimal'), version: 'v2')
+    end
   end
 
   describe 'without authenticated user' do
@@ -100,22 +109,12 @@ describe 'Repos', set_app: true do
 
   it 'GET /repos' do
     response = get '/repos', {}, headers
-    response.should deliver_json_for(Repository.timeline, version: 'v2')
+    response.status.should == 403
   end
 
-  it 'GET /repos?owner_name=svenfuchs' do
-    response = get '/repos', { owner_name: 'svenfuchs' }, headers
-    response.should deliver_json_for(Repository.by_owner_name('svenfuchs'), version: 'v2')
-  end
-
-  it 'GET /repos?member=svenfuchs' do
-    response = get '/repos', { member: 'svenfuchs' }, headers
-    response.should deliver_json_for(Repository.by_member('svenfuchs'), version: 'v2')
-  end
-
-  it 'GET /repos?slug=svenfuchs/name=minimal' do
-    response = get '/repos', { slug: 'svenfuchs/minimal' }, headers
-    response.should deliver_json_for(Repository.by_slug('svenfuchs/minimal'), version: 'v2')
+  it 'GET /repos/:owner' do
+    response = get "repos/#{repo.owner.login}", {}, headers
+    response.should deliver_json_for(Repository.by_owner_name(repo.owner.login), version: 'v2')
   end
 
   it 'GET /repos/1' do
@@ -139,9 +138,9 @@ describe 'Repos', set_app: true do
     response.should deliver_cc_xml_for(Repository.by_slug('svenfuchs/minimal').first)
   end
 
-  it 'responds with cc.xml for /repos list' do
+  it 'responds 403 to /repos when no token is given' do
     response = get '/repos', {}, 'HTTP_ACCEPT' => 'application/xml; version=2'
-    response.should deliver_cc_xml_for(Repository.timeline)
+    response.status.should == 403
   end
 
   it 'responds with 200 and image when repo can\'t be found and format is png' do

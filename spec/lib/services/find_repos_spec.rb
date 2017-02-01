@@ -1,8 +1,9 @@
 describe Travis::Services::FindRepos do
   before { DatabaseCleaner.clean_with :truncation }
 
+  let(:user) { Factory(:user) }
   let!(:repo)   { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :active => true) }
-  let(:service) { described_class.new(stub('user'), params) }
+  let(:service) { described_class.new(user, params) }
 
   attr_reader :params
 
