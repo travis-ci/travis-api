@@ -155,10 +155,22 @@ module Travis::API::V3
         delete :delete
       end
 
-      resource :ssh_key do
-        route '/ssh_key'
+      # This is the key we generate for encryption/decryption etc.
+      # In V2 it was found at /repos/:repo_id/key
+      resource :ssl_key do
+        route '/key_pair/generated'
         get   :find
         post  :create
+      end
+
+      # This is the key that users may choose to add on travis-ci.com
+      # In V2 it was found at /settings/ssh_key/:repo_id
+      resource :key_pair do
+        route   '/key_pair'
+        get     :find
+        post    :create
+        patch   :update
+        delete :delete
       end
     end
 

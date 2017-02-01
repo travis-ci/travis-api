@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::SshKey::Create, set_app: true do
+describe Travis::API::V3::Services::SslKey::Create, set_app: true do
   let(:repo) do
     Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first_or_create.tap do |repo|
       repo.create_key.tap { |key| key.generate_keys!; key.save! }
@@ -12,38 +12,20 @@ describe Travis::API::V3::Services::SshKey::Create, set_app: true do
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
   describe 'not authenticated' do
-    before { post("/v3/repo/#{repo.id}/ssh_key") }
+    before { post("/v3/repo/#{repo.id}/key_pair/generated") }
     include_examples 'not authenticated'
   end
 
   context 'authenticated as wrong user' do
     describe 'not allowed' do
-      before { post("/v3/repo/#{repo.id}/ssh_key", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}") }
-
-      example { expect(last_response.status).to eq(403) }
-      example do
-        expect(JSON.load(body)).to eq(
-          '@type' => 'error',
-          'error_type' => 'insufficient_access',
-          'error_message' => 'operation requires change_key access to repository',
-          'permission' => 'change_key',
-          'resource_type' => 'repository',
-          'repository' => {
-            '@type' => 'repository',
-            '@href' => "/v3/repo/#{repo.id}",
-            '@representation' => 'minimal',
-            'id' => repo.id,
-            'name' => 'minimal',
-            'slug' => 'svenfuchs/minimal'
-          }
-        )
-      end
+      before { post("/v3/repo/#{repo.id}/key_pair/generated", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}") }
+      include_examples 'insufficient access to repo', 'change_key'
     end
   end
 
   context 'authenticated' do
     describe 'missing repo' do
-      before { post("/v3/repo/999999999/ssh_key", {}, auth_headers) }
+      before { post("/v3/repo/999999999/key_pair/generated", {}, auth_headers) }
       include_examples 'missing repo'
     end
 
@@ -51,12 +33,12 @@ describe Travis::API::V3::Services::SshKey::Create, set_app: true do
       before do
         Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
         repo.key.destroy
-        post("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers)
+        post("/v3/repo/#{repo.id}/key_pair/generated", {}, auth_headers)
       end
 
       example { expect(last_response.status).to eq 201 }
       example do
-        expect(JSON.parse(last_response.body)).to include *%w{@type @href @representation id public_key fingerprint}
+        expect(JSON.parse(last_response.body)).to include *%w{@type @href @representation description public_key fingerprint}
       end
     end
 
@@ -65,14 +47,13 @@ describe Travis::API::V3::Services::SshKey::Create, set_app: true do
 
       before do
         Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
-        post("/v3/repo/#{repo.id}/ssh_key", {}, auth_headers)
+        post("/v3/repo/#{repo.id}/key_pair/generated", {}, auth_headers)
       end
 
       example { expect(last_response.status).to eq 201 }
       example do
         result = JSON.parse(last_response.body)
-        expect(result).to include *%w{@type @href @representation id public_key fingerprint}
-        expect(result['id']).to eq key.reload.id
+        expect(result).to include *%w{@type @href @representation description public_key fingerprint}
         expect(result['fingerprint']).to eq(key.reload.fingerprint)
       end
     end
