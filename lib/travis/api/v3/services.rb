@@ -16,6 +16,7 @@ module Travis::API::V3
     EnvVars       = Module.new { extend Services }
     Job           = Module.new { extend Services }
     Jobs          = Module.new { extend Services }
+    KeyPair       = Module.new { extend Services }
     Lint          = Module.new { extend Services }
     Log           = Module.new { extend Services }
     Organization  = Module.new { extend Services }
@@ -24,7 +25,7 @@ module Travis::API::V3
     Repositories  = Module.new { extend Services }
     Repository    = Module.new { extend Services }
     Requests      = Module.new { extend Services }
-    SshKey        = Module.new { extend Services }
+    SslKey        = Module.new { extend Services }
     User          = Module.new { extend Services }
     UserSetting   = Module.new { extend Services }
     UserSettings  = Module.new { extend Services }
