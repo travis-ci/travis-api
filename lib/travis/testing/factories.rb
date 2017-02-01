@@ -154,3 +154,4 @@ FactoryGirl.define do
     dont_run_if_recent_build_exists false
   end
 end
+
