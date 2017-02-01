@@ -53,7 +53,7 @@ class Build < Travis::Model
   belongs_to :request
   belongs_to :repository, autosave: true
   belongs_to :owner, polymorphic: true
-  has_many   :matrix, as: :source, order: :id, class_name: 'Job::Test', dependent: :destroy
+  has_many   :matrix, -> { order('id') }, as: :source, class_name: 'Job::Test', dependent: :destroy
   has_many   :events, as: :source
 
   validates :repository_id, :commit_id, :request_id, presence: true

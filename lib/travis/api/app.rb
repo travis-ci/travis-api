@@ -104,7 +104,6 @@ module Travis::Api
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
         use Raven::Rack if Travis::Api::App.use_monitoring?
         use Rack::SSL if Endpoint.production?
-        use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
@@ -206,7 +205,7 @@ module Travis::Api
           pool_size = ENV['DATABASE_POOL_SIZE']
           Travis.config.logs_database[:pool] = pool_size.to_i if pool_size
 
-          Travis::LogsModel.establish_connection 'logs_database'
+          Travis::LogsModel.establish_connection(Travis.config.logs_database.to_h)
         end
       end
 
