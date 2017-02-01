@@ -7,10 +7,10 @@ module Travis::API::V3
     representation(:active, *representations[:standard])
 
     def jobs
-      if include_full_jobs?
-        return representation?(:active) ? model.active_jobs : model.jobs
-      end
-      model.job_ids.map { |id| job(id) }
+      return model.active_jobs if include_full_jobs? && representation?(:active)
+      return model.jobs if include_full_jobs?
+      return model.job_ids.map { |id| job(id) } unless representation?(:active)
+      model.active_jobs.map{ |j| job(j.id) }
     end
 
     private def include_full_jobs?

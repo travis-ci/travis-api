@@ -36,6 +36,15 @@ RSpec::Matchers.define :contain_full_jobs do
   failure_message_for_should { |_| "expected response #{@response} to contain for jobs: '@representation' => 'standard'"}
 end
 
+RSpec::Matchers.define :contain_minimal_jobs do
+  match do |response|
+    response = JSON.parse(response.body)
+    @response = response['builds'].flat_map { |b| b['jobs'] }
+    @response.all? { |j| j["@representation"] == "minimal" }
+  end
+  failure_message_for_should { |_| "expected response #{@response} to contain for jobs: '@representation' => 'minimal'"}
+end
+
 RSpec::Matchers.define :not_contain_jobs do |*jobs|
   match do |response|
     response = JSON.parse(response.body)
@@ -131,6 +140,7 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
       let(:perm_repo)  { V3::Models::Repository.create(owner: org, name: 'Bionade') }
       let(:perm_build) { V3::Models::Build.create(repository: perm_repo, owner: org, state: 'created') }
       let!(:perm_job)  { V3::Models::Job.create(source_id: perm_build.id, source_type: 'Build', owner: org, state: 'queued') }
+      let!(:non_active_job) { V3::Models::Job.create(source_id: perm_build.id, source_type: 'Build', owner: org, state: 'finished') }
       let!(:user_perm) { V3::Models::Permission.create(repository: perm_repo, user: user) }
 
       let(:non_perm_repo)  { V3::Models::Repository.create(owner: org, name: 'Bionade', private: true) }
@@ -147,6 +157,20 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
 
         example { expect(last_response).to not_contain_builds non_perm_build }
         example { expect(last_response).to not_contain_jobs non_perm_job }
+        example { expect(last_response).to not_contain_jobs non_active_job }
+      end
+
+      describe 'can see everything (with minimal jobs) public or that you have permissions for' do
+        before { get("/v3/owner/#{org.login}/active", {}, json_headers.merge('HTTP_AUTHORIZATION' => "token #{user_token}")) }
+
+        example { expect(last_response).to be_ok }
+        example { expect(last_response).to contain_builds perm_build }
+        example { expect(last_response).to contain_jobs perm_job }
+        example { expect(last_response).to contain_minimal_jobs }
+
+        example { expect(last_response).to not_contain_builds non_perm_build }
+        example { expect(last_response).to not_contain_jobs non_perm_job }
+        example { expect(last_response).to not_contain_jobs non_active_job }
       end
     end
   end
