@@ -49,7 +49,7 @@ module Travis::API::V3
           Routes::Resource.new(:template, attributes: [:request_method, :uri_template])
         ]
 
-        all.sort_by(&:identifier)
+        all.sort_by(&:display_identifier)
       end
     end
 
@@ -82,7 +82,7 @@ module Travis::API::V3
     def render_json
       resources = { }
       all_resources.each do |resource|
-        data = resources[resource.identifier] ||= { :@type => :resource, :actions => {} }
+        data = resources[resource.display_identifier] ||= { :@type => :resource, :actions => {} }
         data.merge! resource.meta_data
 
         if renderer = Renderer[resource.identifier, false]
@@ -98,20 +98,20 @@ module Travis::API::V3
           end
         end
 
-        if permissions           = Permissions[resource.identifier, false]
+        if permissions           = Permissions[resource.display_identifier, false]
           data[:permissions]     = permissions.access_rights.keys
         end
 
         resource.services.each do |(request_method, sub_route), service|
-          list    = resources[resource.identifier][:actions][service] ||= []
+          list    = resources[resource.display_identifier][:actions][service] ||= []
           pattern = sub_route ? resource.route + sub_route : resource.route
           factory = Services[resource.identifier][service]
 
           if factory.params and factory.params.include? "sort_by".freeze
-            query = Queries[resource.identifier]
+            query = Queries[resource.display_identifier]
             if query and query.sortable?
-              resources[resource.identifier][:sortable_by]  = query.sort_by.keys - query.experimental_sortable_by
-              resources[resource.identifier][:default_sort] = query.default_sort unless query.default_sort.empty?
+              resources[resource.display_identifier][:sortable_by]  = query.sort_by.keys - query.experimental_sortable_by
+              resources[resource.display_identifier][:default_sort] = query.default_sort unless query.default_sort.empty?
             end
           end
 
@@ -140,7 +140,7 @@ module Travis::API::V3
       all_resources.each do |resource|
         resource.services.each do |(request_method, sub_route), service|
           pattern  = sub_route ? resource.route + sub_route : resource.route
-          relation = "http://schema.travis-ci.com/rel/#{resource.identifier}/#{service}"
+          relation = "http://schema.travis-ci.com/rel/#{resource.display_identifier}/#{service}"
           pattern.to_templates.each do |template|
             relations[relation]           ||= {}
             relations[relation][template] ||= { allow: [], vars: template.scan(/{\+?([^}]+)}/).flatten }

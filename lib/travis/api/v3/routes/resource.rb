@@ -18,5 +18,9 @@ module Travis::API::V3
     def route=(value)
       @route = value ? Mustermann.new(value) : value
     end
+
+    def display_identifier
+      meta_data.fetch(:as, identifier)
+    end
   end
 end
