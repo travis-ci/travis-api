@@ -18,8 +18,8 @@ module Travis::API::V3
       @prefix ||= ""
     end
 
-    def resource(identifier, **meta_data, &block)
-      resource = Routes::Resource.new(identifier, **meta_data)
+    def resource(identifier, **args, &block)
+      resource = Routes::Resource.new(identifier, **args)
       with_resource(resource, &block)
       resources << resource
     end
