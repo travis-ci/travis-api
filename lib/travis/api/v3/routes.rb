@@ -162,7 +162,7 @@ module Travis::API::V3
 
       # This is the key we generate for encryption/decryption etc.
       # In V2 it was found at /repos/:repo_id/key
-      resource :ssl_key do
+      resource :ssl_key, as: :key_pair_generated do
         route '/key_pair/generated'
         get   :find
         post  :create

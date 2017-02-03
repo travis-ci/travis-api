@@ -76,6 +76,22 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
           specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}build/{build.id}{?include}") }
         end
       end
+      
+      describe "key pair (generated) resource" do
+        let(:resource) { resources.fetch("key_pair_generated") }
+        specify { expect(resources)         .to include("key_pair_generated") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/key_pair/generated{?include}") }
+        end
+
+        describe "create action" do
+          let(:action) { resource.fetch("actions").fetch("create") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/key_pair/generated") }
+        end
+      end
 
       describe "organization resource" do
         let(:resource) { resources.fetch("organization") }
