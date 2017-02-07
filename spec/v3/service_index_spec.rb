@@ -19,7 +19,14 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
 
         describe "create action" do
           let(:action) { resource.fetch("actions").fetch("create") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/requests") }
+          specify do
+            expect(action).to include(
+              "@type"=>"template",
+              "request_method"=>"POST",
+              "uri_template"=>"#{path}repo/{repository.id}/requests",
+              "accepted_params" => ["request.config", "request.message", "request.branch", "request.token"]
+            )
+          end
         end
       end
 
@@ -46,12 +53,26 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
 
         describe "activate action" do
           let(:action) { resource.fetch("actions").fetch("activate") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/activate") }
+          specify do
+            expect(action).to include(
+              "@type"=>"template",
+              "request_method"=>"POST",
+              "uri_template"=>"#{path}repo/{repository.id}/activate",
+              "accepted_params" => []
+            )
+          end
         end
 
         describe "deactivate action" do
           let(:action) { resource.fetch("actions").fetch("deactivate") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/deactivate") }
+          specify do
+            expect(action).to include(
+              "@type"=>"template",
+              "request_method"=>"POST",
+              "uri_template"=>"#{path}repo/{repository.id}/deactivate",
+              "accepted_params" => []
+            )
+          end
         end
       end
 
@@ -66,6 +87,86 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
         end
       end
 
+      describe "env_vars resource" do
+        let(:resource) { resources.fetch("env_vars") }
+        specify { expect(resources)         .to include("env_vars") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "for_repository action" do
+          let(:action) { resource.fetch("actions").fetch("for_repository") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/env_vars{?include}") }
+        end
+
+        describe "create action" do
+          let(:action) { resource.fetch("actions").fetch("create") }
+          specify do
+            expect(action).to include(
+              "@type"=>"template",
+              "request_method"=>"POST",
+              "uri_template"=>"#{path}repo/{repository.id}/env_vars",
+              "accepted_params" => ["env_var.name", "env_var.value", "env_var.public"]
+            )
+          end
+        end
+      end
+
+      describe "env_var resource" do
+        let(:resource) { resources.fetch("env_var") }
+        specify { expect(resources)         .to include("env_var") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "update action" do
+          let(:action) { resource.fetch("actions").fetch("update") }
+          specify do
+            expect(action).to include(
+              "@type"=>"template",
+              "request_method"=>"PATCH",
+              "uri_template"=>"#{path}repo/{repository.id}/env_var/{env_var.id}",
+              "accepted_params" => ["env_var.name", "env_var.value", "env_var.public"]
+            )
+          end
+        end
+
+        describe "delete action" do
+          let(:action) { resource.fetch("actions").fetch("delete") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"DELETE", "uri_template"=>"#{path}repo/{repository.id}/env_var/{env_var.id}") }
+        end
+      end
+
+      describe "user_settings resource" do
+        let(:resource) { resources.fetch("user_settings") }
+        specify { expect(resources)         .to include("user_settings") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("for_repository") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/settings{?include}") }
+        end
+      end
+
+      describe "user_setting resource" do
+        let(:resource) { resources.fetch("user_setting") }
+        specify { expect(resources)         .to include("user_setting") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/setting/{user_setting.name}{?include}") }
+        end
+
+        describe "update action" do
+          let(:action) { resource.fetch("actions").fetch("update") }
+          specify do
+            expect(action).to include(
+              "@type"=>"template",
+              "request_method"=>"PATCH",
+              "uri_template"=>"#{path}repo/{repository.id}/setting/{user_setting.name}",
+              "accepted_params" => ["user_setting.value"]
+            )
+          end
+        end
+      end
+
       describe "build resource" do
         let(:resource) { resources.fetch("build") }
         specify { expect(resources)         .to include("build") }
@@ -74,6 +175,29 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
         describe "find action" do
           let(:action) { resource.fetch("actions").fetch("find") }
           specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}build/{build.id}{?include}") }
+        end
+      end
+      
+      describe "key pair resource" do
+        let(:resource) { resources.fetch("key_pair") }
+        specify { expect(resources)         .to include("key_pair") }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/key_pair{?include}") }
+        end
+
+        describe "create action" do
+          let(:action) { resource.fetch("actions").fetch("create") }
+          specify do
+            expect(action).to include(
+              "@type"=>"template",
+              "request_method"=>"POST",
+              "uri_template"=>"#{path}repo/{repository.id}/key_pair",
+              "accepted_params" => ["key_pair.description", "key_pair.value"]
+            )
+          end
         end
       end
       
@@ -89,7 +213,14 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
 
         describe "create action" do
           let(:action) { resource.fetch("actions").fetch("create") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"POST", "uri_template"=>"#{path}repo/{repository.id}/key_pair/generated") }
+          specify do
+            expect(action).to include(
+              "@type"=>"template",
+              "request_method"=>"POST",
+              "uri_template"=>"#{path}repo/{repository.id}/key_pair/generated",
+              "accepted_params" => []
+            )
+          end
         end
       end
 

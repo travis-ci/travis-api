@@ -119,7 +119,13 @@ module Travis::API::V3
             params    = factory.params if request_method == 'GET'.freeze
             params  &&= params.reject { |p| p.start_with? ?@.freeze }
             template += "{?#{params.sort.join(?,)}}" if params and params.any?
-            list << { :@type => :template, :request_method => request_method, :uri_template => prefix + template }
+            action    = {
+              :@type => :template,
+              :request_method => request_method,
+              :uri_template => prefix + template
+            }
+            action[:accepted_params] = factory.accepted_params if ['POST'.freeze, 'PATCH'.freeze].include? request_method
+            list << action
           end
 
         end
