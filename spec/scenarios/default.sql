@@ -11,8 +11,6 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET row_security = off;
-
 SET search_path = public, pg_catalog;
 
 --
@@ -97,7 +95,7 @@ INSERT INTO builds VALUES (11, 1, '3', '2010-11-12 13:00:00', NULL, '2017-02-07 
 - test/Gemfile.rails-2.3.x
 - test/Gemfile.rails-3.0.x
 ', 5, 3, 'configured', NULL, 1, 'User', 'push', 'passed', NULL, NULL, 'master', NULL, '{12,13,14,15}', NULL, NULL);
-INSERT INTO builds VALUES (16, 2, '1', '2010-11-11 12:00:00', '2010-11-11 12:00:05', '2017-02-07 15:32:31.873576', '2017-02-07 15:32:31.873576', '--- 
+INSERT INTO builds VALUES (16, 2, '1', '2010-11-11 12:00:00', '2010-11-11 12:00:05', '2017-02-07 15:32:31.873576', '2017-02-07 15:32:31.873576', '---
 ...
 ', 7, 4, 'failes', NULL, 2, 'User', 'push', NULL, NULL, NULL, 'master', NULL, '{17}', NULL, NULL);
 
@@ -481,4 +479,3 @@ SELECT pg_catalog.setval('users_id_seq', 2, true);
 --
 -- PostgreSQL database dump complete
 --
-
