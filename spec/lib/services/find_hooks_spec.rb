@@ -22,6 +22,28 @@ describe Travis::Services::FindHooks do
     hooks.sort_by(&:id).map(&:admin?).should == [true, false]
   end
 
+  it 'does not order the repos with order=none' do
+    first = Factory(:repository, name: 'abc')
+    last = Factory(:repository, name: 'zyx')
+
+    user.permissions.create!(:repository => first, :admin => true)
+    user.permissions.create!(:repository => last,  :admin => true)
+
+    @params = { all: true }
+    service = described_class.new(user, params)
+    hooks = service.run
+    ordered_names = hooks.map(&:name).sort
+    hooks.map(&:name).should == ordered_names
+
+    @params = { all: true, order: 'none' }
+    service = described_class.new(user, params)
+    hooks = service.run
+    ordered_names = hooks.map(&:name).sort
+    hooks.map(&:name).should_not == ordered_names
+  end
+
+
+
   it 'finds repositories where the current user has admin access' do
     @params = {}
     service.run.should include(repo)
