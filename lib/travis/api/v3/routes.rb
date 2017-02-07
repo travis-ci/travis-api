@@ -138,12 +138,12 @@ module Travis::API::V3
 
       resource :user_settings do
         route '/settings'
-        get   :find
+        get   :for_repository
       end
 
       resource :user_setting do
         route '/setting/{user_setting.name}'
-        get  :find
+        get   :find
         patch :update
       end
 

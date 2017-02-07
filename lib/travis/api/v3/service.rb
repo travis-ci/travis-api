@@ -24,6 +24,10 @@ module Travis::API::V3
       @params
     end
 
+    def self.accepted_params
+      self.params.select { |p| p =~ /#{result_type}\./.freeze }
+    end
+
     def self.paginate(**options)
       params("limit".freeze, "offset".freeze)
       params("sort_by".freeze) if query_factory.sortable?

@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Services::EnvVars::Create < Service
-    params :id, prefix: :repository
-    params :id, :name, :value, :public, prefix: :env_var
+    params :name, :value, :public, prefix: :env_var
+    result_type :env_var
 
     def run!
       repository = check_login_and_find(:repository)
