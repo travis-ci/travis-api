@@ -79,8 +79,13 @@ class User < Travis::Model
       hooks = hooks.administratable
     end
     hooks = hooks.includes(:permissions).
-              select('repositories.*, permissions.admin as admin, permissions.push as push').
-              order('owner_name, name')
+              select('repositories.*, permissions.admin as admin, permissions.push as push')
+
+    p options
+    if options[:order] != 'none'
+      hooks = hooks.order('owner_name, name')
+    end
+
     # TODO remove owner_name/name once we're on api everywhere
     if options.key?(:id)
       hooks = hooks.where(options.slice(:id))
