@@ -269,6 +269,7 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    rack-timeout (0.4.2)
     raindrops (0.17.0)
     rake (0.9.6)
     rb-fsevent (0.9.8)
@@ -381,6 +382,7 @@ DEPENDENCIES
   rack-attack (= 5.0.0.beta1)
   rack-cache!
   rack-contrib
+  rack-timeout
   rake (~> 0.9.2)
   rb-fsevent (~> 0.9.1)
   redlock
@@ -412,4 +414,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.13.6
+   1.14.3

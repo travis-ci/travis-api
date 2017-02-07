@@ -22,7 +22,7 @@ module Travis
         end
 
         def accept?
-          current_user && permission? && resetable?
+          current_user && permission? # && resetable?
         end
 
         def messages
@@ -51,9 +51,9 @@ module Travis
             current_user.permission?(required_role, repository_id: target.repository_id)
           end
 
-          def resetable?
-            target.resetable?
-          end
+          # def resetable?
+          #   target.resetable?
+          # end
 
           def required_role
             Travis.config.roles.reset_model

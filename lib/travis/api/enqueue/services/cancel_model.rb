@@ -45,7 +45,7 @@ module Travis
         end
 
         def can_cancel?
-          authorized? && target.cancelable?
+          authorized? # && target.cancelable?
         end
 
         # check on web

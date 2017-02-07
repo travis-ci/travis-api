@@ -1,10 +1,8 @@
 require 'travis/api/app'
 require 'securerandom'
 
-class Travis::Api::App
+module Travis::API::App
   class AccessToken
-    include ConditionalSkylight::Mixin
-
     DEFAULT_SCOPES = [:public, :private]
     attr_reader :token, :scopes, :user_id, :app_id, :expires_in, :extra
 
@@ -24,7 +22,6 @@ class Travis::Api::App
       new(token: token, scopes: scopes, user_id: user_id, app_id: app_id, extra: extra) if user_id
     end
 
-    instrument_method
     def initialize(options = {})
       raise ArgumentError, 'must supply either user_id or user' unless options.key?(:user) ^ options.key?(:user_id)
       raise ArgumentError, 'must supply app_id' unless options.key?(:app_id)
@@ -43,7 +40,6 @@ class Travis::Api::App
       @extra    = options[:extra]
     end
 
-    instrument_method
     def save
       key = key(token)
       redis.del(key)
@@ -94,7 +90,6 @@ class Travis::Api::App
 
     private
 
-      instrument_method
       def reuse_token
         redis.get(reuse_key) unless expires_in
       end
