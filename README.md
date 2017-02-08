@@ -10,9 +10,9 @@ You will need the following packages to get travis-api to work:
 
 1. PostgreSQL 9.3 or higher
 2. Bundler
-3. Redis Server
+3. Redis
 4. *Optional:* RabbitMQ Server
-5. Nginx -
+5. *Optional:* Nginx -
     *If working in Ubuntu please install nginx manually from source: Download and extract latest nginx version, open a terminal in extracted folder and then run the following:*
 ```sh-session
     $ sudo apt-get install libpcre3 libpcre3-dev
@@ -58,7 +58,13 @@ Please Note: The database names are configured using the environment variable RA
 ```sh-session
 $ bundle exec rake
 ```
-### Run the server
+
+### Run the server (development)
+```sh-session
+ENV=development bundle exec ruby -Ilib -S rackup
+```
+
+### Run the server (production)
 ```sh-session
 $ bundle exec script/server
 ```
