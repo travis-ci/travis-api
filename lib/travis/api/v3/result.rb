@@ -6,7 +6,7 @@ module Travis::API::V3
       @warnings = []
       @access_control, @type, @resource, @status, @meta_data = access_control, type, resource, status, meta_data
     end
-
+    
     def respond_to_missing?(method, *)
       super or method.to_sym == type.to_sym
     end
