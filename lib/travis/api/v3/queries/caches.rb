@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Caches < RemoteQuery
-    params :match, :branch
+    params :name, :branch
 
     def find(repo)
       @repo = repo
@@ -15,8 +15,8 @@ module Travis::API::V3
     end
 
     def filter(list)
-      return list unless match
-      list.select{|c| c.slug.include? match}
+      return list unless name
+      list.select{|c| c.name.include? name}
     end
 
     private
