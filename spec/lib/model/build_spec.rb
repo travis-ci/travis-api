@@ -288,7 +288,7 @@ describe Build do
     end
 
     it 'saves pull_request_title before create' do
-      payload = { 'pull_request' => { 'title' => 'A pull request' } }
+      payload = { 'pull_request' =>  { 'title' => 'A pull request' } }
       build = Factory(:build,  request: Factory(:request, event_type: 'pull_request', payload: payload))
       build.pull_request_title.should == 'A pull request'
     end

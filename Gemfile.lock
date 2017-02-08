@@ -78,7 +78,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: e1a3c269fdd96e8e8ae8ea2b7bdd054eeb39f54d
+  revision: 63be99a80da08fcfee71a21e1ecb39bf6d14b1f5
   branch: igor-database-config-to-h
   specs:
     travis-support (0.0.1)

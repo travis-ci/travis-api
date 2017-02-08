@@ -67,7 +67,9 @@ class Repository::Settings < Travis::Settings
 
       def max_value(settings, type)
         config = Travis.config.settings.timeouts
-        values = config.send(custom_timeouts?(settings) ? :maximums : :defaults) || {}
+        key = custom_timeouts?(settings) ? :maximums : :defaults
+        values = config[key] || {}
+
         values[type]
       end
 
