@@ -10,7 +10,7 @@ module Travis::API::V3
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
       if log.archived_at
-        content = s3_config.buckets.find(bucket_name).try(:content)
+        content = s3_config.buckets.find(bucket_name).content
         p "#" * 60
         p content
         p bucket_name
