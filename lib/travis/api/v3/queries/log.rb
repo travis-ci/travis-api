@@ -18,7 +18,10 @@ module Travis::API::V3
     end
 
     def create_log_parts(log, content)
-      log.log_parts << Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
+      # log.log_parts << Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
+      log_part = Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
+      log.log_parts << log_part
+      log_part.destroy   
     end
 
     def delete(user, job)
@@ -40,13 +43,5 @@ module Travis::API::V3
       "jobs/#{@job.id}/log.txt"
     end
 
-    # def bucket_name
-    #   hostname('archive')
-    # end
-    #
-    # def hostname(name)
-    #   "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
-    # end
-    #
   end
 end
