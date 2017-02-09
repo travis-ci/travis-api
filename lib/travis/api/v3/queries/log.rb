@@ -1,5 +1,3 @@
-# require 's3'
-
 module Travis::API::V3
   class Queries::Log < RemoteQuery
 
@@ -10,11 +8,7 @@ module Travis::API::V3
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
       if log.archived_at
-        # object = s3_service.buckets.find(bucket_name).objects.find(prefix)
         content = fetch.get(prefix).try(:body)
-        p "#" * 60
-        p content
-        p "#" * 60
         create_log_parts(log, content)
       #if log has been aggregated, look at log.content
       elsif log.aggregated_at
@@ -46,17 +40,13 @@ module Travis::API::V3
       "jobs/#{@job.id}/log.txt"
     end
 
-    def bucket_name
-      hostname('archive')
-    end
-
-    def hostname(name)
-      "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
-    end
-
-    # def s3_service
-    #   S3::Service.new(:access_key_id => Travis.config.log_options.s3.access_key_id, :secret_access_key => Travis.config.log_options.s3.secret_access_key)
+    # def bucket_name
+    #   hostname('archive')
     # end
-
+    #
+    # def hostname(name)
+    #   "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
+    # end
+    #
   end
 end
