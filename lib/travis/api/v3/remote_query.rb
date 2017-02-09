@@ -37,7 +37,7 @@ module Travis::API::V3
     end
 
     def prefix
-      warn 'prefix in RemoteQuery called. If you wanted a prefix filter please impliment it in the subclass.'
+      warn 'prefix in RemoteQuery called. If you wanted a prefix filter please implement it in the subclass.'
       ''
     end
 
@@ -59,7 +59,7 @@ module Travis::API::V3
       #raise NotImplemented
     #end
     def s3_config
-      conf = config.logs_options.try(:s3) || {}
+      conf = config.log_options.try(:s3) || {}
       conf.merge!(bucket_name: bucket_name)
     end
 
