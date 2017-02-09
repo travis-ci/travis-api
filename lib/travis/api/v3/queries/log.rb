@@ -10,9 +10,10 @@ module Travis::API::V3
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
       if log.archived_at
-        content = s3_config.buckets.find(bucket_name).try(:body)
+        content = s3_config.buckets.find(bucket_name)
         p "#" * 60
         p content
+        p bucket_name
         p "#" * 60
         create_log_parts(log, content)
       #if log has been aggregated, look at log.content
@@ -54,7 +55,7 @@ module Travis::API::V3
     end
 
     def s3_config
-      S3::Service.new(:access_key_id => Travis.config.log_options.s3.access_key_id, :secret_access_key => Travis.config.logs_options.s3.secret_access_key)
+      S3::Service.new(:access_key_id => Travis.config.log_options.s3.access_key_id, :secret_access_key => Travis.config.log_options.s3.secret_access_key)
       #conf = config.logs_options.try(:s3) || {}
       #conf.merge!(bucket_name: bucket_name)
     end
