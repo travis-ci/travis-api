@@ -55,8 +55,20 @@ module Travis::API::V3
       Travis.config
     end
 
+    #def s3_config
+      #raise NotImplemented
+    #end
     def s3_config
-      raise NotImplemented
+      conf = config.logs_options.try(:s3) || {}
+      conf.merge!(bucket_name: bucket_name)
+    end
+
+    def bucket_name
+      hostname('archive')
+    end
+
+    def hostname(name)
+      "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
     end
 
     def gcs_config
