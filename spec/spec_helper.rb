@@ -12,7 +12,7 @@ require 'pry'
 require 'stackprof'
 require 'webmock/rspec'
 
-require 'travis/api/app'
+require 'travis/api'
 require 'travis/testing'
 require 'travis/testing/scenario'
 require 'travis/testing/factories'
@@ -62,7 +62,7 @@ RSpec.configure do |c|
 
   c.before :suite do
     Travis.logger = Logger.new(StringIO.new)
-    Travis::Api::App.setup
+    # Travis::Api::App.setup
     Travis.config.client_domain = "www.example.com"
     Travis.config.endpoints.ssh_key = true
 

@@ -9,7 +9,7 @@ listen File.expand_path("nginx.socket", tmp_dir), backlog: 1024
 require 'fileutils'
 before_fork do |server, worker|
   # preload travis so we can have copy on write
-  require 'travis/api/app'
+  require 'travis/api'
 
   # signal to nginx we're ready
   FileUtils.touch("#{tmp_dir}/app-initialized")

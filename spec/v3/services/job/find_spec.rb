@@ -62,7 +62,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "compare_url"         => commit.compare_url,
         "committed_at"        => "2010-11-12T11:50:00Z"},
       "owner"                 => {
-        "@type"               => owner_type.to_s.downcase,
+        "@type"               => owner_type.to_s[/[^:]+$/].downcase,
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,
@@ -137,7 +137,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "compare_url"         => commit.compare_url,
         "committed_at"        => "2010-11-12T11:50:00Z"},
       "owner"                 => {
-        "@type"               => owner_type.to_s.downcase,
+        "@type"               => owner_type.to_s[/[^:]+$/].downcase,
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,

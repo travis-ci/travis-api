@@ -12,19 +12,15 @@ gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   '~> 0.1.0'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
-gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 
 gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
 gem 'mustermann'
-gem 'sinatra'
-gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
 
-gem 'active_model_serializers'
 gem 'unicorn'
 gem 'sentry-raven'
-gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack-contrib'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
+gem 'rack-timeout'
 gem 'rack-attack', '5.0.0.beta1'
 gem 'gh'
 gem 'bunny',           '~> 0.8.0'
@@ -32,15 +28,10 @@ gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
-gem 'simplecov'
-gem 'skylight', '~> 0.6.0.beta.1'
-gem 'stackprof'
-gem 'netaddr'
 
 gem 'jemalloc'
 gem 'customerio'
 
-gem "redlock"
 gem 'rake', '~> 0.9.2'
 
 group :development, :test do
@@ -55,6 +46,9 @@ group :test do
   gem 'database_cleaner', '~> 0.8.0'
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'
+  gem 'sinatra-contrib', require: nil
+  gem 'simplecov'
+  gem 'stackprof'
 end
 
 group :development do

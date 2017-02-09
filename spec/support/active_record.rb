@@ -17,7 +17,7 @@ ActiveRecord::Base.configurations = {
   'logs_test' => logs_config,
 }
 
-Travis::LogsModel.establish_connection('logs_test')
+# Travis::LogsModel.establish_connection('logs_test')
 ActiveRecord::Base.establish_connection('test')
 
 DatabaseCleaner.clean_with :truncation

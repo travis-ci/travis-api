@@ -12,7 +12,7 @@ module Travis::API::V3
     end
 
     def call(env)
-      return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
+      return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze or env['PATH_INFO'.freeze] == ''.freeze
       metrics         = @metrics_processor.create
       access_control  = AccessControl.new(env)
       env_params      = params(env)

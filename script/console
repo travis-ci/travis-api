@@ -2,21 +2,12 @@
 # encoding: UTF-8
 
 require 'bundler/setup'
-require 'travis/api/app'
+require 'travis/api'
 
 class Travis::Console
-  include Travis::Services::Helpers
-  attr_reader :current_user
-
-  def set_user(user)
-    user = User.find_by_login(user) unless User === user
-    @current_user = user
-  end
+  include Travis::API::V3::Models
 end
 
-V3 = Travis::API::V3
-
-Travis::Api::App.new
 console = Travis::Console.new
 methods = Travis::Console.instance_methods - Object.instance_methods
 

@@ -13,3 +13,4 @@ log/
 .coverage
 *.env
 .ruby-gemset
+*.bak
