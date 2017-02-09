@@ -8,7 +8,7 @@ module Travis::API::V3
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
       if log.archived_at
-        content = fetch.get(prefix).try(:body).to_json
+        content = fetch.get(prefix).try(:body).encode('UTF-8')
         create_log_parts(log, content)
       #if log has been aggregated, look at log.content
       elsif log.aggregated_at
@@ -18,9 +18,7 @@ module Travis::API::V3
     end
 
     def create_log_parts(log, content)
-      # log.log_parts << Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
       log.log_parts.build([{content: content, number: 0, created_at: log.created_at}])
-      log
     end
 
     def delete(user, job)
