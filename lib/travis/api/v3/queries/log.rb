@@ -21,7 +21,7 @@ module Travis::API::V3
       # log.log_parts << Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
       log_part = Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
       log.log_parts << log_part
-      log_part.destroy   
+      # log_part.destroy   
     end
 
     def delete(user, job)
