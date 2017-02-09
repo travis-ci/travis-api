@@ -20,6 +20,7 @@ module Travis::API::V3
     def create_log_parts(log, content)
       # log.log_parts << Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
       log.log_parts.build([{content: content, number: 0, created_at: log.created_at}])
+      log
     end
 
     def delete(user, job)
