@@ -49,7 +49,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job.id}/log.txt").
       to_return(status: 200, body: xml_content, headers: {})
     Fog.mock!
-    Travis.config.logs_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
+    Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
     storage = Fog::Storage.new({
       :aws_access_key_id => "key",
       :aws_secret_access_key => "secret",
