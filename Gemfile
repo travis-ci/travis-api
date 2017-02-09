@@ -44,7 +44,7 @@ gem "redlock"
 gem 'rake', '~> 0.9.2'
 
 group :development, :test do
-  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations', branch: 'beta_features'
+  gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations'
 end
 
 group :test do
