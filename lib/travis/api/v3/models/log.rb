@@ -4,7 +4,7 @@ module Travis::API::V3
 
     belongs_to :job
     belongs_to :removed_by, class_name: 'User', foreign_key: :removed_by
-    has_many  :log_parts, dependent: :destroy, order: 'number ASC'
+    has_many  :log_parts, dependent: :destroy, order: 'number ASC', autosave: false
 
     def clear!(user)
       removed_at = Time.now.utc
