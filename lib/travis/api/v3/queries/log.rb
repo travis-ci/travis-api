@@ -8,7 +8,8 @@ module Travis::API::V3
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
       if log.archived_at
-        content = fetch.get(prefix).try(:body)
+        # content = fetch.get(prefix).try(:body)
+        content = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         create_log_parts(log, content)
       #if log has been aggregated, look at log.content
       elsif log.aggregated_at
