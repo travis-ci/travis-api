@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Queries::Requests < Query
     def find(repository)
+      puts "this is the start of find in the query"
       repository.requests
     end
 
