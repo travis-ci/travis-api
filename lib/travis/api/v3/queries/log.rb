@@ -40,5 +40,18 @@ module Travis::API::V3
       "jobs/#{@job.id}/log.txt"
     end
 
+    def s3_config
+      conf = config.log_options.try(:s3) || {}
+      conf.merge!(bucket_name: bucket_name)
+    end
+
+    def bucket_name
+      hostname('archive')
+    end
+
+    def hostname(name)
+      "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
+    end
+
   end
 end
