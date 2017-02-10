@@ -55,7 +55,6 @@ module Travis::API::V3
         included << entry
         rendered
       end
-      $stderr.puts "this is the end of render in CollectionRenderer"
       result
     end
 
@@ -69,7 +68,6 @@ module Travis::API::V3
     end
 
     def render_entry(entry, **options)
-      $stderr.puts "this is the start of render_entry in CollectionRenderer"
       Renderer.render_value(entry, **options)
     end
   end
