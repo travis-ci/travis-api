@@ -102,9 +102,8 @@ module Travis::API::V3
     end
 
     def run
-      not_found unless result = run! #1
-      result = result(result_type, result) #5 unless result.is_a? Result #!!! This is what's calling it! result.!!!!
-      $stderr.puts "this is after the check I think is calling the query otherwise it's in result() which calls Result at some point."
+      not_found unless result = run!
+      result = result(result_type, result)
       result = paginate(result) if self.class.paginate?
       apply_warnings(result)
       result
