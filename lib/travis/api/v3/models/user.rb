@@ -8,6 +8,8 @@ module Travis::API::V3
     has_many :repositories,  as:        :owner
     has_many :stars
     has_one  :subscription,  as:        :owner
+    has_many :user_beta_features
+    has_many :beta_features, through: :user_beta_features
 
     serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
 
