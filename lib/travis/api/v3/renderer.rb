@@ -41,7 +41,7 @@ module Travis::API::V3
     end
 
     def render_value(value, **options)
-      puts "this is the start of render_value in Renderer"
+      $stderr.puts "this is the start of render_value in Renderer"
       case value
       when Hash                   then value.map { |k, v| [k, render_value(v, **options)] }.to_h
       when Array                  then value.map { |v   | render_value(v, **options)      }
@@ -53,7 +53,7 @@ module Travis::API::V3
       when Travis::Settings::EncryptedValue then value.decrypt
       else raise ArgumentError, 'cannot render %p (%p)' % [value.class, value]
       end
-      puts "this is the end of render_value in Renderer"
+      $stderr.puts "this is the end of render_value in Renderer"
     end
 
     private

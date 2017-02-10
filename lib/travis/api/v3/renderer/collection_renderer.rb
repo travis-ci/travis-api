@@ -47,7 +47,7 @@ module Travis::API::V3
     end
 
     def render
-      puts "this is the start of render in CollectionRenderer"
+      $stderr.puts "this is the start of render in CollectionRenderer"
       result                 = fields
       included               = self.included.dup
       result[collection_key] = list.map do |entry|
@@ -55,7 +55,7 @@ module Travis::API::V3
         included << entry
         rendered
       end
-      puts "this is the end of render in CollectionRenderer"
+      $stderr.puts "this is the end of render in CollectionRenderer"
       result
     end
 
@@ -69,7 +69,7 @@ module Travis::API::V3
     end
 
     def render_entry(entry, **options)
-      puts "this is the start of render_entry in CollectionRenderer"
+      $stderr.puts "this is the start of render_entry in CollectionRenderer"
       Renderer.render_value(entry, **options)
     end
   end
