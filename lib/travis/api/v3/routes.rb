@@ -181,11 +181,25 @@ module Travis::API::V3
 
     resource :user do
       capture id: :digit
-      route '/user'
-      get :current
-      get :find, '/{user.id}'
-      post :sync, '/{user.id}/sync'
+      route '/user/{user.id}'
+      get :find
+      post :sync, '/sync'
+
+      resource :beta_features do
+        route '/beta_features'
+        get   :find
+      end
+
+      resource :beta_feature do
+        route  '/beta_feature/{beta_feature.id}'
+        patch  :update
+        delete :delete
+      end
     end
 
+    resource :user do
+      route '/user'
+      get :current
+    end
   end
 end

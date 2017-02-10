@@ -40,7 +40,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-migrations
-  revision: e6b922522e32abd0930d2c985fb2850b7adaa81d
+  revision: c342bff13ff4f43b3209e5a4447cb5a183d29489
   specs:
     travis-migrations (0.0.3)
 
@@ -412,4 +412,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.13.6
+   1.14.3
