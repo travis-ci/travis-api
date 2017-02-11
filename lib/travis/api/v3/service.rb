@@ -103,7 +103,7 @@ module Travis::API::V3
 
     def run
       not_found unless result = run!
-      result = result(result_type, result) unless result.is_a? Result
+      result = result(result_type, result)
       result = paginate(result) if self.class.paginate?
       apply_warnings(result)
       result

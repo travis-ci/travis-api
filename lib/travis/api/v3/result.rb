@@ -2,6 +2,11 @@ module Travis::API::V3
   class Result
     attr_accessor :access_control, :type, :resource, :status, :href, :meta_data, :warnings
 
+    def self.new(access_control, type, resource, status: 200, **meta_data)
+      return resource if self == resource.class
+      super
+    end
+
     def initialize(access_control, type, resource, status: 200, **meta_data)
       @warnings = []
       @access_control, @type, @resource, @status, @meta_data = access_control, type, resource, status, meta_data
