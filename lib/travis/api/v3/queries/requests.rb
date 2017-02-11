@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::Requests < Query
     def find(repository)
-      repository.requests
+      result(result_type, repository.requests)
     end
 
     def count(repository, time_frame)
