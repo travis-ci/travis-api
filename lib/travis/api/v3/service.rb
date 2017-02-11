@@ -102,14 +102,11 @@ module Travis::API::V3
     end
 
     def run
-      not_found unless result = run!
-      $stderr.puts "The class is: #{result.class}"
-      $stderr.puts result.class
-      $stderr.puts result.is_a? Result
-      result = result(result_type, result) unless result.class == Result
-      result = paginate(result) if self.class.paginate?
-      apply_warnings(result)
-      result
+      not_found unless res = run!
+      res = result(result_type, res) unless res.is_a? Result
+      res = paginate(res) if self.class.paginate?
+      apply_warnings(res)
+      res
     end
 
     def warnings
