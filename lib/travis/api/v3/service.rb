@@ -102,10 +102,9 @@ module Travis::API::V3
     end
 
     def run
-      not_found unless res = run!
+      not_found unless result = run!
       result_test = result.is_a? Result
-      $stderr.puts result_test
-      result = result(result_type, result) unless result.is_a? Result
+      result = result(result_type, result) unless result_test
       result = paginate(result) if self.class.paginate?
       apply_warnings(result)
       result
