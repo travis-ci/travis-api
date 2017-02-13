@@ -10,7 +10,7 @@ module Travis::API::V3
       if log.archived_at
         content = fetch.get(prefix).try(:body)
         raise EntityMissing, 'could not retrieve log'.freeze if content.nil?
-        content = content.force_encoding('UTF-8') if content
+        content = content.force_encoding('UTF-8')
         create_log_parts(log, content)
       #if log has been aggregated, look at log.content
       elsif log.aggregated_at
@@ -44,7 +44,7 @@ module Travis::API::V3
 
     def s3_config
       conf = config.log_options.try(:s3) || {}
-      conf.merge!(bucket_name: bucket_name)
+      conf.merge(bucket_name: bucket_name)
     end
 
     def bucket_name

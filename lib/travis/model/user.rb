@@ -81,7 +81,6 @@ class User < Travis::Model
     hooks = hooks.includes(:permissions).
               select('repositories.*, permissions.admin as admin, permissions.push as push')
 
-    p options
     if options[:order] != 'none'
       hooks = hooks.order('owner_name, name')
     end
