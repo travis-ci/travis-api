@@ -8,12 +8,12 @@ module Travis::API::V3
       end
 
       def time(name, duration)
-         $stderr.puts "Librato: time: #{prefix}, #{name}"
+         $stderr.puts "Librato: time: #{@prefix}, #{name}"
         ::Metriks.timer("#{@prefix}.#{name}").update(duration)
       end
 
       def mark(name)
-        $stderr.puts "Librato: mark: #{prefix}, #{name}"
+        $stderr.puts "Librato: mark: #{@prefix}, #{name}"
         ::Metriks.meter("#{@prefix}.#{name}").mark
       end
     end
