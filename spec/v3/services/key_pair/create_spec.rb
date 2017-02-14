@@ -30,7 +30,7 @@ describe Travis::API::V3::Services::KeyPair::Create, set_app: true do
         before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
         describe 'key pair already exists' do
-          let(:key) { OpenSSL::PKey::RSA.generate(4096) }
+          let(:key) { OpenSSL::PKey::RSA.generate(2048) }
           let(:params) do
             {
               'key_pair.description' => 'foo',
@@ -83,7 +83,7 @@ describe Travis::API::V3::Services::KeyPair::Create, set_app: true do
         end
 
         describe 'creates key pair' do
-          let(:key) { OpenSSL::PKey::RSA.generate(4096) }
+          let(:key) { OpenSSL::PKey::RSA.generate(2048) }
           let(:fingerprint) { Travis::API::V3::Models::Fingerprint.calculate(key.to_pem) }
           let(:params) do
             {
