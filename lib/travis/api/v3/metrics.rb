@@ -4,7 +4,7 @@ module Travis::API::V3
   class Metrics
     class MetriksTracker
       def initialize(prefix: "api.v3")
-        @prefx = prefix
+        @prefix = prefix
       end
 
       def time(name, duration)
