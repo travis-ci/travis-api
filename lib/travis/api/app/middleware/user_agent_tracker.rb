@@ -12,7 +12,7 @@ class Travis::Api::App
       ]
 
       before(agent: /^$/) do
-        ::Metriks.meter("api.user_agent.missing").mark
+        ::Metriks.meter("api.v2.user_agent.missing").mark
         halt(400, "error" => "missing User-Agent header") if Travis::Features.feature_active?(:require_user_agent)
       end
 
@@ -54,7 +54,7 @@ class Travis::Api::App
       end
 
       def mark(*keys)
-        key = "api.user_agent." << keys.map { |k| k.to_s.downcase.gsub(/[^a-z0-9\-\.]+/, '_') }.join('.')
+        key = "api.v2.user_agent." << keys.map { |k| k.to_s.downcase.gsub(/[^a-z0-9\-\.]+/, '_') }.join('.')
         ::Metriks.meter(key).mark
       end
     end
