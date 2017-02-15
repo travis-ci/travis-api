@@ -3,6 +3,7 @@ module Travis::API::V3
     params :description, :value, prefix: :key_pair
 
     def run!
+      com_only_service!
       repository = check_login_and_find(:repository)
       access_control.permissions(repository).change_key!
       key_pair = query.update(repository)

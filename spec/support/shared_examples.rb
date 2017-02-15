@@ -9,6 +9,17 @@ RSpec.shared_examples 'not authenticated' do
   end
 end
 
+RSpec.shared_examples 'com only service' do
+  example { expect(last_response.status).to eq 403 }
+  example do
+    expect(JSON.parse(last_response.body)).to eq(
+      '@type' => 'error',
+      'error_message' => 'this service is only available on travis-ci.com',
+      'error_type' => 'com_only_service'
+    )
+  end
+end
+
 RSpec.shared_examples 'insufficient access to repo' do |permission|
   example { expect(last_response.status).to eq(403) }
   example do
