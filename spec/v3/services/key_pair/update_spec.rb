@@ -26,7 +26,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
       end
 
       context 'correct user' do
-        let(:key) { OpenSSL::PKey::RSA.generate(4096) }
+        let(:key) { OpenSSL::PKey::RSA.generate(2048) }
 
         before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
@@ -52,7 +52,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
           end
 
           before do
-            repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: key.to_pem, repository_id: repo.id }))
+            repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
             patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
           end
 
@@ -86,7 +86,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
           end
 
           before do
-            repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: key.to_pem, repository_id: repo.id }))
+            repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
             patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
           end
 
@@ -101,7 +101,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
         end
 
         describe 'updates key pair' do
-          let(:new_key) { OpenSSL::PKey::RSA.generate(4096) }
+          let(:new_key) { OpenSSL::PKey::RSA.generate(2048) }
           let(:params) do
             {
               'key_pair.description' => 'new description',
@@ -110,7 +110,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
           end
 
           before do
-            repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: key.to_pem, repository_id: repo.id }))
+            repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
             patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
           end
 
