@@ -109,39 +109,10 @@ class Travis::Api::App
         end
       end
 
-      # This endpoint is meant to be embedded in an iframe, popup window or
-      # similar. It will perform the handshake and, once done, will send an
-      # access token and user payload to the parent window via postMessage.
-      #
-      # However, the endpoint to send the payload to has to be explicitely
-      # safelisted in production, as this is endpoint is only meant to be used
-      # with the official Travis CI client at the moment.
-      #
-      # Example usage:
-      #
-      #     window.addEventListener("message", function(event) {
-      #       console.log("received token: " + event.data.token);
-      #     });
-      #
-      #     var iframe = $('<iframe />').hide();
-      #     iframe.appendTo('body');
-      #     iframe.attr('src', "https://api.travis-ci.org/auth/post_message");
-      #
-      # Note that embedding it in an iframe will only work for users that are
-      # logged in at GitHub and already authorized Travis CI. It is therefore
-      # recommended to redirect to [/auth/handshake](#/auth/handshake) if no
-      # token is being received.
       get '/post_message', scope: :public do
         content_type :html
         data = { check_third_party_cookies: !Travis.config.auth.disable_third_party_cookies_check }
         erb(:container, locals: data)
-      end
-
-      get '/post_message/iframe', scope: :public do
-        handshake do |user, token, target_origin|
-          halt 403, invalid_target(target_origin) unless target_ok? target_origin
-          post_message(token: token, user: user, target_origin: target_origin)
-        end
       end
 
       error Faraday::Error::ClientError do
@@ -227,7 +198,6 @@ class Travis::Api::App
             redirect to(endpoint.to_s)
           end
         end
-
 
         def create_state
           state = SecureRandom.urlsafe_base64(16)
@@ -426,113 +396,19 @@ function tellEveryone(msg, win) {
 
 // every serious program has a main function
 function main() {
-  doYouHave(thirdPartyCookies,
-    yesIndeed("third party cookies enabled, creating iframe",
-      doYouHave(iframe(after(5)),
-        yesIndeed("iframe succeeded", done),
-        nopeSorry("iframe taking too long, creating pop-up",
-          doYouHave(popup(after(5)),
-            yesIndeed("pop-up succeeded", done),
-            nopeSorry("pop-up failed, redirecting", redirect))))),
-    nopeSorry("third party cookies disabled, creating pop-up",
-      doYouHave(popup(after(8)),
-        yesIndeed("popup succeeded", done),
-        nopeSorry("popup failed", redirect))))();
+  redirect();
 }
 
 // === THE LOGIC ===
-var url = window.location.pathname + '/iframe' + window.location.search;
-
-function thirdPartyCookies(yes, no) {
-  <%= "return no();" unless check_third_party_cookies %>
-  window.cookiesCheckCallback = function(enabled) { enabled ? yes() : no() };
-  var img      = document.createElement('img');
-  img.src      = "https://third-party-cookies.herokuapp.com/set";
-  img.onload   = function() {
-    var script = document.createElement('script');
-    script.src = "https://third-party-cookies.herokuapp.com/check";
-    window.document.body.appendChild(script);
-  }
-}
-
-function iframe(time) {
-  return function(yes, no) {
-    var iframe = document.createElement('iframe');
-    iframe.src = url;
-    timeout(time, yes, no);
-    window.document.body.appendChild(iframe);
-  }
-}
-
-function popup(time) {
-  return function(yes, no) {
-    if(popupWindow) {
-      timeout(time, yes, function() {
-        if(popupWindow.closed || popupWindow.innerHeight < 1) {
-          no()
-        } else {
-          try {
-            popupWindow.focus();
-            popupWindow.resizeTo(900, 500);
-          } catch(err) {
-            no()
-          }
-        }
-      });
-    } else {
-      no()
-    }
-  }
-}
-
-function done() {
-  if(popupWindow && !popupWindow.closed) popupWindow.close();
-}
 
 function redirect() {
   tellEveryone('redirect');
 }
 
-function createPopup() {
-  if(!popupWindow) popupWindow = window.open(url, 'Signing in...', 'height=50,width=50');
-}
-
 // === THE PLUMBING ===
 <%= erb :common %>
 
-function timeout(time, yes, no) {
-  var timeout = setTimeout(no, time);
-  onSuccess(function() {
-    clearTimeout(timeout);
-    yes()
-  });
-}
-
-function onSuccess(callback) {
-  succeeded ? callback() : callbacks.push(callback)
-}
-
-function doYouHave(feature, yes, no) {
-  return function() { feature(yes, no) };
-}
-
-function yesIndeed(msg, callback) {
-  return function() {
-    if(console && console.log) console.log(msg);
-    return callback();
-  }
-}
-
-function after(value) {
-  return value*1000;
-}
-
-var nopeSorry = yesIndeed;
-var timeoutes = [];
-var callbacks = [];
-var seconds   = 1000;
 var succeeded = false;
-var popupWindow;
 
 window.addEventListener("message", function(event) {
   if(event.data === "done") {

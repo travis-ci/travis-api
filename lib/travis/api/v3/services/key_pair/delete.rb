@@ -1,10 +1,11 @@
 module Travis::API::V3
-  class Services::SshKey::Create < Service
+  class Services::KeyPair::Delete < Service
+    params :description, :value, prefix: :key_pair
+
     def run!
       repository = check_login_and_find(:repository)
       access_control.permissions(repository).change_key!
-      ssh_key = query.regenerate(repository)
-      result(:ssh_key, ssh_key, status: 201)
+      query.delete(repository) and deleted
     end
   end
 end

@@ -1,5 +1,7 @@
+require 'travis/api/v3/services/repository/deactivate'
+
 module Travis::API::V3
-  class Services::Repository::Enable < Services::Repository::Disable
+  class Services::Repository::Activate < Services::Repository::Deactivate
     def run!
       repository = super(true)
 
@@ -13,7 +15,7 @@ module Travis::API::V3
     end
 
     def check_access(repository)
-      access_control.permissions(repository).enable!
+      access_control.permissions(repository).activate!
     end
   end
 end

@@ -40,7 +40,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-migrations
-  revision: 9df23c494c90ed64f5151d4d5009c430b2f8c010
+  revision: c342bff13ff4f43b3209e5a4447cb5a183d29489
   specs:
     travis-migrations (0.0.3)
 
@@ -275,7 +275,7 @@ GEM
     rb-inotify (0.9.7)
       ffi (>= 0.5.0)
     redcarpet (3.3.4)
-    redis (3.3.1)
+    redis (3.3.2)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
     redlock (0.1.8)
@@ -412,4 +412,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.13.6
+   1.14.3

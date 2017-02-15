@@ -3,7 +3,7 @@ module Travis
     class Database < Struct.new(:options)
       include Helpers
 
-      VARIABLES = { application_name: ENV['DYNO'] || $0, statement_timeout: 10_000 }
+      VARIABLES = { application_name: ENV['DYNO'] || $0, statement_timeout: 15_000 }
       DEFAULTS  = { adapter: 'postgresql', encoding: 'unicode', variables: VARIABLES }
 
       def config

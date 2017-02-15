@@ -2,6 +2,8 @@ require 'openssl'
 
 module Travis::API::V3
   class Models::SslKey < Model
+    include Models::Fingerprint
+
     belongs_to :repository
 
     serialize :private_key, Travis::Settings::EncryptedColumn.new
@@ -19,11 +21,8 @@ module Travis::API::V3
       end
     end
 
-    def fingerprint
-      return unless public_key
-      rsa_key = OpenSSL::PKey::RSA.new(public_key)
-      public_ssh_rsa = "\x00\x00\x00\x07ssh-rsa" + rsa_key.e.to_s(0) + rsa_key.n.to_s(0)
-      OpenSSL::Digest::MD5.new(public_ssh_rsa).hexdigest.scan(/../).join(':')
+    def fingerprint_source
+      private_key
     end
 
     def encoded_public_key

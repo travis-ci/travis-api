@@ -1,7 +1,8 @@
 describe Travis::Services::FindBranches do
+  let(:user)    { Factory(:user) }
   let(:repo)    { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
   let!(:build)  { Factory(:build, :repository => repo, :state => :finished) }
-  let(:service) { described_class.new(stub('user'), params) }
+  let(:service) { described_class.new(user, params) }
 
   attr_reader :params
 

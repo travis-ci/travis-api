@@ -86,6 +86,25 @@ describe User do
     end
   end
 
+  describe 'avatar_url' do
+    it "returns avatar url if it's present" do
+      user.avatar_url = 'foo'
+      user.avatar_url.should == 'foo'
+    end
+
+    it "returns gravatar url if avatar url is not present, but gravatar_id is" do
+      user.avatar_url = nil
+      user.gravatar_id = 'foo'
+      user.avatar_url.should == 'https://0.gravatar.com/avatar/foo'
+    end
+
+    it "returns gravatar url based on the e-mail if both avatar_url and gravatar_id are nil" do
+      user.avatar_url = nil
+      user.gravatar_id = nil
+      user.avatar_url.should == 'https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2'
+    end
+  end
+
   describe 'profile_image_hash' do
     it "returns gravatar_id if it's present" do
       user.gravatar_id = '41193cdbffbf06be0cdf231b28c54b18'

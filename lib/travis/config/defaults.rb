@@ -19,7 +19,7 @@ module Travis
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
-            logs_options:  { s3: { access_key_id: '', secret_access_key: ''}},
+            log_options:   { s3: { access_key_id: '', secret_access_key: ''}},
             s3:            { access_key_id: '', secret_access_key: ''},
             pusher:        { app_id: 'app-id', key: 'key', secret: 'secret' },
             sidekiq:       { namespace: 'sidekiq', pool_size: 1 },
@@ -50,7 +50,8 @@ module Travis
                              rate_limit: { defaults: { api_builds: 10 }, maximums: { api_builds: 200 } } },
             endpoints:     {},
             oauth2:        {},
-            webhook:       { public_key: nil }
+            webhook:       { public_key: nil },
+            cache_options: {}
 
     default :_access => [:key]
 
