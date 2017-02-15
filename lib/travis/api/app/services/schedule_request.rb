@@ -48,7 +48,7 @@ class Travis::Api::App
         end
 
         def active?
-          Travis::Features.owner_active?(:request_create, repo.owner)
+          true
         end
 
         def payload
