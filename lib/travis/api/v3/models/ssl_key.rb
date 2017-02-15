@@ -22,7 +22,7 @@ module Travis::API::V3
     end
 
     def fingerprint_source
-      public_key
+      private_key
     end
 
     def encoded_public_key
