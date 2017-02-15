@@ -6,7 +6,7 @@ module Travis::API::V3
     def run!
       repository = check_login_and_find(:repository)
       access_control.permissions(repository).change_settings!
-      query.update(repository)
+      result query.update(repository)
     end
   end
 end

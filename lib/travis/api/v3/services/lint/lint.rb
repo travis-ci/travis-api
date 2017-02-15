@@ -6,7 +6,7 @@ module Travis::API::V3
     def run!
       request_body.rewind
       content  = params['content'.freeze] || request_body.read
-      Travis::Yaml.parse(content)
+      result Travis::Yaml.parse(content)
     end
   end
 end

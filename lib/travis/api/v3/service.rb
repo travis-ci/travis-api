@@ -89,21 +89,23 @@ module Travis::API::V3
       self.class.result_type
     end
 
-    def result(*args)
-      Result.new(access_control, *args)
+    def result(resource, **meta_data)
+      return not_found unless resource
+      rt = meta_data[:result_type] || result_type
+      status = meta_data[:status] || 200
+      Result.new(access_control: access_control, type: rt, resource: resource, status: status, **meta_data)
     end
 
-    def head(*args)
-      Result::Head.new(access_control, *args)
+    def head
+      Result::Head.new(access_control: access_control, type: result_type, resource: nil, status: 204)
     end
 
     def deleted
-      head result_type, nil, status: 204
+      head
     end
 
     def run
       not_found unless result = run!
-      result = result(result_type, result) unless result.is_a? Result
       result = paginate(result) if self.class.paginate?
       apply_warnings(result)
       result
@@ -136,7 +138,7 @@ module Travis::API::V3
 
     def accepted(**payload)
       payload[:resource_type] ||= result_type
-      result(:accepted, payload, status: 202)
+      result(payload, status: 202, result_type: :accepted)
     end
 
     def not_implemented

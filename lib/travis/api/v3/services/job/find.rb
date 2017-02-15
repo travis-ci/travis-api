@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Services::Job::Find < Service
     def run!
-      find
+      result find
     end
   end
 end

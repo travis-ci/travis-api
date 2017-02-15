@@ -39,7 +39,7 @@ module Travis::API::V3
     rescue Error => error
       metrics.tick(:service)
 
-      result   = Result.new(access_control, :error, error)
+      result   = Result.new(access_control: access_control, type: :error, resource: error)
       response = V3.response(result.render(env_params, env),  {}, content_type: content_type, status: error.status)
 
       metrics.tick(:rendered)

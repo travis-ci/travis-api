@@ -4,7 +4,7 @@ module Travis::API::V3
     paginate
 
     def run!
-      query.find(find(:repository))
+      result query.find(find(:repository))
     end
   end
 end
