@@ -91,17 +91,22 @@ module Travis::API::V3
 
     def result(resource, **meta_data)
       return not_found unless resource
-      rt = meta_data[:result_type] || result_type
-      status = meta_data[:status] || 200
-      Result.new(access_control: access_control, type: rt, resource: resource, status: status, **meta_data)
+      meta_data[:type]           ||= meta_data[:result_type] || result_type
+      meta_data[:status]         ||= 200
+      meta_data[:access_control] ||= access_control
+      meta_data[:resource]       ||= resource
+      Result.new(meta_data)
     end
 
-    def head
-      Result::Head.new(access_control: access_control, type: result_type, resource: nil, status: 204)
+    def head(**meta_data)
+      meta_data[:access_control] ||= access_control
+      meta_data[:type]           ||= result_type
+      meta_data[:resource]       ||= nil
+      Result::Head.new(meta_data)
     end
 
     def deleted
-      head
+      head(status: 204)
     end
 
     def run
