@@ -144,7 +144,7 @@ module Travis::API::V3
     end
 
     def com_only_service!
-      raise ComOnlyService unless access_control.private_api? || (ENV['ENV'] || ENV['RACK_ENV']) == 'development'
+      raise ComOnlyService unless access_control.private_api? || Travis.env?(:development)
     end
   end
 end
