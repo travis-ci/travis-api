@@ -10,7 +10,7 @@ module Travis::API::V3
       origin:         Travis.config.host,
       api_url:        Travis.config.github.api_url,
       web_url:        Travis.config.github.api_url.gsub(%r{\A(https?://)(?:api\.)?([^/]+)(?:/.*)?\Z}, '\1\2'),
-      ssl:            Travis.config.ssl.merge(Travis.config.github.ssl || {}).to_hash.compact
+      ssl:            Travis.config.ssl.merge(Travis.config.github.ssl || {}).to_h.compact
     }
     private_constant :DEFAULT_OPTIONS
 

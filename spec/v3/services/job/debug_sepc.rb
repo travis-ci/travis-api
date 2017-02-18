@@ -14,7 +14,7 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
 
-    Travis.config.stubs(:debug_tools_enabled).returns true
+    Travis.config.debug_tools_enabled = true
   end
 
   after do

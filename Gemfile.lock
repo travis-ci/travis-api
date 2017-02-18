@@ -6,6 +6,14 @@ GIT
       metriks (>= 0.9.9.6)
 
 GIT
+  remote: https://github.com/igorwwwwwwwwwwwwwwwwwwww/simple_states
+  revision: 3b116214373c0245418b9cdbc078cb219e4ed100
+  branch: igor-v1.0.1-without-hashr
+  specs:
+    simple_states (1.0.1)
+      activesupport
+
+GIT
   remote: https://github.com/rkh/yard-sinatra
   revision: 00774d355123617ff0faa7e0ebd54c4cdcfcdf93
   specs:
@@ -31,6 +39,14 @@ GIT
   revision: 3966b3651adfd1c544f53d49d5986ac16cd9c4bc
   specs:
     travis-amqp (0.0.1)
+
+GIT
+  remote: https://github.com/travis-ci/travis-config
+  revision: 01a97da615049f0fbda28b7a916f30fd7eb63dcf
+  branch: igor-prepared-statements-env
+  specs:
+    travis-config (1.0.12)
+      hashr (~> 2.0.0)
 
 GIT
   remote: https://github.com/travis-ci/travis-lock
@@ -62,7 +78,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 2cd02d2a06fdd1e2fc2f129148c168b56f7c190f
+  revision: e1a3c269fdd96e8e8ae8ea2b7bdd054eeb39f54d
+  branch: igor-database-config-to-h
   specs:
     travis-support (0.0.1)
 
@@ -93,7 +110,7 @@ PATH
       redcarpet (>= 3.2.3)
       redis (~> 3.0)
       rollout (~> 1.1.0)
-      simple_states (~> 1.0.0)
+      simple_states
       sinatra (~> 1.3)
       sinatra-contrib (~> 1.3)
       tool
@@ -202,7 +219,7 @@ GEM
       os (~> 0.9)
       signet (~> 0.7)
     hashdiff (0.3.1)
-    hashr (0.0.22)
+    hashr (2.0.0)
     hitimes (1.2.4)
     httpclient (2.8.2.4)
     hurley (0.2)
@@ -311,9 +328,6 @@ GEM
       faraday (~> 0.9)
       jwt (~> 1.5)
       multi_json (~> 1.10)
-    simple_states (1.0.1)
-      activesupport
-      hashr (~> 0.0.10)
     simplecov (0.12.0)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
@@ -339,8 +353,6 @@ GEM
     tilt (2.0.5)
     timecop (0.8.1)
     tool (0.2.3)
-    travis-config (0.1.4)
-      hashr (~> 0.0)
     tzinfo (0.3.52)
     uber (0.0.15)
     unicorn (5.2.0)
@@ -389,6 +401,7 @@ DEPENDENCIES
   rspec-its
   s3!
   sentry-raven
+  simple_states!
   simplecov
   sinatra
   sinatra-contrib
@@ -397,7 +410,7 @@ DEPENDENCIES
   timecop (~> 0.8.0)
   travis-amqp!
   travis-api!
-  travis-config (~> 0.1.0)
+  travis-config!
   travis-lock!
   travis-migrations!
   travis-settings!

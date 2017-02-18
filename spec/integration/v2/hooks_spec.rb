@@ -29,7 +29,7 @@ describe 'Hooks', set_app: true do
     end
 
     before(:each) do
-      Travis.config.stubs(:service_hook_url).returns('listener.travis-ci.org')
+      Travis.config.service_hook_url = 'listener.travis-ci.org'
     end
 
     it 'sets the hook' do
