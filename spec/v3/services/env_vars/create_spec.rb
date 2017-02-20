@@ -66,6 +66,9 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
       example 'persists changes' do
         expect(repo.reload.settings['env_vars'].first['name']).to eq 'FOO'
       end
+      example 'persists repository id' do
+        expect(repo.reload.settings['env_vars'].first['repository_id']).to eq repo.id
+      end
     end
 
     describe 'public' do
