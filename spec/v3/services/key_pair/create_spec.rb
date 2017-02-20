@@ -108,6 +108,9 @@ describe Travis::API::V3::Services::KeyPair::Create, set_app: true do
           example 'persists changes' do
             expect(repo.reload.settings['ssh_key']['description']).to eq 'foo key pair'
           end
+          example 'persists repository id' do
+            expect(repo.reload.settings['ssh_key']['repository_id']).to eq repo.id
+          end
         end
       end
     end
