@@ -115,6 +115,10 @@ module Travis::API::V3
       self.user == user
     end
 
+    def user_setting_visible?(user_setting)
+      visible? user_setting.repository
+    end
+
     def repository_adminable?(repository)
       false
     end

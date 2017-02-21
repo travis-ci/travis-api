@@ -1,8 +1,10 @@
 module Travis::API::V3
   class Services::UserSetting::Find < Service
     def run!
-      repo = check_login_and_find(:repository)
-      query.find(repo)
+      repository = check_login_and_find(:repository)
+      user_setting = find(:user_setting, repository)
+      access_control.permissions(user_setting).read!
+      user_setting
     end
   end
 end
