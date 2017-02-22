@@ -7,7 +7,7 @@ module Travis
 
     # HACK HACK HACK
     def self.logs_api_enabled?
-      %w(on yes 1).include?(
+      %w(true on yes 1).include?(
         (
           ENV['TRAVIS_API_LOGS_API_ENABLED'] ||
           ENV['LOGS_API_ENABLED']
