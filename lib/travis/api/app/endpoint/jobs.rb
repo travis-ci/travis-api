@@ -82,7 +82,7 @@ class Travis::Api::App
                      auth_header = "token #{Travis.config.logs_api.auth_token}"
 
                      resp = logs_http.get do |req|
-                       req.url "/logs/#{job.id}"
+                       req.url "/logs/#{params[:job_id]}"
                        req.headers['Authorization'] = auth_header
                      end
 
