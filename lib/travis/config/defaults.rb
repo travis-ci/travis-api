@@ -11,6 +11,16 @@ module Travis
         ENV['TRAVIS_API_HTTP_LOGS_ENABLED'].to_s.downcase
       )
     end
+
+    def self.logs_api_url
+      ENV['TRAVIS_API_LOGS_API_URL'] ||
+        ENV['LOGS_API_URL'] || ''
+    end
+
+    def self.logs_api_auth_token
+      ENV['TRAVIS_API_LOGS_API_AUTH_TOKEN'] ||
+        ENV['LOGS_API_AUTH_TOKEN'] || ''
+    end
     # HACK HACK HACK
 
     HOSTS = {
@@ -27,7 +37,7 @@ module Travis
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
-            logs_api:      { url: '', auth_token: '' },
+            logs_api:      { url: logs_api_url, auth_token: logs_api_auth_token },
             log_options:   { s3: { access_key_id: '', secret_access_key: ''}},
             s3:            { access_key_id: '', secret_access_key: ''},
             pusher:        { app_id: 'app-id', key: 'key', secret: 'secret' },
