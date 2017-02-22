@@ -6,9 +6,12 @@ module Travis
     require 'travis/config/url'
 
     # HACK HACK HACK
-    def self.http_logs_enabled?
+    def self.logs_api_enabled?
       %w(on yes 1).include?(
-        ENV['TRAVIS_API_HTTP_LOGS_ENABLED'].to_s.downcase
+        (
+          ENV['TRAVIS_API_LOGS_API_ENABLED'] ||
+          ENV['LOGS_API_ENABLED']
+        ).to_s.downcase
       )
     end
 
@@ -37,7 +40,7 @@ module Travis
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
-            logs_api:      { url: logs_api_url, auth_token: logs_api_auth_token },
+            logs_api:      { url: logs_api_url, auth_token: logs_api_auth_token, enabled: logs_api_enabled? },
             log_options:   { s3: { access_key_id: '', secret_access_key: ''}},
             s3:            { access_key_id: '', secret_access_key: ''},
             pusher:        { app_id: 'app-id', key: 'key', secret: 'secret' },

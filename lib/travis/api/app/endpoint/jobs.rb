@@ -75,7 +75,7 @@ class Travis::Api::App
 
       get '/:job_id/log' do
         # HACK HACK HACK
-        resource = if Travis.config.http_logs_enabled?
+        resource = if Travis.config.logs_api.enabled?
                      require 'faraday'
 
                      logs_http = Faraday.new(url: Travis.config.logs_api.url)
