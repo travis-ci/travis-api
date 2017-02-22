@@ -148,6 +148,11 @@ class Travis::Api::App
           proxy ? File.join(proxy, request.fullpath) : url
         end
 
+        def log_with_request_id(line)
+          request_id = request.env["HTTP_X_REQUEST_ID"]
+          Travis.logger.info "#{line} <request_id=#{request_id}>"
+        end
+
         def handshake
           config   = Travis.config.oauth2
           endpoint = Addressable::URI.parse(config.authorization_server)
@@ -157,8 +162,13 @@ class Travis::Api::App
             redirect_uri: oauth_endpoint
           }
 
+          log_with_request_id("[handshake] Starting handshake")
+
           if params[:code]
-            halt 400, 'state mismatch' unless state_ok?(params[:state])
+            unless state_ok?(params[:state])
+              log_with_request_id("[handshake] Handshake failed (state mismatch)")
+              halt 400, 'state mismatch'
+            end
             endpoint.path          = config.access_token_path
             values[:state]         = params[:state]
             values[:code]          = params[:code]
@@ -269,7 +279,10 @@ class Travis::Api::App
           end
 
           user   = manager.fetch
-          halt 403, 'not a Travis user' if user.nil?
+          if user.nil?
+            log_with_request_id("[handshake] Fetching user failed")
+            halt 403, 'not a Travis user'
+          end
 
           Travis.run_service(:sync_user, user)
 
@@ -283,7 +296,11 @@ class Travis::Api::App
           response   = Faraday.new(ssl: Travis.config.github.ssl).post(endpoint, values)
           parameters = Addressable::URI.form_unencode(response.body)
           token_info = parameters.assoc("access_token")
-          halt 401, 'could not resolve github token' unless token_info
+
+          unless token_info
+            log_with_request_id("[handshake] Could not fetch token, github's response: status=#{response.status}")
+            halt 401, 'could not resolve github token'
+          end
           token_info.last
         end
 
