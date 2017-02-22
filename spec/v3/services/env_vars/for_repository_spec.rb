@@ -47,6 +47,7 @@ describe Travis::API::V3::Services::EnvVars::ForRepository, set_app: true do
             '@type' => 'env_var',
             '@href' => "/v3/repo/#{repo.id}/env_var/#{env_var[:id]}",
             '@representation' => 'standard',
+            '@permissions' => { 'read' => true, 'write' => false },
             'id' => env_var[:id],
             'name' => env_var[:name],
             'value' => env_var[:value].decrypt,

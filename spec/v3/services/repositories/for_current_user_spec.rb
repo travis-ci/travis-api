@@ -44,7 +44,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "unstar"           => true,
           "create_request"   => true,
           "create_cron"      => true,
-          "change_env_vars"  => true,
+          "create_env_var"  => true,
           "change_key"       => true,
           "admin"            => true
         },

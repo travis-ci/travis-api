@@ -37,7 +37,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => false,
         "create_request"   => false,
         "create_cron"      => false,
-        "change_env_vars"  => false,
+        "create_env_var"  => false,
         "change_key"       => false,
         "admin"            => false
       },
@@ -119,7 +119,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => false,
         "create_request"   => false,
         "create_cron"      => false,
-        "change_env_vars"  => false,
+        "create_env_var"  => false,
         "change_key"       => false,
         "admin"            => false
       },
@@ -186,7 +186,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => true,
         "create_request"   => true,
         "create_cron"      => true,
-        "change_env_vars"  => true,
+        "create_env_var"  => true,
         "change_key"       => true,
         "admin"            => false
       },
@@ -253,7 +253,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "unstar"           => true,
         "create_request"   => true,
         "create_cron"      => true,
-        "change_env_vars"  => true,
+        "create_env_var"  => true,
         "change_key"       => true,
         "admin"            => true
       },
