@@ -18,19 +18,19 @@ module Travis::API::V3
       write?
     end
 
-    def create_env_var?
-      write?
-    end
-
-    def create_request?
-      write?
-    end
-
     def create_cron?
       write?
     end
 
-    def change_key?
+    def create_env_var?
+      write?
+    end
+
+    def create_key_pair?
+      write?
+    end
+
+    def create_request?
       write?
     end
 

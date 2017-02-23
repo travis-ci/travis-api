@@ -23,7 +23,7 @@ describe Travis::API::V3::Services::KeyPair::Create, set_app: true do
     context 'existing repo' do
       describe 'wrong user' do
         before { post("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{other_token}" }) }
-        include_examples 'insufficient access to repo', 'change_key'
+        include_examples 'insufficient access to repo', 'create_key_pair'
       end
 
       context 'correct user' do
@@ -99,6 +99,7 @@ describe Travis::API::V3::Services::KeyPair::Create, set_app: true do
             expect(JSON.parse(last_response.body)).to eq(
               '@href' => "/v3/repo/#{repo.id}/key_pair",
               '@representation' => 'standard',
+              '@permissions' => { 'read' => true, 'write' => true },
               '@type' => 'key_pair',
               'description' => 'foo key pair',
               'fingerprint' =>  fingerprint,

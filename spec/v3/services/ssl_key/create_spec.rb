@@ -16,14 +16,17 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
     include_examples 'not authenticated'
   end
 
-  context 'authenticated as wrong user' do
+  context 'authenticated as user with wrong permissions' do
     describe 'not allowed' do
-      before { post("/v3/repo/#{repo.id}/key_pair/generated", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}") }
-      include_examples 'insufficient access to repo', 'change_key'
+      before do
+        Travis::API::V3::Models::Permission.create(repository: repo, user: other_user, pull: true)
+        post("/v3/repo/#{repo.id}/key_pair/generated", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}")
+      end
+      include_examples 'insufficient access to repo', 'create_key_pair'
     end
   end
 
-  context 'authenticated' do
+  context 'authenticated as user with correct permissions' do
     describe 'missing repo' do
       before { post("/v3/repo/999999999/key_pair/generated", {}, auth_headers) }
       include_examples 'missing repo'

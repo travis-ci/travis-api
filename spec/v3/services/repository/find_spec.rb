@@ -38,7 +38,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_request"   => false,
         "create_cron"      => false,
         "create_env_var"  => false,
-        "change_key"       => false,
+        "create_key_pair"       => false,
         "admin"            => false
       },
       "id"                 =>  repo.id,
@@ -120,7 +120,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_request"   => false,
         "create_cron"      => false,
         "create_env_var"  => false,
-        "change_key"       => false,
+        "create_key_pair"       => false,
         "admin"            => false
       },
       "id"                 =>  repo.id,
@@ -187,7 +187,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_request"   => true,
         "create_cron"      => true,
         "create_env_var"  => true,
-        "change_key"       => true,
+        "create_key_pair"       => true,
         "admin"            => false
       },
       "id"                 =>  repo.id,
@@ -254,7 +254,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_request"   => true,
         "create_cron"      => true,
         "create_env_var"  => true,
-        "change_key"       => true,
+        "create_key_pair"       => true,
         "admin"            => true
       },
       "id"                 =>  repo.id,

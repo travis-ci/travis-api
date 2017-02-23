@@ -67,7 +67,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "create_request"  => false,
             "create_cron"     => false,
             "create_env_var" => false,
-            "change_key"      => false,
+            "create_key_pair"      => false,
             "admin"           => false
           },
           "id"                => repo.id,
@@ -119,7 +119,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "create_request"=> false,
             "create_cron"   => false,
             "create_env_var" => false,
-            "change_key"    => false,
+            "create_key_pair"    => false,
             "admin"         => false
           },
           "id"              => repo.id,

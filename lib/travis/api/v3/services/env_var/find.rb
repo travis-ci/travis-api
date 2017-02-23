@@ -5,9 +5,7 @@ module Travis::API::V3
 
     def run!
       repository = check_login_and_find(:repository)
-      query.find(repository).tap do |env_var|
-        access_control.permissions(env_var).read! if env_var
-      end
+      find(:env_var, repository)
     end
   end
 end
