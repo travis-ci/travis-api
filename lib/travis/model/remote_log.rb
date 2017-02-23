@@ -1,6 +1,23 @@
 require 'virtus'
 
 class RemoteLog
+  class << self
+    def find_by_job_id(job_id)
+      logs_api.find_by_job_id(job_id)
+    end
+
+    def write_content_for_job_id(job_id, content: '')
+      logs_api.write_content_for_job_id(job_id, content: content)
+    end
+
+    private def logs_api
+      @logs_api ||= Travis::LogsApi.new(
+        url: Travis.config.logs_api.url,
+        auth_token: Travis.config.logs_api.auth_token
+      )
+    end
+  end
+
   include Virtus.model(nullify_blank: true)
 
   attribute :aggregated_at, Time
@@ -30,12 +47,17 @@ class RemoteLog
     []
   end
 
+  alias log_parts parts
+
   def aggregated?
     !!aggregated_at
   end
 
-  def clear!
-    raise NotImplementedError
+  def clear!(user = nil)
+    message = ''
+    message = "Log removed by #{user.name} at #{Time.now.utc}" if user
+    self.class.write_content_for_job_id(job_id, content: message)
+    message
   end
 
   def archived?

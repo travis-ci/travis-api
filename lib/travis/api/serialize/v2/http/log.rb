@@ -44,8 +44,8 @@ module Travis
               end
 
               def log_parts
-                if log.removed_at
-                  # if log is removed we don't have actual parts
+                if log.removed_at || log.aggregated_at
+                  # if log is removed or aggregated we don't have actual parts
                   parts = [{ 'number' => 1, 'content' => log.content, 'final' => true }]
                 else
                   parts = log.parts

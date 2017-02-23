@@ -5,6 +5,8 @@ require 'travis/model/remote_log'
 
 module Travis
   class LogsApi
+    Error = Class.new(StandardError)
+
     def initialize(url: '', auth_token: '')
       @url = url
       @auth_header = "token #{auth_token}"
@@ -20,6 +22,18 @@ module Travis
 
     def find_by_job_id(job_id)
       find_by('job_id', job_id)
+    end
+
+    def write_content_for_job_id(job_id, content: '')
+      resp = conn.put do |req|
+        req.url "/logs/#{job_id}"
+        req.headers['Authorization'] = auth_header
+        req.headers['Content-Type'] = 'application/octet-stream'
+        req.body = content
+      end
+      unless resp.success?
+        raise LogsApi::Error, "failed to write content job_id=#{job_id}"
+      end
     end
 
     private def find_by(by, id)
