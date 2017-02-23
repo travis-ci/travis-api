@@ -1,7 +1,7 @@
 require 'virtus'
 
 class RemoteLog
-  include Virtus.model
+  include Virtus.model(nullify_blank: true)
 
   attribute :aggregated_at, Time
   attribute :archive_verified, Boolean, default: false
