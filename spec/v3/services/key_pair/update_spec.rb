@@ -145,7 +145,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
             patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
           end
 
-          example('', f: true) { expect(last_response.status).to eq 200 }
+          example { expect(last_response.status).to eq 200 }
           example do
             expect(JSON.parse(last_response.body)).to eq(
               '@href' => "/v3/repo/#{repo.id}/key_pair",
