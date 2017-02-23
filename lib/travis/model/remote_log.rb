@@ -21,6 +21,7 @@ class RemoteLog
   end
 
   def removed_by
+    return nil unless removed_by_id
     @removed_by ||= User.find(removed_by_id)
   end
 
@@ -44,7 +45,7 @@ class RemoteLog
   def to_json
     {
       'log' => attributes.slice(
-        *%w(id content created_at job_id updated_at)
+        *%i(id content created_at job_id updated_at)
       )
     }.to_json
   end
