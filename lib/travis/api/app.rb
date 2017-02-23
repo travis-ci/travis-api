@@ -188,7 +188,7 @@ module Travis::Api
 
         if use_monitoring?
           Sidekiq.configure_client do |config|
-            config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace).to_h
+            config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
           end
         end
 
