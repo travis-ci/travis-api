@@ -31,7 +31,7 @@ module Travis
       private def logs_api
         @logs_api ||= Travis::LogsApi.new(
           url: Travis.config.logs_api.url,
-          auth_token: Travis.config.logs_api.auth_token
+          token: Travis.config.logs_api.token
         )
       end
     end
