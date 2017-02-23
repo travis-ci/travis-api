@@ -74,29 +74,7 @@ class Travis::Api::App
       end
 
       get '/:job_id/log' do
-        # HACK HACK HACK
-        resource = if Travis.config.logs_api.enabled?
-                     require 'faraday'
-
-                     logs_http = Faraday.new(url: Travis.config.logs_api.url)
-                     auth_header = "token #{Travis.config.logs_api.auth_token}"
-
-                     resp = logs_http.get do |req|
-                       req.url "/logs/#{params[:job_id]}"
-                       req.headers['Authorization'] = auth_header
-                     end
-
-                     OpenStruct.new(
-                       :archived? => Integer(resp.status) == 302 && !resp.headers['location'].nil?,
-                       removed_at: nil,
-                       content: resp.body,
-                       to_s: resp.body
-                     )
-                   else
-                     service(:find_log, params).run
-                   end
-        # HACK HACK HACK
-
+        resource = service(:find_log, params).run
         if (resource && resource.removed_at) && accepts?('application/json')
           respond_with resource
         elsif (!resource || resource.archived?)
