@@ -7,14 +7,14 @@ module Travis
   class LogsApi
     Error = Class.new(StandardError)
 
-    def initialize(url: '', auth_token: '')
+    def initialize(url: '', token: '')
       @url = url
-      @auth_header = "token #{auth_token}"
+      @token = token
     end
 
-    attr_reader :url, :auth_header
+    attr_reader :url, :token
     private :url
-    private :auth_header
+    private :token
 
     def find_by_id(log_id)
       find_by('id', log_id)
@@ -28,7 +28,6 @@ module Travis
       resp = conn.put do |req|
         req.url "/logs/#{job_id}"
         req.params['removed_by'] = removed_by unless removed_by.nil?
-        req.headers['Authorization'] = auth_header
         req.headers['Content-Type'] = 'application/octet-stream'
         req.body = content
       end
@@ -40,14 +39,17 @@ module Travis
     private def find_by(by, id)
       resp = conn.get do |req|
         req.url "/logs/#{id}", by: by
-        req.headers['Authorization'] = auth_header
       end
       return nil unless resp.success?
       RemoteLog.new(JSON.parse(resp.body))
     end
 
     private def conn
-      @conn ||= Faraday.new(url: url)
+      @conn ||= Faraday.new(url: url) do |c|
+        c.request :authorization, :token, token
+        c.request :retry, max: 5, interval: 0.1, backoff_factor: 2
+        c.response :raise_error
+      end
     end
   end
 end
