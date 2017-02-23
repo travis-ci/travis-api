@@ -75,9 +75,6 @@ class Travis::Api::App
 
       get '/:job_id/log' do
         resource = service(:find_log, params).run
-        # HACK HACK HACK
-        $stderr.puts "---> resource=#{resource.to_json}"
-        # HACK HACK HACK
         if (resource && resource.removed_at) && accepts?('application/json')
           respond_with resource
         elsif (!resource || resource.archived?)
