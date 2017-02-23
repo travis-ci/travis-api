@@ -25,7 +25,7 @@ class Travis::Api::App
       end
 
       post '/:id/cancel' do
-        Metriks.meter("api.request.cancel_job").mark
+        Metriks.meter("api.v2.request.cancel_job").mark
 
         service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
 
@@ -34,7 +34,7 @@ class Travis::Api::App
             message: "You don't have access to cancel job(#{params[:id]})"
           } }
 
-          Metriks.meter("api.request.cancel_job.unauthorized").mark
+          Metriks.meter("api.v2.request.cancel_job.unauthorized").mark
           status 403
           respond_with json
         elsif !service.can_cancel?
@@ -43,20 +43,20 @@ class Travis::Api::App
               code: 'cant_cancel'
           } }
 
-          Metriks.meter("api.request.cancel_job.cant_cancel").mark
+          Metriks.meter("api.v2.request.cancel_job.cant_cancel").mark
           status 422
           respond_with json
         else
           payload = { id: params[:id], user_id: current_user.id, source: 'api' }
           service.push("job:cancel", payload)
 
-          Metriks.meter("api.request.cancel_job.success").mark
+          Metriks.meter("api.v2.request.cancel_job.success").mark
           status 204
         end
       end
 
       post '/:id/restart' do
-        Metriks.meter("api.request.restart_job").mark
+        Metriks.meter("api.v2.request.restart_job").mark
 
         service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
 

@@ -21,7 +21,7 @@ module Travis::API::V3
     end
 
     def to_h
-      { 'ssh_key' => attributes.slice(:description, :value).stringify_keys }
+      { 'ssh_key' => attributes.slice(:description, :value, :repository_id).stringify_keys }
     end
 
     def valid_pem?

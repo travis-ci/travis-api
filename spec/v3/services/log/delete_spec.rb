@@ -100,7 +100,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     before do
       s3job.update_attributes(finished_at: Time.now)
       Fog.mock!
-      Travis.config.logs_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
+      Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
       storage = Fog::Storage.new({
         :aws_access_key_id => "key",
         :aws_secret_access_key => "secret",

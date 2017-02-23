@@ -37,7 +37,7 @@ module Travis::API::V3
     end
 
     def prefix
-      warn 'prefix in RemoteQuery called. If you wanted a prefix filter please impliment it in the subclass.'
+      warn 'prefix in RemoteQuery called. If you wanted a prefix filter please implement it in the subclass.'
       ''
     end
 

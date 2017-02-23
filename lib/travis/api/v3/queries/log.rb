@@ -9,6 +9,8 @@ module Travis::API::V3
       #if the log has been archived, go to s3
       if log.archived_at
         content = fetch.get(prefix).try(:body)
+        raise EntityMissing, 'could not retrieve log'.freeze if content.nil?
+        content = content.force_encoding('UTF-8')
         create_log_parts(log, content)
       #if log has been aggregated, look at log.content
       elsif log.aggregated_at
@@ -18,7 +20,7 @@ module Travis::API::V3
     end
 
     def create_log_parts(log, content)
-      log.log_parts << Models::LogPart.new(log_id: log.id, content: content, number: 0, created_at: log.created_at)
+      log.log_parts.build([{content: content, number: 0, created_at: log.created_at}])
     end
 
     def delete(user, job)
@@ -40,18 +42,18 @@ module Travis::API::V3
       "jobs/#{@job.id}/log.txt"
     end
 
+    def s3_config
+      conf = config.log_options.try(:s3) || {}
+      conf.bucket_name = bucket_name
+      conf
+    end
+
     def bucket_name
       hostname('archive')
     end
 
     def hostname(name)
       "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
-    end
-
-    def s3_config
-      conf = config.logs_options.try(:s3) || {}
-      conf.bucket_name = bucket_name
-      conf
     end
   end
 end

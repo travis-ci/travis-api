@@ -8,6 +8,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:job2)        { Travis::API::V3::Models::Job.create(build: build)}
   let(:job3)        { Travis::API::V3::Models::Job.create(build: build)}
   let(:s3job)       { Travis::API::V3::Models::Job.create(build: build) }
+  let(:s3job2)       { Travis::API::V3::Models::Job.create(build: build) }
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:parsed_body) { JSON.load(body) }
@@ -15,6 +16,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:log2)        { Travis::API::V3::Models::Log.create(job: job2) }
   let(:log3)        { Travis::API::V3::Models::Log.create(job: job3) }
   let(:s3log)       { Travis::API::V3::Models::Log.create(job: s3job, content: 'minimal log 1') }
+  let(:no_s3log)    { Travis::API::V3::Models::Log.create(archived_at: Time.now, job: s3job2, content: 'minimal log 2') }
   let(:find_log)    { "string" }
   let(:xml_content) {
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -48,8 +50,10 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       to_return(:status => 200, :body => xml_content, :headers => {})
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job.id}/log.txt").
       to_return(status: 200, body: xml_content, headers: {})
+    stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job2.id}/log.txt").
+        to_return(status: 200, body: nil, headers: {})
     Fog.mock!
-    Travis.config.logs_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
+    Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
     storage = Fog::Storage.new({
       :aws_access_key_id => "key",
       :aws_secret_access_key => "secret",
@@ -148,6 +152,18 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'fun/times'))
         expect(last_response.headers).to include("Content-Type" => "application/json")
       end
+    end
+  end
+
+  context 'when log not found on s3' do
+    describe 'does not return log - returns error' do
+      example do
+        get("/v3/job/#{no_s3log.job.id}/log", {}, headers)
+        expect(parsed_body).to eq({
+          "@type"=>"error",
+          "error_type"=>"not_found",
+          "error_message"=>"could not retrieve log"})
+        end
     end
   end
 

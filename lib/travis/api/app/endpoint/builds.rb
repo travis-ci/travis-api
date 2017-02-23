@@ -18,7 +18,7 @@ class Travis::Api::App
       end
 
       post '/:id/cancel' do
-        Metriks.meter("api.request.cancel_build").mark
+        Metriks.meter("api.v2.request.cancel_build").mark
 
         service = Travis::Enqueue::Services::CancelModel.new(current_user, { build_id: params[:id] })
 
@@ -27,7 +27,7 @@ class Travis::Api::App
             message: "You don't have access to cancel build(#{params[:id]})"
           } }
 
-          Metriks.meter("api.request.cancel_build.unauthorized").mark
+          Metriks.meter("api.v2.request.cancel_build.unauthorized").mark
           status 403
           respond_with json
         elsif !service.can_cancel?
@@ -36,7 +36,7 @@ class Travis::Api::App
             code: 'cant_cancel'
           } }
 
-          Metriks.meter("api.request.cancel_build.cant_cancel").mark
+          Metriks.meter("api.v2.request.cancel_build.cant_cancel").mark
           status 422
           respond_with json
         else
@@ -44,13 +44,13 @@ class Travis::Api::App
 
           service.push("build:cancel", payload)
 
-          Metriks.meter("api.request.cancel_build.success").mark
+          Metriks.meter("api.v2.request.cancel_build.success").mark
           status 204
         end
       end
 
       post '/:id/restart' do
-        Metriks.meter("api.request.restart_build").mark
+        Metriks.meter("api.v2.request.restart_build").mark
         service = Travis::Enqueue::Services::RestartModel.new(current_user, build_id: params[:id])
 
         result = if !service.accept?
