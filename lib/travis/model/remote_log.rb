@@ -13,7 +13,7 @@ class RemoteLog
   attribute :job_id, Integer
   attribute :purged_at, Time
   attribute :removed_at, Time
-  attribute :removed_by, Integer
+  attribute :removed_by_id, Integer
   attribute :updated_at, Time
 
   def job
@@ -21,7 +21,7 @@ class RemoteLog
   end
 
   def removed_by
-    @removed_by ||= User.find(attributes[:removed_by])
+    @removed_by ||= User.find(removed_by_id)
   end
 
   def parts
