@@ -24,9 +24,10 @@ module Travis
       find_by('job_id', job_id)
     end
 
-    def write_content_for_job_id(job_id, content: '')
+    def write_content_for_job_id(job_id, content: '', removed_by: nil)
       resp = conn.put do |req|
         req.url "/logs/#{job_id}"
+        req.params['removed_by'] = removed_by unless removed_by.nil?
         req.headers['Authorization'] = auth_header
         req.headers['Content-Type'] = 'application/octet-stream'
         req.body = content

@@ -6,8 +6,10 @@ class RemoteLog
       logs_api.find_by_job_id(job_id)
     end
 
-    def write_content_for_job_id(job_id, content: '')
-      logs_api.write_content_for_job_id(job_id, content: content)
+    def write_content_for_job_id(job_id, content: '', removed_by: nil)
+      logs_api.write_content_for_job_id(
+        job_id, content: content, removed_by: removed_by
+      )
     end
 
     private def logs_api
@@ -56,7 +58,9 @@ class RemoteLog
   def clear!(user = nil)
     message = ''
     message = "Log removed by #{user.name} at #{Time.now.utc}" if user
-    self.class.write_content_for_job_id(job_id, content: message)
+    self.class.write_content_for_job_id(
+      job_id, content: message, removed_by: user.id
+    )
     message
   end
 
