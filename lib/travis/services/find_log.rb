@@ -1,3 +1,4 @@
+require 'travis/logs_api'
 require 'travis/services/base'
 
 module Travis
