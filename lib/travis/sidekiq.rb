@@ -19,9 +19,9 @@ Travis::Metrics.setup
 Travis::Notification.setup
 
 Sidekiq.configure_server do |config|
-  config.redis = Travis.config.redis.merge(namespace: Travis.config.sidekiq.namespace)
+  config.redis = Travis.config.redis.merge(namespace: Travis.config.sidekiq.namespace).to_h
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
+  config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace).to_h
 end
