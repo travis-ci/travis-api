@@ -8,128 +8,143 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
-  describe 'not authenticated' do
-    before { patch("/v3/repo/#{repo.id}/key_pair") }
-    include_examples 'not authenticated'
-  end
-
-  context 'authenticated' do
-    describe 'missing repo' do
-      before { patch('/v3/repo/999999999/key_pair', {}, auth_headers) }
-      include_examples 'missing repo'
+  context 'on .com' do
+    around(:each) do |example|
+      Travis.config.private_api = true
+      example.run
+      Travis.config.private_api = nil
     end
 
-    context 'existing repo' do
-      describe 'wrong user' do
-        before { patch("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{other_token}" }) }
-        include_examples 'insufficient access to repo', 'change_key'
+    describe 'not authenticated' do
+      before { patch("/v3/repo/#{repo.id}/key_pair") }
+      include_examples 'not authenticated'
+    end
+
+    context 'authenticated' do
+      describe 'missing repo' do
+        before { patch('/v3/repo/999999999/key_pair', {}, auth_headers) }
+        include_examples 'missing repo'
       end
 
-      context 'correct user' do
-        let(:key) { OpenSSL::PKey::RSA.generate(2048) }
-
-        before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-
-        describe 'missing key pair' do
-          before { patch("/v3/repo/#{repo.id}/key_pair", {}, auth_headers.merge(json_headers)) }
-
-          example { expect(last_response.status).to eq 404 }
-          example do
-            expect(JSON.parse(last_response.body)).to eq(
-              '@type' => 'error',
-              'error_message' => 'key_pair not found (or insufficient access)',
-              'error_type' => 'not_found',
-              'resource_type' => 'key_pair'
-            )
-          end
+      context 'existing repo' do
+        describe 'wrong user' do
+          before { patch("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{other_token}" }) }
+          include_examples 'insufficient access to repo', 'change_key'
         end
 
-        describe 'wrong params have no effect but return warning' do
-          let(:params) do
-            {
-              'key_pair.xyz' => 'this does nothing'
-            }
+        context 'correct user' do
+          let(:key) { OpenSSL::PKey::RSA.generate(2048) }
+
+          before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+
+          describe 'missing key pair' do
+            before { patch("/v3/repo/#{repo.id}/key_pair", {}, auth_headers.merge(json_headers)) }
+
+            example { expect(last_response.status).to eq 404 }
+            example do
+              expect(JSON.parse(last_response.body)).to eq(
+                '@type' => 'error',
+                'error_message' => 'key_pair not found (or insufficient access)',
+                'error_type' => 'not_found',
+                'resource_type' => 'key_pair'
+              )
+            end
           end
 
-          before do
-            repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
-            patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
+          describe 'wrong params have no effect but return warning' do
+            let(:params) do
+              {
+                'key_pair.xyz' => 'this does nothing'
+              }
+            end
+
+            before do
+              repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
+              patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
+            end
+
+            example { expect(last_response.status).to eq 200 }
+            example do
+              expect(JSON.parse(last_response.body)).to eq(
+                '@href' => "/v3/repo/#{repo.id}/key_pair",
+                '@representation' => 'standard',
+                '@type' => 'key_pair',
+                '@warnings' => [
+                  {
+                    '@type' => 'warning',
+                    'message' => 'query parameter key_pair.xyz not safelisted, ignored',
+                    'warning_type' => 'ignored_parameter',
+                    'parameter' => 'key_pair.xyz'
+                  }
+                ],
+                'description' => 'foo',
+                'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(key.to_pem),
+                'public_key' => key.public_key.to_s
+              )
+            end
           end
 
-          example { expect(last_response.status).to eq 200 }
-          example do
-            expect(JSON.parse(last_response.body)).to eq(
-              '@href' => "/v3/repo/#{repo.id}/key_pair",
-              '@representation' => 'standard',
-              '@type' => 'key_pair',
-              '@warnings' => [
-                {
-                  '@type' => 'warning',
-                  'message' => 'query parameter key_pair.xyz not safelisted, ignored',
-                  'warning_type' => 'ignored_parameter',
-                  'parameter' => 'key_pair.xyz'
-                }
-              ],
-              'description' => 'foo',
-              'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(key.to_pem),
-              'public_key' => key.public_key.to_s
-            )
-          end
-        end
+          describe 'invalid private key' do
+            let(:params) do
+              {
+                'key_pair.description' => 'new description',
+                'key_pair.value' => 'not a real key'
+              }
+            end
 
-        describe 'invalid private key' do
-          let(:params) do
-            {
-              'key_pair.description' => 'new description',
-              'key_pair.value' => 'not a real key'
-            }
+            before do
+              repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
+              patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
+            end
+
+            example { expect(last_response.status).to eq 422 }
+            example do
+              expect(JSON.parse(last_response.body)).to eq(
+                '@type' => 'error',
+                'error_message' => 'request unable to be processed due to semantic errors',
+                'error_type' => 'unprocessable_entity'
+              )
+            end
           end
 
-          before do
-            repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
-            patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
-          end
+          describe 'updates key pair' do
+            let(:new_key) { OpenSSL::PKey::RSA.generate(2048) }
+            let(:params) do
+              {
+                'key_pair.description' => 'new description',
+                'key_pair.value' => new_key.to_pem
+              }
+            end
 
-          example { expect(last_response.status).to eq 422 }
-          example do
-            expect(JSON.parse(last_response.body)).to eq(
-              '@type' => 'error',
-              'error_message' => 'request unable to be processed due to semantic errors',
-              'error_type' => 'unprocessable_entity'
-            )
-          end
-        end
+            before do
+              repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
+              patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
+            end
 
-        describe 'updates key pair' do
-          let(:new_key) { OpenSSL::PKey::RSA.generate(2048) }
-          let(:params) do
-            {
-              'key_pair.description' => 'new description',
-              'key_pair.value' => new_key.to_pem
-            }
-          end
-
-          before do
-            repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
-            patch("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
-          end
-
-          example { expect(last_response.status).to eq 200 }
-          example do
-            expect(JSON.parse(last_response.body)).to eq(
-              '@href' => "/v3/repo/#{repo.id}/key_pair",
-              '@representation' => 'standard',
-              '@type' => 'key_pair',
-              'description' => 'new description',
-              'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(new_key.to_pem),
-              'public_key' => new_key.public_key.to_s
-            )
-          end
-          example 'persists changes' do
-            expect(repo.reload.settings['ssh_key']['description']).to eq 'new description'
+            example { expect(last_response.status).to eq 200 }
+            example do
+              expect(JSON.parse(last_response.body)).to eq(
+                '@href' => "/v3/repo/#{repo.id}/key_pair",
+                '@representation' => 'standard',
+                '@type' => 'key_pair',
+                'description' => 'new description',
+                'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(new_key.to_pem),
+                'public_key' => new_key.public_key.to_s
+              )
+            end
+            example 'persists changes' do
+              expect(repo.reload.settings['ssh_key']['description']).to eq 'new description'
+            end
           end
         end
       end
+    end
+  end
+
+  context 'on .org' do
+    describe 'service is not available' do
+      before { patch("/v3/repo/#{repo.id}/key_pair", {}, auth_headers) }
+      include_examples 'com only service'
     end
   end
 end

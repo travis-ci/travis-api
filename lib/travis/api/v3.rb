@@ -31,6 +31,7 @@ module Travis
       AlreadySyncing      = ClientError        .create('sync already in progress', status: 409)
       BuildAlreadyRunning = ClientError        .create('build already running, cannot restart', status: 409)
       BuildNotCancelable  = ClientError        .create('build is not running, cannot cancel', status: 409)
+      ComOnlyService      = ClientError        .create('this service is only available on travis-ci.com', status: 403)
       DuplicateResource   = ClientError        .create('resource already exists', status: 409)
       EntityMissing       = NotFound           .create(type: 'not_found')
       InsufficientAccess  = ClientError        .create(status: 403)

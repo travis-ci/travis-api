@@ -142,5 +142,9 @@ module Travis::API::V3
     def not_implemented
       raise NotImplemented
     end
+
+    def com_only_service!
+      raise ComOnlyService unless access_control.private_api? || Travis.env?(:development)
+    end
   end
 end

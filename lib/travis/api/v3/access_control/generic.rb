@@ -57,6 +57,14 @@ module Travis::API::V3
       factory.new(self, object)
     end
 
+    def public_api?
+      !Travis.config.private_api
+    end
+
+    def private_api?
+      !!Travis.config.private_api
+    end
+
     protected
 
     def account_visible?(account)
@@ -133,10 +141,6 @@ module Travis::API::V3
     end
     [:settings_visible?, :env_vars_visible?, :env_var_visible?, :key_pairs_visible?].each do |m|
       alias_method m, :repository_attr_visible?
-    end
-
-    def public_api?
-      !Travis.config.private_api
     end
 
     def unrestricted_api?
