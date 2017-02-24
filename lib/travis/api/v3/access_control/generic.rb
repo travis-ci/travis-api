@@ -46,6 +46,10 @@ module Travis::API::V3
       full_access? || logged_in?
     end
 
+    def enterprise?
+      !!Travis.config.enterprise
+    end
+
     def visible_repositories(list)
       # naïve implementation, replaced with smart implementation in specific subclasses
       return list if full_access?
