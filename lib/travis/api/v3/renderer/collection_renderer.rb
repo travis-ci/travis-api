@@ -47,6 +47,7 @@ module Travis::API::V3
     end
 
     def render
+      $stderr.puts "this is the start of render in CollectionRenderer"
       result                 = fields
       included               = self.included.dup
       result[collection_key] = list.map do |entry|
