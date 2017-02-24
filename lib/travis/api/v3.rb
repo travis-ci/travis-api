@@ -41,6 +41,7 @@ module Travis
       LoginRequired       = ClientError        .create('login required', status: 403)
       MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
+      PaidFeature         = ClientError        .create('this feature is only available on private repositories and for Travis CI Enterprise customers', status: 403)
       RequestLimitReached = ClientError        .create('request limit reached for resource', status: 429)
       UnprocessableEntity = ClientError        .create('request unable to be processed due to semantic errors', status: 422)
       WrongCredentials    = ClientError        .create('access denied',  status: 403)

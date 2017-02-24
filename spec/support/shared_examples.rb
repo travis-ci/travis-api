@@ -9,6 +9,17 @@ RSpec.shared_examples 'not authenticated' do
   end
 end
 
+RSpec.shared_examples 'paid feature error' do
+  example { expect(last_response.status).to eq 403 }
+  example do
+    expect(JSON.parse(last_response.body)).to eq(
+      '@type' => 'error',
+      'error_message' => 'this feature is only available on private repositories and for Travis CI Enterprise customers',
+      'error_type' => 'paid_feature'
+    )
+  end
+end
+
 RSpec.shared_examples 'insufficient access to repo' do |permission|
   example { expect(last_response.status).to eq(403) }
   example do
