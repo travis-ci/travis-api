@@ -65,7 +65,7 @@ describe Travis::Config do
     end
 
     it 'database' do
-      config.database.should == {
+      config.database.to_h.should == {
         :adapter => 'postgresql',
         :database => 'travis_test',
         :encoding => 'unicode',

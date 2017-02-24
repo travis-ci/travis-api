@@ -26,11 +26,11 @@ module Travis::API::V3
     end
 
     def s3_config
-      config.cache_options.try(:s3) || {}
+      config[:cache_options][:s3] || {}
     end
 
     def gcs_config
-      config.cache_options.try(:gcs) || {}
+      config[:cache_options][:gcs] || {}
     end
   end
 end
