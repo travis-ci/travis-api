@@ -22,10 +22,40 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
     context 'existing repo' do
       describe 'wrong user' do
         before { patch("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{other_token}" }) }
-        include_examples 'insufficient access to repo', 'change_key'
+        include_examples 'missing key_pair'
       end
 
-      context 'correct user' do
+
+      describe 'correct user, wrong permissions' do
+        let(:key) { OpenSSL::PKey::RSA.generate(2048) }
+
+        before do
+          Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+          repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
+          patch("/v3/repo/#{repo.id}/key_pair", JSON.generate({}), auth_headers.merge(json_headers))
+        end
+
+        example { expect(last_response.status).to eq 403 }
+        example do
+          expect(JSON.parse(last_response.body)).to eq(
+            '@type' => 'error',
+            'error_type' => 'insufficient_access',
+            'error_message' => 'operation requires write access to key_pair',
+            'permission' => 'write',
+            'resource_type' => 'key_pair',
+            'key_pair' => {
+              '@href' => "/v3/repo/#{repo.id}/key_pair",
+              '@representation' => 'minimal',
+              '@type' => 'key_pair',
+              'description' => 'foo',
+              'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(key.to_pem),
+              'public_key' => key.public_key.to_s
+            }
+          )
+        end
+      end
+
+      context 'correct user, correct permissions' do
         let(:key) { OpenSSL::PKey::RSA.generate(2048) }
 
         before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
@@ -62,6 +92,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
               '@href' => "/v3/repo/#{repo.id}/key_pair",
               '@representation' => 'standard',
               '@type' => 'key_pair',
+              '@permissions' => { 'read' => true, 'write' => true },
               '@warnings' => [
                 {
                   '@type' => 'warning',
@@ -120,6 +151,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
               '@href' => "/v3/repo/#{repo.id}/key_pair",
               '@representation' => 'standard',
               '@type' => 'key_pair',
+              '@permissions' => { 'read' => true, 'write' => true },
               'description' => 'new description',
               'fingerprint' => Travis::API::V3::Models::Fingerprint.calculate(new_key.to_pem),
               'public_key' => new_key.public_key.to_s
