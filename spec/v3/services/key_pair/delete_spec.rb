@@ -8,7 +8,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
   let(:other_token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 2) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:key) { OpenSSL::PKey::RSA.generate(4096) }
-  let(:key_pair) { { description: 'foo key pair', value: key.to_pem, repository_id: repo.id } }
+  let(:key_pair) { { description: 'foo key pair', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id } }
 
   describe 'not authenticated' do
     before { delete("/v3/repo/#{repo.id}/key_pair") }
@@ -22,30 +22,34 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
     end
 
     context 'existing repo' do
-      describe 'authenticated as wrong user' do
-        before { delete("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{other_token}" }) }
+      describe 'authenticated user with wrong permissions' do
+        before do
+          Travis::API::V3::Models::Permission.create(repository: repo, user: other_user, pull: true)
+          repo.update_attributes(settings: JSON.generate(ssh_key: key_pair, foo: 'bar'))
+          delete("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{other_token}" })
+        end
 
         example { expect(last_response.status).to eq 403 }
         example do
           expect(JSON.parse(last_response.body)).to eq(
             '@type' => 'error',
-            'error_message' => 'operation requires change_key access to repository',
+            'error_message' => 'operation requires write access to key_pair',
             'error_type' => 'insufficient_access',
-            'permission' => 'change_key',
-            'repository' => {
-              '@type' => 'repository',
-              '@href' => "/v3/repo/#{repo.id}",
+            'permission' => 'write',
+            'key_pair' => {
+              '@type' => 'key_pair',
+              '@href' => "/v3/repo/#{repo.id}/key_pair",
               '@representation' => 'minimal',
-              'id' => repo.id,
-              'name' => repo.name,
-              'slug' => repo.slug
+              'description' => repo.key_pair.description,
+              'public_key' => repo.key_pair.public_key,
+              'fingerprint' => repo.key_pair.fingerprint
             },
-            'resource_type' => 'repository'
+            'resource_type' => 'key_pair'
           )
         end
       end
 
-      context 'authenticated as correct user' do
+      context 'authenticated user with correct permissions' do
         before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
         describe 'existing repo, no key pair' do
