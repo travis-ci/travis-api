@@ -3,7 +3,7 @@ module Travis::API::V3
     def run!
       owner = query(:owner).find
       repositories = access_control.visible_repositories(owner.repositories)
-      query(:builds).active_from(repositories)
+      result query(:builds).active_from(repositories)
     end
   end
 end
