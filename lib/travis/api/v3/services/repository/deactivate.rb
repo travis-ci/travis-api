@@ -9,7 +9,7 @@ module Travis::API::V3
       github(admin).set_hook(repository, activate)
       repository.update_attributes(active: activate)
 
-      repository
+      result repository
     end
 
     def check_access(repository)

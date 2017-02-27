@@ -4,7 +4,9 @@ module Travis::API::V3
 
     def run!
       repository = check_login_and_find(:repository)
-      access_control.permissions(repository).change_key!
+      private_repo_feature!(repository)
+      key_pair = find(:key_pair, repository)
+      access_control.permissions(key_pair).write!
       query.delete(repository) and deleted
     end
   end

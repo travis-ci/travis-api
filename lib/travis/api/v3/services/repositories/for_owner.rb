@@ -5,7 +5,7 @@ module Travis::API::V3
 
     def run!
       unfiltered = query.for_owner(find(:owner), user: access_control.user)
-      access_control.visible_repositories(unfiltered)
+      result access_control.visible_repositories(unfiltered)
     end
   end
 end

@@ -3,7 +3,7 @@ module Travis::API::V3
     params :name, :branch
 
     def run!
-      query.delete(find(:repository))
+      result query.delete(find(:repository))
     end
   end
 end
