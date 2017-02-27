@@ -48,7 +48,7 @@ module Travis
       @conn ||= Faraday.new(url: url) do |c|
         c.request :authorization, :token, token
         c.request :retry, max: 5, interval: 0.1, backoff_factor: 2
-        c.response :raise_error
+        c.adapter :net_http
       end
     end
   end

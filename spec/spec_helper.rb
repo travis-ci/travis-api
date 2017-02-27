@@ -100,6 +100,12 @@ RSpec.configure do |c|
     base.establish_connection(Travis.config.logs_database)
     base.connection.tables.each { |table| base.connection.execute("TRUNCATE #{table}") }
   end
+
+  c.filter_run_excluding(
+    logs_api_enabled: !%w(on true yes 1).include?(
+      ENV['TRAVIS_API_LOGS_API_ENABLED']
+    )
+  )
 end
 
 require 'timecop'

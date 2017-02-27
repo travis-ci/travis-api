@@ -67,7 +67,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   end
   after { Fog::Mock.reset }
 
-  context 'when log stored in db' do
+  context 'when log stored in db', logs_api_enabled: false do
     describe 'returns log with an array of Log Parts' do
       example do
         log_part = log.log_parts.create(content: "logging it", number: 0)
@@ -117,7 +117,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
   end
 
-  context 'when log not found in db but stored on S3' do
+  context 'when log not found in db but stored on S3', logs_api_enabled: false do
     describe 'returns log with an array of Log Parts' do
       example do
         s3log.update_attributes(archived_at: Time.now)
@@ -155,7 +155,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
   end
 
-  context 'when log not found on s3' do
+  context 'when log not found on s3', logs_api_enabled: false do
     describe 'does not return log - returns error' do
       example do
         get("/v3/job/#{no_s3log.job.id}/log", {}, headers)
@@ -167,7 +167,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
   end
 
-  context 'when log not found anywhere' do
+  context 'when log not found anywhere', logs_api_enabled: false do
     describe 'does not return log - returns error' do
       example do
         log3.delete
