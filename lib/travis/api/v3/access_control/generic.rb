@@ -46,6 +46,10 @@ module Travis::API::V3
       full_access? || logged_in?
     end
 
+    def enterprise?
+      !!Travis.config.enterprise
+    end
+
     def visible_repositories(list)
       # naïve implementation, replaced with smart implementation in specific subclasses
       return list if full_access?
@@ -99,8 +103,16 @@ module Travis::API::V3
       writable? job.repository
     end
 
+    def key_pair_visible?(key_pair)
+      visible? key_pair.repository
+    end
+
     def organization_visible?(organization)
       full_access? or public_api?
+    end
+
+    def ssl_key_visible?(ssl_key)
+      visible? ssl_key.repository
     end
 
     def ssl_key_writable?(ssl_key)
@@ -113,6 +125,10 @@ module Travis::API::V3
 
     def user_writable?(user)
       self.user == user
+    end
+
+    def user_setting_visible?(user_setting)
+      visible? user_setting.repository
     end
 
     def repository_adminable?(repository)

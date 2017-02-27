@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Renderer::KeyPair < Renderer::ModelRenderer
     representation :standard, :description, :public_key, :fingerprint
+    representation :minimal, *representations[:standard]
 
     def self.available_attributes
       [*super, :value]

@@ -5,7 +5,7 @@ module Travis::API::V3
 
     def run!
       repository = check_login_and_find(:repository)
-      result query.find(repository)
+      result find(:env_var, repository)
     end
   end
 end

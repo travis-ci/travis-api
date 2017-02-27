@@ -1,10 +1,10 @@
 require 'addressable/uri'
 require 'faraday'
 require 'securerandom'
-require 'customerio'
 require 'travis/api/app'
 require 'travis/github/education'
 require 'travis/github/oauth'
+require 'travis/customerio'
 
 class Travis::Api::App
   class Endpoint
@@ -138,27 +138,6 @@ class Travis::Api::App
           end
         end
 
-        def update_customerio(user)
-          return unless Travis.config.customerio.site_id
-
-          # send event to customer.io
-          payload = {
-            :id => user.id,
-            :name => user.name,
-            :login => user.login,
-            :email => primary_email_for_user(user.github_oauth_token),
-            :created_at => user.created_at.to_i,
-            :github_id => user.github_id,
-            :education => user.education,
-            :first_logged_in_at => user.first_logged_in_at.to_i,
-            :travis_domain => Travis.config.client_domain
-          }
-
-          customerio.identify(payload)
-        rescue StandardError => e
-          Travis.logger.error "Could not update Customer.io for User: #{user.id}:#{user.login} with message:#{e.message}"
-        end
-
         def serialize_user(user)
           rendered = Travis::Api::Serialize.data(user, version: :v2)
           rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
@@ -167,6 +146,11 @@ class Travis::Api::App
         def oauth_endpoint
           proxy = Travis.config.oauth2.proxy
           proxy ? File.join(proxy, request.fullpath) : url
+        end
+
+        def log_with_request_id(line)
+          request_id = request.env["HTTP_X_REQUEST_ID"]
+          Travis.logger.info "#{line} <request_id=#{request_id}>"
         end
 
         def handshake
@@ -178,8 +162,13 @@ class Travis::Api::App
             redirect_uri: oauth_endpoint
           }
 
+          log_with_request_id("[handshake] Starting handshake")
+
           if params[:code]
-            halt 400, 'state mismatch' unless state_ok?(params[:state])
+            unless state_ok?(params[:state])
+              log_with_request_id("[handshake] Handshake failed (state mismatch)")
+              halt 400, 'state mismatch'
+            end
             endpoint.path          = config.access_token_path
             values[:state]         = params[:state]
             values[:code]          = params[:code]
@@ -189,7 +178,7 @@ class Travis::Api::App
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
             update_first_login(user)
-            update_customerio(user)
+            Travis::Customerio.update(user)
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
@@ -290,7 +279,10 @@ class Travis::Api::App
           end
 
           user   = manager.fetch
-          halt 403, 'not a Travis user' if user.nil?
+          if user.nil?
+            log_with_request_id("[handshake] Fetching user failed")
+            halt 403, 'not a Travis user'
+          end
 
           Travis.run_service(:sync_user, user)
 
@@ -304,7 +296,11 @@ class Travis::Api::App
           response   = Faraday.new(ssl: Travis.config.github.ssl).post(endpoint, values)
           parameters = Addressable::URI.form_unencode(response.body)
           token_info = parameters.assoc("access_token")
-          halt 401, 'could not resolve github token' unless token_info
+
+          unless token_info
+            log_with_request_id("[handshake] Could not fetch token, github's response: status=#{response.status}")
+            halt 401, 'could not resolve github token'
+          end
           token_info.last
         end
 
@@ -362,14 +358,6 @@ class Travis::Api::App
           @allowed_https_targets ||= Travis.config.auth.target_origin.to_s.split(',')
         end
 
-        def primary_email_for_user(oauth_token)
-          # check for the users primary email address (we don't store this info)
-          GH.with(token: oauth_token, client_id: nil) { GH['user/emails'] }.select { |e| e['primary'] }.first['email']
-        end
-
-        def customerio
-          Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
-        end
     end
   end
 end
