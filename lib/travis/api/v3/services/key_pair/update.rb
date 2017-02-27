@@ -4,7 +4,7 @@ module Travis::API::V3
 
     def run!
       repository = check_login_and_find(:repository)
-      paid_feature!(repository)
+      private_repo_feature!(repository)
       key_pair = find(:key_pair, repository)
       access_control.permissions(key_pair).write!
       key_pair = query.update(key_pair)
