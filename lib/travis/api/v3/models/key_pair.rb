@@ -41,5 +41,9 @@ module Travis::API::V3
       repository.settings = repository.settings.tap { |setting| setting.delete("ssh_key")}.to_json
       repository.save!
     end
+
+    def repository
+      V3::Models::Repository.find(repository_id)
+    end
   end
 end

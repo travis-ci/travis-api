@@ -142,5 +142,9 @@ module Travis::API::V3
     def not_implemented
       raise NotImplemented
     end
+
+    def paid_feature!(repository)
+      raise PaidFeature unless access_control.enterprise? || repository.private?
+    end
   end
 end
