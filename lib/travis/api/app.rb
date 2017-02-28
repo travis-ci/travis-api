@@ -198,7 +198,7 @@ module Travis::Api
       end
 
       def self.setup_database_connections
-        Travis.config.database.variables.to_h             ||= {}
+        Travis.config.database.variables                  ||= {}
         Travis.config.database.variables.application_name ||= ["api", Travis.env, ENV['DYNO']].compact.join(?-)
         Travis::Database.connect
 
