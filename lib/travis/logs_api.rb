@@ -34,6 +34,7 @@ module Travis
       unless resp.success?
         raise LogsApi::Error, "failed to write content job_id=#{job_id}"
       end
+      RemoteLog.new(JSON.parse(resp.body))
     end
 
     private def find_by(by, id)

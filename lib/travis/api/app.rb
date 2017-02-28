@@ -206,12 +206,10 @@ module Travis::Api
           # HACK HACK HACK
           ActiveRecord::Base.configurations['logs_readonly_database'] = Travis.config.logs_readonly_database.to_h
           # HACK HACK HACK
-          binding.pry
           pool_size = ENV['DATABASE_POOL_SIZE']
           Travis.config.logs_readonly_database[:pool] = pool_size.to_i if pool_size
 
           Travis::LogsModel.establish_connection 'logs_readonly_database'
-          binding.pry
         elsif Travis.config.logs_database
           pool_size = ENV['DATABASE_POOL_SIZE']
           Travis.config.logs_database[:pool] = pool_size.to_i if pool_size
