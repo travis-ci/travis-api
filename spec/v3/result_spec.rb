@@ -1,6 +1,6 @@
 describe Travis::API::V3::Result do
   let(:access_control) { Object.new }
-  subject(:result) { described_class.new(access_control, :example, []) }
+  subject(:result) { described_class.new(access_control: access_control, type: :example, resource: []) }
 
   example { expect(result.type)           .to be == :example       }
   example { expect(result.resource)       .to be == []             }

@@ -3,7 +3,7 @@ module Travis::API::V3
 
     def run!
       repo = find(:repository)
-      query.find_for_branch(find(:branch, repo))
+      result query.find_for_branch(find(:branch, repo))
     end
   end
 end

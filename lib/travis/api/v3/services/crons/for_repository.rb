@@ -4,7 +4,7 @@ module Travis::API::V3
 
     def run!
       repo = find(:repository)
-      query.find(repo)
+      result query.find(repo)
     end
   end
 end
