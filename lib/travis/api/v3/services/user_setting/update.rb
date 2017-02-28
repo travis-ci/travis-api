@@ -7,7 +7,7 @@ module Travis::API::V3
       repository = check_login_and_find(:repository)
       user_setting = query.update(repository)
       access_control.permissions(user_setting).write!
-      user_setting
+      result user_setting
     end
   end
 end

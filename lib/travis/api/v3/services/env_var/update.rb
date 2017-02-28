@@ -6,7 +6,7 @@ module Travis::API::V3
       repository = check_login_and_find(:repository)
       env_var = find(:env_var, repository)
       access_control.permissions(env_var).write!
-      query.update(env_var)
+      result query.update(env_var)
     end
   end
 end

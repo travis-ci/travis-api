@@ -5,7 +5,7 @@ module Travis::API::V3
 
     def run!
       user = check_login_and_find(:user)
-      query.update(user)
+      result query.update(user)
     end
   end
 end

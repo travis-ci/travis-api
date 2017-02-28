@@ -25,7 +25,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
       "repository_id"=>1,
       "size"=>file1.content_length,
       "branch"=>"ha-bug-rm_rf",
-      "slug"=>"cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz",
+      "name"=>"cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz",
       "repo"=>{
         "@type"=>"repository",
         "@href"=>"/v3/repo/#{repo.id}",
@@ -41,7 +41,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
       "repository_id"=>1,
       "size"=>file2.content_length,
       "branch"=>"master",
-      "slug"=>"cache-linux-precise-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz",
+      "name"=>"cache-linux-precise-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz",
       "repo"=>{
         "@type"=>"repository",
         "@href"=>"/v3/repo/#{repo.id}",
@@ -91,9 +91,9 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     end
   end
 
-  describe "delete for match" do
+  describe "delete for name" do
     example do
-      delete("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"], match: 'dhfsod8fu4' } )
+      delete("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"], name: 'dhfsod8fu4' } )
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
         "@representation"=>"standard",
