@@ -42,6 +42,7 @@ module Travis
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
+            logs_readonly_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_api:      { url: logs_api_url, token: logs_api_auth_token, enabled: logs_api_enabled? },
             log_options:   { s3: { access_key_id: '', secret_access_key: ''}},
             s3:            { access_key_id: '', secret_access_key: ''},
@@ -91,6 +92,7 @@ module Travis
         config = compact(
           database: Database.new.config,
           logs_database: Database.new(prefix: :logs).config,
+          logs_readonly_database: Database.new(prefix: :logs_readonly).config,
           amqp: Url.parse(ENV['TRAVIS_RABBITMQ_URL'] || ENV['RABBITMQ_URL']).to_h.compact,
           redis: { url: ENV['TRAVIS_REDIS_URL'] || ENV['REDIS_URL'] }.compact
         )

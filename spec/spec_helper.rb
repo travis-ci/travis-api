@@ -97,7 +97,11 @@ RSpec.configure do |c|
     # DatabaseCleaner is not cleaning up the logs database, so this
     # avoids leaving records lying around between test runs
     base = ActiveRecord::Base
-    base.establish_connection(Travis.config.logs_database)
+    if Travis.config.logs_api.enabled?
+      base.establish_connection(Travis.config.logs_readonly_database)
+    else
+      base.establish_connection(Travis.config.logs_database)
+    end
     base.connection.tables.each { |table| base.connection.execute("TRUNCATE #{table}") }
   end
 
