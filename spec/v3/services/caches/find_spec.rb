@@ -11,7 +11,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
       "size"=>20308738,
       "branch"=>"ha-bug-rm_rf",
       "last_modified"=>"2009-10-12T17:50:30Z",
-      "slug"=>"cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz",
+      "name"=>"cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz",
       "repo"=>{
         "@type"=>"repository",
         "@href"=>"/v3/repo/#{repo.id}",
@@ -28,7 +28,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
       "size"=>64994,
       "branch"=>"master",
       "last_modified"=>"2009-10-12T17:50:30Z",
-      "slug"=>"cache-linux-precise-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz",
+      "name"=>"cache-linux-precise-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz",
       "repo"=>{
         "@type"=>"repository",
         "@href"=>"/v3/repo/#{repo.id}",
@@ -145,17 +145,17 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     end
   end
 
-  describe "filter by match" do
+  describe "filter by name" do
     before do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}").
          to_return(:status => 200, :body => xml_content, :headers => {})
     end
 
     example do
-      get("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"], match: 'dhfsod8fu4' } )
+      get("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"], name: 'dhfsod8fu4' } )
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
-        "@href"=>"/v3/repo/1/caches?branch=#{result[0]["branch"]}&match=dhfsod8fu4",
+        "@href"=>"/v3/repo/1/caches?branch=#{result[0]["branch"]}&name=dhfsod8fu4",
         "@representation"=>"standard",
         "caches"=> [result[0]]
       }
