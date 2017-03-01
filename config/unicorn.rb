@@ -11,6 +11,18 @@ before_fork do |server, worker|
   # preload travis so we can have copy on write
   require 'travis/api/app'
 
+  # kill old connections to logs db
+  Travis::LogsModel.connection.disconnect!
+  Travis::API::V3::Models::Log.connection.disconnect!
+
   # signal to nginx we're ready
   FileUtils.touch("#{tmp_dir}/app-initialized")
+end
+
+after_fork do |server, worker|
+  require 'travis/api/app'
+
+  # reestablish connections to logs db
+  Travis::LogsModel.establish_connection(Travis.config.logs_database)
+  Travis::API::V3::Models::Log.establish_connection(Travis.config.logs_database)
 end
