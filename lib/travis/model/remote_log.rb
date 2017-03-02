@@ -57,15 +57,17 @@ class RemoteLog
 
   def clear!(user = nil)
     message = ''
+    removed_by = nil
 
-    if user.respond_to?(:name)
+    if user.respond_to?(:name) && user.respond_to?(:id)
       message = "Log removed by #{user.name} at #{Time.now.utc}"
+      removed_by = user.id
     end
 
     updated = self.class.write_content_for_job_id(
       job_id,
       content: message,
-      removed_by: user.respond_to?(:id) ? user.id : nil
+      removed_by: removed_by
     )
 
     attributes.keys.each do |k|
