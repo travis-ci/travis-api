@@ -340,6 +340,8 @@ GEM
     tilt (2.0.5)
     timecop (0.8.1)
     tool (0.2.3)
+    travis-config (0.1.4)
+      hashr (~> 0.0)
     tzinfo (0.3.52)
     uber (0.0.15)
     unicorn (5.2.0)
@@ -396,6 +398,7 @@ DEPENDENCIES
   timecop (~> 0.8.0)
   travis-amqp!
   travis-api!
+  travis-config (~> 0.1.0)
   travis-lock!
   travis-migrations!
   travis-settings!

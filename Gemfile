@@ -10,6 +10,7 @@ gem 'mime-types'
 # TODO: back out travis-support on 'meat-logs-readonly-config' branch
 gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support', branch: 'meat-logs-readonly-config'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
+gem 'travis-config',   '~> 0.1.0'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
