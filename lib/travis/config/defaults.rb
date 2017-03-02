@@ -1,5 +1,3 @@
-require 'travis/config'
-
 module Travis
   class Config < Hashr
     require 'travis/config/database'
