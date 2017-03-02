@@ -99,6 +99,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     end
     after { Timecop.return }
     example do
+      expect(log).to_not be_nil
       delete("/v3/job/#{job.id}/log", {}, headers)
       expect(last_response.status).to be == 200
       expect(JSON.load(body)).to be == {
