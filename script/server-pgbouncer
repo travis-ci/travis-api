@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# this script enables a pgbouncer wrapper when the
+# `PGBOUNCER_ENABLED` variable is set to '1' or 'true'
+
+if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
+  bin/start-pgbouncer-stunnel ./script/server
+else
+  ./script/server
+fi
