@@ -3,7 +3,7 @@ require 'active_support/core_ext/hash/slice'
 
 describe Travis::Config do
   let(:config) { Travis::Config.load(:files, :env, :heroku, :docker) }
-  let(:statement_timeout) { Travis::Config::Heroku::Database.VARIABLES[:statement_timeout] }
+  let(:statement_timeout) { Travis::Config::Heroku::Database::VARIABLES[:statement_timeout] }
 
   describe 'endpoints' do
     it 'returns an object even without endpoints entry' do
