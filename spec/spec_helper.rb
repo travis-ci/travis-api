@@ -105,11 +105,13 @@ RSpec.configure do |c|
     base.connection.tables.each { |table| base.connection.execute("TRUNCATE #{table}") }
   end
 
-  c.filter_run_excluding(
-    logs_api_enabled: !%w(on true yes 1).include?(
-      ENV['TRAVIS_API_LOGS_API_ENABLED']
-    )
-  )
+  c.before :each, logs_api_enabled: true do
+    Travis.config.logs_api.enabled = true
+  end
+
+  c.before :each, logs_api_enabled: false do
+    Travis.config.logs_api.enabled = false
+  end
 end
 
 require 'timecop'

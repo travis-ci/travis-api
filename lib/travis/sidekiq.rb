@@ -11,9 +11,6 @@ Travis.config.logs_readonly_database[:pool] = pool_size.to_i
 Travis::Database.connect
 
 if Travis.config.logs_api.enabled? && Travis.config.logs_readonly_database
-  # HACK HACK HACK
-  ActiveRecord::Base.configurations['logs_readonly_database'] = Travis.config.logs_readonly_database.to_h
-  # HACK HACK HACK
   Travis::LogsModel.establish_connection 'logs_readonly_database'
 elsif Travis.config.logs_database
   Travis::LogsModel.establish_connection 'logs_database'

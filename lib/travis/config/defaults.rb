@@ -5,28 +5,28 @@ module Travis
     require 'travis/config/database'
     require 'travis/config/url'
 
-    # HACK HACK HACK
-    def self.logs_api_enabled?
-      %w(true on yes 1).include?(
-        (
-          ENV['TRAVIS_API_LOGS_API_ENABLED'] ||
-          ENV['LOGS_API_ENABLED']
-        ).to_s.downcase
-      )
-    end
+    class << self
+      def logs_api_enabled?
+        %w(true on yes 1).include?(
+          (
+            ENV['TRAVIS_API_LOGS_API_ENABLED'] ||
+            ENV['LOGS_API_ENABLED']
+          ).to_s.downcase
+        )
+      end
 
-    def self.logs_api_url
-      ENV['TRAVIS_API_LOGS_API_URL'] ||
-        ENV['LOGS_API_URL'] ||
-        'http://travis-logs-notset.example.com:9753'
-    end
+      def logs_api_url
+        ENV['TRAVIS_API_LOGS_API_URL'] ||
+          ENV['LOGS_API_URL'] ||
+          'http://travis-logs-notset.example.com:1234'
+      end
 
-    def self.logs_api_auth_token
-      ENV['TRAVIS_API_LOGS_API_AUTH_TOKEN'] ||
-        ENV['LOGS_API_AUTH_TOKEN'] ||
-        'baba-dada-fafafaf-travis-logs-notset'
+      def logs_api_auth_token
+        ENV['TRAVIS_API_LOGS_API_AUTH_TOKEN'] ||
+          ENV['LOGS_API_AUTH_TOKEN'] ||
+          'notset'
+      end
     end
-    # HACK HACK HACK
 
     HOSTS = {
       production:  'travis-ci.org',
