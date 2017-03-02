@@ -2,8 +2,6 @@ require 'travis/config'
 
 module Travis
   class Config < Hashr
-    require 'travis/config/database'
-    require 'travis/config/url'
 
     HOSTS = {
       production:  'travis-ci.org',
