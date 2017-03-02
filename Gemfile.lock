@@ -62,8 +62,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: fee7f426ba4914ad5bc688b975a19ad52db83f51
-  branch: meat-logs-readonly-config
+  revision: 113cff17fe383bb72fcfae3a97a8ce98c228342f
   specs:
     travis-support (0.0.1)
 
