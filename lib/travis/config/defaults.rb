@@ -38,7 +38,6 @@ module Travis
             ssl:           {},
             redis:         { url: 'redis://localhost:6379' },
             repository:    { ssl_key: { size: 4096 } },
-            repository_filter: { include: [/^rails\/rails/], exclude: [/\/rails$/] },
             encryption:    Travis.env == 'development' || Travis.env == 'test' ? { key: 'secret' * 10 } : {},
             sync:          { organizations: { repositories_limit: 1000 } },
             states_cache:  { memcached_servers: 'localhost:11211' },
