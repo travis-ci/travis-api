@@ -202,7 +202,7 @@ module Travis::Api
         Travis.config.database.variables[:application_name] ||= ["api", Travis.env, ENV['DYNO']].compact.join(?-)
         Travis::Database.connect
 
-        if Travis.config.logs_database.to_h
+        if Travis.config.logs_database?
           pool_size = ENV['DATABASE_POOL_SIZE']
           Travis.config.logs_database[:pool] = pool_size.to_i if pool_size
 
