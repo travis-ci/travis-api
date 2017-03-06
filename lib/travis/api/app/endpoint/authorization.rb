@@ -298,7 +298,7 @@ class Travis::Api::App
           token_info = parameters.assoc("access_token")
 
           unless token_info
-            log_with_request_id("[handshake] Could not fetch token, github's response: status=#{response.status}")
+            log_with_request_id("[handshake] Could not fetch token, github's response: status=#{response.status}, body=#{parameters.inspect} headers=#{response.headers.inspect}")
             halt 401, 'could not resolve github token'
           end
           token_info.last
