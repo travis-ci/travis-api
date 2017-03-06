@@ -4,7 +4,7 @@ module Travis::API::V3
     collection_key  :caches
 
     def self.available_attributes
-      [super*, :branch, :name]
+      [:branch, :name]
     end
 
   end
