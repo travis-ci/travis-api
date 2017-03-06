@@ -22,6 +22,7 @@ module Travis::API::V3
     private
 
     def prefix
+      branch += '/' unless branch.to_s.empty?
       "#{@repo.github_id.to_s}/#{branch}"
     end
 
