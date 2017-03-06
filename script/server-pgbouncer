@@ -4,6 +4,10 @@
 
 cd "$(dirname "$0")/.."
 
+if [ "$PGBOUNCER_ENABLE_FOR_DYNO" != '' ] && [ "$PGBOUNCER_ENABLE_FOR_DYNO" = "$DYNO" ]; then
+  export PGBOUNCER_ENABLED=true
+fi
+
 if [ ! -f "bin/start-pgbouncer-stunnel" ]; then
   echo "warning: pgbouncer buildpack not found, setting PGBOUNCER_ENABLED=false"
   export PGBOUNCER_ENABLED=false
