@@ -33,6 +33,13 @@ GIT
     travis-amqp (0.0.1)
 
 GIT
+  remote: https://github.com/travis-ci/travis-config
+  revision: 2c7137272c879c32fa6bb8d753787f3a14044045
+  specs:
+    travis-config (1.0.13)
+      hashr (~> 2.0.0)
+
+GIT
   remote: https://github.com/travis-ci/travis-lock
   revision: b418401c79e082aa53a62364f7b01a9be6f0d768
   specs:
@@ -62,7 +69,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 70e94a38e87a490cb72bab9da777571014694a82
+  revision: 61906e5398bd20071ccb0f54a3f64374cd450163
   specs:
     travis-support (0.0.1)
 
@@ -93,7 +100,7 @@ PATH
       redcarpet (>= 3.2.3)
       redis (~> 3.0)
       rollout (~> 1.1.0)
-      simple_states (~> 1.0.0)
+      simple_states
       sinatra (~> 1.3)
       sinatra-contrib (~> 1.3)
       tool
@@ -202,7 +209,7 @@ GEM
       os (~> 0.9)
       signet (~> 0.7)
     hashdiff (0.3.1)
-    hashr (0.0.22)
+    hashr (2.0.0)
     hitimes (1.2.4)
     httpclient (2.8.2.4)
     hurley (0.2)
@@ -311,9 +318,8 @@ GEM
       faraday (~> 0.9)
       jwt (~> 1.5)
       multi_json (~> 1.10)
-    simple_states (1.0.1)
+    simple_states (1.0.2)
       activesupport
-      hashr (~> 0.0.10)
     simplecov (0.12.0)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
@@ -339,8 +345,6 @@ GEM
     tilt (2.0.5)
     timecop (0.8.1)
     tool (0.2.3)
-    travis-config (0.1.4)
-      hashr (~> 0.0)
     tzinfo (0.3.52)
     uber (0.0.15)
     unicorn (5.2.0)
@@ -389,6 +393,7 @@ DEPENDENCIES
   rspec-its
   s3!
   sentry-raven
+  simple_states (= 1.0.2)
   simplecov
   sinatra
   sinatra-contrib
@@ -397,7 +402,7 @@ DEPENDENCIES
   timecop (~> 0.8.0)
   travis-amqp!
   travis-api!
-  travis-config (~> 0.1.0)
+  travis-config!
   travis-lock!
   travis-migrations!
   travis-settings!
@@ -409,7 +414,7 @@ DEPENDENCIES
   yard-sinatra!
 
 RUBY VERSION
-   ruby 2.3.1p112
+   ruby 2.3.3p222
 
 BUNDLED WITH
-   1.14.3
+   1.14.5

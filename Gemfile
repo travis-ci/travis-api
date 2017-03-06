@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-ruby '2.3.1'
+ruby '2.3.3'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
@@ -9,7 +9,7 @@ gem 'mime-types'
 
 gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
-gem 'travis-config',   '~> 0.1.0'
+gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
@@ -18,6 +18,8 @@ gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
 gem 'mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
+
+gem 'simple_states',   '1.0.2'
 
 gem 'active_model_serializers'
 gem 'unicorn'

@@ -43,8 +43,7 @@ module Travis::API::V3
     end
 
     def s3_config
-      conf = config.log_options.try(:s3) || {}
-      conf.merge(bucket_name: bucket_name)
+      conf = (config[:log_options][:s3] || {}).merge(bucket_name: bucket_name)
     end
 
     def bucket_name
@@ -54,6 +53,5 @@ module Travis::API::V3
     def hostname(name)
       "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
     end
-
   end
 end

@@ -1,6 +1,6 @@
 describe "ActiveRecordPostgresVariables" do
   let(:variables) {{ foo: 'bar' }}
-  let(:database_options) { Travis.config.database.merge(variables: variables) }
+  let(:database_options) { Travis.config.database.to_h.merge(variables: variables) }
   let(:base) { Class.new(ActiveRecord::Base) }
 
   it "passes on variables to postgres connections" do

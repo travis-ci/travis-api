@@ -2,7 +2,7 @@ class Request
   class PullRequest
     Try = Struct.new(:value) do
       def method_missing(*args, &block)
-        Try.new(value.nil? ? nil : value.public_send(*args, &block))
+        Try.new(value.nil? ? nil : value[*args])
       end
     end
 

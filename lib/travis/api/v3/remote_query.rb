@@ -52,7 +52,7 @@ module Travis::API::V3
     end
 
     def config
-      Travis.config
+      Travis.config.to_h
     end
 
     def s3_config
