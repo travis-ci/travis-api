@@ -4,6 +4,11 @@
 
 cd "$(dirname "$0")/.."
 
+if [ ! -f "bin/start-pgbouncer-stunnel" ]; then
+  echo "warning: pgbouncer buildpack not found, setting PGBOUNCER_ENABLED=false"
+  export PGBOUNCER_ENABLED=false
+fi
+
 if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
   export PGBOUNCER_PREPARED_STATEMENTS=false
   bin/start-pgbouncer-stunnel script/server
