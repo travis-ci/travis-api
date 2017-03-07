@@ -52,7 +52,7 @@ module Travis::API::V3
 
     def gcs_bucket
       gcs     = ::Google::Apis::StorageV1::StorageService.new
-      json_key_io = StringIO.new(config.to_h[:json_key])
+      json_key_io = StringIO.new(gcs_config[:json_key])
 
       gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
         json_key_io: json_key_io,
@@ -60,7 +60,7 @@ module Travis::API::V3
           'https://www.googleapis.com/auth/devstorage.read_write'
         ]
       )
-      gcs.list_objects(config[:bucket_name], prefix: prefix).items
+      gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
 
       # parsed_json_key = JSON.parse(gcs_config[:json_key])
       # gcs = Fog::Storage.new(provider: "Google", google_storage_access_key_id: parsed_json_key["private_key_id"], google_storage_secret_access_key: parsed_json_key["private_key"])

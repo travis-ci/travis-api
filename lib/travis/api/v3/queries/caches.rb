@@ -21,8 +21,13 @@ module Travis::API::V3
 
     private
 
+    # def prefix
+    #   "#{@repo.github_id.to_s}/#{branch}"
+    # end
     def prefix
-      "#{@repo.github_id.to_s}/#{branch}"
+      prefix = "#{@repo.github_id}/"
+      prefix << branch << '/' if branch
+      prefix
     end
 
     def s3_config
