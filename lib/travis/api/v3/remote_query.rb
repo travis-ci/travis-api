@@ -50,8 +50,9 @@ module Travis::API::V3
     end
 
     def gcs_bucket
-      # gcs = Fog::Storage.new(provider: "Google", google_storage_access_key_id: gcs_config[:json_key][:private_key_id], google_storage_secret_access_key: gcs_config[:json_key][:private_key])
-      gcs = Fog::Storage::Google.new(google_json_key_string: gcs_config[:json_key], google_project: gcs_config[:google_project])
+      parsed_json_key = JSON.parse(gcs_config[:json_key])
+      gcs = Fog::Storage.new(provider: "Google", google_storage_access_key_id: parsed_json_key["private_key_id"], google_storage_secret_access_key: parsed_json_key["private_key"])
+      # gcs = Fog::Storage::Google.new(google_json_key_string: gcs_config[:json_key], google_project: gcs_config[:google_project])
       gcs.directories.get(gcs_config[:bucket_name], prefix: prefix)
     end
 
