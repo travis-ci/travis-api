@@ -1,6 +1,5 @@
 require 'fog/aws'
 require 'fog/google'
-require 'google/apis/storage_v1'
 
 module Travis::API::V3
   class RemoteQuery < Query
