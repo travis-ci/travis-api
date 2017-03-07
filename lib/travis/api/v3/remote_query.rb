@@ -1,5 +1,6 @@
 require 'fog/aws'
 require 'fog/google'
+require 'google/apis/storage_v1'
 
 module Travis::API::V3
   class RemoteQuery < Query
@@ -50,10 +51,21 @@ module Travis::API::V3
     end
 
     def gcs_bucket
-      parsed_json_key = JSON.parse(gcs_config[:json_key])
+      gcs     = ::Google::Apis::StorageV1::StorageService.new
+      json_key_io = StringIO.new(config.to_h[:json_key])
+
+      gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
+        json_key_io: json_key_io,
+        scope: [
+          'https://www.googleapis.com/auth/devstorage.read_write'
+        ]
+      )
+      gcs.list_objects(config[:bucket_name], prefix: prefix).items
+
+      # parsed_json_key = JSON.parse(gcs_config[:json_key])
       # gcs = Fog::Storage.new(provider: "Google", google_storage_access_key_id: parsed_json_key["private_key_id"], google_storage_secret_access_key: parsed_json_key["private_key"])
-      gcs = Fog::Storage::Google.new(google_json_key_string: gcs_config[:json_key], google_project: gcs_config[:project_id])
-      gcs.directories.get(gcs_config[:bucket_name], prefix: prefix)
+      # gcs = Fog::Storage::Google.new(google_json_key_string: gcs_config[:json_key], google_project: gcs_config[:project_id])
+      # gcs.directories.get(gcs_config[:bucket_name], prefix: prefix)
     end
 
     def config
