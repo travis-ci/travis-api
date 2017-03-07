@@ -33,9 +33,10 @@ module Travis::API::V3
     end
 
     def storage_bucket
-      aws_bucket = s3_bucket
-      return aws_bucket if aws_bucket
-      gcs_bucket
+      bucket = []
+      bucket << s3_bucket
+      bucket << gcs_bucket
+      bucket
     end
 
     def prefix
