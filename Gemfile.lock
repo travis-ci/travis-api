@@ -372,8 +372,11 @@ DEPENDENCIES
   dalli
   database_cleaner (~> 0.8.0)
   factory_girl (~> 2.4.0)
+  fog-aws
+  fog-google
   foreman
   gh
+  google-api-client
   jemalloc
   metriks (= 0.9.9.6)
   metriks-librato_metrics!

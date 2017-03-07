@@ -4,6 +4,9 @@ gemspec
 ruby '2.3.3'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
+gem 'google-api-client'
+gem 'fog-aws'
+gem 'fog-google'
 
 gem 'mime-types'
 
