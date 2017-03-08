@@ -84,6 +84,7 @@ module Travis::API::V3
       items = gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
       #put each item into an array
       gcs_items = []
+      return gcs_items if items.nil?
       items.map { |item| gcs_items << GcsWrapper.new(item) }
       gcs_items
     end
