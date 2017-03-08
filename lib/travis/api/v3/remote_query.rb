@@ -36,12 +36,23 @@ module Travis::API::V3
       end
     end
 
+    class S3Wrapper
+      attr_reader :content_length, :key, :branch, :last_modified
+
+      def initialize(object)
+        @content_length  = object.content_length
+        @key             = object.key
+        @branch          = object.key
+        @last_modified   = object.last_modified
+      end
+    end
+
     private
 
     def storage_objects
       objects = []
-      objects << s3_bucket if s3_config
-      objects << gcs_bucket if gcs_config
+      s3_bucket.each { |object| objects << object } if s3_config
+      gcs_bucket.each { |object| objects << object } if gcs_config
       puts "DEBUG CACHE RESULTS LOGGING: number of S3 & GCS caches #{objects.length}"
       objects
     end
@@ -56,7 +67,7 @@ module Travis::API::V3
       files = s3.directories.get(s3_config[:bucket_name], prefix: prefix).files
       #put each file into an array
       s3_files = []
-      files.each { |file| s3_files << file }
+      files.map { |file| s3_files << s3Wrapper.new(file) }
       s3_files
     end
 
@@ -73,7 +84,7 @@ module Travis::API::V3
       items = gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
       #put each item into an array
       gcs_items = []
-      items.each { |item| gcs_items << GcsWrapper.new(item) }
+      items.map { |item| gcs_items << GcsWrapper.new(item) }
       gcs_items
     end
 
