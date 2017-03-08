@@ -27,6 +27,8 @@ module Travis::API::V3
     def prefix
       prefix = "#{@repo.github_id}/"
       prefix << branch << '/' if branch
+      puts "*********************************"
+      puts prefix
       prefix
     end
 
