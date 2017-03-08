@@ -28,14 +28,6 @@ class User < Travis::Model
       where(:permissions => permissions).includes(:permissions)
     end
 
-    def authenticate_by(options)
-      options = options.symbolize_keys
-
-      if user = User.find_by_login(options[:login])
-        user if user.tokens.any? { |t| t.token == options[:token] }
-      end
-    end
-
     def find_or_create_for_oauth(payload)
       Oauth.find_or_create_by(payload)
     end
