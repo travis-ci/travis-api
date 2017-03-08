@@ -40,7 +40,7 @@ class Rack::Attack
 
   # https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-safelist/
   safelist('safelist anything coming from github') do |request|
-    request.ip && GITHUB_CIDR.contains?(request.ip)
+    request.ip && NetAddr::CIDR.create(request.ip).version == 4 && GITHUB_CIDR.contains?(request.ip)
   end
 
   ####
