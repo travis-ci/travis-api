@@ -67,7 +67,7 @@ module Travis::API::V3
       files = s3.directories.get(s3_config[:bucket_name], prefix: prefix).files
       #put each file into an array
       s3_files = []
-      files.map { |file| s3_files << s3Wrapper.new(file) }
+      files.map { |file| s3_files << S3Wrapper.new(file) }
       s3_files
     end
 
