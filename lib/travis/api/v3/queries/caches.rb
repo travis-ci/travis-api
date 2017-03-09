@@ -15,6 +15,9 @@ module Travis::API::V3
     end
 
     def filter(list)
+      puts"**********"
+      puts "now filtering"
+      puts match if match
       return list unless match
       list.select{|c| c.name.include? match}
     end
