@@ -13,6 +13,7 @@ module Travis::API::V3
       puts "now deleting"
       caches = find(repo)
       puts "caches: #{caches.each {|c| puts c}}"
+      remove(caches)
     end
 
     def filter(list)
