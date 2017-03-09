@@ -25,7 +25,7 @@ module Travis::API::V3
         if cache.source == 's3'
           puts "remove s3 cache"
           Travis.logger.info "action=delete backend=s3 s3_object=#{cache.key}"
-          @s3.delete_object(cache.key)
+          @s3.delete_object(s3_config[:bucket_name], cache.key)
         elsif cache.source == 'gcs'
           puts "remove gcs cache"
           Travis.logger.info "action=delete backend=gcs bucket_name=#{s3_config[:bucket_name]} cache_key=#{cache.key}"
