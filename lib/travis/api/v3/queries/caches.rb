@@ -15,19 +15,15 @@ module Travis::API::V3
     end
 
     def filter(list)
-      return list unless name
-      list.select{|c| c.name.include? name}
+      return list unless match
+      list.select{|c| c.name.include? match}
     end
 
     private
 
-    # def prefix
-    #   "#{@repo.github_id.to_s}/#{branch}"
-    # end
     def prefix
       prefix = "#{@repo.github_id}/"
       prefix << branch << '/' if branch
-      prefix << match << '/' if match
       puts "*********************************"
       puts prefix
       prefix
