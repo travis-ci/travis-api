@@ -19,15 +19,11 @@ module Travis::API::V3
     end
 
     def remove(caches)
-      puts "*********"
-      puts "now removing"
       caches.each do |cache|
         if cache.source == 's3'
-          puts "remove s3 cache"
           Travis.logger.info "action=delete backend=s3 s3_object=#{cache.key}"
           @s3.delete_object(s3_config[:bucket_name], cache.key)
         elsif cache.source == 'gcs'
-          puts "remove gcs cache"
           Travis.logger.info "action=delete backend=gcs bucket_name=#{s3_config[:bucket_name]} cache_key=#{cache.key}"
           @gcs.delete_object(gcs_config[:bucket_name], cache.key)
         else
@@ -68,7 +64,6 @@ module Travis::API::V3
       objects = []
       s3_bucket.each { |object| objects << object } if s3_config
       gcs_bucket.each { |object| objects << object } if gcs_config
-      puts "DEBUG CACHE RESULTS LOGGING: number of S3 & GCS caches #{objects.length}"
       objects
     end
 
@@ -80,7 +75,6 @@ module Travis::API::V3
     def s3_bucket
       @s3 = Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], provider: 'AWS')
       files = @s3.directories.get(s3_config[:bucket_name], prefix: prefix).files
-      #put each file into an array
       s3_files = []
       files.map { |file| s3_files << S3Wrapper.new(file) }
       s3_files
@@ -97,7 +91,6 @@ module Travis::API::V3
         ]
       )
       items = @gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
-      #put each item into an array
       gcs_items = []
       return gcs_items if items.nil?
       items.map { |item| gcs_items << GcsWrapper.new(item) }

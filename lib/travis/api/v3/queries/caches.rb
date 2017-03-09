@@ -9,17 +9,11 @@ module Travis::API::V3
     end
 
     def delete(repo)
-      puts"**********"
-      puts "now deleting"
       caches = find(repo)
-      puts "caches: #{caches.each {|c| puts c}}"
       remove(caches)
     end
 
     def filter(list)
-      puts"**********"
-      puts "now filtering with #{params} params"
-      puts match if match
       return list unless match
       list.select{|c| c.name.include? match}
     end
@@ -29,8 +23,6 @@ module Travis::API::V3
     def prefix
       prefix = "#{@repo.github_id}/"
       prefix << branch << '/' if branch
-      puts "*********************************"
-      puts prefix
       prefix
     end
 
