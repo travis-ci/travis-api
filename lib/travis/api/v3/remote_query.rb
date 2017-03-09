@@ -22,7 +22,7 @@ module Travis::API::V3
       caches.each do |cache|
         puts "*********"
         puts cache
-        cache.destroy
+        # cache.destroy
       end
     end
 
