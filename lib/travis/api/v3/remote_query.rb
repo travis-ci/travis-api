@@ -22,13 +22,12 @@ module Travis::API::V3
       puts "*********"
       puts "now removing"
       caches.each do |cache|
-        if cache.source = 's3'
-          puts "remove s3 cache"
-        elsif cache.source = 'gcs'
-          puts "remove gcs cache"
-        else
-          raise SourceUnknown "#{cache.source} is an unknown source."
-        end
+        puts "remove s3 cache" if cache.source = 's3'  
+        puts "remove gcs cache" if cache.source = 'gcs'
+          
+        # else
+        #   raise SourceUnknown "#{cache.source} is an unknown source."
+        # end
       end
     end
 
