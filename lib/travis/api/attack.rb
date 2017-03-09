@@ -12,7 +12,7 @@ if ENV['RACK_ATTACK_METRICS_ENABLED'] == 'true' || ENV['RACK_ATTACK_METRICS_ENAB
 
     metric_names = [
       metric_name_prefix,
-      metric_name_prefix + '.' + req.ip.gsub('.', '_').gsub('::', '__'),
+      # metric_name_prefix + '.' + req.ip.gsub('.', '_').gsub('::', '__'),
       metric_name_prefix + '.' + req.request_method.downcase + '.' + req.path.downcase.gsub(/^\//, '').gsub('/', '_'),
     ]
 
