@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Caches < RemoteQuery
-    params :name, :branch
+    params :name, :branch, :match
 
     def find(repo)
       @repo = repo
