@@ -1,5 +1,6 @@
 require 'fog/aws'
 require 'fog/google'
+require 'google/apis/storage_v1'
 
 module Travis::API::V3
   class RemoteQuery < Query
@@ -14,7 +15,7 @@ module Travis::API::V3
     end
 
     def fetch
-      storage_files
+      storage_objects
     end
 
     def remove
@@ -24,16 +25,36 @@ module Travis::API::V3
       end
     end
 
-    private
+    class GcsWrapper
+      attr_reader :content_length, :key, :branch, :last_modified
 
-    def storage_files
-      storage_bucket.files
+      def initialize(object)
+        @content_length  = object.size
+        @key             = object.name
+        @branch          = object.name
+        @last_modified   = object.updated
+      end
     end
 
-    def storage_bucket
-      aws_bucket = s3_bucket
-      return aws_bucket if aws_bucket
-      gcs_bucket
+    class S3Wrapper
+      attr_reader :content_length, :key, :branch, :last_modified
+
+      def initialize(object)
+        @content_length  = object.content_length
+        @key             = object.key
+        @branch          = object.key
+        @last_modified   = object.last_modified
+      end
+    end
+
+    private
+
+    def storage_objects
+      objects = []
+      s3_bucket.each { |object| objects << object } if s3_config
+      gcs_bucket.each { |object| objects << object } if gcs_config
+      puts "DEBUG CACHE RESULTS LOGGING: number of S3 & GCS caches #{objects.length}"
+      objects
     end
 
     def prefix
@@ -43,12 +64,29 @@ module Travis::API::V3
 
     def s3_bucket
       s3 = Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], provider: 'AWS')
-      s3.directories.get(s3_config[:bucket_name], prefix: prefix)
+      files = s3.directories.get(s3_config[:bucket_name], prefix: prefix).files
+      #put each file into an array
+      s3_files = []
+      files.map { |file| s3_files << S3Wrapper.new(file) }
+      s3_files
     end
 
     def gcs_bucket
-      gcs = Fog::Storage::Google.new(google_json_key_string: gcs_config[:json_key], google_project: gcs_config[:google_project])
-      gcs.directories.get(gcs_config[:bucket_name], prefix: prefix)
+      gcs     = ::Google::Apis::StorageV1::StorageService.new
+      json_key_io = StringIO.new(gcs_config[:json_key])
+
+      gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
+        json_key_io: json_key_io,
+        scope: [
+          'https://www.googleapis.com/auth/devstorage.read_write'
+        ]
+      )
+      items = gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
+      #put each item into an array
+      gcs_items = []
+      return gcs_items if items.nil?
+      items.map { |item| gcs_items << GcsWrapper.new(item) }
+      gcs_items
     end
 
     def config

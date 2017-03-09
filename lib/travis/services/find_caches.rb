@@ -149,7 +149,9 @@ module Travis
           bucket = svc.buckets.find(config.to_h[:bucket_name])
 
           if bucket
-             bucket.objects(options).each { |object| cache_objects << S3Wrapper.new(repo, object) }
+             objects = bucket.objects(options)
+             puts "************* DEBUG CACHE RESULTS LOGGING: number of s3 caches #{objects.length} "
+             objects.each { |object| cache_objects << S3Wrapper.new(repo, object) }
           end
         end
 
@@ -167,6 +169,7 @@ module Travis
           )
 
           if items = storage.list_objects(bucket_name, prefix: prefix).items
+            puts "************* DEBUG CACHE RESULTS LOGGING: number of GCS caches #{items.length} "
             items.each { |object| cache_objects << GcsWrapper.new(storage, bucket_name, repo, object) }
           end
         end
