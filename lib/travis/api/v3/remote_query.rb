@@ -20,6 +20,8 @@ module Travis::API::V3
 
     def remove(caches)
       caches.each do |cache|
+        puts "*********"
+        puts cache
         cache.destroy
       end
     end
