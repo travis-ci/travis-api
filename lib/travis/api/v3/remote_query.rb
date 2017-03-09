@@ -27,24 +27,26 @@ module Travis::API::V3
     # end
 
     class GcsWrapper
-      attr_reader :content_length, :key, :branch, :last_modified
+      attr_reader :content_length, :key, :branch, :last_modified, :source
 
       def initialize(object)
         @content_length  = object.size
         @key             = object.name
         @branch          = object.name
         @last_modified   = object.updated
+        @source          = 'gcs'
       end
     end
 
     class S3Wrapper
-      attr_reader :content_length, :key, :branch, :last_modified
+      attr_reader :content_length, :key, :branch, :last_modified, :source
 
       def initialize(object)
         @content_length  = object.content_length
         @key             = object.key
         @branch          = object.key
         @last_modified   = object.last_modified
+        @source          = 's3'
       end
     end
 

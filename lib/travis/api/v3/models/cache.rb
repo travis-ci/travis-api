@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Models::Cache
-    attr_accessor :repo, :repository_id, :size, :name, :branch, :last_modified
+    attr_accessor :repo, :repository_id, :size, :name, :branch, :last_modified, :source
 
     def self.factory(caches, repo)
       caches.map do |c|
@@ -15,6 +15,7 @@ module Travis::API::V3
       @name = cache.key.to_s.split('/').last
       @branch =  cache.key[%r{^\d+/(.*)/[^/]+$}, 1]
       @last_modified = cache.last_modified
+      @source = cache.source
     end
   end
 end
