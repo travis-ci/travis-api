@@ -9,9 +9,11 @@ module Travis::API::V3
     end
 
     def delete(repo)
-      @repo = repo
-      destroyed_caches = remove
-      filter Models::Cache.factory(destroyed_caches, repo)
+      puts"**********"
+      puts "now deleting"
+      caches = find(repo)
+      caches = remove(caches)
+      filter Models::Cache.factory(caches, repo)
     end
 
     def filter(list)

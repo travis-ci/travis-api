@@ -18,8 +18,7 @@ module Travis::API::V3
       storage_objects
     end
 
-    def remove
-      caches = fetch
+    def remove(caches)
       caches.each do |cache|
         cache.destroy
       end
