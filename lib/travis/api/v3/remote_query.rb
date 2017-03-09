@@ -22,10 +22,14 @@ module Travis::API::V3
       puts "*********"
       puts "now removing"
       caches.each do |cache|
-        if cache.source == 's3'  
-          puts "remove s3 cache" 
+        if cache.source == 's3'
+          puts "remove s3 cache"
+          Travis.logger.info "action=delete backend=s3 s3_object=#{cache.key}"
+          @s3.delete_object(cache.key)
         elsif cache.source == 'gcs'
-           puts "remove gcs cache"
+          puts "remove gcs cache"
+          Travis.logger.info "action=delete backend=gcs bucket_name=#{s3_config[:bucket_name]} cache_key=#{cache.key}"
+          @gcs.delete_object(gcs_config[:bucket_name], cache.key)
         else
           raise SourceUnknown "#{cache.source} is an unknown source."
         end
@@ -37,10 +41,11 @@ module Travis::API::V3
 
       def initialize(object)
         @content_length  = object.size
-        @key             = object.name
+        @name            = object.name
         @branch          = object.name
         @last_modified   = object.updated
         @source          = 'gcs'
+        @key             = object.name
       end
     end
 
@@ -49,10 +54,11 @@ module Travis::API::V3
 
       def initialize(object)
         @content_length  = object.content_length
-        @key             = object.key
+        @name            = object.key
         @branch          = object.key
         @last_modified   = object.last_modified
         @source          = 's3'
+        @key             = object.key
       end
     end
 
@@ -72,8 +78,8 @@ module Travis::API::V3
     end
 
     def s3_bucket
-      s3 = Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], provider: 'AWS')
-      files = s3.directories.get(s3_config[:bucket_name], prefix: prefix).files
+      @s3 = Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], provider: 'AWS')
+      files = @s3.directories.get(s3_config[:bucket_name], prefix: prefix).files
       #put each file into an array
       s3_files = []
       files.map { |file| s3_files << S3Wrapper.new(file) }
@@ -81,16 +87,16 @@ module Travis::API::V3
     end
 
     def gcs_bucket
-      gcs     = ::Google::Apis::StorageV1::StorageService.new
+      @gcs = ::Google::Apis::StorageV1::StorageService.new
       json_key_io = StringIO.new(gcs_config[:json_key])
 
-      gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
+      @gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
         json_key_io: json_key_io,
         scope: [
           'https://www.googleapis.com/auth/devstorage.read_write'
         ]
       )
-      items = gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
+      items = @gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
       #put each item into an array
       gcs_items = []
       return gcs_items if items.nil?
