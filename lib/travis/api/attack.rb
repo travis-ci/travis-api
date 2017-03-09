@@ -4,6 +4,10 @@ require 'metriks'
 
 if ENV['RACK_ATTACK_METRICS_ENABLED'] == 'true' || ENV['RACK_ATTACK_METRICS_ENABLED_FOR_DYNOS'] && ENV['RACK_ATTACK_METRICS_ENABLED_FOR_DYNOS'].split(' ').include?(ENV['DYNO'])
   ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, req|
+    if req.env['rack.attack.match_type'] == 'safelist'
+      next
+    end
+
     metric_name_prefix = [
       'api.rate_limiting',
       req.env['rack.attack.match_type'],
