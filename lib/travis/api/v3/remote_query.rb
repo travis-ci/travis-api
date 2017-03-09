@@ -37,7 +37,7 @@ module Travis::API::V3
     end
 
     class GcsWrapper
-      attr_reader :content_length, :key, :branch, :last_modified, :source
+      attr_reader :content_length, :name, :branch, :last_modified, :source, :key
 
       def initialize(object)
         @content_length  = object.size
@@ -50,7 +50,7 @@ module Travis::API::V3
     end
 
     class S3Wrapper
-      attr_reader :content_length, :key, :branch, :last_modified, :source
+      attr_reader :content_length, :name, :branch, :last_modified, :source, :key
 
       def initialize(object)
         @content_length  = object.content_length
