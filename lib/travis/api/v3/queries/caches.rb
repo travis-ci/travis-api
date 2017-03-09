@@ -12,8 +12,7 @@ module Travis::API::V3
       puts"**********"
       puts "now deleting"
       caches = find(repo)
-      caches = remove(caches)
-      filter Models::Cache.factory(caches, repo)
+      puts "caches: #{caches.each {|c| puts c}}"
     end
 
     def filter(list)

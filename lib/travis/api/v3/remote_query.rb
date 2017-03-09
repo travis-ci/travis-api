@@ -18,13 +18,13 @@ module Travis::API::V3
       storage_objects
     end
 
-    def remove(caches)
-      caches.each do |cache|
-        puts "*********"
-        puts cache
-        # cache.destroy
-      end
-    end
+    # def remove(caches)
+    #   caches.each do |cache|
+    #     puts "*********"
+    #     puts cache
+    #     # cache.destroy
+    #   end
+    # end
 
     class GcsWrapper
       attr_reader :content_length, :key, :branch, :last_modified
