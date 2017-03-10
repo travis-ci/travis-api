@@ -40,7 +40,7 @@ module Travis::API::V3
         @name            = object.name
         @branch          = object.name
         @last_modified   = object.updated
-        @source          = 'gcs'
+        @source          = 'gcs'.freeze
         @key             = object.name
       end
     end
@@ -53,7 +53,7 @@ module Travis::API::V3
         @name            = object.key
         @branch          = object.key
         @last_modified   = object.last_modified
-        @source          = 's3'
+        @source          = 's3'.freeze
         @key             = object.key
       end
     end
@@ -75,9 +75,7 @@ module Travis::API::V3
     def s3_bucket
       @s3 = Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], provider: 'AWS')
       files = @s3.directories.get(s3_config[:bucket_name], prefix: prefix).files
-      s3_files = []
-      files.map { |file| s3_files << S3Wrapper.new(file) }
-      s3_files
+      files.map { |file| S3Wrapper.new(file) }
     end
 
     def gcs_bucket
@@ -91,10 +89,8 @@ module Travis::API::V3
         ]
       )
       items = @gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
-      gcs_items = []
-      return gcs_items if items.nil?
-      items.map { |item| gcs_items << GcsWrapper.new(item) }
-      gcs_items
+      return [] if items.nil?
+      items.map { |item| GcsWrapper.new(item) }
     end
 
     def config

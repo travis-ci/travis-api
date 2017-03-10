@@ -149,8 +149,7 @@ module Travis
           bucket = svc.buckets.find(config.to_h[:bucket_name])
 
           if bucket
-             objects = bucket.objects(options)
-             objects.each { |object| cache_objects << S3Wrapper.new(repo, object) }
+             bucket.objects(options).each { |object| cache_objects << S3Wrapper.new(repo, object) }
           end
         end
 
