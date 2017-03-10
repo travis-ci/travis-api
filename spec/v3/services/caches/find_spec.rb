@@ -1,3 +1,4 @@
+require 'spec_helper'
 describe Travis::API::V3::Services::Caches::Find, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
