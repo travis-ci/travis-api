@@ -66,9 +66,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     result[1]["last_modified"] = Time.now.utc.strftime("%FT%TZ")
 
     stub_request(:post, "https://www.googleapis.com/oauth2/v3/token").
-         with(:body => {"assertion"=>"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJ0cmF2aXMtY2FjaGUtb3JnLWFwaS1wcm9kdWN0aW9uIiwiYXVkIjoiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vb2F1dGgyL3YzL3Rva2VuIiwiZXhwIjoxNDg5MTQ2MDk3LCJpYXQiOjE0ODkxNDU5NzcsInNjb3BlIjoiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9kZXZzdG9yYWdlLnJlYWRfd3JpdGUifQ.Huea0nOeMWCoXpWqF_Yv9w-GhP1482F1ojD0DtMWa-RRY1xTTprxpKBDOSYx6FqPEcDk2KeBYMSRc2s-AYKKyYAGnnU2vckI9IYjk7spDGZTB6TpFQY83xvSXgOLRpOmj7jrPfbaAu5iT7R1MmsHjfb2iBwIu9QJcBN2wQ1NYRiyqZwbbP8MR9-Ynm5VtrI0Wz7zc--If2HUYwXqKH-i4IXNV85YWv9WKiK18pf6kUZ9gJo11_2GrRHu4vWd7WgkkxhFYo-3l3ENT3HcX57C_B-riWW-nNDUv6L3W19_-VLPU6sYqOU2uEQDrlGY7CCYcv3KaRIKuNFK6oicA1TE8A", "grant_type"=>"urn:ietf:params:oauth:grant-type:jwt-bearer"},
-              :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Content-Type'=>'application/x-www-form-urlencoded', 'User-Agent'=>'Faraday v0.9.2'}).
-         to_return(:status => 200, :body => "", :headers => {})
+      to_return(:status => 200, :body => "", :headers => {})
 
   end
   after do
@@ -87,7 +85,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
         "client_email" => "travis-cache-org-api-production",
         "client_id" => "1234",
         "auth_uri" => "https://accounts.google.com/o/oauth2/auth",
-        "token_uri" => "https://accounts.google.com/o/oauth2/token",
+        "token_uri" => "https://accounts.google.com/oauth2/v3/token",
         "auth_provider_x509_cert_url" => "https://www.googleapis.com/oauth2/v1/certs",
         "client_x509_cert_url" => "travis-cache-org-api-production"
       }),
