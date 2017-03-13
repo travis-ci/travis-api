@@ -123,37 +123,6 @@ describe User do
     end
   end
 
-  describe 'authenticate_by' do
-    describe 'given a valid token and login' do
-      it 'authenticates the user' do
-        User.authenticate_by('login' => user.login, 'token' => user.tokens.first.token).should == user
-      end
-    end
-
-    describe 'given a wrong token' do
-      it 'does not authenticate the user' do
-        User.authenticate_by('login' => 'someone-else', 'token' => user.tokens.first.token).should be_nil
-      end
-    end
-
-    describe 'given a wrong login' do
-      it 'does not authenticate the user' do
-        User.authenticate_by('login' => user.login, 'token' => 'some-other-token').should be_nil
-      end
-    end
-
-    describe 'with encrypted token' do
-      it 'authenticates the user' do
-        user.tokens.first.update_column :token, 'encrypted-token'
-
-        Travis::Model::EncryptedColumn.any_instance.stubs(:encrypt? => true, :key => 'abcd', :load => '...')
-        Travis::Model::EncryptedColumn.any_instance.expects(:load).with('encrypted-token').returns('a-token')
-
-        User.authenticate_by('login' => user.login, 'token' => 'a-token').should == user
-      end
-    end
-  end
-
   describe 'service_hooks' do
     let(:own_repo)   { Factory(:repository, :name => 'own-repo', :description => 'description', :active => true) }
     let(:admin_repo) { Factory(:repository, :name => 'admin-repo') }
