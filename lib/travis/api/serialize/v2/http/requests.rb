@@ -41,10 +41,9 @@ module Travis
                   'pull_request_number' => request.pull_request_number,
                   'pull_request_title' => request.pull_request_title,
                   'branch' => request.branch_name,
-                  'tag' => request.tag_name
+                  'tag' => request.tag_name,
+                  'build_id' => request.build_id
                 }
-
-                data['build_id'] = request.builds.first.id if request.builds.present?
 
                 data
               end

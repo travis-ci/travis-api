@@ -1,13 +1,9 @@
 describe Travis::Api::Serialize::V2::Http::Requests do
   include Travis::Testing::Stubs, Support::Formats
 
-  before do
-    request.stubs(:builds).returns([build])
-  end
-
   let(:data) {
     request = stub_request
-    request.stubs(:builds).returns([build])
+    request.stubs(:build_id).returns(1)
     request.stubs(:tag_name).returns(nil)
     described_class.new([request]).data
   }
@@ -31,7 +27,7 @@ describe Travis::Api::Serialize::V2::Http::Requests do
         'pull_request' => false,
         'pull_request_title' => nil,
         'pull_request_number' => nil,
-        'build_id' => build.id
+        'build_id' => 1
       }
     ]
   end
@@ -56,7 +52,7 @@ describe Travis::Api::Serialize::V2::Http::Requests do
     let(:data) {
       request = stub_request
       request.stubs(:commit).returns(nil)
-      request.stubs(:builds).returns([build])
+      request.stubs(:build_id).returns(1)
       described_class.new([request]).data
     }
 
