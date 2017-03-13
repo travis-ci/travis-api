@@ -88,9 +88,6 @@ module Travis::API::V3
           'https://www.googleapis.com/auth/devstorage.read_write'
         ]
       )
-      p @gcs
-      p @gcs.list_objects(gcs_config[:bucket_name], prefix: prefix)
-      p @gcs.method(:list_objects).source_location
       items = @gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
       return [] if items.nil?
       items.map { |item| GcsWrapper.new(item) }

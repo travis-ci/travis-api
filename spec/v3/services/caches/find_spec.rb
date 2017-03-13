@@ -112,7 +112,8 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
         {"kind": "storage#objects",
         "nextPageToken": "string",
         "prefixes": [
-        ]
+        ],
+        "items": []
       }
       }
     }
@@ -188,7 +189,6 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
   before do
     repo.default_branch.save!
-    Fog.unmock!
   end
 
   around(:each) do |example|
@@ -236,31 +236,6 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     end
   end
 
-  describe "debug" do
-    before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
-        to_return(:status => 200, :body => xml_content, :headers => {})
-
-        stub_request(:post, "https://www.googleapis.com/oauth2/v3/token").
-        to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
-
-        stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=#{repo.id}/").
-         to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
-
-    end
-    before     { get("/v3/repo/#{repo.id}/caches") }
-    example    { expect(last_response).to be_ok }
-    example    do
-      expect(JSON.load(body)).to be == {
-        "@type"=>"caches",
-        "@href"=>"/v3/repo/#{repo.id}/caches",
-        "@representation"=>"standard",
-        "caches"=> result
-      }
-    end
-  end
-
-
   describe "filter by branch s3" do
     before     do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}/").
@@ -270,7 +245,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
         to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
 
       stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=#{repo.id}/#{result[0]["branch"]}/").
-        to_return(:status => 200, :body => "{}", :headers => {})
+        to_return(:status => 200, :body => empty_gcs_content, :headers => {"Content-Type" => "application/json"})
     end
 
     example do
@@ -284,21 +259,25 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     end
   end
 
-
-
-  describe "filter by match" do
+  describe "filter by match on gcs" do
     before do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/x").
-         to_return(:status => 200, :body => xml_content, :headers => {})
+      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
+        to_return(:status => 200, :body => empty_xml_content, :headers => {})
+
+      stub_request(:post, "https://www.googleapis.com/oauth2/v3/token").
+        to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
+
+      stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/").
+        to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
     end
 
     example do
-      get("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"], name: 'dhfsod8fu4' } )
+      get("/v3/repo/#{repo.id}/caches?match=osx")
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
-        "@href"=>"/v3/repo/1/caches?branch=#{result[0]["branch"]}&name=dhfsod8fu4",
+        "@href"=>"/v3/repo/1/caches?match=osx",
         "@representation"=>"standard",
-        "caches"=> [result[0]]
+        "caches"=> [result[2]]
       }
     end
   end
