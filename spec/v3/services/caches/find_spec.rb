@@ -70,7 +70,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
         { "kind": "storage#object",
           "id": "travis-cache-staging-org-gce/25736446/cd-mac-build/cache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz/1488893377144168",
           "selfLink":  "https://www.googleapis.com/storage/v1/b/travis-cache-staging-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz",
-          "name": "25736446/cd-mac-build/cache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz/",
+          "name": "25736446/cd-mac-build/cache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz",
           "bucket": "travis-cache-production-org-gce",
           "generation": 1,
           "metageneration": 2,
