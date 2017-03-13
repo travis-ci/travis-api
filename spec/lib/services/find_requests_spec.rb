@@ -13,6 +13,15 @@ describe Travis::Services::FindRequests do
       service.run.should == [newer_request, request]
     end
 
+    it 'includes the build_id' do
+      Factory.create(:build, request_id: request.id)
+      @params = { :repository_id => repo.id }
+      requests = service.run
+      requests.should == [newer_request, request]
+      requests.first.build_id  = nil
+      requests.second.build_id = request.builds.first.id
+    end
+
     it 'finds requests older than the given id' do
       @params = { :repository_id => repo.id, :older_than => newer_request.id }
       service.run.should == [request]

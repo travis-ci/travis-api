@@ -98,7 +98,7 @@ RSpec.configure do |c|
     # avoids leaving records lying around between test runs
     base = ActiveRecord::Base
     base.establish_connection(Travis.config.logs_database.to_h)
-    base.connection.tables.each { |table| base.connection.execute("TRUNCATE #{table}") }
+    base.connection.tables.each { |table| base.connection.execute("TRUNCATE #{table} CASCADE") }
   end
 end
 
