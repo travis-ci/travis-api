@@ -12,7 +12,7 @@ module Travis
       private
 
         def preload(requests)
-          requests.includes(:commit, :builds)
+          requests.includes(:commit)
         end
 
         def result
@@ -23,7 +23,7 @@ module Travis
             if params[:older_than]
               requests.older_than(params[:older_than])
             else
-              requests.recent(requests_limit)
+              requests.recent(requests_limit).with_build_id
             end
           else
             raise Travis::RepositoryNotFoundError.new(params)

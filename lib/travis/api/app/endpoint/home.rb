@@ -10,8 +10,8 @@ class Travis::Api::App
       set :client_config,
         host: host,
         shorten_host: Travis.config.shorten_host,
-        assets: Travis.config.assets,
-        pusher: (Travis.config.pusher_ws || Travis.config.pusher || {}).to_hash.slice(:scheme, :host, :port, :path, :key, :secure, :private),
+        assets: Travis.config.assets.to_h,
+        pusher: (Travis.config.pusher_ws || Travis.config.pusher.to_h || {}).to_hash.slice(:scheme, :host, :port, :path, :key, :secure, :private),
         github: { api_url: GH.current.api_host.to_s, scopes: Travis.config.oauth2.try(:scope).to_s.split(?,) },
         notifications: { webhook: { public_key: Travis.config.webhook.public_key } }
 

@@ -116,7 +116,7 @@ module Travis
       private
 
       def new_dalli_connection
-        Dalli::Client.new(Travis.config.states_cache.memcached_servers, Travis.config.states_cache.memcached_options)
+        Dalli::Client.new(Travis.config.states_cache.memcached_servers, Travis.config.states_cache.memcached_options.to_h)
       end
 
       def get(key)

@@ -2,8 +2,6 @@ require 'travis/config'
 
 module Travis
   class Config < Hashr
-    require 'travis/config/database'
-    require 'travis/config/url'
 
     class << self
       def logs_api_enabled?
@@ -65,7 +63,6 @@ module Travis
             ssl:           {},
             redis:         { url: 'redis://localhost:6379' },
             repository:    { ssl_key: { size: 4096 } },
-            repository_filter: { include: [/^rails\/rails/], exclude: [/\/rails$/] },
             encryption:    Travis.env == 'development' || Travis.env == 'test' ? { key: 'secret' * 10 } : {},
             sync:          { organizations: { repositories_limit: 1000 } },
             states_cache:  { memcached_servers: 'localhost:11211' },
@@ -83,20 +80,6 @@ module Travis
     def initialize(*)
       super
       load_urls
-    end
-
-    # Wild monkeypatch to backport travis-config v1.0.x resource url loading.
-    # Needed for enterprise.
-    class Docker
-      def load
-        config = compact(
-          database: Database.new.config,
-          logs_database: Database.new(prefix: :logs).config,
-          logs_readonly_database: Database.new(prefix: :logs_readonly).config,
-          amqp: Url.parse(ENV['TRAVIS_RABBITMQ_URL'] || ENV['RABBITMQ_URL']).to_h.compact,
-          redis: { url: ENV['TRAVIS_REDIS_URL'] || ENV['REDIS_URL'] }.compact
-        )
-      end
     end
   end
 end

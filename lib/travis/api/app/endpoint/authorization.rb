@@ -154,11 +154,11 @@ class Travis::Api::App
         end
 
         def handshake
-          config   = Travis.config.oauth2
-          endpoint = Addressable::URI.parse(config.authorization_server)
+          config   = Travis.config.oauth2.to_h
+          endpoint = Addressable::URI.parse(config[:authorization_server])
           values   = {
-            client_id:    config.client_id,
-            scope:        config.scope,
+            client_id:    config[:client_id],
+            scope:        config[:scope],
             redirect_uri: oauth_endpoint
           }
 
@@ -169,10 +169,10 @@ class Travis::Api::App
               log_with_request_id("[handshake] Handshake failed (state mismatch)")
               halt 400, 'state mismatch'
             end
-            endpoint.path          = config.access_token_path
+            endpoint.path          = config[:access_token_path]
             values[:state]         = params[:state]
             values[:code]          = params[:code]
-            values[:client_secret] = config.client_secret
+            values[:client_secret] = config[:client_secret]
             github_token           = get_token(endpoint.to_s, values)
             user                   = user_for_github_token(github_token)
             token                  = generate_token(user: user, app_id: 0)
@@ -182,7 +182,7 @@ class Travis::Api::App
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
-            endpoint.path          = config.authorize_path
+            endpoint.path          = config[:authorize_path]
             endpoint.query_values  = values
             redirect to(endpoint.to_s)
           end
@@ -298,7 +298,7 @@ class Travis::Api::App
           token_info = parameters.assoc("access_token")
 
           unless token_info
-            log_with_request_id("[handshake] Could not fetch token, github's response: status=#{response.status}")
+            log_with_request_id("[handshake] Could not fetch token, github's response: status=#{response.status}, body=#{parameters.inspect} headers=#{response.headers.inspect}")
             halt 401, 'could not resolve github token'
           end
           token_info.last
