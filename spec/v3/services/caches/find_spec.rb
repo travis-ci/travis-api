@@ -4,7 +4,6 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:s3_bucket_name)  { "travis-cache-staging-org" }
-  let(:config) {Travis.config.to_h}
   let(:result) { [
     {
       "@type"=>"cache",
@@ -107,16 +106,16 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     }
   }
 
-    let(:empty_gcs_content) {
-      %q{
-        {"kind": "storage#objects",
-        "nextPageToken": "string",
-        "prefixes": [
-        ],
-        "items": []
-      }
-      }
+  let(:empty_gcs_content) {
+    %q{
+      {"kind": "storage#objects",
+      "nextPageToken": "string",
+      "prefixes": [
+      ],
+      "items": []
     }
+    }
+  }
 
 
   let(:xml_content) {
