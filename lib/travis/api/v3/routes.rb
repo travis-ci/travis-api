@@ -3,11 +3,6 @@ module Travis::API::V3
     require 'travis/api/v3/routes/dsl'
     extend DSL
 
-    resource :accounts do
-      route '/accounts'
-      get :for_current_user
-    end
-
     resource :broadcasts do
       route '/broadcasts'
       get :for_current_user
