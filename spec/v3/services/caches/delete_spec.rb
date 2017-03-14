@@ -160,7 +160,10 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   describe "delete all on s3 and gcs" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
+        stub_request(:get, "https://travis-cache-staging-org.s3.amazonaws.com/?prefix=1/").
+        to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
+
+        stub_request(:get, "https://travis-cache-staging-org.s3.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
         stub_request(:post, "https://www.googleapis.com/oauth2/v3/token").
@@ -176,7 +179,6 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
           to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
     end
     before     { delete("/v3/repo/#{repo.id}/caches") }
-    example    { expect(last_response).to be_ok }
     example    do
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",

@@ -18,16 +18,16 @@ module Travis::API::V3
       storage_objects
     end
 
-    def remove(caches)
-      caches.each do |cache|
-        if cache.source == 's3'
-          Travis.logger.info "action=delete backend=s3 s3_object=#{cache.key}"
-          @s3.delete_object(s3_config[:bucket_name], cache.key)
-        elsif cache.source == 'gcs'
-          Travis.logger.info "action=delete backend=gcs bucket_name=#{s3_config[:bucket_name]} cache_key=#{cache.key}"
-          @gcs.delete_object(gcs_config[:bucket_name], cache.key)
+    def remove(objects)
+      objects.each do |object|
+        if object.source == 's3'
+          Travis.logger.info "action=delete backend=s3 s3_object=#{object.key}"
+          @s3.delete_object(s3_config[:bucket_name], object.key)
+        elsif object.source == 'gcs'
+          Travis.logger.info "action=delete backend=gcs bucket_name=#{s3_config[:bucket_name]} object_key=#{object.key}"
+          @gcs.delete_object(gcs_config[:bucket_name], object.key)
         else
-          raise SourceUnknown "#{cache.source} is an unknown source."
+          raise SourceUnknown "#{object.source} is an unknown source."
         end
       end
     end
@@ -46,7 +46,7 @@ module Travis::API::V3
     end
 
     class S3Wrapper
-      attr_reader :content_length, :name, :branch, :last_modified, :source, :key
+      attr_reader :content_length, :name, :branch, :last_modified, :source, :key, :body
 
       def initialize(object)
         @content_length  = object.content_length
@@ -55,6 +55,7 @@ module Travis::API::V3
         @last_modified   = object.last_modified
         @source          = 's3'.freeze
         @key             = object.key
+        @body            = object.body
       end
     end
 
@@ -98,11 +99,11 @@ module Travis::API::V3
     end
 
     def s3_config
-      raise NotImplemented
+      # leave empty - s3_config is set in the attribute query
     end
 
     def gcs_config
-      raise NotImplemented
+      # leave empty - gcs_config is set in the attribute query
     end
   end
 end
