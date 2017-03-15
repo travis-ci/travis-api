@@ -26,6 +26,12 @@ class Request < Travis::Model
     def recent(limit = 25)
       order('id DESC').limit(limit)
     end
+
+    def with_build_id
+      select('requests.*, MAX(builds.id) as build_id').
+        joins('left join builds on builds.request_id = requests.id').
+        group('requests.id')
+    end
   end
 
   belongs_to :commit
