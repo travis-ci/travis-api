@@ -1,11 +1,5 @@
 module Travis::API::V3
-  class Models::Log < Model
-    if Travis.config.logs_api.enabled?
-      establish_connection(Travis.config.logs_readonly_database.to_h)
-    else
-      establish_connection(Travis.config.logs_database.to_h)
-    end
-
+  class Models::Log < LogsModel
     belongs_to :job
     belongs_to :removed_by, class_name: 'User', foreign_key: :removed_by
     has_many  :log_parts, dependent: :destroy, order: 'number ASC'

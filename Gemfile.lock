@@ -34,7 +34,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-config
-  revision: 2c7137272c879c32fa6bb8d753787f3a14044045
+  revision: a64596623f8f8ee70838a4dc4d7803906a049733
   specs:
     travis-config (1.0.13)
       hashr (~> 2.0.0)
