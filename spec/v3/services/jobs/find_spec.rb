@@ -1,9 +1,18 @@
 describe Travis::API::V3::Services::Jobs::Find, set_app: true do
-  let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:build) { repo.builds.first }
-  let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
-  let(:commit){ build.commit }
+  let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:build)  { repo.builds.first }
+  let(:stages) { build.stages }
+  let(:jobs)   { Travis::API::V3::Models::Build.find(build.id).jobs }
+  let(:commit) { build.commit }
   let(:parsed_body) { JSON.load(body) }
+
+  before do
+    # TODO should this go into the scenario? is it ok to keep it here?
+    test   = build.stages.create(number: 1, name: 'test')
+    deploy = build.stages.create(number: 2, name: 'deploy')
+    jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
+    jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+  end
 
   describe "jobs on public repository" do
     before     { get("/v3/build/#{build.id}/jobs") }
@@ -41,6 +50,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "pull_request_title"  => build.pull_request_title,
           "started_at"          => "2010-11-12T13:00:00Z",
           "finished_at"         => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[0].id,
+          "number"              => 1,
+          "name"                => "test"},
         "queue"                 => "builds.linux",
         "repository"            => {
           "@type"               => "repository",
@@ -92,6 +107,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "pull_request_title"  => nil,
           "started_at"          => "2010-11-12T13:00:00Z",
           "finished_at"         => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[0].id,
+          "number"              => 1,
+          "name"                => "test"},
         "queue"                 => "builds.linux",
         "repository"            => {
           "@type"               => "repository",
@@ -144,6 +165,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "started_at"          => "2010-11-12T13:00:00Z",
           "finished_at"         => nil},
         "queue"                 => "builds.linux",
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[1].id,
+          "number"              => 2,
+          "name"                => "deploy"},
         "repository"            => {
           "@type"               => "repository",
           "@href"               => "/v3/repo/1",
@@ -194,6 +221,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "pull_request_title"  => build.pull_request_title,
           "started_at"          => "2010-11-12T13:00:00Z",
           "finished_at"         => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[1].id,
+          "number"              => 2,
+          "name"                => "deploy"},
         "queue"                 => "builds.linux",
         "repository"            => {
           "@type"               => "repository",
@@ -263,6 +296,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "pull_request_title"  => build.pull_request_title,
           "started_at"          => "2010-11-12T13:00:00Z",
           "finished_at"         => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[0].id,
+          "number"              => 1,
+          "name"                => "test"},
         "queue"                 => "builds.linux",
         "repository"            => {
           "@type"               => "repository",
@@ -314,6 +353,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "pull_request_title"  => build.pull_request_title,
           "started_at"          => "2010-11-12T13:00:00Z",
           "finished_at"         => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[0].id,
+          "number"              => 1,
+          "name"                => "test"},
         "queue"                 => "builds.linux",
         "repository"            => {
           "@type"               => "repository",
@@ -365,6 +410,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "pull_request_title"  => build.pull_request_title,
           "started_at"          => "2010-11-12T13:00:00Z",
           "finished_at"         => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[1].id,
+          "number"              => 2,
+          "name"                => "deploy"},
         "queue"                 => "builds.linux",
         "repository"            => {
           "@type"               => "repository",
@@ -416,6 +467,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "pull_request_title"  => build.pull_request_title,
           "started_at"          => "2010-11-12T13:00:00Z",
           "finished_at"         => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[1].id,
+          "number"              => 2,
+          "name"                => "deploy"},
         "queue"                 => "builds.linux",
         "repository"            => {
           "@type"               => "repository",
@@ -487,6 +544,12 @@ describe "jobs private repository, private API, authenticated as user with push 
           "pull_request_title"  => build.pull_request_title,
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[0].id,
+          "number"              => 1,
+          "name"                => "test"},
         "queue"            => "builds.linux",
         "repository"       =>{
           "@type"          => "repository",
@@ -538,6 +601,12 @@ describe "jobs private repository, private API, authenticated as user with push 
           "pull_request_title"  => build.pull_request_title,
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[0].id,
+          "number"              => 1,
+          "name"                => "test"},
         "queue"            => "builds.linux",
         "repository"       =>{
           "@type"          => "repository",
@@ -589,6 +658,12 @@ describe "jobs private repository, private API, authenticated as user with push 
           "pull_request_title"  => build.pull_request_title,
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[1].id,
+          "number"              => 2,
+          "name"                => "deploy"},
         "queue"            => "builds.linux",
         "repository"       =>{
           "@type"          => "repository",
@@ -640,6 +715,12 @@ describe "jobs private repository, private API, authenticated as user with push 
           "pull_request_title" => nil,
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil},
+        "stage"                 => {
+          "@type"               => "stage",
+          "@representation"     => "minimal",
+          "id"                  => stages[1].id,
+          "number"              => 2,
+          "name"                => "deploy"},
         "queue"            => "builds.linux",
         "repository"       =>{
           "@type"          => "repository",
