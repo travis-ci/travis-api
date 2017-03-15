@@ -49,15 +49,13 @@ module Travis::API::V3
       attr_reader :content_length, :name, :branch, :last_modified, :source, :key, :body
 
       def initialize(object)
-        require 'pry'
-        binding.pry
         @content_length  = object.content_length
         @name            = object.key
         @branch          = object.key
         @last_modified   = object.last_modified
         @source          = 's3'.freeze
         @key             = object.key
-        @body            = object.body unless object.body.nil?
+        @body            = object.body if object.key.include?("/log.txt")
       end
     end
 

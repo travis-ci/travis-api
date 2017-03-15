@@ -40,6 +40,12 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     </ListBucketResult>"
   }
 
+  around(:each) do |example|
+    Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
+    example.run
+    Travis.config.log_options = {}
+  end
+
   before do
     Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true)
     Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true)

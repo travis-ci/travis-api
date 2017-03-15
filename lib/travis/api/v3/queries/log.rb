@@ -10,7 +10,7 @@ module Travis::API::V3
       if log.archived_at
         content = fetch.first
         raise EntityMissing, 'could not retrieve log'.freeze if content.nil?
-        body = content.body.force_encoding('UTF-8')
+        body = content.body.force_encoding('UTF-8') unless content.body.nil?
         create_log_parts(log, body)
       #if log has been aggregated, look at log.content
       elsif log.aggregated_at
