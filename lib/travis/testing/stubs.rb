@@ -176,6 +176,7 @@ module Travis
           repository_id: 1,
           repository: repository,
           source_id: 1,
+          stage_id: 1,
           request_id: 1,
           commit_id: commit.id,
           commit: commit,
