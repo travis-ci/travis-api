@@ -60,7 +60,7 @@ class Job < Travis::Model
 
   include Travis::Model::EnvHelpers
 
-  has_one    :log, dependent: :destroy unless Travis::Config.logs_api_enabled?
+  has_one    :log, dependent: :destroy
   has_many   :events, as: :source
   has_many   :annotations, dependent: :destroy
 
@@ -166,6 +166,8 @@ class Job < Travis::Model
     def log
       @log ||= RemoteLog.find_by_job_id(id)
     end
+
+    attr_writer :log
   end
 
   # compatibility, we still use result in webhooks
