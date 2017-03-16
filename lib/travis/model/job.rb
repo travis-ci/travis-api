@@ -1,4 +1,5 @@
 require 'travis/model'
+require 'travis/config/defaults'
 require 'active_support/core_ext/hash/deep_dup'
 require 'travis/model/build/config/language'
 
@@ -59,7 +60,7 @@ class Job < Travis::Model
 
   include Travis::Model::EnvHelpers
 
-  has_one    :log, dependent: :destroy
+  has_one    :log, dependent: :destroy unless Travis::Config.logs_api_enabled?
   has_many   :events, as: :source
   has_many   :annotations, dependent: :destroy
 
@@ -159,6 +160,12 @@ class Job < Travis::Model
     end
     create_log! unless log
     log.update_attributes!(content: content, aggregated_at: Time.now)
+  end
+
+  if Travis::Config.logs_api_enabled?
+    def log
+      @log ||= RemoteLog.find_by_job_id(id)
+    end
   end
 
   # compatibility, we still use result in webhooks
