@@ -10,10 +10,10 @@ module Travis::API::V3
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
       if log.archived_at
-        content = fetch.get(prefix).try(:body)
+        content = fetch.first
         raise EntityMissing, 'could not retrieve log'.freeze if content.nil?
-        content = content.force_encoding('UTF-8')
-        create_log_parts(log, content)
+        body = content.body.force_encoding('UTF-8') unless content.body.nil?
+        create_log_parts(log, body)
       #if log has been aggregated, look at log.content
       elsif log.aggregated_at
         create_log_parts(log, log.content)
@@ -33,7 +33,10 @@ module Travis::API::V3
       raise LogAlreadyRemoved if log.removed_at || log.removed_by
       raise JobUnfinished unless @job.finished_at?
 
-      remove if log.archived_at
+      if log.archived_at
+        archived_log = fetch
+        remove(archived_log)
+      end
 
       log.clear!(user)
       log
