@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Services::Caches::Find < Service
-    params :name, :branch
+    params :match, :branch
 
     def run!
       result query.find(find(:repository))
