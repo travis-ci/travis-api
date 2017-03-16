@@ -20,16 +20,13 @@ module Travis::API::V3
 
     def remove(objects)
       objects.each do |object|
-        if object.source == 's3'
-          Travis.logger.info "action=delete backend=s3 s3_object=#{object.key}"
-          @s3.delete_object(s3_config[:bucket_name], object.key)
-        elsif object.source == 'gcs'
-          Travis.logger.info "action=delete backend=gcs bucket_name=#{s3_config[:bucket_name]} object_key=#{object.key}"
-          @gcs.delete_object(gcs_config[:bucket_name], object.key)
-        else
-          raise SourceUnknown "#{object.source} is an unknown source."
-        end
+        raise SourceUnknown "#{object.source} is an unknown source." unless ['s3', 'gcs'].include? object.source
+        send("#{object.source}_connection").delete_object(bucket_name_for(object), object.key)
       end
+    end
+
+    def bucket_name_for(object)
+      send("#{object.source}_config")[:bucket_name]
     end
 
     class GcsWrapper
@@ -63,8 +60,8 @@ module Travis::API::V3
 
     def storage_objects
       objects = []
-      s3_bucket.each { |object| objects << object } if s3_config
-      gcs_bucket.each { |object| objects << object } if gcs_config
+      s3_objects.each { |object| objects << object } if s3_config
+      gcs_objects.each { |object| objects << object } if gcs_config
       objects
     end
 
@@ -73,23 +70,38 @@ module Travis::API::V3
       ''
     end
 
+    def s3_connection
+      Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], provider: 'AWS')
+    end
+
     def s3_bucket
-      @s3 = Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], provider: 'AWS')
-      files = @s3.directories.get(s3_config[:bucket_name], prefix: prefix).files
+      s3_connection.directories.get(s3_config[:bucket_name], prefix: prefix)
+    end
+
+    def s3_objects
+      files = s3_bucket.files
       files.map { |file| S3Wrapper.new(file) }
     end
 
-    def gcs_bucket
-      @gcs = ::Google::Apis::StorageV1::StorageService.new
+    def gcs_connection
+      gcs = ::Google::Apis::StorageV1::StorageService.new
       json_key_io = StringIO.new(gcs_config[:json_key])
 
-      @gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
+      gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
         json_key_io: json_key_io,
         scope: [
           'https://www.googleapis.com/auth/devstorage.read_write'
         ]
       )
-      items = @gcs.list_objects(gcs_config[:bucket_name], prefix: prefix).items
+      gcs
+    end
+
+    def gcs_bucket
+       gcs_connection.list_objects(gcs_config[:bucket_name], prefix: prefix)
+    end
+
+    def gcs_objects
+      items = gcs_bucket.items
       return [] if items.nil?
       items.map { |item| GcsWrapper.new(item) }
     end
@@ -99,11 +111,11 @@ module Travis::API::V3
     end
 
     def s3_config
-      # leave empty - s3_config is set in the attribute query
+      config["#{main_type}_options".to_sym][:s3]
     end
 
     def gcs_config
-      # leave empty - gcs_config is set in the attribute query
+      config["#{main_type}_options".to_sym][:gcs]
     end
   end
 end

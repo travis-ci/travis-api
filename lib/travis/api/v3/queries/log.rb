@@ -46,7 +46,7 @@ module Travis::API::V3
     end
 
     def s3_config
-      conf = (config[:log_options][:s3] || {}).merge(bucket_name: bucket_name)
+      super.merge(bucket_name: bucket_name)
     end
 
     def bucket_name
