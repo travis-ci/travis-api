@@ -38,7 +38,9 @@ module Travis
         end
 
         def preload(job)
-          ActiveRecord::Associations::Preloader.new(job, :log).run
+          unless Travis.config.logs_api.enabled?
+            ActiveRecord::Associations::Preloader.new(job, :log).run
+          end
           ActiveRecord::Associations::Preloader.new(job, :commit).run
           ActiveRecord::Associations::Preloader.new(job, :annotations).run
           job

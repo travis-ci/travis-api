@@ -81,7 +81,7 @@ class Job < Travis::Model
   end
 
   before_create do
-    build_log
+    build_log unless Travis.config.logs_api.enabled?
     self.state = :created if self.state.nil?
     self.queue = Queue.for(self).name
   end
@@ -154,6 +154,9 @@ class Job < Travis::Model
   end
 
   def log_content=(content)
+    if Travis.config.logs_api.enabled?
+      return RemoteLog.write_content_for_job_id(id, content: content)
+    end
     create_log! unless log
     log.update_attributes!(content: content, aggregated_at: Time.now)
   end

@@ -34,7 +34,9 @@ module Travis
 
         def preload(jobs)
           jobs = jobs.includes(:commit)
-          ActiveRecord::Associations::Preloader.new(jobs, :log, :select => [:id, :job_id]).run
+          unless Travis.config.logs_api.enabled?
+            ActiveRecord::Associations::Preloader.new(jobs, :log, :select => [:id, :job_id]).run
+          end
           ActiveRecord::Associations::Preloader.new(jobs, :repository, :select => [:id, :owner_name, :name]).run
           jobs
         end
