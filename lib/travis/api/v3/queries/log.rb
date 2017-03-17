@@ -1,5 +1,3 @@
-require 'travis/logs_api'
-
 module Travis::API::V3
   class Queries::Log < RemoteQuery
 

@@ -47,8 +47,7 @@ describe Travis::Api::Serialize::V2::Http::Jobs, 'using Travis::Services::Jobs::
     3.times { Factory(:test) }
   end
 
-  it 'queries' do
-    skip('query count differs depending on logs API usage')
+  it 'queries', logs_api_enabled: false do
     lambda { data }.should issue_queries(4)
   end
 

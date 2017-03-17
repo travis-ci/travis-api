@@ -1,4 +1,3 @@
-require 'travis/logs_api'
 require 'travis/services/base'
 
 module Travis
@@ -24,15 +23,8 @@ module Travis
       end
 
       private def result_via_http
-        return logs_api.find_by_id(params[:id]) if params[:id]
-        logs_api.find_by_job_id(params[:job_id])
-      end
-
-      private def logs_api
-        @logs_api ||= Travis::LogsApi.new(
-          url: Travis.config.logs_api.url,
-          token: Travis.config.logs_api.token
-        )
+        return RemoteLog.find_by_id(params[:id]) if params[:id]
+        RemoteLog.find_by_job_id(params[:job_id])
       end
     end
   end
