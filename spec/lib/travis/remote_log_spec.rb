@@ -1,6 +1,6 @@
-require 'travis/model/remote_log'
+require 'travis/remote_log'
 
-describe RemoteLog do
+describe Travis::RemoteLog do
   subject { described_class.new(attrs) }
   let(:attrs) { { id: 4, content: 'huh', job_id: 5 } }
 
@@ -131,7 +131,7 @@ describe RemoteLog do
   end
 end
 
-describe RemoteLog::Client do
+describe Travis::RemoteLog::Client do
   let(:url) { 'http://loggo.example.com' }
   let(:token) { 'fafafafcoolbeansgeocitiesangelfire' }
   let :stubs do
@@ -191,7 +191,7 @@ describe RemoteLog::Client do
 
     it 'cannot write content for job id' do
       expect { subject.write_content_for_job_id(8, content: 'nah') }
-        .to raise_error(RemoteLog::Client::Error)
+        .to raise_error(Travis::RemoteLog::Client::Error)
     end
   end
 end

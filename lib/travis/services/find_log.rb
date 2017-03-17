@@ -23,8 +23,8 @@ module Travis
       end
 
       private def result_via_http
-        return RemoteLog.find_by_id(params[:id]) if params[:id]
-        RemoteLog.find_by_job_id(params[:job_id])
+        return Travis::RemoteLog.find_by_id(params[:id]) if params[:id]
+        Travis::RemoteLog.find_by_job_id(params[:job_id])
       end
     end
   end

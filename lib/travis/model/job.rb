@@ -156,7 +156,7 @@ class Job < Travis::Model
 
   def log_content=(content)
     if Travis.config.logs_api.enabled?
-      return RemoteLog.write_content_for_job_id(id, content: content)
+      return Travis::RemoteLog.write_content_for_job_id(id, content: content)
     end
     create_log! unless log
     log.update_attributes!(content: content, aggregated_at: Time.now)
@@ -164,7 +164,7 @@ class Job < Travis::Model
 
   if Travis::Config.logs_api_enabled?
     def log
-      @log ||= RemoteLog.find_by_job_id(id)
+      @log ||= Travis::RemoteLog.find_by_job_id(id)
     end
 
     attr_writer :log

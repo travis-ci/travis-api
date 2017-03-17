@@ -1,4 +1,5 @@
-require 'travis/model/remote_log'
+require 'travis/remote_log'
 
-class Travis::API::V3::Models::RemoteLog < ::RemoteLog
+module Travis::API::V3::Models
+  RemoteLog = Class.new(Travis::RemoteLog)
 end
