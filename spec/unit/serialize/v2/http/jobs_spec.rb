@@ -4,7 +4,7 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
   let(:data) { described_class.new([test]).data }
   let!(:time) { Time.now.utc }
 
-  it 'jobs' do
+  it 'jobs', logs_api_enabled: false do
     data['jobs'].first.should == {
       'id' => 1,
       'repository_id' => 1,
