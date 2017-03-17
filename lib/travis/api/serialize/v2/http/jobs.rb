@@ -31,7 +31,6 @@ module Travis
                   'repository_slug' => job.repository.slug,
                   'build_id' => job.source_id,
                   'commit_id' => job.commit_id,
-                  'log_id' => job.log_id,
                   'number' => job.number,
                   'config' => job.obfuscated_config.stringify_keys,
                   'state' => job.state.to_s,
@@ -40,7 +39,14 @@ module Travis
                   'queue' => job.queue,
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags
-                }
+                }.tap do |ret|
+                  if Travis.config.logs_api.enabled?
+                    # TODO: is log_id used?
+                    ret['log_id'] = 0
+                  else
+                    ret['log_id'] = job.log_id
+                  end
+                end
               end
 
               def commit_data(commit)
