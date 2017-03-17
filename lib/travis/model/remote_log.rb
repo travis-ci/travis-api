@@ -54,6 +54,18 @@ class RemoteLog
     !!aggregated_at
   end
 
+  def archived?
+    !!(!archived_at.nil? && archive_verified?)
+  end
+
+  def to_json
+    {
+      'log' => attributes.slice(
+        *%i(id content created_at job_id updated_at)
+      )
+    }.to_json
+  end
+
   def clear!(user = nil)
     message = ''
     removed_by = nil
@@ -74,18 +86,6 @@ class RemoteLog
     end
 
     message
-  end
-
-  def archived?
-    archived_at && archive_verified?
-  end
-
-  def to_json
-    {
-      'log' => attributes.slice(
-        *%i(id content created_at job_id updated_at)
-      )
-    }.to_json
   end
 
   class Client
