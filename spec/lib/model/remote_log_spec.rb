@@ -55,6 +55,12 @@ describe RemoteLog do
     subject.removed_by.should == user
   end
 
+  it 'has a job' do
+    job = mock('job')
+    Job.expects(:find).with(attrs[:job_id]).returns(job)
+    subject.job.should == job
+  end
+
   it 'never has parts' do
     subject.parts.should be_empty
     subject.log_parts.should be_empty
