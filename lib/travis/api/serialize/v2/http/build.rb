@@ -79,10 +79,7 @@ module Travis
                   'tags' => job.tags,
                   'annotation_ids' => job.annotation_ids,
                 }.tap do |ret|
-                  if Travis.config.logs_api.enabled?
-                    # TODO: is log_id used?
-                    ret['log_id'] = 0
-                  else
+                  unless Travis.config.logs_api.enabled?
                     ret['log_id'] = job.log_id
                   end
                 end
