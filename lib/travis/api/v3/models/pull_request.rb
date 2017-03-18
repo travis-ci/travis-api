@@ -1,9 +1,7 @@
 module Travis::API::V3
-  class Models::Request < Model
-    belongs_to :commit
-    belongs_to :pull_request
+  class Models::PullRequest < Model
     belongs_to :repository
-    belongs_to :owner, polymorphic: true
+    has_many   :requests
     has_many   :builds
     serialize  :config
     serialize  :payload

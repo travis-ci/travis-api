@@ -8,7 +8,7 @@ require 'travis/model/encrypted_column'
 # and needs to be approved based on the configuration. Once approved the
 # Request creates a Build.
 class Request < Travis::Model
-  require 'travis/model/request/pull_request'
+  require 'travis/model/request/pr'
 
   include SimpleStates
 
@@ -35,8 +35,10 @@ class Request < Travis::Model
   end
 
   belongs_to :commit
+  belongs_to :pull_request
   belongs_to :repository
   belongs_to :owner, polymorphic: true
+  belongs_to :repository
   has_many   :builds
   has_many   :events, as: :source
 
@@ -49,12 +51,17 @@ class Request < Travis::Model
     read_attribute(:event_type) || 'push'
   end
 
+  def payload
+    puts "[deprectated] Reading request.payload. Called from #{caller.reject { |line| line.include?('request.rb') }.first}"
+    super
+  end
+
   def ref
-    payload['ref'] if payload
+    commit.ref
   end
 
   def branch_name
-    ref.scan(%r{refs/heads/(.*?)$}).flatten.first if ref
+    commit.branch
   end
 
   def tag_name
@@ -69,32 +76,28 @@ class Request < Travis::Model
     event_type == 'pull_request'
   end
 
-  def pull_request
-    @pull_request ||= PullRequest.new(payload && payload['pull_request'])
-  end
-
   def pull_request_title
-    pull_request.title if pull_request?
+    pull_request ? pull_request.title : pr.title if pull_request?
   end
 
   def pull_request_number
-    pull_request.number if pull_request?
+    pull_request ? pull_request.number : pr.number if pull_request?
   end
 
   def head_repo
-    pull_request.head_repo
+    pull_request ? pull_request.head_repo_slug : pr.head_repo
   end
 
   def base_repo
-    pull_request.base_repo
+    repository.slug
   end
 
   def head_branch
-    pull_request.head_branch
+    pull_request ? pull_request.head_ref : pr.head_branch
   end
 
   def base_branch
-    pull_request.base_branch
+    commit.branch
   end
 
   def config_url
@@ -102,12 +105,10 @@ class Request < Travis::Model
   end
 
   def same_repo_pull_request?
-    begin
-      head_repo && base_repo && head_repo == base_repo
-    rescue => e
-      Travis.logger.error("[request:#{id}] Couldn't determine whether pull request is from the same repository: #{e.message}")
-      false
-    end
+    head_repo && base_repo && head_repo == base_repo
+  rescue => e
+    Travis.logger.error("[request:#{id}] Couldn't determine whether pull request is from the same repository: #{e.message}")
+    false
   end
 
   def creates_jobs?
@@ -115,4 +116,10 @@ class Request < Travis::Model
       Build::Config.new(config).normalize, multi_os: repository.multi_os_enabled?, dist_group_expansion: repository.dist_group_expansion_enabled?
     ).expand.size > 0
   end
+
+  private
+
+    def pr
+      @pr ||= Pr.new(payload && payload['pull_request'])
+    end
 end

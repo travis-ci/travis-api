@@ -51,6 +51,7 @@ class Build < Travis::Model
 
   belongs_to :commit
   belongs_to :request
+  belongs_to :pull_request
   belongs_to :repository, autosave: true
   belongs_to :owner, polymorphic: true
   has_many   :matrix, as: :source, order: :id, class_name: 'Job::Test', dependent: :destroy
