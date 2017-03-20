@@ -13,11 +13,21 @@ Travis Admin (2.0) was build by the Emerald Project team June-November 2016. It 
 ### Setup the database for development/test
 Go to [travis-pro-migrations](https://github.com/travis-pro/travis-pro-migrations) and follow the instructions there.
 
-### Make a `config/travis.yml`:
+### Make a `config/travis.yml`
 
-You can generate is with trvs:
+`Rakefile` defines the task `config[:env, :pro]`, which writes configuration file to `config/travis.yml`.
+This task assumes that a sibling directory `travis-keychain` (and `travis-pro-keychain) exists and are
+up to date.
 
-`trvs generate-config --pro admin-v2 staging  > config/travis.yml`
+The `rake` task also writes two `export` commands at the end, which is useful for running the Rails server.
+
+#### Manually generating `config/travis.yml`
+
+Instead of using the Rake task, you can manually generate the configuration file by following these steps.
+
+First, fetch
+
+`trvs generate-config --pro admin staging  > config/travis.yml`
 
 Manually add "development:" as a parent, nest the updated config info under that, and remove the config for redis (so that we use our local redis instance). Also make sure to remove travis_config=--- if it is at the top of the file.
 
