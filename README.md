@@ -16,7 +16,7 @@ Go to [travis-pro-migrations](https://github.com/travis-pro/travis-pro-migration
 ### Make a `config/travis.yml`
 
 `Rakefile` defines the task `config[:env, :pro]`, which writes configuration file to `config/travis.yml`.
-This task assumes that a sibling directory `travis-keychain` (and `travis-pro-keychain) exists and are
+This task assumes that a sibling directory `travis-keychain` (and `travis-pro-keychain`) exists and are
 up to date.
 
 The `rake` task also writes two `export` commands at the end, which is useful for running the Rails server.
