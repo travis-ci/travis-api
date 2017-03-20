@@ -16,10 +16,17 @@ Go to [travis-pro-migrations](https://github.com/travis-pro/travis-pro-migration
 ### Make a `config/travis.yml`
 
 `Rakefile` defines the task `config[:env, :pro]`, which writes configuration file to `config/travis.yml`.
-This task assumes that a sibling directory `travis-keychain` (and `travis-pro-keychain`) exists and are
+This task assumes that a sibling directory `travis-keychain` and `travis-pro-keychain` exist and are
 up to date.
 
-The `rake` task also writes two `export` commands at the end, which is useful for running the Rails server.
+The `rake` task also writes two `export` commands at the end, which is useful for running the Rails server:
+
+```
+$ rake config["staging","pro"]
+I, [2017-03-20T19:04:57.958573 #89131]  INFO -- : writing to config/travis.yml
+export GITHUB_LOGIN=YOUR_OWN_GITHUB_LOGIN
+export STAGING_DATABASE_URL=`heroku config:get DATABASE_URL -a travis-pro-staging`
+```
 
 #### Manually generating `config/travis.yml`
 
