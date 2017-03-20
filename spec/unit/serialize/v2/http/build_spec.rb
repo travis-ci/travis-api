@@ -78,8 +78,11 @@ describe Travis::Api::Serialize::V2::Http::Build, 'using Travis::Services::Build
   let(:build)   { Travis.run_service(:find_build, nil, :id => record.id) }
   let(:data)    { described_class.new(build).data }
 
-  it 'queries' do
+  it 'queries', logs_api_enabled: false do
     lambda { data }.should issue_queries(8)
   end
-end
 
+  it 'does not explode' do
+    data.should_not be_nil
+  end
+end

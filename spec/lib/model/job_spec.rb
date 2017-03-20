@@ -25,7 +25,7 @@ describe Job do
     end
   end
 
-  describe 'before_create' do
+  describe 'before_create', logs_api_enabled: false do
     let(:job) { Job::Test.create!(owner: Factory(:user), repository: Factory(:repository), commit: Factory(:commit), source: Factory(:build)) }
 
     before :each do
@@ -456,7 +456,7 @@ describe Job do
     end
   end
 
-  describe 'log_content=' do
+  describe 'log_content=', logs_api_enabled: false do
     let(:job) { Job::Test.create!(owner: Factory(:user), repository: Factory(:repository), commit: Factory(:commit), source: Factory(:build), log: Factory(:log)) }
 
     it 'sets the log content' do

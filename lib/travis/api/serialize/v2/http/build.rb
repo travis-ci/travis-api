@@ -69,7 +69,6 @@ module Travis
                   'repository_id' => job.repository_id,
                   'build_id' => job.source_id,
                   'commit_id' => job.commit_id,
-                  'log_id' => job.log_id,
                   'state' => job.state.to_s,
                   'number' => job.number,
                   'config' => job.obfuscated_config.stringify_keys,
@@ -79,7 +78,11 @@ module Travis
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags,
                   'annotation_ids' => job.annotation_ids,
-                }
+                }.tap do |ret|
+                  unless Travis.config.logs_api.enabled?
+                    ret['log_id'] = job.log_id
+                  end
+                end
               end
 
               def branch_is_default(commit, repository)

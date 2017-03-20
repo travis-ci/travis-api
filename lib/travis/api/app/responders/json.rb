@@ -23,7 +23,7 @@ class Travis::Api::App
         end
 
         def accepts_log?
-          return true unless resource.is_a?(Log)
+          return true unless resource.is_a?(Log) || resource.is_a?(Travis::RemoteLog)
 
           chunked = accept_params[:chunked]
           if resource.removed_at
@@ -46,9 +46,9 @@ class Travis::Api::App
 
         def builder
           if defined?(@builder)
-           @builder
+            @builder
           else
-           @builder = Travis::Api::Serialize.builder(resource, { :version => version }.merge(options))
+            @builder = Travis::Api::Serialize.builder(resource, { :version => version }.merge(options))
           end
         end
 

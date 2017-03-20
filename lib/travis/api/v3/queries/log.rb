@@ -4,7 +4,7 @@ module Travis::API::V3
     def find(job)
       @job = job
       #check for the log in the Logs DB
-      log = Models::Log.find_by_job_id(@job.id)
+      log = logs_model.find_by_job_id(@job.id)
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
       if log.archived_at
@@ -20,12 +20,13 @@ module Travis::API::V3
     end
 
     def create_log_parts(log, content)
+      return unless log.log_parts.respond_to?(:build)
       log.log_parts.build([{content: content, number: 0, created_at: log.created_at}])
     end
 
     def delete(user, job)
       @job = job
-      log = Models::Log.find_by_job_id(@job.id)
+      log = logs_model.find_by_job_id(@job.id)
       raise EntityMissing, 'log not found'.freeze if log.nil?
       raise LogAlreadyRemoved if log.removed_at || log.removed_by
       raise JobUnfinished unless @job.finished_at?
@@ -55,6 +56,11 @@ module Travis::API::V3
 
     def hostname(name)
       "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
+    end
+
+    private def logs_model
+      return Travis::API::V3::Models::RemoteLog if Travis.config.logs_api.enabled?
+      Travis::API::V3::Models::Log
     end
   end
 end

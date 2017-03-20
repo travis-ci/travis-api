@@ -3,7 +3,7 @@ describe Travis::Api::Serialize::V2::Http::Job do
 
   let(:data) { described_class.new(test).data }
 
-  it 'job' do
+  it 'job', logs_api_enabled: false do
     data['job'].should == {
       'id' => 1,
       'repository_id' => 1,
@@ -66,7 +66,11 @@ describe Travis::Api::Serialize::V2::Http::Job, 'using Travis::Services::Jobs::F
   let(:job)     { Travis.run_service(:find_job, nil, :id => record.id) }
   let(:data)    { described_class.new(job).data }
 
-  it 'queries' do
+  it 'queries', logs_api_enabled: false do
     lambda { data }.should issue_queries(5)
+  end
+
+  it 'does not explode' do
+    data.should_not be_nil
   end
 end

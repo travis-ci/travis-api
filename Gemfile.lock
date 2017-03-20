@@ -69,7 +69,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 61906e5398bd20071ccb0f54a3f64374cd450163
+  revision: 113cff17fe383bb72fcfae3a97a8ce98c228342f
   specs:
     travis-support (0.0.1)
 
@@ -191,7 +191,7 @@ GEM
       net-http-persistent (>= 2.7)
       net-http-pipeline
     git-version-bump (0.15.1)
-    google-api-client (0.9.20)
+    google-api-client (0.9.28)
       addressable (~> 2.3)
       googleauth (~> 0.5)
       httpclient (~> 2.7)
@@ -417,4 +417,4 @@ RUBY VERSION
    ruby 2.3.3p222
 
 BUNDLED WITH
-   1.14.5
+   1.14.6

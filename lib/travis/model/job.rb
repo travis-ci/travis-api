@@ -1,4 +1,5 @@
 require 'travis/model'
+require 'travis/config/defaults'
 require 'active_support/core_ext/hash/deep_dup'
 require 'travis/model/build/config/language'
 
@@ -81,7 +82,7 @@ class Job < Travis::Model
   end
 
   before_create do
-    build_log
+    build_log unless Travis.config.logs_api.enabled?
     self.state = :created if self.state.nil?
     self.queue = Queue.for(self).name
   end
@@ -154,8 +155,19 @@ class Job < Travis::Model
   end
 
   def log_content=(content)
+    if Travis.config.logs_api.enabled?
+      return Travis::RemoteLog.write_content_for_job_id(id, content: content)
+    end
     create_log! unless log
     log.update_attributes!(content: content, aggregated_at: Time.now)
+  end
+
+  if Travis::Config.logs_api_enabled?
+    def log
+      @log ||= Travis::RemoteLog.find_by_job_id(id)
+    end
+
+    attr_writer :log
   end
 
   # compatibility, we still use result in webhooks
