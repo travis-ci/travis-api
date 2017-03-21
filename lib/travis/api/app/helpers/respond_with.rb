@@ -15,6 +15,7 @@ class Travis::Api::App
       }
 
       def respond_with(resource, options = {})
+        Travis.logger.debug("respond_with resource=#{resource.inspect} options=#{options.inspect}")
         result = respond(resource, options)
 
         if result && response.content_type =~ /application\/json/
@@ -33,6 +34,7 @@ class Travis::Api::App
       private
 
         def respond(resource, options)
+          Travis.logger.debug("respond_with->respond in resource=#{resource.inspect} options=#{options.inspect}")
           resource = apply_service_responder(resource, options)
 
           response = nil
@@ -50,6 +52,7 @@ class Travis::Api::App
             end
           end
 
+          Travis.logger.debug("respond_with->respond out response=#{response.inspect} resource=#{resource.inspect} options=#{options.inspect}")
           response || (resource ? error(406) : error(404))
         end
 
@@ -58,8 +61,10 @@ class Travis::Api::App
         end
 
         def apply_service_responder(resource, options)
+          Travis.logger.debug("respond_with->respond->apply_service_responder in resource=#{resource.inspect} options=#{options.inspect}")
           responder = Responders::Service.new(self, resource, options)
           resource  = responder.apply if responder.apply?
+          Travis.logger.debug("respond_with->respond->apply_service_responder out resource=#{resource.inspect} options=#{options.inspect}")
           resource
         end
 
