@@ -22,7 +22,7 @@ module Travis
             begin
               if const && const.const_defined?(name.to_s.camelize, false)
                 const.const_get(name, false).tap do |value|
-                  Travis.logger.debug("#{self.class.name}#builder found value=#{value.inspect}"
+                  Travis.logger.debug("#{self.class.name}#builder found value=#{value.inspect}")
                 end
               else
                 nil
