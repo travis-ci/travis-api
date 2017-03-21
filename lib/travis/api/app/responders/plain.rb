@@ -10,7 +10,6 @@ module Travis::Api::App::Responders
       # for log's content for now.
       #
       # TODO: think how to handle other formats correctly
-      Travis.logger.debug("#{self.class.name}#apply? resource=#{resource.inspect}")
       super && (resource.is_a?(Log) || resource.is_a?(Travis::RemoteLog) || resource.is_a?(String))
     end
 

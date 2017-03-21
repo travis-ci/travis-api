@@ -6,18 +6,14 @@ class Travis::Api::App
       include Helpers::Accept
 
       def apply?
-        truth = (super && !resource.is_a?(String) && !resource.nil? && accepts_log?)
-        Travis.logger.debug("#{self.class.name}#apply? #{truth} resource=#{resource.inspect}")
-        truth
+        super && !resource.is_a?(String) && !resource.nil? && accepts_log?
       end
 
       instrument_method
       def apply
         super
 
-        result.tap do |r|
-          Travis.logger.debug("#{self.class.name}#apply result=#{r.inspect}")
-        end
+        result
       end
 
       private
@@ -42,10 +38,8 @@ class Travis::Api::App
             p = params
             p[:root] = options[:root] if options[:root]
             p[:root] = options[:type] if options[:type] && !p[:root]
-            Travis.logger.debug("#{self.class.name}#result builder.new(resource, params).data")
             builder.new(resource, p).data
           else
-            Travis.logger.debug("#{self.class.name}#result basic_type_resource")
             basic_type_resource
           end
         end
