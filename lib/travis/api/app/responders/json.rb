@@ -6,8 +6,9 @@ class Travis::Api::App
       include Helpers::Accept
 
       def apply?
-        Travis.logger.debug("#{self.class.name}#apply? resource=#{resource.inspect}")
-        super && !resource.is_a?(String) && !resource.nil? && accepts_log?
+        truth = (super && !resource.is_a?(String) && !resource.nil? && accepts_log?)
+        Travis.logger.debug("#{self.class.name}#apply? #{truth} resource=#{resource.inspect}")
+        truth
       end
 
       instrument_method
