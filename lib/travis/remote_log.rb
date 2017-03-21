@@ -12,7 +12,8 @@ module Travis
       def_delegators :client, :find_by_job_id, :find_by_id,
         :find_id_by_job_id, :write_content_for_job_id
 
-      def_delegators :archive_client, :fetch_archived_content
+      def_delegators :archive_client, :fetch_archived_content,
+        :fetch_archived_url
 
       private def client
         @client ||= Client.new(
@@ -80,6 +81,14 @@ module Travis
       !!(!archived_at.nil? && archive_verified?)
     end
 
+    def archived_url(expires: nil)
+      @archived_url ||= self.class.fetch_archived_url(job_id, expires: expires)
+    end
+
+    def archived_content
+      @archived_content ||= self.class.fetch_archived_content(job_id)
+    end
+
     def to_json
       {
         'log' => {
@@ -90,10 +99,6 @@ module Travis
           'updated_at' => updated_at
         }
       }.to_json
-    end
-
-    def archived_content
-      @archived_content ||= self.class.fetch_archived_content(job_id)
     end
 
     def clear!(user = nil)
@@ -191,13 +196,27 @@ module Travis
       private :bucket_name
 
       def fetch_archived_content(job_id)
+        file = fetch_archived(job_id)
+        return nil if file.nil?
+        file.body.force_encoding('UTF-8')
+      end
+
+      def fetch_archived_url(job_id, expires: nil)
+        expires = expires || Time.now.to_i + 30
+        file = fetch_archived(job_id)
+        return nil if file.nil?
+        return file.public_url if file.public?
+        file.url(expires)
+      end
+
+      private def fetch_archived(job_id)
         candidates = s3.directories.get(
           bucket_name,
           prefix: "jobs/#{job_id}/log.txt"
         ).files
 
         return nil if candidates.empty?
-        candidates.first.body.force_encoding('UTF-8')
+        candidates.first
       end
     end
   end

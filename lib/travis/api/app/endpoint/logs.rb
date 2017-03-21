@@ -6,7 +6,12 @@ class Travis::Api::App
     class Logs < Endpoint
       # Fetches a log by its *id*.
       get '/:id' do |id|
-        respond_with service(:find_log, params)
+        result = service(:find_log, params).run
+        if result && result.archived? && result.respond_to?(:archived_url)
+          redirect result.archived_url, 307
+        else
+          respond_with result
+        end
       end
     end
   end
