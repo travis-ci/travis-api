@@ -17,6 +17,7 @@ class Travis::Api::App
       def respond_with(resource, options = {})
         Travis.logger.debug("respond_with resource=#{resource.inspect} options=#{options.inspect}")
         result = respond(resource, options)
+        Travis.logger.debug("respond_with result=#{result.inspect}")
 
         if result && response.content_type =~ /application\/json/
           status STATUS[result[:result]] if result.is_a?(Hash) && result[:result].is_a?(Symbol)
