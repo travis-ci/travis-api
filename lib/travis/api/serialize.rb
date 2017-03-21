@@ -21,7 +21,9 @@ module Travis
             Travis.logger.debug("#{self.class.name}#builder inject const=#{const.inspect} name=#{name.inspect}")
             begin
               if const && const.const_defined?(name.to_s.camelize, false)
-                const.const_get(name, false)
+                const.const_get(name, false).tap do |value|
+                  Travis.logger.debug("#{self.class.name}#builder found value=#{value.inspect}"
+                end
               else
                 nil
               end
