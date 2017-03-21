@@ -24,19 +24,13 @@ class Travis::Api::App
         end
 
         def accepts_log?
-          return true unless resource.is_a?(Log) || resource.is_a?(Travis::RemoteLog)
+          return true unless resource.is_a?(Log)
 
-          if resource.is_a?(Log)
-            Travis.logger.debug("#{self.class.name}#accepts_log? is_a?(Log)")
-            chunked = accept_params[:chunked]
-            if resource.removed_at
-              true
-            else
-              chunked ? !resource.aggregated_at : true
-            end
-          elsif resource.is_a?(Travis::RemoteLog)
-            Travis.logger.debug("#{self.class.name}#accepts_log? is_a?(Travis::RemoteLog)")
-            resource.archived_at.nil?
+          chunked = accept_params[:chunked]
+          if resource.removed_at
+            true
+          else
+            chunked ? !resource.aggregated_at : true
           end
         end
 
