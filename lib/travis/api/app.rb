@@ -88,6 +88,9 @@ module Travis::Api
     attr_accessor :app
 
     def initialize
+      # HACK: explicitly set log level to debug
+      Travis.logger.level = Logger::DEBUG
+      # HACK: explicitly set log level to debug
       @app = Rack::Builder.app do
         # if stackprof = ENV['STACKPROF']
         #   require 'stackprof'
