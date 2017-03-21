@@ -168,6 +168,12 @@ class Job < Travis::Model
     end
 
     attr_writer :log
+
+    def log_id
+      @log_id ||= Travis::RemoteLog.find_id_by_job_id(id)
+    end
+
+    attr_writer :log_id
   end
 
   # compatibility, we still use result in webhooks

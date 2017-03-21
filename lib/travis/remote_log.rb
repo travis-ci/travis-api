@@ -10,7 +10,7 @@ module Travis
       extend Forwardable
 
       def_delegators :client, :find_by_job_id, :find_by_id,
-        :write_content_for_job_id
+        :find_id_by_job_id, :write_content_for_job_id
 
       private def client
         @client ||= Client.new(
@@ -107,6 +107,14 @@ module Travis
 
       def find_by_job_id(job_id)
         find_by('job_id', job_id)
+      end
+
+      def find_id_by_job_id(job_id)
+        resp = conn.get do |req|
+          req.url "/logs/#{job_id}/id"
+        end
+        return nil unless resp.success?
+        JSON.parse(resp.body).fetch('id')
       end
 
       def write_content_for_job_id(job_id, content: '', removed_by: nil)

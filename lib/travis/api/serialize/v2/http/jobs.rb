@@ -27,6 +27,7 @@ module Travis
               def job_data(job)
                 {
                   'id' => job.id,
+                  'log_id' => job.log_id,
                   'repository_id' => job.repository_id,
                   'repository_slug' => job.repository.slug,
                   'build_id' => job.source_id,
@@ -39,11 +40,7 @@ module Travis
                   'queue' => job.queue,
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags
-                }.tap do |ret|
-                  unless Travis.config.logs_api.enabled?
-                    ret['log_id'] = job.log_id
-                  end
-                end
+                }
               end
 
               def commit_data(commit)
