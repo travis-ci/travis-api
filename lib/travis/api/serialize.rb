@@ -13,10 +13,12 @@ module Travis
         end
 
         def builder(resource, options = {})
+          Travis.logger.debug("#{self.class.name}#builder resource=#{resource.inspect} options=#{options.inspect}")
           target  = (options[:for] || 'http').to_s.camelize
           version = (options[:version] || default_version(options)).to_s.camelize
           type    = (options[:type] || type_for(resource)).to_s.camelize.split('::')
           ([version, target] + type).inject(self) do |const, name|
+            Travis.logger.debug("#{self.class.name}#builder inject const=#{const.inspect} name=#{name.inspect}")
             begin
               if const && const.const_defined?(name.to_s.camelize, false)
                 const.const_get(name, false)
@@ -37,6 +39,7 @@ module Travis
         private
 
           def type_for(resource)
+            Travis.logger.debug("#{self.class.name}#type_for in resource=#{resource.inspect}")
             if arel_relation?(resource)
               type = resource.klass.name.pluralize
             else
@@ -44,7 +47,9 @@ module Travis
               type = type.base_class if active_record?(type)
               type = type.name
             end
-            type.split('::').last
+            type.split('::').last.tap do |value|
+              Travis.logger.debug("#{self.class.name}#type_for out value=#{value.inspect}")
+            end
           end
 
           def arel_relation?(object)
