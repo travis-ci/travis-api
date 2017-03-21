@@ -131,9 +131,11 @@ module Travis
       end
 
       private def find_by(by, id)
+        Travis.logger.debug("finding log by=#{by} id=#{id}")
         resp = conn.get do |req|
           req.url "/logs/#{id}", by: by
         end
+        Travis.logger.debug("response for log by=#{by} id=#{id}: #{resp}")
         return nil unless resp.success?
         Travis::RemoteLog.new(JSON.parse(resp.body))
       end

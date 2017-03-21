@@ -6,6 +6,7 @@ module Travis
       register :find_log
 
       def run(options = {})
+        Travis.logger.debug("find_log params=#{params.inspect}")
         return result_via_http if Travis.config.logs_api.enabled?
         result if result
       end
