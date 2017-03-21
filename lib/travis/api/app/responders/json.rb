@@ -14,7 +14,9 @@ class Travis::Api::App
       def apply
         super
 
-        result
+        result.tap do |r|
+          Travis.logger.debug("#{self.class.name}#apply result=#{r.inspect}")
+        end
       end
 
       private
