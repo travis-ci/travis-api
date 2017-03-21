@@ -42,8 +42,10 @@ class Travis::Api::App
             p = params
             p[:root] = options[:root] if options[:root]
             p[:root] = options[:type] if options[:type] && !p[:root]
+            Travis.logger.debug("#{self.class.name}#result builder.new(resource, params).data")
             builder.new(resource, p).data
           else
+            Travis.logger.debug("#{self.class.name}#result basic_type_resource")
             basic_type_resource
           end
         end
