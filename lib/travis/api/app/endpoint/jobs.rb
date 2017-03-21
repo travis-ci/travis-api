@@ -78,9 +78,10 @@ class Travis::Api::App
         if (resource && resource.removed_at) && accepts?('application/json')
           respond_with resource
         elsif (!resource || resource.archived?)
-          # the way we use responders makes it hard to validate proper format
-          # automatically here, so we need to check it explicitly
-          if accepts?('text/plain')
+          # XXX: Temporarily sidestep the content-type check
+          # # the way we use responders makes it hard to validate proper format
+          # # automatically here, so we need to check it explicitly
+          # if accepts?('text/plain')
             archived_log_path = archive_url("/jobs/#{params[:job_id]}/log.txt")
 
             if params[:cors_hax]
@@ -90,9 +91,10 @@ class Travis::Api::App
             else
               redirect archived_log_path, 307
             end
-          else
-            status 406
-          end
+          # else
+          #   status 406
+          # end
+          # XXX: End temporary sidestep of content-type check
         else
           respond_with resource
         end
