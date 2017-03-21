@@ -76,8 +76,10 @@ class Travis::Api::App
       get '/:job_id/log' do
         resource = service(:find_log, params).run
         if (resource && resource.removed_at) && accepts?('application/json')
+          Travis.logger.warn("*** GET /#{params[:job_id]}/log *** if branch")
           respond_with resource
         elsif (!resource || resource.archived?)
+          Travis.logger.warn("*** GET /#{params[:job_id]}/log *** elsif branch")
           # XXX: Temporarily sidestep the content-type check
           # # the way we use responders makes it hard to validate proper format
           # # automatically here, so we need to check it explicitly
@@ -96,6 +98,7 @@ class Travis::Api::App
           # end
           # XXX: End temporary sidestep of content-type check
         else
+          Travis.logger.warn("*** GET /#{params[:job_id]}/log *** else branch")
           respond_with resource
         end
       end
