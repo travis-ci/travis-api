@@ -10,13 +10,34 @@ module Travis
       extend Forwardable
 
       def_delegators :client, :find_by_job_id, :find_by_id,
-        :write_content_for_job_id
+        :find_id_by_job_id, :write_content_for_job_id
+
+      def_delegators :archive_client, :fetch_archived_url
 
       private def client
         @client ||= Client.new(
           url: Travis.config.logs_api.url,
           token: Travis.config.logs_api.token
         )
+      end
+
+      private def archive_client
+        @archive_client ||= ArchiveClient.new(
+          access_key_id: archive_s3_config[:access_key_id],
+          secret_access_key: archive_s3_config[:secret_access_key],
+          bucket_name: archive_s3_bucket
+        )
+      end
+
+      private def archive_s3_bucket
+        @archive_s3_bucket ||= [
+          Travis.env == 'staging' ? 'archive-staging' : 'archive',
+          Travis.config.host.split('.')[-2, 2]
+        ].flatten.compact.join('.')
+      end
+
+      private def archive_s3_config
+        @archive_s3_config ||= Travis.config.log_options.s3.to_h
       end
     end
 
@@ -59,12 +80,20 @@ module Travis
       !!(!archived_at.nil? && archive_verified?)
     end
 
+    def archived_url(expires: nil)
+      @archived_url ||= self.class.fetch_archived_url(job_id, expires: expires)
+    end
+
     def to_json
+      as_json.to_json
+    end
+
+    def as_json
       {
         'log' => attributes.slice(
           *%i(id content created_at job_id updated_at)
         )
-      }.to_json
+      }
     end
 
     def clear!(user = nil)
@@ -109,6 +138,14 @@ module Travis
         find_by('job_id', job_id)
       end
 
+      def find_id_by_job_id(job_id)
+        resp = conn.get do |req|
+          req.url "/logs/#{job_id}/id"
+        end
+        return nil unless resp.success?
+        JSON.parse(resp.body).fetch('id')
+      end
+
       def write_content_for_job_id(job_id, content: '', removed_by: nil)
         resp = conn.put do |req|
           req.url "/logs/#{job_id}"
@@ -136,6 +173,39 @@ module Travis
           c.request :retry, max: 5, interval: 0.1, backoff_factor: 2
           c.adapter :net_http
         end
+      end
+    end
+
+    class ArchiveClient
+      def initialize(access_key_id: nil, secret_access_key: nil, bucket_name: nil)
+        @bucket_name = bucket_name
+        @s3 = Fog::Storage.new(
+          aws_access_key_id: access_key_id,
+          aws_secret_access_key: secret_access_key,
+          provider: 'AWS'
+        )
+      end
+
+      attr_reader :s3, :bucket_name
+      private :s3
+      private :bucket_name
+
+      def fetch_archived_url(job_id, expires: nil)
+        expires = expires || Time.now.to_i + 30
+        file = fetch_archived(job_id)
+        return nil if file.nil?
+        return file.public_url if file.public?
+        file.url(expires)
+      end
+
+      private def fetch_archived(job_id)
+        candidates = s3.directories.get(
+          bucket_name,
+          prefix: "jobs/#{job_id}/log.txt"
+        ).files
+
+        return nil if candidates.empty?
+        candidates.first
       end
     end
   end
