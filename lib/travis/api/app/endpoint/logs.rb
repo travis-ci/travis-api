@@ -7,7 +7,7 @@ class Travis::Api::App
       # Fetches a log by its *id*.
       get '/:id' do |id|
         result = service(:find_log, params).run
-        if result && result.archived? && result.respond_to?(:archived_url)
+        if result && params[:cors_hax] && result.archived? && result.respond_to?(:archived_url)
           redirect result.archived_url, 307
         else
           respond_with result
