@@ -28,7 +28,6 @@ module Travis
               def job_data(job)
                 {
                   'id' => job.id,
-                  'log_id' => job.log_id,
                   'repository_id' => job.repository_id,
                   'repository_slug' => job.repository.slug,
                   'build_id' => job.source_id,
