@@ -9,7 +9,7 @@ class Travis::Api::App
         result = service(:find_log, params).run
         halt 404 if result.nil?
 
-        if params[:cors_hax] && result.archived? && result.respond_to?(:archived_url)
+        if result.archived? && result.respond_to?(:archived_url)
           redirect result.archived_url, 307
         else
           respond_with result
