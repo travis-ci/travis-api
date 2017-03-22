@@ -6,10 +6,15 @@ describe Travis::RemoteLog do
 
   before :each do
     described_class.instance_variable_set(:@client, nil)
+    described_class.instance_variable_set(:@archive_client, nil)
   end
 
   it 'has a default client' do
     expect(described_class.send(:client)).to_not be_nil
+  end
+
+  it 'has a default archive_client' do
+    expect(described_class.send(:archive_client)).to_not be_nil
   end
 
   it 'delegates public methods to client' do
@@ -22,6 +27,14 @@ describe Travis::RemoteLog do
     described_class.find_by_id
     described_class.find_by_job_id
     described_class.write_content_for_job_id
+  end
+
+  it 'delegates public methods to archive_client' do
+    archive_client = mock('archive_client')
+    archive_client.expects(:fetch_archived_url)
+    described_class.instance_variable_set(:@archive_client, archive_client)
+
+    described_class.fetch_archived_url
   end
 
   it 'has all the necessary attributes' do
@@ -59,6 +72,13 @@ describe Travis::RemoteLog do
     job = mock('job')
     Job.expects(:find).with(attrs[:job_id]).returns(job)
     subject.job.should == job
+  end
+
+  it 'has archived content' do
+    described_class.expects(:fetch_archived_url)
+      .with(5, expires: nil)
+      .returns('yep')
+    subject.archived_url.should eq 'yep'
   end
 
   it 'never has parts' do
@@ -137,6 +157,7 @@ describe Travis::RemoteLog::Client do
   let :stubs do
     Faraday::Adapter::Test::Stubs.new do |stub|
       stub.get('/logs/4') { [200, {}, JSON.dump(content: 'huh wow')] }
+      stub.get('/logs/4/id') { [200, {}, JSON.dump(id: 4000)] }
       stub.put('/logs/8?removed_by=3') do
         [
           200,
@@ -168,6 +189,10 @@ describe Travis::RemoteLog::Client do
     subject.find_by_job_id(4).should_not be_nil
   end
 
+  it 'can find log ids by job id' do
+    subject.find_id_by_job_id(4).should_not be_nil
+  end
+
   it 'can write content for job id' do
     subject.write_content_for_job_id(8, content: 'oh hi', removed_by: 3)
       .should_not be_nil
@@ -177,6 +202,7 @@ describe Travis::RemoteLog::Client do
     let :stubs do
       Faraday::Adapter::Test::Stubs.new do |stub|
         stub.get('/logs/4') { [404, {}, ''] }
+        stub.get('/logs/4/id') { [404, {}, ''] }
         stub.put('/logs/8') { [404, {}, ''] }
       end
     end
@@ -189,9 +215,48 @@ describe Travis::RemoteLog::Client do
       subject.find_by_job_id(4).should be_nil
     end
 
+    it 'cannot find log ids by job id' do
+      subject.find_id_by_job_id(4).should be_nil
+    end
+
     it 'cannot write content for job id' do
       expect { subject.write_content_for_job_id(8, content: 'nah') }
         .to raise_error(Travis::RemoteLog::Client::Error)
     end
+  end
+end
+
+describe Travis::RemoteLog::ArchiveClient do
+  subject do
+    described_class.new(
+      access_key_id: 'AKFLAH',
+      secret_access_key: 'SECRETSECRETWOWNEAT',
+      bucket_name: 'fluffernutter-pretzel-pie'
+    )
+  end
+
+  let(:s3) { mock('s3') }
+
+  before do
+    subject.instance_variable_set(:@s3, s3)
+    s3.stubs(:directories).returns(s3)
+    s3.stubs(:get)
+      .with('fluffernutter-pretzel-pie', prefix: 'jobs/9/log.txt')
+      .returns(s3)
+    s3.stubs(:files).returns([s3])
+  end
+
+  it 'fetches public archived URLs' do
+    s3.stubs(:public?).returns(true)
+    s3.stubs(:public_url).returns('https://wowneat.example.com/flah')
+    subject.fetch_archived_url(9).should eq 'https://wowneat.example.com/flah'
+  end
+
+  it 'fetches private archived URLs' do
+    s3.stubs(:public?).returns(false)
+    s3.stubs(:url).with(8001)
+      .returns('https://whoabud.example.com/flah?sig=ya&exp=nah')
+    subject.fetch_archived_url(9, expires: 8001)
+      .should eq'https://whoabud.example.com/flah?sig=ya&exp=nah'
   end
 end
