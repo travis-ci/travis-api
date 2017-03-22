@@ -80,7 +80,7 @@ class Travis::Api::App
         elsif (!resource || resource.archived?)
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
-          if accepts?('text/plain')
+          if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')
             archived_log_path = if resource.respond_to?(:archived_url)
                                   resource.archived_url
                                 else
