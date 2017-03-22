@@ -12,8 +12,7 @@ module Travis
       def_delegators :client, :find_by_job_id, :find_by_id,
         :find_id_by_job_id, :write_content_for_job_id
 
-      def_delegators :archive_client, :fetch_archived_content,
-        :fetch_archived_url
+      def_delegators :archive_client, :fetch_archived_url
 
       private def client
         @client ||= Client.new(
@@ -85,19 +84,11 @@ module Travis
       @archived_url ||= self.class.fetch_archived_url(job_id, expires: expires)
     end
 
-    def archived_content
-      @archived_content ||= self.class.fetch_archived_content(job_id)
-    end
-
     def to_json
       {
-        'log' => {
-          'id' => id,
-          'content' => archived? ? archived_content : content,
-          'created_at' => created_at,
-          'job_id' => job_id,
-          'updated_at' => updated_at
-        }
+        'log' => attributes.slice(
+          *%i(id content created_at job_id updated_at)
+        )
       }.to_json
     end
 
@@ -194,12 +185,6 @@ module Travis
       attr_reader :s3, :bucket_name
       private :s3
       private :bucket_name
-
-      def fetch_archived_content(job_id)
-        file = fetch_archived(job_id)
-        return nil if file.nil?
-        file.body.force_encoding('UTF-8')
-      end
 
       def fetch_archived_url(job_id, expires: nil)
         expires = expires || Time.now.to_i + 30
