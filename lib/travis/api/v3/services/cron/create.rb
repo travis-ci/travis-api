@@ -12,7 +12,7 @@ module Travis::API::V3
       raise Error.new('Invalid value for interval. Interval must be "daily", "weekly" or "monthly"!', status: 422) unless ["daily", "weekly", "monthly"].include?(params["interval"] || params["cron.interval"])
       access_control.permissions(repository).create_cron!
       access_control.permissions(branch.cron).delete! if branch.cron
-      query.create(branch, params["interval"], params["dont_run_if_recent_build_exists"] ? params["dont_run_if_recent_build_exists"] : false)
+      query.create(branch)
     end
   end
 end
