@@ -78,7 +78,11 @@ module Travis
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags,
                   'annotation_ids' => job.annotation_ids,
-                }
+                }.tap do |ret|
+                  unless Travis.config.logs_api.enabled?
+                    ret['log_id'] = job.log_id
+                  end
+                end
               end
 
               def branch_is_default(commit, repository)
