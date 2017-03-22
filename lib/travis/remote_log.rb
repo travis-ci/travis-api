@@ -85,11 +85,15 @@ module Travis
     end
 
     def to_json
+      as_json.to_json
+    end
+
+    def as_json
       {
         'log' => attributes.slice(
           *%i(id content created_at job_id updated_at)
         )
-      }.to_json
+      }
     end
 
     def clear!(user = nil)

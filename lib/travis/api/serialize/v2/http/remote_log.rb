@@ -11,7 +11,7 @@ module Travis
             end
 
             def data
-              log.to_json
+              log.as_json
             end
           end
         end
