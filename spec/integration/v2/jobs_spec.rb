@@ -128,6 +128,8 @@ describe 'Jobs', set_app: true do
 
     context 'when log is archived' do
       it 'redirects to archive' do
+        Travis::RemoteLog.expects(:fetch_archived_url)
+          .returns("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
           .to_return(
             status: 200,
