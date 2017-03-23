@@ -9,12 +9,12 @@ class Travis::Api::App
         prefer_follower do
           name = params[:branches] ? :find_branches : :find_builds
           params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-          respond_with service(name, params), include_log_id: include_log_id?
+          respond_with service(name, params.merge(include_log_id: include_log_id?))
         end
       end
 
       get '/:id' do
-        respond_with service(:find_build, params), include_log_id: include_log_id?
+        respond_with service(:find_build, params.merge(include_log_id: include_log_id?))
       end
 
       post '/:id/cancel' do
@@ -68,8 +68,6 @@ class Travis::Api::App
     end
 
     private def include_log_id?
-      # HACK: short-circuit always on
-      return true
       params[:include_log_id] = !Travis.config.logs_api.enabled? if params[:include_log_id].nil?
       params[:include_log_id] || request.user_agent.to_s.start_with?('Travis')
     end

@@ -41,7 +41,7 @@ module Travis
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags
                 }.tap do |ret|
-                  ret['log_id'] = job.log_id if options[:include_log_id]
+                  ret['log_id'] = job.log_id unless options[:include_log_id].nil?
                 end
               end
 
