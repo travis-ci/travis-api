@@ -11,6 +11,7 @@ module Travis
             attr_reader :job, :options
 
             def initialize(job, options = {})
+              $stdout.puts "---> #{self.class.name}.new(job, #{options.inspect})"
               @job = job
               @options = options
             end
