@@ -16,7 +16,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:log2)        { Travis::API::V3::Models::Log.create(job: job2) }
   let(:log3)        { Travis::API::V3::Models::Log.create(job: job3) }
   let(:s3log)       { Travis::API::V3::Models::Log.create(job: s3job, content: 'minimal log 1') }
-  let(:no_s3log)    { Travis::API::V3::Models::Log.create(archived_at: Time.now, job: s3job2, content: 'minimal log 2') }
+  let(:no_s3log)    { Travis::API::V3::Models::Log.create(archived_at: Time.now, archive_verified: true, job: s3job2, content: 'minimal log 2') }
   let(:find_log)    { "string" }
   let(:time)        { Time.now }
   let(:xml_content) {
@@ -126,7 +126,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   context 'when log not found in db but stored on S3', logs_api_enabled: false do
     describe 'returns log with an array of Log Parts' do
       example do
-        s3log.update_attributes(archived_at: time)
+        s3log.update_attributes(archived_at: time, archive_verified: true)
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
 
         expect(parsed_body).to eq(
@@ -144,7 +144,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
     describe 'returns log as plain text' do
       example do
-        s3log.update_attributes(archived_at: Time.now)
+        s3log.update_attributes(archived_at: Time.now, archive_verified: true)
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
         expect(last_response.headers).to include("Content-Type" => "text/plain")
         expect(body).to eq(
@@ -154,7 +154,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
 
     describe 'it returns the correct content type' do
       example do
-        s3log.update_attributes(archived_at: Time.now)
+        s3log.update_attributes(archived_at: Time.now, archive_verified: true)
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'fun/times'))
         expect(last_response.headers).to include("Content-Type" => "application/json")
       end

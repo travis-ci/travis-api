@@ -4,23 +4,30 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
   let(:data) { described_class.new([test]).data }
   let!(:time) { Time.now.utc }
 
-  it 'jobs', logs_api_enabled: false do
-    data['jobs'].first.should == {
-      'id' => 1,
-      'repository_id' => 1,
-      'repository_slug' => 'svenfuchs/minimal',
-      'build_id' => 1,
-      'commit_id' => 1,
-      'log_id' => 1,
-      'number' => '2.1',
-      'state' => 'passed',
-      'started_at' => json_format_time(time - 1.minute),
-      'finished_at' => json_format_time(time),
-      'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
-      'queue' => 'builds.linux',
-      'allow_failure' => false,
-      'tags' => 'tag-a,tag-b'
-    }
+  [
+    {},
+    { include_log_id: true }
+  ].each do |options|
+    it 'jobs', logs_api_enabled: false do
+      serialized = described_class.new([test], options).data
+      serialized['jobs'].first.should == {
+        'id' => 1,
+        'repository_id' => 1,
+        'repository_slug' => 'svenfuchs/minimal',
+        'build_id' => 1,
+        'commit_id' => 1,
+        'number' => '2.1',
+        'state' => 'passed',
+        'started_at' => json_format_time(time - 1.minute),
+        'finished_at' => json_format_time(time),
+        'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
+        'queue' => 'builds.linux',
+        'allow_failure' => false,
+        'tags' => 'tag-a,tag-b'
+      }.tap do |expected|
+        expected['log_id'] = 1 if options[:include_log_id]
+      end
+    end
   end
 
   it 'commits' do

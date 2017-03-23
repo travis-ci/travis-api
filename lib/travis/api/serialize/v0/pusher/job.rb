@@ -31,7 +31,6 @@ module Travis
               def job_data(job)
                 {
                   'id' => job.id,
-                  'log_id' => job.log_id,
                   'repository_id' => job.repository_id,
                   'repository_slug' => job.repository.slug,
                   'repository_private' => job.repository.private,
@@ -44,7 +43,9 @@ module Travis
                   'queue' => job.queue,
                   'allow_failure' => job.allow_failure,
                   'annotation_ids' => job.annotation_ids
-                }
+                }.tap do |ret|
+                  ret['log_id'] = job.log_id if options[:include_log_id]
+                end
               end
 
               def commit_data(commit)
