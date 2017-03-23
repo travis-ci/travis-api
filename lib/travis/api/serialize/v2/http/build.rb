@@ -20,7 +20,7 @@ module Travis
             def data
               Travis.logger.debug("#{self.class.name} params=#{params.inspect} serialization_options=#{serialization_options.inspect}")
               {
-                'build'  => build_data
+                'build'  => build_data,
                 'commit' => commit_data,
                 'jobs'   => jobs_data,
                 'annotations' => annotations_data
