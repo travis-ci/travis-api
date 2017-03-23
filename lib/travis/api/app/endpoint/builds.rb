@@ -9,13 +9,12 @@ class Travis::Api::App
         prefer_follower do
           name = params[:branches] ? :find_branches : :find_builds
           params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-          params[:include_log_id] ||= include_log_id?
-          respond_with service(name, params)
+          respond_with service(name, params), include_log_id: include_log_id?
         end
       end
 
       get '/:id' do
-        respond_with service(:find_build, params.merge(include_log_id: include_log_id?))
+        respond_with service(:find_build, params), include_log_id: include_log_id?
       end
 
       post '/:id/cancel' do
