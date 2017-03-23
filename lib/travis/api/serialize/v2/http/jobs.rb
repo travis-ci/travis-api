@@ -8,15 +8,17 @@ module Travis
           class Jobs
             include Formats
 
-            attr_reader :jobs, :options
+            attr_reader :jobs, :params
+            attr_accessor :options
 
-            def initialize(jobs, options = {})
-              Travis.logger.debug("#{self.class.name}.new options=#{options.inspect}")
+            def initialize(jobs, params = {})
               @jobs = jobs
-              @options = options
+              @params = params
+              @options = {}
             end
 
             def data
+              Travis.logger.debug("#{self.class.name} params=#{params.inspect} options=#{options.inspect}")
               {
                 'jobs' => jobs.map { |job| job_data(job) },
                 'commits' => jobs.map { |job| commit_data(job.commit) }
@@ -41,7 +43,7 @@ module Travis
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags
                 }.tap do |ret|
-                  ret['log_id'] = job.log_id unless options[:include_log_id].nil?
+                  ret['log_id'] = job.log_id if include_log_id?
                 end
               end
 
@@ -58,6 +60,10 @@ module Travis
                   'committer_email' => commit.committer_email,
                   'compare_url' => commit.compare_url,
                 }
+              end
+
+              def include_log_id?
+                !!options[:include_log_id]
               end
           end
         end

@@ -8,16 +8,17 @@ module Travis
           class Build
             include Formats
 
-            attr_reader :build, :options
+            attr_reader :build, :params
+            attr_accessor :options
 
-            def initialize(build, options = {})
-              options[:include_jobs] = true unless options.key?(:include_jobs)
-
+            def initialize(build, params = {})
               @build = build
-              @options = options
+              @params = params
+              @options = {}
             end
 
             def data
+              Travis.logger.debug("#{self.class.name} params=#{params.inspect} options=#{options.inspect}")
               {
                 'build'  => build_data(build),
                 'commit' => commit_data(build.commit, build.repository),
@@ -79,7 +80,7 @@ module Travis
                   'tags' => job.tags,
                   'annotation_ids' => job.annotation_ids,
                 }.tap do |ret|
-                  ret['log_id'] = job.log_id unless options[:include_log_id].nil?
+                  ret['log_id'] = job.log_id if include_log_id?
                 end
               end
 
@@ -89,6 +90,10 @@ module Travis
 
               def annotations(build)
                 build.matrix.map(&:annotations).flatten
+              end
+
+              def include_log_id?
+                !!options[:include_log_id]
               end
           end
         end

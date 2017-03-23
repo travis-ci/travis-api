@@ -13,11 +13,13 @@ module Travis
           class Job
             include Formats
 
-            attr_reader :job, :options
+            attr_reader :job, :params
+            attr_accessor :options
 
-            def initialize(job, options = {})
+            def initialize(job, params = {})
               @job = job
-              @options = options
+              @params = params
+              @options = {}
             end
 
             def data
@@ -44,7 +46,7 @@ module Travis
                   'allow_failure' => job.allow_failure,
                   'annotation_ids' => job.annotation_ids
                 }.tap do |ret|
-                  ret['log_id'] = job.log_id unless options[:include_log_id].nil?
+                  ret['log_id'] = job.log_id if include_log_id?
                 end
               end
 
@@ -61,6 +63,10 @@ module Travis
                   'committer_email' => commit.committer_email,
                   'compare_url' => commit.compare_url,
                 }
+              end
+
+              def include_log_id?
+                !!options[:include_log_id]
               end
           end
         end

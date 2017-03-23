@@ -8,15 +8,17 @@ module Travis
           class Job
             include Formats
 
-            attr_reader :job, :options
+            attr_reader :job, :params
+            attr_accessor :options
 
-            def initialize(job, options = {})
-              Travis.logger.debug("#{self.class.name}.new options=#{options.inspect}")
+            def initialize(job, params = {})
               @job = job
-              @options = options
+              @params = params
+              @options = {}
             end
 
             def data
+              Travis.logger.debug("#{self.class.name} params=#{params.inspect} options=#{options.inspect}")
               {
                 'job' => job_data(job),
                 'commit' => commit_data(job.commit, job.repository),
@@ -43,7 +45,7 @@ module Travis
                   'tags' => job.tags,
                   'annotation_ids' => job.annotation_ids,
                 }.tap do |ret|
-                  ret['log_id'] = job.log_id unless options[:include_log_id].nil?
+                  ret['log_id'] = job.log_id if include_log_id?
                 end
               end
 
@@ -65,6 +67,10 @@ module Travis
 
               def branch_is_default(commit, repository)
                 repository.default_branch == commit.branch
+              end
+
+              def include_log_id?
+                !!options[:include_log_id]
               end
           end
         end
