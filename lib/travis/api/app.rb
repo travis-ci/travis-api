@@ -181,8 +181,6 @@ module Travis::Api
       end
 
       def self.setup_travis
-        # HACK: explicitly set logging to debug
-        Travis.logger.level = Logger::DEBUG
         Travis::Async.enabled = true
         Travis::Amqp.setup(Travis.config.amqp.to_h)
 
