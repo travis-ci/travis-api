@@ -9,16 +9,16 @@ module Travis
             include Formats
 
             attr_reader :jobs, :params
-            attr_accessor :options
+            attr_accessor :serialization_options
 
             def initialize(jobs, params = {})
               @jobs = jobs
               @params = params
-              @options = {}
+              @serialization_options = {}
             end
 
             def data
-              Travis.logger.debug("#{self.class.name} params=#{params.inspect} options=#{options.inspect}")
+              Travis.logger.debug("#{self.class.name} params=#{params.inspect} serialization_options=#{serialization_options.inspect}")
               {
                 'jobs' => jobs.map { |job| job_data(job) },
                 'commits' => jobs.map { |job| commit_data(job.commit) }
@@ -63,7 +63,7 @@ module Travis
               end
 
               def include_log_id?
-                !!options[:include_log_id]
+                !!serialization_options[:include_log_id]
               end
           end
         end

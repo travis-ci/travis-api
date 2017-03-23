@@ -39,7 +39,11 @@ class Travis::Api::App
             p[:root] = options[:root] if options[:root]
             p[:root] = options[:type] if options[:type] && !p[:root]
             builder_instance = builder.new(resource, p)
-            builder_instance.options = options if builder_instance.respond_to?(:options=)
+
+            if builder_instance.respond_to?(:serialization_options=)
+              builder_instance.serialization_options = options
+            end
+
             builder_instance.data
           else
             basic_type_resource

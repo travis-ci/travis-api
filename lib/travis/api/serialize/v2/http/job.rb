@@ -9,26 +9,26 @@ module Travis
             include Formats
 
             attr_reader :job, :params
-            attr_accessor :options
+            attr_accessor :serialization_options
 
             def initialize(job, params = {})
               @job = job
               @params = params
-              @options = {}
+              @serialization_options = {}
             end
 
             def data
-              Travis.logger.debug("#{self.class.name} params=#{params.inspect} options=#{options.inspect}")
+              Travis.logger.debug("#{self.class.name} params=#{params.inspect} serialization_options=#{serialization_options.inspect}")
               {
-                'job' => job_data(job),
-                'commit' => commit_data(job.commit, job.repository),
-                'annotations' => Annotations.new(job.annotations, @options).data["annotations"]
+                'job' => job_data,
+                'commit' => commit_data,
+                'annotations' => annotations_data
               }
             end
 
             private
 
-              def job_data(job)
+              def job_data
                 {
                   'id' => job.id,
                   'repository_id' => job.repository_id,
@@ -49,7 +49,7 @@ module Travis
                 end
               end
 
-              def commit_data(commit, repository)
+              def commit_data
                 {
                   'id' => commit.id,
                   'sha' => commit.commit,
@@ -65,12 +65,24 @@ module Travis
                 }
               end
 
+              def annotations_data
+                Annotations.new(job.annotations, params).data["annotations"]
+              end
+
               def branch_is_default(commit, repository)
                 repository.default_branch == commit.branch
               end
 
+              def commit
+                job.commit
+              end
+
+              def repository
+                job.repository
+              end
+
               def include_log_id?
-                !!options[:include_log_id]
+                !!serialization_options[:include_log_id]
               end
           end
         end

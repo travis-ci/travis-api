@@ -14,12 +14,12 @@ module Travis
             include Formats
 
             attr_reader :job, :params
-            attr_accessor :options
+            attr_accessor :serialization_options
 
             def initialize(job, params = {})
               @job = job
               @params = params
-              @options = {}
+              @serialization_options = {}
             end
 
             def data
@@ -66,7 +66,7 @@ module Travis
               end
 
               def include_log_id?
-                !!options[:include_log_id]
+                !!serialization_options[:include_log_id]
               end
           end
         end
