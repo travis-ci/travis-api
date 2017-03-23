@@ -23,7 +23,6 @@ module Travis
                 'commit' => commit_data(build.commit, build.repository),
                 'jobs'   => options[:include_jobs] ? build.matrix.map { |job| job_data(job) } : [],
                 'annotations' => options[:include_jobs] ? Annotations.new(annotations(build), @options).data["annotations"] : [],
-                'options' => options
               }
             end
 

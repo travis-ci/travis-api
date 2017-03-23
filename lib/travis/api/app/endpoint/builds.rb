@@ -9,7 +9,8 @@ class Travis::Api::App
         prefer_follower do
           name = params[:branches] ? :find_branches : :find_builds
           params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-          respond_with service(name, params.merge(include_log_id: include_log_id?))
+          params[:include_log_id] ||= include_log_id?
+          respond_with service(name, params)
         end
       end
 
@@ -68,8 +69,9 @@ class Travis::Api::App
     end
 
     private def include_log_id?
-      params[:include_log_id] = !Travis.config.logs_api.enabled? if params[:include_log_id].nil?
-      params[:include_log_id] || request.user_agent.to_s.start_with?('Travis')
+      params[:include_log_id] ||
+        !Travis.config.logs_api.enabled? ||
+        request.user_agent.to_s.start_with?('Travis')
     end
   end
 end

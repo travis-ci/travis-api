@@ -9,7 +9,8 @@ class Travis::Api::App
 
       get '/' do
         prefer_follower do
-          respond_with service(:find_jobs, params.merge(include_log_id: include_log_id?))
+          params[:include_log_id] ||= include_log_id?
+          respond_with service(:find_jobs, params)
         end
       end
 
@@ -142,8 +143,9 @@ class Travis::Api::App
       end
 
       private def include_log_id?
-        params[:include_log_id] = !Travis.config.logs_api.enabled? if params[:include_log_id].nil?
-        params[:include_log_id] || request.user_agent.to_s.start_with?('Travis')
+        params[:include_log_id] ||
+          !Travis.config.logs_api.enabled? ||
+          request.user_agent.to_s.start_with?('Travis')
       end
     end
   end
