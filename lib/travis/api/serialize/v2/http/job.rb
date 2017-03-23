@@ -20,6 +20,7 @@ module Travis
                 'job' => job_data(job),
                 'commit' => commit_data(job.commit, job.repository),
                 'annotations' => Annotations.new(job.annotations, @options).data["annotations"],
+                '__options' => options
               }
             end
 
