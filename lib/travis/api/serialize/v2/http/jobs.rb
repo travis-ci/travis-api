@@ -18,7 +18,8 @@ module Travis
             def data
               {
                 'jobs' => jobs.map { |job| job_data(job) },
-                'commits' => jobs.map { |job| commit_data(job.commit) }
+                'commits' => jobs.map { |job| commit_data(job.commit) },
+                '__options' => options
               }
             end
 
