@@ -9,7 +9,9 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
     { include_log_id: true }
   ].each do |options|
     it 'jobs', logs_api_enabled: false do
-      serialized = described_class.new([test], options).data
+      instance = described_class.new([test])
+      instance.serialization_options = options
+      serialized = instance.data
       serialized['jobs'].first.should == {
         'id' => 1,
         'repository_id' => 1,

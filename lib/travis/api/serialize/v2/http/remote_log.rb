@@ -4,15 +4,16 @@ module Travis
       module V2
         module Http
           class RemoteLog
-            attr_reader :log, :options
+            attr_reader :log, :params
+            attr_accessor :serialization_options
 
-            def initialize(log, options = {})
+            def initialize(log, params = {})
               @log = log
-              @options = options
+              @params = params
             end
 
             def data
-              log.as_json(chunked: !!options[:chunked])
+              log.as_json(chunked: !!serialization_options[:chunked])
             end
           end
         end

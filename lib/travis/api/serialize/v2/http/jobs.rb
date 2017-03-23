@@ -18,7 +18,6 @@ module Travis
             end
 
             def data
-              Travis.logger.debug("#{self.class.name} params=#{params.inspect} serialization_options=#{serialization_options.inspect}")
               {
                 'jobs' => jobs.map { |job| job_data(job) },
                 'commits' => jobs.map { |job| commit_data(job.commit) }
