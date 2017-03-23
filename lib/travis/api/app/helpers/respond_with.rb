@@ -22,7 +22,6 @@ class Travis::Api::App
           result = prettify_result? ? JSON.pretty_generate(result) : result.to_json
         end
 
-        response.headers['Travis-Response-Options'] = JSON.dump(options)
         halt result || 404
       end
 
