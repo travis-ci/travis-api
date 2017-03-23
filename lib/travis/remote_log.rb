@@ -84,16 +84,35 @@ module Travis
       @archived_url ||= self.class.fetch_archived_url(job_id, expires: expires)
     end
 
-    def to_json
-      as_json.to_json
+    def to_json(chunked: false)
+      as_json(chunked: chunked).to_json
     end
 
-    def as_json
-      {
-        'log' => attributes.slice(
-          *%i(id content created_at job_id updated_at)
-        )
+    def as_json(chunked: false)
+      ret = {
+        'id' => id,
+        'job_id' => job_id,
+        'type' => 'Log'
       }
+
+      unless removed_at.nil?
+        ret['removed_at'] = removed_at.utc.to_s
+        ret['removed_by'] = removed_by.name || removed_by.login
+      end
+
+      if chunked
+        ret['parts'] = [
+          {
+            'number' => 1,
+            'content' => content,
+            'final' => true
+          }
+        ]
+      else
+        ret['body'] = content
+      end
+
+      { 'log' => ret }
     end
 
     def clear!(user = nil)

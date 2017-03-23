@@ -124,10 +124,41 @@ describe Travis::RemoteLog do
   it 'can serialize via #to_json' do
     from_json = JSON.parse(subject.to_json).fetch('log')
     from_json.fetch('id').should == attrs[:id]
-    from_json.fetch('content').should == attrs[:content]
-    from_json.fetch('created_at').should be_nil
     from_json.fetch('job_id').should == attrs[:job_id]
-    from_json.fetch('updated_at').should be_nil
+    from_json.fetch('type').should == 'Log'
+    from_json.fetch('body').should == attrs[:content]
+  end
+
+  it 'can fake chunked serialization via #to_json' do
+    from_json = JSON.parse(subject.to_json(chunked: true)).fetch('log')
+    from_json.fetch('id').should == attrs[:id]
+    from_json.fetch('job_id').should == attrs[:job_id]
+    from_json.fetch('type').should == 'Log'
+    from_json.fetch('parts').first.fetch('content').should == attrs[:content]
+  end
+
+  it 'can serialize removed logs via #to_json' do
+    user_id = 8
+    user = mock('user')
+    user.stubs(:name).returns('Twizzler HotDog')
+    user.stubs(:id).returns(user_id)
+
+    now = mock('now')
+    now.stubs(:utc).returns(now)
+    now.stubs(:to_s).returns('whenebber')
+    Time.stubs(:now).returns(now)
+
+    subject.stubs(:removed_by).returns(user)
+    subject.removed_at = now
+    subject.removed_by_id = user_id
+
+    from_json = JSON.parse(subject.to_json).fetch('log')
+    from_json.fetch('id').should == attrs[:id]
+    from_json.fetch('job_id').should == attrs[:job_id]
+    from_json.fetch('type').should == 'Log'
+    from_json.fetch('body').should == attrs[:content]
+    from_json.fetch('removed_by').should == 'Twizzler HotDog'
+    from_json.fetch('removed_at').should == 'whenebber'
   end
 
   it 'can be cleared' do
