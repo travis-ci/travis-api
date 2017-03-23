@@ -142,6 +142,8 @@ class Travis::Api::App
       end
 
       private def include_log_id?
+        # HACK: short-circuit always on
+        return true
         params[:include_log_id] = !Travis.config.logs_api.enabled? if params[:include_log_id].nil?
         params[:include_log_id] || request.user_agent.to_s.start_with?('Travis')
       end
