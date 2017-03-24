@@ -134,14 +134,6 @@ describe Travis::RemoteLog do
     from_json.fetch('body').should == attrs[:content]
   end
 
-  it 'can fake chunked serialization via #to_json' do
-    from_json = JSON.parse(subject.to_json(chunked: true)).fetch('log')
-    from_json.fetch('id').should == attrs[:id]
-    from_json.fetch('job_id').should == attrs[:job_id]
-    from_json.fetch('type').should == 'Log'
-    from_json.fetch('parts').first.fetch('content').should == attrs[:content]
-  end
-
   it 'can serialize removed logs via #to_json' do
     user_id = 8
     user = mock('user')
