@@ -13,8 +13,14 @@ module Travis
             end
 
             def data
-              log.as_json(chunked: !!serialization_options[:chunked])
+              log.as_json(chunked: chunked?)
             end
+
+            private
+
+              def chunked?
+                !!params.fetch(:chunked, serialization_options[:chunked])
+              end
           end
         end
       end
