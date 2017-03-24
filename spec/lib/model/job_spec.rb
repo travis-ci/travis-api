@@ -102,6 +102,23 @@ describe Job do
       }
     end
 
+    it 'handles nil secure var' do
+      job = Job.new(repository: repo)
+      secure = job.repository.key.secure
+      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      config = { rvm: '1.8.7',
+                 env: [{ secure: nil }, { secure: secure.encrypt('FOO=foo') }],
+                 global_env: [{ secure: nil }, { secure: secure.encrypt('BAR=bar') }]
+               }
+      job.config = config
+
+      job.obfuscated_config.should == {
+        rvm: '1.8.7',
+        env: 'FOO=[secure]',
+        global_env: 'BAR=[secure]'
+      }
+    end
+
     it 'normalizes env vars which are hashes to strings' do
       job = Job.new(repository: repo)
       job.expects(:secure_env_enabled?).at_least_once.returns(true)
