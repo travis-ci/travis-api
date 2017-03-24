@@ -103,9 +103,9 @@ module Travis::Api
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
         if Travis::Api::App.use_monitoring?
-          use { |env|
+          use Rack::Config do |env|
             Raven.tags_context(request: env['HTTP_X_REQUEST_ID'])
-          }
+          end
           use Raven::Rack
         end
         use Rack::SSL if Endpoint.production?
