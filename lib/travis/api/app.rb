@@ -128,10 +128,10 @@ module Travis::Api
           env['travis.global_prefix'] = env['SCRIPT_NAME']
         end
 
-
         use Travis::Api::App::Middleware::Logging
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
+        use Travis::Api::App::Middleware::RequestId
 
         # make sure this is below ScopeCheck so we have the token
         use Rack::Attack if Endpoint.production? and not Travis.config.enterprise
