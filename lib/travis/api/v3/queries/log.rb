@@ -59,7 +59,7 @@ module Travis::API::V3
     end
 
     private def logs_model
-      return Travis::API::V3::Models::RemoteLog if Travis.config.logs_api.enabled?
+      return Travis::RemoteLog if Travis.config.logs_api.enabled?
       Travis::API::V3::Models::Log
     end
   end
