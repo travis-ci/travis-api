@@ -31,11 +31,11 @@ module Travis::API::V3
     def all_resources
       @all_resources ||= begin
         home_actions = {
-          find: {
+          find: [{
             :@type          => :template,
             :request_method => :GET,
             :uri_template   => prefix + ?/
-          }
+          }]
         }
 
         all = routes.resources + [
