@@ -9,14 +9,14 @@ class Travis::Api::App
 
       get '/' do
         prefer_follower do
-          respond_with service(:find_jobs, params)
+          respond_with service(:find_jobs, params), include_log_id: include_log_id?
         end
       end
 
       get '/:id' do
         job = service(:find_job, params).run
         if job && job.repository
-          respond_with job
+          respond_with job, include_log_id: include_log_id?
         else
           json = { error: { message: "The job(#{params[:id]}) couldn't be found" } }
           status 404
@@ -139,6 +139,12 @@ class Travis::Api::App
 
       def hostname(name)
         "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
+      end
+
+      private def include_log_id?
+        params[:include_log_id] ||
+          !Travis.config.logs_api.enabled? ||
+          request.user_agent.to_s.start_with?('Travis')
       end
     end
   end
