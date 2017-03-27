@@ -105,7 +105,7 @@ module Travis::Api
         if Travis::Api::App.use_monitoring?
           use Rack::Config do |env|
             if env['HTTP_X_REQUEST_ID']
-              Raven.tags_context(request: env['HTTP_X_REQUEST_ID'])
+              Raven.tags_context(x_request_id: env['HTTP_X_REQUEST_ID'])
             end
           end
           use Raven::Rack
