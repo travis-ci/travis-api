@@ -30,6 +30,17 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
         end
       end
 
+      describe "home resource" do
+        let(:resource) { resources.fetch("home") }
+        specify { expect(resources)         .to include("home")   }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>path) }
+        end
+      end
+
       describe "branch resource" do
         let(:resource) { resources.fetch("branch") }
         specify { expect(resources)         .to include("branch") }
@@ -177,7 +188,7 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
           specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}build/{build.id}{?include}") }
         end
       end
-      
+
       describe "key pair resource" do
         let(:resource) { resources.fetch("key_pair") }
         specify { expect(resources)         .to include("key_pair") }
@@ -200,7 +211,7 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
           end
         end
       end
-      
+
       describe "key pair (generated) resource" do
         let(:resource) { resources.fetch("key_pair_generated") }
         specify { expect(resources)         .to include("key_pair_generated") }
