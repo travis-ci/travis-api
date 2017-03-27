@@ -209,7 +209,7 @@ module Travis
         unless resp.success?
           raise Error, "failed to write content job_id=#{job_id}"
         end
-        Travis::RemoteLog.new(JSON.parse(resp.body))
+        RemoteLog.new(JSON.parse(resp.body))
       end
 
       private def find_by(by, id)
@@ -217,7 +217,7 @@ module Travis
           req.url "/logs/#{id}", by: by
         end
         return nil unless resp.success?
-        Travis::RemoteLog.new(JSON.parse(resp.body))
+        RemoteLog.new(JSON.parse(resp.body))
       end
 
       private def conn
