@@ -66,10 +66,10 @@ module Travis
               def job_data(job)
                 {
                   'id' => job.id,
+                  'log_id' => job.log_id,
                   'repository_id' => job.repository_id,
                   'build_id' => job.source_id,
                   'commit_id' => job.commit_id,
-                  'log_id' => job.log_id,
                   'state' => job.state.to_s,
                   'number' => job.number,
                   'config' => job.obfuscated_config.stringify_keys,

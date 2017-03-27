@@ -25,7 +25,7 @@ describe Job do
     end
   end
 
-  describe 'before_create' do
+  describe 'before_create', logs_api_enabled: false do
     let(:job) { Job::Test.create!(owner: Factory(:user), repository: Factory(:repository), commit: Factory(:commit), source: Factory(:build)) }
 
     before :each do
@@ -99,6 +99,23 @@ describe Job do
       job.obfuscated_config.should == {
         rvm: '1.8.7',
         env: 'BAR=[secure] [secure] FOO=foo'
+      }
+    end
+
+    it 'handles nil secure var' do
+      job = Job.new(repository: repo)
+      secure = job.repository.key.secure
+      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      config = { rvm: '1.8.7',
+                 env: [{ secure: nil }, { secure: secure.encrypt('FOO=foo') }],
+                 global_env: [{ secure: nil }, { secure: secure.encrypt('BAR=bar') }]
+               }
+      job.config = config
+
+      job.obfuscated_config.should == {
+        rvm: '1.8.7',
+        env: 'FOO=[secure]',
+        global_env: 'BAR=[secure]'
       }
     end
 
@@ -456,7 +473,7 @@ describe Job do
     end
   end
 
-  describe 'log_content=' do
+  describe 'log_content=', logs_api_enabled: false do
     let(:job) { Job::Test.create!(owner: Factory(:user), repository: Factory(:repository), commit: Factory(:commit), source: Factory(:build), log: Factory(:log)) }
 
     it 'sets the log content' do

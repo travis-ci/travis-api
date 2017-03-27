@@ -12,6 +12,12 @@ for d in $PGBOUNCER_ENABLED_FOR_DYNOS; do
   fi
 done
 
+for d in $TRAVIS_API_LOGS_API_ENABLED_DYNOS; do
+  if [ "$d" = "$DYNO" ]; then
+    export TRAVIS_API_LOGS_API_ENABLED=true
+  fi
+done
+
 if [ ! -f "bin/start-pgbouncer-stunnel" ]; then
   echo "warning: pgbouncer buildpack not found, setting PGBOUNCER_ENABLED=false"
   export PGBOUNCER_ENABLED=false

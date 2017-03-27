@@ -46,8 +46,10 @@ module Travis
 
         def preload(build)
           ActiveRecord::Associations::Preloader.new(build, [:matrix, :commit, :request]).run
-          ActiveRecord::Associations::Preloader.new(build.matrix, :log, select: [:id, :job_id, :updated_at]).run
           ActiveRecord::Associations::Preloader.new(build.matrix, :annotations).run
+          unless Travis.config.logs_api.enabled?
+            ActiveRecord::Associations::Preloader.new(build.matrix, :log, select: [:id, :job_id, :updated_at]).run
+          end
           build
         end
     end

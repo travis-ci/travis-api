@@ -46,9 +46,9 @@ class Travis::Api::App
 
         def builder
           if defined?(@builder)
-           @builder
+            @builder
           else
-           @builder = Travis::Api::Serialize.builder(resource, { :version => version }.merge(options))
+            @builder = Travis::Api::Serialize.builder(resource, { :version => version }.merge(options))
           end
         end
 

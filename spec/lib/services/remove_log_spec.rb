@@ -9,6 +9,9 @@ describe Travis::Services::RemoveLog do
     before :each do
       job.stubs(:finished?).returns false
       user.stubs(:permission?).with(:push, anything).returns true
+      stub_request(
+        :any, /#{URI(Travis.config.logs_api.url).hostname}/
+      ).to_return(status: 200, body: JSON.dump(content: '', job_id: job.id))
     end
 
     it 'raises JobUnfinished error' do
@@ -21,6 +24,9 @@ describe Travis::Services::RemoveLog do
   context 'when user does not have push permissions' do
     before :each do
       user.stubs(:permission?).with(:push, anything).returns false
+      stub_request(
+        :any, /#{URI(Travis.config.logs_api.url).hostname}/
+      ).to_return(status: 200, body: JSON.dump(content: '', job_id: job.id))
     end
 
     it 'raises AuthorizationDenied' do
@@ -30,7 +36,7 @@ describe Travis::Services::RemoveLog do
     end
   end
 
-  context 'when a job is found' do
+  context 'when a job is found', logs_api_enabled: false do
     before do
       find_by_id = stub
       find_by_id.stubs(:find_by_id).returns job
@@ -56,6 +62,62 @@ describe Travis::Services::RemoveLog do
       service.run
       service.log.parts.first.content.should =~ Regexp.new(user.name)
       service.log.parts.first.content.should =~ Regexp.new(params[:reason])
+    end
+
+    context 'when log is already removed' do
+      it 'raises LogAlreadyRemoved error' do
+        service.run
+        lambda {
+          service.run
+        }.should raise_error Travis::LogAlreadyRemoved
+      end
+    end
+  end
+
+  context 'when a job is found', logs_api_enabled: true do
+    before do
+      find_by_id = stub
+      find_by_id.stubs(:find_by_id).returns job
+      job.stubs(:finished?).returns true
+      service.stubs(:scope).returns find_by_id
+      user.stubs(:permission?).with(:push, anything).returns true
+      stub_request(
+        :get,
+        "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id"
+      ).to_return(
+        status: 200,
+        body: JSON.dump(
+          content: 'wow log wow',
+          job_id: job.id
+        )
+      )
+      stub_request(
+        :put,
+        "#{Travis.config.logs_api.url}/logs/#{job.id}?removed_by=#{user.id}"
+      ).with(
+        body: /Log removed by #{user.name}/
+      ).to_return(
+        status: 200,
+        body: JSON.dump(
+          content: "Log removed by #{user.name} at #{Time.now.utc} Because reason!",
+          removed_at: Time.now.utc.to_s,
+          removed_by_id: user.id,
+          job_id: job.id
+        )
+      )
+    end
+
+    it 'runs successfully' do
+      result = service.run
+      expect(result.removed_by).to eq user
+      expect(result.removed_at).to be_truthy
+      expect(result).to be_truthy
+    end
+
+    it 'updates logs with desired information' do
+      service.run
+      expect(service.log.content).to be =~ Regexp.new(user.name)
+      expect(service.log.content).to be =~ Regexp.new(params[:reason])
     end
 
     context 'when log is already removed' do
@@ -95,6 +157,9 @@ describe Travis::Services::RemoveLog::Instrument do
     Travis::Notification.publishers.replace([publisher])
     service.stubs(:run_service)
     user.stubs(:permission?).with(:push, anything).returns true
+    stub_request(
+      :any, /#{URI(Travis.config.logs_api.url).hostname}/
+    ).to_return(status: 200, body: JSON.dump(content: '', job_id: job.id))
   end
 
   it 'publishes a event' do

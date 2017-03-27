@@ -6,28 +6,26 @@ module Travis
       register :find_log
 
       def run(options = {})
+        return result_via_http if Travis.config.logs_api.enabled?
         result if result
       end
 
       def final?
-        # TODO jobs can be requeued, so finished jobs are no more final
-        # result && result.job && result.job.finished?
         false
       end
 
-      # def updated_at
-      #   result.updated_at
-      # end
-
-      private
-
-        def result
-          @result ||= if params[:id]
-            scope(:log).find_by_id(params[:id])
-          elsif params[:job_id]
-            scope(:log).where(job_id: params[:job_id]).first
-          end
+      private def result
+        if params[:id]
+          scope(:log).find_by_id(params[:id])
+        elsif params[:job_id]
+          scope(:log).where(job_id: params[:job_id]).first
         end
+      end
+
+      private def result_via_http
+        return Travis::RemoteLog.find_by_id(params[:id]) if params[:id]
+        Travis::RemoteLog.find_by_job_id(params[:job_id])
+      end
     end
   end
 end

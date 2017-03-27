@@ -40,17 +40,23 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     </ListBucketResult>"
   }
 
+  around(:each) do |example|
+    Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
+    example.run
+    Travis.config.log_options = {}
+  end
+
   before do
     Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true)
     Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true)
     stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
       to_return(:status => 200, :body => xml_content, :headers => {})
-    stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/?prefix=jobs/#{log.job.id}/log.txt").
+    stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/?prefix=jobs/#{job.id}/log.txt").
       to_return(:status => 200, :body => xml_content, :headers => {})
   end
 
   describe "not authenticated" do
-    before  { delete("/v3/job/#{log.job.id}/log")      }
+    before  { delete("/v3/job/#{job.id}/log")      }
     example { expect(last_response.status).to be == 403 }
     example { expect(JSON.load(body)).to      be ==     {
       "@type"         => "error",
@@ -59,7 +65,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     }}
   end
 
-  describe "missing log, authenticated" do
+  describe "missing log, authenticated", logs_api_enabled: false do
     before { job3.update_attributes(finished_at: Time.now, state: "passed")}
 
     example do
@@ -73,7 +79,25 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     end
   end
 
-  describe 'existing db log, authenticated' do
+  describe "missing log, authenticated", logs_api_enabled: true do
+    before { job3.update_attributes(finished_at: Time.now, state: "passed")}
+
+    example do
+      stub_request(
+        :get,
+        "#{Travis.config.logs_api.url}/logs/#{job3.id}?by=job_id"
+      ).to_return(status: 404)
+      delete("/v3/job/#{job3.id}/log", {}, headers)
+      expect(last_response.status).to be == 404
+      expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "not_found",
+        "error_message" => "log not found"
+      }
+    end
+  end
+
+  describe 'existing db log, authenticated', logs_api_enabled: false do
     before do
       Timecop.return
       Timecop.freeze(Time.now.utc)
@@ -81,10 +105,12 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     end
     after { Timecop.return }
     example do
-      delete("/v3/job/#{log.job.id}/log", {}, headers)
+      expect(log).to_not be_nil
+      delete("/v3/job/#{job.id}/log", {}, headers)
       expect(last_response.status).to be == 200
-      expect(JSON.load(body)).to be == {"@type"=>"log",
-        "@href"=>"/v3/job/#{log.job.id}/log",
+      expect(JSON.load(body)).to be == {
+        "@type"=>"log",
+        "@href"=>"/v3/job/#{job.id}/log",
         "@representation"=>"standard",
         "id"=>log.id,
         "content"=>nil,
@@ -92,11 +118,12 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
           "@type"=>"log_part",
           "@representation"=>"minimal",
           "content"=>"Log removed by Sven Fuchs at #{Time.now.utc}",
-          "number"=>1}]}
+          "number"=>1}]
+      }
     end
   end
 
-  context 's3 log, authenticated' do
+  context 's3 log, authenticated', logs_api_enabled: false do
     before do
       s3job.update_attributes(finished_at: Time.now)
       Fog.mock!
@@ -138,7 +165,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     end
   end
 
-  context 'when job for log is still running, authenticated' do
+  context 'when job for log is still running, authenticated', logs_api_enabled: false do
     example do
       delete("/v3/job/#{log2.job.id}/log", {}, headers)
       expect(last_response.status).to be == 409
@@ -149,7 +176,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     end
   end
 
-  context 'when log already removed_at, authenticated' do
+  context 'when log already removed_at, authenticated', logs_api_enabled: false do
     before { log2.update_attributes(removed_at: Time.now) }
     example do
       delete("/v3/job/#{log2.job.id}/log", {}, headers)
@@ -161,7 +188,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     end
   end
 
-  context 'when log already removed_by, authenticated' do
+  context 'when log already removed_by, authenticated', logs_api_enabled: false do
     before { log2.update_attributes(removed_by: user) }
     example do
       delete("/v3/job/#{log2.job.id}/log", {}, headers)

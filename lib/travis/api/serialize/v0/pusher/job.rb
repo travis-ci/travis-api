@@ -31,12 +31,12 @@ module Travis
               def job_data(job)
                 {
                   'id' => job.id,
+                  'log_id' => job.log_id,
                   'repository_id' => job.repository_id,
                   'repository_slug' => job.repository.slug,
                   'repository_private' => job.repository.private,
                   'build_id' => job.source_id,
                   'commit_id' => job.commit_id,
-                  'log_id' => job.log_id,
                   'number' => job.number,
                   'state' => job.state.to_s,
                   'started_at' => format_date(job.started_at),

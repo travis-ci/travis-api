@@ -7,9 +7,12 @@ require 'travis/customerio'
 pool_size = ENV['SIDEKIQ_DB_POOL_SIZE'] || 5
 Travis.config.database[:pool] = pool_size.to_i
 Travis.config.logs_database[:pool] = pool_size.to_i
+Travis.config.logs_readonly_database[:pool] = pool_size.to_i
 Travis::Database.connect
 
-if Travis.config.logs_database?
+if Travis.config.logs_api.enabled? && Travis.config.logs_readonly_database?
+  Travis::LogsModel.establish_connection 'logs_readonly_database'
+elsif Travis.config.logs_database?
   Travis::LogsModel.establish_connection 'logs_database'
 end
 

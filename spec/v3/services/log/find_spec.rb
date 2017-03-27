@@ -18,6 +18,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:s3log)       { Travis::API::V3::Models::Log.create(job: s3job, content: 'minimal log 1') }
   let(:no_s3log)    { Travis::API::V3::Models::Log.create(archived_at: Time.now, job: s3job2, content: 'minimal log 2') }
   let(:find_log)    { "string" }
+  let(:time)        { Time.now }
   let(:xml_content) {
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">
@@ -53,7 +54,6 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job2.id}/log.txt").
         to_return(status: 200, body: nil, headers: {})
     Fog.mock!
-    Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
     storage = Fog::Storage.new({
       :aws_access_key_id => "key",
       :aws_secret_access_key => "secret",
@@ -67,7 +67,13 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   end
   after { Fog::Mock.reset }
 
-  context 'when log stored in db' do
+  around(:each) do |example|
+    Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
+    example.run
+    Travis.config.log_options = {}
+  end
+
+  context 'when log stored in db', logs_api_enabled: false do
     describe 'returns log with an array of Log Parts' do
       example do
         log_part = log.log_parts.create(content: "logging it", number: 0)
@@ -117,10 +123,10 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
   end
 
-  context 'when log not found in db but stored on S3' do
+  context 'when log not found in db but stored on S3', logs_api_enabled: false do
     describe 'returns log with an array of Log Parts' do
       example do
-        s3log.update_attributes(archived_at: Time.now)
+        s3log.update_attributes(archived_at: time)
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
 
         expect(parsed_body).to eq(
@@ -155,7 +161,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
   end
 
-  context 'when log not found on s3' do
+  context 'when log not found on s3', logs_api_enabled: false do
     describe 'does not return log - returns error' do
       example do
         get("/v3/job/#{no_s3log.job.id}/log", {}, headers)
@@ -167,7 +173,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
   end
 
-  context 'when log not found anywhere' do
+  context 'when log not found anywhere', logs_api_enabled: false do
     describe 'does not return log - returns error' do
       example do
         log3.delete

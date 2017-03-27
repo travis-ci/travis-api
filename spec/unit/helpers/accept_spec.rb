@@ -24,6 +24,16 @@ module Travis::Api::App::Helpers
       accept_entry.mime_type.should == '*/*'
     end
 
+    it 'accepts text/plain when chunked is preferred' do
+      app = FakeApp.new('HTTP_ACCEPT' => %w(
+        application/json; chunked=true; version=2,
+        application/json; version=2,
+        text/plain
+      ).join(' '))
+
+      app.accepts?('text/plain').should == true
+    end
+
     describe Accept::Entry do
       describe 'version' do
         it 'can be passed as a vendor extension' do

@@ -3,6 +3,29 @@ require 'travis/config'
 module Travis
   class Config < Hashr
 
+    class << self
+      def logs_api_enabled?
+        %w(true on yes 1).include?(
+          (
+            ENV['TRAVIS_API_LOGS_API_ENABLED'] ||
+            ENV['LOGS_API_ENABLED']
+          ).to_s.downcase
+        )
+      end
+
+      def logs_api_url
+        ENV['TRAVIS_API_LOGS_API_URL'] ||
+          ENV['LOGS_API_URL'] ||
+          'http://travis-logs-notset.example.com:1234'
+      end
+
+      def logs_api_auth_token
+        ENV['TRAVIS_API_LOGS_API_AUTH_TOKEN'] ||
+          ENV['LOGS_API_AUTH_TOKEN'] ||
+          'notset'
+      end
+    end
+
     HOSTS = {
       production:  'travis-ci.org',
       staging:     'staging.travis-ci.org',
@@ -17,6 +40,8 @@ module Travis
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
+            logs_readonly_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
+            logs_api:      { url: logs_api_url, token: logs_api_auth_token, enabled: logs_api_enabled? },
             log_options:   { s3: { access_key_id: '', secret_access_key: ''}},
             s3:            { access_key_id: '', secret_access_key: ''},
             pusher:        { app_id: 'app-id', key: 'key', secret: 'secret' },

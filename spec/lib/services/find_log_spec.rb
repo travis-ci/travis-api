@@ -1,11 +1,13 @@
 describe Travis::Services::FindLog do
-  let!(:job)    { Factory(:test) }
-  let(:log)     { job.log }
+  let!(:job) { Factory(:test) }
+  let(:log) { nil }
   let(:service) { described_class.new(stub('user'), params) }
 
   attr_reader :params
 
-  describe 'run' do
+  describe 'run', logs_api_enabled: false do
+    let(:log)     { job.log }
+
     it 'finds the log with the given id' do
       @params = { id: log.id }
       service.run.should == log
@@ -21,18 +23,4 @@ describe Travis::Services::FindLog do
       lambda { service.run }.should_not raise_error
     end
   end
-
-  # TODO jobs can be requeued, so finished jobs are no more final
-  #
-  # describe 'final?' do
-  #   it 'returns true if the job is finished' do
-  #     log.job.update_attributes!(:state => :finished)
-  #     service.final?.should be_truthy
-  #   end
-
-  #   it 'returns false if the job is not finished' do
-  #     log.job.update_attributes!(:state => :started)
-  #     service.final?.should be false
-  #   end
-  # end
 end

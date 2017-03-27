@@ -4,7 +4,7 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
   let(:data) { described_class.new([test]).data }
   let!(:time) { Time.now.utc }
 
-  it 'jobs' do
+  it 'jobs', logs_api_enabled: false do
     data['jobs'].first.should == {
       'id' => 1,
       'repository_id' => 1,
@@ -47,7 +47,11 @@ describe Travis::Api::Serialize::V2::Http::Jobs, 'using Travis::Services::Jobs::
     3.times { Factory(:test) }
   end
 
-  it 'queries' do
+  it 'queries', logs_api_enabled: false do
     lambda { data }.should issue_queries(4)
+  end
+
+  it 'does not explode' do
+    data.should_not be_nil
   end
 end

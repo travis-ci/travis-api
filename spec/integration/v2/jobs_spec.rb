@@ -16,7 +16,7 @@ describe 'Jobs', set_app: true do
     response.should deliver_json_for(job, version: 'v2')
   end
 
-  context 'GET /jobs/:job_id/log.txt' do
+  context 'GET /jobs/:job_id/log.txt', logs_api_enabled: false do
     it 'returns log for a job' do
       job.log.update_attributes!(content: 'the log')
       response = get "/jobs/#{job.id}/log.txt", {}, headers
@@ -118,7 +118,92 @@ describe 'Jobs', set_app: true do
     end
   end
 
-  describe 'PATCH /jobs/:job_id/log' do
+  context 'GET /jobs/:job_id/log.txt', logs_api_enabled: true do
+    it 'returns log for a job' do
+      stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+        .to_return(status: 200, body: JSON.dump(content: 'the log'))
+      response = get("/jobs/#{job.id}/log.txt", {}, headers)
+      expect(response).to deliver_as_txt('the log', version: 'v2')
+    end
+
+    context 'when log is archived' do
+      it 'redirects to archive' do
+        Travis::RemoteLog.expects(:fetch_archived_url)
+          .returns("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+          .to_return(
+            status: 200,
+            body: JSON.dump(
+              content: 'the log',
+              archived_at: Time.now,
+              archive_verified: true
+            )
+          )
+        response = get(
+          "/jobs/#{job.id}/log.txt",
+          {},
+          { 'HTTP_ACCEPT' => 'text/plain; version=2' }
+        )
+        expect(response).to redirect_to(
+          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
+        )
+      end
+    end
+
+    context 'when log is missing' do
+      it 'redirects to archive' do
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+          .to_return(status: 404, body: '')
+        response = get(
+          "/jobs/#{job.id}/log.txt",
+          {},
+          { 'HTTP_ACCEPT' => 'text/plain; version=2' }
+        )
+        expect(response).to redirect_to(
+          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
+        )
+      end
+    end
+
+    context 'with cors_hax param' do
+      it 'renders No Content response with location of the archived log' do
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+          .to_return(status: 404, body: '')
+        response = get(
+          "/jobs/#{job.id}/log.txt?cors_hax=true",
+          {},
+          { 'HTTP_ACCEPT' => 'text/plain; version=2' }
+        )
+        expect(response.status).to eq 204
+        expect(response.headers['Location']).to eq(
+          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
+        )
+      end
+    end
+
+    context 'with chunked log requested' do
+      it 'always responds with 406' do
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+          .to_return(
+            status: 200,
+            body: JSON.dump(
+              content: 'fla flah flooh',
+              aggregated_at: Time.now,
+              archived_at: Time.now,
+              archive_verified: true
+            )
+          )
+        response = get(
+          "/jobs/#{job.id}/log",
+          {},
+          { 'HTTP_ACCEPT' => 'application/json; version=2; chunked=true' }
+        )
+        expect(response.status).to eq(406)
+      end
+    end
+  end
+
+  describe 'PATCH /jobs/:job_id/log', logs_api_enabled: false do
     let(:user)    { User.where(login: 'svenfuchs').first }
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
 
@@ -161,12 +246,102 @@ describe 'Jobs', set_app: true do
           response = patch "/jobs/#{finished_job.id}/log", { reason: 'Because reason!' }, headers
           response.status.should == 200
         end
-
       end
     end
 
     context 'when job is not found' do
       # TODO
+    end
+  end
+
+  describe 'PATCH /jobs/:job_id/log', logs_api_enabled: true do
+    let(:user) { User.where(login: 'svenfuchs').first }
+    let(:token) do
+      Travis::Api::App::AccessToken.create(user: user, app_id: -1)
+    end
+
+    before :each do
+      headers.merge! 'HTTP_AUTHORIZATION' => "token #{token}"
+    end
+
+    context 'when user does not have push permissions' do
+      before :each do
+        user.permissions.create!(
+          repository_id: job.repository.id,
+          push: false
+        )
+      end
+
+      it 'returns status 401' do
+        stub_request(
+          :get,
+          "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id"
+        ).to_return(status: 200, body: JSON.dump(content: 'flah'))
+        response = patch(
+          "/jobs/#{job.id}/log",
+          { reason: 'Because reason!' },
+          headers
+        )
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when user has push permission' do
+      context 'when job is not finished' do
+        before :each do
+          job.stubs(:finished?).returns false
+          user.permissions.create!(
+            repository_id: job.repository.id, push: true
+          )
+        end
+
+        it 'returns status 409' do
+          stub_request(
+            :get,
+            "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id"
+          ).to_return(
+            status: 200,
+            body: JSON.dump(content: 'flah', job_id: job.id)
+          )
+          response = patch(
+            "/jobs/#{job.id}/log", { reason: 'Because reason!' }, headers
+          )
+          expect(response.status).to eq 409
+        end
+      end
+
+      context 'when job is finished' do
+        let(:finished_job) { Factory(:test, state: 'passed') }
+
+        before :each do
+          user.permissions.create!(
+            repository_id: finished_job.repository.id, push: true
+          )
+        end
+
+        it 'returns status 200' do
+          stub_request(
+            :get,
+            "#{Travis.config.logs_api.url}/logs/#{finished_job.id}?by=job_id"
+          ).to_return(
+            status: 200,
+            body: JSON.dump(content: 'flah', job_id: finished_job.id)
+          )
+          stub_request(
+            :put,
+            "#{Travis.config.logs_api.url}/logs/#{finished_job.id}?removed_by=#{user.id}"
+          ).to_return(
+            status: 200,
+            body: JSON.dump(content: '', job_id: finished_job.id)
+          )
+          response = patch(
+            "/jobs/#{finished_job.id}/log",
+            { reason: 'Because reason!' },
+            headers
+          )
+          expect(response.status).to eq 200
+        end
+      end
     end
   end
 
