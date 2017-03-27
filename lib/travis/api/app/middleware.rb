@@ -3,6 +3,7 @@ require 'travis/api/app'
 class Travis::Api::App
   # Superclass for all middleware.
   class Middleware < Base
+    require 'travis/api/app/middleware/error_response'
     require 'travis/api/app/middleware/logging'
     require 'travis/api/app/middleware/metriks'
     require 'travis/api/app/middleware/rewrite'

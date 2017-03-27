@@ -97,6 +97,9 @@ module Travis::Api
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
 
+        use Travis::Api::App::Middleware::RequestId
+        use Travis::Api::App::Middleware::ErrorResponse
+
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
@@ -133,7 +136,6 @@ module Travis::Api
         use Travis::Api::App::Middleware::Logging
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
-        use Travis::Api::App::Middleware::RequestId
 
         # make sure this is below ScopeCheck so we have the token
         use Rack::Attack if Endpoint.production? and not Travis.config.enterprise

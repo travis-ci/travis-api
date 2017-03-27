@@ -1,5 +1,4 @@
 require 'travis/api/app'
-require 'useragent'
 
 class Travis::Api::App
   class Middleware
