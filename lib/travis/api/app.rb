@@ -9,6 +9,7 @@ require 'travis/model'
 require 'travis/states_cache'
 require 'rack'
 require 'rack/protection'
+require 'rack/robustness'
 require 'rack/contrib/config'
 require 'rack/contrib/jsonp'
 require 'rack/contrib/post_body_content_type_parser'
@@ -98,7 +99,9 @@ module Travis::Api
         # end
 
         use Travis::Api::App::Middleware::RequestId
-        use Travis::Api::App::Middleware::ErrorResponse
+        use Rack::Robustness do |g|
+          g.body 'Sorry, we experienced an error.'
+        end
 
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight

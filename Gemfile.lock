@@ -272,6 +272,7 @@ GEM
       rack (~> 1.4)
     rack-protection (1.5.3)
       rack
+    rack-robustness (1.1.0)
     rack-ssl (1.4.1)
       rack
     rack-test (0.6.3)
@@ -385,6 +386,7 @@ DEPENDENCIES
   rack-attack (= 5.0.0.beta1)
   rack-cache!
   rack-contrib
+  rack-robustness
   rake (~> 0.9.2)
   rb-fsevent (~> 0.9.1)
   redlock
