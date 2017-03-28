@@ -81,9 +81,14 @@ describe Travis::RemoteLog do
     subject.archived_url.should eq 'yep'
   end
 
-  it 'never has parts' do
-    subject.parts.should be_empty
-    subject.log_parts.should be_empty
+  it 'has parts' do
+    found_parts = [
+      Travis::RemoteLogPart.new(number: 42, content: 'yey', final: false)
+    ]
+    described_class.stubs(:find_parts_by_job_id)
+      .with(5, after: nil, part_numbers: [])
+      .returns(found_parts)
+    subject.parts.should eq found_parts
   end
 
   {
@@ -124,10 +129,33 @@ describe Travis::RemoteLog do
   it 'can serialize via #to_json' do
     from_json = JSON.parse(subject.to_json).fetch('log')
     from_json.fetch('id').should == attrs[:id]
-    from_json.fetch('content').should == attrs[:content]
-    from_json.fetch('created_at').should be_nil
     from_json.fetch('job_id').should == attrs[:job_id]
-    from_json.fetch('updated_at').should be_nil
+    from_json.fetch('type').should == 'Log'
+    from_json.fetch('body').should == attrs[:content]
+  end
+
+  it 'can serialize removed logs via #to_json' do
+    user_id = 8
+    user = mock('user')
+    user.stubs(:name).returns('Twizzler HotDog')
+    user.stubs(:id).returns(user_id)
+
+    now = mock('now')
+    now.stubs(:utc).returns(now)
+    now.stubs(:to_s).returns('whenebber')
+    Time.stubs(:now).returns(now)
+
+    subject.stubs(:removed_by).returns(user)
+    subject.removed_at = now
+    subject.removed_by_id = user_id
+
+    from_json = JSON.parse(subject.to_json).fetch('log')
+    from_json.fetch('id').should == attrs[:id]
+    from_json.fetch('job_id').should == attrs[:job_id]
+    from_json.fetch('type').should == 'Log'
+    from_json.fetch('body').should == attrs[:content]
+    from_json.fetch('removed_by').should == 'Twizzler HotDog'
+    from_json.fetch('removed_at').should == 'whenebber'
   end
 
   it 'can be cleared' do
