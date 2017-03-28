@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Renderer::LogParts < Renderer::CollectionRenderer
+  class Renderer::LogParts < CollectionRenderer
     type           :log_parts
     collection_key :log_parts
   end
