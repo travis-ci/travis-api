@@ -172,7 +172,7 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
               "@type"=>"template",
               "request_method"=>"PATCH",
               "uri_template"=>"#{path}repo/{repository.id}/setting/{setting.name}",
-              "accepted_params" => ["setting.value"]
+              "accepted_params" => []
             )
           end
         end
