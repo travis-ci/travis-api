@@ -77,7 +77,10 @@ class Travis::Api::App
         resource = service(:find_log, params).run
         if (resource && resource.removed_at) && accepts?('application/json')
           respond_with resource
-        elsif (!resource || resource.archived?)
+        elsif resource.nil?
+          status 200
+          body empty_log(Integer(params[:job_id])).to_json
+        elsif resource.archived?
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')
@@ -145,6 +148,11 @@ class Travis::Api::App
         params[:include_log_id] ||
           !Travis.config.logs_api.enabled? ||
           request.user_agent.to_s.start_with?('Travis')
+      end
+
+      private def empty_log(job_id)
+        # XXX: Should this empty version be defined elsewhere?
+        { log: { job_id: job_id, parts: [], :@type => 'Log' } }
       end
     end
   end
