@@ -44,7 +44,6 @@ gem 'customerio'
 
 gem "redlock"
 gem 'rake', '~> 0.9.2'
-gem 'rack-robustness'
 
 group :development, :test do
   gem 'travis-migrations', git: 'https://github.com/travis-ci/travis-migrations'
