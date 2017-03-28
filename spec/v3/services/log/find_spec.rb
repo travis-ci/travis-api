@@ -205,7 +205,6 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             {
               'content' => 'hello world. this is a really cool log',
               'final' => true,
-              'id' => nil,
               'number' => 0
             }
           ]

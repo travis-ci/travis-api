@@ -193,7 +193,6 @@ module Travis
         unless resp.success?
           raise Error, "failed to fetch log-parts job_id=#{job_id}"
         end
-
         JSON.parse(resp.body).fetch('log_parts').map do |part|
           RemoteLogPart.new(part)
         end
@@ -272,7 +271,7 @@ module Travis
     attribute :number, Integer
 
     def as_json
-      attributes.dup
+      attributes.slice(*%i(content final number))
     end
   end
 end
