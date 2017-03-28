@@ -80,11 +80,11 @@ module Travis
 
     private def solo_part
       [
-        {
-          'number' => 1,
-          'content' => content,
-          'final' => true
-        }
+        RemoteLogPart.new(
+          number: 0,
+          content: content,
+          final: true
+        )
       ]
     end
 
@@ -193,9 +193,8 @@ module Travis
         unless resp.success?
           raise Error, "failed to fetch log-parts job_id=#{job_id}"
         end
-
         JSON.parse(resp.body).fetch('log_parts').map do |part|
-          Travis::RemoteLogPart.new(part)
+          RemoteLogPart.new(part)
         end
       end
 
@@ -209,7 +208,7 @@ module Travis
         unless resp.success?
           raise Error, "failed to write content job_id=#{job_id}"
         end
-        Travis::RemoteLog.new(JSON.parse(resp.body))
+        RemoteLog.new(JSON.parse(resp.body))
       end
 
       private def find_by(by, id)
@@ -217,7 +216,7 @@ module Travis
           req.url "/logs/#{id}", by: by
         end
         return nil unless resp.success?
-        Travis::RemoteLog.new(JSON.parse(resp.body))
+        RemoteLog.new(JSON.parse(resp.body))
       end
 
       private def conn
@@ -272,7 +271,7 @@ module Travis
     attribute :number, Integer
 
     def as_json
-      attributes.dup
+      attributes.slice(*%i(content final number))
     end
   end
 end
