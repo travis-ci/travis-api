@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Renderer::Caches < Renderer::CollectionRenderer
+  class Renderer::Caches < CollectionRenderer
     type            :caches
     collection_key  :caches
 

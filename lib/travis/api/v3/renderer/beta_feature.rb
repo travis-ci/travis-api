@@ -1,7 +1,5 @@
-require 'travis/api/v3/renderer/model_renderer'
-
 module Travis::API::V3
-  class Renderer::BetaFeature < Renderer::ModelRenderer
+  class Renderer::BetaFeature < ModelRenderer
     representation(:standard, :id, :name, :description, :enabled, :feedback_url)
 
     def id

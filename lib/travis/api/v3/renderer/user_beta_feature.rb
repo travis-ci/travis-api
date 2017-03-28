@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Renderer::UserBetaFeature < Renderer::ModelRenderer
+  class Renderer::UserBetaFeature < ModelRenderer
     representation :standard, :id, :name, :description, :enabled, :feedback_url
 
     type           :beta_feature
