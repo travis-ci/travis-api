@@ -30,7 +30,10 @@ describe 'Exception', set_app: true do
     res = get '/repos/1'
     expect(res.status).to eq(500)
     expect(res.body).to eq('Sorry, we experienced an error.')
-    expect(res.original_headers).to eq({'Content-Type' => 'text/plain'})
+    expect(res.original_headers).to eq({
+      'Content-Type' => 'text/plain',
+      'Content-Length' => '31',
+    })
     sleep 0.1
   end
 end
