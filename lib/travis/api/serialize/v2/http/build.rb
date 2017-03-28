@@ -8,27 +8,27 @@ module Travis
           class Build
             include Formats
 
-            attr_reader :build, :options
+            attr_reader :build, :params
+            attr_accessor :serialization_options
 
-            def initialize(build, options = {})
-              options[:include_jobs] = true unless options.key?(:include_jobs)
-
+            def initialize(build, params = {})
               @build = build
-              @options = options
+              @params = params
+              @serialization_options = {}
             end
 
             def data
               {
-                'build'  => build_data(build),
-                'commit' => commit_data(build.commit, build.repository),
-                'jobs'   => options[:include_jobs] ? build.matrix.map { |job| job_data(job) } : [],
-                'annotations' => options[:include_jobs] ? Annotations.new(annotations(build), @options).data["annotations"] : [],
+                'build'  => build_data,
+                'commit' => commit_data,
+                'jobs'   => jobs_data,
+                'annotations' => annotations_data
               }
             end
 
             private
 
-              def build_data(build)
+              def build_data
                 {
                   'id' => build.id,
                   'repository_id' => build.repository_id,
@@ -47,12 +47,12 @@ module Travis
                 }
               end
 
-              def commit_data(commit, repository)
+              def commit_data
                 {
                   'id' => commit.id,
                   'sha' => commit.commit,
                   'branch' => commit.branch,
-                  'branch_is_default' => branch_is_default(commit, repository),
+                  'branch_is_default' => branch_is_default,
                   'message' => commit.message,
                   'committed_at' => format_date(commit.committed_at),
                   'author_name' => commit.author_name,
@@ -66,7 +66,6 @@ module Travis
               def job_data(job)
                 {
                   'id' => job.id,
-                  'log_id' => job.log_id,
                   'repository_id' => job.repository_id,
                   'build_id' => job.source_id,
                   'commit_id' => job.commit_id,
@@ -79,15 +78,39 @@ module Travis
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags,
                   'annotation_ids' => job.annotation_ids,
-                }
+                }.tap do |ret|
+                  ret['log_id'] = job.log_id if include_log_id?
+                end
               end
 
-              def branch_is_default(commit, repository)
+              def jobs_data
+                return [] unless params[:include_jobs]
+                build.matrix.map { |job| job_data(job) }
+              end
+
+              def annotations_data
+                return [] unless params[:include_jobs]
+                Annotations.new(annotations, params).data["annotations"]
+              end
+
+              def branch_is_default
                 repository.default_branch == commit.branch
               end
 
-              def annotations(build)
+              def annotations
                 build.matrix.map(&:annotations).flatten
+              end
+
+              def commit
+                build.commit
+              end
+
+              def repository
+                build.repository
+              end
+
+              def include_log_id?
+                !!serialization_options[:include_log_id]
               end
           end
         end

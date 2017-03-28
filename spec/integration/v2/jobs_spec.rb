@@ -13,7 +13,12 @@ describe 'Jobs', set_app: true do
 
   it '/jobs/:id' do
     response = get "/jobs/#{job.id}", {}, headers
-    response.should deliver_json_for(job, version: 'v2')
+    response.status.should == 200
+    expected = Travis::Api::Serialize.data(job, version: 'v2')
+    expected.delete('log_id')
+    parsed = MultiJson.decode(response.body)
+    parsed['job'].delete('log_id')
+    parsed.should == expected
   end
 
   context 'GET /jobs/:job_id/log.txt', logs_api_enabled: false do
