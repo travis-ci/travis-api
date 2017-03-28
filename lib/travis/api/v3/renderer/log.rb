@@ -20,7 +20,7 @@ module Travis::API::V3
       Json.new(log, **options).render(:standard)
     end
 
-    class Json < Renderer::ModelRenderer
+    class Json < ModelRenderer
       type :log
       representation :standard, :id, :content, :log_parts
     end

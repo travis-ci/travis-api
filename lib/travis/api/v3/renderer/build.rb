@@ -1,7 +1,5 @@
-require 'travis/api/v3/renderer/model_renderer'
-
 module Travis::API::V3
-  class Renderer::Build < Renderer::ModelRenderer
+  class Renderer::Build < ModelRenderer
     representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at)
     representation(:standard, *representations[:minimal], :repository, :branch, :commit, :jobs)
     representation(:active, *representations[:standard])

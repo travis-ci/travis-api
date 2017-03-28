@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Renderer::UserSetting < Renderer::ModelRenderer
+  class Renderer::UserSetting < ModelRenderer
     representation :standard, :name, :value
     representation :minimal, *representations[:standard]
 

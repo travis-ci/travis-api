@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Renderer::CollectionRenderer
+  class CollectionRenderer
     def self.render(list, **options)
       new(list, **options).render
     end
