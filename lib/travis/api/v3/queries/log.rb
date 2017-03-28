@@ -47,7 +47,7 @@ module Travis::API::V3
     end
 
     def s3_config
-      conf = (config[:log_options][:s3] || {}).merge(bucket_name: bucket_name)
+      super.merge(bucket_name: bucket_name)
     end
 
     def bucket_name
@@ -58,7 +58,7 @@ module Travis::API::V3
       "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
     end
 
-    private def logs_model
+    def logs_model
       return Travis::API::V3::Models::RemoteLog if Travis.config.logs_api.enabled?
       Travis::API::V3::Models::Log
     end

@@ -18,20 +18,16 @@ module Travis::API::V3
       list.select{|c| c.name.include? match}
     end
 
+    def main_type
+      "cache"
+    end
+
     private
 
     def prefix
-      prefix = "#{@repo.github_id}/"
-      prefix << branch << '/' if branch
+      prefix = "#{@repo.github_id}/#{branch}"
+      prefix << '/' unless prefix.last == '/'
       prefix
-    end
-
-    def s3_config
-      config[:cache_options][:s3] || {}
-    end
-
-    def gcs_config
-      config[:cache_options][:gcs] || {}
     end
   end
 end
