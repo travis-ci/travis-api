@@ -80,11 +80,11 @@ module Travis
 
     private def solo_part
       [
-        RemoteLogPart.new({
-          'number' => 0,
-          'content' => content,
-          'final' => true
-        })
+        RemoteLogPart.new(
+          number: 0,
+          content: content,
+          final: true
+        )
       ]
     end
 
