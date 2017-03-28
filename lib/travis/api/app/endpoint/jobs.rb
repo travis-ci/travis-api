@@ -151,7 +151,6 @@ class Travis::Api::App
       end
 
       private def empty_log(job_id)
-        # XXX: Should this empty version be defined elsewhere?
         { log: { job_id: job_id, parts: [], :@type => 'Log' } }
       end
     end
