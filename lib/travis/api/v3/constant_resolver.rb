@@ -11,6 +11,7 @@ module Travis::API::V3
 
     def [](key, raise_unknown = true)
       return key unless key.is_a? Symbol
+      resolver_cache[key] ||= Travis::API::V3::Permissions::Job if key == :"travis/remote_log"
       resolver_cache[key] ||= const_get(key.to_s.camelize, false)
     rescue NameError => e
       raise e if raise_unknown

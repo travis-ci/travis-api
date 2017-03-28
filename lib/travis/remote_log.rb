@@ -80,11 +80,11 @@ module Travis
 
     private def solo_part
       [
-        {
-          'number' => 1,
+        RemoteLogPart.new({
+          'number' => 0,
           'content' => content,
           'final' => true
-        }
+        })
       ]
     end
 
@@ -195,7 +195,7 @@ module Travis
         end
 
         JSON.parse(resp.body).fetch('log_parts').map do |part|
-          Travis::RemoteLogPart.new(part)
+          RemoteLogPart.new(part)
         end
       end
 

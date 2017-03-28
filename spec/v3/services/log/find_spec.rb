@@ -43,6 +43,24 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     </ListBucketResult>"
   }
 
+  let(:log_from_api){
+    {
+      aggregated_at: Time.now,
+      archive_verified: true,
+      archived_at: Time.now,
+      archiving: false,
+      content: 'hello world. this is a really cool log',
+      created_at: Time.now,
+      id: 345,
+      job_id: s3job.id,
+      purged_at: Time.now,
+      removed_at: Time.now,
+      removed_by_id: 45,
+      updated_at: Time.now
+    }
+  }
+
+  let(:json_log_from_api) { log_from_api.to_json }
 
   before do
     log3.delete
@@ -64,6 +82,9 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       :key  => "jobs/#{s3job.id}/log.txt",
       :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch"
     )
+    stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{s3job.id}?by=job_id").
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Authorization'=>'token notset', 'User-Agent'=>'Faraday v0.9.2'}).
+          to_return(:status => 200, :body => json_log_from_api, :headers => {})
   end
   after { Fog::Mock.reset }
 
@@ -149,6 +170,40 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         expect(last_response.headers).to include("Content-Type" => "text/plain")
         expect(body).to eq(
           "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch")
+      end
+    end
+
+    describe 'it returns the correct content type' do
+      example do
+        s3log.update_attributes(archived_at: Time.now, archive_verified: true)
+        get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'fun/times'))
+        expect(last_response.headers).to include("Content-Type" => "application/json")
+      end
+    end
+  end
+
+  context 'when log not found in db but stored on S3', logs_api_enabled: true do
+    describe 'returns log with an array of Log Parts' do
+      example do
+        s3log.update_attributes(archived_at: time, archive_verified: true)
+        get("/v3/job/#{s3log.job.id}/log", {}, headers)
+
+        expect(parsed_body).to eq(
+          '@type' => 'log',
+          '@href' => "/v3/job/#{s3job.id}/log",
+          '@representation' => 'standard',
+          "@permissions"=>{"read"=>true, "debug"=>false, "cancel"=>false, "restart"=>false, "delete_log"=>false},
+          'id' => log_from_api[:id],
+          'content' => log_from_api[:content],
+          "log_parts"=>[{"content"=>"hello world. this is a really cool log", "final"=>true, "id"=>nil, "number"=>0}])
+      end
+    end
+    describe 'returns log as plain text' do
+      example do
+        s3log.update_attributes(archived_at: Time.now, archive_verified: true)
+        get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+        expect(last_response.headers).to include("Content-Type" => "text/plain")
+        expect(body).to eq(log_from_api[:content])
       end
     end
 
