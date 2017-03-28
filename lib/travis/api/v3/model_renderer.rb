@@ -1,7 +1,7 @@
 require 'set'
 
 module Travis::API::V3
-  class Renderer::ModelRenderer
+  class ModelRenderer
     REDUNDANT = Object.new
     private_constant :REDUNDANT
 

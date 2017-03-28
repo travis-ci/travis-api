@@ -1,7 +1,5 @@
-require 'travis/api/v3/renderer/model_renderer'
-
 module Travis::API::V3
-  class Renderer::Commit < Renderer::ModelRenderer
+  class Renderer::Commit < ModelRenderer
     representation(:minimal,  :id, :sha, :ref, :message, :compare_url, :committed_at)
     representation(:standard, *representations[:minimal], :committer, :author)
 
