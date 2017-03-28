@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Renderer::SslKey < Renderer::ModelRenderer
+  class Renderer::SslKey < ModelRenderer
     type :key_pair
     representation :standard, :description, :public_key, :fingerprint
     representation :minimal, *representations[:standard]
