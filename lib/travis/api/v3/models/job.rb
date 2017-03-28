@@ -15,7 +15,7 @@ module Travis::API::V3
 
     if Travis::Config.logs_api_enabled?
       def log
-        @log ||= Models::RemoteLog.find_by_job_id(id)
+        @log ||= Travis::RemoteLog.find_by_job_id(id)
       end
     end
   end
