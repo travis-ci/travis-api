@@ -84,12 +84,10 @@ module Travis
               end
 
               def jobs_data
-                return [] unless params[:include_jobs]
                 build.matrix.map { |job| job_data(job) }
               end
 
               def annotations_data
-                return [] unless params[:include_jobs]
                 Annotations.new(annotations, params).data["annotations"]
               end
 
