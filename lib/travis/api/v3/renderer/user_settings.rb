@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Renderer::UserSettings < CollectionRenderer
-    type           :user_settings
-    collection_key :user_settings
+    type           :settings
+    collection_key :settings
   end
 end
