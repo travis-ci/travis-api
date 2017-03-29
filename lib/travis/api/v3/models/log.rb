@@ -17,5 +17,9 @@ module Travis::API::V3
       log_parts.destroy_all
       log_parts.create(content: message, number: 1, final: true)
     end
+
+    def archived?
+      archived_at && archive_verified?
+    end
   end
 end

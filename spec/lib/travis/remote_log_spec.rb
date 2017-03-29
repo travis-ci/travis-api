@@ -81,9 +81,14 @@ describe Travis::RemoteLog do
     subject.archived_url.should eq 'yep'
   end
 
-  it 'never has parts' do
-    subject.parts.should be_empty
-    subject.log_parts.should be_empty
+  it 'has parts' do
+    found_parts = [
+      Travis::RemoteLogPart.new(number: 42, content: 'yey', final: false)
+    ]
+    described_class.stubs(:find_parts_by_job_id)
+      .with(5, after: nil, part_numbers: [])
+      .returns(found_parts)
+    subject.parts.should eq found_parts
   end
 
   {
@@ -124,10 +129,61 @@ describe Travis::RemoteLog do
   it 'can serialize via #to_json' do
     from_json = JSON.parse(subject.to_json).fetch('log')
     from_json.fetch('id').should == attrs[:id]
-    from_json.fetch('content').should == attrs[:content]
-    from_json.fetch('created_at').should be_nil
     from_json.fetch('job_id').should == attrs[:job_id]
-    from_json.fetch('updated_at').should be_nil
+    from_json.fetch('type').should == 'Log'
+    from_json.fetch('body').should == attrs[:content]
+  end
+
+  it 'can serialize chunked via #to_json' do
+    subject.stubs(:parts).returns([
+      Travis::RemoteLogPart.new(
+        number: 8, content: 'whats that', final: false
+      ),
+      Travis::RemoteLogPart.new(
+        number: 11, content: 'whats thaaaaat', final: false
+      )
+    ])
+
+    from_json = JSON.parse(
+      subject.to_json(
+        chunked: true,
+        after: 2,
+        part_numbers: [8, 11]
+      )
+    ).fetch('log')
+
+    from_json.fetch('id').should == attrs[:id]
+    from_json.fetch('job_id').should == attrs[:job_id]
+    from_json.fetch('type').should == 'Log'
+    from_json.fetch('parts').should == [
+      { 'number' => 8, 'content' => 'whats that', 'final' => false },
+      { 'number' => 11, 'content' => 'whats thaaaaat', 'final' => false },
+    ]
+    from_json.should_not include('body')
+  end
+
+  it 'can serialize removed logs via #to_json' do
+    user_id = 8
+    user = mock('user')
+    user.stubs(:name).returns('Twizzler HotDog')
+    user.stubs(:id).returns(user_id)
+
+    now = mock('now')
+    now.stubs(:utc).returns(now)
+    now.stubs(:to_s).returns('whenebber')
+    Time.stubs(:now).returns(now)
+
+    subject.stubs(:removed_by).returns(user)
+    subject.removed_at = now
+    subject.removed_by_id = user_id
+
+    from_json = JSON.parse(subject.to_json).fetch('log')
+    from_json.fetch('id').should == attrs[:id]
+    from_json.fetch('job_id').should == attrs[:job_id]
+    from_json.fetch('type').should == 'Log'
+    from_json.fetch('body').should == attrs[:content]
+    from_json.fetch('removed_by').should == 'Twizzler HotDog'
+    from_json.fetch('removed_at').should == 'whenebber'
   end
 
   it 'can be cleared' do
@@ -158,6 +214,7 @@ describe Travis::RemoteLog::Client do
     Faraday::Adapter::Test::Stubs.new do |stub|
       stub.get('/logs/4') { [200, {}, JSON.dump(content: 'huh wow')] }
       stub.get('/logs/4/id') { [200, {}, JSON.dump(id: 4000)] }
+
       stub.put('/logs/8?removed_by=3') do
         [
           200,
@@ -166,6 +223,28 @@ describe Travis::RemoteLog::Client do
             content: 'why not eh',
             job_id: 8,
             removed_by_id: 3
+          )
+        ]
+      end
+
+      stub.get('/log-parts/8?after=4&part_numbers=42,17') do
+        [
+          200,
+          {},
+          JSON.dump(
+            job_id: 8,
+            log_parts: [
+              {
+                number: 42,
+                content: 'whoa noww',
+                final: false
+              },
+              {
+                number: 17,
+                content: "is a party\e0m",
+                final: false
+              }
+            ]
           )
         ]
       end
@@ -198,12 +277,18 @@ describe Travis::RemoteLog::Client do
       .should_not be_nil
   end
 
+  it 'can find parts by job id' do
+    subject.find_parts_by_job_id(8, after: 4, part_numbers: [42, 17])
+      .should_not be_nil
+  end
+
   context 'when the responses are sad' do
     let :stubs do
       Faraday::Adapter::Test::Stubs.new do |stub|
         stub.get('/logs/4') { [404, {}, ''] }
         stub.get('/logs/4/id') { [404, {}, ''] }
         stub.put('/logs/8') { [404, {}, ''] }
+        stub.get('/log-parts/8?after=4&part_numbers=42,17') { [404, {}, ''] }
       end
     end
 
@@ -222,6 +307,12 @@ describe Travis::RemoteLog::Client do
     it 'cannot write content for job id' do
       expect { subject.write_content_for_job_id(8, content: 'nah') }
         .to raise_error(Travis::RemoteLog::Client::Error)
+    end
+
+    it 'cannot find parts by job id' do
+      expect do
+        subject.find_parts_by_job_id(8, after: 4, part_numbers: [42, 17])
+      end.to raise_error(Travis::RemoteLog::Client::Error)
     end
   end
 end
