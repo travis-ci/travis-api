@@ -1,5 +1,6 @@
 module Travis::API::V3
   class Services::UserSetting::Update < Service
+    type :setting
     params :value, prefix: :setting
 
     def run!
