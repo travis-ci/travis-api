@@ -120,7 +120,7 @@ describe 'Jobs', set_app: true do
 
   context 'GET /jobs/:job_id/log.txt', logs_api_enabled: true do
     it 'returns log for a job' do
-      stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+      stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
         .to_return(status: 200, body: JSON.dump(content: 'the log'))
       response = get("/jobs/#{job.id}/log.txt", {}, headers)
       expect(response).to deliver_as_txt('the log', version: 'v2')
@@ -130,7 +130,7 @@ describe 'Jobs', set_app: true do
       it 'redirects to archive' do
         Travis::RemoteLog.expects(:fetch_archived_url)
           .returns("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
-        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(
             status: 200,
             body: JSON.dump(
@@ -152,7 +152,7 @@ describe 'Jobs', set_app: true do
 
     context 'when log is missing' do
       it 'redirects to archive' do
-        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(status: 404, body: '')
         response = get(
           "/jobs/#{job.id}/log.txt",
@@ -167,7 +167,7 @@ describe 'Jobs', set_app: true do
 
     context 'with cors_hax param' do
       it 'renders No Content response with location of the archived log' do
-        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(status: 404, body: '')
         response = get(
           "/jobs/#{job.id}/log.txt?cors_hax=true",
@@ -183,7 +183,7 @@ describe 'Jobs', set_app: true do
 
     context 'with chunked log requested' do
       it 'always responds with 406' do
-        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(
             status: 200,
             body: JSON.dump(
@@ -275,7 +275,7 @@ describe 'Jobs', set_app: true do
       it 'returns status 401' do
         stub_request(
           :get,
-          "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id"
+          "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api"
         ).to_return(status: 200, body: JSON.dump(content: 'flah'))
         response = patch(
           "/jobs/#{job.id}/log",
@@ -298,7 +298,7 @@ describe 'Jobs', set_app: true do
         it 'returns status 409' do
           stub_request(
             :get,
-            "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id"
+            "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api"
           ).to_return(
             status: 200,
             body: JSON.dump(content: 'flah', job_id: job.id)
@@ -322,14 +322,14 @@ describe 'Jobs', set_app: true do
         it 'returns status 200' do
           stub_request(
             :get,
-            "#{Travis.config.logs_api.url}/logs/#{finished_job.id}?by=job_id"
+            "#{Travis.config.logs_api.url}/logs/#{finished_job.id}?by=job_id&source=api"
           ).to_return(
             status: 200,
             body: JSON.dump(content: 'flah', job_id: finished_job.id)
           )
           stub_request(
             :put,
-            "#{Travis.config.logs_api.url}/logs/#{finished_job.id}?removed_by=#{user.id}"
+            "#{Travis.config.logs_api.url}/logs/#{finished_job.id}?removed_by=#{user.id}&source=api"
           ).to_return(
             status: 200,
             body: JSON.dump(content: '', job_id: finished_job.id)
