@@ -7,7 +7,7 @@ module Travis::API::V3
       log = logs_model.find_by_job_id(@job.id)
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
-      if log.archived_at
+      if log.archived?
         content = fetch.first
         raise EntityMissing, 'could not retrieve log'.freeze if content.nil?
         body = content.body.force_encoding('UTF-8') unless content.body.nil?
@@ -59,7 +59,7 @@ module Travis::API::V3
     end
 
     def logs_model
-      return Travis::API::V3::Models::RemoteLog if Travis.config.logs_api.enabled?
+      return Travis::RemoteLog if Travis.config.logs_api.enabled?
       Travis::API::V3::Models::Log
     end
   end

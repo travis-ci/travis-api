@@ -27,6 +27,7 @@ require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'securerandom'
+require 'fog/aws'
 
 module Travis::Api
 end
@@ -194,6 +195,12 @@ module Travis::Api
 
         if use_monitoring? && !console?
           setup_monitoring
+        end
+
+        if defined?(Fog) && defined?(Fog::Logger)
+          %i(warning deprecation debug).each do |channel|
+            Fog::Logger[channel] = nil
+          end
         end
       end
 

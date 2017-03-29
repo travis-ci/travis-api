@@ -10,7 +10,7 @@ module Travis
       extend Forwardable
 
       def_delegators :client, :find_by_job_id, :find_by_id,
-        :find_id_by_job_id, :write_content_for_job_id
+        :find_id_by_job_id, :find_parts_by_job_id, :write_content_for_job_id
 
       def_delegators :archive_client, :fetch_archived_url
 
@@ -65,12 +65,28 @@ module Travis
       @removed_by ||= User.find(removed_by_id)
     end
 
-    def parts
-      # The content field is always pre-aggregated.
-      []
+    def removed?
+      !removed_by_id.nil?
+    end
+
+    def parts(after: nil, part_numbers: [])
+      return solo_part if removed? || aggregated?
+      self.class.find_parts_by_job_id(
+        job_id, after: after, part_numbers: part_numbers
+      )
     end
 
     alias log_parts parts
+
+    private def solo_part
+      [
+        RemoteLogPart.new(
+          number: 0,
+          content: content,
+          final: true
+        )
+      ]
+    end
 
     def aggregated?
       !!aggregated_at
@@ -84,16 +100,36 @@ module Travis
       @archived_url ||= self.class.fetch_archived_url(job_id, expires: expires)
     end
 
-    def to_json
-      as_json.to_json
+    def to_json(chunked: false, after: nil, part_numbers: [])
+      as_json(
+        chunked: chunked,
+        after: after,
+        part_numbers: part_numbers
+      ).to_json
     end
 
-    def as_json
-      {
-        'log' => attributes.slice(
-          *%i(id content created_at job_id updated_at)
-        )
+    def as_json(chunked: false, after: nil, part_numbers: [])
+      ret = {
+        'id' => id,
+        'job_id' => job_id,
+        'type' => 'Log'
       }
+
+      unless removed_at.nil?
+        ret['removed_at'] = removed_at.utc.to_s
+        ret['removed_by'] = removed_by.name || removed_by.login
+      end
+
+      if chunked
+        ret['parts'] = parts(
+          after: after,
+          part_numbers: part_numbers
+        ).map(&:as_json)
+      else
+        ret['body'] = content
+      end
+
+      { 'log' => ret }
     end
 
     def clear!(user = nil)
@@ -146,6 +182,22 @@ module Travis
         JSON.parse(resp.body).fetch('id')
       end
 
+      def find_parts_by_job_id(job_id, after: nil, part_numbers: [])
+        resp = conn.get do |req|
+          req.url "/log-parts/#{job_id}"
+          req.params['after'] = after unless after.nil?
+          unless part_numbers.empty?
+            req.params['part_numbers'] = part_numbers.map(&:to_s).join(',')
+          end
+        end
+        unless resp.success?
+          raise Error, "failed to fetch log-parts job_id=#{job_id}"
+        end
+        JSON.parse(resp.body).fetch('log_parts').map do |part|
+          RemoteLogPart.new(part)
+        end
+      end
+
       def write_content_for_job_id(job_id, content: '', removed_by: nil)
         resp = conn.put do |req|
           req.url "/logs/#{job_id}"
@@ -156,7 +208,7 @@ module Travis
         unless resp.success?
           raise Error, "failed to write content job_id=#{job_id}"
         end
-        Travis::RemoteLog.new(JSON.parse(resp.body))
+        RemoteLog.new(JSON.parse(resp.body))
       end
 
       private def find_by(by, id)
@@ -164,7 +216,7 @@ module Travis
           req.url "/logs/#{id}", by: by
         end
         return nil unless resp.success?
-        Travis::RemoteLog.new(JSON.parse(resp.body))
+        RemoteLog.new(JSON.parse(resp.body))
       end
 
       private def conn
@@ -207,6 +259,19 @@ module Travis
         return nil if candidates.empty?
         candidates.first
       end
+    end
+  end
+
+  class RemoteLogPart
+    include Virtus.model(nullify_blank: true)
+
+    attribute :content, String
+    attribute :final, Boolean
+    attribute :id, Integer
+    attribute :number, Integer
+
+    def as_json
+      attributes.slice(*%i(content final number))
     end
   end
 end

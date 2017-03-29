@@ -8,27 +8,28 @@ module Travis
           class Job
             include Formats
 
-            attr_reader :job, :options
+            attr_reader :job, :params
+            attr_accessor :serialization_options
 
-            def initialize(job, options = {})
+            def initialize(job, params = {})
               @job = job
-              @options = options
+              @params = params
+              @serialization_options = {}
             end
 
             def data
               {
-                'job' => job_data(job),
-                'commit' => commit_data(job.commit, job.repository),
-                'annotations' => Annotations.new(job.annotations, @options).data["annotations"],
+                'job' => job_data,
+                'commit' => commit_data,
+                'annotations' => annotations_data
               }
             end
 
             private
 
-              def job_data(job)
+              def job_data
                 {
                   'id' => job.id,
-                  'log_id' => job.log_id,
                   'repository_id' => job.repository_id,
                   'repository_slug' => job.repository.slug,
                   'build_id' => job.source_id,
@@ -42,10 +43,12 @@ module Travis
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags,
                   'annotation_ids' => job.annotation_ids,
-                }
+                }.tap do |ret|
+                  ret['log_id'] = job.log_id if include_log_id?
+                end
               end
 
-              def commit_data(commit, repository)
+              def commit_data
                 {
                   'id' => commit.id,
                   'sha' => commit.commit,
@@ -61,8 +64,24 @@ module Travis
                 }
               end
 
+              def annotations_data
+                Annotations.new(job.annotations, params).data["annotations"]
+              end
+
               def branch_is_default(commit, repository)
                 repository.default_branch == commit.branch
+              end
+
+              def commit
+                job.commit
+              end
+
+              def repository
+                job.repository
+              end
+
+              def include_log_id?
+                !!serialization_options[:include_log_id]
               end
           end
         end
