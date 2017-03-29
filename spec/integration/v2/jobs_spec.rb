@@ -13,7 +13,12 @@ describe 'Jobs', set_app: true do
 
   it '/jobs/:id' do
     response = get "/jobs/#{job.id}", {}, headers
-    response.should deliver_json_for(job, version: 'v2')
+    response.status.should == 200
+    expected = Travis::Api::Serialize.data(job, version: 'v2')
+    expected.delete('log_id')
+    parsed = MultiJson.decode(response.body)
+    parsed['job'].delete('log_id')
+    parsed.should == expected
   end
 
   context 'GET /jobs/:job_id/log.txt', logs_api_enabled: false do
@@ -33,17 +38,20 @@ describe 'Jobs', set_app: true do
     end
 
     context 'when log is missing' do
-      it 'redirects to archive' do
+      it 'responds with an empty representation' do
         job.log.destroy
         headers = { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         response = get "/jobs/#{job.id}/log.txt", {}, headers
-        response.should redirect_to("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
+        response.status.should == 200
+        JSON.parse(response.body, symbolize_names: true).should eq(
+          { log: { job_id: job.id, parts: [], :@type => 'Log' } }
+        )
       end
     end
 
     context 'with cors_hax param' do
       it 'renders No Content response with location of the archived log' do
-        job.log.destroy
+        job.log.update_attributes(archived_at: Time.now, archive_verified: true)
         headers = { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         response = get "/jobs/#{job.id}/log.txt?cors_hax=true", {}, headers
         response.status.should == 204
@@ -151,7 +159,7 @@ describe 'Jobs', set_app: true do
     end
 
     context 'when log is missing' do
-      it 'redirects to archive' do
+      it 'responds with an empty representation' do
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
           .to_return(status: 404, body: '')
         response = get(
@@ -159,8 +167,9 @@ describe 'Jobs', set_app: true do
           {},
           { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         )
-        expect(response).to redirect_to(
-          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
+        response.status.should == 200
+        JSON.parse(response.body, symbolize_names: true).should eq(
+          { log: { job_id: job.id, parts: [], :@type => 'Log' } }
         )
       end
     end
@@ -168,7 +177,18 @@ describe 'Jobs', set_app: true do
     context 'with cors_hax param' do
       it 'renders No Content response with location of the archived log' do
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id")
-          .to_return(status: 404, body: '')
+          .to_return(
+            status: 200,
+            body: JSON.dump(
+              content: nil,
+              aggregated_at: Time.now,
+              archived_at: Time.now,
+              archive_verified: true
+            )
+          )
+        Travis::RemoteLog.any_instance.stubs(:archived_url).returns(
+          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
+        )
         response = get(
           "/jobs/#{job.id}/log.txt?cors_hax=true",
           {},
