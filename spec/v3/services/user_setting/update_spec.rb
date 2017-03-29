@@ -7,7 +7,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
   let(:old_params) { JSON.dump('setting.value' => false) }
-  let(:new_params) { JSON.dump('setting.value' => false) }
+  let(:new_params) { JSON.dump('user_setting.value' => false) }
 
   describe 'not authenticated' do
     before do
@@ -44,7 +44,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
     example { expect(last_response.status).to eq(200) }
     example do
       expect(JSON.load(body)).to eq(
-        '@type' => 'setting',
+        '@type' => 'user_setting',
         '@representation' => 'standard',
         '@permissions' => { 'read' => true, 'write' => true },
         '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",
@@ -92,11 +92,11 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
         'permission' => 'write',
         'resource_type' => 'user_setting',
         'user_setting' => {
-          '@type' => 'setting',
+          '@type' => 'user_setting',
           '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",
           '@representation' => 'minimal',
           'name' => 'build_pushes',
-          'value' => false
+          'value' => false 
         }
       )
     end

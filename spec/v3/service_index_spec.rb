@@ -145,8 +145,8 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
       end
 
       describe "user_settings resource" do
-        let(:resource) { resources.fetch("settings") }
-        specify { expect(resources)         .to include("settings") }
+        let(:resource) { resources.fetch("user_settings") }
+        specify { expect(resources)         .to include("user_settings") }
         specify { expect(resource["@type"]) .to be == "resource"  }
 
         describe "find action" do
@@ -156,13 +156,13 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
       end
 
       describe "user_setting resource" do
-        let(:resource) { resources.fetch("setting") }
-        specify { expect(resources)         .to include("setting") }
+        let(:resource) { resources.fetch("user_setting") }
+        specify { expect(resources)         .to include("user_setting") }
         specify { expect(resource["@type"]) .to be == "resource"  }
 
         describe "find action" do
           let(:action) { resource.fetch("actions").fetch("find") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/setting/{setting.name}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/setting/{user_setting.name}{?include}") }
         end
 
         describe "update action" do
@@ -171,8 +171,8 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
             expect(action).to include(
               "@type"=>"template",
               "request_method"=>"PATCH",
-              "uri_template"=>"#{path}repo/{repository.id}/setting/{setting.name}",
-              "accepted_params" => ["setting.value"]
+              "uri_template"=>"#{path}repo/{repository.id}/setting/{user_setting.name}",
+              "accepted_params" => ["user_setting.value"]
             )
           end
         end

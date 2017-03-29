@@ -131,13 +131,13 @@ module Travis::API::V3
         post :create
       end
 
-      resource :user_settings, as: :settings do
+      resource :user_settings do
         route '/settings'
         get   :for_repository
       end
 
-      resource :user_setting, as: :setting do
-        route '/setting/{setting.name}'
+      resource :user_setting do
+        route '/setting/{user_setting.name}'
         get   :find
         patch :update
       end

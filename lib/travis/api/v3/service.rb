@@ -3,15 +3,11 @@ module Travis::API::V3
     DEFAULT_PARAMS = [ "include".freeze, "@type".freeze ]
     private_constant :DEFAULT_PARAMS
 
-    def self.result_type(rt = nil)
-      @result_type   = rt if rt
+    def self.result_type(type = nil)
+      @result_type   = type if type
       @result_type ||= parent.result_type if parent and parent.respond_to? :result_type
       raise 'result type not set' unless defined? @result_type
       @result_type
-    end
-
-    def self.type(t = nil)
-      @type ||= (t || result_type)
     end
 
     def self.filter_params(params)
@@ -29,7 +25,7 @@ module Travis::API::V3
     end
 
     def self.accepted_params
-      self.params.select { |p| p =~ /#{type}\./.freeze }
+      self.params.select { |p| p =~ /#{result_type}\./.freeze }
     end
 
     def self.paginate(**options)
