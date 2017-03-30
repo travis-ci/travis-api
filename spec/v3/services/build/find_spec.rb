@@ -6,7 +6,6 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   let(:parsed_body) { JSON.load(body) }
 
   before do
-    # TODO should this go into the scenario? is it ok to keep it here?
     test   = build.stages.create(number: 1, name: 'test')
     deploy = build.stages.create(number: 2, name: 'deploy')
     build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }

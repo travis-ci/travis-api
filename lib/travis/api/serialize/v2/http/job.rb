@@ -32,6 +32,7 @@ module Travis
                   'id' => job.id,
                   'repository_id' => job.repository_id,
                   'repository_slug' => job.repository.slug,
+                  'stage_id' => job.stage_id,
                   'build_id' => job.source_id,
                   'commit_id' => job.commit_id,
                   'number' => job.number,
@@ -45,7 +46,6 @@ module Travis
                   'annotation_ids' => job.annotation_ids,
                 }
                 data['log_id'] = job.log_id if include_log_id?
-                data['stage_id'] = job.stage_id if job.stage_id
                 data
               end
 
