@@ -32,7 +32,7 @@ class Travis::Api::App
         scheduled = Travis::API::V3::Models::Cron.scheduled
         count = scheduled.count
 
-        Travis.logger.info "Found #{count} cron jobs to enqueue"
+        Travis.logger.info "Found #{count} cron jobs to enqueue" unless count == 0
 
         Metriks.gauge("api.v3.cron_scheduler.upcoming_jobs").set(count)
 
