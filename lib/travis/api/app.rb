@@ -98,12 +98,22 @@ module Travis::Api
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
 
+        use Travis::Api::App::Middleware::RequestId
+        use Travis::Api::App::Middleware::ErrorHandler
+
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
-        use Raven::Rack if Travis::Api::App.use_monitoring?
+        if Travis::Api::App.use_monitoring?
+          use Rack::Config do |env|
+            if env['HTTP_X_REQUEST_ID']
+              Raven.tags_context(x_request_id: env['HTTP_X_REQUEST_ID'])
+            end
+          end
+          use Raven::Rack
+        end
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
@@ -123,7 +133,6 @@ module Travis::Api
           env['SCRIPT_NAME'] = env['HTTP_X_SCRIPT_NAME'].to_s + env['SCRIPT_NAME'].to_s
           env['travis.global_prefix'] = env['SCRIPT_NAME']
         end
-
 
         use Travis::Api::App::Middleware::Logging
         use Travis::Api::App::Middleware::ScopeCheck

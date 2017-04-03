@@ -27,7 +27,13 @@ describe 'Exception', set_app: true do
     Raven.expects(:send_event).with do |event|
       event['logentry']['message'] == "#{error.class}: #{error.message}"
     end
-    expect { get '/repos/1'}.to raise_error(TestError)
+    res = get '/repos/1'
+    expect(res.status).to eq(500)
+    expect(res.body).to eq('Sorry, we experienced an error.')
+    expect(res.headers).to eq({
+      'Content-Type' => 'text/plain',
+      'Content-Length' => '31',
+    })
     sleep 0.1
   end
 end
