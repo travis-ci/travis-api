@@ -4,12 +4,15 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   let(:owner_type)  { repo.owner_type.constantize }
   let(:owner)       { owner_type.find(repo.owner_id)}
   let(:build)       { repo.builds.last }
-  let(:default_branch) { repo.default_branch}
-  let(:def_branch_jobs){ Travis::API::V3::Models::Build.find(default_branch.last_build.id).jobs}
-  let(:jobs)        { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:job)         { Travis::API::V3::Models::Build.find(build.id).jobs.last }
+  let(:stage)       { Travis::API::V3::Models::Stage.create!(number: 1, name: 'test') }
   let(:commit)      { job.commit }
   let(:parsed_body) { JSON.load(body) }
+
+  before do
+    # TODO should this go into the scenario? is it ok to keep it here?
+    job.update_attributes!(stage: stage)
+  end
 
   describe "fetching job on a public repository, no pull access" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
@@ -44,6 +47,12 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "pull_request_title"  => build.pull_request_title,
         "started_at"          => "2010-11-12T12:00:00Z",
         "finished_at"         => "2010-11-12T12:00:10Z"},
+      "stage"                 => {
+        "@type"               => "stage",
+        "@representation"     => "minimal",
+        "id"                  => stage.id,
+        "number"              => 1,
+        "name"                => "test"},
       "queue"                 => job.queue,
       "repository"            => {
         "@type"               => "repository",
@@ -119,6 +128,12 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "pull_request_title"  => build.pull_request_title,
         "started_at"          => "2010-11-12T12:00:00Z",
         "finished_at"         => "2010-11-12T12:00:10Z"},
+      "stage"                 => {
+        "@type"               => "stage",
+        "@representation"     => "minimal",
+        "id"                  => stage.id,
+        "number"              => 1,
+        "name"                => "test"},
       "queue"                 => job.queue,
       "repository"            => {
         "@type"               => "repository",

@@ -17,6 +17,7 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
         'repository_id' => 1,
         'repository_slug' => 'svenfuchs/minimal',
         'build_id' => 1,
+        'stage_id' => 1,
         'commit_id' => 1,
         'number' => '2.1',
         'state' => 'passed',
