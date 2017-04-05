@@ -1,9 +1,12 @@
 module Travis::API::V3
   class Models::Build < Model
     belongs_to :commit
+    belongs_to :pull_request
     belongs_to :request
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
+
+    has_many :stages
 
     has_many :jobs,
       foreign_key: :source_id,

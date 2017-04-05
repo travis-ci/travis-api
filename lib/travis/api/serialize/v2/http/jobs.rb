@@ -27,11 +27,12 @@ module Travis
             private
 
               def job_data(job)
-                {
+                data = {
                   'id' => job.id,
                   'repository_id' => job.repository_id,
                   'repository_slug' => job.repository.slug,
                   'build_id' => job.source_id,
+                  'stage_id' => job.stage_id,
                   'commit_id' => job.commit_id,
                   'number' => job.number,
                   'config' => job.obfuscated_config.stringify_keys,
@@ -41,9 +42,9 @@ module Travis
                   'queue' => job.queue,
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags
-                }.tap do |ret|
-                  ret['log_id'] = job.log_id if include_log_id?
-                end
+                }
+                data['log_id'] = job.log_id if include_log_id?
+                data
               end
 
               def commit_data(commit)

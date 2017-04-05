@@ -12,7 +12,7 @@ module Travis
       private
 
         def preload(requests)
-          requests.includes(:commit)
+          requests.includes(:commit, :pull_request)
         end
 
         def result
