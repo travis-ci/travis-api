@@ -41,6 +41,13 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
         end
       end
 
+      describe "home resource" do
+        let(:resource) { resources.fetch("stage") }
+        specify { expect(resources)              .to include("stage") }
+        specify { expect(resource["@type"])      .to be == "resource" }
+        specify { expect(resource["attributes"]) .to include("name")  }
+      end
+
       describe "branch resource" do
         let(:resource) { resources.fetch("branch") }
         specify { expect(resources)         .to include("branch") }
