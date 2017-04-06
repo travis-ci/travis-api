@@ -66,8 +66,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "unstar"          => false,
             "create_request"  => false,
             "create_cron"     => false,
-            "create_env_var" => false,
-            "create_key_pair"      => false,
+            "create_env_var"  => false,
+            "create_key_pair" => false,
+            "delete_key_pair" => false,
             "admin"           => false
           },
           "id"                => repo.id,
@@ -118,8 +119,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "unstar"        => false,
             "create_request"=> false,
             "create_cron"   => false,
-            "create_env_var" => false,
-            "create_key_pair"    => false,
+            "create_env_var"  => false,
+            "create_key_pair" => false,
+            "delete_key_pair" => false,
             "admin"         => false
           },
           "id"              => repo.id,
