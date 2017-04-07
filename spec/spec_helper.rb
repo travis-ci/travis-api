@@ -92,26 +92,6 @@ RSpec.configure do |c|
       endpoint.superclass.direct_subclasses.delete(endpoint)
     end
   end
-
-  c.after :suite do
-    # DatabaseCleaner is not cleaning up the logs database, so this
-    # avoids leaving records lying around between test runs
-    base = ActiveRecord::Base
-    if Travis.config.logs_api.enabled?
-      base.establish_connection(Travis.config.logs_readonly_database.to_h)
-    else
-      base.establish_connection(Travis.config.logs_database.to_h)
-    end
-    base.connection.tables.each { |table| base.connection.execute("TRUNCATE #{table} CASCADE") }
-  end
-
-  c.before :each, logs_api_enabled: true do
-    Travis.config.logs_api.enabled = true
-  end
-
-  c.before :each, logs_api_enabled: false do
-    Travis.config.logs_api.enabled = false
-  end
 end
 
 require 'timecop'

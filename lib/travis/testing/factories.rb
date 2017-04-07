@@ -29,14 +29,9 @@ FactoryGirl.define do
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }
     source     { Factory(:build) }
-    log        { Factory(:log) }
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
     number     '2.1'
     tags       ""
-  end
-
-  factory :log do
-    content '$ bundle install --pa'
   end
 
   factory :request do

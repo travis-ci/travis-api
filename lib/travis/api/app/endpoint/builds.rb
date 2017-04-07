@@ -69,7 +69,6 @@ class Travis::Api::App
 
     private def include_log_id?
       params[:include_log_id] ||
-        !Travis.config.logs_api.enabled? ||
         request.user_agent.to_s.start_with?('Travis')
     end
   end

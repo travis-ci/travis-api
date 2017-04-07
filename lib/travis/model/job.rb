@@ -60,7 +60,6 @@ class Job < Travis::Model
 
   include Travis::Model::EnvHelpers
 
-  has_one    :log, dependent: :destroy
   has_many   :events, as: :source
   has_many   :annotations, dependent: :destroy
 
@@ -82,7 +81,6 @@ class Job < Travis::Model
   end
 
   before_create do
-    build_log unless Travis.config.logs_api.enabled?
     self.state = :created if self.state.nil?
     self.queue = Queue.for(self).name
   end
@@ -155,26 +153,20 @@ class Job < Travis::Model
   end
 
   def log_content=(content)
-    if Travis.config.logs_api.enabled?
-      return Travis::RemoteLog.write_content_for_job_id(id, content: content)
-    end
-    create_log! unless log
-    log.update_attributes!(content: content, aggregated_at: Time.now)
+    Travis::RemoteLog.write_content_for_job_id(id, content: content)
   end
 
-  if Travis::Config.logs_api_enabled?
-    def log
-      @log ||= Travis::RemoteLog.find_by_job_id(id)
-    end
-
-    attr_writer :log
-
-    def log_id
-      @log_id ||= Travis::RemoteLog.find_id_by_job_id(id)
-    end
-
-    attr_writer :log_id
+  def log
+    @log ||= Travis::RemoteLog.find_by_job_id(id)
   end
+
+  attr_writer :log
+
+  def log_id
+    @log_id ||= Travis::RemoteLog.find_id_by_job_id(id)
+  end
+
+  attr_writer :log_id
 
   # compatibility, we still use result in webhooks
   def result

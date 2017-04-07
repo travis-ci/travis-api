@@ -5,9 +5,12 @@ describe Travis::Services::UpdateJob do
   let(:payload) { WORKER_PAYLOADS["job:test:#{event}"].merge('id' => job.id) }
   let(:build)   { Factory(:build, state: :created, started_at: nil, finished_at: nil) }
   let(:job)     { Factory(:test, source: build, state: :started, started_at: nil, finished_at: nil) }
+  let(:log)     { Travis::RemoteLog.new(job_id: job.id) }
 
   before :each do
     build.matrix.delete_all
+    Travis::RemoteLog.stubs(:find_by_job_id).returns(log)
+    Travis::RemoteLog.stubs(:write_content_for_job_id).returns(log)
   end
 
   describe '#cancel_job_in_worker' do
