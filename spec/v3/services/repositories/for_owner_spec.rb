@@ -45,8 +45,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "unstar"           => false,
           "create_request"   => false,
           "create_cron"      => false,
-          "create_env_var"  => false,
-          "create_key_pair"       => false,
+          "create_env_var"   => false,
+          "create_key_pair"  => false,
+          "delete_key_pair"  => false,
           "admin"            => false
         },
         "id"                 => repo.id,
@@ -127,7 +128,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_request"=> false,
           "create_cron"   => false,
           "create_env_var" => false,
-          "create_key_pair"      => false,
+          "create_key_pair"=> false,
+          "delete_key_pair"=> false,
           "admin"           => false
         },
         "id"              => 1,
@@ -160,7 +162,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_request"=> false,
           "create_cron"   => false,
           "create_env_var"  => false,
-          "create_key_pair"       => false,
+          "create_key_pair" => false,
+          "delete_key_pair"  => false,
           "admin"            => false
         },
         "id"              => repo2.id,

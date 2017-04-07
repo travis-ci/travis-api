@@ -30,6 +30,10 @@ module Travis::API::V3
       write?
     end
 
+    def delete_key_pair?
+      write?
+    end
+
     def create_request?
       write?
     end
