@@ -27,25 +27,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
             repo.update_attributes(settings: JSON.generate(ssh_key: key_pair, foo: 'bar'))
             delete("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{token}" })
           end
-
-          example { expect(last_response.status).to eq 403 }
-          example do
-            expect(JSON.parse(last_response.body)).to eq(
-              '@type' => 'error',
-              'error_message' => 'operation requires write access to key_pair',
-              'error_type' => 'insufficient_access',
-              'permission' => 'write',
-              'key_pair' => {
-                '@type' => 'key_pair',
-                '@href' => "/v3/repo/#{repo.id}/key_pair",
-                '@representation' => 'minimal',
-                'description' => repo.key_pair.description,
-                'public_key' => repo.key_pair.public_key,
-                'fingerprint' => repo.key_pair.fingerprint
-              },
-              'resource_type' => 'key_pair'
-            )
-          end
+          include_examples 'insufficient access to repo', 'delete_key_pair'
         end
 
         context 'authenticated user with correct permissions' do
