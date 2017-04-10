@@ -249,7 +249,7 @@ GEM
       connection_pool (~> 2.2)
     net-http-pipeline (1.0.1)
     netaddr (1.5.1)
-    nokogiri (1.7.0.1)
+    nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
     os (0.9.6)
     pg (0.19.0)
