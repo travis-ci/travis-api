@@ -86,7 +86,7 @@ class Job < Travis::Model
   end
 
   after_commit on: :create do
-    notify(:create)
+    notify(:create) if respond_to?(:notify)
   end
 
   def propagate(name, *args)

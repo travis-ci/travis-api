@@ -10,8 +10,8 @@ module Travis
       end
 
       private def result
-        return Travis::RemoteLog.find_by_id(params[:id]) if params[:id]
-        Travis::RemoteLog.find_by_job_id(params[:job_id])
+        return Travis::RemoteLog.find_by_id(Integer(params[:id])) if params[:id]
+        Travis::RemoteLog.find_by_job_id(Integer(params[:job_id]))
       end
     end
   end

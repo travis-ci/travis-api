@@ -1,27 +1,20 @@
 module Travis::API::V3
-  class Queries::Log < RemoteQuery
+  class Queries::RemoteLog < RemoteQuery
+    def main_type
+      'log'
+    end
 
     def find(job)
       @job = job
-      #check for the log in the Logs DB
       log = Travis::RemoteLog.find_by_job_id(@job.id)
       raise EntityMissing, 'log not found'.freeze if log.nil?
-      #if the log has been archived, go to s3
+      # if the log has been archived, go to s3
       if log.archived?
         content = fetch.first
         raise EntityMissing, 'could not retrieve log'.freeze if content.nil?
         body = content.body.force_encoding('UTF-8') unless content.body.nil?
-        create_log_parts(log, body)
-      #if log has been aggregated, look at log.content
-      elsif log.aggregated_at
-        create_log_parts(log, log.content)
       end
       log
-    end
-
-    def create_log_parts(log, content)
-      return unless log.log_parts.respond_to?(:build)
-      log.log_parts.build([{content: content, number: 0, created_at: log.created_at}])
     end
 
     def delete(user, job)

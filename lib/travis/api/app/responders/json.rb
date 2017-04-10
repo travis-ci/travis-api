@@ -23,7 +23,7 @@ class Travis::Api::App
         end
 
         def accepts_log?
-          return true unless resource.is_a?(Log)
+          return true unless resource.is_a?(Travis::RemoteLog)
 
           chunked = accept_params[:chunked]
           if resource.removed_at

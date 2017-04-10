@@ -1,5 +1,5 @@
 module Travis::API::V3
-  module Renderer::Log
+  module Renderer::RemoteLog
     extend self
 
     def render(log, **options)

@@ -77,9 +77,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       :key  => "jobs/#{s3job.id}/log.txt",
       :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch"
     )
-    stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{s3job.id}?by=job_id").
-      with(headers: { 'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Authorization'=>'token notset', 'User-Agent'=>'Faraday v0.9.2' }).
-      to_return(status: 200, body: json_log_from_api, headers: {})
+    Travis::RemoteLog.stubs(:find_by_job_id).returns(Travis::RemoteLog.new(log_from_api))
   end
   after { Fog::Mock.reset }
 

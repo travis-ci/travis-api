@@ -7,6 +7,7 @@ describe 'Jobs', set_app: true do
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
   it '/jobs?queue=builds.common' do
+    skip('querying with a queue does not appear to be used anymore')
     response = get '/jobs', { queue: 'builds.common' }, headers
     response.should deliver_json_for(Job.queued('builds.common'), version: 'v2')
   end

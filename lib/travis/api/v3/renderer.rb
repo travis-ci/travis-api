@@ -50,7 +50,7 @@ module Travis::API::V3
       when ActiveRecord::Relation then render_value(value.to_a, **options)
       when ActiveRecord::Associations::CollectionProxy then render_value(value.to_a, **options)
       when Travis::Settings::EncryptedValue then value.decrypt
-      when Travis::RemoteLogPart then render_value(value.as_json, **options)
+      when Travis::RemoteLogPart, Travis::RemoteLog then render_value(value.as_json, **options)
       else raise ArgumentError, 'cannot render %p (%p)' % [value.class, value]
       end
     end
