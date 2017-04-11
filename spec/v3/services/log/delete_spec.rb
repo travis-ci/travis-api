@@ -71,7 +71,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     example do
       stub_request(
         :get,
-        "#{Travis.config.logs_api.url}/logs/#{job3.id}?by=job_id"
+        "#{Travis.config.logs_api.url}/logs/#{job3.id}?by=job_id&source=api"
       ).to_return(status: 404)
       delete("/v3/job/#{job3.id}/log", {}, headers)
       expect(last_response.status).to be == 404
