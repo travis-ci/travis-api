@@ -19,7 +19,8 @@
         <% if membership.user %>
           <li class="inline-list member-item">
             <p>
-              <%= image_tag(membership.user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if membership.user %>
+              <!-- TODO: Display a default avatar image if there isn't one defined -->
+              <%= image_tag(membership.user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if membership.user.avatar_url %>
               <%= link_to describe(membership.user), membership.user %>
             </p>
             <p><%= membership.role %></p>
