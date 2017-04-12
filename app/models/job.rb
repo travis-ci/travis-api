@@ -40,5 +40,7 @@ class Job < ApplicationRecord
     else
       started_at - queued_at
     end
+  rescue
+    nil
   end
 end
