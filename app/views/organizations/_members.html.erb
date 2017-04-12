@@ -16,23 +16,25 @@
         <p class="info-label">Trial Builds</p>
       </li>
       <% @memberships.each do |membership| %>
-        <li class="inline-list member-item">
-          <p>
-            <%= image_tag(membership.user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if membership.user.avatar_url %>
-            <%= link_to describe(membership.user), membership.user %>
-          </p>
-          <p><%= membership.role %></p>
-          <p>
-            <% if membership.user.subscription %>
-              <%= link_to format_subscription(membership.user.subscription), membership.user.subscription %>
-            <% else %>
-              none
-            <% end %>
-          </p>
-          <p>
-            <%= check_trial_builds(membership.user) %>
-          </p>
-        </li>
+        <% if membership.user %>
+          <li class="inline-list member-item">
+            <p>
+              <%= image_tag(membership.user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if membership.user %>
+              <%= link_to describe(membership.user), membership.user %>
+            </p>
+            <p><%= membership.role %></p>
+            <p>
+              <% if membership.user.subscription %>
+                <%= link_to format_subscription(membership.user.subscription), membership.user.subscription %>
+              <% else %>
+                none
+              <% end %>
+            </p>
+            <p>
+              <%= check_trial_builds(membership.user) %>
+            </p>
+          </li>
+        <% end %>
       <% end %>
     </ul>
   <% end %>
