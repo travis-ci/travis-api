@@ -33,7 +33,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
               <ID>75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a</ID>
               <DisplayName>mtd@amazon.com</DisplayName>
           </Owner>
-          <body>$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch
+          <body>#{archived_content}
           </body>
       </Contents>
     </ListBucketResult>"
@@ -57,6 +57,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   end
 
   let(:json_log_from_api) { log_from_api.to_json }
+  let(:archived_content) { "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch" }
 
   before do
     Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true)
@@ -68,14 +69,14 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         to_return(status: 200, body: nil, headers: {})
     Fog.mock!
     storage = Fog::Storage.new({
-      :aws_access_key_id => "key",
-      :aws_secret_access_key => "secret",
-      :provider => "AWS"
+      aws_access_key_id: 'key',
+      aws_secret_access_key: 'secret',
+      provider: 'AWS'
     })
-    bucket = storage.directories.create(:key => 'archive.travis-ci.org')
+    bucket = storage.directories.create(key: 'archive.travis-ci.org')
     file = bucket.files.create(
-      :key  => "jobs/#{s3job.id}/log.txt",
-      :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch"
+      key: "jobs/#{s3job.id}/log.txt",
+      body: archived_content
     )
     Travis::RemoteLog.stubs(:find_by_job_id).returns(Travis::RemoteLog.new(log_from_api))
   end
@@ -105,10 +106,10 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             'delete_log' => false
           },
           'id' => log_from_api[:id],
-          'content' => log_from_api[:content],
+          'content' => archived_content,
           'log_parts' => [
             {
-              'content' => 'hello world. this is a really cool log',
+              'content' => archived_content,
               'final' => true,
               'number' => 0
             }
@@ -122,7 +123,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         s3log.attributes.merge!(archived_at: Time.now, archive_verified: true)
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
         expect(last_response.headers).to include('Content-Type' => 'text/plain')
-        expect(body).to eq(log_from_api[:content])
+        expect(body).to eq(archived_content)
       end
     end
 

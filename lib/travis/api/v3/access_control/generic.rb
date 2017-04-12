@@ -172,16 +172,16 @@ module Travis::API::V3
     @@method_for_cache       = Tool::ThreadLocal.new
 
     def permission_class(klass)
-      result = @@permission_class_cache[klass] ||= Permissions[normailze_type(klass), false] || @@unknown_permission
+      result = @@permission_class_cache[klass] ||= Permissions[normalize_type(klass), false] || @@unknown_permission
       result unless result == @@unknown_permission
     end
 
     def method_for(type, method)
       type_cache = @@method_for_cache[type] ||= {}
-      type_cache[method]                    ||= "#{normailze_type(type)}_#{method}"
+      type_cache[method]                    ||= "#{normalize_type(type)}_#{method}"
     end
 
-    def normailze_type(type)
+    def normalize_type(type)
       type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore.to_sym
     end
   end

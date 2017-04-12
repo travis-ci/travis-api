@@ -273,7 +273,7 @@ module Travis
     attribute :id, Integer
     attribute :number, Integer
 
-    def as_json
+    def as_json(**_)
       attributes.slice(*%i(content final number))
     end
   end
