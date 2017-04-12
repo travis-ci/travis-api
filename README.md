@@ -10,14 +10,22 @@ This is where we will document the features and abilities that admin has. Exampl
 Travis Admin (2.0) was build by the Emerald Project team June-November 2016. It falls under Team Sapphire's areas of responsibility.
 
 ## Local Setup
+
+### Install dependencies
+
+```
+bundle install
+```
+
 ### Setup the database for development/test
-Go to [travis-pro-migrations](https://github.com/travis-pro/travis-pro-migrations) and follow the instructions there.
+
+Go to [travis-migrations](https://github.com/travis-ci/travis-migrations) and follow the instructions there.
 
 ### Make a `config/travis.yml`
 
 `Rakefile` defines the task `config[:env, :pro]`, which writes configuration file to `config/travis.yml`.
-This task assumes that a sibling directory `travis-keychain` and `travis-pro-keychain` exist and are
-up to date.
+This task assumes that: a sibling directories `travis-keychain` and `travis-pro-keychain` exist and are
+up to date, and that [trvs](https://githbu.com/travis-pro/trvs) is properly configured and functional.
 
 The `rake` task also writes two `export` commands at the end, which is useful for running the Rails server:
 
@@ -26,6 +34,13 @@ $ rake config["staging","pro"]
 I, [2017-03-20T19:04:57.958573 #89131]  INFO -- : writing to config/travis.yml
 export GITHUB_LOGIN=YOUR_OWN_GITHUB_LOGIN
 export STAGING_DATABASE_URL=`heroku config:get DATABASE_URL -a travis-pro-staging`
+```
+
+`zsh` may have issues with Rake task taking `[]` as a part of an argument. If it does, run with
+`noglob` precommand modifier:
+
+```
+$ noglob rake config["staging","pro"]
 ```
 
 #### Manually generating `config/travis.yml`
@@ -38,62 +53,34 @@ First, fetch
 
 Manually add "development:" as a parent, nest the updated config info under that, and remove the config for redis (so that we use our local redis instance). Also make sure to remove travis_config=--- if it is at the top of the file.
 
-or use this:
+##### Disabling OTP (One-Time Password)
 
-```
-development:
-  admins:
-    - lisbethmarianne
-    - sinthetix
-  api_endpoint:
-    'https://api-staging.travis-ci.com'
-  topaz:
-    url: https://topaz-staging.travis-ci.com
-  redis:
-    url: redis://localhost:6379
-  billing_endpoint:
-   'https://billing-staging.travis-ci.com'
-  become_endpoint:
-   'https://travis:Goo7shoo@become-staging.travis-ci.com'
-  encryption:
-    key: [add key]
-  service_hook_url: https://notify.staging.travis-ci.com
+You can disable one time password in development by adding `disable_otp: true` to your `config/travis.yml`.
 
-test:
-  admins:
-    - travisbot
-  api_endpoint:
-    'https://api-fake.travis-ci.com'
-  redis:
-    url: redis://localhost:6380
-  topaz:
-    url: https://topaz-fake.travis-ci.com
-  billing_endpoint:
-    'https://billing-fake.travis-ci.com'
-  encryption:
-    key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  service_hook_url: https://notify.fake.travis-ci.com
+### Use Staging database in development
+
+After generating `config/travis.yml`, export two environment variables:
+
+```sh-session
+export GITHUB_LOGIN=YOUR_OWN_GITHUB_LOGIN # replace YOUR_OWN_GITHUB_LOGIN with the real GitHub user name
+export STAGING_DATABASE_URL=`heroku config:get DATABASE_URL -a travis-pro-staging`
 ```
 
-You need to make sure the correct instance(s) of redis are running locally `redis-server --port 6380`.
+Then start the rails server
+1. `rails s`
+2. Go to http://localhost:3000
 
-You can disable one time passwort in development by adding `disable_otp: true` to your config/travis.yml.
+### Running tests locally
 
-### Use Staging database in development:
+The `test` environment needs to be defined in `config/travis.yml`.
+The easiest way to achieve this is to concatenate `config/travis.example.yml` to
+`config/travis.yml`:
 
-1. create a `.env` file in the root directory of travis-admin-v2
-2. add `export GITHUB_LOGIN=[your case-sensitive github login]` to this file
-3. find the current postgres_url for travis-staging database: `heroku config:get DATABASE_URL -a travis-pro-staging`
-4. add `export STAGING_DATABASE_URL=[postgres_url]` to the `.env` file
-5. run `source .env`
-6. IN THE SAME SHELL run the server: `rails s`
-7. Go to <http://localhost:3000>
+```sh-session
+$ cat config/travis.example.yml >> config/travis.yml
+```
 
-### Run tests:
-
-1. open a new shell (don't run `source .env`!)
-2. run `bundle exec rspec`
-(make sure you have your test redis instance running)
+Run `RAILS_ENV=test bundle exec rake db:drop db:create db:structure:load spec`
 
 ## How to Deploy
 
