@@ -14,6 +14,10 @@ module Travis::API::V3
     serialize :config
     serialize :debug_options
 
+    def state
+      super || 'created'
+    end
+
     if Travis::Config.logs_api_enabled?
       def log
         @log ||= Travis::RemoteLog.find_by_job_id(id)

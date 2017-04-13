@@ -169,6 +169,10 @@ class Build < Travis::Model
     end
   end
 
+  def state
+    super || 'created'
+  end
+
   # AR 3.2 does not handle pg arrays and the plugins supporting them
   # do not work well with jdbc drivers
   # TODO: remove this once we're on >= 4.0
