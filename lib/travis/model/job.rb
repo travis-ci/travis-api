@@ -101,6 +101,10 @@ class Job < Travis::Model
     true
   end
 
+  def state
+    super || 'created'
+  end
+
   def duration
     started_at && finished_at ? finished_at - started_at : nil
   end

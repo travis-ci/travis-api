@@ -25,6 +25,10 @@ module Travis::API::V3
       primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
+    def state
+      super || 'created'
+    end
+
     def branch_name
       read_attribute(:branch)
     end

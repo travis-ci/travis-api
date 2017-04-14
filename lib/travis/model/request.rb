@@ -51,11 +51,6 @@ class Request < Travis::Model
     read_attribute(:event_type) || 'push'
   end
 
-  def payload
-    puts "[deprectated] Reading request.payload. Called from #{caller.reject { |line| line.include?('request.rb') }.first}"
-    super
-  end
-
   def ref
     commit.ref
   end
