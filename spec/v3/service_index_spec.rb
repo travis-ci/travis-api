@@ -30,6 +30,24 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
         end
       end
 
+      describe "home resource" do
+        let(:resource) { resources.fetch("home") }
+        specify { expect(resources)         .to include("home")   }
+        specify { expect(resource["@type"]) .to be == "resource"  }
+
+        describe "find action" do
+          let(:action) { resource.fetch("actions").fetch("find") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>path) }
+        end
+      end
+
+      describe "home resource" do
+        let(:resource) { resources.fetch("stage") }
+        specify { expect(resources)              .to include("stage") }
+        specify { expect(resource["@type"])      .to be == "resource" }
+        specify { expect(resource["attributes"]) .to include("name")  }
+      end
+
       describe "branch resource" do
         let(:resource) { resources.fetch("branch") }
         specify { expect(resources)         .to include("branch") }
@@ -134,8 +152,8 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
       end
 
       describe "user_settings resource" do
-        let(:resource) { resources.fetch("user_settings") }
-        specify { expect(resources)         .to include("user_settings") }
+        let(:resource) { resources.fetch("settings") }
+        specify { expect(resources)         .to include("settings") }
         specify { expect(resource["@type"]) .to be == "resource"  }
 
         describe "find action" do
@@ -145,13 +163,13 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
       end
 
       describe "user_setting resource" do
-        let(:resource) { resources.fetch("user_setting") }
-        specify { expect(resources)         .to include("user_setting") }
+        let(:resource) { resources.fetch("setting") }
+        specify { expect(resources)         .to include("setting") }
         specify { expect(resource["@type"]) .to be == "resource"  }
 
         describe "find action" do
           let(:action) { resource.fetch("actions").fetch("find") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/setting/{user_setting.name}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/setting/{setting.name}{?include}") }
         end
 
         describe "update action" do
@@ -160,8 +178,8 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
             expect(action).to include(
               "@type"=>"template",
               "request_method"=>"PATCH",
-              "uri_template"=>"#{path}repo/{repository.id}/setting/{user_setting.name}",
-              "accepted_params" => ["user_setting.value"]
+              "uri_template"=>"#{path}repo/{repository.id}/setting/{setting.name}",
+              "accepted_params" => ["setting.value"]
             )
           end
         end
@@ -177,7 +195,7 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
           specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}build/{build.id}{?include}") }
         end
       end
-      
+
       describe "key pair resource" do
         let(:resource) { resources.fetch("key_pair") }
         specify { expect(resources)         .to include("key_pair") }
@@ -200,7 +218,7 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
           end
         end
       end
-      
+
       describe "key pair (generated) resource" do
         let(:resource) { resources.fetch("key_pair_generated") }
         specify { expect(resources)         .to include("key_pair_generated") }

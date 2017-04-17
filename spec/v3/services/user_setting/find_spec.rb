@@ -49,7 +49,7 @@ describe Travis::API::V3::Services::UserSetting::Find, set_app: true do
     example { expect(last_response.status).to eq(200) }
     example do
       expect(JSON.load(body)).to eq(
-        '@type' => 'user_setting',
+        '@type' => 'setting',
         '@representation' => 'standard',
         '@permissions' => { 'read' => true, 'write' => false },
         '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",
@@ -68,7 +68,7 @@ describe Travis::API::V3::Services::UserSetting::Find, set_app: true do
     example { expect(last_response.status).to eq(200) }
     example do
       expect(JSON.load(body)).to eq(
-        '@type' => 'user_setting',
+        '@type' => 'setting',
         '@representation' => 'standard',
         '@permissions' => { 'read' => true, 'write' => false },
         '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",

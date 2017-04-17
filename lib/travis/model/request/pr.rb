@@ -1,5 +1,5 @@
 class Request
-  class PullRequest
+  class Pr
     Try = Struct.new(:value) do
       def method_missing(*args, &block)
         Try.new(value.nil? ? nil : value[*args])
@@ -22,10 +22,6 @@ class Request
 
     def head_repo
       payload.head.repo.full_name.value
-    end
-
-    def base_repo
-      payload.base.repo.full_name.value
     end
 
     def head_branch

@@ -24,7 +24,7 @@ FactoryGirl.define do
     compare_url 'https://github.com/svenfuchs/minimal/compare/master...develop'
   end
 
-  factory :test, :class => 'Job::Test' do
+  factory :test, :class => 'Job::Test', aliases: [:job] do
     owner      { User.first || Factory(:user) }
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }
@@ -33,6 +33,7 @@ FactoryGirl.define do
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
     number     '2.1'
     tags       ""
+    state      :created
   end
 
   factory :log do

@@ -1,7 +1,5 @@
-require 'travis/api/v3/renderer/model_renderer'
-
 module Travis::API::V3
-  class Renderer::Repository < Renderer::ModelRenderer
+  class Renderer::Repository < ModelRenderer
     representation(:minimal,  :id, :name, :slug)
     representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred)
     representation(:experimental, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build)

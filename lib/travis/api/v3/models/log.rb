@@ -1,7 +1,5 @@
 module Travis::API::V3
-  class Models::Log < Model
-    establish_connection(Travis.config.logs_database.to_h)
-
+  class Models::Log < LogsModel
     belongs_to :job
     belongs_to :removed_by, class_name: 'User', foreign_key: :removed_by
     has_many  :log_parts, dependent: :destroy, order: 'number ASC'
@@ -18,6 +16,10 @@ module Travis::API::V3
       )
       log_parts.destroy_all
       log_parts.create(content: message, number: 1, final: true)
+    end
+
+    def archived?
+      archived_at && archive_verified?
     end
   end
 end

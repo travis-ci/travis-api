@@ -4,14 +4,14 @@ module Travis::API::V3
     def find(job)
       @job = job
       #check for the log in the Logs DB
-      log = Models::Log.find_by_job_id(@job.id)
+      log = logs_model.find_by_job_id(@job.id)
       raise EntityMissing, 'log not found'.freeze if log.nil?
       #if the log has been archived, go to s3
-      if log.archived_at
-        content = fetch.get(prefix).try(:body)
+      if log.archived?
+        content = fetch.first
         raise EntityMissing, 'could not retrieve log'.freeze if content.nil?
-        content = content.force_encoding('UTF-8')
-        create_log_parts(log, content)
+        body = content.body.force_encoding('UTF-8') unless content.body.nil?
+        create_log_parts(log, body)
       #if log has been aggregated, look at log.content
       elsif log.aggregated_at
         create_log_parts(log, log.content)
@@ -20,17 +20,21 @@ module Travis::API::V3
     end
 
     def create_log_parts(log, content)
+      return unless log.log_parts.respond_to?(:build)
       log.log_parts.build([{content: content, number: 0, created_at: log.created_at}])
     end
 
     def delete(user, job)
       @job = job
-      log = Models::Log.find_by_job_id(@job.id)
+      log = logs_model.find_by_job_id(@job.id)
       raise EntityMissing, 'log not found'.freeze if log.nil?
       raise LogAlreadyRemoved if log.removed_at || log.removed_by
       raise JobUnfinished unless @job.finished_at?
 
-      remove if log.archived_at
+      if log.archived_at
+        archived_log = fetch
+        remove(archived_log)
+      end
 
       log.clear!(user)
       log
@@ -43,7 +47,7 @@ module Travis::API::V3
     end
 
     def s3_config
-      conf = (config[:log_options][:s3] || {}).merge(bucket_name: bucket_name)
+      super.merge(bucket_name: bucket_name)
     end
 
     def bucket_name
@@ -52,6 +56,11 @@ module Travis::API::V3
 
     def hostname(name)
       "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
+    end
+
+    def logs_model
+      return Travis::RemoteLog if Travis.config.logs_api.enabled?
+      Travis::API::V3::Models::Log
     end
   end
 end

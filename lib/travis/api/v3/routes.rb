@@ -3,11 +3,6 @@ module Travis::API::V3
     require 'travis/api/v3/routes/dsl'
     extend DSL
 
-    resource :accounts do
-      route '/accounts'
-      get :for_current_user
-    end
-
     resource :broadcasts do
       route '/broadcasts'
       get :for_current_user
@@ -136,13 +131,13 @@ module Travis::API::V3
         post :create
       end
 
-      resource :user_settings do
+      resource :user_settings, as: :settings do
         route '/settings'
         get   :for_repository
       end
 
-      resource :user_setting do
-        route '/setting/{user_setting.name}'
+      resource :user_setting, as: :setting do
+        route '/setting/{setting.name}'
         get   :find
         patch :update
       end

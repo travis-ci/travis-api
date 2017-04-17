@@ -1,8 +1,16 @@
 describe Travis::API::V3::Services::Build::Find, set_app: true do
-  let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:build) { repo.builds.first }
-  let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
+  let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:build)  { repo.builds.first }
+  let(:stages) { build.stages }
+  let(:jobs)   { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
+
+  before do
+    test   = build.stages.create(number: 1, name: 'test')
+    deploy = build.stages.create(number: 2, name: 'deploy')
+    build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
+    build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+  end
 
   describe "fetching build on a public repository " do
     before     { get("/v3/build/#{build.id}")   }
@@ -63,6 +71,17 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
         "@href"             => "/v3/job/#{jobs[3].id}",
         "@representation"   => "minimal",
         "id"                => jobs[3].id}],
+      "stages"              => [{
+         "@type"            => "stage",
+         "@representation"  => "minimal",
+         "id"               => stages[0].id,
+         "number"           => 1,
+         "name"             => "test"},
+        {"@type"            => "stage",
+         "@representation" => "minimal",
+         "id"               => stages[1].id,
+         "number"          => 2,
+         "name"            => "deploy"}],
       "repository"          => {
         "@type"             => "repository",
         "@href"             => "/v3/repo/#{repo.id}",
@@ -130,6 +149,17 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
         "@href"             => "/v3/job/#{jobs[3].id}",
         "@representation"   => "minimal",
         "id"                => jobs[3].id}],
+      "stages"              => [{
+         "@type"            => "stage",
+         "@representation"  => "minimal",
+         "id"               => stages[0].id,
+         "number"           => 1,
+         "name"             => "test"},
+        {"@type"            => "stage",
+         "@representation" => "minimal",
+         "id"               => stages[1].id,
+         "number"          => 2,
+         "name"            => "deploy"}],
       "repository"          => {
         "@type"             => "repository",
         "@href"             => "/v3/repo/#{repo.id}",

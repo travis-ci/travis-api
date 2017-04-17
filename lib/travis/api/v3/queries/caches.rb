@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Caches < RemoteQuery
-    params :name, :branch
+    params :branch, :match
 
     def find(repo)
       @repo = repo
@@ -9,28 +9,25 @@ module Travis::API::V3
     end
 
     def delete(repo)
-      @repo = repo
-      destroyed_caches = remove
-      filter Models::Cache.factory(destroyed_caches, repo)
+      caches = find(repo)
+      remove(caches)
     end
 
     def filter(list)
-      return list unless name
-      list.select{|c| c.name.include? name}
+      return list unless match
+      list.select{|c| c.name.include? match}
+    end
+
+    def main_type
+      "cache"
     end
 
     private
 
     def prefix
-      "#{@repo.github_id.to_s}/#{branch}"
-    end
-
-    def s3_config
-      config[:cache_options][:s3] || {}
-    end
-
-    def gcs_config
-      config[:cache_options][:gcs] || {}
+      prefix = "#{@repo.github_id}/#{branch}"
+      prefix << '/' unless prefix.last == '/'
+      prefix
     end
   end
 end

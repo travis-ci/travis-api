@@ -22,6 +22,7 @@ module Travis
     require 'travis/model/membership'
     require 'travis/model/organization'
     require 'travis/model/permission'
+    require 'travis/model/pull_request'
     require 'travis/model/repository'
     require 'travis/model/request'
     require 'travis/model/ssl_key'

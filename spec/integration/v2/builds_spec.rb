@@ -8,12 +8,12 @@ describe 'Builds', set_app: true do
     response.should deliver_json_for(repo.builds.order('id DESC'), version: 'v2')
   end
 
-  it 'GET /builds/1' do
+  it 'GET /builds/1', logs_api_enabled: true do
     response = get "/builds/#{build.id}", {}, headers
     response.should deliver_json_for(build, version: 'v2')
   end
 
-  it 'GET /builds/1?repository_id=1' do
+  it 'GET /builds/1?repository_id=1', logs_api_enabled: true do
     response = get "/builds/#{build.id}", { repository_id: repo.id }, headers
     response.should deliver_json_for(build, version: 'v2')
   end
