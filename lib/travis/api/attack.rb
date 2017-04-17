@@ -4,25 +4,13 @@ require 'metriks'
 
 if ENV['RACK_ATTACK_METRICS_ENABLED'] == 'true' || ENV['RACK_ATTACK_METRICS_ENABLED_FOR_DYNOS'] && ENV['RACK_ATTACK_METRICS_ENABLED_FOR_DYNOS'].split(' ').include?(ENV['DYNO'])
   ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, req|
-    if req.env['rack.attack.match_type'] == 'safelist'
-      next
-    end
-
-    metric_name_prefix = [
+    metric_name = [
       'api.rate_limiting',
       req.env['rack.attack.match_type'],
       req.env['rack.attack.matched'],
     ].join('.')
 
-    metric_names = [
-      metric_name_prefix,
-      # metric_name_prefix + '.' + req.ip.gsub('.', '_').gsub('::', '__'),
-      metric_name_prefix + '.' + req.request_method.downcase + '.' + req.path.downcase.gsub(/^\//, '').gsub('/', '_'),
-    ]
-
-    metric_names.each do |metric|
-      ::Metriks.meter(metric).mark
-    end
+    ::Metriks.meter(metric_name).mark
   end
 end
 
