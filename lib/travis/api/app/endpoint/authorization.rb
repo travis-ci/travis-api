@@ -244,6 +244,7 @@ class Travis::Api::App
 
             ActiveRecord::Base.transaction do
               if user
+                ensure_token_is_available
                 rename_repos_owner(user.login, info['login'])
                 user.update_attributes info
               else
@@ -260,6 +261,12 @@ class Travis::Api::App
             unless retried
               retried = true
               retry
+            end
+          end
+
+          def ensure_token_is_available
+            unless user.tokens.first
+              user.create_a_token
             end
           end
         end
