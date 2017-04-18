@@ -9,5 +9,6 @@ module Travis::API::V3
     def default_branch
       name == repository.default_branch_name
     end
+
   end
 end
