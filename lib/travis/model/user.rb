@@ -150,6 +150,10 @@ class User < Travis::Model
     github_oauth_token ? super.gsub(github_oauth_token, '[REDACTED]') : super
   end
 
+  def create_a_token
+    self.tokens.create!
+  end
+
   protected
 
     def track_previous_changes
@@ -158,9 +162,5 @@ class User < Travis::Model
 
     def set_as_recent
       @recently_signed_up = true
-    end
-
-    def create_a_token
-      self.tokens.create!
     end
 end
