@@ -4,12 +4,15 @@ module Travis::API::V3
     representation(:standard, :name, :repository, :default_branch, :exists_on_github, :last_build)
 
     def render(representation)
-      super unless include?(:recent_builds)
-      representation(:standard, :name, :repository, :default_branch, :exists_on_github, :recent_builds)
+      super 
     end
 
     def recent_builds
-      model.builds.first(10)
+      return model.builds.first(10) if include_recent_builds?
+    end
+
+    def include_recent_builds?
+      return true if include?'branch.recent_builds'.freeze
     end
   end
 end
