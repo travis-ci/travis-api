@@ -1,6 +1,7 @@
 describe Travis::API::V3::Services::Branch::Find, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
+  let(:recent_builds) { repo.builds.first(10) }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   before { repo.default_branch.save! }
 
@@ -68,14 +69,7 @@ describe Travis::API::V3::Services::Branch::Find, set_app: true do
         "pull_request_title" => build.pull_request_title,
         "started_at"     => "2010-11-12T13:00:00Z",
         "finished_at"    => nil },
-      "recent_builds"    => [{
-          "@type"=>"build",
-          "@representation"=>"standard"
-            },
-            {
-          "@type"=>"build",
-          "@representation"=>"standard"
-            }]
+      "recent_builds"    => recent_builds
             }}
   end
 end
