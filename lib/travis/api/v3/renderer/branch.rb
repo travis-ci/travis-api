@@ -9,7 +9,7 @@ module Travis::API::V3
     end
 
     def include_recent_builds?
-      return true if include?'branch.recent_builds'.freeze
+      return true if include? 'branch.recent_builds'.freeze
     end
   end
 end
