@@ -98,7 +98,7 @@ module Travis
               end
 
               def last_build_on_default_branch_id(repository)
-                default_branch = Branch.where(repository_id: repository.id, name: repository.default_branch).first
+                default_branch = Branch.where(repository_id: repository.id, name: repository.default_branch).order('name ASC').first
 
                 if default_branch
                   default_branch.last_build_id
