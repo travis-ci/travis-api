@@ -1,7 +1,7 @@
 describe Travis::API::V3::Services::Branch::Find, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
-  let(:recent_builds) { repo.builds.first(10) }
+  let(:recent_builds) { repo.builds.first.branch.builds.first(10) }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   before { repo.default_branch.save! }
 
