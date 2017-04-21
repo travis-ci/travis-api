@@ -26,15 +26,15 @@ module Travis::API::V3
       @representations ||= superclass.representations.dup
     end
 
-    @experimental_representations = []
-    def self.experimental_representations(*representations)
-      @experimental_representations ||= superclass.experimental_representations.dup
+    @hidden_representations = []
+    def self.hidden_representations(*representations)
+      @hidden_representations ||= superclass.hidden_representations.dup
 
       if representations.first
-        @experimental_representations.push(*representations)
+        @hidden_representations.push(*representations)
       end
 
-      @experimental_representations
+      @hidden_representations
     end
 
     @available_attributes = Set.new
