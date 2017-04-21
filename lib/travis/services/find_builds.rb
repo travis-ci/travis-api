@@ -23,16 +23,29 @@ module Travis
           scope(:build).where(:id => params[:ids])
         end
 
+        def get_recent_builds_for_repo
+          get_builds_for(repo.builds)
+        end
+
+        def get_archived_builds_for_repo
+          get_builds_for(repo.archived_builds)
+        end
+
+        def get_builds_for(builds)
+          builds = builds.by_event_type(params[:event_type]) if params[:event_type]
+          if params[:number]
+            builds.where(:number => params[:number].to_s)
+          else
+            builds.older_than(params[:after_number])
+          end
+        end
+
         def by_params
           if repo
             # TODO :after_number seems like a bizarre api why not just pass an id? pagination style?
-            builds = repo.builds
-            builds = builds.by_event_type(params[:event_type]) if params[:event_type]
-            if params[:number]
-              builds.where(:number => params[:number].to_s)
-            else
-              builds.older_than(params[:after_number])
-            end
+            builds = get_recent_builds_for_repo
+            return builds unless builds.empty?
+            get_archived_builds_for_repo
           elsif params[:running]
             scope(:build).running.limit(25)
           elsif params.nil? || params == {}
