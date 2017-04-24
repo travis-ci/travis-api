@@ -25,7 +25,7 @@ fi
 
 if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
   export PGBOUNCER_PREPARED_STATEMENTS=false
-  bin/start-pgbouncer-stunnel script/server
+  exec bin/start-pgbouncer-stunnel script/server
 else
-  script/server
+  exec script/server
 fi
