@@ -4,6 +4,8 @@ module Travis::API::V3
     representation(:standard, *representations[:minimal], :repository, :branch, :commit, :jobs, :stages)
     representation(:active, *representations[:standard])
 
+    hidden_representations(:active)
+
     def jobs
       return model.active_jobs if include_full_jobs? && representation?(:active)
       return model.jobs if include_full_jobs?

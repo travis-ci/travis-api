@@ -4,7 +4,7 @@ module Travis::API::V3
     representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred)
     representation(:experimental, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build)
 
-    experimental_representations(:experimental)
+    hidden_representations(:experimental)
 
     def active
       !!model.active
