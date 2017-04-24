@@ -91,8 +91,8 @@ module Travis::API::V3
 
           if renderer.respond_to? :representations
             representations = renderer.representations
-            if renderer.respond_to? :experimental_representations
-              representations = representations.reject { |k| renderer.experimental_representations.include? k }
+            if renderer.respond_to? :hidden_representations
+              representations = representations.reject { |k| renderer.hidden_representations.include? k }
             end
             data[:representations] = representations
           end

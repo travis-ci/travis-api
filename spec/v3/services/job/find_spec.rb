@@ -52,7 +52,10 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => stage.id,
         "number"              => 1,
-        "name"                => "test"},
+        "name"                => "test",
+        "state"               => stage.state,
+        "started_at"          => stage.started_at,
+        "finished_at"         => stage.finished_at},
       "queue"                 => job.queue,
       "repository"            => {
         "@type"               => "repository",
@@ -133,7 +136,10 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => stage.id,
         "number"              => 1,
-        "name"                => "test"},
+        "name"                => "test",
+        "state"               => stage.state,
+        "started_at"          => stage.started_at,
+        "finished_at"         => stage.finished_at},
       "queue"                 => job.queue,
       "repository"            => {
         "@type"               => "repository",
