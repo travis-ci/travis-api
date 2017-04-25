@@ -15,7 +15,7 @@ module Travis::API::V3
       location = caller_locations.first
       fields.each do |field|
         class_eval "def #{field}; @model.#{field}; end", location.path, location.lineno unless method_defined?(field)
-        available_attributes << field.to_s unless field == 'stage'
+        available_attributes << field.to_s
       end
       representations[name] ||= []
       representations[name]  += fields
