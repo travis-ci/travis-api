@@ -3,5 +3,7 @@ module Travis::API::V3
     representation(:minimal, :id, :number, :name, :state, :started_at, :finished_at)
     representation(:standard, *representations[:minimal], :jobs)
     representation(:active, *representations[:standard])
+
+    hidden_representations(:active)
   end
 end

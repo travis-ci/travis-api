@@ -42,7 +42,7 @@ module Travis::API::V3
           Routes::Resource.new(:broadcast), # dummy as there are only broadcasts routes right now
           Routes::Resource.new(:commit),    # dummy as commits can only be embedded
           Routes::Resource.new(:request),   # dummy as there are only requests routes right now
-          Routes::Resource.new(:stage),     # dummy as there is no stage endpoint at the moment
+          # Routes::Resource.new(:stage),     # dummy as there is no stage endpoint at the moment
           Routes::Resource.new(:error),
           Routes::Resource.new(:home,     attributes: [:config, :errors, :resources], actions: home_actions),
           Routes::Resource.new(:resource, attributes: [:actions, :attributes, :representations, :access_rights]),
@@ -91,8 +91,8 @@ module Travis::API::V3
 
           if renderer.respond_to? :representations
             representations = renderer.representations
-            if renderer.respond_to? :experimental_representations
-              representations = representations.reject { |k| renderer.experimental_representations.include? k }
+            if renderer.respond_to? :hidden_representations
+              representations = representations.reject { |k| renderer.hidden_representations.include? k }
             end
             data[:representations] = representations
           end
