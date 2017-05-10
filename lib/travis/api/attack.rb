@@ -2,16 +2,14 @@ require 'rack/attack'
 require 'netaddr'
 require 'metriks'
 
-if ENV['RACK_ATTACK_METRICS_ENABLED'] == 'true' || ENV['RACK_ATTACK_METRICS_ENABLED_FOR_DYNOS'] && ENV['RACK_ATTACK_METRICS_ENABLED_FOR_DYNOS'].split(' ').include?(ENV['DYNO'])
-  ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, req|
-    metric_name = [
-      'api.rate_limiting',
-      req.env['rack.attack.match_type'],
-      req.env['rack.attack.matched'],
-    ].join('.')
+ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, req|
+  metric_name = [
+    'api.rate_limiting',
+    req.env['rack.attack.match_type'],
+    req.env['rack.attack.matched'],
+  ].join('.')
 
-    ::Metriks.meter(metric_name).mark
-  end
+  ::Metriks.meter(metric_name).mark
 end
 
 class Rack::Attack
