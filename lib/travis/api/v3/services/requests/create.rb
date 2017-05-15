@@ -4,8 +4,8 @@ module Travis::API::V3
     LIMIT = 10
     private_constant :TIME_FRAME, :LIMIT
 
-    result_type :request
     params "request", "user", :config, :message, :branch, :token, prefix: :request
+    result_type :request
 
     def run
       repository = check_login_and_find(:repository)
