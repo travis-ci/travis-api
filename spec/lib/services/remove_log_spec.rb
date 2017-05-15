@@ -83,7 +83,7 @@ describe Travis::Services::RemoveLog do
       user.stubs(:permission?).with(:push, anything).returns true
       stub_request(
         :get,
-        "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id"
+        "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api"
       ).to_return(
         status: 200,
         body: JSON.dump(
@@ -93,7 +93,7 @@ describe Travis::Services::RemoveLog do
       )
       stub_request(
         :put,
-        "#{Travis.config.logs_api.url}/logs/#{job.id}?removed_by=#{user.id}"
+        "#{Travis.config.logs_api.url}/logs/#{job.id}?removed_by=#{user.id}&source=api"
       ).with(
         body: /Log removed by #{user.name}/
       ).to_return(

@@ -177,6 +177,7 @@ module Travis
       def find_id_by_job_id(job_id)
         resp = conn.get do |req|
           req.url "/logs/#{job_id}/id"
+          req.params['source'] = 'api'
         end
         return nil unless resp.success?
         JSON.parse(resp.body).fetch('id')
@@ -201,6 +202,7 @@ module Travis
       def write_content_for_job_id(job_id, content: '', removed_by: nil)
         resp = conn.put do |req|
           req.url "/logs/#{job_id}"
+          req.params['source'] = 'api'
           req.params['removed_by'] = removed_by unless removed_by.nil?
           req.headers['Content-Type'] = 'application/octet-stream'
           req.body = content
@@ -214,6 +216,7 @@ module Travis
       private def find_by(by, id)
         resp = conn.get do |req|
           req.url "/logs/#{id}", by: by
+          req.params['source'] = 'api'
         end
         return nil unless resp.success?
         RemoteLog.new(JSON.parse(resp.body))
