@@ -5,7 +5,7 @@ module Travis::API::V3
     private_constant :TIME_FRAME, :LIMIT
 
     result_type :request
-    params "request", "user", :config, :message, :branch, :token
+    params "request", "user", :config, :message, :branch, :token, prefix: :request
 
     def run
       repository = check_login_and_find(:repository)
