@@ -1,10 +1,6 @@
 describe Job::Test do
   let(:job) { Factory(:test) }
 
-  before :each do
-    Travis::Event.stubs(:dispatch)
-  end
-
   it 'is cancelable if the job has not finished yet' do
     job = Factory(:test, state: :created)
     job.should be_cancelable

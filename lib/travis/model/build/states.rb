@@ -16,7 +16,7 @@ class Build
   #    attributes to its repository and notify event listeners.
   module States
     extend ActiveSupport::Concern
-    include Denormalize, Travis::Event
+    include Denormalize
 
     included do
       include SimpleStates
