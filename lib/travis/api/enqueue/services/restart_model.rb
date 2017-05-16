@@ -48,7 +48,7 @@ module Travis
         private
 
           def permission?
-            current_user.permission?(required_role, repository_id: target.repository_id)
+            current_user && current_user.permission?(required_role, repository_id: target.repository_id)
           end
 
           def resetable?
