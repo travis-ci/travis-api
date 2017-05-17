@@ -36,45 +36,7 @@ describe Travis::Services::RemoveLog do
     end
   end
 
-  context 'when a job is found', logs_api_enabled: false do
-    before do
-      find_by_id = stub
-      find_by_id.stubs(:find_by_id).returns job
-      job.stubs(:finished?).returns true
-      service.stubs(:scope).returns find_by_id
-      user.stubs(:permission?).with(:push, anything).returns true
-    end
-
-    it 'runs successfully' do
-      result = service.run
-      result.removed_by.should == user
-      result.removed_at.should be_truthy
-      result.should be_truthy
-    end
-
-    it "updates logs with desired information" do
-      service.run
-      service.log.content.should =~ Regexp.new(user.name)
-      service.log.content.should =~ Regexp.new(params[:reason])
-    end
-
-    it "uses a log part for storing the content" do
-      service.run
-      service.log.parts.first.content.should =~ Regexp.new(user.name)
-      service.log.parts.first.content.should =~ Regexp.new(params[:reason])
-    end
-
-    context 'when log is already removed' do
-      it 'raises LogAlreadyRemoved error' do
-        service.run
-        lambda {
-          service.run
-        }.should raise_error Travis::LogAlreadyRemoved
-      end
-    end
-  end
-
-  context 'when a job is found', logs_api_enabled: true do
+  context 'when a job is found' do
     before do
       find_by_id = stub
       find_by_id.stubs(:find_by_id).returns job
@@ -83,7 +45,7 @@ describe Travis::Services::RemoveLog do
       user.stubs(:permission?).with(:push, anything).returns true
       stub_request(
         :get,
-        "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id"
+        "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api"
       ).to_return(
         status: 200,
         body: JSON.dump(
@@ -93,7 +55,7 @@ describe Travis::Services::RemoveLog do
       )
       stub_request(
         :put,
-        "#{Travis.config.logs_api.url}/logs/#{job.id}?removed_by=#{user.id}"
+        "#{Travis.config.logs_api.url}/logs/#{job.id}?removed_by=#{user.id}&source=api"
       ).with(
         body: /Log removed by #{user.name}/
       ).to_return(

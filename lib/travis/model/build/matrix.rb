@@ -55,8 +55,7 @@ class Build
         attributes.merge!(
           owner: owner,
           number: "#{number}.#{ix + 1}",
-          config: row,
-          log: Log.new
+          config: row
         )
         matrix.build(attributes)
       end

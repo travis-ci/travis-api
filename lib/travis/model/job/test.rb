@@ -28,7 +28,6 @@ class Job
     end
 
     def receive(data = {})
-      log.update_attributes!(content: '', removed_at: nil, removed_by: nil) # TODO this should be in a restart method, right?
       data = data.symbolize_keys.slice(:received_at, :worker)
       data.each { |key, value| send(:"#{key}=", value) }
     end
@@ -47,11 +46,7 @@ class Job
       self.state = :created
       attrs = %w(started_at queued_at finished_at worker)
       attrs.each { |attr| write_attribute(attr, nil) }
-      if log
-        log.clear!
-      else
-        build_log
-      end
+      log.clear! if log
       annotations.destroy_all
     end
 

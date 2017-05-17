@@ -5,7 +5,6 @@ module Travis::API::V3
 
     self.inheritance_column = :_type_disabled
 
-    has_one    :log, dependent: :destroy
     belongs_to :repository
     belongs_to :commit
     belongs_to :build, autosave: true, foreign_key: 'source_id'
@@ -14,14 +13,12 @@ module Travis::API::V3
     serialize :config
     serialize :debug_options
 
+    def log
+      @log ||= Travis::RemoteLog.find_by_job_id(id)
+    end
+    
     def state
       super || 'created'
-    end
-
-    if Travis::Config.logs_api_enabled?
-      def log
-        @log ||= Travis::RemoteLog.find_by_job_id(id)
-      end
     end
   end
 end

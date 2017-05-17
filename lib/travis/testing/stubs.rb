@@ -210,7 +210,7 @@ module Travis
 
       def stub_log(attributes = {})
         Stubs.stub 'log', attributes.reverse_merge(
-          class: Stubs.stub('class', name: 'Log'),
+          class: Stubs.stub('class', name: 'Travis::RemoteLog'),
           id: 1,
           job_id: 1,
           content: 'the test log'

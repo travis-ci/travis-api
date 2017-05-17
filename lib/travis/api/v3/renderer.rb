@@ -3,6 +3,9 @@ module Travis::API::V3
     PRIMITIVE = [String, Symbol, Numeric, true, false, nil]
     private_constant :PRIMITIVE
 
+    AS_JSONABLE = ->(v) { v.respond_to?(:as_json) }
+    private_constant :AS_JSONABLE
+
     EXPANDER_CACHE = Tool::ThreadLocal.new
     private_constant :EXPANDER_CACHE
 
@@ -50,7 +53,7 @@ module Travis::API::V3
       when ActiveRecord::Relation then render_value(value.to_a, **options)
       when ActiveRecord::Associations::CollectionProxy then render_value(value.to_a, **options)
       when Travis::Settings::EncryptedValue then value.decrypt
-      when Travis::RemoteLogPart then render_value(value.as_json, **options)
+      when AS_JSONABLE            then render_value(value.as_json, **options)
       else raise ArgumentError, 'cannot render %p (%p)' % [value.class, value]
       end
     end

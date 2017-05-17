@@ -12,11 +12,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:parsed_body) { JSON.load(body) }
-  let(:log)         { Travis::API::V3::Models::Log.create(job: job) }
-  let(:log2)        { Travis::API::V3::Models::Log.create(job: job2) }
-  let(:log3)        { Travis::API::V3::Models::Log.create(job: job3) }
-  let(:s3log)       { Travis::API::V3::Models::Log.create(job: s3job, content: 'minimal log 1') }
-  let(:no_s3log)    { Travis::API::V3::Models::Log.create(archived_at: Time.now, archive_verified: true, job: s3job2, content: 'minimal log 2') }
+  let(:s3log)       { Travis::RemoteLog.new(job_id: s3job.id, content: 'minimal log 1') }
   let(:find_log)    { "string" }
   let(:time)        { Time.now }
   let(:xml_content) {
@@ -37,7 +33,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
               <ID>75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a</ID>
               <DisplayName>mtd@amazon.com</DisplayName>
           </Owner>
-          <body>$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch
+          <body>#{archived_content}
           </body>
       </Contents>
     </ListBucketResult>"
@@ -61,9 +57,9 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   end
 
   let(:json_log_from_api) { log_from_api.to_json }
+  let(:archived_content) { "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch" }
 
   before do
-    log3.delete
     Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true)
     stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
       to_return(:status => 200, :body => xml_content, :headers => {})
@@ -73,18 +69,16 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         to_return(status: 200, body: nil, headers: {})
     Fog.mock!
     storage = Fog::Storage.new({
-      :aws_access_key_id => "key",
-      :aws_secret_access_key => "secret",
-      :provider => "AWS"
+      aws_access_key_id: 'key',
+      aws_secret_access_key: 'secret',
+      provider: 'AWS'
     })
-    bucket = storage.directories.create(:key => 'archive.travis-ci.org')
+    bucket = storage.directories.create(key: 'archive.travis-ci.org')
     file = bucket.files.create(
-      :key  => "jobs/#{s3job.id}/log.txt",
-      :body => "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch"
+      key: "jobs/#{s3job.id}/log.txt",
+      body: archived_content
     )
-    stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{s3job.id}?by=job_id").
-      with(headers: { 'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Authorization'=>'token notset', 'User-Agent'=>'Faraday v0.9.2' }).
-      to_return(status: 200, body: json_log_from_api, headers: {})
+    Travis::RemoteLog.stubs(:find_by_job_id).returns(Travis::RemoteLog.new(log_from_api))
   end
   after { Fog::Mock.reset }
 
@@ -94,98 +88,10 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     Travis.config.log_options = {}
   end
 
-  context 'when log stored in db', logs_api_enabled: false do
+  context 'when log not found in db but stored on S3' do
     describe 'returns log with an array of Log Parts' do
       example do
-        log_part = log.log_parts.create(content: "logging it", number: 0)
-        get("/v3/job/#{log.job.id}/log", {}, headers)
-        expect(parsed_body).to eq(
-          '@href' => "/v3/job/#{log.job.id}/log",
-          '@representation' => 'standard',
-          '@type' => 'log',
-          'content' => nil,
-          'id' => log.id,
-          'log_parts'       => [{
-          "@type"           => "log_part",
-          "@representation" => "minimal",
-          "content"         => log_part.content,
-          "number"          => log_part.number }])
-      end
-    end
-
-    describe 'returns aggregated log with an array of Log Parts' do
-      before { log2.update_attributes(aggregated_at: Time.now, content: "aggregating!")}
-      example do
-        get("/v3/job/#{log2.job.id}/log", {}, headers)
-        expect(parsed_body).to eq(
-          '@type' => 'log',
-          '@href' => "/v3/job/#{log2.job.id}/log",
-          '@representation' => 'standard',
-          'content' => "aggregating!",
-          'id' => log2.id,
-          'log_parts'       => [{
-          "@type"           => "log_part",
-          "@representation" => "minimal",
-          "content"         => "aggregating!",
-          "number"          => 0 }])
-      end
-    end
-
-    describe 'returns log as plain text' do
-      example do
-        log_part = log.log_parts.create(content: "logging it", number: 1)
-        log_part2 = log.log_parts.create(content: "logging more", number: 2)
-        log_part3 = log.log_parts.create(content: "logging forever", number: 3)
-
-        get("/v3/job/#{log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
-        expect(body).to eq(
-          "logging it\nlogging more\nlogging forever")
-      end
-    end
-  end
-
-  context 'when log not found in db but stored on S3', logs_api_enabled: false do
-    describe 'returns log with an array of Log Parts' do
-      example do
-        s3log.update_attributes(archived_at: time, archive_verified: true)
-        get("/v3/job/#{s3log.job.id}/log", {}, headers)
-
-        expect(parsed_body).to eq(
-          '@type' => 'log',
-          '@href' => "/v3/job/#{s3job.id}/log",
-          '@representation' => 'standard',
-          'id' => s3log.id,
-          'content' => 'minimal log 1',
-          'log_parts'       => [{
-            "@type"=>"log_part",
-            "@representation"=>"minimal",
-            "content"=>"$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch",
-            "number"=>0}])
-      end
-    end
-    describe 'returns log as plain text' do
-      example do
-        s3log.update_attributes(archived_at: Time.now, archive_verified: true)
-        get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
-        expect(last_response.headers).to include("Content-Type" => "text/plain")
-        expect(body).to eq(
-          "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch")
-      end
-    end
-
-    describe 'it returns the correct content type' do
-      example do
-        s3log.update_attributes(archived_at: Time.now, archive_verified: true)
-        get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'fun/times'))
-        expect(last_response.headers).to include("Content-Type" => "application/json")
-      end
-    end
-  end
-
-  context 'when log not found in db but stored on S3', logs_api_enabled: true do
-    describe 'returns log with an array of Log Parts' do
-      example do
-        s3log.update_attributes(archived_at: time, archive_verified: true)
+        s3log.attributes.merge!(archived_at: time, archive_verified: true)
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
 
         expect(parsed_body).to eq(
@@ -200,10 +106,10 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             'delete_log' => false
           },
           'id' => log_from_api[:id],
-          'content' => log_from_api[:content],
+          'content' => archived_content,
           'log_parts' => [
             {
-              'content' => 'hello world. this is a really cool log',
+              'content' => archived_content,
               'final' => true,
               'number' => 0
             }
@@ -214,44 +120,19 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
 
     describe 'returns log as plain text' do
       example do
-        s3log.update_attributes(archived_at: Time.now, archive_verified: true)
+        s3log.attributes.merge!(archived_at: Time.now, archive_verified: true)
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
         expect(last_response.headers).to include('Content-Type' => 'text/plain')
-        expect(body).to eq(log_from_api[:content])
+        expect(body).to eq(archived_content)
       end
     end
 
     describe 'it returns the correct content type' do
       example do
-        s3log.update_attributes(archived_at: Time.now, archive_verified: true)
+        s3log.attributes.merge!(archived_at: Time.now, archive_verified: true)
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'fun/times'))
         expect(last_response.headers).to include('Content-Type' => 'application/json')
       end
-    end
-  end
-
-  context 'when log not found on s3', logs_api_enabled: false do
-    describe 'does not return log - returns error' do
-      example do
-        get("/v3/job/#{no_s3log.job.id}/log", {}, headers)
-        expect(parsed_body).to eq({
-          "@type"=>"error",
-          "error_type"=>"not_found",
-          "error_message"=>"could not retrieve log"})
-        end
-    end
-  end
-
-  context 'when log not found anywhere', logs_api_enabled: false do
-    describe 'does not return log - returns error' do
-      example do
-        log3.delete
-        get("/v3/job/#{job3.id}/log", {}, headers)
-        expect(parsed_body).to eq({
-          "@type"=>"error",
-          "error_type"=>"not_found",
-          "error_message"=>"log not found"})
-        end
     end
   end
 end

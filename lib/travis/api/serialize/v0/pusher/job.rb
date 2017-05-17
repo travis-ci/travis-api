@@ -1,6 +1,5 @@
 require 'travis/api/serialize/v0/pusher/job/canceled'
 require 'travis/api/serialize/v0/pusher/job/created'
-require 'travis/api/serialize/v0/pusher/job/log'
 require 'travis/api/serialize/v0/pusher/job/received'
 require 'travis/api/serialize/v0/pusher/job/started'
 require 'travis/api/serialize/v0/pusher/job/finished'

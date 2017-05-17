@@ -7,7 +7,6 @@ require 'core_ext/active_record/base'
 
 module Travis
   class Model < ActiveRecord::Base
-    require 'travis/model/logs_model'
     require 'travis/model/account'
     require 'travis/model/annotation'
     require 'travis/model/annotation_provider'
@@ -18,7 +17,6 @@ module Travis
     require 'travis/model/email'
     require 'travis/model/env_helpers'
     require 'travis/model/job'
-    require 'travis/model/log'
     require 'travis/model/membership'
     require 'travis/model/organization'
     require 'travis/model/permission'
