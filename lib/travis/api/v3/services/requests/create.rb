@@ -4,8 +4,7 @@ module Travis::API::V3
     LIMIT = 10
     private_constant :TIME_FRAME, :LIMIT
 
-    # params "request", "user", :config, :message, :branch, :token, prefix: :request
-    params :config, :message, :branch, :token, prefix: :request
+    params "request", "user", :config, :message, :branch, :token, prefix: :request
     result_type :request
 
     def run
