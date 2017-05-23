@@ -1,7 +1,19 @@
 require 'pg'
+require 'uri'
 require 'librato/metrics'
 
-url = ENV['PGBOUNCER_URL'] || 'postgres://pgbouncer@127.0.0.1:6000/pgbouncer'
+if ENV['PGBOUNCER_URL']
+  url = ENV['PGBOUNCER_URL']
+elsif ENV['DATABASE_URL']
+  uri = URI(ENV['DATABASE_URL'])
+  uri.user = 'pgbouncer'
+  uri.password = nil
+  uri.path = '/pgbouncer'
+  url = uri.to_s
+else
+  url = 'postgres://pgbouncer@127.0.0.1:6000/pgbouncer'
+end
+
 interval = ENV['PGBOUNCER_MONITOR_INTERVAL'] || 10
 librato_source = ENV['DYNO']
 
