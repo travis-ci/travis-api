@@ -24,7 +24,7 @@ if [ ! -f "bin/start-pgbouncer-stunnel" ]; then
 fi
 
 if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
-  bundle exec je script/monitor-pgbouncer.rb &
+  bundle exec je ruby script/monitor-pgbouncer.rb &
 
   export PGBOUNCER_PREPARED_STATEMENTS=false
   exec bin/start-pgbouncer-stunnel script/server
