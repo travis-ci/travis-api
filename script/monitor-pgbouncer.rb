@@ -1,7 +1,7 @@
 require 'pg'
 require 'librato/metrics'
 
-url = ENV['PGBOUNCER_URL'] || 'postgres://pgbouncer:pgbouncer@127.0.0.1:6000/pgbouncer'
+url = ENV['PGBOUNCER_URL'] || 'postgres://pgbouncer@/tmp:6000/pgbouncer'
 interval = ENV['PGBOUNCER_MONITOR_INTERVAL']&.to_i || 10
 librato_source = ENV['DYNO']
 
