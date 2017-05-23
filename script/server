@@ -20,12 +20,9 @@ else
   export tmp_dir=./tmp
 fi
 
-if ENV['PGBOUNCER_ENABLED'] == 'true'
-  monitor = fork do
-    exec "$bexec je ruby script/monitor-pgbouncer.rb"
-  end
-  Process.detach(monitor)
-end
+if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
+  $bexec je ruby script/monitor-pgbouncer.rb &
+fi
 
 cmd="unicorn config.ru -E $RACK_ENV -c config/unicorn.rb"
 [[ $RACK_ENV == "development" ]] && cmd="rerun -b -- $cmd"
