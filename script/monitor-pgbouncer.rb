@@ -2,10 +2,8 @@ require 'pg'
 require 'uri'
 require 'librato/metrics'
 
-if ENV['PGBOUNCER_URL']
-  url = ENV['PGBOUNCER_URL']
-elsif ENV['DATABASE_URL']
-  uri = URI(ENV['DATABASE_URL'])
+if ENV['DATABASE_URL_PGBOUNCER']
+  uri = URI(ENV['DATABASE_URL_PGBOUNCER'])
   uri.user = 'pgbouncer'
   uri.password = nil
   uri.path = '/pgbouncer'
