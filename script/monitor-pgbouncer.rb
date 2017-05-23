@@ -1,5 +1,4 @@
 require 'pg'
-require 'uri'
 require 'librato/metrics'
 
 if ENV['PGBOUNCER_URL']
