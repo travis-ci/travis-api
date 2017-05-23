@@ -1,13 +1,13 @@
 require 'pg'
 require 'librato/metrics'
 
-port = ENV['PGBOUNCER_PORT'] || 6000
+url = ENV['PGBOUNCER_URL'] || 'postgres://pgbouncer@127.0.0.1:6000/pgbouncer'
 interval = ENV['PGBOUNCER_MONITOR_INTERVAL'] || 10
 librato_source = ENV['DYNO']
 
 Librato::Metrics.authenticate ENV['LIBRATO_USER'], ENV['LIBRATO_TOKEN']
 
-conn = PGconn.open(port: port, user: 'pgbouncer', dbname: 'pgbouncer')
+conn = PGconn.open(url)
 
 loop do
   res  = conn.exec('SHOW POOLS')
