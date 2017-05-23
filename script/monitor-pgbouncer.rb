@@ -9,6 +9,11 @@ elsif ENV['DATABASE_URL']
   uri.user = 'pgbouncer'
   uri.password = nil
   uri.path = '/pgbouncer'
+
+  query = URI::decode_www_form(uri.query).to_h
+  query.delete('prepared_statements')
+  uri.query = URI.encode_www_form(query)
+
   url = uri.to_s
 else
   url = 'postgres://pgbouncer@127.0.0.1:6000/pgbouncer'
