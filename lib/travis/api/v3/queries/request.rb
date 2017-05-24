@@ -1,6 +1,11 @@
 module Travis::API::V3
   class Queries::Request < Query
-    params :message, :branch, :config, :token, prefix: :request
+    params  :id, :message, :branch, :config, :token, prefix: :request
+
+    def find
+      return Models::Request.find_by_id(id) if id
+      raise WrongParams, 'missing request.id'.freeze
+    end
 
     def schedule(repository, user)
       raise ServerError, 'repository does not have a github_id'.freeze unless repository.github_id

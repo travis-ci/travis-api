@@ -140,6 +140,10 @@ module Travis::API::V3
       private_repository_visible?(repository)
     end
 
+    def request_visible?(request)
+      repository_visible?(request.repository)
+    end
+
     def private_repository_visible?(repository)
       false
     end
