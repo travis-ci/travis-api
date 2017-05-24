@@ -21,7 +21,7 @@ else
 fi
 
 if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
-  $bexec je ruby script/monitor-pgbouncer.rb &
+  $bexec je script/monitor-pgbouncer &
 fi
 
 cmd="unicorn config.ru -E $RACK_ENV -c config/unicorn.rb"
