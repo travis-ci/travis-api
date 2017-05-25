@@ -2,7 +2,7 @@ module Travis::API::V3
   class Services::Request::Find < Service
 
     def run!
-      result find
+      find
     end
   end
 end
