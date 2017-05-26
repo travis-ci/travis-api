@@ -131,6 +131,11 @@ module Travis::API::V3
         post :create
       end
 
+      resource :request do
+        route '/request/{request.id}'
+        get  :find
+      end
+
       resource :user_settings, as: :settings do
         route '/settings'
         get   :for_repository
