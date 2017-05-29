@@ -7,6 +7,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
 
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
+    build.update_attributes!(sender_id: repo.owner.id, sender_type: 'User')
     test   = build.stages.create(number: 1, name: 'test')
     deploy = build.stages.create(number: 2, name: 'deploy')
     build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
@@ -132,6 +133,12 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "message"           => "unignore Gemfile.lock",
           "compare_url"       => "https://github.com/svenfuchs/minimal/compare/master...develop",
           "committed_at"      => "2010-11-12T12:55:00Z"},
+        "created_by"          => {
+          "@type"             => "user",
+          "@href"             => "/v3/user/1",
+          "@representation"   => "minimal",
+          "id"                => 1,
+          "login"             => "svenfuchs"}
       }]
     }}
   end
@@ -243,7 +250,13 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "ref"               => "refs/heads/master",
           "message"           => "unignore Gemfile.lock",
           "compare_url"       => "https://github.com/svenfuchs/minimal/compare/master...develop",
-          "committed_at"      => "2010-11-12T12:55:00Z"}
+          "committed_at"      => "2010-11-12T12:55:00Z"},
+        "created_by"          => {
+          "@type"             => "user",
+          "@href"             => "/v3/user/1",
+          "@representation"   => "minimal",
+          "id"                => 1,
+          "login"             => "svenfuchs"}
       }]
     }}
   end

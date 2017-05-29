@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Renderer::Build < ModelRenderer
     representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at)
-    representation(:standard, *representations[:minimal], :repository, :branch, :commit, :jobs, :stages)
+    representation(:standard, *representations[:minimal], :repository, :branch, :commit, :jobs, :stages, :created_by)
     representation(:active, *representations[:standard])
 
     hidden_representations(:active)
@@ -11,6 +11,10 @@ module Travis::API::V3
       return model.jobs if include_full_jobs?
       return model.job_ids.map { |id| job(id) } unless representation?(:active)
       model.active_jobs.map{ |j| job(j.id) }
+    end
+
+    def created_by
+      model.sender
     end
 
     private def include_full_jobs?
