@@ -33,21 +33,14 @@ module Travis
           message << "\n\n#{params[:reason]}"
         end
 
-        log.clear!
-        log.update_attributes!(
-          :content => nil,
-          :aggregated_at => nil,
-          :removed_at => removed_at,
-          :removed_by => current_user
-        )
-        log.parts.create(content: message, number: 1, final: true)
+        log.clear!(current_user)
         log
       end
 
       instrument :run
 
       def log
-        @log ||= job.log
+        @log ||= Travis::RemoteLog.find_by_job_id(job.id)
       end
 
       def can_remove?

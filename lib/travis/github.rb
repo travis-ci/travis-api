@@ -14,7 +14,7 @@ module Travis
           user_agent:     "GH/#{GH::VERSION}",
           origin:         Travis.config.host,
           api_url:        Travis.config.github.api_url,
-          ssl:            Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).to_h.compact
+          ssl:            Travis.config.ssl.to_h.merge(Travis.config.github.ssl.to_h || {}).to_h.compact
         )
       end
 

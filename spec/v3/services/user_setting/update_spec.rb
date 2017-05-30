@@ -7,7 +7,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
   let(:old_params) { JSON.dump('setting.value' => false) }
-  let(:new_params) { JSON.dump('user_setting.value' => false) }
+  let(:new_params) { JSON.dump('setting.value' => false) }
 
   describe 'not authenticated' do
     before do
@@ -44,8 +44,9 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
     example { expect(last_response.status).to eq(200) }
     example do
       expect(JSON.load(body)).to eq(
-        '@type' => 'user_setting',
+        '@type' => 'setting',
         '@representation' => 'standard',
+        '@permissions' => { 'read' => true, 'write' => true },
         '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",
         'name' => 'build_pushes',
         'value' => false
@@ -87,16 +88,15 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
       expect(JSON.load(body)).to eq(
         '@type' => 'error',
         'error_type' => 'insufficient_access',
-        'error_message' => 'operation requires change_settings access to repository',
-        'permission' => 'change_settings',
-        'resource_type' => 'repository',
-        'repository' => {
-          '@type' => 'repository',
-          '@href' => "/v3/repo/#{repo.id}",
+        'error_message' => 'operation requires write access to user_setting',
+        'permission' => 'write',
+        'resource_type' => 'user_setting',
+        'user_setting' => {
+          '@type' => 'setting',
+          '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",
           '@representation' => 'minimal',
-          'id' => repo.id,
-          'name' => 'minimal',
-          'slug' => 'svenfuchs/minimal'
+          'name' => 'build_pushes',
+          'value' => false
         }
       )
     end

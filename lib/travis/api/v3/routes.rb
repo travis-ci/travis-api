@@ -3,11 +3,6 @@ module Travis::API::V3
     require 'travis/api/v3/routes/dsl'
     extend DSL
 
-    resource :accounts do
-      route '/accounts'
-      get :for_current_user
-    end
-
     resource :broadcasts do
       route '/broadcasts'
       get :for_current_user
@@ -43,6 +38,13 @@ module Travis::API::V3
       post :cancel, '/cancel'
       post :restart, '/restart'
       post :debug, '/debug'
+
+      resource :log do
+        route '/log'
+        get   :find
+        delete :delete
+      end
+
     end
 
     resource :lint do
@@ -69,6 +71,11 @@ module Travis::API::V3
         route '/repos'
         get :for_owner
       end
+
+      resource :active do
+        route '/active'
+        get :for_owner
+      end
     end
 
     resource :repositories do
@@ -81,8 +88,8 @@ module Travis::API::V3
       route '/repo/({repository.id}|{repository.slug})'
       get :find
 
-      post :enable,  '/enable'
-      post :disable, '/disable'
+      post :activate,  '/activate'
+      post :deactivate, '/deactivate'
       post :star,    '/star'
       post :unstar,  '/unstar'
 
@@ -107,6 +114,12 @@ module Travis::API::V3
         get  :find
       end
 
+      resource :caches do
+        route '/caches'
+        get :find
+        delete :delete
+      end
+
       resource :crons do
         route '/crons'
         get  :for_repository
@@ -118,14 +131,19 @@ module Travis::API::V3
         post :create
       end
 
-      resource :user_settings do
-        route '/settings'
-        get   :find
+      resource :request do
+        route '/request/{request.id}'
+        get  :find
       end
 
-      resource :user_setting do
-        route '/setting/{user_setting.name}'
-        get  :find
+      resource :user_settings, as: :settings do
+        route '/settings'
+        get   :for_repository
+      end
+
+      resource :user_setting, as: :setting do
+        route '/setting/{setting.name}'
+        get   :find
         patch :update
       end
 
@@ -141,15 +159,47 @@ module Travis::API::V3
         patch  :update
         delete :delete
       end
+
+      # This is the key we generate for encryption/decryption etc.
+      # In V2 it was found at /repos/:repo_id/key
+      resource :ssl_key, as: :key_pair_generated do
+        route '/key_pair/generated'
+        get   :find
+        post  :create
+      end
+
+      # This is the key that users may choose to add on travis-ci.com
+      # In V2 it was found at /settings/ssh_key/:repo_id
+      resource :key_pair do
+        route   '/key_pair'
+        get     :find
+        post    :create
+        patch   :update
+        delete :delete
+      end
     end
 
     resource :user do
       capture id: :digit
-      route '/user'
-      get :current
-      get :find, '/{user.id}'
-      post :sync, '/{user.id}/sync'
+      route '/user/{user.id}'
+      get :find
+      post :sync, '/sync'
+
+      resource :beta_features do
+        route '/beta_features'
+        get   :find
+      end
+
+      resource :beta_feature do
+        route  '/beta_feature/{beta_feature.id}'
+        patch  :update
+        delete :delete
+      end
     end
 
+    resource :user do
+      route '/user'
+      get :current
+    end
   end
 end

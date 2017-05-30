@@ -3,6 +3,7 @@ require 'active_support/core_ext/hash/slice'
 
 describe Travis::Config do
   let(:config) { Travis::Config.load(:files, :env, :heroku, :docker) }
+  let(:statement_timeout) { Travis::Config::Heroku::Database::VARIABLES[:statement_timeout] }
 
   describe 'endpoints' do
     it 'returns an object even without endpoints entry' do
@@ -65,9 +66,19 @@ describe Travis::Config do
     end
 
     it 'database' do
-      config.database.should == {
+      config.database.to_h.should == {
         :adapter => 'postgresql',
         :database => 'travis_test',
+        :encoding => 'unicode',
+        :min_messages => 'warning',
+        :variables => { :statement_timeout => 10000 }
+      }
+    end
+
+    it 'logs database' do
+      config.logs_database.should == {
+        :adapter => 'postgresql',
+        :database => 'travis_logs_test',
         :encoding => 'unicode',
         :min_messages => 'warning',
         :variables => { :statement_timeout => 10000 }
@@ -87,7 +98,7 @@ describe Travis::Config do
       it { config.database.database.should == 'database' }
       it { config.database.encoding.should == 'unicode' }
       it { config.database.variables.application_name.should_not be_empty }
-      it { config.database.variables.statement_timeout.should eq 10000 }
+      it { config.database.variables.statement_timeout.should eq statement_timeout }
     end
 
     describe 'with a DATABASE_URL set' do
@@ -101,7 +112,7 @@ describe Travis::Config do
       it { config.database.database.should == 'database' }
       it { config.database.encoding.should == 'unicode' }
       it { config.database.variables.application_name.should_not be_empty }
-      it { config.database.variables.statement_timeout.should eq 10000 }
+      it { config.database.variables.statement_timeout.should eq statement_timeout }
     end
 
     describe 'with a TRAVIS_LOGS_DATABASE_URL set' do
@@ -115,7 +126,7 @@ describe Travis::Config do
       it { config.logs_database.database.should == 'database' }
       it { config.logs_database.encoding.should == 'unicode' }
       it { config.logs_database.variables.application_name.should_not be_empty }
-      it { config.logs_database.variables.statement_timeout.should eq 10000 }
+      it { config.database.variables.statement_timeout.should eq statement_timeout }
     end
 
     describe 'with a LOGS_DATABASE_URL set' do
@@ -129,7 +140,7 @@ describe Travis::Config do
       it { config.logs_database.database.should == 'database' }
       it { config.logs_database.encoding.should == 'unicode' }
       it { config.logs_database.variables.application_name.should_not be_empty }
-      it { config.logs_database.variables.statement_timeout.should eq 10000 }
+      it { config.database.variables.statement_timeout.should eq statement_timeout }
     end
 
     describe 'with a TRAVIS_RABBITMQ_URL set' do

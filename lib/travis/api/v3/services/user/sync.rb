@@ -5,7 +5,7 @@ module Travis::API::V3
       user = check_login_and_find(:user)
       access_control.permissions(user).sync!
 
-      query.sync(user)
+      result query.sync(user)
     end
   end
 end

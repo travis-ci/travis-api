@@ -7,7 +7,7 @@ module Travis::API::V3
     def run!
       owner        = find
       @result_type = type_for(owner)
-      owner
+      result owner
     end
 
     def type_for(owner)

@@ -38,7 +38,6 @@ module Travis
         end
 
         def preload(job)
-          ActiveRecord::Associations::Preloader.new(job, :log).run
           ActiveRecord::Associations::Preloader.new(job, :commit).run
           ActiveRecord::Associations::Preloader.new(job, :annotations).run
           job

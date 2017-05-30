@@ -1,6 +1,8 @@
 describe Travis::Services::FindRepo do
-  let!(:repo)   { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
-  let(:service) { described_class.new(stub('user'), params) }
+
+  let(:user) { Factory(:user) }
+  let!(:repo)   { Factory(:repository, :owner => user, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let(:service) { described_class.new(user, params) }
 
   attr_reader :params
 

@@ -6,32 +6,10 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
   let(:current_cron) {Travis::API::V3::Models::Cron.where(branch_id: branch.id).last}
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}", "Content-Type" => "application/json" }}
-  let(:options) {{ "interval" => "monthly", "disable_by_build" => false }}
-  let(:wrong_options) {{ "interval" => "notExisting", "disable_by_build" => false }}
+  let(:options) {{ "interval" => "monthly", "dont_run_if_recent_build_exists" => false }}
+  let(:options2) {{ "cron.interval" => "monthly", "cron.dont_run_if_recent_build_exists" => false }}
+  let(:wrong_options) {{ "interval" => "notExisting", "dont_run_if_recent_build_exists" => false }}
   let(:parsed_body) { JSON.load(body) }
-
-  before do
-    Travis::Features.activate_owner(:cron, repo.owner)
-  end
-
-  describe "creating a cron job with feature flag disabled" do
-    before     { Travis::Features.deactivate_owner(:cron, repo.owner)   }
-    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers)}
-    example    { expect(parsed_body).to be == {
-        "@type"               => "error",
-        "error_type"          => "insufficient_access",
-        "error_message"       => "operation requires create_cron access to repository",
-        "resource_type"       => "repository",
-        "permission"          => "create_cron",
-        "repository"          => {
-            "@type"           => "repository",
-            "@href"           => "/v3/repo/#{repo.id}",
-            "@representation" => "minimal",
-            "id"              => repo.id,
-            "name"            => "minimal",
-            "slug"            => "svenfuchs/minimal" }
-    }}
-  end
 
   describe "creating a cron job" do
     before     { last_cron }
@@ -61,10 +39,48 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
             "@representation" => "minimal",
             "name"            => "#{branch.name}" },
         "interval"            => "monthly",
-        "disable_by_build"    => false,
-        "next_enqueuing"      => current_cron.next_enqueuing.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        "dont_run_if_recent_build_exists"    => false,
+        "last_run"            => current_cron.last_run,
+        "next_run"      => current_cron.next_run.strftime('%Y-%m-%dT%H:%M:%SZ'),
         "created_at"          => current_cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
     }}
+    example { expect(current_cron.next_run).to_not be nil }
+  end
+
+  describe "creating a cron job with cron as param prefix" do
+    before     { last_cron }
+    before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+    before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options2, headers) }
+    example    { expect(current_cron == last_cron).to be_falsey }
+    example    { expect(last_response).to be_ok }
+    example    { expect(parsed_body).to be == {
+        "@type"               => "cron",
+        "@href"               => "/v3/cron/#{current_cron.id}",
+        "@representation"     => "standard",
+        "@permissions"        => {
+            "read"            => true,
+            "delete"          => true,
+            "start"           => true },
+        "id"                  => current_cron.id,
+        "repository"          => {
+            "@type"           => "repository",
+            "@href"           => "/v3/repo/#{repo.id}",
+            "@representation" => "minimal",
+            "id"              => repo.id,
+            "name"            => "minimal",
+            "slug"            => "svenfuchs/minimal" },
+        "branch"              => {
+            "@type"           => "branch",
+            "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
+            "@representation" => "minimal",
+            "name"            => "#{branch.name}" },
+        "interval"            => "monthly",
+        "dont_run_if_recent_build_exists"    => false,
+        "last_run"            => current_cron.last_run,
+        "next_run"      => current_cron.next_run.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        "created_at"          => current_cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
+    }}
+    example { expect(current_cron.next_run).to_not be nil }
   end
 
   describe "creating multiple cron jobs for one branch" do

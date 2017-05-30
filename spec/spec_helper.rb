@@ -10,6 +10,7 @@ require 'gh'
 require 'multi_json'
 require 'pry'
 require 'stackprof'
+require 'webmock/rspec'
 
 require 'travis/api/app'
 require 'travis/testing'
@@ -24,6 +25,7 @@ require 'support/private_key'
 require 'support/s3'
 require 'support/test_helpers'
 require 'support/shared_examples'
+require 'support/active_record'
 
 module TestHelpers
   include Sinatra::TestHelpers
@@ -94,9 +96,3 @@ end
 
 require 'timecop'
 Timecop.freeze(Time.now.utc)
-
-describe Time do
-  let(:time) { Time.now.utc }
-  example { expect(Time.now.utc).to eq(time) }
-  example { expect(Time.now.utc + 5.minutes ).to eq(time + 5.minutes) }
-end

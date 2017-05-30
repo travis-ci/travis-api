@@ -6,53 +6,12 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
   let(:parsed_body) { JSON.load(body) }
 
-  before do
-    Travis::Features.activate_owner(:cron, repo.owner)
-  end
-
-  describe "deleting cron jobs with feature disabled" do
-    before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before     { Travis::Features.deactivate_owner(:cron, repo.owner)   }
-    before     { delete("/v3/cron/#{cron.id}", {}, headers)}
-    example    { expect(parsed_body).to be == {
-        "@type"               => "error",
-        "error_type"          => "not_found",
-        "error_message"       => "cron not found (or insufficient access)",
-        "resource_type"       => "cron"
-    }}
-  end
-
   describe "deleting a cron job by id" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
     before     { delete("/v3/cron/#{cron.id}", {}, headers) }
-    example    { expect(last_response).to be_ok }
+    example    { expect(last_response.status).to eq 204 }
     example    { expect(Travis::API::V3::Models::Cron.where(id: cron.id)).to be_empty }
-    example    { expect(parsed_body).to be == {
-        "@type"               => "cron",
-        "@href"               => "/v3/cron/#{cron.id}",
-        "@representation"     => "standard",
-        "@permissions"        => {
-            "read"            => true,
-            "delete"          => true,
-            "start"           => true },
-        "id"                  => cron.id,
-        "repository"          => {
-            "@type"           => "repository",
-            "@href"           => "/v3/repo/#{repo.id}",
-            "@representation" => "minimal",
-            "id"              => repo.id,
-            "name"            => "minimal",
-            "slug"            => "svenfuchs/minimal" },
-        "branch"              => {
-            "@type"           => "branch",
-            "@href"           => "/v3/repo/#{repo.id}/branch/#{branch.name}",
-            "@representation" => "minimal",
-            "name"            => branch.name },
-        "interval"            => "daily",
-        "disable_by_build"    => true,
-        "next_enqueuing"      => cron.next_enqueuing.strftime('%Y-%m-%dT%H:%M:%SZ'),
-        "created_at"          => cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
-    }}
+    example    { expect(parsed_body).to be_nil }
   end
 
   describe "try deleting a cron job without login" do

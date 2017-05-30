@@ -18,6 +18,8 @@ module Travis::API::V3
       env_params      = params(env)
       factory, params = routes.factory_for(env['REQUEST_METHOD'.freeze], env['PATH_INFO'.freeze])
 
+      content_type = get_content_type(env)
+
       raise NotFound unless factory
       metrics.name_after(factory)
 
@@ -29,7 +31,7 @@ module Travis::API::V3
       metrics.tick(:service)
 
       env_params.each_key { |key| result.ignored_param(key, reason: "not safelisted".freeze) unless filtered.include?(key) }
-      response = render(result, env_params, env)
+      response = render(result, env_params, env, content_type)
 
       metrics.tick(:renderer)
       metrics.success(status: response[0])
@@ -37,8 +39,8 @@ module Travis::API::V3
     rescue Error => error
       metrics.tick(:service)
 
-      result   = Result.new(access_control, :error, error)
-      response = V3.response(result.render(env_params, env), {}, status: error.status)
+      result   = Result.new(access_control: access_control, type: :error, resource: error)
+      response = V3.response(result.render(env_params, env),  {}, content_type: content_type, status: error.status)
 
       metrics.tick(:rendered)
       metrics.failure(status: error.status)
@@ -46,12 +48,19 @@ module Travis::API::V3
       response
     end
 
-    def render(result, env_params, env)
-      V3.response(result.render(env_params, env), status: result.status)
+    def render(result, env_params, env, content_type)
+      V3.response(result.render(env_params, env), {}, content_type: content_type, status: result.status)
     end
 
     def service_index(env)
       ServiceIndex.for(env, routes).render(env)
+    end
+
+    def get_content_type(env)
+      default_content_type = 'application/json'.freeze
+      allowed_content_types = [default_content_type, 'text/plain'.freeze]
+      content_type = env.fetch('HTTP_ACCEPT'.freeze, default_content_type)
+      allowed_content_types.find{ |d| d == content_type} || default_content_type
     end
 
     def params(env)

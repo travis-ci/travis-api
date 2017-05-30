@@ -27,6 +27,7 @@ require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'securerandom'
+require 'fog/aws'
 require 'newrelic_rpm'
 
 module Travis::Api
@@ -98,12 +99,22 @@ module Travis::Api
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
 
+        use Travis::Api::App::Middleware::RequestId
+        use Travis::Api::App::Middleware::ErrorHandler
+
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
-        use Raven::Rack if Travis::Api::App.use_monitoring?
+        if Travis::Api::App.use_monitoring?
+          use Rack::Config do |env|
+            if env['HTTP_X_REQUEST_ID']
+              Raven.tags_context(x_request_id: env['HTTP_X_REQUEST_ID'])
+            end
+          end
+          use Raven::Rack
+        end
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
@@ -123,7 +134,6 @@ module Travis::Api
           env['SCRIPT_NAME'] = env['HTTP_X_SCRIPT_NAME'].to_s + env['SCRIPT_NAME'].to_s
           env['travis.global_prefix'] = env['SCRIPT_NAME']
         end
-
 
         use Travis::Api::App::Middleware::Logging
         use Travis::Api::App::Middleware::ScopeCheck
@@ -183,32 +193,31 @@ module Travis::Api
 
       def self.setup_travis
         Travis::Async.enabled = true
-        Travis::Amqp.setup(Travis.config.amqp)
+        Travis::Amqp.setup(Travis.config.amqp.to_h)
 
         setup_database_connections
 
         if use_monitoring?
           Sidekiq.configure_client do |config|
-            config.redis = Travis.config.redis.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
+            config.redis = Travis.config.redis.to_h.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
           end
         end
 
         if use_monitoring? && !console?
           setup_monitoring
         end
+
+        if defined?(Fog) && defined?(Fog::Logger)
+          %i(warning deprecation debug).each do |channel|
+            Fog::Logger[channel] = nil
+          end
+        end
       end
 
       def self.setup_database_connections
-        Travis.config.database.variables                  ||= {}
-        Travis.config.database.variables.application_name ||= ["api", Travis.env, ENV['DYNO']].compact.join(?-)
+        Travis.config.database.variables                    ||= {}
+        Travis.config.database.variables[:application_name] ||= ["api", Travis.env, ENV['DYNO']].compact.join(?-)
         Travis::Database.connect
-
-        if Travis.config.logs_database
-          pool_size = ENV['DATABASE_POOL_SIZE']
-          Travis.config.logs_database[:pool] = pool_size.to_i if pool_size
-
-          Travis::LogsModel.establish_connection 'logs_database'
-        end
       end
 
       def self.setup_monitoring

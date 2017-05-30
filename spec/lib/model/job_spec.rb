@@ -25,26 +25,6 @@ describe Job do
     end
   end
 
-  describe 'before_create' do
-    let(:job) { Job::Test.create!(owner: Factory(:user), repository: Factory(:repository), commit: Factory(:commit), source: Factory(:build)) }
-
-    before :each do
-      Job::Test.any_instance.stubs(:enqueueable?).returns(false) # prevent jobs to enqueue themselves on create
-    end
-
-    it 'instantiates the log' do
-      job.reload.log.should be_instance_of(Log)
-    end
-
-    it 'sets the state attribute' do
-      job.reload.should be_created
-    end
-
-    it 'sets the queue attribute' do
-      job.reload.queue.should == 'builds.linux'
-    end
-  end
-
   describe 'duration' do
     it 'returns nil if both started_at is not populated' do
       job = Job.new(finished_at: Time.now)
@@ -99,6 +79,23 @@ describe Job do
       job.obfuscated_config.should == {
         rvm: '1.8.7',
         env: 'BAR=[secure] [secure] FOO=foo'
+      }
+    end
+
+    it 'handles nil secure var' do
+      job = Job.new(repository: repo)
+      secure = job.repository.key.secure
+      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      config = { rvm: '1.8.7',
+                 env: [{ secure: nil }, { secure: secure.encrypt('FOO=foo') }],
+                 global_env: [{ secure: nil }, { secure: secure.encrypt('BAR=bar') }]
+               }
+      job.config = config
+
+      job.obfuscated_config.should == {
+        rvm: '1.8.7',
+        env: 'FOO=[secure]',
+        global_env: 'BAR=[secure]'
       }
     end
 
@@ -453,21 +450,6 @@ describe Job do
           }
         }
       end
-    end
-  end
-
-  describe 'log_content=' do
-    let(:job) { Job::Test.create!(owner: Factory(:user), repository: Factory(:repository), commit: Factory(:commit), source: Factory(:build), log: Factory(:log)) }
-
-    it 'sets the log content' do
-      job.log_content = 'Hello, world'
-      job.log.content.should == 'Hello, world'
-    end
-
-    it 'blanks out any old log content' do
-      job.log_content = 'foo'
-      job.log_content = 'bar'
-      job.log.content.should == 'bar'
     end
   end
 end

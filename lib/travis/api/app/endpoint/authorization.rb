@@ -1,10 +1,10 @@
 require 'addressable/uri'
 require 'faraday'
 require 'securerandom'
-require 'customerio'
 require 'travis/api/app'
 require 'travis/github/education'
 require 'travis/github/oauth'
+require 'travis/customerio'
 
 class Travis::Api::App
   class Endpoint
@@ -109,39 +109,10 @@ class Travis::Api::App
         end
       end
 
-      # This endpoint is meant to be embedded in an iframe, popup window or
-      # similar. It will perform the handshake and, once done, will send an
-      # access token and user payload to the parent window via postMessage.
-      #
-      # However, the endpoint to send the payload to has to be explicitely
-      # safelisted in production, as this is endpoint is only meant to be used
-      # with the official Travis CI client at the moment.
-      #
-      # Example usage:
-      #
-      #     window.addEventListener("message", function(event) {
-      #       console.log("received token: " + event.data.token);
-      #     });
-      #
-      #     var iframe = $('<iframe />').hide();
-      #     iframe.appendTo('body');
-      #     iframe.attr('src', "https://api.travis-ci.org/auth/post_message");
-      #
-      # Note that embedding it in an iframe will only work for users that are
-      # logged in at GitHub and already authorized Travis CI. It is therefore
-      # recommended to redirect to [/auth/handshake](#/auth/handshake) if no
-      # token is being received.
       get '/post_message', scope: :public do
         content_type :html
         data = { check_third_party_cookies: !Travis.config.auth.disable_third_party_cookies_check }
         erb(:container, locals: data)
-      end
-
-      get '/post_message/iframe', scope: :public do
-        handshake do |user, token, target_origin|
-          halt 403, invalid_target(target_origin) unless target_ok? target_origin
-          post_message(token: token, user: user, target_origin: target_origin)
-        end
       end
 
       error Faraday::Error::ClientError do
@@ -167,27 +138,6 @@ class Travis::Api::App
           end
         end
 
-        def update_customerio(user)
-          return unless Travis.config.customerio.site_id
-
-          # send event to customer.io
-          payload = {
-            :id => user.id,
-            :name => user.name,
-            :login => user.login,
-            :email => primary_email_for_user(user.github_oauth_token),
-            :created_at => user.created_at.to_i,
-            :github_id => user.github_id,
-            :education => user.education,
-            :first_logged_in_at => user.first_logged_in_at.to_i,
-            :travis_domain => Travis.config.client_domain
-          }
-
-          customerio.identify(payload)
-        rescue StandardError => e
-          Travis.logger.error "Could not update Customer.io for User: #{user.id}:#{user.login} with message:#{e.message}"
-        end
-
         def serialize_user(user)
           rendered = Travis::Api::Serialize.data(user, version: :v2)
           rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
@@ -198,36 +148,45 @@ class Travis::Api::App
           proxy ? File.join(proxy, request.fullpath) : url
         end
 
+        def log_with_request_id(line)
+          request_id = request.env["HTTP_X_REQUEST_ID"]
+          Travis.logger.info "#{line} <request_id=#{request_id}>"
+        end
+
         def handshake
-          config   = Travis.config.oauth2
-          endpoint = Addressable::URI.parse(config.authorization_server)
+          config   = Travis.config.oauth2.to_h
+          endpoint = Addressable::URI.parse(config[:authorization_server])
           values   = {
-            client_id:    config.client_id,
-            scope:        config.scope,
+            client_id:    config[:client_id],
+            scope:        config[:scope],
             redirect_uri: oauth_endpoint
           }
 
+          log_with_request_id("[handshake] Starting handshake")
+
           if params[:code]
-            halt 400, 'state mismatch' unless state_ok?(params[:state])
-            endpoint.path          = config.access_token_path
+            unless state_ok?(params[:state])
+              log_with_request_id("[handshake] Handshake failed (state mismatch)")
+              halt 400, 'state mismatch'
+            end
+            endpoint.path          = config[:access_token_path]
             values[:state]         = params[:state]
             values[:code]          = params[:code]
-            values[:client_secret] = config.client_secret
+            values[:client_secret] = config[:client_secret]
             github_token           = get_token(endpoint.to_s, values)
             user                   = user_for_github_token(github_token)
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
             update_first_login(user)
-            update_customerio(user)
+            Travis::Customerio.update(user)
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
-            endpoint.path          = config.authorize_path
+            endpoint.path          = config[:authorize_path]
             endpoint.query_values  = values
             redirect to(endpoint.to_s)
           end
         end
-
 
         def create_state
           state = SecureRandom.urlsafe_base64(16)
@@ -285,6 +244,7 @@ class Travis::Api::App
 
             ActiveRecord::Base.transaction do
               if user
+                ensure_token_is_available
                 rename_repos_owner(user.login, info['login'])
                 user.update_attributes info
               else
@@ -301,6 +261,12 @@ class Travis::Api::App
             unless retried
               retried = true
               retry
+            end
+          end
+
+          def ensure_token_is_available
+            unless user.tokens.first
+              user.create_a_token
             end
           end
         end
@@ -320,7 +286,10 @@ class Travis::Api::App
           end
 
           user   = manager.fetch
-          halt 403, 'not a Travis user' if user.nil?
+          if user.nil?
+            log_with_request_id("[handshake] Fetching user failed")
+            halt 403, 'not a Travis user'
+          end
 
           Travis.run_service(:sync_user, user)
 
@@ -334,7 +303,11 @@ class Travis::Api::App
           response   = Faraday.new(ssl: Travis.config.github.ssl).post(endpoint, values)
           parameters = Addressable::URI.form_unencode(response.body)
           token_info = parameters.assoc("access_token")
-          halt 401, 'could not resolve github token' unless token_info
+
+          unless token_info
+            log_with_request_id("[handshake] Could not fetch token, github's response: status=#{response.status}, body=#{parameters.inspect} headers=#{response.headers.inspect}")
+            halt 401, 'could not resolve github token'
+          end
           token_info.last
         end
 
@@ -392,14 +365,6 @@ class Travis::Api::App
           @allowed_https_targets ||= Travis.config.auth.target_origin.to_s.split(',')
         end
 
-        def primary_email_for_user(oauth_token)
-          # check for the users primary email address (we don't store this info)
-          GH.with(token: oauth_token, client_id: nil) { GH['user/emails'] }.select { |e| e['primary'] }.first['email']
-        end
-
-        def customerio
-          Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
-        end
     end
   end
 end
@@ -426,113 +391,19 @@ function tellEveryone(msg, win) {
 
 // every serious program has a main function
 function main() {
-  doYouHave(thirdPartyCookies,
-    yesIndeed("third party cookies enabled, creating iframe",
-      doYouHave(iframe(after(5)),
-        yesIndeed("iframe succeeded", done),
-        nopeSorry("iframe taking too long, creating pop-up",
-          doYouHave(popup(after(5)),
-            yesIndeed("pop-up succeeded", done),
-            nopeSorry("pop-up failed, redirecting", redirect))))),
-    nopeSorry("third party cookies disabled, creating pop-up",
-      doYouHave(popup(after(8)),
-        yesIndeed("popup succeeded", done),
-        nopeSorry("popup failed", redirect))))();
+  redirect();
 }
 
 // === THE LOGIC ===
-var url = window.location.pathname + '/iframe' + window.location.search;
-
-function thirdPartyCookies(yes, no) {
-  <%= "return no();" unless check_third_party_cookies %>
-  window.cookiesCheckCallback = function(enabled) { enabled ? yes() : no() };
-  var img      = document.createElement('img');
-  img.src      = "https://third-party-cookies.herokuapp.com/set";
-  img.onload   = function() {
-    var script = document.createElement('script');
-    script.src = "https://third-party-cookies.herokuapp.com/check";
-    window.document.body.appendChild(script);
-  }
-}
-
-function iframe(time) {
-  return function(yes, no) {
-    var iframe = document.createElement('iframe');
-    iframe.src = url;
-    timeout(time, yes, no);
-    window.document.body.appendChild(iframe);
-  }
-}
-
-function popup(time) {
-  return function(yes, no) {
-    if(popupWindow) {
-      timeout(time, yes, function() {
-        if(popupWindow.closed || popupWindow.innerHeight < 1) {
-          no()
-        } else {
-          try {
-            popupWindow.focus();
-            popupWindow.resizeTo(900, 500);
-          } catch(err) {
-            no()
-          }
-        }
-      });
-    } else {
-      no()
-    }
-  }
-}
-
-function done() {
-  if(popupWindow && !popupWindow.closed) popupWindow.close();
-}
 
 function redirect() {
   tellEveryone('redirect');
 }
 
-function createPopup() {
-  if(!popupWindow) popupWindow = window.open(url, 'Signing in...', 'height=50,width=50');
-}
-
 // === THE PLUMBING ===
 <%= erb :common %>
 
-function timeout(time, yes, no) {
-  var timeout = setTimeout(no, time);
-  onSuccess(function() {
-    clearTimeout(timeout);
-    yes()
-  });
-}
-
-function onSuccess(callback) {
-  succeeded ? callback() : callbacks.push(callback)
-}
-
-function doYouHave(feature, yes, no) {
-  return function() { feature(yes, no) };
-}
-
-function yesIndeed(msg, callback) {
-  return function() {
-    if(console && console.log) console.log(msg);
-    return callback();
-  }
-}
-
-function after(value) {
-  return value*1000;
-}
-
-var nopeSorry = yesIndeed;
-var timeoutes = [];
-var callbacks = [];
-var seconds   = 1000;
 var succeeded = false;
-var popupWindow;
 
 window.addEventListener("message", function(event) {
   if(event.data === "done") {

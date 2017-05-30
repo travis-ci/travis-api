@@ -1,8 +1,29 @@
+require 'openssl'
+
 module Travis::API::V3
-  class Models::SSLKey < Model
+  class Models::SslKey < Model
+    include Models::Fingerprint
+
     belongs_to :repository
 
     serialize :private_key, Travis::Settings::EncryptedColumn.new
+
+    def generate_keys!
+      self.public_key = self.private_key = nil
+      generate_keys
+    end
+
+    def generate_keys
+      unless public_key && private_key
+        keys = OpenSSL::PKey::RSA.generate(Travis.config.repository.ssl_key.size)
+        self.public_key = keys.public_key.to_s
+        self.private_key = keys.to_pem
+      end
+    end
+
+    def fingerprint_source
+      private_key
+    end
 
     def encoded_public_key
       key = build_key.public_key

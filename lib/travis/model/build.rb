@@ -51,6 +51,7 @@ class Build < Travis::Model
 
   belongs_to :commit
   belongs_to :request
+  belongs_to :pull_request
   belongs_to :repository, autosave: true
   belongs_to :owner, polymorphic: true
   has_many   :matrix, as: :source, order: :id, class_name: 'Job::Test', dependent: :destroy
@@ -84,7 +85,7 @@ class Build < Travis::Model
     end
 
     def on_branch(branch)
-      api_and_pushes.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
+      api_and_pushes_and_crons.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
     end
 
     def by_event_type(event_types)
@@ -101,8 +102,8 @@ class Build < Travis::Model
       where(event_type: 'pull_request')
     end
 
-    def api_and_pushes
-      by_event_type(['api', 'push'])
+    def api_and_pushes_and_crons
+      by_event_type(["api", "push", "cron"])
     end
 
     def previous(build)
@@ -166,6 +167,10 @@ class Build < Travis::Model
     unless cached_matrix_ids
       update_column(:cached_matrix_ids, to_postgres_array(matrix_ids))
     end
+  end
+
+  def state
+    super || 'created'
   end
 
   # AR 3.2 does not handle pg arrays and the plugins supporting them

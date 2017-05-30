@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# this script enables a pgbouncer wrapper when the
+# $PGBOUNCER_ENABLED variable is set to '1' or 'true'
+# or if the space-delimited list
+# $PGBOUNCER_ENABLED_FOR_DYNOS contains $DYNO
+
+cd "$(dirname "$0")/.."
+
+for d in $PGBOUNCER_ENABLED_FOR_DYNOS; do
+  if [ "$d" = "$DYNO" ]; then
+    export PGBOUNCER_ENABLED=true
+  fi
+done
+
+for d in $TRAVIS_API_LOGS_API_ENABLED_DYNOS; do
+  if [ "$d" = "$DYNO" ]; then
+    export TRAVIS_API_LOGS_API_ENABLED=true
+  fi
+done
+
+if [ ! -f "bin/start-pgbouncer-stunnel" ]; then
+  echo "warning: pgbouncer buildpack not found, setting PGBOUNCER_ENABLED=false"
+  export PGBOUNCER_ENABLED=false
+fi
+
+if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
+  export PGBOUNCER_PREPARED_STATEMENTS=false
+  exec bin/start-pgbouncer-stunnel script/server
+else
+  exec script/server
+fi

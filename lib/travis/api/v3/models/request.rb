@@ -1,8 +1,7 @@
 module Travis::API::V3
   class Models::Request < Model
-    BRANCH_REF = %r{refs/heads/(.*?)$}
-
     belongs_to :commit
+    belongs_to :pull_request
     belongs_to :repository
     belongs_to :owner, polymorphic: true
     has_many   :builds
@@ -10,11 +9,12 @@ module Travis::API::V3
     serialize  :payload
 
     def branch_name
-      ref =~ BRANCH_REF and $1
+      commit.branch if commit
     end
 
-    def ref
-      payload['ref'] if payload
+    def payload
+      puts "[deprectated] Reading request.payload. Called from #{caller[0]}" # unless caller[0] =~ /(dirty.rb|request.rb|_spec.rb)/
+      super
     end
   end
 end

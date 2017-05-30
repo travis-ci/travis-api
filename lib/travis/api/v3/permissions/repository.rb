@@ -2,11 +2,11 @@ require 'travis/api/v3/permissions/generic'
 
 module Travis::API::V3
   class Permissions::Repository < Permissions::Generic
-    def enable?
+    def activate?
       write?
     end
 
-    def disable?
+    def deactivate?
       write?
     end
 
@@ -18,15 +18,23 @@ module Travis::API::V3
       write?
     end
 
-    def create_request?
+    def create_cron?
       write?
     end
 
-    def create_cron?
-      Travis::Features.owner_active?(:cron, object.owner) and write?
+    def create_env_var?
+      write?
     end
 
-    def change_settings?
+    def create_key_pair?
+      write?
+    end
+
+    def delete_key_pair?
+      write?
+    end
+
+    def create_request?
       write?
     end
 

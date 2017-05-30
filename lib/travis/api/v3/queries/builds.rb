@@ -9,6 +9,13 @@ module Travis::API::V3
       sort filter(repository.builds)
     end
 
+    def active_from(repositories)
+      V3::Models::Build.where(
+        repository_id: repositories.pluck(:id),
+        state: ['created'.freeze, 'started'.freeze]
+      ).includes(:active_jobs)
+    end
+
     def filter(list)
       list = list.where(state:          list(state))          if state
       list = list.where(previous_state: list(previous_state)) if previous_state

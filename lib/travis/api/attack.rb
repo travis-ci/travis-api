@@ -1,5 +1,16 @@
 require 'rack/attack'
 require 'netaddr'
+require 'metriks'
+
+ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, req|
+  metric_name = [
+    'api.rate_limiting',
+    req.env['rack.attack.match_type'],
+    req.env['rack.attack.matched'],
+  ].join('.')
+
+  ::Metriks.meter(metric_name).mark
+end
 
 class Rack::Attack
   class Request
@@ -34,18 +45,18 @@ class Rack::Attack
 
   GITHUB_CIDR = NetAddr::CIDR.create('192.30.252.0/22')
 
-  safelist('safelist build status images') do |request|
+  safelist('build_status_image') do |request|
     /\.(png|svg)$/.match(request.path)
   end
 
   # https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-safelist/
-  safelist('safelist anything coming from github') do |request|
-    request.ip && GITHUB_CIDR.contains?(request.ip)
+  safelist('github_request_ip') do |request|
+    request.ip && NetAddr::CIDR.create(request.ip).version == 4 && GITHUB_CIDR.contains?(request.ip)
   end
 
   ####
   # Whitelisted IP addresses
-  safelist('safelist client requesting from redis') do |request|
+  safelist('ip_in_redis') do |request|
     # TODO: deprecate :api_whitelisted_ips in favour of api_safelisted_ips
     Travis.redis.sismember(:api_whitelisted_ips, request.ip) || Travis.redis.sismember(:api_safelisted_ips, request.ip)
   end
@@ -54,7 +65,7 @@ class Rack::Attack
   # Ban based on: IP address
   # Ban time:     indefinite
   # Ban after:    manually banned
-  blocklist('block client requesting from redis') do |request|
+  blocklist('ip_in_redis') do |request|
     # TODO: deprecate :api_blacklisted_ips in favour of api_blocklisted_ips
     Travis.redis.sismember(:api_blacklisted_ips, request.ip) || Travis.redis.sismember(:api_blocklisted_ips, request.ip)
   end
@@ -63,7 +74,7 @@ class Rack::Attack
   # Ban based on: IP address or access token
   # Ban time:     5 hours
   # Ban after:    10 POST requests within five minutes to /auth/github
-  blocklist('hammering /auth/github') do |request|
+  blocklist('hammering_auth_github') do |request|
     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 2, findtime: 5.minutes, bantime: bantime(5.hours)) do
       request.post? and request.path == '/auth/github'
     end
@@ -73,7 +84,7 @@ class Rack::Attack
   # Ban based on: IP address or access token
   # Ban time:     1 hour
   # Ban after:    10 POST requests within 30 seconds
-  blocklist('spamming with POST requests') do |request|
+  blocklist('spamming_post_requests') do |request|
     Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 30.seconds, bantime: bantime(1.hour)) do
       request.post? and not POST_SAFELIST.include? request.path
     end
@@ -83,21 +94,21 @@ class Rack::Attack
   ###
   # Throttle:  unauthenticated requests to /auth/github - 1 per minute
   # Scoped by: IP address
-  throttle('req/ip/1min', limit: 1, period: 1.minute) do |request|
+  throttle('req_ip_1min', limit: 1, period: 1.minute) do |request|
     request.ip unless request.authenticated? and request.path == '/auth/github'
   end
 
   ###
   # Throttle:  unauthenticated requests - 500 per minute
   # Scoped by: IP address
-  throttle('req/ip/1min', limit: 500, period: 1.minute) do |request|
+  throttle('req_ip_1min', limit: 500, period: 1.minute) do |request|
     request.ip unless request.authenticated?
   end
 
   ###
   # Throttle:  authenticated requests - 2000 per minute
   # Scoped by: access token
-  throttle('req/token/1min', limit: 2000, period: 1.minute) do |request|
+  throttle('req_token_1min', limit: 2000, period: 1.minute) do |request|
     request.identifier
   end
 

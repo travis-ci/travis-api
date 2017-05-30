@@ -176,6 +176,7 @@ module Travis
           repository_id: 1,
           repository: repository,
           source_id: 1,
+          stage_id: 1,
           request_id: 1,
           commit_id: commit.id,
           commit: commit,
@@ -209,7 +210,7 @@ module Travis
 
       def stub_log(attributes = {})
         Stubs.stub 'log', attributes.reverse_merge(
-          class: Stubs.stub('class', name: 'Log'),
+          class: Stubs.stub('class', name: 'Travis::RemoteLog'),
           id: 1,
           job_id: 1,
           content: 'the test log'

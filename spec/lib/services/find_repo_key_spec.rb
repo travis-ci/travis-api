@@ -1,6 +1,8 @@
 describe Travis::Services::FindRepoKey do
+
+  let(:user)    { Factory(:user) }
   let!(:repo)   { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
-  let(:service) { described_class.new(stub('user'), params) }
+  let(:service) { described_class.new(user, params) }
 
   before { repo.regenerate_key! }
 

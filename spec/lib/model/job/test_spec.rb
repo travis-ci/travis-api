@@ -1,8 +1,11 @@
 describe Job::Test do
   let(:job) { Factory(:test) }
+  let(:log) { Travis::RemoteLog.new(job_id: job.id) }
 
   before :each do
     Travis::Event.stubs(:dispatch)
+    Travis::RemoteLog.stubs(:find_by_job_id).returns(log)
+    Travis::RemoteLog.stubs(:write_content_for_job_id).returns(log)
   end
 
   it 'is cancelable if the job has not finished yet' do
@@ -77,22 +80,9 @@ describe Job::Test do
         job.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
       end
 
-      it 'resets the log content' do
-        job.log.expects(:update_attributes!).with(content: '', removed_at: nil, removed_by: nil)
-        job.receive(data)
-      end
-
       it 'propagates the event to the source' do
         job.source.expects(:receive)
         job.receive(data)
-      end
-
-      it 'sets log\'s removed_at and removed_by to nil' do
-        job.log.removed_at = Time.now
-        job.log.removed_by = job.repository.owner
-        job.receive(data)
-        job.log.removed_at.should be_nil
-        job.log.removed_by.should be_nil
       end
     end
 
@@ -139,20 +129,8 @@ describe Job::Test do
       end
 
       it 'resets log attributes' do
-        job.log.update_attributes!(content: 'foo', aggregated_at: Time.now)
+        log.expects(:clear!)
         job.reset!
-        job.reload.log.aggregated_at.should be_nil
-        job.reload.log.content.should be_blank
-      end
-
-      it 'recreates log if it\'s removed' do
-        job.log.destroy
-        job.reload
-        job.reset!
-        job.reload.log.should_not be_nil
-      end
-
-      xit 'clears log parts' do
       end
 
       it 'destroys annotations' do

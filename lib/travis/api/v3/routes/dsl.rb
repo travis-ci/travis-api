@@ -18,8 +18,8 @@ module Travis::API::V3
       @prefix ||= ""
     end
 
-    def resource(type, &block)
-      resource = Routes::Resource.new(type)
+    def resource(identifier, **args, &block)
+      resource = Routes::Resource.new(identifier, **args)
       with_resource(resource, &block)
       resources << resource
     end
@@ -47,7 +47,7 @@ module Travis::API::V3
 
     def capture(mapping)
       mapping.each_pair do |key, value|
-        key = "#{current_resource.identifier}.#{key}" if current_resource and not key.to_s.include?(?.)
+        key = "#{current_resource.display_identifier}.#{key}" if current_resource and not key.to_s.include?(?.)
         mustermann_options[:capture][key.to_sym] = value
       end
     end

@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Renderer::Requests < Renderer::CollectionRenderer
+  class Renderer::Requests < CollectionRenderer
     type            :requests
     collection_key  :requests
   end

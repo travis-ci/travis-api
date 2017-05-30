@@ -20,7 +20,7 @@ module Travis::API::V3
 
     def config
       # TODO: move this somewhere else?
-      pusher_config = (Travis.config.pusher_ws || Travis.config.pusher || {}).to_hash.slice(:scheme, :host, :port, :path, :key, :secure, :private)
+      pusher_config = (Travis.config.pusher_ws || Travis.config.pusher.to_h || {}).to_hash.slice(:scheme, :host, :port, :path, :key, :secure, :private)
       {
         host:   Travis.config.client_domain || Travis.config.host,
         github: V3::GitHub.client_config,
@@ -31,25 +31,25 @@ module Travis::API::V3
     def all_resources
       @all_resources ||= begin
         home_actions = {
-          find: {
+          find: [{
             :@type          => :template,
             :request_method => :GET,
             :uri_template   => prefix + ?/
-          }
+          }]
         }
 
         all = routes.resources + [
-          Routes::Resource.new(:account),   # dummy as there are only accounts routes right now
           Routes::Resource.new(:broadcast), # dummy as there are only broadcasts routes right now
           Routes::Resource.new(:commit),    # dummy as commits can only be embedded
           Routes::Resource.new(:request),   # dummy as there are only requests routes right now
+          # Routes::Resource.new(:stage),     # dummy as there is no stage endpoint at the moment
           Routes::Resource.new(:error),
           Routes::Resource.new(:home,     attributes: [:config, :errors, :resources], actions: home_actions),
           Routes::Resource.new(:resource, attributes: [:actions, :attributes, :representations, :access_rights]),
           Routes::Resource.new(:template, attributes: [:request_method, :uri_template])
         ]
 
-        all.sort_by(&:identifier)
+        all.sort_by(&:display_identifier)
       end
     end
 
@@ -82,7 +82,7 @@ module Travis::API::V3
     def render_json
       resources = { }
       all_resources.each do |resource|
-        data = resources[resource.identifier] ||= { :@type => :resource, :actions => {} }
+        data = resources[resource.display_identifier] ||= { :@type => :resource, :actions => {} }
         data.merge! resource.meta_data
 
         if renderer = Renderer[resource.identifier, false]
@@ -91,27 +91,27 @@ module Travis::API::V3
 
           if renderer.respond_to? :representations
             representations = renderer.representations
-            if renderer.respond_to? :experimental_representations
-              representations = representations.reject { |k| renderer.experimental_representations.include? k }
+            if renderer.respond_to? :hidden_representations
+              representations = representations.reject { |k| renderer.hidden_representations.include? k }
             end
             data[:representations] = representations
           end
         end
 
-        if permissions           = Permissions[resource.identifier, false]
+        if permissions           = Permissions[resource.display_identifier, false]
           data[:permissions]     = permissions.access_rights.keys
         end
 
         resource.services.each do |(request_method, sub_route), service|
-          list    = resources[resource.identifier][:actions][service] ||= []
+          list    = resources[resource.display_identifier][:actions][service] ||= []
           pattern = sub_route ? resource.route + sub_route : resource.route
           factory = Services[resource.identifier][service]
 
           if factory.params and factory.params.include? "sort_by".freeze
-            query = Queries[resource.identifier]
+            query = Queries[resource.display_identifier]
             if query and query.sortable?
-              resources[resource.identifier][:sortable_by]  = query.sort_by.keys - query.experimental_sortable_by
-              resources[resource.identifier][:default_sort] = query.default_sort unless query.default_sort.empty?
+              resources[resource.display_identifier][:sortable_by]  = query.sort_by.keys - query.experimental_sortable_by
+              resources[resource.display_identifier][:default_sort] = query.default_sort unless query.default_sort.empty?
             end
           end
 
@@ -119,7 +119,13 @@ module Travis::API::V3
             params    = factory.params if request_method == 'GET'.freeze
             params  &&= params.reject { |p| p.start_with? ?@.freeze }
             template += "{?#{params.sort.join(?,)}}" if params and params.any?
-            list << { :@type => :template, :request_method => request_method, :uri_template => prefix + template }
+            action    = {
+              :@type => :template,
+              :request_method => request_method,
+              :uri_template => prefix + template
+            }
+            action[:accepted_params] = factory.accepted_params if ['POST'.freeze, 'PATCH'.freeze].include? request_method
+            list << action
           end
 
         end
@@ -140,7 +146,7 @@ module Travis::API::V3
       all_resources.each do |resource|
         resource.services.each do |(request_method, sub_route), service|
           pattern  = sub_route ? resource.route + sub_route : resource.route
-          relation = "http://schema.travis-ci.com/rel/#{resource.identifier}/#{service}"
+          relation = "http://schema.travis-ci.com/rel/#{resource.display_identifier}/#{service}"
           pattern.to_templates.each do |template|
             relations[relation]           ||= {}
             relations[relation][template] ||= { allow: [], vars: template.scan(/{\+?([^}]+)}/).flatten }

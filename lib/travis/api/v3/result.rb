@@ -2,7 +2,7 @@ module Travis::API::V3
   class Result
     attr_accessor :access_control, :type, :resource, :status, :href, :meta_data, :warnings
 
-    def initialize(access_control, type, resource, status: 200, **meta_data)
+    def initialize(access_control:, type:, resource:, status: 200, **meta_data)
       @warnings = []
       @access_control, @type, @resource, @status, @meta_data = access_control, type, resource, status, meta_data
     end
@@ -23,13 +23,14 @@ module Travis::API::V3
     def render(params, env)
       href    = self.href
       href    = V3.location(env) if href.nil? and env['REQUEST_METHOD'.freeze] == 'GET'.freeze
-      include = params['include'.freeze].to_s.split(?,.freeze)
+      include = params.to_h['include'.freeze].to_s.split(?,.freeze)
       add_info Renderer[type].render(resource,
         href:           href,
         script_name:    env['SCRIPT_NAME'.freeze],
         include:        include,
         access_control: access_control,
-        meta_data:      meta_data)
+        meta_data:      meta_data,
+        accept:         env.fetch('HTTP_ACCEPT'.freeze, 'application/json'.freeze))
     end
 
     def add_info(payload)

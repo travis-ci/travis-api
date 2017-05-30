@@ -20,7 +20,7 @@ module Scenario
               :committed_at => '2010-11-12 11:50:00',
             },
             :jobs => [
-              { :owner => minimal.owner, :log => Log.new(:content => 'minimal log 1'), :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
             ]
 
       build :repository => minimal,
@@ -40,7 +40,7 @@ module Scenario
               :committed_at => '2010-11-12 12:25:00',
             },
             :jobs => [
-              { :owner => minimal.owner, :log => Log.new(:content => 'minimal log 2'), :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
             ]
 
       build :repository => minimal,
@@ -60,10 +60,10 @@ module Scenario
               :committer_email => 'svenfuchs@artweb-design.de',
             },
             :jobs => [
-              { :owner => minimal.owner, :log => Log.new(:content => 'minimal log 3.1'), :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
-              { :owner => minimal.owner, :log => Log.new(:content => 'minimal log 3.2'), :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
-              { :owner => minimal.owner, :log => Log.new(:content => 'minimal log 3.3'), :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
-              { :owner => minimal.owner, :log => Log.new(:content => 'minimal log 3.4'), :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
+              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
+              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
+              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
             ]
 
       build :repository => enginex,
@@ -84,7 +84,7 @@ module Scenario
               :committed_at => '2010-11-11 11:55:00',
             },
             :jobs => [
-              { :owner => enginex.owner, :log => Log.new(:content => 'enginex log 1'), :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+              { :owner => enginex.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
             ]
 
       [minimal, enginex]

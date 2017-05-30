@@ -15,7 +15,7 @@ FactoryGirl.define do
   factory :commit do
     commit '62aae5f70ceee39123ef'
     branch 'master'
-    message 'the commit message'
+    message 'the commit message 🤔'
     committed_at '2011-11-11T11:11:11Z'
     committer_name 'Sven Fuchs'
     committer_email 'svenfuchs@artweb-design.de'
@@ -24,19 +24,15 @@ FactoryGirl.define do
     compare_url 'https://github.com/svenfuchs/minimal/compare/master...develop'
   end
 
-  factory :test, :class => 'Job::Test' do
+  factory :test, :class => 'Job::Test', aliases: [:job] do
     owner      { User.first || Factory(:user) }
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }
     source     { Factory(:build) }
-    log        { Factory(:log) }
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
     number     '2.1'
     tags       ""
-  end
-
-  factory :log do
-    content '$ bundle install --pa'
+    state      :created
   end
 
   factory :request do
@@ -130,6 +126,28 @@ FactoryGirl.define do
     name "Travis CI"
     api_username "travis-ci"
     api_key "0123456789abcdef"
+  end
+
+  factory :branch, class: Travis::API::V3::Models::Branch do
+    name Random.rand(1..1000)
+    repository_id { Factory(:repository).id }
+  end
+
+  factory :v3_build, class: Travis::API::V3::Models::Build do
+    owner { User.first || Factory(:user) }
+    repository { Repository.first || Factory(:repository) }
+    association :request
+    association :commit
+    started_at { Time.now.utc }
+    finished_at { Time.now.utc }
+    number 1
+    state :passed
+  end
+
+  factory :cron, class: Travis::API::V3::Models::Cron do
+    branch { Factory(:branch) }
+    interval "daily"
+    dont_run_if_recent_build_exists false
   end
 end
 
