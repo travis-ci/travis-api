@@ -31,15 +31,16 @@ module Travis::API::V3
 
     def for_owner(list, created_by)
       # https://stackoverflow.com/questions/10871131/how-to-use-or-condition-in-activerecord-query
-      owners = list(created_by)
+      logins = list(created_by)
       created_builds = []
-      owners.each do |o|
-        if V3::Models::User.find_by_login(o.to_s)
-          @sender_id = V3::Models::User.find_by_login(o.to_s).id
+
+      logins.each do |login|
+        if V3::Models::User.find_by_login(login.to_s)
+          @sender_id = V3::Models::User.find_by_login(login.to_s).id
           @sender_type = 'User'
           created_builds << list.where(sender_id: @sender_id, sender_type: @sender_type)
-        elsif V3::Models::Organization.find_by_login(o.to_s)
-          @sender_id = V3::Models::Organization.find_by_login(o.to_s).id
+        elsif V3::Models::Organization.find_by_login(login.to_s)
+          @sender_id = V3::Models::Organization.find_by_login(login.to_s).id
           @sender_type = 'Organization'
           created_builds << list.where(sender_id: @sender_id, sender_type: @sender_type)
         else

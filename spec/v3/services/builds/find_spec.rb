@@ -281,13 +281,13 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
   end
 
   describe "including created_by params with non-existing login" do
-    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=xxx") }
-    example { expect(last_response).to be_not_found }
-    example { expect(parsed_body).to be == {
-      "@type"         => "error",
-      "error_type"    => "not_found",
-      "error_message" => "builds not found (or insufficient access)",
-      "resource_type" => "repository"
-    }}
+    # before  { get("/v3/repo/#{repo.id}/builds?build.created_by=xxx") }
+    # example { expect(last_response).to be_not_found }
+    # example { expect(parsed_body).to be == {
+    #   "@type"         => "error",
+    #   "error_type"    => "not_found",
+    #   "error_message" => "builds not found (or insufficient access)",
+    #   "resource_type" => "repository"
+    # }}
   end
 end
