@@ -38,7 +38,7 @@ module Travis::API::V3
       orgs.map! { |o| [o.id, 'Organization']}
 
       owners = users + orgs
-      raise EntityMissing, 'no builds found for that user or organization'.freeze if owners.count == 0
+      raise NotFound, 'user or organization not found'.freeze if owners.count == 0
 
       owners.each do |owner|
         list = list.where("builds.sender_id = ? AND builds.sender_type = ?", owner[0], owner[1])

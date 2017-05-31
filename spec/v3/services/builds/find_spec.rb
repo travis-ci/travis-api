@@ -274,13 +274,19 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
   end
 
   describe "including created_by params with non-existing login" do
-    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=xxx") }
+    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=xxxxxx") }
     example { expect(last_response).to be_not_found }
     example { expect(parsed_body).to be == {
       "@type"         => "error",
       "error_type"    => "not_found",
-      "error_message" => "no builds found for that user or organization"
+      "error_message" => "user or organization not found"
     }}
+  end
+
+  describe "including created_by params with existing login but no created builds" do
+    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=josevalim") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body['builds']).to be == [] }
   end
 
   describe "including created_by params with existing login" do
