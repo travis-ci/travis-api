@@ -273,6 +273,16 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     example { expect(parsed_body['builds']).to be == [] }
   end
 
+  describe "including created_by params with non-existing login" do
+    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=xxx") }
+    example { expect(last_response).to be_not_found }
+    example { expect(parsed_body).to be == {
+      "@type"         => "error",
+      "error_type"    => "not_found",
+      "error_message" => "no builds found for that user or organization"
+    }}
+  end
+
   describe "including created_by params with existing login" do
     before  { get("/v3/repo/#{repo.id}/builds?build.created_by=svenfuchs,travis-ci") }
     example { expect(last_response).to be_ok }
@@ -280,14 +290,5 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     example { expect(parsed_body['builds'].first['created_by']['id']).to be == (repo.owner.id) }
   end
 
-  describe "including created_by params with non-existing login" do
-    # before  { get("/v3/repo/#{repo.id}/builds?build.created_by=xxx") }
-    # example { expect(last_response).to be_not_found }
-    # example { expect(parsed_body).to be == {
-    #   "@type"         => "error",
-    #   "error_type"    => "not_found",
-    #   "error_message" => "builds not found (or insufficient access)",
-    #   "resource_type" => "repository"
-    # }}
-  end
+
 end

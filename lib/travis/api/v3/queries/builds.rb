@@ -30,25 +30,20 @@ module Travis::API::V3
     end
 
     def for_owner(list, created_by)
-      # https://stackoverflow.com/questions/10871131/how-to-use-or-condition-in-activerecord-query
       logins = list(created_by)
-      created_builds = []
 
-      logins.each do |login|
-        if V3::Models::User.find_by_login(login.to_s)
-          @sender_id = V3::Models::User.find_by_login(login.to_s).id
-          @sender_type = 'User'
-          created_builds << list.where(sender_id: @sender_id, sender_type: @sender_type)
-        elsif V3::Models::Organization.find_by_login(login.to_s)
-          @sender_id = V3::Models::Organization.find_by_login(login.to_s).id
-          @sender_type = 'Organization'
-          created_builds << list.where(sender_id: @sender_id, sender_type: @sender_type)
-        else
-          next
-        end
+      users = V3::Models::User.where(login: logins)
+      users.map! { |u| [u.id, 'User']}
+      orgs = V3::Models::Organization.where(login: logins)
+      orgs.map! { |o| [o.id, 'Organization']}
+
+      owners = users + orgs
+      raise EntityMissing, 'no builds found for that user or organization'.freeze if owners.count == 0
+
+      owners.each do |owner|
+        list = list.where("builds.sender_id = ? AND builds.sender_type = ?", owner[0], owner[1])
       end
-      raise EntityMissing, 'no builds found'.freeze unless created_builds != nil
-      created_builds
+      list
     end
   end
 end
