@@ -16,34 +16,25 @@ module Travis::API::V3
       ).includes(:active_jobs)
     end
 
-    def filter(list)
-      list = list.where(state:          list(state))          if state
-      list = list.where(previous_state: list(previous_state)) if previous_state
-      list = list.where(event_type:     list(event_type))     if event_type
-      list = list.where(branch:         list(branch_name))    if branch_name
-      list = for_owner(list, created_by) if created_by
+    def filter(relation)
+      relation = relation.where(state:          list(state))          if state
+      relation = relation.where(previous_state: list(previous_state)) if previous_state
+      relation = relation.where(event_type:     list(event_type))     if event_type
+      relation = relation.where(branch:         list(branch_name))    if branch_name
+      relation = for_owner(relation)                                  if created_by
 
-      list = list.includes(:commit).includes(branch: :last_build).includes(:repository)
-      list = list.includes(branch: { last_build: :commit }) if includes? 'build.commit'.freeze
-      list = list.includes(:jobs) if includes? 'build.jobs'.freeze or includes? 'job'.freeze
-      list
+      relation = relation.includes(:commit).includes(branch: :last_build).includes(:repository)
+      relation = relation.includes(branch: { last_build: :commit }) if includes? 'build.commit'.freeze
+      relation = relation.includes(:jobs) if includes? 'build.jobs'.freeze or includes? 'job'.freeze
+      relation
     end
 
-    def for_owner(list, created_by)
-      logins = list(created_by)
+    def for_owner(relation)
+      users = V3::Models::User.where(login: list(created_by)).pluck(:id)
+      orgs = V3::Models::Organization.where(login: list(created_by)).pluck(:id)
 
-      users = V3::Models::User.where(login: logins)
-      users.map! { |u| [u.id, 'User']}
-      orgs = V3::Models::Organization.where(login: logins)
-      orgs.map! { |o| [o.id, 'Organization']}
-
-      owners = users + orgs
-      raise NotFound, 'user or organization not found'.freeze if owners.count == 0
-
-      owners.each do |owner|
-        list = list.where("builds.sender_id = ? AND builds.sender_type = ?", owner[0], owner[1])
-      end
-      list
+      relation.where(%Q((builds.sender_type = 'User' AND builds.sender_id IN (?))
+                    OR (builds.sender_type = 'Organization' AND builds.sender_id IN (?))), users, orgs)
     end
   end
 end
