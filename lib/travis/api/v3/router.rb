@@ -1,3 +1,5 @@
+require 'metriks'
+
 module Travis::API::V3
   class Router
     include Travis::API::V3
@@ -12,7 +14,7 @@ module Travis::API::V3
     end
 
     def call(env)
-      Metriks.meter("api.v3.total_requests").mark
+      ::Metriks.meter("api.v3.total_requests").mark
 
       return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
       metrics         = @metrics_processor.create

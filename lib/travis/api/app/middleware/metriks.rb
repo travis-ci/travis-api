@@ -7,7 +7,7 @@ class Travis::Api::App
       include Helpers::Accept
 
       before do
-        Metriks.meter("api.v2.total_requests").mark
+        ::Metriks.meter("api.v2.total_requests").mark
 
         env['metriks.request.start'] ||= Time.now.utc
       end
