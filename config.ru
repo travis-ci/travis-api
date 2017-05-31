@@ -16,7 +16,10 @@ skip   = ['Travis::Memory', 'GH::ResponseWrapper', 'Travis::Helpers::Legacy', 'G
 end
 
 require 'newrelic_rpm'
-::NewRelic::Agent.manual_start(config_path: 'config/newrelic.yml')
-::NewRelic::Agent.after_fork(force_reconnect: true)
+
+if ENV['NEW_RELIC_ENABLED'] == 'true' || ENV['NEW_RELIC_ENABLED_FOR_DYNOS'] && ENV['NEW_RELIC_ENABLED_FOR_DYNOS'].split(' ').include?(ENV['DYNO'])
+  ::NewRelic::Agent.manual_start(config_path: 'config/newrelic.yml')
+  ::NewRelic::Agent.after_fork(force_reconnect: true)
+end
 
 run Travis::Api::App.new
