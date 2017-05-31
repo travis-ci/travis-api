@@ -88,6 +88,8 @@ class Repository::Settings < Travis::Settings
   attribute :timeout_hard_limit
   attribute :timeout_log_silence
   attribute :api_builds_rate_limit, Integer
+  attribute :auto_cancel_pushes, Boolean
+  attribute :auto_cancel_pull_requests, Boolean
 
   validates :maximum_number_of_builds, numericality: true
 
