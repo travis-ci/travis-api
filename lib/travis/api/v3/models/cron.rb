@@ -81,8 +81,7 @@ module Travis::API::V3
     end
 
     def last_non_cron_build_time
-      last_build = Build.find_by_id(branch.last_build_id)
-      last_build.finished_at.to_datetime.utc if last_build && last_build.finished_at
+      Build.find_by_id(branch.last_build_id)&.started_at&.to_datetime&.utc
     end
   end
 end
