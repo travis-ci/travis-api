@@ -7,6 +7,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
 
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
+    build.update_attributes!(sender_id: repo.owner.id, sender_type: 'User')
     test   = build.stages.create(number: 1, name: 'test')
     deploy = build.stages.create(number: 2, name: 'deploy')
     build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
@@ -132,6 +133,12 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "message"           => "unignore Gemfile.lock",
           "compare_url"       => "https://github.com/svenfuchs/minimal/compare/master...develop",
           "committed_at"      => "2010-11-12T12:55:00Z"},
+        "created_by"          => {
+          "@type"             => "user",
+          "@href"             => "/v3/user/1",
+          "@representation"   => "minimal",
+          "id"                => 1,
+          "login"             => "svenfuchs"}
       }]
     }}
   end
@@ -243,7 +250,13 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "ref"               => "refs/heads/master",
           "message"           => "unignore Gemfile.lock",
           "compare_url"       => "https://github.com/svenfuchs/minimal/compare/master...develop",
-          "committed_at"      => "2010-11-12T12:55:00Z"}
+          "committed_at"      => "2010-11-12T12:55:00Z"},
+        "created_by"          => {
+          "@type"             => "user",
+          "@href"             => "/v3/user/1",
+          "@representation"   => "minimal",
+          "id"                => 1,
+          "login"             => "svenfuchs"}
       }]
     }}
   end
@@ -258,5 +271,24 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     before  { get("/v3/repo/#{repo.id}/builds?branch.name=missing&limit=1") }
     example { expect(last_response).to be_ok }
     example { expect(parsed_body['builds']).to be == [] }
+  end
+
+  describe "including created_by params with non-existing login" do
+    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=xxxxxx") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body['builds']).to be == []}
+  end
+
+  describe "including created_by params with existing login but no created builds" do
+    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=josevalim") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body['builds']).to be == [] }
+  end
+
+  describe "including created_by params with existing login" do
+    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=josevalim,svenfuchs,travis-ci") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body['builds'].size).to be == (1) }
+    example { expect(parsed_body['builds'].first['created_by']['id']).to be == (repo.owner.id) }
   end
 end
