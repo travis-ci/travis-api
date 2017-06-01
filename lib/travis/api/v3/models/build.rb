@@ -5,6 +5,7 @@ module Travis::API::V3
     belongs_to :request
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
+    belongs_to :sender, polymorphic: true
 
     has_many :stages
 
