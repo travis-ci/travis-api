@@ -43,14 +43,14 @@ module Travis::API::V3
     # Will not create a branch object if we don't have any builds for it unless
     # the create_without_build option is set to true.
     def branch(name, create_without_build: false)
-      return nil    unless branch = branches.where(name: name).first_or_initialize
+      return nil    unless branch = branches.where(name: name).order('name ASC').first_or_initialize
       return branch unless branch.new_record?
       return nil    unless create_without_build or branch.builds.any?
       branch.last_build = branch.builds.first
       branch.save!
       branch
     rescue ActiveRecord::RecordNotUnique
-      branches.where(name: name).first
+      branches.where(name: name).order('name ASC').first
     end
 
     def id_default_branch

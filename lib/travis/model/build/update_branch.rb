@@ -19,7 +19,7 @@ class Build
       end
 
       def branch
-        Branch.where(repository_id: repository.id, name: branch_name).first_or_create
+        Branch.where(repository_id: repository.id, name: branch_name).order('name ASC').first_or_create
       end
 
       def branch_name
