@@ -3,7 +3,10 @@ require 'mustermann'
 require 'travis/api/app'
 require 'travis/api/app/extensions'
 require 'travis/api/app/helpers'
-require 'newrelic_rpm'
+
+if ENV['NEW_RELIC_ENABLED'] == 'true' || ENV['NEW_RELIC_ENABLED_FOR_DYNOS'] && ENV['NEW_RELIC_ENABLED_FOR_DYNOS'].split(' ').include?(ENV['DYNO'])
+  require 'newrelic_rpm'
+end
 
 class Travis::Api::App
   # Superclass for any endpoint and middleware.
