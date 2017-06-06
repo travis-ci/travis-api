@@ -29,6 +29,10 @@ require 'fileutils'
 require 'securerandom'
 require 'fog/aws'
 
+if ENV['NEW_RELIC_ENABLED'] == 'true' || ENV['NEW_RELIC_ENABLED_FOR_DYNOS'] && ENV['NEW_RELIC_ENABLED_FOR_DYNOS'].split(' ').include?(ENV['DYNO'])
+  require 'newrelic_rpm'
+end
+
 module Travis::Api
 end
 

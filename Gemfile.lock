@@ -249,6 +249,7 @@ GEM
       connection_pool (~> 2.2)
     net-http-pipeline (1.0.1)
     netaddr (1.5.1)
+    newrelic_rpm (3.16.0.318)
     nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
     os (0.9.6)
@@ -381,6 +382,7 @@ DEPENDENCIES
   mocha (~> 0.12)
   mustermann
   netaddr
+  newrelic_rpm
   pry
   rack-attack (= 5.0.0.beta1)
   rack-cache!
@@ -417,4 +419,4 @@ RUBY VERSION
    ruby 2.3.4p301
 
 BUNDLED WITH
-   1.14.6
+   1.15.0
