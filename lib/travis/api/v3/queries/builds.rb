@@ -36,5 +36,11 @@ module Travis::API::V3
       relation.where(%Q((builds.sender_type = 'User' AND builds.sender_id IN (?))
                     OR (builds.sender_type = 'Organization' AND builds.sender_id IN (?))), users, orgs)
     end
+
+    def for_user(user)
+      V3::Models::Build.where(
+        sender_id: user.id,
+        sender_type: 'User')
+    end
   end
 end
