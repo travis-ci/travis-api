@@ -1,6 +1,5 @@
 module Travis::API::V3
   class Services::Builds::ForCurrentUser < Service
-    # params :active, prefix: :broadcast
     paginate(default_limit: 100)
 
     def run!
