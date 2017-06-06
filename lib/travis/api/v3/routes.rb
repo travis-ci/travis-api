@@ -22,6 +22,10 @@ module Travis::API::V3
       end
     end
 
+    resource :builds do
+      route '/builds'
+      get :for_current_user
+    end
 
     resource :cron do
       capture id: :digit
