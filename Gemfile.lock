@@ -46,12 +46,6 @@ GIT
     travis-lock (0.1.1)
 
 GIT
-  remote: https://github.com/travis-ci/travis-migrations
-  revision: 8c7fbac63e29ae8a6f922051e8417c2ca9e66efb
-  specs:
-    travis-migrations (0.0.3)
-
-GIT
   remote: https://github.com/travis-ci/travis-settings
   revision: d510e63b6c6f059cccae141c265e7a0c7236d1fd
   specs:
@@ -404,7 +398,6 @@ DEPENDENCIES
   travis-api!
   travis-config!
   travis-lock!
-  travis-migrations!
   travis-settings!
   travis-sidekiqs!
   travis-support!

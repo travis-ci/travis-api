@@ -4,6 +4,8 @@ config/database.yml
 config/nginx.conf
 config/skylight.yml
 
+db/
+
 tmp/
 
 logs/
