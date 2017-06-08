@@ -333,6 +333,7 @@ describe Job do
                        username: 'johndoe',
                        access_key: job.repository.key.secure.encrypt('foobar')
                      },
+                     chrome: 'stable',
                      firefox: '22.0',
                      mariadb: '10.1',
                      postgresql: '9.3',
@@ -346,6 +347,7 @@ describe Job do
         job.decrypted_config.should == {
           rvm: '1.8.7',
           addons: {
+            chrome: 'stable',
             firefox: '22.0',
             mariadb: '10.1',
             postgresql: '9.3',
