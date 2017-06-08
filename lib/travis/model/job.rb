@@ -19,6 +19,7 @@ class Job < Travis::Model
     apt
     apt_packages
     apt_sources
+    chrome
     firefox
     hosts
     mariadb
