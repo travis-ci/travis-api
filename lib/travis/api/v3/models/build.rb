@@ -26,6 +26,19 @@ module Travis::API::V3
       primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
+    def created_by
+      return unless sender
+      sender.becomes(created_by_class)
+    end
+
+    def created_by_class
+      return unless sender
+      case sender_type
+      when 'User' then V3::Models::User
+      when 'Organization' then V3::Models::Organization
+      end
+    end
+
     def state
       super || 'created'
     end
