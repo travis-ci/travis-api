@@ -14,7 +14,24 @@ module Travis::API::V3
     end
 
     def created_by
-      model.sender
+      if creator = model.created_by
+        payload = {
+          '@type' => model.sender_type.downcase,
+          '@href' => created_by_href(creator),
+          '@representation' => 'minimal'.freeze,
+          'id' => creator.id,
+          'login' => creator.login
+        }
+        payload['avatar_url'] = V3::Renderer::AvatarURL.avatar_url(creator) if include?('created_by.avatar_url')
+        payload
+      end
+    end
+
+    private def created_by_href(creator)
+      case creator
+      when V3::Models::Organization then Renderer.href(:organization, script_name: script_name, id: creator.id)
+      when V3::Models::User         then Renderer.href(:user, script_name: script_name, id: creator.id)
+      end
     end
 
     private def include_full_jobs?

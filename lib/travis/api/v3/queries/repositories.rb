@@ -45,7 +45,7 @@ module Travis::API::V3
       end
 
       list = list.includes(default_branch: :last_build)
-      list = list.includes(:current_build) if includes? 'repository.current_build'.freeze
+      list = list.includes(current_build: [:repository, :branch, :commit, :stages, :sender]) if includes? 'repository.current_build'.freeze
       list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
       sort list
     end
