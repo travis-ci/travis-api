@@ -20,14 +20,7 @@ describe Travis::Api::Serialize::V2::Http::Job do
   end
 
   it 'annotations' do
-    data['annotations'].should eq([{
-      'id' => 1,
-      'job_id' => 1,
-      'description' => 'The job passed.',
-      'url' => 'https://travis-ci.org/travis-ci/travis-ci/12345',
-      'provider_name' => 'Travis CI',
-      'status' => '',
-    }])
+    data['annotations'].should eq(nil)
   end
 
   context 'with encrypted env vars' do
