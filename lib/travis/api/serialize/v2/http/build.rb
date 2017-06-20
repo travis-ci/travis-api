@@ -22,7 +22,6 @@ module Travis
                 'build'  => build_data,
                 'commit' => commit_data,
                 'jobs'   => jobs_data,
-                'annotations' => annotations_data
               }
             end
 
@@ -87,16 +86,8 @@ module Travis
                 build.matrix.map { |job| job_data(job) }
               end
 
-              def annotations_data
-                Annotations.new(annotations, params).data["annotations"]
-              end
-
               def branch_is_default
                 repository.default_branch == commit.branch
-              end
-
-              def annotations
-                build.matrix.map(&:annotations).flatten
               end
 
               def commit
