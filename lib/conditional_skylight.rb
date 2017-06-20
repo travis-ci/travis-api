@@ -35,7 +35,7 @@ module ConditionalSkylight
       return true
     end
 
-    if ENV['SKYLIGHT_ENABLED_FOR_DYNO'.freeze] && ENV['SKYLIGHT_ENABLED_FOR_DYNO'.freeze].split(' ').include?(ENV['DYNO'.freeze])
+    if ENV['SKYLIGHT_ENABLED_FOR_DYNOS'.freeze] && ENV['SKYLIGHT_ENABLED_FOR_DYNOS'.freeze].split(' ').include?(ENV['DYNO'.freeze])
       warn "[ConditionalSkylight] lucky dyno, enabling Skylight"
       return true
     end
