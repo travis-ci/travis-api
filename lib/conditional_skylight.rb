@@ -26,19 +26,22 @@ module ConditionalSkylight
 
   def detect_lucy_dyno
     unless ENV['DYNO'.freeze]
-      warn "[ConditionalSkylight] $DYNO not set, skipping lucky dyno check"
+      warn "[ConditionalSkylight] $DYNO not set, skipping lucky dyno check and enabling Skylight"
       return true
     end
 
-    dyno = Integer ENV['DYNO'.freeze][/\d+/]
-
-    if dyno % 5 == 1
-      warn "[ConditionalSkylight] lucky dyno, enabling Skylight"
-      true
-    else
-      warn "[ConditionalSkylight] not a lucky dyno, disabling Skylight"
-      false
+    if ENV['SKYLIGHT_ENABLED'.freeze] == 'true'
+      warn "[ConditionalSkylight] enabling Skylight on all dynos"
+      return true
     end
+
+    if ENV['SKYLIGHT_ENABLED_FOR_DYNO'.freeze] && ENV['SKYLIGHT_ENABLED_FOR_DYNO'.freeze].split(' ').include?(ENV['DYNO'.freeze])
+      warn "[ConditionalSkylight] lucky dyno, enabling Skylight"
+      return true
+    end
+
+    warn "[ConditionalSkylight] not a lucky dyno, disabling Skylight"
+    false
   end
 
   if enabled?
