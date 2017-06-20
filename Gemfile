@@ -35,7 +35,7 @@ gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
 gem 'simplecov'
-gem 'skylight', '~> 0.6.0.beta.1'
+gem 'skylight'
 gem 'stackprof'
 gem 'netaddr'
 
