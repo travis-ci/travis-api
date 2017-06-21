@@ -21,7 +21,6 @@ module Travis
               {
                 'job' => job_data,
                 'commit' => commit_data,
-                'annotations' => annotations_data
               }
             end
 
@@ -63,10 +62,6 @@ module Travis
                   'committer_email' => commit.committer_email,
                   'compare_url' => commit.compare_url,
                 }
-              end
-
-              def annotations_data
-                Annotations.new(job.annotations, params).data["annotations"]
               end
 
               def branch_is_default(commit, repository)
