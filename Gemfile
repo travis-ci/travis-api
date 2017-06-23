@@ -45,6 +45,8 @@ gem 'customerio'
 gem "redlock"
 gem 'rake', '~> 0.9.2'
 
+gem 'appsignal'
+
 group :test do
   gem 'rspec',         '~> 2.13'
   gem 'rspec-its'

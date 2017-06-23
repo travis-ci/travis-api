@@ -1,0 +1,26 @@
+default: &defaults
+  push_api_key: <%= ENV['APPSIGNAL_PUSH_API_KEY'] %>
+
+  # Your app's name
+  name: "travis-api"
+
+  # Actions that should not be monitored by AppSignal
+  # ignore_actions:
+  #   - ApplicationController#isup
+
+  # See http://docs.appsignal.com/ruby/configuration/options.html for
+  # all configuration options.
+
+# Configuration per environment, leave out an environment or set active
+# to false to not push metrics for that environment.
+development:
+  <<: *defaults
+  active: false
+
+production:
+  <<: *defaults
+  active: true
+
+staging:
+  <<: *defaults
+  active: false
