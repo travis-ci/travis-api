@@ -56,6 +56,24 @@ tFns8eTxHpZOYOftxpX91vS3tzKCKgkdPhnYBDrvFFWnGgRLXFpb
     ssh_key.errors[:value].should == [:blank]
   end
 
+  describe 'with an ED25519 key' do
+    let(:private_key) {
+      "-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACDPmEjigwEQU9o0a+qFP8Vhc7Cdi7PZCdbeVIJmyw0GjgAAAKBiMsH3YjLB
+9wAAAAtzc2gtZWQyNTUxOQAAACDPmEjigwEQU9o0a+qFP8Vhc7Cdi7PZCdbeVIJmyw0Gjg
+AAAECbdD+95n8+tf+74mEw2xRiWQcJBoH/SXXKGyKpAhOvp8+YSOKDARBT2jRr6oU/xWFz
+sJ2Ls9kJ1t5UgmbLDQaOAAAAFmJARGlhbW9uZC1IYXJib3IubG9jYWwBAgMEBQYH
+-----END OPENSSH PRIVATE KEY-----
+"
+    }
+    
+    it 'validates correctness of private key' do
+      ssh_key = described_class.new(value: private_key)
+      ssh_key.should be_valid
+    end
+  end
+
   describe 'with a passphrase' do
     let(:private_key) {
       "-----BEGIN RSA PRIVATE KEY-----
