@@ -155,7 +155,7 @@ GEM
     excon (0.55.0)
     factory_girl (2.4.2)
       activesupport
-    faraday (0.12.1)
+    faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.14)
     fog-aws (0.12.0)
@@ -303,8 +303,8 @@ GEM
     rspec-mocks (2.99.4)
     ruby_dep (1.5.0)
     safe_yaml (1.0.4)
-    sentry-raven (2.5.3)
-      faraday (>= 0.7.6, < 1.0)
+    sentry-raven (2.1.2)
+      faraday (>= 0.7.6, < 0.10.x)
     sidekiq (4.2.6)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
@@ -414,4 +414,4 @@ RUBY VERSION
    ruby 2.3.4p301
 
 BUNDLED WITH
-   1.15.1
+   1.15.0
