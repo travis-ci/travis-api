@@ -190,7 +190,6 @@ class Travis::Api::App
 
         def create_state
           state = SecureRandom.urlsafe_base64(16)
-          puts "creating state: #{state}"
           redis.sadd('github:states', state)
           redis.expire('github:states', 1800)
           payload = params[:origin] || params[:redirect_uri]
@@ -201,9 +200,6 @@ class Travis::Api::App
 
         def state_ok?(state)
           cookie_state = request.cookies['travis.state']
-          puts "state: #{state}"
-          puts "cookie_state: #{cookie_state}"
-          puts "ismember: #{redis.sismember('github:states', state.to_s.split(":::", 2)[0])}"
           state == cookie_state && redis.srem('github:states', state.to_s.split(":::", 2)[0])
         end
 
