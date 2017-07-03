@@ -200,6 +200,9 @@ class Travis::Api::App
 
         def state_ok?(state)
           cookie_state = request.cookies['travis.state']
+          puts "state: #{state}"
+          puts "cookie_state: #{cookie_state}"
+          puts "ismember: #{redis.sismember('github:states', state.to_s.split(":::", 2)[1])}"
           state == cookie_state && redis.srem('github:states', state.to_s.split(":::", 2)[1])
         end
 
