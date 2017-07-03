@@ -54,7 +54,7 @@ class Rack::Attack
 
   # https://help.github.com/articles/github-s-ip-addresses/
   safelist('github_request_ip') do |request|
-    request.ip && NetAddr::CIDR.create(request.ip).version == 4 && GITHUB_CIDR.any? { |block| block.contains?(request.ip) }
+    request.ip && NetAddr::CIDR.create(request.ip).version == 4 && GITHUB_CIDRS.any? { |block| block.contains?(request.ip) }
   end
 
   ####
