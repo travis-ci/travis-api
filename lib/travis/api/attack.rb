@@ -43,15 +43,18 @@ class Rack::Attack
     "/auth/post_message/iframe"
   ]
 
-  GITHUB_CIDR = NetAddr::CIDR.create('192.30.252.0/22')
+  GITHUB_CIDRS = [
+    NetAddr::CIDR.create('192.30.252.0/22'),
+    NetAddr::CIDR.create('185.199.108.0/22'),
+  ]
 
   safelist('build_status_image') do |request|
     /\.(png|svg)$/.match(request.path)
   end
 
-  # https://help.github.com/articles/what-ip-addresses-does-github-use-that-i-should-safelist/
+  # https://help.github.com/articles/github-s-ip-addresses/
   safelist('github_request_ip') do |request|
-    request.ip && NetAddr::CIDR.create(request.ip).version == 4 && GITHUB_CIDR.contains?(request.ip)
+    request.ip && NetAddr::CIDR.create(request.ip).version == 4 && GITHUB_CIDR.any? { |block| block.contains?(request.ip) }
   end
 
   ####
