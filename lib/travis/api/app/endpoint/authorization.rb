@@ -190,7 +190,8 @@ class Travis::Api::App
 
         def create_state
           state = SecureRandom.urlsafe_base64(16)
-          redis.sadd('github:states', state.to_s.split(":::", 2)[1])
+          puts "creating state: #{state}"
+          redis.sadd('github:states', state)
           redis.expire('github:states', 1800)
           payload = params[:origin] || params[:redirect_uri]
           state << ":::" << payload if payload
