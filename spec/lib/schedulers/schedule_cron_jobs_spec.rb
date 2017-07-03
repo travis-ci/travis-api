@@ -31,6 +31,7 @@ describe "ScheduleCronJobs" do
       subject
 
       Timecop.return
+      Timecop.freeze(Time.now.utc)
       cron1.destroy
       cron2.destroy
     end
@@ -46,6 +47,7 @@ describe "ScheduleCronJobs" do
       subject
 
       Timecop.return
+      Timecop.freeze(Time.now.utc)
       cron1.destroy
     end
 
@@ -63,7 +65,10 @@ describe "ScheduleCronJobs" do
           Timecop.travel(scheduler_interval.from_now)
         end
 
-        after { Timecop.return }
+        after do
+          Timecop.return
+          Timecop.freeze(Time.now.utc)
+        end
 
         it "skips enqueuing a cron job" do
           Sidekiq::Client.any_instance.expects(:push).never
