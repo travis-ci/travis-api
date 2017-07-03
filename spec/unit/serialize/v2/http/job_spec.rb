@@ -4,9 +4,6 @@ describe Travis::Api::Serialize::V2::Http::Job do
   let(:data) { described_class.new(test).data }
 
   it 'commit' do
-    puts "sleeping"
-    sleep 2.0
-    puts "done"
     data['commit'].should == {
       'id' => 1,
       'sha' => '62aae5f70ceee39123ef',
