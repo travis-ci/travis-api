@@ -300,7 +300,7 @@ class Travis::Api::App
         end
 
         def get_token(endpoint, values)
-          response   = Faraday.new(ssl: Travis.config.github.ssl).post(endpoint, values)
+          response   = Faraday.new(ssl: Travis.config.github.ssl || {}).post(endpoint, values)
           parameters = Addressable::URI.form_unencode(response.body)
           token_info = parameters.assoc("access_token")
 
