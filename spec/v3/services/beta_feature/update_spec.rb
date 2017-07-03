@@ -45,6 +45,7 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
     end
     after do
       Timecop.return
+      Timecop.freeze(Time.now.utc)
     end
 
     example { expect(last_response.status).to eq 200 }
