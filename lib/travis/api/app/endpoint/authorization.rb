@@ -190,8 +190,9 @@ class Travis::Api::App
 
         def create_state
           state = SecureRandom.urlsafe_base64(16)
-          redis.sadd('github:states', state)
-          redis.expire('github:states', 1800)
+          key = "github:states:#{state}"
+          redis.set(key, 1)
+          redis.expire(key, 1800)
           payload = params[:origin] || params[:redirect_uri]
           state << ":::" << payload if payload
           response.set_cookie('travis.state', state)
@@ -199,8 +200,14 @@ class Travis::Api::App
         end
 
         def state_ok?(state)
+          key = 'github:states:' + state.to_s.split(":::", 2)[0]
+
+          # TODO: remove old_key and srem code after running it in production for some time
+          old_key = 'github:states'
+          old_val = state.to_s.split(":::", 2)[0]
+
           cookie_state = request.cookies['travis.state']
-          state == cookie_state && redis.srem('github:states', state.to_s.split(":::", 2)[0])
+          state == cookie_state && (redis.srem(old_key, old_val) || redis.get(key) && redis.del(key))
         end
 
         def github_to_travis(token, options = {})
