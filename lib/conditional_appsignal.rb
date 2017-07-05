@@ -46,7 +46,7 @@ module ConditionalAppsignal
 
   if enabled?
     require 'appsignal'
-    Mixin = Appsignal::Helpers
+    Appsignal.start
   else
     Mixin = DummyMixin
   end
