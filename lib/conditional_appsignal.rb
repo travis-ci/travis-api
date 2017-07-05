@@ -16,15 +16,15 @@ module ConditionalAppsignal
   end
 
   def authenticated?
-    ENV['APPSIGNAL_AUTHENTICATION'.freeze]
+    ENV['APPSIGNAL_PUSH_API_KEY'.freeze]
   end
 
   def lucky_dyno?
-    @lucky_dyno = detect_lucy_dyno unless instance_variable_defined? :@lucky_dyno
+    @lucky_dyno = detect_lucky_dyno unless instance_variable_defined? :@lucky_dyno
     @lucky_dyno
   end
 
-  def detect_lucy_dyno
+  def detect_lucky_dyno
     unless ENV['DYNO'.freeze]
       warn "[ConditionalAppsignal] $DYNO not set, skipping lucky dyno check and enabling Appsignal"
       return true

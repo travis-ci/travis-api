@@ -19,6 +19,7 @@ class Travis::Api::App
 
       def instrument?
         ConditionalSkylight.enabled?
+        ConditionalAppsignal.enabled?
       end
     end
 
