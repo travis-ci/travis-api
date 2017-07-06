@@ -19,6 +19,10 @@ module Travis::API::V3
       full_access? or dispatch(object, :restartable?)
     end
 
+    def starable?(object)
+      full_access? or dispatch(object, :starable?)
+    end
+
     def writable?(object)
       full_access? or dispatch(object, :writable?)
     end
@@ -109,6 +113,10 @@ module Travis::API::V3
 
     def organization_visible?(organization)
       full_access? or public_api?
+    end
+
+    def repository_starable?(repository)
+      starable? repository
     end
 
     def ssl_key_visible?(ssl_key)

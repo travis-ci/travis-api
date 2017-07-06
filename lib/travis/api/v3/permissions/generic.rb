@@ -67,5 +67,9 @@ module Travis::API::V3
       access_control.restartable? object
     end
 
+    def starable?
+      access_control.starable? object
+    end
+
   end
 end

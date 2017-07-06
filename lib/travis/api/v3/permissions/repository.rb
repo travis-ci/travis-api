@@ -11,11 +11,11 @@ module Travis::API::V3
     end
 
     def star?
-      write?
+      starable?
     end
 
     def unstar?
-      write?
+      starable?
     end
 
     def create_cron?
