@@ -57,10 +57,6 @@ module Travis::API::V3
       organization.members.include? user
     end
 
-    def repository_starable?(repository)
-      permission?(:pull, repository)
-    end
-
     def user_writable?(user)
       user == self.user
     end
