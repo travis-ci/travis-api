@@ -115,10 +115,6 @@ module Travis::API::V3
       full_access? or public_api?
     end
 
-    def repository_starable?(repository)
-      starable? repository
-    end
-
     def ssl_key_visible?(ssl_key)
       visible? ssl_key.repository
     end
@@ -140,6 +136,10 @@ module Travis::API::V3
     end
 
     def repository_adminable?(repository)
+      false
+    end
+
+    def repository_starable?(repository)
       false
     end
 
