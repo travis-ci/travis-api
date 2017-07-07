@@ -19,6 +19,10 @@ module Travis::API::V3
       full_access? or dispatch(object, :restartable?)
     end
 
+    def starable?(object)
+      full_access? or dispatch(object, :starable?)
+    end
+
     def writable?(object)
       full_access? or dispatch(object, :writable?)
     end
@@ -132,6 +136,10 @@ module Travis::API::V3
     end
 
     def repository_adminable?(repository)
+      false
+    end
+
+    def repository_starable?(repository)
       false
     end
 
