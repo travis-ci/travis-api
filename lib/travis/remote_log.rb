@@ -176,7 +176,7 @@ module Travis
 
       def find_id_by_job_id(job_id)
         resp = conn.get do |req|
-          req.url "/logs/#{job_id}/id"
+          req.url "logs/#{job_id}/id"
           req.params['source'] = 'api'
         end
         return nil unless resp.success?
@@ -185,7 +185,7 @@ module Travis
 
       def find_parts_by_job_id(job_id, after: nil, part_numbers: [])
         resp = conn.get do |req|
-          req.url "/log-parts/#{job_id}"
+          req.url "log-parts/#{job_id}"
           req.params['after'] = after unless after.nil?
           unless part_numbers.empty?
             req.params['part_numbers'] = part_numbers.map(&:to_s).join(',')
@@ -201,7 +201,7 @@ module Travis
 
       def write_content_for_job_id(job_id, content: '', removed_by: nil)
         resp = conn.put do |req|
-          req.url "/logs/#{job_id}"
+          req.url "logs/#{job_id}"
           req.params['source'] = 'api'
           req.params['removed_by'] = removed_by unless removed_by.nil?
           req.headers['Content-Type'] = 'application/octet-stream'
@@ -215,7 +215,7 @@ module Travis
 
       private def find_by(by, id)
         resp = conn.get do |req|
-          req.url "/logs/#{id}", by: by
+          req.url "logs/#{id}", by: by
           req.params['source'] = 'api'
         end
         return nil unless resp.success?
