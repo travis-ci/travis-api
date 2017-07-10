@@ -22,7 +22,7 @@ module Travis::API::V3
         config:     config || {}
       }
 
-      Sidekiq.gatekeeper(
+      ::Travis::API::Sidekiq.gatekeeper(
         type: 'api'.freeze,
         credentials: { token: token },
         payload: JSON.dump(payload)

@@ -60,7 +60,7 @@ module Travis::API::V3
         user:       { id: user_id }
       }
 
-      Sidekiq.gatekeeper(
+      ::Travis::API::Sidekiq.gatekeeper(
         type:        'cron'.freeze,
         payload:     JSON.dump(payload),
         credentials: {}

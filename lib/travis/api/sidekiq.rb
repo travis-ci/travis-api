@@ -1,4 +1,4 @@
-module Travis::API::V3
+module Travis::API
   module Sidekiq
     extend self
 
