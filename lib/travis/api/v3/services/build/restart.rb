@@ -6,7 +6,7 @@ module Travis::API::V3
       access_control.permissions(build).restart!
 
       build.clear_debug_options!
-      return rejected unless query.restart(access_control.user)
+      return abuse_detected unless query.restart(access_control.user)
       accepted(build: build, state_change: :restart)
     end
   end

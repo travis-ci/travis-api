@@ -150,9 +150,12 @@ module Travis::API::V3
       result(payload, status: 202, result_type: :accepted)
     end
 
-    def rejected(message = 'Abuse detected. Restart disabled. If you think you have received this message in error, please contact support: support@travis-ci.com')
-      payload = Error.new(message, status: 403)
+    def rejected(payload)
       result(payload, status: 403, result_type: :error)
+    end
+
+    def abuse_detected(message = 'Abuse detected. Restart disabled. If you think you have received this message in error, please contact support: support@travis-ci.com')
+      rejected(Error.new(message, status: 403))
     end
 
     def not_implemented
