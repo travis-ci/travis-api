@@ -93,7 +93,7 @@ class Travis::Api::App
             end
 
             def repository
-              @repository ||= Repository.by_slug(slug).first || raise(Travis::RepositoryNotFoundError.new(slug: slug))
+              @repository ||= Repository.by_slug(slug).first || raise(RepositoryNotFoundError.new(slug: slug))
             end
         end
     end

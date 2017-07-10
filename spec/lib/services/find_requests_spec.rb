@@ -31,7 +31,7 @@ describe Travis::Services::FindRequests do
       @params = { }
       expect {
         service.run
-      }.to raise_error(Travis::RepositoryNotFoundError, "Repository could not be found")
+      }.to raise_error(Travis::Api::App::RepositoryNotFoundError, "Repository could not be found")
     end
 
     it 'scopes to the given repository_id' do
@@ -44,7 +44,7 @@ describe Travis::Services::FindRequests do
       @params = { :repository_id => repo.id + 1 }
       expect {
         service.run
-      }.to raise_error(Travis::RepositoryNotFoundError, "Repository with id=#{repo.id + 1} could not be found")
+      }.to raise_error(Travis::Api::App::RepositoryNotFoundError, "Repository with id=#{repo.id + 1} could not be found")
     end
 
     it 'limits requests if limit is passed' do

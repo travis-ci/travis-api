@@ -26,7 +26,7 @@ module Travis
               requests.recent(requests_limit).with_build_id
             end
           else
-            raise Travis::RepositoryNotFoundError.new(params)
+            raise Api::App::RepositoryNotFoundError.new(params)
           end
         end
 

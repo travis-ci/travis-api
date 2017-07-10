@@ -2,7 +2,6 @@ require 'pusher'
 require 'travis/support'
 require 'travis/support/database'
 require 'travis/redis_pool'
-require 'travis/errors'
 
 module Travis
   class << self
