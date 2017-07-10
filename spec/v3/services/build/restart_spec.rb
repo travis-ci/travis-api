@@ -70,8 +70,12 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
       post("/v3/build/#{build.id}/restart", {}, headers)
     end
 
-    example { expect(last_response.status).to be == 500 }
-    example { expect(body) == "Sorry, we experienced an error." }
+    example { expect(last_response.status).to be == 403 }
+    example { expect(JSON.load(body)).to      be ==     {
+      "@type"         => "error",
+      "error_type"    => "error",
+      "error_message" => "Abuse detected. Restart disabled. If you think you have received this message in error, please contact support: support@travis-ci.com"
+    }}
   end
 
   describe "private repository, no access" do
