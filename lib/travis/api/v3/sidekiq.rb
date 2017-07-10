@@ -17,22 +17,18 @@ module Travis::API::V3
       end
 
       def gatekeeper_client
+        if ENV['REDIS_GATEKEEPER_ENABLED'] != 'true'
+          return client
+        end
+
         @gatekeeper_client ||= ::Sidekiq::Client.new(gatekeeper_pool)
       end
 
       def gatekeeper_pool
         ::Sidekiq::RedisConnection.create(
-          url: gatekeeper_url,
+          url: config.redis_gatekeeper.url,
           namespace: config.sidekiq.namespace
         )
-      end
-
-      def gatekeeper_url
-        if ENV['REDIS_GATEKEEPER_ENABLED'] == 'true'
-          config.redis_gatekeeper.url
-        else
-          config.redis.url
-        end
       end
 
       def config
