@@ -52,7 +52,6 @@ module Travis
           end
 
           def abusive?
-
             Travis.redis.sismember("abuse:offenders", "#{@target.owner.class.name}:#{@target.owner_id}")
           end
 

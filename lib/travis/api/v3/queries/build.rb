@@ -24,8 +24,8 @@ module Travis::API::V3
 
       service = Travis::Enqueue::Services::RestartModel.new(user, { build_id: id })
       payload = { id: id, user_id: user.id }
-      service.push("build:restart", payload)
-      payload
+
+      payload if service.push("build:restart", payload)
     end
   end
 end

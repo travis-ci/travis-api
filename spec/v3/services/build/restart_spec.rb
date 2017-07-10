@@ -1,3 +1,4 @@
+
 describe Travis::API::V3::Services::Build::Restart, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
@@ -43,8 +44,12 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
   describe "existing repository, pull access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
-    before        { post("/v3/build/#{build.id}/restart", {}, headers)                 }
+    before do
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+      build.state = "passed"
+      build.save
+      post("/v3/build/#{build.id}/restart", {}, headers)
+    end
 
     example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
@@ -53,6 +58,20 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
       "event_type",
       "push")
     }
+  end
+
+
+  describe "existing repo, repo owner is flagged abusive" do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    before do
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+      Travis.redis.sadd("abuse:offenders", "#{build.owner.class.name.split("::").last}:#{build.owner_id}")
+      post("/v3/build/#{build.id}/restart", {}, headers)
+    end
+
+    example { expect(last_response.status).to be == 500 }
+    example { expect(body) == "Sorry, we experienced an error." }
   end
 
   describe "private repository, no access" do
