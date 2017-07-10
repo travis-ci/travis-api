@@ -53,6 +53,7 @@ module Travis
             archive:       {},
             ssl:           {},
             redis:         { url: 'redis://localhost:6379' },
+            redis_gatekeeper: { url: ENV['REDIS_GATEKEEPER_URL'] || 'redis://localhost:6379' },
             repository:    { ssl_key: { size: 4096 } },
             encryption:    Travis.env == 'development' || Travis.env == 'test' ? { key: 'secret' * 10 } : {},
             sync:          { organizations: { repositories_limit: 1000 } },

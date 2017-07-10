@@ -22,7 +22,11 @@ module Travis::API::V3
         config:     config || {}
       }
 
-      perform_async(:build_request, type: 'api'.freeze, credentials: { token: token }, payload: JSON.dump(payload))
+      Sidekiq.gatekeeper(
+        type: 'api'.freeze,
+        credentials: { token: token },
+        payload: JSON.dump(payload)
+      )
       payload
     end
 

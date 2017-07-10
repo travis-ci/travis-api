@@ -60,16 +60,11 @@ module Travis::API::V3
         user:       { id: user_id }
       }
 
-      class_name, queue = Query.sidekiq_queue(:build_request)
-
-      ::Sidekiq::Client.push(
-          'queue'.freeze => queue,
-          'class'.freeze => class_name,
-          'args'.freeze  => [{
-            type:        'cron'.freeze,
-            payload:     JSON.dump(payload),
-            credentials: {}
-            }])
+      Sidekiq.gatekeeper(
+        type:        'cron'.freeze,
+        payload:     JSON.dump(payload),
+        credentials: {}
+      )
 
       update_attribute(:last_run, DateTime.now.utc)
       schedule_next_build
