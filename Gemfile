@@ -55,6 +55,7 @@ group :test do
   gem 'database_cleaner', '~> 0.8.0'
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'
+  gem 'knapsack'
 end
 
 group :development do
