@@ -6,8 +6,13 @@ module Travis::API::V3
       access_control.permissions(job).restart!
 
       job.update_attribute(:debug_options, nil)
-      query.restart(access_control.user)
-      accepted(job: job, state_change: :restart)
+      restart_status = query.restart(access_control.user)
+
+      if restart_status == "abuse_detected"
+        abuse_detected
+      else
+        accepted(job: job, state_change: :restart)
+      end
     end
   end
 end
