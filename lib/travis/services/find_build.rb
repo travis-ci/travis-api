@@ -24,7 +24,7 @@ module Travis
 
         def all_resources
           if result
-            all = [result, result.commit, result.request, result.matrix.to_a, result.matrix.map(&:annotations)]
+            all = [result, result.commit, result.request, result.matrix.to_a]
             all.flatten.find_all { |r| r.updated_at }
           else
             []
@@ -46,8 +46,6 @@ module Travis
 
         def preload(build)
           ActiveRecord::Associations::Preloader.new(build, [:matrix, :commit, :request]).run
-          ActiveRecord::Associations::Preloader.new(build.matrix, :log, select: [:id, :job_id, :updated_at]).run
-          ActiveRecord::Associations::Preloader.new(build.matrix, :annotations).run
           build
         end
     end

@@ -7,5 +7,10 @@ module Travis::API::V3
     def repository_id
       parent && parent.id
     end
+
+    def repository
+      return unless repository_id
+      V3::Models::Repository.find(repository_id)
+    end
   end
 end

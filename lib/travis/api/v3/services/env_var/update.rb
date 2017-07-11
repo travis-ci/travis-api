@@ -1,11 +1,12 @@
 module Travis::API::V3
   class Services::EnvVar::Update < Service
-    params :id, prefix: :repository
-    params :id, :name, :value, :public, prefix: :env_var
+    params :name, :value, :public, prefix: :env_var
 
     def run!
       repository = check_login_and_find(:repository)
-      query.update(repository)
+      env_var = find(:env_var, repository)
+      access_control.permissions(env_var).write!
+      result query.update(env_var)
     end
   end
 end

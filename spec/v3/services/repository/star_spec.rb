@@ -25,9 +25,10 @@ describe Travis::API::V3::Services::Repository::Star, set_app: true do
     }}
   end
 
-  describe "existing repository, no push access" do
+  describe "existing repository, no pull access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before        { post("/v3/repo/#{repo.id}/star", {}, headers)                 }
 
     example { expect(last_response.status).to be == 403 }
@@ -42,6 +43,15 @@ describe Travis::API::V3::Services::Repository::Star, set_app: true do
       "permission",
       "star")
     }
+  end
+
+  describe "existing repository, pull access" do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+    before        { post("/v3/repo/#{repo.id}/star", {}, headers)                 }
+
+    example { expect(last_response.status).to be == 200 }
   end
 
   describe "private repository, no access" do
@@ -61,6 +71,5 @@ describe Travis::API::V3::Services::Repository::Star, set_app: true do
   end
 
   describe "existing repository, push access"
-    #  this requires stubing a github request, which is difficult, so has been omitted for now
-
+  #  this requires stubing a github request, which is difficult, so has been omitted for now
 end

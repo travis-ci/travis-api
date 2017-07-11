@@ -9,16 +9,16 @@ class Travis::Api::App
         prefer_follower do
           name = params[:branches] ? :find_branches : :find_builds
           params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-          respond_with service(name, params)
+          respond_with service(name, params), include_log_id: include_log_id?
         end
       end
 
       get '/:id' do
-        respond_with service(:find_build, params)
+        respond_with service(:find_build, params), include_log_id: include_log_id?
       end
 
       post '/:id/cancel' do
-        Metriks.meter("api.request.cancel_build").mark
+        Metriks.meter("api.v2.request.cancel_build").mark
 
         service = Travis::Enqueue::Services::CancelModel.new(current_user, { build_id: params[:id] })
 
@@ -27,7 +27,7 @@ class Travis::Api::App
             message: "You don't have access to cancel build(#{params[:id]})"
           } }
 
-          Metriks.meter("api.request.cancel_build.unauthorized").mark
+          Metriks.meter("api.v2.request.cancel_build.unauthorized").mark
           status 403
           respond_with json
         elsif !service.can_cancel?
@@ -36,7 +36,7 @@ class Travis::Api::App
             code: 'cant_cancel'
           } }
 
-          Metriks.meter("api.request.cancel_build.cant_cancel").mark
+          Metriks.meter("api.v2.request.cancel_build.cant_cancel").mark
           status 422
           respond_with json
         else
@@ -44,13 +44,13 @@ class Travis::Api::App
 
           service.push("build:cancel", payload)
 
-          Metriks.meter("api.request.cancel_build.success").mark
+          Metriks.meter("api.v2.request.cancel_build.success").mark
           status 204
         end
       end
 
       post '/:id/restart' do
-        Metriks.meter("api.request.restart_build").mark
+        Metriks.meter("api.v2.request.restart_build").mark
         service = Travis::Enqueue::Services::RestartModel.new(current_user, build_id: params[:id])
 
         result = if !service.accept?
@@ -65,6 +65,11 @@ class Travis::Api::App
 
         respond_with(result: result, flash: service.messages)
       end
+    end
+
+    private def include_log_id?
+      params[:include_log_id] ||
+        request.user_agent.to_s.start_with?('Travis')
     end
   end
 end

@@ -66,8 +66,10 @@ class Repository::Settings < Travis::Settings
       end
 
       def max_value(settings, type)
-        config = Travis.config.settings.timeouts
-        values = config.send(custom_timeouts?(settings) ? :maximums : :defaults) || {}
+        config = Travis.config.settings.timeouts.to_h
+        key = custom_timeouts?(settings) ? :maximums : :defaults
+        values = config[key] || {}
+
         values[type]
       end
 
@@ -86,6 +88,8 @@ class Repository::Settings < Travis::Settings
   attribute :timeout_hard_limit
   attribute :timeout_log_silence
   attribute :api_builds_rate_limit, Integer
+  attribute :auto_cancel_pushes, Boolean, default: false
+  attribute :auto_cancel_pull_requests, Boolean, default: false
 
   validates :maximum_number_of_builds, numericality: true
 

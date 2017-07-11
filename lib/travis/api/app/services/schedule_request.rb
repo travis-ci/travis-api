@@ -26,7 +26,7 @@ class Travis::Api::App
       private
 
         def schedule_request
-          Metriks.meter('api.request.create').mark
+          Metriks.meter('api.v2.request.create').mark
           Travis::Sidekiq::BuildRequest.perform_async(type: 'api', payload: payload, credentials: {})
           messages << { notice: 'Build request scheduled.' }
           :success
@@ -48,7 +48,7 @@ class Travis::Api::App
         end
 
         def active?
-          Travis::Features.owner_active?(:request_create, repo.owner)
+          true
         end
 
         def payload

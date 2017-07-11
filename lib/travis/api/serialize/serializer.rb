@@ -1,5 +1,15 @@
 require 'active_model_serializers'
 
+# This hideousness courtesy of http://stackoverflow.com/a/8339255
+module ActiveSupport::JSON::Encoding
+  def self.escape(string)
+    string = string.encode(::Encoding::UTF_8, :undef => :replace).force_encoding(::Encoding::BINARY)
+    json = string.gsub(escape_regex) { |s| ESCAPED_CHARS[s] }
+    json = %("#{json}")
+    json.force_encoding(::Encoding::UTF_8)
+  end
+end
+
 module Travis
   module Api
     module Serialize
@@ -22,4 +32,3 @@ module Travis
     end
   end
 end
-

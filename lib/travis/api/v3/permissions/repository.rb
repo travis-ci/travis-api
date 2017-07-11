@@ -2,39 +2,39 @@ require 'travis/api/v3/permissions/generic'
 
 module Travis::API::V3
   class Permissions::Repository < Permissions::Generic
-    def enable?
+    def activate?
       write?
     end
 
-    def disable?
+    def deactivate?
       write?
     end
 
     def star?
-      write?
+      starable?
     end
 
     def unstar?
-      write?
-    end
-
-    def create_request?
-      write?
+      starable?
     end
 
     def create_cron?
       write?
     end
 
-    def change_settings?
+    def create_env_var?
       write?
     end
 
-    def change_env_vars?
+    def create_key_pair?
       write?
     end
 
-    def change_key?
+    def delete_key_pair?
+      write?
+    end
+
+    def create_request?
       write?
     end
 

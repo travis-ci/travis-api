@@ -48,7 +48,12 @@ module Travis
         private
 
           def permission?
-            current_user.permission?(required_role, repository_id: target.repository_id)
+            current_user && current_user.permission?(required_role, repository_id: target.repository_id) && !abusive?
+          end
+
+          def abusive?
+
+            Travis.redis.sismember("abuse:offenders", "#{@target.owner.class.name}:#{@target.owner_id}")
           end
 
           def resetable?

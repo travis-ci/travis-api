@@ -13,15 +13,15 @@ module Travis::API::V3
       limit   = default_limit if limit < 0
 
       unless access_control.full_access?
-        limit = max_limit if limit > max_limit or limit < 1
+        limit = max_limit if limit > max_limit || limit < 1
       end
 
       offset &&= Integer(offset, :offset)
       offset   = 0 if offset.nil? or offset < 0
 
-      count = result.resource ? result.resource.count : 0
-      result.resource &&= result.resource.limit(limit)   unless limit  == 0
-      result.resource &&= result.resource.offset(offset) unless offset == 0
+      count = result.resource.count
+      result.resource = result.resource.limit(limit)   unless limit  == 0
+      result.resource = result.resource.offset(offset) unless offset == 0
 
       pagination_info = {
         limit:  limit,

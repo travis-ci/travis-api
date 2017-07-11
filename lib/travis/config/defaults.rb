@@ -2,8 +2,20 @@ require 'travis/config'
 
 module Travis
   class Config < Hashr
-    require 'travis/config/database'
-    require 'travis/config/url'
+
+    class << self
+      def logs_api_url
+        ENV['TRAVIS_API_LOGS_API_URL'] ||
+          ENV['LOGS_API_URL'] ||
+          'http://travis-logs-notset.example.com:1234'
+      end
+
+      def logs_api_auth_token
+        ENV['TRAVIS_API_LOGS_API_AUTH_TOKEN'] ||
+          ENV['LOGS_API_AUTH_TOKEN'] ||
+          'notset'
+      end
+    end
 
     HOSTS = {
       production:  'travis-ci.org',
@@ -19,7 +31,9 @@ module Travis
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
-            logs_options:  { s3: { access_key_id: '', secret_access_key: ''}},
+            logs_readonly_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
+            logs_api:      { url: logs_api_url, token: logs_api_auth_token },
+            log_options:   { s3: { access_key_id: '', secret_access_key: ''}},
             s3:            { access_key_id: '', secret_access_key: ''},
             pusher:        { app_id: 'app-id', key: 'key', secret: 'secret' },
             sidekiq:       { namespace: 'sidekiq', pool_size: 1 },
@@ -40,7 +54,6 @@ module Travis
             ssl:           {},
             redis:         { url: 'redis://localhost:6379' },
             repository:    { ssl_key: { size: 4096 } },
-            repository_filter: { include: [/^rails\/rails/], exclude: [/\/rails$/] },
             encryption:    Travis.env == 'development' || Travis.env == 'test' ? { key: 'secret' * 10 } : {},
             sync:          { organizations: { repositories_limit: 1000 } },
             states_cache:  { memcached_servers: 'localhost:11211' },
@@ -58,19 +71,6 @@ module Travis
     def initialize(*)
       super
       load_urls
-    end
-
-    # Wild monkeypatch to backport travis-config v1.0.x resource url loading.
-    # Needed for enterprise.
-    class Docker
-      def load
-        config = compact(
-          database: Database.new.config,
-          logs_database: Database.new(prefix: :logs).config,
-          amqp: Url.parse(ENV['TRAVIS_RABBITMQ_URL'] || ENV['RABBITMQ_URL']).to_h.compact,
-          redis: { url: ENV['TRAVIS_REDIS_URL'] || ENV['REDIS_URL'] }.compact
-        )
-      end
     end
   end
 end

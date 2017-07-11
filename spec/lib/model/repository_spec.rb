@@ -230,7 +230,7 @@ describe Repository do
 
   describe 'source_host' do
     before :each do
-      Travis.config.github.stubs(:source_host).returns('localhost')
+      Travis.config.github.source_host = 'localhost'
     end
 
     it 'returns the source_host name from Travis.config' do

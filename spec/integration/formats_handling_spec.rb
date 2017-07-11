@@ -1,10 +1,8 @@
 describe 'App', set_app: true do
   before do
-    FactoryGirl.create(:test, :number => '3.1', :queue => 'builds.common')
-
     add_endpoint '/foo' do
       get '/' do
-        respond_with(Log.first)
+        respond_with Travis::RemoteLog.new
       end
 
       get '/hash' do

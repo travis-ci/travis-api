@@ -1,4 +1,5 @@
 require 'travis/model'
+require 'travis/config/defaults'
 require 'active_support/core_ext/hash/deep_dup'
 require 'travis/model/build/config/language'
 
@@ -18,6 +19,7 @@ class Job < Travis::Model
     apt
     apt_packages
     apt_sources
+    chrome
     firefox
     hosts
     mariadb
@@ -59,7 +61,6 @@ class Job < Travis::Model
 
   include Travis::Model::EnvHelpers
 
-  has_one    :log, dependent: :destroy
   has_many   :events, as: :source
   has_many   :annotations, dependent: :destroy
 
@@ -81,13 +82,12 @@ class Job < Travis::Model
   end
 
   before_create do
-    build_log
     self.state = :created if self.state.nil?
     self.queue = Queue.for(self).name
   end
 
   after_commit on: :create do
-    notify(:create)
+    notify(:create) if respond_to?(:notify)
   end
 
   def propagate(name, *args)
@@ -100,6 +100,10 @@ class Job < Travis::Model
       source.send(name, *args)
     end
     true
+  end
+
+  def state
+    super || 'created'
   end
 
   def duration
@@ -154,9 +158,20 @@ class Job < Travis::Model
   end
 
   def log_content=(content)
-    create_log! unless log
-    log.update_attributes!(content: content, aggregated_at: Time.now)
+    Travis::RemoteLog.write_content_for_job_id(id, content: content)
   end
+
+  def log
+    @log ||= Travis::RemoteLog.find_by_job_id(id)
+  end
+
+  attr_writer :log
+
+  def log_id
+    @log_id ||= Travis::RemoteLog.find_id_by_job_id(id)
+  end
+
+  attr_writer :log_id
 
   # compatibility, we still use result in webhooks
   def result

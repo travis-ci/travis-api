@@ -7,12 +7,19 @@ describe Travis::Services::FindRequests do
 
   attr_reader :params
 
-  before { user.permissions.create!(admin: true, push: true, repository_id: repo.id) }
-
   describe 'run' do
     it 'finds recent requests when older_than is not given' do
       @params = { :repository_id => repo.id }
       service.run.should == [newer_request, request]
+    end
+
+    it 'includes the build_id' do
+      Factory.create(:build, request_id: request.id)
+      @params = { :repository_id => repo.id }
+      requests = service.run
+      requests.should == [newer_request, request]
+      requests.first.build_id  = nil
+      requests.second.build_id = request.builds.first.id
     end
 
     it 'finds requests older than the given id' do
@@ -46,13 +53,13 @@ describe Travis::Services::FindRequests do
     end
 
     it 'limits requests to Travis.config.services.find_requests.max_limit if limit is higher' do
-      Travis.config.services.find_requests.expects(:max_limit).returns(1)
+      Travis.config.services.find_requests.max_limit = 1
       @params = { :repository_id => repo.id, :limit => 2 }
       service.run.should == [newer_request]
     end
 
     it 'limits requests to Travis.config.services.find_requests.default_limit if limit is not given' do
-      Travis.config.services.find_requests.expects(:default_limit).returns(1)
+      Travis.config.services.find_requests.default_limit = 1
       @params = { :repository_id => repo.id }
       service.run.should == [newer_request]
     end

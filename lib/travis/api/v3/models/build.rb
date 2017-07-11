@@ -1,20 +1,47 @@
 module Travis::API::V3
   class Models::Build < Model
-    belongs_to :repository
     belongs_to :commit
+    belongs_to :pull_request
     belongs_to :request
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
+    belongs_to :sender, polymorphic: true
+
+    has_many :stages
 
     has_many :jobs,
-      as:        :source,
-      order:     :id,
-      dependent: :destroy
+      foreign_key: :source_id,
+      order:       :id,
+      dependent:   :destroy,
+      class_name:  'Travis::API::V3::Models::Job'.freeze
+
+    has_many :active_jobs,
+      foreign_key: :source_id,
+      order:       :id,
+      conditions:  "jobs.state IN ('received', 'queued', 'started')".freeze,
+      class_name:  'Travis::API::V3::Models::Job'.freeze
 
     has_one :branch,
       foreign_key: [:repository_id, :name],
       primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
+
+    def created_by
+      return unless sender
+      sender.becomes(created_by_class)
+    end
+
+    def created_by_class
+      return unless sender
+      case sender_type
+      when 'User' then V3::Models::User
+      when 'Organization' then V3::Models::Organization
+      end
+    end
+
+    def state
+      super || 'created'
+    end
 
     def branch_name
       read_attribute(:branch)

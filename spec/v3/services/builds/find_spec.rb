@@ -1,8 +1,18 @@
 describe Travis::API::V3::Services::Builds::Find, set_app: true do
-  let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:build) { repo.builds.first }
-  let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
+  let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:build)  { repo.builds.first }
+  let(:stages) { build.stages }
+  let(:jobs)   { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
+
+  before do
+    # TODO should this go into the scenario? is it ok to keep it here?
+    build.update_attributes!(sender_id: repo.owner.id, sender_type: 'User')
+    test   = build.stages.create(number: 1, name: 'test')
+    deploy = build.stages.create(number: 2, name: 'deploy')
+    build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
+    build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+  end
 
   describe "fetching builds on a public repository by slug" do
     before     { get("/v3/repo/svenfuchs%2Fminimal/builds")     }
@@ -64,6 +74,23 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "pull_request_title"  => build.pull_request_title,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
+        "stages"              => [{
+           "@type"            => "stage",
+           "@representation"  => "minimal",
+           "id"               => stages[0].id,
+           "number"           => 1,
+           "name"             => "test",
+           "state"            => stages[0].state,
+           "started_at"       => stages[0].started_at,
+           "finished_at"      => stages[0].finished_at},
+          {"@type"            => "stage",
+           "@representation" => "minimal",
+           "id"               => stages[1].id,
+           "number"          => 2,
+           "name"             => "deploy",
+           "state"            => stages[1].state,
+           "started_at"       => stages[1].started_at,
+           "finished_at"      => stages[1].finished_at}],
         "jobs"                => [
           {
           "@type"             => "job",
@@ -106,6 +133,12 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "message"           => "unignore Gemfile.lock",
           "compare_url"       => "https://github.com/svenfuchs/minimal/compare/master...develop",
           "committed_at"      => "2010-11-12T12:55:00Z"},
+        "created_by"          => {
+          "@type"             => "user",
+          "@href"             => "/v3/user/1",
+          "@representation"   => "minimal",
+          "id"                => 1,
+          "login"             => "svenfuchs"}
       }]
     }}
   end
@@ -159,6 +192,23 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "pull_request_title"  => build.pull_request_title,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
+        "stages"              => [{
+           "@type"            => "stage",
+           "@representation"  => "minimal",
+           "id"               => stages[0].id,
+           "number"           => 1,
+           "name"             => "test",
+           "state"            => stages[0].state,
+           "started_at"       => stages[0].started_at,
+           "finished_at"      => stages[0].finished_at},
+          {"@type"            => "stage",
+           "@representation" => "minimal",
+           "id"               => stages[1].id,
+           "number"          => 2,
+           "name"             => "deploy",
+           "state"            => stages[1].state,
+           "started_at"       => stages[1].started_at,
+           "finished_at"      => stages[1].finished_at}],
         "jobs"                => [
           {
           "@type"             => "job",
@@ -200,7 +250,13 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "ref"               => "refs/heads/master",
           "message"           => "unignore Gemfile.lock",
           "compare_url"       => "https://github.com/svenfuchs/minimal/compare/master...develop",
-          "committed_at"      => "2010-11-12T12:55:00Z"}
+          "committed_at"      => "2010-11-12T12:55:00Z"},
+        "created_by"          => {
+          "@type"             => "user",
+          "@href"             => "/v3/user/1",
+          "@representation"   => "minimal",
+          "id"                => 1,
+          "login"             => "svenfuchs"}
       }]
     }}
   end
@@ -215,5 +271,24 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     before  { get("/v3/repo/#{repo.id}/builds?branch.name=missing&limit=1") }
     example { expect(last_response).to be_ok }
     example { expect(parsed_body['builds']).to be == [] }
+  end
+
+  describe "including created_by params with non-existing login" do
+    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=xxxxxx") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body['builds']).to be == []}
+  end
+
+  describe "including created_by params with existing login but no created builds" do
+    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=josevalim") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body['builds']).to be == [] }
+  end
+
+  describe "including created_by params with existing login" do
+    before  { get("/v3/repo/#{repo.id}/builds?build.created_by=josevalim,svenfuchs,travis-ci") }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body['builds'].size).to be == (1) }
+    example { expect(parsed_body['builds'].first['created_by']['id']).to be == (repo.owner.id) }
   end
 end

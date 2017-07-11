@@ -46,9 +46,6 @@ describe Travis::API::V3::Models::Cron do
   end
 
   context "for daily runs, when last_run is set" do
-    before { Timecop.freeze(Time.now) }
-    after { Timecop.return }
-
     it "sets the next_run correctly" do
       subject.last_run = 1.day.ago.utc + 5.minutes
       subject.schedule_next_build
@@ -57,9 +54,6 @@ describe Travis::API::V3::Models::Cron do
   end
 
   context "when last_run is not set" do
-    before { Timecop.freeze(Time.now) }
-    after { Timecop.return }
-
     context "and from: is not passed" do
       it "sets the next_run from now" do
         subject.schedule_next_build
@@ -82,9 +76,6 @@ describe Travis::API::V3::Models::Cron do
   end
 
   describe "enqueue" do
-    before { Timecop.freeze(Time.now) }
-    after { Timecop.return }
-
     it "enqueues the cron" do
       Sidekiq::Client.any_instance.expects(:push).once
       subject.enqueue
@@ -119,8 +110,8 @@ describe Travis::API::V3::Models::Cron do
       end
     end
 
-    context "when last build within has no finished_at" do
-      let(:build) { Factory(:v3_build, finished_at: nil) }
+    context "when last build within last 24h has no started_at" do
+      let(:build) { Factory(:v3_build, started_at: nil) }
       let(:cron) { Factory(:cron, branch_id: Factory(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
         cron.needs_new_build?.should be_truthy

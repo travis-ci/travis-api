@@ -15,7 +15,7 @@ FactoryGirl.define do
   factory :commit do
     commit '62aae5f70ceee39123ef'
     branch 'master'
-    message 'the commit message'
+    message 'the commit message 🤔'
     committed_at '2011-11-11T11:11:11Z'
     committer_name 'Sven Fuchs'
     committer_email 'svenfuchs@artweb-design.de'
@@ -24,19 +24,15 @@ FactoryGirl.define do
     compare_url 'https://github.com/svenfuchs/minimal/compare/master...develop'
   end
 
-  factory :test, :class => 'Job::Test' do
+  factory :test, :class => 'Job::Test', aliases: [:job] do
     owner      { User.first || Factory(:user) }
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }
     source     { Factory(:build) }
-    log        { Factory(:log) }
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
     number     '2.1'
     tags       ""
-  end
-
-  factory :log do
-    content '$ bundle install --pa'
+    state      :created
   end
 
   factory :request do

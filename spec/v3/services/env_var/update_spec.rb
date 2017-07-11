@@ -22,7 +22,7 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
     include_examples 'missing env_var'
   end
 
-  describe 'authenticated, existing repo, existing env var' do
+  describe 'authenticated, existing repo, existing env var, incorrect permissions' do
     let(:params) do
       {
         'env_var.name' => 'QUX'
@@ -30,6 +30,40 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
     end
 
     before do
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+      repo.update_attributes(settings: JSON.generate(env_vars: [env_var], foo: 'bar'))
+      patch("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", JSON.generate(params), auth_headers.merge(json_headers))
+    end
+
+    example { expect(last_response.status).to eq 403 }
+    example do
+      expect(JSON.load(body)).to eq(
+        '@type' => 'error',
+        'error_type' => 'insufficient_access',
+        'error_message' => 'operation requires write access to env_var',
+        'permission' => 'write',
+        'resource_type' => 'env_var',
+        'env_var' => {
+          '@type' => 'env_var',
+          '@href' => "/v3/repo/#{repo.id}/env_var/#{env_var[:id]}",
+          '@representation' => 'minimal',
+          'id' => env_var[:id],
+          'name' => env_var[:name],
+          'public' => env_var[:public]
+        }
+      )
+    end
+  end
+
+  describe 'authenticated, existing repo, existing env var, correct permissions' do
+    let(:params) do
+      {
+        'env_var.name' => 'QUX'
+      }
+    end
+
+    before do
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
       repo.update_attributes(settings: JSON.generate(env_vars: [env_var], foo: 'bar'))
       patch("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", JSON.generate(params), auth_headers.merge(json_headers))
     end
@@ -38,8 +72,9 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
     example do
       expect(JSON.load(body)).to eq(
         '@type' => 'env_var',
-        '@href' => '/v3/repo/1/env_var/abc',
+        '@href' => "/v3/repo/#{repo.id}/env_var/#{env_var[:id]}",
         '@representation' => 'standard',
+        '@permissions' => { 'read' => true, 'write' => true },
         'id' => env_var[:id],
         'name' => params['env_var.name'],
         'value' => env_var[:value].decrypt,

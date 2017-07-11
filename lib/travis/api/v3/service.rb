@@ -3,11 +3,15 @@ module Travis::API::V3
     DEFAULT_PARAMS = [ "include".freeze, "@type".freeze ]
     private_constant :DEFAULT_PARAMS
 
-    def self.result_type(type = nil)
-      @result_type   = type if type
+    def self.result_type(rt = nil)
+      @result_type   = rt if rt
       @result_type ||= parent.result_type if parent and parent.respond_to? :result_type
       raise 'result type not set' unless defined? @result_type
       @result_type
+    end
+
+    def self.type(t = nil)
+      @type ||= (t || result_type)
     end
 
     def self.filter_params(params)
@@ -22,6 +26,10 @@ module Travis::API::V3
         @params << "#{prefix || result_type}.#{entry}" if entry.is_a? Symbol
       end
       @params
+    end
+
+    def self.accepted_params
+      self.params.select { |p| p =~ /#{type}\./.freeze }
     end
 
     def self.paginate(**options)
@@ -85,21 +93,28 @@ module Travis::API::V3
       self.class.result_type
     end
 
-    def result(*args)
-      Result.new(access_control, *args)
+    def result(resource, **meta_data)
+      return not_found unless resource
+      meta_data[:type]           ||= meta_data[:result_type] || result_type
+      meta_data[:status]         ||= 200
+      meta_data[:access_control] ||= access_control
+      meta_data[:resource]       ||= resource
+      Result.new(meta_data)
     end
 
-    def head(*args)
-      Result::Head.new(access_control, *args)
+    def head(**meta_data)
+      meta_data[:access_control] ||= access_control
+      meta_data[:type]           ||= result_type
+      meta_data[:resource]       ||= nil
+      Result::Head.new(meta_data)
     end
 
     def deleted
-      head result_type, nil, status: 204
+      head(status: 204)
     end
 
     def run
       not_found unless result = run!
-      result = result(result_type, result) unless result.is_a? Result
       result = paginate(result) if self.class.paginate?
       apply_warnings(result)
       result
@@ -132,11 +147,15 @@ module Travis::API::V3
 
     def accepted(**payload)
       payload[:resource_type] ||= result_type
-      result(:accepted, payload, status: 202)
+      result(payload, status: 202, result_type: :accepted)
     end
 
     def not_implemented
       raise NotImplemented
+    end
+
+    def private_repo_feature!(repository)
+      raise PrivateRepoFeature unless access_control.enterprise? || repository.private?
     end
   end
 end

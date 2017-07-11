@@ -16,6 +16,33 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
     include_examples 'missing repo'
   end
 
+  describe 'authenticated, existing repo, wrong permissions' do
+    before do
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+      repo.update_attributes(settings: JSON.generate(env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }]))
+      post("/v3/repo/#{repo.id}/env_vars", JSON.generate({}), auth_headers.merge(json_headers))
+    end
+
+    example { expect(last_response.status).to eq 403 }
+    example do
+      expect(JSON.load(body)).to eq(
+        '@type' => 'error',
+        'error_message' => 'operation requires create_env_var access to repository',
+        'error_type' => 'insufficient_access',
+        'permission' => 'create_env_var',
+        'resource_type' => 'repository',
+        'repository' => {
+          '@type' => 'repository',
+          '@href' => "/v3/repo/#{repo.id}",
+          '@representation' => 'minimal',
+          'id' => repo.id,
+          'name' => repo.name,
+          'slug' => repo.slug
+        }
+      )
+    end
+  end
+
   describe 'authenticated, existing repo, env var already exists' do
     let(:params) do
       {
@@ -26,6 +53,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
     end
 
     before do
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
       repo.update_attributes(settings: JSON.generate(env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }]))
       post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers))
     end
@@ -50,7 +78,10 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
         }
       end
 
-      before { post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers)) }
+      before do
+        Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
+        post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers))
+      end
 
       example { expect(last_response.status).to eq 201 }
       example do
@@ -66,6 +97,9 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
       example 'persists changes' do
         expect(repo.reload.settings['env_vars'].first['name']).to eq 'FOO'
       end
+      example 'persists repository id' do
+        expect(repo.reload.settings['env_vars'].first['repository_id']).to eq repo.id
+      end
     end
 
     describe 'public' do
@@ -77,7 +111,10 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
         }
       end
 
-      before { post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers)) }
+      before do
+        Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
+        post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers))
+      end
 
       example { expect(last_response.status).to eq 201 }
       example do

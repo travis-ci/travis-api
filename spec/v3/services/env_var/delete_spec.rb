@@ -13,24 +13,25 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
 
   describe 'authenticated, wrong permissions' do
     before do
+      repo.update_attributes(settings: JSON.generate(env_vars: [env_var]))
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-      delete("/v3/repo/#{repo.id}/env_var/foo", {}, auth_headers)
+      delete("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", {}, auth_headers)
     end
     example { expect(last_response.status).to eq 403 }
     example do
       expect(JSON.load(last_response.body)).to eq(
         '@type' => 'error',
         'error_type' => 'insufficient_access',
-        'error_message' => 'operation requires change_env_vars access to repository',
-        'resource_type' => 'repository',
-        'permission' => 'change_env_vars',
-        'repository' => {
-          '@type' => 'repository',
-          '@href' => "/v3/repo/#{repo.id}",
+        'error_message' => 'operation requires write access to env_var',
+        'resource_type' => 'env_var',
+        'permission' => 'write',
+        'env_var' => {
+          '@type' => 'env_var',
+          '@href' => "/v3/repo/#{repo.id}/env_var/#{env_var[:id]}",
           '@representation' => 'minimal',
-          'id' => repo.id,
-          'name' => repo.name,
-          'slug' => repo.slug
+          'id' => env_var[:id],
+          'name' => env_var[:name],
+          'public' => true
         }
       )
     end

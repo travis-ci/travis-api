@@ -9,14 +9,14 @@ class Travis::Api::App
 
       get '/' do
         prefer_follower do
-          respond_with service(:find_jobs, params)
+          respond_with service(:find_jobs, params), include_log_id: include_log_id?
         end
       end
 
       get '/:id' do
         job = service(:find_job, params).run
         if job && job.repository
-          respond_with job
+          respond_with job, include_log_id: include_log_id?
         else
           json = { error: { message: "The job(#{params[:id]}) couldn't be found" } }
           status 404
@@ -25,7 +25,7 @@ class Travis::Api::App
       end
 
       post '/:id/cancel' do
-        Metriks.meter("api.request.cancel_job").mark
+        Metriks.meter("api.v2.request.cancel_job").mark
 
         service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
 
@@ -34,7 +34,7 @@ class Travis::Api::App
             message: "You don't have access to cancel job(#{params[:id]})"
           } }
 
-          Metriks.meter("api.request.cancel_job.unauthorized").mark
+          Metriks.meter("api.v2.request.cancel_job.unauthorized").mark
           status 403
           respond_with json
         elsif !service.can_cancel?
@@ -43,20 +43,20 @@ class Travis::Api::App
               code: 'cant_cancel'
           } }
 
-          Metriks.meter("api.request.cancel_job.cant_cancel").mark
+          Metriks.meter("api.v2.request.cancel_job.cant_cancel").mark
           status 422
           respond_with json
         else
           payload = { id: params[:id], user_id: current_user.id, source: 'api' }
           service.push("job:cancel", payload)
 
-          Metriks.meter("api.request.cancel_job.success").mark
+          Metriks.meter("api.v2.request.cancel_job.success").mark
           status 204
         end
       end
 
       post '/:id/restart' do
-        Metriks.meter("api.request.restart_job").mark
+        Metriks.meter("api.v2.request.restart_job").mark
 
         service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
 
@@ -77,11 +77,18 @@ class Travis::Api::App
         resource = service(:find_log, params).run
         if (resource && resource.removed_at) && accepts?('application/json')
           respond_with resource
-        elsif (!resource || resource.archived?)
+        elsif resource.nil?
+          status 200
+          body empty_log(Integer(params[:job_id])).to_json
+        elsif resource.archived?
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
-          if accepts?('text/plain')
-            archived_log_path = archive_url("/jobs/#{params[:job_id]}/log.txt")
+          if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')
+            archived_log_path = if resource.respond_to?(:archived_url)
+                                  resource.archived_url
+                                else
+                                  archive_url("/jobs/#{params[:job_id]}/log.txt")
+                                end
 
             if params[:cors_hax]
               status 204
@@ -135,6 +142,15 @@ class Travis::Api::App
 
       def hostname(name)
         "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
+      end
+
+      private def include_log_id?
+        params[:include_log_id] ||
+          request.user_agent.to_s.start_with?('Travis')
+      end
+
+      private def empty_log(job_id)
+        { log: { job_id: job_id, parts: [], :@type => 'Log' } }
       end
     end
   end

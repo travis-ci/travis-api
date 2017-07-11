@@ -8,8 +8,6 @@ describe Travis::Services::FindBuilds do
 
   attr_reader :params
 
-  before { user.permissions.create!(admin: true, push: true, repository_id: repo.id) }
-  
   describe 'run' do
     it 'finds recent builds when empty params given' do
       @params = { :repository_id => repo.id }

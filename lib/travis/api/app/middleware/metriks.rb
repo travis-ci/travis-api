@@ -7,34 +7,36 @@ class Travis::Api::App
       include Helpers::Accept
 
       before do
+        ::Metriks.meter("api.v2.total_requests").mark
+
         env['metriks.request.start'] ||= Time.now.utc
       end
 
       after do
         if queue_start = time(env['HTTP_X_QUEUE_START']) || time(env['HTTP_X_REQUEST_START'])
           time = env['metriks.request.start'] - queue_start
-          ::Metriks.timer('api.request_queue').update(time)
+          ::Metriks.timer('api.v2.request_queue').update(time)
         end
 
         if response.status < 400
           time = Time.now.utc - env['metriks.request.start']
           if headers['X-Pattern'].present? and headers['X-Endpoint'].present?
             name = "#{(headers['X-Endpoint'].split("::", 5).last.gsub(/::/, ".")).downcase}#{headers['X-Pattern'].gsub(/[\/]/, '.').gsub(/[:\?\*]/, "_")}"
-            metric = "api.request.endpoint.#{name}"
+            metric = "api.v2.request.endpoint.#{name}"
             ::Metriks.timer(metric).update(time)
-            ::Metriks.timer('api.requests').update(time)
+            ::Metriks.timer('api.v2.requests').update(time)
           end
           if content_type.present?
             type = content_type.split(';', 2).first.to_s.gsub(/\s/,'').gsub(/[^A-z\/]+/, '_').gsub('/', '.')
-            ::Metriks.timer("api.request.content_type.#{type}").update(time)
+            ::Metriks.timer("api.v2.request.content_type.#{type}").update(time)
           else
-            ::Metriks.timer("api.request.content_type.none").update(time)
+            ::Metriks.timer("api.v2.request.content_type.none").update(time)
           end
-          ::Metriks.meter("api.request.#{request.request_method.downcase}").mark
+          ::Metriks.meter("api.v2.request.#{request.request_method.downcase}").mark
         end
 
-        ::Metriks.meter("api.request.status.#{response.status.to_s[0]}").mark
-        ::Metriks.meter("api.request.version.#{accept_version}").mark
+        ::Metriks.meter("api.v2.request.status.#{response.status.to_s[0]}").mark
+        ::Metriks.meter("api.v2.request.version.#{accept_version}").mark
       end
 
       def time(value)

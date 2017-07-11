@@ -23,7 +23,7 @@ class Travis::Api::App
         end
 
         def accepts_log?
-          return true unless resource.is_a?(Log)
+          return true unless resource.is_a?(Travis::RemoteLog)
 
           chunked = accept_params[:chunked]
           if resource.removed_at
@@ -38,7 +38,13 @@ class Travis::Api::App
             p = params
             p[:root] = options[:root] if options[:root]
             p[:root] = options[:type] if options[:type] && !p[:root]
-            builder.new(resource, p).data
+            builder_instance = builder.new(resource, p)
+
+            if builder_instance.respond_to?(:serialization_options=)
+              builder_instance.serialization_options = options
+            end
+
+            builder_instance.data
           else
             basic_type_resource
           end
@@ -46,9 +52,9 @@ class Travis::Api::App
 
         def builder
           if defined?(@builder)
-           @builder
+            @builder
           else
-           @builder = Travis::Api::Serialize.builder(resource, { :version => version }.merge(options))
+            @builder = Travis::Api::Serialize.builder(resource, { :version => version }.merge(options))
           end
         end
 

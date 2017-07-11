@@ -11,6 +11,11 @@ module Travis::API::V3
       end
     end
 
+    def sync_once(*args)
+      sync(*args)
+      sync!
+    end
+
     def sync!
       @sync.call if @sync
     end

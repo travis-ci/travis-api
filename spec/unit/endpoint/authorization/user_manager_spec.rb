@@ -35,7 +35,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
      }
 
     it 'drops the token when drop_token is set to true' do
-      user = stub('user', login: 'drogus', github_id: 456, previous_changes: {}, recently_signed_up?: false)
+      user = stub('user', login: 'drogus', github_id: 456, previous_changes: {}, recently_signed_up?: false, tokens: [stub('token')])
       User.expects(:find_by_github_id).with(456).returns(user)
 
       manager = described_class.new(data, 'abc123', true)
@@ -54,6 +54,18 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
       before do
         manager.stubs(:education).returns(false)
+      end
+
+      context 'without any User#tokens record' do
+        before do
+          user.tokens.destroy_all
+        end
+
+        it 'creates a User#tokens record' do
+          User.any_instance.expects(:create_a_token)
+          User.any_instance.expects(:tokens).returns([])
+          manager.fetch.should == user
+        end
       end
 
       it 'updates user data' do

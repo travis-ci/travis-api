@@ -28,7 +28,7 @@ class Travis::Api::App
           # https://metrics.librato.com/s/metrics/api.request.restart?duration=2419200&q=api.request.restart
           #
           # I think we need to properly deprecate this by publishing a blog post.
-          Metriks.meter("api.request.restart").mark
+          Metriks.meter("api.v2.request.restart").mark
           service = Travis::Enqueue::Services::RestartModel.new(current_user, params)
           params[:user_id] = service.target.repository.owner.id
 

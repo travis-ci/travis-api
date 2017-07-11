@@ -16,7 +16,7 @@ module Travis
       end
 
       def updated_at
-        [result].concat(result.annotations).map(&:updated_at).max if result
+        [result].map(&:updated_at).max if result
       end
 
       private
@@ -38,9 +38,7 @@ module Travis
         end
 
         def preload(job)
-          ActiveRecord::Associations::Preloader.new(job, :log).run
           ActiveRecord::Associations::Preloader.new(job, :commit).run
-          ActiveRecord::Associations::Preloader.new(job, :annotations).run
           job
         end
     end

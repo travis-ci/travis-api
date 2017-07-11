@@ -1,3 +1,5 @@
+require 'metriks'
+
 module Travis::API::V3
   class Router
     include Travis::API::V3
@@ -12,6 +14,8 @@ module Travis::API::V3
     end
 
     def call(env)
+      ::Metriks.meter("api.v3.total_requests").mark
+
       return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
       metrics         = @metrics_processor.create
       access_control  = AccessControl.new(env)
@@ -39,7 +43,7 @@ module Travis::API::V3
     rescue Error => error
       metrics.tick(:service)
 
-      result   = Result.new(access_control, :error, error)
+      result   = Result.new(access_control: access_control, type: :error, resource: error)
       response = V3.response(result.render(env_params, env),  {}, content_type: content_type, status: error.status)
 
       metrics.tick(:rendered)

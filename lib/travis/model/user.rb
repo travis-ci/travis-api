@@ -28,14 +28,6 @@ class User < Travis::Model
       where(:permissions => permissions).includes(:permissions)
     end
 
-    def authenticate_by(options)
-      options = options.symbolize_keys
-
-      if user = User.find_by_login(options[:login])
-        user if user.tokens.any? { |t| t.token == options[:token] }
-      end
-    end
-
     def find_or_create_for_oauth(payload)
       Oauth.find_or_create_by(payload)
     end
@@ -79,8 +71,12 @@ class User < Travis::Model
       hooks = hooks.administratable
     end
     hooks = hooks.includes(:permissions).
-              select('repositories.*, permissions.admin as admin, permissions.push as push').
-              order('owner_name, name')
+              select('repositories.*, permissions.admin as admin, permissions.push as push')
+
+    if options[:order] != 'none'
+      hooks = hooks.order('owner_name, name')
+    end
+
     # TODO remove owner_name/name once we're on api everywhere
     if options.key?(:id)
       hooks = hooks.where(options.slice(:id))
@@ -113,8 +109,32 @@ class User < Travis::Model
     github_oauth_token && read_attribute(:github_scopes) || []
   end
 
+  # avatar_url calculation here is almost the same code that's used in
+  # Travis::API::V3::Renderer::AvatarURL. While generally I don't
+  # like repetition, it seems that copying it is the best choice in
+  # this specific situation. We need to add this field as a bug fix
+  # for travis-web, so I don't think that anyone else will be using
+  # it, especially with V3 in place and plans to retire V2. We won't
+  # likely need to do any maintenance here, because we plan to
+  # switch to V3 for /user request soon. And lastly, with plans to
+  # split V2 and V3 codebases I wouldn't like to share this code between V3 and
+  # V2
+  #
+  GRAVATAR_URL = 'https://0.gravatar.com/avatar/%s'
+  private_constant :GRAVATAR_URL
+
   def avatar_url
-    "https://0.gravatar.com/avatar/#{profile_image_hash}"
+    if read_attribute(:avatar_url)
+      read_attribute(:avatar_url)
+    elsif gravatar_id
+      GRAVATAR_URL % gravatar_id
+    else
+      GRAVATAR_URL % Digest::MD5.hexdigest(email)
+    end
+  end
+
+  def _has
+    self.respond_to?(field) and self.send(field).present?
   end
 
   def previous_changes
@@ -130,6 +150,10 @@ class User < Travis::Model
     github_oauth_token ? super.gsub(github_oauth_token, '[REDACTED]') : super
   end
 
+  def create_a_token
+    self.tokens.create!
+  end
+
   protected
 
     def track_previous_changes
@@ -138,9 +162,5 @@ class User < Travis::Model
 
     def set_as_recent
       @recently_signed_up = true
-    end
-
-    def create_a_token
-      self.tokens.create!
     end
 end

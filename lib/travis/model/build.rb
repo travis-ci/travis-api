@@ -51,6 +51,7 @@ class Build < Travis::Model
 
   belongs_to :commit
   belongs_to :request
+  belongs_to :pull_request
   belongs_to :repository, autosave: true
   belongs_to :owner, polymorphic: true
   has_many   :matrix, as: :source, order: :id, class_name: 'Job::Test', dependent: :destroy
@@ -166,6 +167,10 @@ class Build < Travis::Model
     unless cached_matrix_ids
       update_column(:cached_matrix_ids, to_postgres_array(matrix_ids))
     end
+  end
+
+  def state
+    super || 'created'
   end
 
   # AR 3.2 does not handle pg arrays and the plugins supporting them

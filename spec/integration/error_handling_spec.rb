@@ -17,7 +17,7 @@ describe 'Exception', set_app: true do
 
   before do
     set_app Raven::Rack.new(FixRaven.new(app))
-    Travis.config.sentry.dsn = "test"
+    Travis.config.sentry.dsn = 'https://fake:token@app.getsentry.com/12345'
     Travis::Api::App.setup_monitoring
   end
 
@@ -27,7 +27,13 @@ describe 'Exception', set_app: true do
     Raven.expects(:send_event).with do |event|
       event['logentry']['message'] == "#{error.class}: #{error.message}"
     end
-    expect { get '/repos/1'}.to raise_error(TestError)
+    res = get '/repos/1'
+    expect(res.status).to eq(500)
+    expect(res.body).to eq('Sorry, we experienced an error.')
+    expect(res.headers).to eq({
+      'Content-Type' => 'text/plain',
+      'Content-Length' => '31',
+    })
     sleep 0.1
   end
 end

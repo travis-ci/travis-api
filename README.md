@@ -10,9 +10,9 @@ You will need the following packages to get travis-api to work:
 
 1. PostgreSQL 9.3 or higher
 2. Bundler
-3. Redis Server
+3. Redis
 4. *Optional:* RabbitMQ Server
-5. Nginx -
+5. *Optional:* Nginx -
     *If working in Ubuntu please install nginx manually from source: Download and extract latest nginx version, open a terminal in extracted folder and then run the following:*
 ```sh-session
     $ sudo apt-get install libpcre3 libpcre3-dev
@@ -36,29 +36,30 @@ $ bundle install
 $ sudo -u postgres psql -c "CREATE USER yourusername WITH SUPERUSER PASSWORD 'yourpassword'"
 ```
 
-Databases are set up with a Rake task that uses the database schemas (`structure.sql`) in `travis-migrations` which is loaded as a Gem. Details can be found in the `Rakefile`.
+Databases are set up with a Rake task that uses the database schemas (`structure.sql`) in `travis-migrations`. Details can be found in the `Rakefile`. 
 
-If there have been new migrations added to `travis-migrations` since you bundle installed, you will need to update `travis-migrations` to ensure you have the latest version with the new migrations.
-
-```sh-session
-bundle update travis-migrations
-```
 
 To create and migrate the Databases:
 
 ```sh-session
-$ RAILS_ENV=development bundle exec rake db:create
-$ RAILS_ENV=test bundle exec rake db:create
+$ ENV=development bundle exec rake db:create
+$ ENV=test bundle exec rake db:create
 ```
 
-Please Note: The database names are configured using the environment variable RAILS_ENV. If you are using a different configuration you will have to make your own adjustments.
+Please Note: The database names are configured using the environment variable ENV. If you are using a different configuration you will have to make your own adjustments. The default environment is `test`.
 
 
 ### Run tests
 ```sh-session
 $ bundle exec rake
 ```
-### Run the server
+
+### Run the server (development)
+```sh-session
+ENV=development bundle exec ruby -Ilib -S rackup
+```
+
+### Run the server (production)
 ```sh-session
 $ bundle exec script/server
 ```

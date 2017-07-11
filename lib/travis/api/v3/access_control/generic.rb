@@ -19,6 +19,10 @@ module Travis::API::V3
       full_access? or dispatch(object, :restartable?)
     end
 
+    def starable?(object)
+      full_access? or dispatch(object, :starable?)
+    end
+
     def writable?(object)
       full_access? or dispatch(object, :writable?)
     end
@@ -44,6 +48,10 @@ module Travis::API::V3
 
     def full_access_or_logged_in?
       full_access? || logged_in?
+    end
+
+    def enterprise?
+      !!Travis.config.enterprise
     end
 
     def visible_repositories(list)
@@ -99,8 +107,16 @@ module Travis::API::V3
       writable? job.repository
     end
 
+    def key_pair_visible?(key_pair)
+      visible? key_pair.repository
+    end
+
     def organization_visible?(organization)
       full_access? or public_api?
+    end
+
+    def ssl_key_visible?(ssl_key)
+      visible? ssl_key.repository
     end
 
     def ssl_key_writable?(ssl_key)
@@ -115,13 +131,25 @@ module Travis::API::V3
       self.user == user
     end
 
+    def user_setting_visible?(user_setting)
+      visible? user_setting.repository
+    end
+
     def repository_adminable?(repository)
+      false
+    end
+
+    def repository_starable?(repository)
       false
     end
 
     def repository_visible?(repository)
       return true if unrestricted_api? and not repository.private?
       private_repository_visible?(repository)
+    end
+
+    def request_visible?(request)
+      repository_visible?(request.repository)
     end
 
     def private_repository_visible?(repository)
@@ -131,7 +159,9 @@ module Travis::API::V3
     def repository_attr_visible?(record)
       repository_visible?(record.repository)
     end
-    [:settings_visible?, :env_vars_visible?, :env_var_visible?].each { |m| alias_method m, :repository_attr_visible? }
+    [:settings_visible?, :env_vars_visible?, :env_var_visible?, :key_pairs_visible?].each do |m|
+      alias_method m, :repository_attr_visible?
+    end
 
     def public_api?
       !Travis.config.private_api
@@ -154,16 +184,16 @@ module Travis::API::V3
     @@method_for_cache       = Tool::ThreadLocal.new
 
     def permission_class(klass)
-      result = @@permission_class_cache[klass] ||= Permissions[normailze_type(klass), false] || @@unknown_permission
+      result = @@permission_class_cache[klass] ||= Permissions[normalize_type(klass), false] || @@unknown_permission
       result unless result == @@unknown_permission
     end
 
     def method_for(type, method)
       type_cache = @@method_for_cache[type] ||= {}
-      type_cache[method]                    ||= "#{normailze_type(type)}_#{method}"
+      type_cache[method]                    ||= "#{normalize_type(type)}_#{method}"
     end
 
-    def normailze_type(type)
+    def normalize_type(type)
       type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore.to_sym
     end
   end

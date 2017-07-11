@@ -51,11 +51,13 @@ module Travis::API::V3
       self.class.access_rights.map { |k,v| [k,!!public_send(v)] }.to_h
     end
 
-    private
+    protected
 
     def write?
       access_control.writable? object
     end
+
+    private
 
     def cancelable?
       access_control.cancelable? object
@@ -63,6 +65,10 @@ module Travis::API::V3
 
     def restartable?
       access_control.restartable? object
+    end
+
+    def starable?
+      access_control.starable? object
     end
 
   end

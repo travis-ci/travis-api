@@ -8,11 +8,13 @@ module Travis
           class Jobs
             include Formats
 
-            attr_reader :jobs, :options
+            attr_reader :jobs, :params
+            attr_accessor :serialization_options
 
-            def initialize(jobs, options = {})
+            def initialize(jobs, params = {})
               @jobs = jobs
-              @options = options
+              @params = params
+              @serialization_options = {}
             end
 
             def data
@@ -25,13 +27,13 @@ module Travis
             private
 
               def job_data(job)
-                {
+                data = {
                   'id' => job.id,
                   'repository_id' => job.repository_id,
                   'repository_slug' => job.repository.slug,
                   'build_id' => job.source_id,
+                  'stage_id' => job.stage_id,
                   'commit_id' => job.commit_id,
-                  'log_id' => job.log_id,
                   'number' => job.number,
                   'config' => job.obfuscated_config.stringify_keys,
                   'state' => job.state.to_s,
@@ -41,6 +43,8 @@ module Travis
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags
                 }
+                data['log_id'] = job.log_id if include_log_id?
+                data
               end
 
               def commit_data(commit)
@@ -56,6 +60,10 @@ module Travis
                   'committer_email' => commit.committer_email,
                   'compare_url' => commit.compare_url,
                 }
+              end
+
+              def include_log_id?
+                !!serialization_options[:include_log_id]
               end
           end
         end
