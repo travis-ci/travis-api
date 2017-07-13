@@ -100,6 +100,11 @@ describe Travis::API::V3::Models::Cron do
       subject.branch.exists_on_github = false
       expect{ subject.enqueue }.to change { Travis::API::V3::Models::Cron.count}.by(-1)
     end
+
+    it "destroys cron if repo is no longer active" do
+      subject.branch.repository.active = false
+      expect{ subject.enqueue }.to change { Travis::API::V3::Models::Cron.count}.by(-1)
+    end
   end
 
   context "when always_run? is false" do
