@@ -35,7 +35,7 @@ module Travis::Api::App::Responders
         'text/plain'
       end
 
-      def clear_ansi(content)
+      def clear_ansi(content = '')
         content.gsub(/\r\r/, "\r")
                .gsub(/^.*\r(?!$)/, '')
                .gsub(/\x1b(\[|\(|\))[;?0-9]*[0-9A-Za-z]/m, '')
