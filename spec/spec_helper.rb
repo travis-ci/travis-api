@@ -1,3 +1,7 @@
+require 'knapsack'
+
+Knapsack::Adapters::RspecAdapter.bind
+
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 
 require 'support/coverage' unless ENV['SKIP_COVERAGE']
