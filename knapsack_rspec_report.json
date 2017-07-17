@@ -58,7 +58,6 @@
   "spec/lib/services/find_build_spec.rb": 0.60823655128479,
   "spec/lib/services/find_builds_spec.rb": 3.7710862159729004,
   "spec/lib/services/find_caches_spec.rb": 0.038797855377197266,
-  "/Users/aakriti/.rvm/gems/ruby-2.3.4/gems/rspec-its-1.0.1/lib/rspec/its.rb": 0.21388840675354004,
   "spec/lib/services/find_hooks_spec.rb": 0.1977827548980713,
   "spec/lib/services/find_job_spec.rb": 0.61236572265625,
   "spec/lib/services/find_jobs_spec.rb": 1.2050940990447998,
