@@ -107,7 +107,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     }}
 
     example { expect(Sidekiq::Client.last['queue']).to be == 'build_requests'                }
-    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildRequest' }
+    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Gatekeeper::Worker' }
 
     describe "setting id has no effect" do
       let(:params) {{ id: 42 }}

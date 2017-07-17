@@ -1,3 +1,5 @@
+require "knapsack"
+
 namespace :db do
   env = ENV["ENV"] || 'test'
   abort "Cannot run rake db:create in production." if env == 'production'
@@ -22,3 +24,4 @@ namespace :spec do
 end
 
 task :default => :'spec:all'
+Knapsack.load_tasks if defined?(Knapsack)

@@ -43,7 +43,7 @@ module Travis::API::V3
         raise StandardError, "Repository does not have a github_id"
       end
 
-      if !branch.exists_on_github
+      if !branch.repository.active? or !branch.exists_on_github
         self.destroy
         return false
       end
@@ -60,16 +60,11 @@ module Travis::API::V3
         user:       { id: user_id }
       }
 
-      class_name, queue = Query.sidekiq_queue(:build_request)
-
-      ::Sidekiq::Client.push(
-          'queue'.freeze => queue,
-          'class'.freeze => class_name,
-          'args'.freeze  => [{
-            type:        'cron'.freeze,
-            payload:     JSON.dump(payload),
-            credentials: {}
-            }])
+      ::Travis::API::Sidekiq.gatekeeper(
+        type:        'cron'.freeze,
+        payload:     JSON.dump(payload),
+        credentials: {}
+      )
 
       update_attribute(:last_run, DateTime.now.utc)
       schedule_next_build

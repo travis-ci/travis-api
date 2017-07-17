@@ -39,6 +39,7 @@ require 'travis/api/serialize/v2'
 require 'travis/api/v3'
 require 'travis/api/app/stack_instrumentation'
 require 'travis/api/app/error_handling'
+require 'travis/api/sidekiq'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.

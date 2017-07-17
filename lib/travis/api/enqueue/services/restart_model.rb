@@ -4,6 +4,7 @@ module Travis
 
       class RestartModel
         attr_reader :current_user, :target
+        ABUSE_DETECTED = "abuse_detected"
 
         def initialize(current_user, params)
           @current_user = current_user
@@ -18,6 +19,8 @@ module Travis
                   'class'   => 'Travis::Hub::Sidekiq::Worker',
                   'args'    => [event, payload]
                 )
+          else
+            @cause_of_denial
           end
         end
 
@@ -48,7 +51,13 @@ module Travis
         private
 
           def permission?
-            current_user && current_user.permission?(required_role, repository_id: target.repository_id)
+            current_user && current_user.permission?(required_role, repository_id: target.repository_id) && !abusive?
+          end
+
+          def abusive?
+            abusive = Travis.redis.sismember("abuse:offenders", "#{@target.owner.class.name}:#{@target.owner_id}")
+            @cause_of_denial = ABUSE_DETECTED if abusive
+            abusive
           end
 
           def resetable?
