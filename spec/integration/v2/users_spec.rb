@@ -3,6 +3,42 @@ describe 'Users', set_app: true do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
+  context 'GET /users/:id' do
+    let(:repo1) { Factory(:repository, owner: user) }
+    let(:org) { Factory(:org) }
+    let(:repo2) { Factory(:repository, owner: org) }
+
+    before do
+      user.permissions.create!(repository: repo1)
+      user.permissions.create!(repository: repo2)
+    end
+
+    it 'fetches a list of channels for a user' do
+      response = get "/users/#{user.id}", {}, headers
+      expected = ["repo-#{repo1.id}", "repo-#{repo2.id}", "user-#{user.id}"].sort
+      JSON.parse(response.body)['user']['channels'].sort.should == expected
+    end
+
+    context 'with user channel enabled for an org' do
+      it 'does not attach repos from the org to the list of channels' do
+        Travis.redis.sadd('user-channel.rollout.uids', "#{org.id}-O")
+        Travis.redis.set('user-channel.rollout.enabled', '1')
+        response = get "/users/#{user.id}", {}, headers
+        expected = ["repo-#{repo1.id}", "user-#{user.id}"].sort
+        JSON.parse(response.body)['user']['channels'].sort.should == expected
+      end
+
+      it 'does not attach repos from the user to the list of channels' do
+        Travis.redis.sadd('user-channel.rollout.uids', "#{user.id}-U")
+        Travis.redis.set('user-channel.rollout.enabled', '1')
+        response = get "/users/#{user.id}", {}, headers
+        expected = ["repo-#{repo2.id}", "user-#{user.id}"].sort
+        JSON.parse(response.body)['user']['channels'].sort.should == expected
+      end
+
+    end
+  end
+
   context 'PUT /users/:id' do
     it 'updates user data and returns the user' do
       params = {user: {id: user.id, locale: 'pl'}}

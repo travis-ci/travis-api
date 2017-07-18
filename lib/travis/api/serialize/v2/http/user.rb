@@ -1,5 +1,6 @@
 require 'travis/api/serialize/formats'
 require 'travis/github/oauth'
+require 'travis/rollout'
 
 module Travis
   module Api
@@ -42,7 +43,24 @@ module Travis
               end
 
               def channels
-                ["user-#{user.id}"] + user.repository_ids.map { |id| "repo-#{id}" }
+                repository_ids = []
+                uids = user.repositories
+                  .select(['repositories.id', 'repositories.owner_id', 'repositories.owner_type'])
+                  .group_by { |r| "#{r.owner_id}-#{r.owner_type[0]}" }
+                  .each do |uid, repositories|
+                    # for each owner we need to add repositories to the list
+                    # only if user channel is not enabled
+                    rollout = Travis::Rollout.new('user-channel', redis: redis, uid: uid)
+                    unless rollout.matches?
+                      repository_ids.push(*repositories.map(&:id))
+                    end
+                  end
+
+                ["user-#{user.id}"] + repository_ids.map { |id| "repo-#{id}" }
+              end
+
+              def redis
+                Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
               end
           end
         end
