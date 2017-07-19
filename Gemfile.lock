@@ -46,6 +46,13 @@ GIT
     travis-lock (0.1.1)
 
 GIT
+  remote: https://github.com/travis-ci/travis-rollout
+  revision: 71cc9102dff01f95c281f99183e54b6695faa7ec
+  branch: sf-refactor
+  specs:
+    travis-rollout (0.0.1)
+
+GIT
   remote: https://github.com/travis-ci/travis-settings
   revision: d510e63b6c6f059cccae141c265e7a0c7236d1fd
   specs:
@@ -405,6 +412,7 @@ DEPENDENCIES
   travis-api!
   travis-config!
   travis-lock!
+  travis-rollout!
   travis-settings!
   travis-sidekiqs!
   travis-support!
@@ -417,4 +425,4 @@ RUBY VERSION
    ruby 2.3.4p301
 
 BUNDLED WITH
-   1.15.1
+   1.15.2

@@ -4,7 +4,11 @@ describe Travis::Api::Serialize::V2::Http::User do
   let(:user) { stub_user(repository_ids: [1, 4, 8]) }
   let(:data) { described_class.new(user).data }
 
-  before { user.stubs(:github_scopes).returns(['public_repo', 'user:email']) }
+  before do
+    user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
+    pusher_channel_instance = stub('pusher_channel_instance', channels: ['user-1', 'repo-1', 'repo-4', 'repo-8'])
+    Travis::Api::Serialize::V2::Http::User::PusherChannels.stubs(:new).returns(pusher_channel_instance)
+  end
 
   it 'user' do
     data['user'].should == {
