@@ -52,6 +52,7 @@ module Travis
                   'id' => commit.id,
                   'sha' => commit.commit,
                   'branch' => commit.branch,
+                  'tag' => commit.tag_name,
                   'message' => commit.message,
                   'committed_at' => format_date(commit.committed_at),
                   'author_name' => commit.author_name,

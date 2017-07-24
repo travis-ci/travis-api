@@ -27,6 +27,7 @@ describe Travis::Api::Serialize::V2::Http::Builds do
       'id' => commit.id,
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
+      'tag' => nil,
       'message' => 'the commit message',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
       'committer_email' => 'svenfuchs@artweb-design.de',
@@ -43,6 +44,16 @@ describe Travis::Api::Serialize::V2::Http::Builds do
     build.expects(:cached_matrix_ids).returns([1, 2, 3])
     data = described_class.new([build]).data
     data['builds'].first['job_ids'].should == [1, 2, 3]
+  end
+
+  describe 'with a tag' do
+    before do
+      build.commit.stubs(tag_name: 'v1.0.0')
+    end
+
+    it 'includes the tag name to commit' do
+      data['commits'][0]['tag'].should == 'v1.0.0'
+    end
   end
 
   describe 'with a pull request' do
