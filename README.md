@@ -36,7 +36,7 @@ $ bundle install
 $ sudo -u postgres psql -c "CREATE USER yourusername WITH SUPERUSER PASSWORD 'yourpassword'"
 ```
 
-Databases are set up with a Rake task that uses the database schemas (`structure.sql`) in `travis-migrations`. Details can be found in the `Rakefile`. 
+Databases are set up with a Rake task that uses the database schemas (`structure.sql`) in `travis-migrations`. Details can be found in the `Rakefile`.
 
 
 To create and migrate the Databases:
@@ -58,6 +58,7 @@ $ bundle exec rake
 ```sh-session
 ENV=development bundle exec ruby -Ilib -S rackup
 ```
+(The database connection can be overwritten by setting a DATABASE_URL env var. Please ensure you also set RAILS_ENV to corresponding env and add encryption key config to `config/travis.ylm`)
 
 ### Run the server (production)
 ```sh-session

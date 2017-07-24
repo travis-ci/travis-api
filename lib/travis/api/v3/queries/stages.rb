@@ -1,7 +1,8 @@
 module Travis::API::V3
-  class Queries::Jobs < Query
+  class Queries::Stages < Query
+
     def find(build)
-      sort filter(build.jobs)
+      sort filter(build.stages)
     end
 
     def filter(list)
