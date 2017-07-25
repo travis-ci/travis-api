@@ -166,6 +166,9 @@ module Travis::Api
 
     # Rack protocol
     def call(env)
+      if env['PATH_INFO'] == '/health'
+        return [200, {}, ["ok\n"]]
+      end
       app.call(env)
     rescue
       if Endpoint.production?
