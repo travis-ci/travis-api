@@ -36,17 +36,19 @@ gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
 gem 'simplecov'
-gem 'skylight'
 gem 'stackprof'
 gem 'netaddr'
 
 gem 'jemalloc'
 gem 'customerio'
 
-gem "redlock"
+gem 'redlock'
 gem 'rake', '~> 0.9.2'
 
+gem 'skylight'
 gem 'appsignal'
+gem 'libhoney'
+gem 'rack-honey', git: 'https://github.com/honeycombio/rack-honey'
 
 gem 'knapsack'
 
