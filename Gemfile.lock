@@ -396,6 +396,7 @@ DEPENDENCIES
   active_model_serializers
   appsignal
   bunny (~> 0.8.0)
+  concurrent-ruby
   customerio
   dalli
   database_cleaner (~> 0.8.0)
