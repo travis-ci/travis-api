@@ -25,7 +25,6 @@ module Travis::API::V3
 
       relation = relation.includes(:commit).includes(branch: :last_build).includes(:repository)
       relation = relation.includes(branch: { last_build: :commit }) if includes? 'build.commit'.freeze
-      # relation = relation.includes(jobs: [:repository, :commit, :stage]) if includes? 'build.jobs'.freeze or includes? 'job'.freeze
       relation
     end
 
