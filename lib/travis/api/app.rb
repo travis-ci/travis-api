@@ -28,7 +28,6 @@ require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'securerandom'
 require 'fog/aws'
-require 'rack/honey'
 
 module Travis::Api
 end
@@ -108,7 +107,8 @@ module Travis::Api
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
         if ENV['HONEYCOMB_ENABLED_FOR_DYNOS']&.split(' ')&.include?(ENV['DYNO'])
-          use Rack::Honey::Middleware, writekey: ENV['HONEYCOMB_WRITEKEY'], dataset: ENV['HONEYCOMB_DATASET']
+          Travis.logger.info 'honeycomb enabled'
+          use Travis::Api::App::Middleware::Honeycomb, writekey: ENV['HONEYCOMB_WRITEKEY'], dataset: ENV['HONEYCOMB_DATASET']
         end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???

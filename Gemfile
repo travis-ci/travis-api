@@ -47,8 +47,7 @@ gem 'rake', '~> 0.9.2'
 
 gem 'skylight'
 gem 'appsignal'
-gem 'libhoney'
-gem 'rack-honey', git: 'https://github.com/honeycombio/rack-honey'
+gem 'libhoney', git: 'https://github.com/honeycombio/libhoney-rb'
 
 gem 'knapsack'
 
