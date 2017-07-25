@@ -58,7 +58,7 @@ $ bundle exec rake
 ```sh-session
 ENV=development bundle exec ruby -Ilib -S rackup
 ```
-(The database connection can be overwritten by setting a DATABASE_URL env var. Please ensure you also set RAILS_ENV to corresponding env and add encryption key config to `config/travis.ylm`)
+(The database connection can be overwritten by setting a DATABASE_URL env var. Please ensure you also set RAILS_ENV to corresponding env and add encryption key config to `config/travis.yml`)
 
 ### Run the server (production)
 ```sh-session
