@@ -20,6 +20,11 @@ module Travis::API::V3
         route '/jobs'
         get  :find
       end
+
+      resource :stages do
+        route '/stages'
+        get   :find
+      end
     end
 
     resource :builds do

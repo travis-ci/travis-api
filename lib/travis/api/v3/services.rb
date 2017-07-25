@@ -30,6 +30,7 @@ module Travis::API::V3
     Request       = Module.new { extend Services }
     Requests      = Module.new { extend Services }
     SslKey        = Module.new { extend Services }
+    Stages        = Module.new { extend Services }
     User          = Module.new { extend Services }
     UserSetting   = Module.new { extend Services }
     UserSettings  = Module.new { extend Services }

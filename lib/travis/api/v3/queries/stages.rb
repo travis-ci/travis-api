@@ -1,7 +1,8 @@
 module Travis::API::V3
-  class Queries::Jobs < Query
+  class Queries::Stages < Query
+
     def find(build)
-      build.jobs
+      build.stages
     end
   end
 end
