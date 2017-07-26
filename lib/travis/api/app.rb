@@ -108,7 +108,10 @@ module Travis::Api
 
         if ENV['HONEYCOMB_ENABLED_FOR_DYNOS']&.split(' ')&.include?(ENV['DYNO'])
           Travis.logger.info 'honeycomb enabled'
-          use Travis::Api::App::Middleware::Honeycomb, writekey: ENV['HONEYCOMB_WRITEKEY'], dataset: ENV['HONEYCOMB_DATASET']
+          use Travis::Api::App::Middleware::Honeycomb,
+            writekey: ENV['HONEYCOMB_WRITEKEY'],
+            dataset: ENV['HONEYCOMB_DATASET'],
+            sample_rate: ENV['HONEYCOMB_SAMPLE_RATE']&.to_i
         end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
