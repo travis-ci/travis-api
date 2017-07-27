@@ -6,6 +6,13 @@ GIT
       metriks (>= 0.9.9.6)
 
 GIT
+  remote: https://github.com/honeycombio/libhoney-rb
+  revision: 87347222248a3b4497b3e3d8785cc110a3d471fd
+  specs:
+    libhoney (1.0.4)
+      http (~> 2.0)
+
+GIT
   remote: https://github.com/rkh/yard-sinatra
   revision: 00774d355123617ff0faa7e0ebd54c4cdcfcdf93
   specs:
@@ -158,6 +165,8 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
     docile (1.1.5)
+    domain_name (0.5.20170404)
+      unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.11)
     excon (0.55.0)
     factory_girl (2.4.2)
@@ -215,6 +224,15 @@ GEM
     hashdiff (0.3.1)
     hashr (2.0.0)
     hitimes (1.2.4)
+    http (2.2.2)
+      addressable (~> 2.3)
+      http-cookie (~> 1.0)
+      http-form_data (~> 1.0.1)
+      http_parser.rb (~> 0.6.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
+    http-form_data (1.0.3)
+    http_parser.rb (0.6.0)
     httpclient (2.8.3)
     hurley (0.2)
     i18n (0.8.4)
@@ -353,6 +371,9 @@ GEM
     tool (0.2.3)
     tzinfo (0.3.52)
     uber (0.0.15)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.4)
     unicorn (5.2.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
@@ -383,6 +404,7 @@ DEPENDENCIES
   gh
   jemalloc
   knapsack
+  libhoney!
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
   mime-types
