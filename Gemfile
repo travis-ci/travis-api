@@ -15,7 +15,7 @@ gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 gem 'travis-rollout',  git: 'https://github.com/travis-ci/travis-rollout', branch: 'sf-refactor'
 
-gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
+gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml', branch: 'meat-legit-minimal'
 gem 'mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
