@@ -1,5 +1,4 @@
 require 'libhoney'
-require 'concurrent'
 
 class Travis::Api::App
   class Middleware
@@ -15,7 +14,6 @@ class Travis::Api::App
       def initialize(app, options = {})
         @app = app
         @honey = Libhoney::Client.new(options)
-        @periodic_flush_task = build_periodic_flush_task
       end
 
       def call(env)
@@ -66,19 +64,6 @@ class Travis::Api::App
 
       private def add_env(ev, env, field)
         add_field(ev, field, env[field])
-      end
-
-      private def build_periodic_flush_task
-        Concurrent::TimerTask.execute(
-          run_now: true,
-          execution_interval: 10,
-          timeout_interval: 30
-        ) do
-          Travis.logger.debug(
-            'honey: triggering periodic flush'
-          )
-          @honey.close
-        end
       end
     end
   end

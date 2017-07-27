@@ -48,7 +48,6 @@ gem 'rake', '~> 0.9.2'
 gem 'skylight'
 gem 'appsignal'
 gem 'libhoney', git: 'https://github.com/honeycombio/libhoney-rb'
-gem 'concurrent-ruby'
 
 gem 'knapsack'
 
