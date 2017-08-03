@@ -3,8 +3,13 @@ require 'libhoney'
 module Travis
   class Honeycomb
     class << self
+      # env vars used to configure rpc client:
+      # * HONEYCOMB_RPC_ENABLED_FOR_DYNOS
+      # * HONEYCOMB_RPC_WRITEKEY
+      # * HONEYCOMB_RPC_DATASET
+      # * HONEYCOMB_RPC_SAMPLE_RATE
       def rpc
-        @rpc ||= Client.new('HONEYCOMB_RPC')
+        @rpc ||= Client.new('HONEYCOMB_RPC_')
       end
 
       def rpc_setup
