@@ -35,7 +35,7 @@ module Travis
       def send(event)
         return unless enabled?
 
-        ev = rpc_honey.event
+        ev = honey.event
         ev.add(event)
         ev.send
       end
