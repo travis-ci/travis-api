@@ -17,21 +17,31 @@ module Travis
 
         Travis.logger.info 'honeycomb rpc enabled'
 
-        target_events = [
-          'sql.active_record',
-          'request.faraday'
-        ]
-        target_events.each do |target_event|
-          ActiveSupport::Notifications.subscribe(target_event) do |name, start, finish, id, payload|
-            event = payload.to_h.merge(
-              event: name,
-              duration_ms: ((finish - start) * 1000).to_i,
-              id: id,
-              app: 'api',
-              dyno: ENV['DYNO'],
-            )
-            rpc.send(event)
-          end
+        ActiveSupport::Notifications.subscribe('sql.active_record') do |name, start, finish, id, payload|
+          event = payload.merge(
+            event: name,
+            duration_ms: ((finish - start) * 1000).to_i,
+            id: id,
+            app: 'api',
+            dyno: ENV['DYNO'],
+          )
+          rpc.send(event)
+        end
+
+        ActiveSupport::Notifications.subscribe('request.faraday') do |name, start, finish, id, env|
+          event = {
+            event: name,
+            duration_ms: ((finish - start) * 1000).to_i,
+            id: id,
+            app: 'api',
+            dyno: ENV['DYNO'],
+            method: env[:method],
+            body: env[:body],
+            url: env[:url].to_s,
+            host: env[:url].host,
+            request_uri: env[:url].request_uri,
+          }
+          rpc.send(event)
         end
       end
     end
