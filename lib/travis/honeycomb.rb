@@ -15,6 +15,8 @@ module Travis
       def rpc_setup
         return unless rpc.enabled?
 
+        Travis.logger.info 'honeycomb rpc enabled'
+
         ActiveSupport::Notifications.subscribe('sql.active_record') do |name, start, finish, id, payload|
           event = payload.merge(
             event: name,
