@@ -23,7 +23,7 @@ module Travis
         ]
         target_events.each do |target_event|
           ActiveSupport::Notifications.subscribe(target_event) do |name, start, finish, id, payload|
-            event = payload.merge(
+            event = payload.to_h.merge(
               event: name,
               duration_ms: ((finish - start) * 1000).to_i,
               id: id,
