@@ -22,6 +22,8 @@ module Travis
             event: name,
             duration_ms: ((finish - start) * 1000).to_i,
             id: id,
+            app: 'api',
+            dyno: ENV['DYNO'],
           )
 
           rpc.send(event)
