@@ -40,6 +40,8 @@ module Travis
             url: env[:url].to_s,
             host: env[:url].host,
             request_uri: env[:url].request_uri,
+            request_headers: env[:request_headers].to_h,
+            status: env[:status],
           }
           rpc.send(event)
         end
@@ -54,6 +56,7 @@ module Travis
       def send(event)
         return unless enabled?
 
+        puts "sending #{event}"
         ev = honey.event
         ev.add(event)
         ev.send

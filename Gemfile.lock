@@ -28,7 +28,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/gh
-  revision: 4bd6219755a472979ededcf26c781bfe11c77f84
+  revision: 80fcbd7ff9de45acbaf116bffe1f57f69cfcfd23
   branch: igor-faraday-middleware
   specs:
     gh (0.15.1)
@@ -36,7 +36,7 @@ GIT
       backports
       faraday (~> 0.8)
       multi_json (~> 1.0)
-      net-http-persistent (~> 2.9)
+      net-http-persistent (~> 3.0)
       net-http-pipeline
 
 GIT
@@ -277,7 +277,8 @@ GEM
     multi_json (1.12.1)
     multipart-post (2.0.0)
     mustermann (1.0.0.beta2)
-    net-http-persistent (2.9.4)
+    net-http-persistent (3.0.0)
+      connection_pool (~> 2.2)
     net-http-pipeline (1.0.1)
     netaddr (1.5.1)
     nokogiri (1.8.0)
