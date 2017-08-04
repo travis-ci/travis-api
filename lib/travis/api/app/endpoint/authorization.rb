@@ -301,8 +301,9 @@ class Travis::Api::App
         end
 
         def get_token(endpoint, values)
-          conn = Faraday.new(ssl: Travis.config.github.ssl || {})
-          conn.use :instrumentation
+          conn = Faraday.new(ssl: Travis.config.github.ssl || {}) do |conn|
+            conn.use :instrumentation
+          end
           response = conn.post(endpoint, values)
 
           parameters = Addressable::URI.form_unencode(response.body)
