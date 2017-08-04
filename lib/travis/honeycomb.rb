@@ -36,12 +36,13 @@ module Travis
             app: 'api',
             dyno: ENV['DYNO'],
             method: env[:method],
-            body: env[:body],
             url: env[:url].to_s,
             host: env[:url].host,
             request_uri: env[:url].request_uri,
             request_headers: env[:request_headers].to_h,
             status: env[:status],
+            response_headers: env[:response_headers].to_h,
+            response_body: env[:body],
           }
           rpc.send(event)
         end
