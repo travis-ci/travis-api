@@ -42,7 +42,6 @@ module Travis
             request_headers: env[:request_headers].to_h,
             status: env[:status],
             response_headers: env[:response_headers].to_h,
-            response_body: env[:body],
           }
           rpc.send(event)
         end
