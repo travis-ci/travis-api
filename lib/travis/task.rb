@@ -80,7 +80,7 @@ module Travis
         @http ||= Faraday.new(http_options) do |f|
           f.request :url_encoded
           f.use :instrumentation
-          f.adapter :net_http
+          f.adapter :net_http_persistent
         end
       end
 

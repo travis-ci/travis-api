@@ -303,7 +303,7 @@ class Travis::Api::App
         def get_token(endpoint, values)
           conn = Faraday.new(ssl: Travis.config.github.ssl || {}) do |conn|
             conn.use :instrumentation
-            conn.adapter :net_http
+            conn.adapter :net_http_persistent
           end
           response = conn.post(endpoint, values)
 
