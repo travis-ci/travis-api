@@ -52,7 +52,16 @@ describe Travis::Api::Serialize::V2::Http::Build do
       data['build']['pull_request_title'].should == 'A pull request'
       data['build']['pull_request_number'].should == 44
     end
+  end
 
+  describe 'with a tag' do
+    before do
+      build.commit.stubs(tag_name: 'v1.0.0')
+    end
+
+    it 'includes the tag name to commit' do
+      data['commit']['tag'].should == 'v1.0.0'
+    end
   end
 
   describe 'with a tag' do

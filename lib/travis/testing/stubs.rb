@@ -123,6 +123,7 @@ module Travis
           branch: 'master',
           tag_name: nil,
           ref: 'refs/master',
+          tag_name: nil,
           message: 'the commit message',
           author_name: 'Sven Fuchs',
           author_email: 'svenfuchs@artweb-design.de',

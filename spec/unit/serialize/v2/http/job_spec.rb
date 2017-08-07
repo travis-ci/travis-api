@@ -43,6 +43,16 @@ describe Travis::Api::Serialize::V2::Http::Job do
       data['job']['config']['env'].should == 'FOO=[secure]'
     end
   end
+
+  describe 'with a tag' do
+    before do
+      test.commit.stubs(tag_name: 'v1.0.0')
+    end
+
+    it 'includes the tag name to commit' do
+      data['commit']['tag'].should == 'v1.0.0'
+    end
+  end
 end
 
 describe Travis::Api::Serialize::V2::Http::Job, 'using Travis::Services::Jobs::FindOne' do
