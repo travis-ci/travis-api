@@ -28,6 +28,7 @@ describe Travis::Api::Serialize::V2::Http::Build do
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
       'branch_is_default' => true,
+      'tag' => nil,
       'message' => 'the commit message',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
       'committer_email' => 'svenfuchs@artweb-design.de',
@@ -52,6 +53,16 @@ describe Travis::Api::Serialize::V2::Http::Build do
       data['build']['pull_request_number'].should == 44
     end
 
+  end
+
+  describe 'with a tag' do
+    before do
+      build.commit.stubs(tag_name: 'v1.0.0')
+    end
+
+    it 'includes the tag name to commit' do
+      data['commit']['tag'].should == 'v1.0.0'
+    end
   end
 
   context 'with encrypted env vars' do
