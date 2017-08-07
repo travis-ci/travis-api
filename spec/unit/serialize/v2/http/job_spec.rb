@@ -20,6 +20,16 @@ describe Travis::Api::Serialize::V2::Http::Job do
     }
   end
 
+  describe 'with a tag' do
+    before do
+      test.commit.stubs(tag_name: 'v1.0.0')
+    end
+
+    it 'includes the tag name to commit' do
+      data['commit']['tag'].should == 'v1.0.0'
+    end
+  end
+
   it 'annotations' do
     data['annotations'].should eq(nil)
   end

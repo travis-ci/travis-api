@@ -64,6 +64,16 @@ describe Travis::Api::Serialize::V2::Http::Build do
     end
   end
 
+  describe 'with a tag' do
+    before do
+      build.commit.stubs(tag_name: 'v1.0.0')
+    end
+
+    it 'includes the tag name to commit' do
+      data['commit']['tag'].should == 'v1.0.0'
+    end
+  end
+
   context 'with encrypted env vars' do
     let(:build) do
       stub_build(:obfuscated_config => { 'env' => 'FOO=[secure]' })
