@@ -28,8 +28,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/gh
-  revision: c417a57f860bd2c180513a94eb65e8fe5dd4a697
-  branch: igor-faraday-middleware
+  revision: 38fb339510ff9ae67cb08c6df7698f4c393f5a44
   specs:
     gh (0.15.1)
       addressable (~> 2.4)
