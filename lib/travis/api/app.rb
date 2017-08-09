@@ -7,6 +7,7 @@ require 'travis'
 require 'travis/amqp'
 require 'travis/model'
 require 'travis/states_cache'
+require 'travis/honeycomb'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib/config'
@@ -105,6 +106,8 @@ module Travis::Api
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
+
+        Travis::Honeycomb.rpc_setup
 
         if ENV['HONEYCOMB_ENABLED_FOR_DYNOS']&.split(' ')&.include?(ENV['DYNO'])
           Travis.logger.info 'honeycomb enabled'
