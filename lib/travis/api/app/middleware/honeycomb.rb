@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'libhoney'
 
 class Travis::Api::App

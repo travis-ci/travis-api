@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'libhoney'
 
 module Travis
@@ -56,7 +58,6 @@ module Travis
       def send(event)
         return unless enabled?
 
-        puts "sending #{event}"
         ev = honey.event
         ev.add(event)
         ev.send
