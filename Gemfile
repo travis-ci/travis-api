@@ -29,7 +29,7 @@ gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack-contrib'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
 gem 'rack-attack', '5.0.0.beta1'
-gem 'gh'
+gem 'gh', git: 'https://github.com/travis-ci/gh'
 gem 'bunny',           '~> 0.8.0'
 gem 'dalli'
 gem 'pry'
@@ -48,6 +48,9 @@ gem 'rake', '~> 0.9.2'
 gem 'skylight'
 gem 'appsignal'
 gem 'libhoney', git: 'https://github.com/honeycombio/libhoney-rb'
+
+gem 'faraday'
+gem 'faraday_middleware'
 
 gem 'knapsack'
 
