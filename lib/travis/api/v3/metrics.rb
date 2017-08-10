@@ -1,4 +1,5 @@
 require 'metriks'
+require 'travis/honeycomb'
 
 module Travis::API::V3
   class Metrics
@@ -96,6 +97,7 @@ module Travis::API::V3
       start = @start_time
       @ticks.each do |event, time|
         tracker.time("#{name}.#{event}", time - start)
+        Travis::Honeycomb.context.add("#{event}_duration_ms", (time - start) * 1000)
         start = time
       end
     end
