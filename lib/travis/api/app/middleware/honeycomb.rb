@@ -7,19 +7,11 @@ class Travis::Api::App
     class Honeycomb
       attr_reader :app
 
-      ##
-      # @param  [#call]                       app
-      # @param  [Hash{Symbol => Object}]      options
-      # @option options [String]  :writekey   (nil)
-      # @option options [String]  :dataset    (nil)
-      # @option options [String]  :api_host   (nil)
-      def initialize(app, options = {})
+      def initialize(app)
         @app = app
-        @honey = Libhoney::Client.new(options)
       end
 
       def call(env)
-        ev = @honey.event
         request_started_at = Time.now
         status, headers, response = @app.call(env)
         request_ended_at = Time.now
@@ -64,8 +56,6 @@ class Travis::Api::App
 
         # remove nil and blank values
         event = event.reject { |k,v| v.nil? || v == '' }
-
-        ev.send
 
         Travis::Honeycomb.api_requests.send(event)
 

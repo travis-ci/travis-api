@@ -110,10 +110,7 @@ module Travis::Api
         Travis::Honeycomb.setup
 
         if Travis::Honeycomb.api_requests.enabled?
-          use Travis::Api::App::Middleware::Honeycomb,
-            writekey: ENV['HONEYCOMB_WRITEKEY'],
-            dataset: ENV['HONEYCOMB_DATASET'],
-            sample_rate: ENV['HONEYCOMB_SAMPLE_RATE']&.to_i || 1
+          use Travis::Api::App::Middleware::Honeycomb
         end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
