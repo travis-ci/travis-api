@@ -18,6 +18,7 @@ class Travis::Api::App
 
         event = {}
 
+        event = event.merge(Travis::Honeycomb.context.data)
         event = event.merge(headers)
 
         if headers['CONTENT_LENGTH']

@@ -5,7 +5,12 @@ require 'libhoney'
 module Travis
   class Honeycomb
     class << self
+      def context
+        @context ||= Context.new
+      end
+
       def setup
+        context.clear
         api_requests_setup
         rpc_setup
       end
@@ -71,6 +76,22 @@ module Travis
 
           rpc.send(event)
         end
+      end
+    end
+
+    class Context
+      attr_accessor :data
+
+      def initialize
+        @data = {}
+      end
+
+      def clear
+        @data = {}
+      end
+
+      def add(field, value)
+        @data[field] = value
       end
     end
 
