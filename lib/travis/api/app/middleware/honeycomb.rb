@@ -29,6 +29,8 @@ class Travis::Api::App
         event = event.merge({
           'HTTP_STATUS' => status,
           'REQUEST_TIME_MS' => (request_ended_at - request_started_at) * 1000,
+          'user_id' => env['travis.access_token']&.user&.id,
+          'user_login' => env['travis.access_token']&.user&.login,
         })
 
         event = event.merge(env_filter(env, [
