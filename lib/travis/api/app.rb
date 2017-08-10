@@ -107,10 +107,9 @@ module Travis::Api
         use Travis::Api::App::Middleware::Skylight
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
-        Travis::Honeycomb.rpc_setup
+        Travis::Honeycomb.setup
 
-        if ENV['HONEYCOMB_ENABLED_FOR_DYNOS']&.split(' ')&.include?(ENV['DYNO'])
-          Travis.logger.info 'honeycomb enabled'
+        if Travis::Honeycomb.api_requests.enabled?
           use Travis::Api::App::Middleware::Honeycomb,
             writekey: ENV['HONEYCOMB_WRITEKEY'],
             dataset: ENV['HONEYCOMB_DATASET'],

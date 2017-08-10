@@ -5,13 +5,35 @@ require 'libhoney'
 module Travis
   class Honeycomb
     class << self
+      def setup
+        api_requests_setup
+        rpc_setup
+      end
+
+      # env vars used to configure api requests client:
+      # * HONEYCOMB_ENABLED
+      # * HONEYCOMB_ENABLED_FOR_DYNOS
+      # * HONEYCOMB_WRITEKEY
+      # * HONEYCOMB_DATASET
+      # * HONEYCOMB_SAMPLE_RATE
+      def api_requests
+        @api_requests ||= Client.new('HONEYCOMB_')
+      end
+
       # env vars used to configure rpc client:
+      # * HONEYCOMB_RPC_ENABLED
       # * HONEYCOMB_RPC_ENABLED_FOR_DYNOS
       # * HONEYCOMB_RPC_WRITEKEY
       # * HONEYCOMB_RPC_DATASET
       # * HONEYCOMB_RPC_SAMPLE_RATE
       def rpc
         @rpc ||= Client.new('HONEYCOMB_RPC_')
+      end
+
+      def api_requests_setup
+        return unless api_requests.enabled?
+
+        Travis.logger.info 'honeycomb api requests enabled'
       end
 
       def rpc_setup
@@ -27,6 +49,7 @@ module Travis
             app: 'api',
             dyno: ENV['DYNO'],
           )
+
           rpc.send(event)
         end
 
@@ -45,6 +68,7 @@ module Travis
             status: env[:status],
             response_headers: env[:response_headers].to_h,
           }
+
           rpc.send(event)
         end
       end
@@ -64,7 +88,11 @@ module Travis
       end
 
       def enabled?
-        @enabled ||= env('ENABLED_FOR_DYNOS')&.split(' ')&.include?(ENV['DYNO'])
+        return @enabled unless @enabled.nil?
+        @enabled = (
+          env('ENABLED') == 'true' ||
+          env('ENABLED_FOR_DYNOS')&.split(' ')&.include?(ENV['DYNO'])
+        )
       end
 
       private
