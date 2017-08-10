@@ -69,6 +69,7 @@ RSpec.configure do |c|
     Travis::Api::App.setup
     Travis.config.client_domain = "www.example.com"
     Travis.config.endpoints.ssh_key = true
+    # Travis.config.private_mode = false
 
     DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
