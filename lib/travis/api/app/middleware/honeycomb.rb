@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'libhoney'
+require 'travis/honeycomb'
 
 class Travis::Api::App
   class Middleware
