@@ -1,4 +1,5 @@
 require 'travis/api/app'
+require 'travis/honeycomb'
 
 class Travis::Api::App
   class Middleware
