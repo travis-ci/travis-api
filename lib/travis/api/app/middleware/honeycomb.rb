@@ -50,7 +50,6 @@ class Travis::Api::App
           'HTTP_USER_AGENT',
           'HTTP_ACCEPT',
           'HTTP_ACCEPT_LANGUAGE',
-          'HTTP_X_REQUEST_ID',
           'REMOTE_ADDR',
         ]))
 

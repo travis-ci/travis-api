@@ -107,8 +107,6 @@ module Travis::Api
         use Travis::Api::App::Middleware::Skylight
         use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
-        Travis::Honeycomb.setup
-
         if Travis::Honeycomb.api_requests.enabled?
           use Travis::Api::App::Middleware::Honeycomb
         end
@@ -229,6 +227,8 @@ module Travis::Api
 
       def self.setup_monitoring
         Travis::Api::App::ErrorHandling.setup
+
+        Travis::Honeycomb.setup
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         Travis::Notification.setup(instrumentation: false)
