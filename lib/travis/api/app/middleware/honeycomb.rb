@@ -21,12 +21,8 @@ class Travis::Api::App
         event = event.merge(Travis::Honeycomb.context.data)
         event = event.merge(headers)
 
-        if headers['CONTENT_LENGTH']
-          # Content-Length (if present) is a string.  let's change it to an int.
-          event['CONTENT_LENGTH'] = headers['CONTENT_LENGTH'].to_i
-        end
-
         event = event.merge({
+          'CONTENT_LENGTH' => headers['CONTENT_LENGTH']&.to_i,
           'HTTP_STATUS' => status,
           'REQUEST_TIME_MS' => (request_ended_at - request_started_at) * 1000,
           'user_id' => env['travis.access_token']&.user&.id,
@@ -54,6 +50,7 @@ class Travis::Api::App
           'HTTP_USER_AGENT',
           'HTTP_ACCEPT',
           'HTTP_ACCEPT_LANGUAGE',
+          'HTTP_X_REQUEST_ID',
           'REMOTE_ADDR',
         ]))
 
