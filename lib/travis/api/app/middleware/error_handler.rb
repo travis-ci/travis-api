@@ -7,8 +7,8 @@ class Travis::Api::App
     class ErrorHandler < Struct.new(:app)
       def call(env)
         app.call(env)
-      #rescue Exception => e
-      #  [500, {'Content-Type' => 'text/plain'}, ['Sorry, we experienced an error.']]
+      rescue Exception => e
+        [500, {'Content-Type' => 'text/plain'}, ['Sorry, we experienced an error.']]
       end
     end
   end
