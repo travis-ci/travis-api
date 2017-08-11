@@ -4,7 +4,7 @@ class Travis::Api::App
   class Middleware
     class RequestId < Middleware
       before do
-        Travis::Honeycomb.context.data.add('x_request_id', env['HTTP_X_REQUEST_ID'])
+        Travis::Honeycomb.context.add('x_request_id', env['HTTP_X_REQUEST_ID'])
       end
 
       after do
