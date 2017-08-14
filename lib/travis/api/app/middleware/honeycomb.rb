@@ -54,10 +54,6 @@ class Travis::Api::App
         })
 
         event = event.merge(env_filter(env, [
-          'rack.version',
-          'rack.multithread',
-          'rack.multiprocess',
-          'rack.run_once',
           'SCRIPT_NAME',
           'QUERY_STRING',
           'SERVER_PROTOCOL',
