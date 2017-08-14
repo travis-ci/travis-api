@@ -18,7 +18,7 @@ class Travis::Api::App
           request_ended_at = Time.now
           request_time = request_ended_at - request_started_at
 
-          honeycomb(env, [500, {}, nil], request_time)
+          honeycomb(env, response, request_time)
 
           response
         rescue StandardError => e
