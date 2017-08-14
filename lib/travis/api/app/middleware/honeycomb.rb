@@ -13,31 +13,47 @@ class Travis::Api::App
 
       def call(env)
         request_started_at = Time.now
-        status, headers, response = @app.call(env)
-        request_ended_at = Time.now
+        begin
+          response = @app.call(env)
+          request_ended_at = Time.now
+          request_time = request_ended_at - request_started_at
+
+          honeycomb(env, response, request_time)
+
+          response
+        rescue StandardError => e
+          request_ended_at = Time.now
+          request_time = request_ended_at - request_started_at
+
+          honeycomb(env, [500, {}, nil], request_time, e)
+
+          raise e
+        end
+      end
+
+      private def honeycomb(env, response, request_time, e = nil)
+        status, headers, body = response
 
         event = {}
 
         event = event.merge(Travis::Honeycomb.context.data)
         event = event.merge(headers)
 
-        if headers['CONTENT_LENGTH']
-          # Content-Length (if present) is a string.  let's change it to an int.
-          event['CONTENT_LENGTH'] = headers['CONTENT_LENGTH'].to_i
-        end
-
         event = event.merge({
-          'HTTP_STATUS' => status,
-          'REQUEST_TIME_MS' => (request_ended_at - request_started_at) * 1000,
-          'user_id' => env['travis.access_token']&.user&.id,
-          'user_login' => env['travis.access_token']&.user&.login,
+          'CONTENT_LENGTH'  => headers['CONTENT_LENGTH']&.to_i,
+          'HTTP_STATUS'     => status,
+          'REQUEST_TIME_MS' => request_time * 1000,
+
+          'user_id'         => env['travis.access_token']&.user&.id,
+          'user_login'      => env['travis.access_token']&.user&.login,
+
+          'exception_class'         => e&.class&.name,
+          'exception_message'       => e&.message,
+          'exception_cause_class'   => e&.cause&.class&.name,
+          'exception_cause_message' => e&.cause&.message,
         })
 
         event = event.merge(env_filter(env, [
-          'rack.version',
-          'rack.multithread',
-          'rack.multiprocess',
-          'rack.run_once',
           'SCRIPT_NAME',
           'QUERY_STRING',
           'SERVER_PROTOCOL',
@@ -61,8 +77,6 @@ class Travis::Api::App
         event = event.reject { |k,v| v.nil? || v == '' }
 
         Travis::Honeycomb.api_requests.send(event)
-
-        [status, headers, response]
       end
 
       private def env_filter(env, keys)
