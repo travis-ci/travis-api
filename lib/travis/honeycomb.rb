@@ -10,9 +10,14 @@ module Travis
       end
 
       def setup
-        context.clear
         api_requests_setup
         rpc_setup
+      end
+
+      def clear
+        context.clear
+        api_requests.clear
+        rpc.clear
       end
 
       # env vars used to configure api requests client:
@@ -47,6 +52,8 @@ module Travis
         Travis.logger.info 'honeycomb rpc enabled'
 
         ActiveSupport::Notifications.subscribe('sql.active_record') do |name, start, finish, id, payload|
+          return unless rpc.should_sample?
+
           event = payload.merge(
             event: name,
             duration_ms: ((finish - start) * 1000).to_i,
@@ -59,6 +66,8 @@ module Travis
         end
 
         ActiveSupport::Notifications.subscribe('request.faraday') do |name, start, finish, id, env|
+          return unless rpc.should_sample?
+
           event = {
             event: name,
             duration_ms: ((finish - start) * 1000).to_i,
@@ -101,10 +110,11 @@ module Travis
       end
 
       def send(event)
-        return unless enabled?
+        return unless enabled? && should_sample?
 
         ev = honey.event
         ev.add(event)
+        ev.sample_rate = sample_rate
         ev.send
       end
 
@@ -116,19 +126,77 @@ module Travis
         )
       end
 
-      private
+      def should_sample?
+        sample_result.should_sample
+      end
 
-        def honey
-          @honey ||= Libhoney::Client.new(
-            writekey: env('WRITEKEY'),
-            dataset: env('DATASET'),
-            sample_rate: env('SAMPLE_RATE')&.to_i || 1
-          )
-        end
+      def sample_rate
+        sample_result.sample_rate
+      end
 
-        def env(name)
-          ENV[@prefix + name]
+      def sample_override!
+        @sample_override = true
+      end
+
+      def clear
+        @sample_override = false
+        @sample_result = nil
+      end
+
+      private def sample_result
+        @sample_result ||= sampler.call
+      end
+
+      private def sampler
+        if @sample_override
+          yes_sampler
+        else
+          random_sampler
         end
+      end
+
+      private def yes_sampler
+        @yes_sampler ||= YesSampler.new
+      end
+
+      private def random_sampler
+        @random_sampler ||= RandomSampler.new(default_sample_rate)
+      end
+
+      private def default_sample_rate
+        @default_sample_rate ||= env('SAMPLE_RATE')&.to_i || 1
+      end
+
+      private def honey
+        @honey ||= Libhoney::Client.new(
+          writekey: env('WRITEKEY'),
+          dataset: env('DATASET'),
+        )
+      end
+
+      private def env(name)
+        ENV[@prefix + name]
+      end
+    end
+
+    class YesSampler
+      def call
+        SamplerResult.new(true, 1)
+      end
+    end
+
+    class RandomSampler
+      def initialize(default_sample_rate)
+        @default_sample_rate = default_sample_rate
+      end
+
+      def call
+        should_sample = rand(1..@default_sample_rate) == 1
+        SamplerResult.new(should_sample, @default_sample_rate)
+      end
+    end
+
+    class SamplerResult < Struct.new(:should_sample, :sample_rate)
     end
   end
 end
