@@ -42,13 +42,15 @@ class Travis::Api::App
         request_queue = nil
         if env['HTTP_X_REQUEST_START'] && env['metriks.request.start']
           request_queue = env['metriks.request.start'].to_f*1000 - env['HTTP_X_REQUEST_START'].to_i
+          request_queue = request_queue.to_i
+          request_queue = request_queue > 0 ? request_queue : 0
         end
 
         event = event.merge({
           CONTENT_LENGTH:   headers['CONTENT_LENGTH']&.to_i,
           HTTP_STATUS:      status,
           REQUEST_TIME_MS:  request_time * 1000,
-          request_queue_ms: request_queue&.to_i,
+          request_queue_ms: request_queue,
 
           user_id:    env['travis.access_token']&.user&.id,
           user_login: env['travis.access_token']&.user&.login,
@@ -82,6 +84,7 @@ class Travis::Api::App
           'HTTP_X_FORWARDED_FOR',
           'HTTP_VIA',
           'HTTP_TRAVIS_API_VERSION',
+          'HTTP_HONEYCOMB_OVERRIDE',
         ]))
 
         # remove nil and blank values
