@@ -100,7 +100,7 @@ module Travis::Api
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
 
-        use(Rack::Config) do |env|
+        use Rack::Config do |env|
           env['metriks.request.start'] ||= Time.now.utc
 
           Travis::Honeycomb.clear
@@ -113,7 +113,7 @@ module Travis::Api
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight
 
-        use(Rack::Config) do |env|
+        use Rack::Config do |env|
           if env['HTTP_HONEYCOMB_OVERRIDE'] == 'true'
             Travis::Honeycomb.override!
           end
