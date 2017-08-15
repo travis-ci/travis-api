@@ -82,6 +82,7 @@ class Travis::Api::App
           'HTTP_X_FORWARDED_FOR',
           'HTTP_VIA',
           'HTTP_TRAVIS_API_VERSION',
+          'HTTP_HONEYCOMB_OVERRIDE',
         ]))
 
         # remove nil and blank values
