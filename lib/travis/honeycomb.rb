@@ -14,6 +14,11 @@ module Travis
         rpc_setup
       end
 
+      def override
+        api_requests.override!
+        rpc.override!
+      end
+
       def clear
         context.clear
         api_requests.clear

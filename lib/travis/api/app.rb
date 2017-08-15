@@ -113,6 +113,12 @@ module Travis::Api
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight
 
+        use(Rack::Config) do |env|
+          if env['HTTP_HONEYCOMB_OVERRIDE'] == 'true'
+            Travis::Honeycomb.override!
+          end
+        end
+
         if Travis::Honeycomb.api_requests.enabled?
           use Travis::Api::App::Middleware::Honeycomb
         end
