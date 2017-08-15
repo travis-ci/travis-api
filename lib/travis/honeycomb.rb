@@ -58,7 +58,12 @@ module Travis
 
         ActiveSupport::Notifications.subscribe('sql.active_record') do |name, start, finish, id, payload|
           if rpc.should_sample?
-            event = payload.merge(
+            event = {}
+
+            event = event.merge(Travis::Honeycomb.context.data)
+            event = event.merge(payload)
+
+            event = event.merge(
               event: name,
               duration_ms: ((finish - start) * 1000).to_i,
               id: id,
@@ -72,7 +77,11 @@ module Travis
 
         ActiveSupport::Notifications.subscribe('request.faraday') do |name, start, finish, id, env|
           if rpc.should_sample?
-            event = {
+            event = {}
+
+            event = event.merge(Travis::Honeycomb.context.data)
+
+            event = event.merge(
               event: name,
               duration_ms: ((finish - start) * 1000).to_i,
               id: id,
@@ -85,7 +94,7 @@ module Travis
               request_headers: env[:request_headers].to_h,
               status: env[:status],
               response_headers: env[:response_headers].to_h,
-            }
+            )
 
             rpc.send(event)
           end
