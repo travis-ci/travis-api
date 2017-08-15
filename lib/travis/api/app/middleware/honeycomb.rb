@@ -79,6 +79,9 @@ class Travis::Api::App
           'HTTP_ACCEPT',
           'HTTP_ACCEPT_LANGUAGE',
           'REMOTE_ADDR',
+          'HTTP_X_FORWARDED_FOR',
+          'HTTP_VIA',
+          'HTTP_TRAVIS_API_VERSION',
         ]))
 
         # remove nil and blank values
