@@ -52,38 +52,38 @@ module Travis
         Travis.logger.info 'honeycomb rpc enabled'
 
         ActiveSupport::Notifications.subscribe('sql.active_record') do |name, start, finish, id, payload|
-          return unless rpc.should_sample?
+          if rpc.should_sample?
+            event = payload.merge(
+              event: name,
+              duration_ms: ((finish - start) * 1000).to_i,
+              id: id,
+              app: 'api',
+              dyno: ENV['DYNO'],
+            )
 
-          event = payload.merge(
-            event: name,
-            duration_ms: ((finish - start) * 1000).to_i,
-            id: id,
-            app: 'api',
-            dyno: ENV['DYNO'],
-          )
-
-          rpc.send(event)
+            rpc.send(event)
+          end
         end
 
         ActiveSupport::Notifications.subscribe('request.faraday') do |name, start, finish, id, env|
-          return unless rpc.should_sample?
+          if rpc.should_sample?
+            event = {
+              event: name,
+              duration_ms: ((finish - start) * 1000).to_i,
+              id: id,
+              app: 'api',
+              dyno: ENV['DYNO'],
+              method: env[:method],
+              url: env[:url].to_s,
+              host: env[:url].host,
+              request_uri: env[:url].request_uri,
+              request_headers: env[:request_headers].to_h,
+              status: env[:status],
+              response_headers: env[:response_headers].to_h,
+            }
 
-          event = {
-            event: name,
-            duration_ms: ((finish - start) * 1000).to_i,
-            id: id,
-            app: 'api',
-            dyno: ENV['DYNO'],
-            method: env[:method],
-            url: env[:url].to_s,
-            host: env[:url].host,
-            request_uri: env[:url].request_uri,
-            request_headers: env[:request_headers].to_h,
-            status: env[:status],
-            response_headers: env[:response_headers].to_h,
-          }
-
-          rpc.send(event)
+            rpc.send(event)
+          end
         end
       end
     end
