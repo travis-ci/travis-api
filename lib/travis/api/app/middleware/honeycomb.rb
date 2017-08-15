@@ -40,17 +40,17 @@ class Travis::Api::App
         event = event.merge(headers)
 
         event = event.merge({
-          'CONTENT_LENGTH'  => headers['CONTENT_LENGTH']&.to_i,
-          'HTTP_STATUS'     => status,
-          'REQUEST_TIME_MS' => request_time * 1000,
+          CONTENT_LENGTH:  headers['CONTENT_LENGTH']&.to_i,
+          HTTP_STATUS:     status,
+          REQUEST_TIME_MS: request_time * 1000,
 
-          'user_id'         => env['travis.access_token']&.user&.id,
-          'user_login'      => env['travis.access_token']&.user&.login,
+          user_id:    env['travis.access_token']&.user&.id,
+          user_login: env['travis.access_token']&.user&.login,
 
-          'exception_class'         => e&.class&.name,
-          'exception_message'       => e&.message,
-          'exception_cause_class'   => e&.cause&.class&.name,
-          'exception_cause_message' => e&.cause&.message,
+          exception_class:         e&.class&.name,
+          exception_message:       e&.message,
+          exception_cause_class:   e&.cause&.class&.name,
+          exception_cause_message: e&.cause&.message,
         })
 
         event = event.merge(env_filter(env, [
