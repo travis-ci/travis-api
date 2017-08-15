@@ -39,10 +39,16 @@ class Travis::Api::App
         event = event.merge(Travis::Honeycomb.context.data)
         event = event.merge(headers)
 
+        request_queue = nil
+        if env['HTTP_X_REQUEST_START'] && env['metriks.request.start']
+          request_queue = env['metriks.request.start'].to_f*1000 - env['HTTP_X_REQUEST_START'].to_i
+        end
+
         event = event.merge({
-          CONTENT_LENGTH:  headers['CONTENT_LENGTH']&.to_i,
-          HTTP_STATUS:     status,
-          REQUEST_TIME_MS: request_time * 1000,
+          CONTENT_LENGTH:   headers['CONTENT_LENGTH']&.to_i,
+          HTTP_STATUS:      status,
+          REQUEST_TIME_MS:  request_time * 1000,
+          request_queue_ms: request_queue&.to_i,
 
           user_id:    env['travis.access_token']&.user&.id,
           user_login: env['travis.access_token']&.user&.login,
