@@ -102,7 +102,9 @@ module Travis::Api
 
         use(Rack::Config) do |env|
           env['metriks.request.start'] ||= Time.now.utc
+
           Travis::Honeycomb.clear
+          Travis::Honeycomb.context.add('x_request_id', env['HTTP_X_REQUEST_ID'])
         end
 
         use Travis::Api::App::Middleware::RequestId
