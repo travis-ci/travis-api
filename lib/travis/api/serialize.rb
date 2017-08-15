@@ -18,7 +18,7 @@ module Travis
           version = (options[:version] || default_version(options)).to_s.camelize
           type    = (options[:type] || type_for(resource)).to_s.camelize.split('::')
 
-          Travis::Honeycomb.context.add('api_version', version)
+          Travis::Honeycomb.context.add('api_version', version.downcase)
 
           ([version, target] + type).inject(self) do |const, name|
             begin
