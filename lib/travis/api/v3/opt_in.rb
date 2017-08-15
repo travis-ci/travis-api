@@ -1,3 +1,5 @@
+require 'travis/honeycomb'
+
 module Travis::API::V3
   class OptIn
     attr_reader :legacy_stack, :prefix, :router, :accept, :version_header
@@ -16,6 +18,10 @@ module Travis::API::V3
       if matched        = matching_env(env)
         result          = @router.call(matched)
         result, missing = nil, result if cascade?(*result)
+      end
+
+      if result
+        Travis::Honeycomb.context.add('api_version', 'v3')
       end
 
       result = result || legacy_stack.call(env)
