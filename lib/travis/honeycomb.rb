@@ -148,12 +148,12 @@ module Travis
         sample_result.sample_rate
       end
 
-      def sample_override!
-        @sample_override = true
+      def override!
+        @override = true
       end
 
       def clear
-        @sample_override = false
+        @override = false
         @sample_result = nil
       end
 
@@ -162,7 +162,7 @@ module Travis
       end
 
       private def sampler
-        if @sample_override
+        if @override
           yes_sampler
         else
           random_sampler
