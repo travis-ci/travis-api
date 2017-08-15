@@ -14,7 +14,7 @@ module Travis
         rpc_setup
       end
 
-      def override
+      def override!
         api_requests.override!
         rpc.override!
       end
