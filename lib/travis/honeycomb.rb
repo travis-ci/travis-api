@@ -115,7 +115,7 @@ module Travis
         ev = honey.event
         ev.add(event)
         ev.sample_rate = sample_rate
-        ev.send
+        ev.send_presampled
       end
 
       def enabled?
