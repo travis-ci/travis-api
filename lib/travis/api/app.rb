@@ -100,12 +100,16 @@ module Travis::Api
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
 
+        use(Rack::Config) do |env|
+          env['metriks.request.start'] ||= Time.now.utc
+          Travis::Honeycomb.context.clear
+        end
+
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
 
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight
-        use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
 
         if Travis::Honeycomb.api_requests.enabled?
           use Travis::Api::App::Middleware::Honeycomb
