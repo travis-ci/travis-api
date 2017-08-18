@@ -85,6 +85,7 @@ class Travis::Api::App
           'HTTP_VIA',
           'HTTP_TRAVIS_API_VERSION',
           'HTTP_HONEYCOMB_OVERRIDE',
+          'HTTP_REFERER',
           'rack.attack.matched',
           'rack.attack.match_type',
         ]))
