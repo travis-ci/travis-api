@@ -47,7 +47,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "create_env_var"   => true,
           "create_key_pair"  => true,
           "delete_key_pair"  => true,
-          "admin"            => true
+          "admin"            => true,
+          "is_collaborator"  => true
         },
         "id"                 =>  repo.id,
         "name"               =>  "minimal",

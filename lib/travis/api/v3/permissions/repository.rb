@@ -41,5 +41,9 @@ module Travis::API::V3
     def admin?
       access_control.adminable? object
     end
+
+    def is_collaborator?
+      read?
+    end
   end
 end
