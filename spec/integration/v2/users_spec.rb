@@ -15,27 +15,7 @@ describe 'Users', set_app: true do
 
     it 'fetches a list of channels for a user' do
       response = get "/users/#{user.id}", {}, headers
-      expected = ["repo-#{repo1.id}", "repo-#{repo2.id}", "user-#{user.id}"].sort
-      JSON.parse(response.body)['user']['channels'].sort.should == expected
-    end
-
-    context 'with user channel enabled for an org' do
-      it 'does not attach repos from the org to the list of channels' do
-        Travis.redis.sadd('user-channel.rollout.uids', "#{org.id}-O")
-        Travis.redis.set('user-channel.rollout.enabled', '1')
-        response = get "/users/#{user.id}", {}, headers
-        expected = ["repo-#{repo1.id}", "user-#{user.id}"].sort
-        JSON.parse(response.body)['user']['channels'].sort.should == expected
-      end
-
-      it 'does not attach repos from the user to the list of channels' do
-        Travis.redis.sadd('user-channel.rollout.uids', "#{user.id}-U")
-        Travis.redis.set('user-channel.rollout.enabled', '1')
-        response = get "/users/#{user.id}", {}, headers
-        expected = ["repo-#{repo2.id}", "user-#{user.id}"].sort
-        JSON.parse(response.body)['user']['channels'].sort.should == expected
-      end
-
+      JSON.parse(response.body)['user']['channels'].should == ["user-#{user.id}"]
     end
   end
 
@@ -57,4 +37,3 @@ describe 'Users', set_app: true do
     end
   end
 end
-
