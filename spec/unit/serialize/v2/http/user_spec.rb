@@ -6,8 +6,6 @@ describe Travis::Api::Serialize::V2::Http::User do
 
   before do
     user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
-    pusher_channel_instance = stub('pusher_channel_instance', channels: ['user-1'])
-    Travis::Api::Serialize::V2::Http::User::PusherChannels.stubs(:new).returns(pusher_channel_instance)
   end
 
   it 'user' do
@@ -23,7 +21,7 @@ describe Travis::Api::Serialize::V2::Http::User do
       'synced_at' => json_format_time(Time.now.utc - 1.hour),
       'correct_scopes' => true,
       'created_at' => json_format_time(Time.now.utc - 2.hours),
-      'channels' => ["user-1"]
+      'channels' => ["user-1", "private-user-1"]
     }
   end
 end
