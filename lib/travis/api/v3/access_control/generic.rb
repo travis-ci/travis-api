@@ -164,7 +164,7 @@ module Travis::API::V3
     end
 
     def public_mode?(owner = nil)
-      Travis.config.public_mode || owner && Travis::Features.owner_active?(:public_api, owner)
+      Travis.config.public_mode || owner && Travis::Features.owner_active?(:public_mode, owner)
     end
 
     def unrestricted_api?(owner = nil)

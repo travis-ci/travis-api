@@ -261,10 +261,10 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
     include_examples 'public mode'
   end
 
-  describe 'feature flag public_api enabled for the repo owner' do
+  describe 'feature flag public_mode enabled for the repo owner' do
     before { Travis.config.public_mode = false }
-    before { Travis::Features.activate_owner(:public_api, repo.owner) }
-    after  { Travis::Features.deactivate_owner(:public_api, repo.owner) }
+    before { Travis::Features.activate_owner(:public_mode, repo.owner) }
+    after  { Travis::Features.deactivate_owner(:public_mode, repo.owner) }
     include_examples 'public mode'
   end
 
