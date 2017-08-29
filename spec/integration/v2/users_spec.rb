@@ -15,7 +15,7 @@ describe 'Users', set_app: true do
 
     it 'fetches a list of channels for a user' do
       response = get "/users/#{user.id}", {}, headers
-      JSON.parse(response.body)['user']['channels'].should == ["user-#{user.id}", "private-user-#{user.id}"]
+      JSON.parse(response.body)['user']['channels'].should == ["private-user-#{user.id}"]
     end
   end
 
