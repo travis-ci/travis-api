@@ -21,7 +21,7 @@ describe Travis::Api::Serialize::V2::Http::User do
       'synced_at' => json_format_time(Time.now.utc - 1.hour),
       'correct_scopes' => true,
       'created_at' => json_format_time(Time.now.utc - 2.hours),
-      'channels' => ["user-1", "private-user-1"]
+      'channels' => ["private-user-1"]
     }
   end
 end

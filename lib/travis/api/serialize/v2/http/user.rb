@@ -42,9 +42,7 @@ module Travis
               end
 
               def channels
-                # TODO: once we switch other apps to use private channel
-                # we can drop public channel from here
-                ["user-#{user.id}", "private-user-#{user.id}"]
+                ["private-user-#{user.id}"]
               end
           end
         end

@@ -26,7 +26,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       'created_at'     => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'synced_at'      => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'correct_scopes' => true,
-      'channels'       => ["user-1", "private-user-1"]
+      'channels'       => ["private-user-1"]
     }
   end
 
