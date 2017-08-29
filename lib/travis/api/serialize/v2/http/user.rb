@@ -7,12 +7,6 @@ module Travis
       module V2
         module Http
           class User
-            class PusherChannels < Struct.new(:user)
-              def channels
-                ["user-#{user.id}"]
-              end
-            end
-
             include Formats
 
             attr_reader :user, :options
@@ -48,7 +42,9 @@ module Travis
               end
 
               def channels
-                PusherChannels.new(user).channels
+                # TODO: once we switch other apps to use private channel
+                # we can drop public channel from here
+                ["user-#{user.id}", "private-user-#{user.id}"]
               end
           end
         end
