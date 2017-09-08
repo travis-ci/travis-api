@@ -7,7 +7,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:job)         { Travis::API::V3::Models::Job.create(build: build) }
   let(:job2)        { Travis::API::V3::Models::Job.create(build: build)}
   let(:job3)        { Travis::API::V3::Models::Job.create(build: build)}
-  let(:s3job)       { Travis::API::V3::Models::Job.create(build: build) }
+  let(:s3job)       { Travis::API::V3::Models::Job.create(build: build, repository: repo) }
   let(:s3job2)       { Travis::API::V3::Models::Job.create(build: build) }
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
@@ -86,6 +86,35 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
     example.run
     Travis.config.log_options = {}
+  end
+
+  context 'without authentication' do
+    let(:headers) { {} }
+
+    describe 'when repo is public' do
+      before { repo.update_attributes(private: false) }
+
+      it 'returns the log' do
+        get("/v3/job/#{s3log.job.id}/log", {}, headers)
+        expect(parsed_body['@type']).to eq('log')
+        expect(parsed_body['id']).to eq(log_from_api[:id])
+      end
+    end
+
+    describe 'when repo is private' do
+      before { repo.update_attributes(private: true) }
+
+      it 'returns an error' do
+        get("/v3/job/#{s3log.job.id}/log", {}, headers)
+        expect(last_response.status).to eq(404)
+        expect(parsed_body).to eq({
+          '@type'=>'error',
+          'error_type'=>'not_found',
+          'error_message'=>'job not found (or insufficient access)',
+          'resource_type'=>'job'
+        })
+      end
+    end
   end
 
   context 'when log not found in db but stored on S3' do
