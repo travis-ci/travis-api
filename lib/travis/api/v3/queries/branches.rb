@@ -3,7 +3,7 @@ module Travis::API::V3
     params :exists_on_github, prefix: :branch
 
     sortable_by :name,
-      last_build:       "builds.started_at".freeze,
+      last_build:       "builds.started_at %{order}  NULLS LAST".freeze,
       exists_on_github: sort_condition(:exists_on_github),
       default_branch:   sort_condition(name: "repositories.default_branch")
 
