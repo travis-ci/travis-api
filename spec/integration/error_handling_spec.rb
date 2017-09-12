@@ -29,10 +29,25 @@ describe 'Exception', set_app: true do
     end
     res = get '/repos/1'
     expect(res.status).to eq(500)
-    expect(res.body).to eq('Sorry, we experienced an error.')
+    expect(res.body).to eq("Sorry, we experienced an error.\n")
     expect(res.headers).to eq({
       'Content-Type' => 'text/plain',
-      'Content-Length' => '31',
+      'Content-Length' => '32',
+    })
+    sleep 0.1
+  end
+
+  it 'returns request_id in body' do
+    error = TestError.new('Konstantin broke all the thingz!')
+    Travis::Api::App::Endpoint::Repos.any_instance.stubs(:service).raises(error)
+    Raven.stubs(:send_event)
+    res = get '/repos/1', nil, 'HTTP_X_REQUEST_ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975'
+    expect(res.status).to eq(500)
+    expect(res.body).to eq("Sorry, we experienced an error.\n\nrequest_id=235dd08f-10d5-4fcc-9a4d-6b8e6a24f975\n")
+    expect(res.headers).to eq({
+      'Content-Type' => 'text/plain',
+      'Content-Length' => '81',
+      'X-Request-ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975',
     })
     sleep 0.1
   end
