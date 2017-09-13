@@ -110,6 +110,25 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     describe 'when repo is private' do
       before { repo.update_attributes(private: true) }
 
+      it 'returns the text version of the log with log token supplied' do
+        get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_AUTHORIZATION' => "token #{token}"))
+        raw_url = parsed_body['@raw_url']
+        get(raw_url, {}, headers)
+        expect(last_response.headers).to include('Content-Type' => 'text/plain')
+        expect(body).to eq(archived_content)
+      end
+
+      it 'returns an error if wrong token is used' do
+        get("/v3/job/#{s3log.job.id}/log?log.token=foo", {}, headers)
+        expect(last_response.status).to eq(404)
+        expect(parsed_body).to eq({
+          '@type'=>'error',
+          'error_type'=>'not_found',
+          'error_message'=>'job not found (or insufficient access)',
+          'resource_type'=>'job'
+        })
+      end
+
       it 'returns an error' do
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
         expect(last_response.status).to eq(404)
@@ -133,6 +152,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
           '@type' => 'log',
           '@href' => "/v3/job/#{s3job.id}/log",
           '@representation' => 'standard',
+          '@raw_url' => "/v3/job/#{s3job.id}/log.txt",
           '@permissions' => {
             'read' => true,
             'debug' => false,

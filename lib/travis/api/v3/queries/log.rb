@@ -4,7 +4,7 @@ module Travis::API::V3
       @job = job
       remote_log = Travis::RemoteLog.find_by_job_id(@job.id)
       raise EntityMissing, 'log not found'.freeze if remote_log.nil?
-      log = Travis::API::V3::Models::Log.new(remote_log: remote_log)
+      log = Travis::API::V3::Models::Log.new(remote_log: remote_log, job: job)
       # if the log has been archived, go to s3
       if log.archived?
         content = fetch.first
