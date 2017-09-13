@@ -11,6 +11,9 @@ module Travis::API::V3
       result = super
 
       raw_url = "#{href}.txt"
+      if raw_url !~ /^\/v3/
+        raw_url = "/v3#{raw_url}"
+      end
       if model.repository_private?
         token = LogToken.create(model.job)
         raw_url += "?log.token=#{token}"

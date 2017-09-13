@@ -111,8 +111,9 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       before { repo.update_attributes(private: true) }
 
       it 'returns the text version of the log with log token supplied' do
-        get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_AUTHORIZATION' => "token #{token}"))
+        get("/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_AUTHORIZATION' => "token #{token}", 'HTTP_TRAVIS_API_VERSION' => '3'))
         raw_url = parsed_body['@raw_url']
+        expect(raw_url).to match(%r{/v3/job/#{s3log.job.id}/log\.txt\?log\.token=})
         get(raw_url, {}, headers)
         expect(last_response.headers).to include('Content-Type' => 'text/plain')
         expect(body).to eq(archived_content)
