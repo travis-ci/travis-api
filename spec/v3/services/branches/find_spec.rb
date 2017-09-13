@@ -172,19 +172,18 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
 
   describe "sorting by last_build" do
     let!(:repository) { FactoryGirl.create(:repository) }
-    let!(:build1) { FactoryGirl.create(:v3_build, started_at: Time.now) }
-    let!(:build2) { FactoryGirl.create(:v3_build, started_at: Time.now - 10.seconds) }
-    let!(:build3) { FactoryGirl.create(:v3_build, started_at: nil) }
-    let!(:branch1) { FactoryGirl.create(:branch, name: 'newer', last_build: build1, repository: repository) }
-    let!(:branch2) { FactoryGirl.create(:branch, name: 'older', last_build: build2, repository: repository) }
-    let!(:branch3) { FactoryGirl.create(:branch, name: 'not-started', last_build: build3, repository: repository) }
+    let!(:build1) { FactoryGirl.create(:v3_build) }
+    let!(:build2) { FactoryGirl.create(:v3_build) }
+    let!(:branch1) { FactoryGirl.create(:branch, name: 'older', last_build: build1, repository: repository) }
+    let!(:branch2) { FactoryGirl.create(:branch, name: 'newer', last_build: build2, repository: repository) }
+    let!(:branch3) { FactoryGirl.create(:branch, name: 'no-builds', last_build: nil, repository: repository) }
 
     context 'desc' do
       before  { get("/v3/repo/#{repo.id}/branches?sort_by=last_build:desc&limit=10") }
       example { expect(last_response).to be_ok }
       example {
         branch_names = parsed_body["branches"].map { |branch| branch['name'] }
-        expect(branch_names).to be == ['newer', 'older', 'not-started']
+        expect(branch_names).to be == ['newer', 'older']
       }
     end
 
@@ -193,7 +192,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
       example { expect(last_response).to be_ok }
       example {
         branch_names = parsed_body["branches"].map { |branch| branch['name'] }
-        expect(branch_names).to be == ['older', 'newer', 'not-started']
+        expect(branch_names).to be == ['older', 'newer']
       }
     end
   end
