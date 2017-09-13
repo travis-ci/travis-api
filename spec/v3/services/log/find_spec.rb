@@ -99,6 +99,12 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         expect(parsed_body['@type']).to eq('log')
         expect(parsed_body['id']).to eq(log_from_api[:id])
       end
+
+      it 'returns the text version of the log' do
+        get("/v3/job/#{s3log.job.id}/log.txt", {}, headers)
+        expect(last_response.headers).to include('Content-Type' => 'text/plain')
+        expect(body).to eq(archived_content)
+      end
     end
 
     describe 'when repo is private' do
