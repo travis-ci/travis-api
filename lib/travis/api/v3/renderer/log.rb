@@ -10,15 +10,15 @@ module Travis::API::V3
     def render(representation)
       result = super
 
-      raw_url = "#{href}.txt"
-      if raw_url !~ /^\/v3/
-        raw_url = "/v3#{raw_url}"
+      raw_log_href = "#{href}.txt"
+      if raw_log_href !~ /^\/v3/
+        raw_log_href = "/v3#{raw_log_href}"
       end
       if model.repository_private?
         token = LogToken.create(model.job)
-        raw_url += "?log.token=#{token}"
+        raw_log_href += "?log.token=#{token}"
       end
-      result['@raw_url'] = raw_url
+      result['@raw_log_href'] = raw_log_href
 
       result
     end
