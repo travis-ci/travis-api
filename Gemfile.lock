@@ -246,7 +246,7 @@ GEM
     ice_nine (0.11.2)
     ipaddress (0.8.3)
     jemalloc (1.0.1)
-    json (2.0.2)
+    json (2.1.0)
     jwt (1.5.6)
     kgio (2.10.0)
     knapsack (1.14.0)
@@ -452,7 +452,7 @@ DEPENDENCIES
   yard-sinatra!
 
 RUBY VERSION
-   ruby 2.3.4p301
+   ruby 2.3.5p376
 
 BUNDLED WITH
-   1.15.2
+   1.15.4
