@@ -32,6 +32,11 @@ module Travis::API::V3
       get :for_current_user
     end
 
+    resource :jobs do
+      route '/jobs'
+      get :for_current_user
+    end
+
     resource :cron do
       capture id: :digit
       route '/cron/{cron.id}'
