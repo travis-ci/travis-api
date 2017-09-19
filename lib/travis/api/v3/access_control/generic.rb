@@ -124,7 +124,7 @@ module Travis::API::V3
     end
 
     def user_visible?(user)
-      unrestricted_api?(user)
+      unrestricted_api?(user) || logged_in?
     end
 
     def user_writable?(user)
