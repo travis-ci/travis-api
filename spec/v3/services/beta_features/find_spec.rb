@@ -5,6 +5,7 @@ describe Travis::API::V3::Services::BetaFeatures::Find, set_app: true do
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:beta_feature) { Travis::API::V3::Models::BetaFeature.create(name: 'FOO3', description: "Bar Baz.", feedback_url: "http://thisisgreat.com")}
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
+  let(:other_user) { FactoryGirl.create(:user, login: 'noone') }
 
   describe 'not authenticated' do
     before { get("/v3/user/#{user.id}/beta_features") }
@@ -14,6 +15,13 @@ describe Travis::API::V3::Services::BetaFeatures::Find, set_app: true do
   describe 'authenticated, missing user' do
     before { get("/v3/user/999999999/beta_features", {}, auth_headers) }
     include_examples 'missing user'
+  end
+
+  describe 'authenticated, different user\'s beta feauters' do
+    before do
+      get("/v3/user/#{other_user.id}/beta_features", {}, auth_headers)
+    end
+    example { expect(last_response.status).to eq(404) }
   end
 
   describe 'authenticated, existing user, no beta features' do
