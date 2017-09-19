@@ -7,8 +7,8 @@ module Travis::API::V3
       list.each { |e| (AccessControl::REGISTER[e] ||= []) << self }
     end
 
-    def visible?(object)
-      full_access? or dispatch(object, :visible?)
+    def visible?(object, type = nil)
+      full_access? or dispatch(object, :visible?, type)
     end
 
     def cancelable?(object)
@@ -131,6 +131,15 @@ module Travis::API::V3
       self.user == user
     end
 
+    def is_current_user?(user)
+      self.user == user
+    end
+
+    def beta_features_visible?(user)
+      is_current_user?(user)
+    end
+    alias_method :beta_feature_visible?, :beta_features_visible?
+
     def user_setting_visible?(user_setting)
       visible? user_setting.repository
     end
@@ -173,8 +182,8 @@ module Travis::API::V3
 
     private
 
-    def dispatch(object, method)
-      method = method_for(object.class, method)
+    def dispatch(object, method, type = nil)
+      method = method_for(type || object.class, method)
       send(method, object) if respond_to?(method, true)
     end
 
@@ -194,7 +203,11 @@ module Travis::API::V3
     end
 
     def normalize_type(type)
-      type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore.to_sym
+      if type.is_a?(Symbol)
+        type
+      else
+        type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore.to_sym
+      end
     end
   end
 end

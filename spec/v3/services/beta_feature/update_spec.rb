@@ -17,6 +17,14 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
     include_examples 'missing user'
   end
 
+  describe 'authenticated, other user' do
+    let(:other_user) { FactoryGirl.create(:user, login: 'noone') }
+    let(:token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 1) }
+    let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
+    before { patch("/v3/user/#{user.id}/beta_feature/#{beta_feature.id}", {}, auth_headers) }
+    include_examples 'missing beta_feature'
+  end
+
   describe 'authenticated, existing user, missing beta feature' do
     before { patch("/v3/user/#{user.id}/beta_feature/foo", {}, auth_headers) }
     example { expect(last_response.status).to eq(404) }
