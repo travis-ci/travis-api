@@ -24,6 +24,17 @@ describe Travis::API::V3::Services::BetaFeatures::Find, set_app: true do
     example { expect(last_response.status).to eq(404) }
   end
 
+  describe 'authenticated, existing user, public_mode disabled' do
+    before { Travis.config.public_mode = false }
+    after { Travis.config.public_mode = true }
+    before { Travis::Features.deactivate_owner(:public_mode, user) }
+
+    before do
+      get("/v3/user/#{user.id}/beta_features", {}, auth_headers)
+    end
+    example { expect(last_response.status).to eq(200) }
+  end
+
   describe 'authenticated, existing user, no beta features' do
     before do
       get("/v3/user/#{user.id}/beta_features", {}, auth_headers)
