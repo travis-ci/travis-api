@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: git://github.com/travis-ci/travis-migrations.git
-  revision: 9df23c494c90ed64f5151d4d5009c430b2f8c010
+  revision: 09dad753c986c344ae93c77b8f0110583020d831
   specs:
     travis-migrations (0.0.3)
 
@@ -354,4 +354,4 @@ DEPENDENCIES
   will_paginate (~> 3.1.0)
 
 BUNDLED WITH
-   1.13.6
+   1.15.4
