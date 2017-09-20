@@ -7,6 +7,9 @@ rvm: 2.3.5
 script: "bundle exec rake knapsack:rspec"
 env:
   global:
+    - RUBY_GC_MALLOC_LIMIT=90000000
+    - RUBY_GC_HEAP_FREE_SLOTS=200000
+    - RUBY_GC_HEAP_INIT_SLOTS=1000000
     - CI_NODE_TOTAL=3
 
   matrix:
