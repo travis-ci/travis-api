@@ -1,12 +1,8 @@
 # Travis Admin 2.0
 
-## Description
-Travis Admin is an application for administrating the Travis system.
+Travis Admin is an application for administrating the Travis system. Built by the Emerald Project team June-November 2016, it now falls under Team Jade's areas of responsibility.
 
-## Status
-Travis Admin (2.0) was build by the Emerald Project team June-November 2016. It falls under Team Jade's areas of responsibility.
-
-## Local Setup
+## Setup
 
 ### Install dependencies
 
@@ -14,15 +10,19 @@ Travis Admin (2.0) was build by the Emerald Project team June-November 2016. It 
 bundle install
 ```
 
-## Generating `config/travis.yml`
+### Generate config
 
-### Development config
+#### Development
 
-`trvs generate-config --pro admin staging  > config/travis.yml`
+Generate the config. This file is already ignored by Git – it should never be committed.
 
-Manually add "development:" as a parent, nest the updated config info under that, and remove the config for redis (so that we use our local redis instance). Also make sure to remove travis_config=--- if it is at the top of the file.
+```
+trvs generate-config --pro admin staging  > config/travis.yml
+```
 
-### Test config
+Manually add `development:` as a parent, nest the updated config data under that, and remove the config for redis (so that we use our local redis instance). Also make sure to remove `travis_config=---` if it appears at the top of the file.
+
+#### Test
 
 ```sh-session
 $ cat config/travis.test.yml >> config/travis.yml
@@ -30,33 +30,43 @@ $ cat config/travis.test.yml >> config/travis.yml
 
 ### Disabling OTP (One-Time Password)
 
-You can disable one time password in development by adding `disable_otp: true` to your `config/travis.yml`.
+Adding `disable_otp: true` to the development section of your config.
 
+### Connecting to the staging database in development
 
-### Use Staging database in development
+This is a good idea, because the application is barely usable without a populated database.
 
-After generating `config/travis.yml`, export two environment variables:
+Export these environment variables.
 
 ```sh-session
 export GITHUB_LOGIN=YOUR_OWN_GITHUB_LOGIN # replace YOUR_OWN_GITHUB_LOGIN with the real GitHub user name
 export STAGING_DATABASE_URL=`heroku config:get DATABASE_URL -a travis-pro-staging`
 ```
 
-Then start the rails server
-1. `rails s`
-2. Go to http://localhost:3000
+Then start the rails server.
 
-### Running tests locally
+```
+bundle exec rails s
+```
 
-Run this command once to create the test database
+### Running tests
 
-`RAILS_ENV=test bundle exec rake db:drop db:create db:structure:load`
+Run this command once to create the test database.
 
-Run this for the tests
-`bundle exec rake spec`
+```
+RAILS_ENV=test bundle exec rake db:drop db:create db:structure:load
+```
 
-## How to Deploy
+Run this for the tests.
 
-At the moment we deploy by pushing to heroku:
+```
+bundle exec rake spec
+```
 
-`git push heroku master` or `git push heroku <branch-name>:master`
+### Deployment
+
+At the moment, we deploy by pushing to Heroku.
+
+```
+git push heroku master
+```
