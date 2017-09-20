@@ -47,9 +47,15 @@ $ noglob rake config["staging","pro"]
 
 Instead of using the Rake task, you can manually generate the configuration file by following these steps.
 
-First, fetch
+First, run
+
+`trvs generate-config --pro admin-staging  > config/travis.yml`
+
+or
 
 `trvs generate-config --pro admin staging  > config/travis.yml`
+
+depending on the version of `trvs` you have.
 
 Manually add "development:" as a parent, nest the updated config info under that, and remove the config for redis (so that we use our local redis instance). Also make sure to remove travis_config=--- if it is at the top of the file.
 

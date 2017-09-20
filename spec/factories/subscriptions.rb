@@ -14,11 +14,6 @@ FactoryGirl.define do
       address 'Nice Street 12'
       city 'Berlin'
       zip_code '12344'
-
-      after(:create) do |subscription|
-        create(:plan, subscription: subscription, updated_at: 1.week.ago)
-        create(:plan, subscription: subscription, updated_at: 1.year.ago)
-      end
     end
 
     trait :expired do
