@@ -49,6 +49,7 @@ Then start the rails server
 ### Running tests locally
 
 Run this command once to create the test database
+
 `RAILS_ENV=test bundle exec rake db:drop db:create db:structure:load`
 
 Run this for the tests
