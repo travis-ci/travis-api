@@ -24,8 +24,8 @@ Manually add `development:` as a parent, nest the updated config data under that
 
 #### Test
 
-```sh-session
-$ cat config/travis.test.yml >> config/travis.yml
+```
+cat config/travis.test.yml >> config/travis.yml
 ```
 
 ### Disabling OTP (One-Time Password)
@@ -38,7 +38,7 @@ This is a good idea, because the application is barely usable without a populate
 
 Export these environment variables.
 
-```sh-session
+```
 export GITHUB_LOGIN=YOUR_OWN_GITHUB_LOGIN # replace YOUR_OWN_GITHUB_LOGIN with the real GitHub user name
 export STAGING_DATABASE_URL=`heroku config:get DATABASE_URL -a travis-pro-staging`
 ```
