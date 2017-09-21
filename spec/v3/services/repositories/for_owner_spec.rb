@@ -48,7 +48,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_env_var"   => false,
           "create_key_pair"  => false,
           "delete_key_pair"  => false,
-          "admin"            => false
+          "admin"            => false,
+          "is_collaborator"  => true
         },
         "id"                 => repo.id,
         "name"               => "minimal",
@@ -130,7 +131,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_env_var" => false,
           "create_key_pair"=> false,
           "delete_key_pair"=> false,
-          "create_request"=> false
+          "create_request" => false,
+          "is_collaborator"=>true
         },
         "id"              => 1,
         "name"            => "minimal",
@@ -164,7 +166,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_env_var"  => false,
           "create_key_pair" => false,
           "delete_key_pair"  => false,
-          "create_request"=> false
+          "create_request"=> false,
+          "is_collaborator"=>true
         },
         "id"              => repo2.id,
         "name"            => "maximal",
