@@ -77,4 +77,26 @@ describe Travis::API::V3::Services::UserSetting::Find, set_app: true do
       )
     end
   end
+
+  describe 'authenticated, existing repo, default auto cancel setting' do
+    before do
+      ENV['AUTO_CANCEL_DEFAULT'] = 'true'
+      get("/v3/repo/#{repo.id}/setting/auto_cancel_pushes", {}, auth_headers)
+    end
+    after do
+      ENV['AUTO_CANCEL_DEFAULT'] = nil
+    end
+
+    example { expect(last_response.status).to eq(200) }
+    example do
+      expect(JSON.load(body)).to eq(
+        '@type' => 'setting',
+        '@representation' => 'standard',
+        '@permissions' => { 'read' => true, 'write' => false },
+        '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes",
+        'name' => 'auto_cancel_pushes',
+        'value' => true
+      )
+    end
+  end
 end
