@@ -4,8 +4,6 @@ RSpec.feature 'Create a free subscription', js: true, type: :feature do
   let(:user)         { create :user, login: 'lisbethmarianne', name: 'Katrin' }
   let(:organization) { create :organization, login: 'rubymonstas', name: 'Rubymonstas'}
 
-  before { allow(Travis::DataStores.topaz).to receive(:builds_provided_for) }
-
   scenario 'Create a one build subscription for user' do
     visit "/users/#{user.id}"
     find_button('create-subscription').trigger('click')

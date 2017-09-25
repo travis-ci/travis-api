@@ -5,8 +5,6 @@ test:
     'https://api-fake.travis-ci.com'
   billing_endpoint:
     'https://billing-fake.travis-ci.com'
-  topaz:
-    url: https://topaz-fake.travis-ci.com
   redis:
     url: redis://localhost:6379
   encryption:

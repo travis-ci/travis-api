@@ -6,8 +6,6 @@ RSpec.feature 'Sync with GitHub for all users in an organization', js: true, typ
   let!(:organization) { create(:organization, users: [katrin, aly]) }
 
   scenario 'Syncing several users' do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/organizations/#{organization.id}#members"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/user/#{katrin.id}/sync").

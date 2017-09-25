@@ -4,7 +4,6 @@ RSpec.feature 'Display a users github token', js: true, type: :feature do
   let!(:user) { create(:user, login: 'lisbethmarianne', github_oauth_token: '3k0Tjf#kdlskbkjbkhvbiuviv') }
 
   scenario 'Display a users github token' do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
     allow_any_instance_of(ROTP::TOTP).to receive(:verify).with('123456').and_return(true)
 
     visit "/users/#{user.id}"

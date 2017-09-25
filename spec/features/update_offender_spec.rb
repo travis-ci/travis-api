@@ -4,8 +4,6 @@ RSpec.feature 'Update Offender', js: true, type: :feature do
   let!(:user) { create(:user) }
 
   scenario 'Update abuse status of a user' do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/users/#{user.id}"
 
     find('#offender_offenders').trigger('click')
