@@ -25,6 +25,7 @@
       <dt class="info-label">Source:</dt>
       <dd>
         <%= @subscription.source %>
+        <b><%= " - You are not allowed to edit github subscriptions" if @subscription.github? %></b>
       </dd>
       <dt class="info-label"><%= @subscription.expiration_status %></dt>
       <dd>
@@ -59,6 +60,6 @@
         </address>
       </dd>
     </dl>
-    <%= f.submit('Update', class: 'button') %>
+    <%= f.submit('Update', class: 'button') unless @subscription.github? %>
   <% end %>
 </section>

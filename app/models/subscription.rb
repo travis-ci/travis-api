@@ -21,6 +21,10 @@ class Subscription < ApplicationRecord
     valid_to && valid_to < Time.now
   end
 
+  def github?
+    source == "github"
+  end
+
   def valid_to
     super.to_date unless super.nil?
   end
