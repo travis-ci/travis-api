@@ -99,10 +99,36 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         expect(parsed_body['@type']).to eq('log')
         expect(parsed_body['id']).to eq(log_from_api[:id])
       end
+
+      it 'returns the text version of the log' do
+        get("/v3/job/#{s3log.job.id}/log.txt", {}, headers)
+        expect(last_response.headers).to include('Content-Type' => 'text/plain')
+        expect(body).to eq(archived_content)
+      end
     end
 
     describe 'when repo is private' do
       before { repo.update_attributes(private: true) }
+
+      it 'returns the text version of the log with log token supplied' do
+        get("/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_AUTHORIZATION' => "token #{token}", 'HTTP_TRAVIS_API_VERSION' => '3'))
+        raw_log_href = parsed_body['@raw_log_href']
+        expect(raw_log_href).to match(%r{/v3/job/#{s3log.job.id}/log\.txt\?log\.token=})
+        get(raw_log_href, {}, headers)
+        expect(last_response.headers).to include('Content-Type' => 'text/plain')
+        expect(body).to eq(archived_content)
+      end
+
+      it 'returns an error if wrong token is used' do
+        get("/v3/job/#{s3log.job.id}/log?log.token=foo", {}, headers)
+        expect(last_response.status).to eq(404)
+        expect(parsed_body).to eq({
+          '@type'=>'error',
+          'error_type'=>'not_found',
+          'error_message'=>'job not found (or insufficient access)',
+          'resource_type'=>'job'
+        })
+      end
 
       it 'returns an error' do
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
@@ -127,6 +153,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
           '@type' => 'log',
           '@href' => "/v3/job/#{s3job.id}/log",
           '@representation' => 'standard',
+          '@raw_log_href' => "/v3/job/#{s3job.id}/log.txt",
           '@permissions' => {
             'read' => true,
             'debug' => false,
