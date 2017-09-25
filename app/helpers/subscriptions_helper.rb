@@ -11,7 +11,7 @@ module SubscriptionsHelper
     if subscription.active?
       "active, #{format_plan(subscription.selected_plan) || "unknown plan"}, expires #{subscription.valid_to.to_date}"
     elsif subscription.expired?
-      "inactive, expired #{subscription.valid_to.to_date}"
+      "inactive, #{format_plan(subscription.selected_plan) || "unknown plan"}, expired #{subscription.valid_to.to_date}"
     else
       "not active"
     end
