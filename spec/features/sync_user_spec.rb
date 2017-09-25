@@ -4,8 +4,6 @@ RSpec.feature 'Sync with GitHub for a single user', js: true, type: :feature do
   let!(:user) { create(:user) }
 
   scenario 'Syncing a user' do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/users/#{user.id}"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/user/#{user.id}/sync").

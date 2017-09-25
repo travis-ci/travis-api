@@ -22,8 +22,6 @@ RSpec.feature 'Create a Broadcast', js: true, type: :feature do
   end
 
   scenario 'Create a broadcast for user' do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/users/#{user.id}#broadcasts"
 
     fill_in('broadcast_message', with: 'This is a message.')
@@ -36,8 +34,6 @@ RSpec.feature 'Create a Broadcast', js: true, type: :feature do
   end
 
   scenario 'Create a broadcast for organization' do
-    allow(Travis::DataStores.topaz).to receive(:builds_provided_for)
-
     visit "/organizations/#{organization.id}#broadcasts"
 
     fill_in('broadcast_message', with: 'This is a message.')

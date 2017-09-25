@@ -3,8 +3,6 @@ require 'rails_helper'
 RSpec.feature 'Update subscription information', js: true, type: :feature do
   let!(:user) { create :user_with_active_subscription}
 
-  before { allow(Travis::DataStores.topaz).to receive(:builds_provided_for) }
-
   scenario 'Update expiry date for User' do
     visit "/users/#{user.id}#subscription"
     click_on('Subscription')
