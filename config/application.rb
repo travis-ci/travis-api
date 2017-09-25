@@ -13,5 +13,7 @@ module TravisAdmin
     # -- all .rb files in that directory are automatically loaded.
 
     config.eager_load_paths << Rails.root.join('lib')
+
+    Travis::Admin::Slack.setup
   end
 end
