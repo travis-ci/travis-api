@@ -3,10 +3,10 @@ FactoryGirl.define do
     association :owner, factory: :user
     billing_email 'contact@travis-ci.com'
     vat_id 'DE999999999'
+    selected_plan 'travis-ci-twenty-builds-annual'
 
     trait :active do
       valid_to { 1.week.from_now }
-      selected_plan 'travis-ci-twenty-builds-annual'
       first_name 'Katrin'
       last_name 'Mustermann'
       company 'Travis CI'

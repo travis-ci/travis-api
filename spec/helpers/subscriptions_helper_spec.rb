@@ -21,7 +21,7 @@ RSpec.describe SubscriptionsHelper, type: :helper do
     it 'formats subscriptions' do
       expect(helper.format_subscription(inactive_subscription)).to eq('not active')
       expect(helper.format_subscription(active_subscription)).to include('active, twenty builds annual, expires')
-      expect(helper.format_subscription(expired_subscription)).to include('inactive, expired')
+      expect(helper.format_subscription(expired_subscription)).to include('inactive, twenty builds annual, expired')
     end
   end
 end
