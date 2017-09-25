@@ -87,7 +87,7 @@ class UsersController < ApplicationController
     subscription = Subscription.find_by(owner_id: params[:id])
 
     if subscription
-      @subscription = SubscriptionPresenter.new(subscription, subscription.plans.current, self)
+      @subscription = SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
       @invoices = subscription.invoices.order('id DESC')
     end
 

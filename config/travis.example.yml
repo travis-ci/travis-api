@@ -12,4 +12,3 @@ test:
   encryption:
     key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   service_hook_url: https://notify.fake.travis-ci.com
-
