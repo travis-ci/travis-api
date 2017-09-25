@@ -10,6 +10,8 @@ RSpec.describe Settings, type: :model do
       expect(Settings.new(repository.settings).build_pushes).to eql true
       expect(Settings.new(repository.settings).build_pull_requests).to eql true
       expect(Settings.new(repository.settings).maximum_number_of_builds).to eql 0
+      expect(Settings.new(repository.settings).auto_cancel_pushes).to eql false
+      expect(Settings.new(repository.settings).auto_cancel_pull_requests).to eql false
     end
 
     it 'correctly sets settings for repo with settings' do
