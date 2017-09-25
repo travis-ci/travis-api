@@ -19,9 +19,9 @@ RSpec.describe Settings, type: :model do
       expect(Settings.new(repository_with_settings.settings).build_pushes).to eql false
       expect(Settings.new(repository_with_settings.settings).build_pull_requests).to eql true
       expect(Settings.new(repository_with_settings.settings).maximum_number_of_builds).to eql 0
-      expect(Settings.new(repository_with_settings.settings).timeout_hard_limit).to eql
-      expect(Settings.new(repository.settings).auto_cancel_pushes).to eql false
-      expect(Settings.new(repository.settings).auto_cancel_pull_requests).to eql true
+      expect(Settings.new(repository_with_settings.settings).timeout_hard_limit).to eql 12345
+      expect(Settings.new(repository_with_settings.settings).auto_cancel_pushes).to eql false
+      expect(Settings.new(repository_with_settings.settings).auto_cancel_pull_requests).to eql true
     end
   end
 end
