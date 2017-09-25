@@ -6,11 +6,14 @@ module Services
         @current_user = current_user
       end
 
-      def call(builds_remaining, previous_builds)
-        Travis::DataStores.redis.set("trial:#{@owner.login}", builds_remaining)
-        Services::AuditTrail::TrialBuilds.new(@current_user, @owner, builds_remaining).call
+      def call(builds_allowed)
+        @owner.latest_trial && @owner.latest_trial.trial_allowances.create!(
+          creator: current_user,
+          builds_allowed: builds_allowed,
+          builds_remaining: builds_allowed
+        )
+        Services::AuditTrail::TrialBuilds.new(@current_user, @owner, builds_allowed).call
       end
-
     end
   end
 end

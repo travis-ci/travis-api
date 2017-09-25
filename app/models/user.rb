@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :permitted_repositories, through: :permissions, source: :repository
   has_many :broadcasts,             as:      :recipient
   has_one  :subscription,           as:      :owner
+  has_many :trials,                 as:      :owner
 
   serialize :github_oauth_token, Travis::EncryptedColumn.new
 
@@ -20,5 +21,9 @@ class User < ApplicationRecord
     travis_config = Travis::Config.load
     admins = travis_config.admins
     admins.respond_to?(:include?) && admins.include?(login)
+  end
+
+  def latest_trial
+    trials.underway.order(created_at: :desc).first
   end
 end
