@@ -10,7 +10,7 @@ module Services
       @string += '.' if @string =~ /\w\Z/
       unless Rails.env.development?
         Services::Slack.setup
-        Service::Slack    << @string
+        Services::Slack    << @string
         Travis::DataStores.redis.lpush("admin-v2:logs", "<time>#{Time.now.utc.to_s}</time> #{h(@string)}")
         Travis::DataStores.redis.ltrim("admin-v2:logs", 0, 100)
         puts "=== called slack"
