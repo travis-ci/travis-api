@@ -77,6 +77,13 @@
 </section>
 
 <section class="info-block">
+  <h2 class="info-header">Custom SSH Key</h2>
+    <p>
+      <%= @repository.has_custom_ssh_key? ? "Yes" : "No"%>
+    </p>
+</section>
+
+<section class="info-block">
   <h2 class="info-header">Settings</h2>
 
   <%= form_for :settings, url: {controller: "settings", action: "update"}, html: {class: "inline-list"} do |f| %>

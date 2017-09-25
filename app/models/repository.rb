@@ -33,6 +33,10 @@ class Repository < ApplicationRecord
     @settings ||= super || {}
   end
 
+  def has_custom_ssh_key?
+    !settings["ssh_key"].nil?
+  end
+
   def slug
     @slug ||= "#{owner_name}/#{name}"
   end

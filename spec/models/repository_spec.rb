@@ -9,6 +9,16 @@ RSpec.describe Repository, type: :model do
     end
   end
 
+  describe '#has_custom_ssh_key?' do
+    it 'returns true when custom ssh_key is set' do
+      repository = create(:repository, owner_name: 'travis', settings: {"ssh_key" => "asdf"})
+      expect(repository.has_custom_ssh_key?).to eql true
+    end
+    it 'returns false when no custom ssh_key is set' do
+      repository = create(:repository, owner_name: 'travis')
+      expect(repository.has_custom_ssh_key?).to eql false
+    end
+  end
   describe '#permissions_sorted' do
     let!(:repository_with_users) { create(:repo_with_users) }
 
