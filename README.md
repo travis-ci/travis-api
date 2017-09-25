@@ -25,7 +25,7 @@ Manually add `development:` as a parent, nest the updated config data under that
 #### Test
 
 ```
-cat config/travis.test.yml >> config/travis.yml
+cat config/travis.example.yml >> config/travis.yml
 ```
 
 ### Disabling OTP (One-Time Password)
