@@ -67,8 +67,8 @@ class OrganizationsController < ApplicationController
   end
 
   def update_trial_builds
-    Services::TrialBuilds::Update.new(@organization, current_user).call(params[:builds_remaining],params[:previous_builds])
-    flash[:notice] = "Reset #{@organization.login}'s trial to #{params[:builds_remaining]} builds."
+    Services::TrialBuilds::Update.new(@organization, current_user).call(params[:builds_allowed])
+    flash[:notice] = "Added #{params[:builds_allowed]} trial builds for #{@organization.login}."
     redirect_to @organization
   end
 

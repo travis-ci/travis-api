@@ -85,4 +85,11 @@ module ApplicationHelper
   def yaml_format(config)
     stringify_hash_keys(config).to_yaml
   end
+
+  def update_trial_builds_path(owner)
+    case owner
+    when Organization then update_trial_builds_organization_path(owner)
+    when User then update_trial_builds_user_path(owner)
+    end
+  end
 end

@@ -8,7 +8,7 @@ module Services
 
       def call(builds_allowed)
         @owner.latest_trial && @owner.latest_trial.trial_allowances.create!(
-          creator: current_user,
+          creator: @current_user,
           builds_allowed: builds_allowed,
           builds_remaining: builds_allowed
         )

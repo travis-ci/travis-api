@@ -15,6 +15,19 @@
 
     <dt class="info-label">Trial: </dt>
     <dd>
+      <% if owner.latest_trial %>
+        <ul style="margin: 0;">
+        <% owner.latest_trial.trial_allowances.each do |ta| %>
+          <li><%= "%d builds added by %s %s" % [ta.builds_allowed, ta.creator.name, ta.created_at] %></li>
+        <% end %>
+        </ul>
+        <%= form_tag update_trial_builds_path(owner) do %>
+          <%= number_field_tag :builds_allowed, '', min: '1', max: '500' %>
+          <%= submit_tag 'Add' %>
+        <% end %>
+      <% else %>
+        None.
+      <% end %>
     </dd>
 
     <dt class="info-label">Subscription:</dt>
