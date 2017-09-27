@@ -8,7 +8,7 @@ module Services
       end
 
       def call
-        @log = api.job(job.id).log.body
+        @log = api.get_raw("/jobs/#{job.id}/log", nil, 'Accept' => '*/*')
       rescue Travis::Client::NotLoggedIn => e
         puts "Getting job log failed: #{e.message}"
       end
