@@ -17,6 +17,7 @@ module Travis::API::V3
     Crons         = Module.new { extend Services }
     EnvVar        = Module.new { extend Services }
     EnvVars       = Module.new { extend Services }
+    EnterpriseLicense = Module.new { extend Services }
     Job           = Module.new { extend Services }
     Jobs          = Module.new { extend Services }
     KeyPair       = Module.new { extend Services }

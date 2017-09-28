@@ -44,6 +44,13 @@ module Travis::API::V3
       delete :delete
     end
 
+    # if Travis.config.enterprise
+      resource :enterprise_license do
+        get :find
+        route '/enterprise_license'
+      # end
+    end
+
     resource :job do
       capture id: :digit
       route '/job/{job.id}'
