@@ -10,6 +10,7 @@ Travis Admin is an application for administrating the Travis system. Built by th
 - [Redis](https://redis.io/) installed and available
 - Ruby 2.3.4
 - [Bundler](http://bundler.io/)
+- [PhantomJS](http://phantomjs.org/)
 
 ### First steps
 
