@@ -10,5 +10,10 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
   describe "fetching enterprise license" do
     before     { get("/v3/enterprise_license") }
     example    { expect(last_response.status).to eq 200 }
+    example    {
+      expect(parsed_body).to be == {
+        "seats" => 20
+      }
+    }
   end
 end

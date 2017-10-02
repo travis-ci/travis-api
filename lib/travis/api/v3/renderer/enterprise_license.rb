@@ -1,6 +1,6 @@
 module Travis::API::V3
   module Renderer::EnterpriseLicense
-    AVAILABLE_ATTRIBUTES = [ :foo ]
+    AVAILABLE_ATTRIBUTES = [ :seats ]
     extend self
 
     def available_attributes
@@ -9,7 +9,7 @@ module Travis::API::V3
 
     def render(license, **)
       {
-        :foo => "bar"
+        :seats => license[:seats]
       }
     end
   end
