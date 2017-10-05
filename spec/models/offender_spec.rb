@@ -1,19 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe Offender, type: :model do
-  let!(:user) { create :user}
-  let!(:organization) { create :organization }
+  let(:user) { create :user}
+  let(:organization) { create :organization }
   let(:redis) { Travis::DataStores.redis }
 
-  before { redis.sadd('abuse:offenders', "#{user.login}")
-           redis.sadd('abuse:offenders', "#{organization.login}") }
-
-  describe '.logins' do
-    it 'returns an array with offender logins' do
-      expect(Offender.logins.length).to eql 2
-      expect(Offender.logins).to include 'travisbot'
-      expect(Offender.logins).to include 'travis-pro'
-    end
+  before do
+    redis.sadd('abuse:offenders', "#{user.class.name}:#{user.id}")
+    redis.sadd('abuse:offenders', "#{organization.class.name}:#{organization.id}")
   end
 
   describe '.users' do

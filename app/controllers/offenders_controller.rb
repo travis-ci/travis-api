@@ -9,7 +9,7 @@ class OffendersController < ApplicationController
   def update
     @offender = Organization.find_by(login: params[:login]) || User.find_by(login: params[:login])
 
-    Services::Abuse::Update.new(@offender.login, offender_params, current_user).call
+    Services::Abuse::Update.new(@offender, offender_params, current_user).call
 
     flash[:notice] = "Abuse settings for #{describe(@offender)} updated."
     redirect_to @offender

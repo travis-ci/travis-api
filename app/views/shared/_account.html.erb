@@ -88,7 +88,7 @@
   <%= form_for :offender, url: {controller: "offenders", action: "update", login: owner.login}, html: {class: "abuse-form inline"}, method: :put do |f| %>
     <div>
       <% Offender::LISTS.each do |key, description| %>
-        <%= f.check_box key, checked: Travis::DataStores.redis.sismember("abuse:#{key}", owner.login) %>
+        <%= f.check_box key, checked: Travis::DataStores.redis.sismember("abuse:#{key}", "#{owner.class.name}:#{owner.id}") %>
         <%= f.label description %>
       <% end %>
     </div>
