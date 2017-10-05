@@ -3,7 +3,9 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
   let(:parsed_body) { JSON.load(body) }
 
   before do
-    stub_request(:get, "http://localhost:8800/license.json")
+    replicated_endpoint = 'https://10.169.183.13:9880'
+    ENV['REPLICATED_INTEGRATIONAPI'] = replicated_endpoint
+    stub_request(:get, "#{replicated_endpoint}/license/v1/license")
       .to_return(body: File.read('spec/support/enterprise_license.json'), headers: { 'Content-Type' => 'application/json' })
   end
 
