@@ -88,14 +88,18 @@ class Repository::Settings < Travis::Settings
   attribute :timeout_hard_limit
   attribute :timeout_log_silence
   attribute :api_builds_rate_limit, Integer
-  attribute :auto_cancel_pushes, Boolean, default: false
-  attribute :auto_cancel_pull_requests, Boolean, default: false
+  attribute :auto_cancel_pushes, Boolean, default: lambda { |s, _| s.auto_cancel_default? }
+  attribute :auto_cancel_pull_requests, Boolean, default: lambda { |s, _| s.auto_cancel_default? }
 
   validates :maximum_number_of_builds, numericality: true
 
   validate :api_builds_rate_limit_restriction
 
   validates_with TimeoutsValidator
+
+  def auto_cancel_default?
+    ENV.fetch('AUTO_CANCEL_DEFAULT', 'false') == 'true'
+  end
 
   def maximum_number_of_builds
     super || 0
