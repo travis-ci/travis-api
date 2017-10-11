@@ -83,7 +83,16 @@ Rails.application.routes.draw do
       post 'reset_2fa'
       post 'sync'
       post 'update_trial_builds'
+
+      get 'subscription'
+      get 'invoices'
+      get 'organizations'
+      get 'repositories'
+      get 'jobs'
+      get 'requests'
+      get 'broadcasts'
     end
+
     post 'sync_all', on: :collection
   end
 end

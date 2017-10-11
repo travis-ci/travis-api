@@ -1,6 +1,6 @@
 <section class="info-block">
   <h2 class="info-header">Invoices</h2>
-  <% if @invoices.empty? %>
+  <% if @invoices.nil? || @invoices.empty? %>
     <p>No invoices exist for this subscription.</p>
   <% else %>
     <ul>

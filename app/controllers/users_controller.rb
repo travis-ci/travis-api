@@ -48,15 +48,6 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
-  def jobs
-    @repositories = @user.permitted_repositories
-    @finished_jobs = Job.from_repositories(@repositories).finished.paginate(page: params[:job_page], per_page: 10)
-  end
-
-  def requests
-    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
-  end
-
   def reset_2fa
     if otp_valid?
       Travis::DataStores.redis.del("admin-v2:otp:#{@user.login}")
@@ -68,43 +59,69 @@ class UsersController < ApplicationController
     redirect_to admins_path
   end
 
-  def show
-    @display_gh_token = true if cookies["display_token_#{@user.login}"]
+  def render_either(partial, args = {}, view = 'show')
+    if request.xhr?
+      render args.merge(partial: partial)
+    else
+      @render_args = args.merge(partial: partial)
+      render view
+    end
+  end
 
+  def subscription
+    subscription = Subscription.find_by(owner_id: params[:id])
+    @subscription = subscription && SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
+    render_either 'shared/subscription'
+  end
+
+  def invoices
+    subscription = Subscription.find_by(owner_id: params[:id])
+    @invoices = subscription && subscription.invoices.order('id DESC')
+    render_either 'shared/invoices'
+  end
+
+  def organizations
     # there is a bug, so that @user.organizations.includes(:subscription) is not working and we get N+1 queries for subscriptions,
     # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
     @organizations = @user.organizations
     @subscriptions = Subscription.where(owner_id: @organizations.map(&:id)).where('owner_type = ?', 'Organization').includes(:owner)
     @subscriptions_by_organization_id = @subscriptions.group_by { |s| s.owner.id }
+    render_either 'organizations'
+  end
 
+  def repositories
     @repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name)
+    render_either 'shared/repositories'
+  end
 
-    @pending_jobs = Job.from_repositories(@repositories).not_finished
-    @finished_jobs = Job.from_repositories(@repositories).finished.paginate(page: params[:job_page], per_page: 10)
-
+  def jobs
+    repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name)
+    @pending_jobs = Job.from_repositories(repositories).not_finished
+    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 10)
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
-
-    subscription = Subscription.find_by(owner_id: params[:id])
-
-    if subscription
-      @subscription = SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
-      @invoices = subscription.invoices.order('id DESC')
-    end
-
-    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
-
-    @active_broadcasts = Broadcast.active.for(@user).includes(:recipient)
-    @inactive_broadcasts = Broadcast.inactive.for(@user).includes(:recipient)
-
-    @existing_boost_limit = @user.existing_boost_limit
-    @normalized_boost_time = @user.normalized_boost_time
-
-    @builds_remaining = builds_remaining_for(@user)
-
-    @features = Features.for(@user)
-
     @build_counts = build_counts(@user)
     @build_months = build_months(@user)
+    render_either 'shared/jobs', locals: { owner: @user }
+  end
+
+  def requests
+    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 10)
+    render_either 'shared/requests'
+  end
+
+  def broadcasts
+    @active_broadcasts = Broadcast.active.for(@user).includes(:recipient)
+    @inactive_broadcasts = Broadcast.inactive.for(@user).includes(:recipient)
+    render_either 'shared/broadcasts', locals: { recipient: @user }
+  end
+
+  def show
+    @display_gh_token = true if cookies["display_token_#{@user.login}"]
+    @existing_boost_limit = @user.existing_boost_limit
+    @normalized_boost_time = @user.normalized_boost_time
+    @builds_remaining = builds_remaining_for(@user)
+    @features = Features.for(@user)
+    render_either 'user'
   end
 
   def sync

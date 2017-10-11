@@ -30,7 +30,7 @@ class SubscriptionsController < ApplicationController
       flash[:error] = 'No subscription changes were made.'
     end
 
-    redirect_to controller: @subscription.owner.class.table_name, action: 'show', id: @subscription.owner, anchor: 'subscription'
+    redirect_to controller: @subscription.owner.class.table_name, action: 'subscription', id: @subscription.owner
   end
 
   private
