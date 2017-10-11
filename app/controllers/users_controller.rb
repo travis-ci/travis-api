@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  include BuildCounters
+  include BuildCounters, RenderEither
 
   before_action :get_user, except: [:admins, :sync_all]
 
@@ -57,15 +57,6 @@ class UsersController < ApplicationController
       flash[:error] = "One time password did not match, please try again."
     end
     redirect_to admins_path
-  end
-
-  def render_either(partial, args = {}, view = 'show')
-    if request.xhr?
-      render args.merge(partial: partial)
-    else
-      @render_args = args.merge(partial: partial)
-      render view
-    end
   end
 
   def subscription
