@@ -1,4 +1,4 @@
-<% title describe(@user) %>
+<% title "User - #{describe(@user)}" %>
 
 <div id="tabs">
   <%= link_to 'User', user_path(@user), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>

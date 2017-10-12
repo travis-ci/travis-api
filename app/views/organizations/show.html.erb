@@ -1,4 +1,4 @@
-<% title describe(@organization) %>
+<% title "Organization - #{describe(@organization)}" %>
 
 <div id="tabs">
   <%= link_to 'Organization', organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>

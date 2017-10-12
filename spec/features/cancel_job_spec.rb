@@ -23,9 +23,7 @@ RSpec.feature 'Cancel a Job', js: true, type: :feature do
 
   scenario 'User cancels a job via jobs tab in organization view' do
 
-    visit "/organizations/#{organization.id}#jobs"
-
-    click_on('Jobs')
+    visit "/organizations/#{organization.id}/jobs"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/cancel").
       with(headers: {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).

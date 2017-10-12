@@ -22,7 +22,7 @@ RSpec.feature 'Create a Broadcast', js: true, type: :feature do
   end
 
   scenario 'Create a broadcast for user' do
-    visit "/users/#{user.id}#broadcasts"
+    visit "/users/#{user.id}/broadcasts"
 
     fill_in('broadcast_message', with: 'This is a message.')
     find_button('Create').trigger('click')
@@ -34,7 +34,7 @@ RSpec.feature 'Create a Broadcast', js: true, type: :feature do
   end
 
   scenario 'Create a broadcast for organization' do
-    visit "/organizations/#{organization.id}#broadcasts"
+    visit "/organizations/#{organization.id}/broadcasts"
 
     fill_in('broadcast_message', with: 'This is a message.')
     find_button('Create').trigger('click')
