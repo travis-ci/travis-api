@@ -9,7 +9,8 @@ module Travis::API::V3
 
     def render(license, **)
       {
-        :seats => license[:seats]
+        :seats => license[:seats],
+        :active_users => license[:active_users]
       }
     end
   end

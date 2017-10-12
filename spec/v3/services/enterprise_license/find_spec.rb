@@ -1,4 +1,3 @@
-require 'pry'
 describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
   let(:parsed_body) { JSON.load(body) }
 
@@ -14,7 +13,8 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
     example    { expect(last_response.status).to eq 200 }
     example    {
       expect(parsed_body).to be == {
-        "seats" => 20
+        "seats" => 20,
+        "active_users" => 1
       }
     }
   end
