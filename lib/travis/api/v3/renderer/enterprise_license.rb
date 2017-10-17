@@ -1,6 +1,6 @@
 module Travis::API::V3
   module Renderer::EnterpriseLicense
-    AVAILABLE_ATTRIBUTES = [ :seats ]
+    AVAILABLE_ATTRIBUTES = [ :seats, :active_users ]
     extend self
 
     def available_attributes
