@@ -156,6 +156,12 @@ module Travis::Api
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
 
+        use Rack::Config do |env|
+          if ENV['TRAVIS_DEBUG_USER_LOGIN'] && ENV['TRAVIS_DEBUG_USER_LOGIN'] == env['travis.access_token']&.user&.login
+            puts "debug: #{ENV['TRAVIS_DEBUG_USER_LOGIN']} #{env}"
+          end
+        end
+
         # make sure this is below ScopeCheck so we have the token
         use Rack::Attack if Endpoint.production? and not Travis.config.enterprise
 
