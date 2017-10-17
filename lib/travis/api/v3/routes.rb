@@ -44,11 +44,11 @@ module Travis::API::V3
       delete :delete
     end
 
-    # if Travis.config.enterprise
+    if Travis.env == 'test' || Travis.config.enterprise
       resource :enterprise_license do
         get :find
         route '/enterprise_license'
-      # end
+      end
     end
 
     resource :job do
