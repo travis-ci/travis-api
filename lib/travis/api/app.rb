@@ -92,13 +92,13 @@ module Travis::Api
 
     def initialize
       @app = Rack::Builder.app do
-        # if stackprof = ENV['STACKPROF']
-        #   require 'stackprof'
-        #   modes = ['wall', 'cpu', 'object', 'custom']
-        #   mode  = modes.include?(stackprof) ? stackprof.to_sym : :cpu
-        #   Travis.logger.info "Setting up profiler: #{mode}"
-        #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
-        # end
+        if stackprof = ENV['STACKPROF']
+          require 'stackprof'
+          modes = ['wall', 'cpu', 'object', 'custom']
+          mode  = modes.include?(stackprof) ? stackprof.to_sym : :cpu
+          Travis.logger.info "Setting up profiler: #{mode}"
+          use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
+        end
 
         use Rack::Config do |env|
           env['metriks.request.start'] ||= Time.now.utc
