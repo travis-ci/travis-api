@@ -3,8 +3,7 @@ module Travis::API::V3
     def active_users
       Models::Email
       .joins("INNER JOIN commits c ON LOWER(c.committer_email) = LOWER(emails.email)")
-      .select(:email)
-      .distinct
+      .select('DISTINCT email')
     end
   end
 end
