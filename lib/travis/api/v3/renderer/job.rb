@@ -9,7 +9,7 @@ module Travis::API::V3
     hidden_representations(:active)
 
     def config
-    	ConfigObfuscator.new(model.config).obfuscate
+      ConfigObfuscator.new(model.config, model.repository.key).obfuscate
     end
   end
 end
