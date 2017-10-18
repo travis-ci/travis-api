@@ -1,3 +1,5 @@
+require 'travis/api/v3/config_obfuscator'
+
 module Travis::API::V3
   class Renderer::Job < ModelRenderer
     representation(:minimal, :id)
@@ -5,5 +7,9 @@ module Travis::API::V3
     representation(:active, *representations[:standard])
 
     hidden_representations(:active)
+
+    def config
+    	ConfigObfuscator.new(model.config).obfuscate
+    end
   end
 end

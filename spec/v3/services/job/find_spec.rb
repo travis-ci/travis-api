@@ -8,7 +8,23 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   let(:job2)        { Travis::API::V3::Models::Build.find(build.id).jobs.first }
   let(:stage)       { Travis::API::V3::Models::Stage.create!(number: 1, name: 'test') }
   let(:commit)      { job.commit }
-  let(:config)      { { foo: 'bar', addons: 'anything', ssh: 'skdjf', env: 'secure'} }
+  let(:config)      { {:language=>"shell",
+                       :sudo=>false,
+                       :branches=>{:only=>["gh-pages"]},
+                       :git=>{:depth=>3},
+                       :addons=>{ :mariadb=>'10.0', :secure=>
+                           "IlyxHYWefJ4rdKaoaisudosiuaodsiuad" },
+                       :global_env=>
+                        [{:secure=>
+                           "IlyxHYWefJ4rdKaoaisudosiuaodsiuad"}],
+                       :env=>
+                        [{:secure=>
+                           "IlyxHYWefJ4rdKaoaisudosiuaodsiuad"}],
+                       :notifications=>
+                        [{:secure=>
+                           "IlyxHYWefJ4rdKaoaisudosiuaodsiuad"}],
+                       :group=>"stable",
+                       :dist=>"precise"} }
   let(:parsed_body) { JSON.load(body) }
 
   before do
@@ -185,7 +201,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
     }}
   end
 
-  describe "config correctly serialized" do
+  describe "config correctly obfuscated" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/job/#{job2.id}")     }
     example    { expect(last_response).to be_ok }
@@ -251,11 +267,20 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login},
-      "config"                => {
-        "foo"                 => "bar",
-        "env"                 => {
-          "BAR"               => "[secure] [secure]",
-          "FOO"               => "foo" }}
+      "config"                => { :language=>"shell",
+                                   :sudo=>false,
+                                   :branches=>{:only=>["gh-pages"]},
+                                   :git=>{:depth=>3},
+                                   :addons=>{ :mariadb=>'10.0', :secure=>
+                                       "secure" },
+                                   :global_env=>
+                                    [{:secure=>
+                                       "secure"}],
+                                   :env=>
+                                    [{:secure=>
+                                       "secure"}],
+                                   :group=>"stable",
+                                   :dist=>"precise"}
     }}
   end
 end

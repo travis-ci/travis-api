@@ -16,14 +16,9 @@ module Travis::API::V3
     def log
       @log ||= Travis::RemoteLog.find_by_job_id(id)
     end
-    
+
     def state
       super || 'created'
     end
-
-    # def config
-    #   super
-    #   #'config' => job.obfuscated_config.stringify_keys,
-    # end
   end
 end
