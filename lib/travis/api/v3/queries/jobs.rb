@@ -5,7 +5,9 @@ module Travis::API::V3
     default_sort "id:desc"
 
     def find(build)
-      build.jobs
+      relation = build.jobs
+      relation = relation.includes(:commit) if includes? 'job.commit'.freeze
+      relation
     end
 
     def filter(relation)
@@ -14,6 +16,7 @@ module Travis::API::V3
       relation = for_owner(relation)                  if created_by
 
       relation = relation.includes(:build)
+      relation = relation.includes(:commit) if includes? 'job.commit'.freeze
       relation
     end
 
