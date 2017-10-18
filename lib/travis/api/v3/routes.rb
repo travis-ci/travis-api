@@ -44,7 +44,7 @@ module Travis::API::V3
       delete :delete
     end
 
-    if Travis.env == 'test' || Travis.config.enterprise
+    enterprise do
       resource :enterprise_license do
         get :find
         route '/enterprise_license'
