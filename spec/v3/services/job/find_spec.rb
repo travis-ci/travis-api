@@ -1,5 +1,6 @@
 describe Travis::API::V3::Services::Job::Find, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:secure) { Travis::SecureConfig.new(repo.key) }
   let(:owner_href)  { repo.owner_type.downcase }
   let(:owner_type)  { repo.owner_type.constantize }
   let(:owner)       { owner_type.find(repo.owner_id)}
@@ -9,28 +10,22 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   let(:stage)       { Travis::API::V3::Models::Stage.create!(number: 1, name: 'test') }
   let(:commit)      { job.commit }
   let(:config)      { {:language=>"shell",
-                       :sudo=>false,
-                       :branches=>{:only=>["gh-pages"]},
-                       :git=>{:depth=>3},
-                       :addons=>{ :mariadb=>'10.0', :secure=>
-                           "IlyxHYWefJ4rdKaoaisudosiuaodsiuad" },
-                       :global_env=>
-                        [{:secure=>
-                           "IlyxHYWefJ4rdKaoaisudosiuaodsiuad"}],
-                       :env=>
-                        [{:secure=>
-                           "IlyxHYWefJ4rdKaoaisudosiuaodsiuad"}],
-                       :notifications=>
-                        [{:secure=>
-                           "IlyxHYWefJ4rdKaoaisudosiuaodsiuad"}],
-                       :group=>"stable",
-                       :dist=>"precise"} }
+                       :addons=>{ :mariadb=>'10.0', :sauce_connect => true },
+                       :global_env => [secure.encrypt('FOO=bar')],
+                       :env=> [secure.encrypt('SUPER=duper')],
+                       :notifications => {
+                         :slack => {
+                           rooms: [{ secure: 'foo'}]
+                         }
+                       }
+                     }
+                   }
   let(:parsed_body) { JSON.load(body) }
 
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
     job.update_attributes!(stage: stage)
-    job2.update_attributes!(config: config)
+    job2.update_attributes!(config: config, stage: stage)
   end
 
   describe "fetching job on a public repository, no pull access" do
@@ -215,10 +210,10 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "restart"             => false,
         "debug"               => false,
         "delete_log"          => false },
-      "id"                    => job.id,
-      "allow_failure"         => job.allow_failure,
-      "number"                => job.number,
-      "state"                 => job.state,
+      "id"                    => job2.id,
+      "allow_failure"         => job2.allow_failure,
+      "number"                => job2.number,
+      "state"                 => job2.state,
       "started_at"            => "2010-11-12T12:00:00Z",
       "finished_at"           => "2010-11-12T12:00:10Z",
       "build"                 => {
@@ -244,7 +239,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "state"               => stage.state,
         "started_at"          => stage.started_at,
         "finished_at"         => stage.finished_at},
-      "queue"                 => job.queue,
+      "queue"                 => job2.queue,
       "repository"            => {
         "@type"               => "repository",
         "@href"               => "/v3/repo/#{repo.id}",
@@ -267,20 +262,16 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login},
-      "config"                => { :language=>"shell",
-                                   :sudo=>false,
-                                   :branches=>{:only=>["gh-pages"]},
-                                   :git=>{:depth=>3},
-                                   :addons=>{ :mariadb=>'10.0', :secure=>
-                                       "secure" },
-                                   :global_env=>
-                                    [{:secure=>
-                                       "secure"}],
-                                   :env=>
-                                    [{:secure=>
-                                       "secure"}],
-                                   :group=>"stable",
-                                   :dist=>"precise"}
+      "config"                => {
+        "language" => "shell",
+        "addons" => { "mariadb" => "10.0" },
+        "global_env" => "FOO=[secure]",
+        "env" => "SUPER=[secure]",
+        "notifications" => { "slack" => {
+          "rooms" => [
+            {"secure"=>"foo"}
+          ]
+        }}}
     }}
   end
 end

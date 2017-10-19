@@ -38,6 +38,10 @@ module Travis::API::V3
       build_key.private_decrypt(string)
     end
 
+    def encode(string)
+      Base64.encode64(encrypt(string)).strip
+    end
+
     private
 
       def build_key
