@@ -1,5 +1,5 @@
 require 'sinatra/base'
-require 'appsignal/integrations/sinatra' if ENV['APPSIGNAL_EANBLED_FOR_DYNOS']&.split(' ')&.include?(ENV['DYNO'])
+require 'appsignal/integrations/sinatra' if ENV['APPSIGNAL_ENABLED_FOR_DYNOS']&.split(' ')&.include?(ENV['DYNO'])
 require 'mustermann'
 require 'travis/api/app'
 require 'travis/api/app/extensions'

@@ -42,7 +42,7 @@ module Travis::API::V3
           Routes::Resource.new(:broadcast), # dummy as there are only broadcasts routes right now
           Routes::Resource.new(:commit),    # dummy as commits can only be embedded
           Routes::Resource.new(:request),   # dummy as there are only requests routes right now
-          # Routes::Resource.new(:stage),     # dummy as there is no stage endpoint at the moment
+          Routes::Resource.new(:stage),     # dummy as there is no stage endpoint at the moment
           Routes::Resource.new(:error),
           Routes::Resource.new(:home,     attributes: [:config, :errors, :resources], actions: home_actions),
           Routes::Resource.new(:resource, attributes: [:actions, :attributes, :representations, :access_rights]),

@@ -1,5 +1,6 @@
 require 'addressable/uri'
 require 'faraday'
+require 'faraday_middleware'
 require 'securerandom'
 require 'travis/api/app'
 require 'travis/github/education'
@@ -300,7 +301,13 @@ class Travis::Api::App
         end
 
         def get_token(endpoint, values)
-          response   = Faraday.new(ssl: Travis.config.github.ssl || {}).post(endpoint, values)
+          conn = Faraday.new(ssl: Travis.config.github.ssl || {}) do |conn|
+            conn.request :json
+            conn.use :instrumentation
+            conn.adapter :net_http_persistent
+          end
+          response = conn.post(endpoint, values)
+
           parameters = Addressable::URI.form_unencode(response.body)
           token_info = parameters.assoc("access_token")
 

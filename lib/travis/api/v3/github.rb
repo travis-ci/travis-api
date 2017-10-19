@@ -60,7 +60,11 @@ module Travis::API::V3
         detect { |e| e['key'] == repository.key.encoded_public_key }
 
       unless key
-        gh.post keys_path, title: Travis.config.host.to_s, key: repository.key.encoded_public_key
+        gh.post keys_path, {
+          title: Travis.config.host.to_s,
+          key: repository.key.encoded_public_key,
+          read_only: true
+        }
       end
     end
   end

@@ -7,6 +7,7 @@ require 'travis'
 require 'travis/amqp'
 require 'travis/model'
 require 'travis/states_cache'
+require 'travis/honeycomb'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib/config'
@@ -99,12 +100,28 @@ module Travis::Api
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
 
+        use Rack::Config do |env|
+          env['metriks.request.start'] ||= Time.now.utc
+
+          Travis::Honeycomb.clear
+          Travis::Honeycomb.context.add('x_request_id', env['HTTP_X_REQUEST_ID'])
+        end
+
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
 
         extend StackInstrumentation
         use Travis::Api::App::Middleware::Skylight
-        use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
+
+        use Rack::Config do |env|
+          if env['HTTP_HONEYCOMB_OVERRIDE'] == 'true'
+            Travis::Honeycomb.override!
+          end
+        end
+
+        if Travis::Honeycomb.api_requests.enabled?
+          use Travis::Api::App::Middleware::Honeycomb
+        end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
         if Travis::Api::App.use_monitoring?
@@ -222,6 +239,8 @@ module Travis::Api
 
       def self.setup_monitoring
         Travis::Api::App::ErrorHandling.setup
+
+        Travis::Honeycomb.setup
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         Travis::Notification.setup(instrumentation: false)

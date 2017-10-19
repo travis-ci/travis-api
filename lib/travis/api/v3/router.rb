@@ -37,6 +37,8 @@ module Travis::API::V3
       env_params.each_key { |key| result.ignored_param(key, reason: "not safelisted".freeze) unless filtered.include?(key) }
       response = render(result, env_params, env, content_type)
 
+      response[1]['X-Endpoint'] = factory.name
+
       metrics.tick(:renderer)
       metrics.success(status: response[0])
       response
@@ -45,6 +47,8 @@ module Travis::API::V3
 
       result   = Result.new(access_control: access_control, type: :error, resource: error)
       response = V3.response(result.render(env_params, env),  {}, content_type: content_type, status: error.status)
+
+      response[1]['X-Endpoint'] = factory.name if factory
 
       metrics.tick(:rendered)
       metrics.failure(status: error.status)

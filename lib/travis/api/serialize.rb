@@ -1,6 +1,7 @@
 require 'travis/api/serialize/formats'
 require 'travis/api/serialize/v0'
 require 'travis/api/serialize/v1'
+require 'travis/honeycomb'
 
 module Travis
   module Api
@@ -16,6 +17,9 @@ module Travis
           target  = (options[:for] || 'http').to_s.camelize
           version = (options[:version] || default_version(options)).to_s.camelize
           type    = (options[:type] || type_for(resource)).to_s.camelize.split('::')
+
+          Travis::Honeycomb.context.add('api_version', version.downcase)
+
           ([version, target] + type).inject(self) do |const, name|
             begin
               if const && const.const_defined?(name.to_s.camelize, false)
