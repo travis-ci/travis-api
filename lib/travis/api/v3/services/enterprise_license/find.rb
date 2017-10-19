@@ -3,12 +3,13 @@ module Travis::API::V3
     def run!
       response = Faraday.get("#{replicated_endpoint}/license/v1/license")
       replicated_response = JSON.parse(response.body)
-      seats = process_license(replicated_response)
+      seats, expiration_time = process_license(replicated_response)
       active_users = query.active_users
 
       result({
         seats: seats,
-        active_users: active_users.count
+        active_users: active_users.count,
+        expiration_time: expiration_time
       })
     end
 
@@ -21,7 +22,7 @@ module Travis::API::V3
     def process_license(replicated_response)
       te_license = replicated_response["fields"].find { |te_fields| te_fields["field"] == "te_license" }
       yaml = YAML.load(te_license["value"])
-      yaml["production"]["license"]["seats"]
+      [yaml["production"]["license"]["seats"], replicated_response["expiration_time"]]
     end
   end
 end

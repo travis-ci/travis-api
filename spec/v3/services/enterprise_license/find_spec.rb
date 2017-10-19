@@ -25,7 +25,8 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
     example    {
       expect(parsed_body).to be == {
         "seats" => 20,
-        "active_users" => 3
+        "active_users" => 3,
+        "expiration_time" => "2014-08-18T00:00:00Z"
       }
     }
   end
