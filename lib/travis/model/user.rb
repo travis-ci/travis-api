@@ -102,7 +102,7 @@ class User < Travis::Model
     # TODO:
     #   If Github always sends valid gravatar_id in oauth payload (need to check that)
     #   then these fallbacks (email hash and zeros) are superfluous and can be removed.
-    gravatar_id.presence || (email? && Digest::MD5.hexdigest(email)) || '0' * 32
+    gravatar_id.presence || (email? && Digest::MD5.hexdigest(email.downcase)) || '0' * 32
   end
 
   def github_scopes
@@ -129,7 +129,7 @@ class User < Travis::Model
     elsif gravatar_id
       GRAVATAR_URL % gravatar_id
     else
-      GRAVATAR_URL % Digest::MD5.hexdigest(email)
+      GRAVATAR_URL % Digest::MD5.hexdigest(email.downcase)
     end
   end
 
