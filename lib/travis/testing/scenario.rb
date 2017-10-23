@@ -91,11 +91,7 @@ module Scenario
     end
 
     def repositories(*names)
-      names.map { |name|
-        repo = Factory(name)
-        repo.create_key
-        repo
-      }
+      names.map { |name| Factory(name) }
     end
 
     def build(attributes)

@@ -63,17 +63,17 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
     let(:user)       { FactoryGirl.create(:user, name: 'Joe', login: 'joe') }
     let(:user_repo)  { V3::Models::Repository.create(owner: user, name: 'Kneipe') }
     let(:user_build) { V3::Models::Build.create(repository: user_repo, owner: user, state: 'created') }
-    let!(:user_job)  { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'queued', repository: user_repo) }
-    let!(:err_job)   { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'errored', repository: user_repo) }
+    let!(:user_job)  { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'queued') }
+    let!(:err_job)   { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'errored') }
 
     let(:private_repo)  { V3::Models::Repository.create(name: 'private-repo', owner: user, private: true) }
     let(:private_build) { V3::Models::Build.create(repository: private_repo, owner: user, state: 'created') }
-    let!(:private_job)  { V3::Models::Job.create(source_id: private_build.id, source_type: 'Build', owner: user, state: 'queued', repository: private_repo) }
+    let!(:private_job)  { V3::Models::Job.create(source_id: private_build.id, source_type: 'Build', owner: user, state: 'queued') }
 
     let(:org)       { V3::Models::Organization.create(name: 'Spätkauf', login: 'spaetkauf') }
     let(:org_repo)  { V3::Models::Repository.create(owner: org, name: 'Bionade') }
     let(:org_build) { V3::Models::Build.create(repository: org_repo, owner: org, state: 'created') }
-    let!(:org_job)  { V3::Models::Job.create(source_id: org_build.id, source_type: 'Build', owner: org, state: 'queued', repository: org_repo) }
+    let!(:org_job)  { V3::Models::Job.create(source_id: org_build.id, source_type: 'Build', owner: org, state: 'queued') }
 
     describe 'viewing a user' do
       before { get("/v3/owner/#{user.login}/active?include=build.jobs", {}, json_headers) }
@@ -99,13 +99,13 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
     let(:user)       { FactoryGirl.create(:user, name: 'Joe', login: 'joe') }
     let(:user_repo)  { V3::Models::Repository.create(owner: user, name: 'Kneipe') }
     let(:user_build) { V3::Models::Build.create(repository: user_repo, owner: user, state: 'created') }
-    let!(:user_job)  { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'queued', repository: user_repo) }
+    let!(:user_job)  { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'queued') }
 
     let(:user_token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
 
     let(:private_repo)  { V3::Models::Repository.create(name: 'private-repo', owner: user, private: true) }
     let(:private_build) { V3::Models::Build.create(repository: private_repo, owner: user, state: 'created') }
-    let!(:private_job)  { V3::Models::Job.create(source_id: private_build.id, source_type: 'Build', owner: user, state: 'queued', repository: private_repo) }
+    let!(:private_job)  { V3::Models::Job.create(source_id: private_build.id, source_type: 'Build', owner: user, state: 'queued') }
     let!(:private_perm) { V3::Models::Permission.create(repository: private_repo, user: user) }
 
     context 'viewing own profile' do
@@ -139,13 +139,13 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
 
       let(:perm_repo)  { V3::Models::Repository.create(owner: org, name: 'Bionade') }
       let(:perm_build) { V3::Models::Build.create(repository: perm_repo, owner: org, state: 'created') }
-      let!(:perm_job)  { V3::Models::Job.create(source_id: perm_build.id, source_type: 'Build', owner: org, state: 'queued', repository: perm_repo) }
-      let!(:non_active_job) { V3::Models::Job.create(source_id: perm_build.id, source_type: 'Build', owner: org, state: 'finished', repository: perm_repo) }
+      let!(:perm_job)  { V3::Models::Job.create(source_id: perm_build.id, source_type: 'Build', owner: org, state: 'queued') }
+      let!(:non_active_job) { V3::Models::Job.create(source_id: perm_build.id, source_type: 'Build', owner: org, state: 'finished') }
       let!(:user_perm) { V3::Models::Permission.create(repository: perm_repo, user: user) }
 
       let(:non_perm_repo)  { V3::Models::Repository.create(owner: org, name: 'Bionade', private: true) }
       let(:non_perm_build) { V3::Models::Build.create(repository: non_perm_repo, owner: org, state: 'created') }
-      let!(:non_perm_job)  { V3::Models::Job.create(source_id: non_perm_build.id, source_type: 'Build', owner: org, state: 'queued', repository: non_perm_repo) }
+      let!(:non_perm_job)  { V3::Models::Job.create(source_id: non_perm_build.id, source_type: 'Build', owner: org, state: 'queued') }
 
       describe 'can see everything public or that you have permissions for' do
         before { get("/v3/owner/#{org.login}/active?include=build.jobs", {}, json_headers.merge('HTTP_AUTHORIZATION' => "token #{user_token}")) }
