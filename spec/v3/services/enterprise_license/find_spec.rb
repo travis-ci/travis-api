@@ -6,12 +6,13 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
     user = Factory(:user, emails: [Email.new(email: "hello@example.com")])
     user1 = Factory(:user, emails: [Email.new(email: "hello2@example.com")])
     user2 = Factory(:user, emails: [Email.new(email: "hello3@example.com")])
+    user3 = Factory(:user, emails: [Email.new(email: "hello4@example.com")])
 
     Factory(:commit, committer_email: user.emails.first.email)
     Factory(:commit, committer_email: user1.emails.first.email)
     Factory(:commit, committer_email: user2.emails.first.email)
     Factory(:commit, committer_email: user2.emails.first.email)
-    Factory(:commit, committer_email: user2.emails.first.email)
+    Factory(:commit, created_at: "2017-05-12 08:43:23", committer_email: user3.emails.first.email)
 
     replicated_endpoint = 'https://10.169.183.13:9880'
     ENV['REPLICATED_INTEGRATIONAPI'] = replicated_endpoint
@@ -26,7 +27,7 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
       expect(parsed_body).to be == {
         "seats" => 20,
         "active_users" => 3,
-        "expiration_time" => "2014-08-18T00:00:00Z"
+        "expiration_time" => "2018-08-18T00:00:00Z"
       }
     }
   end

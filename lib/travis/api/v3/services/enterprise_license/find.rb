@@ -4,7 +4,7 @@ module Travis::API::V3
       response = Faraday.get("#{replicated_endpoint}/license/v1/license")
       replicated_response = JSON.parse(response.body)
       seats, expiration_time = process_license(replicated_response)
-      active_users = query.active_users
+      active_users = query.active_users(expiration_time)
 
       result({
         seats: seats,
