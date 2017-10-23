@@ -112,7 +112,7 @@ module Travis::API::V3
     end
 
     def organization_visible?(organization)
-      full_access? or public_api?
+      full_access? or public_mode?(organization)
     end
 
     def ssl_key_visible?(ssl_key)
@@ -124,7 +124,7 @@ module Travis::API::V3
     end
 
     def user_visible?(user)
-      unrestricted_api?
+      unrestricted_api?(user) || logged_in?
     end
 
     def user_writable?(user)
@@ -153,7 +153,7 @@ module Travis::API::V3
     end
 
     def repository_visible?(repository)
-      return true if unrestricted_api? and not repository.private?
+      return true if unrestricted_api?(repository.owner) and not repository.private?
       private_repository_visible?(repository)
     end
 
@@ -172,12 +172,12 @@ module Travis::API::V3
       alias_method m, :repository_attr_visible?
     end
 
-    def public_api?
-      !Travis.config.private_api
+    def public_mode?(owner = nil)
+      Travis.config.public_mode || owner && Travis::Features.owner_active?(:public_mode, owner)
     end
 
-    def unrestricted_api?
-      full_access? or logged_in? or public_api?
+    def unrestricted_api?(owner = nil)
+      full_access? or public_mode?(owner)
     end
 
     private
