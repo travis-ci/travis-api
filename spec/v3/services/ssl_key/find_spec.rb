@@ -3,7 +3,9 @@ require 'spec_helper'
 describe Travis::API::V3::Services::SslKey::Find, set_app: true do
   let(:repo) do
     Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first_or_create.tap do |repo|
-      repo.create_key.tap { |key| key.generate_keys!; key.save! }
+      key = repo.key
+      key.generate_keys!
+      key.save!
     end
   end
   let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
