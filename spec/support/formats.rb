@@ -35,6 +35,10 @@ module Support
     def json_format_time(time)
       time.strftime('%Y-%m-%dT%H:%M:%SZ')
     end
+
+    def json_format_time_with_ms(time)
+      time.strftime('%Y-%m-%dT%H:%M:%S.%3NZ')
+    end
   end
 end
 

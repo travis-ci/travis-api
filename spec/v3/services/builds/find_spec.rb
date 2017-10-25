@@ -1,4 +1,5 @@
 describe Travis::API::V3::Services::Builds::Find, set_app: true do
+  include Support::Formats
   let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build)  { repo.builds.first }
   let(:stages) { build.stages }
@@ -74,6 +75,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "pull_request_title"  => build.pull_request_title,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
+        "updated_at"          => json_format_time_with_ms(build.updated_at),
         "repository"          => {
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -193,6 +195,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "pull_request_title"  => build.pull_request_title,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
+        "updated_at"          => json_format_time_with_ms(build.updated_at),
         "repository"          => {
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",

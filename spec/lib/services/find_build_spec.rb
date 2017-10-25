@@ -26,7 +26,7 @@ describe Travis::Services::FindBuild do
 
   describe 'updated_at' do
     it 'returns builds updated_at attribute' do
-      service.updated_at.to_s.should == build.updated_at.to_s
+      service.updated_at.to_s.should == build.reload.updated_at.to_s
     end
   end
 

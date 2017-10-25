@@ -128,5 +128,9 @@ module Travis::API::V3
 
       result
     end
+
+    def json_format_time_with_ms(time)
+      time.strftime('%Y-%m-%dT%H:%M:%S.%3NZ')
+    end
   end
 end
