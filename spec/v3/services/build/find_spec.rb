@@ -21,19 +21,19 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   describe "fetching a non-existing build" do
     before     { get("/v3/build/1231987129387218")  }
     example { expect(last_response).to be_not_found }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "not_found",
       "error_message" => "build not found (or insufficient access)",
       "resource_type" => "build"
-    }}
+    })}
   end
 
   describe "build on public repository, no pull access" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/build/#{build.id}") }
     example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"               => "build",
       "@href"               => "/v3/build/#{build.id}",
       "@representation"     => "standard",
@@ -117,7 +117,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
         "@representation"   => "minimal",
         "id"                => 1,
         "login"             => "svenfuchs"}
-    }}
+    })}
   end
 
   describe "build private repository, private API, authenticated as user with access" do
@@ -128,7 +128,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
     before        { get("/v3/build/#{build.id}", {}, headers) }
     after         { repo.update_attribute(:private, false) }
     example       { expect(last_response).to be_ok  }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"               => "build",
       "@href"               => "/v3/build/#{build.id}",
       "@representation"     => "standard",
@@ -208,14 +208,14 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
         "@representation"   => "minimal",
         "id"                => 1,
         "login"             => "svenfuchs"}
-    }}
+    })}
   end
 
   describe "build on public repository, no pull access" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/build/#{build.id}") }
     example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"               => "build",
       "@href"               => "/v3/build/#{build.id}",
       "@representation"     => "standard",
@@ -299,7 +299,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
         "@representation"   => "minimal",
         "id"                => 1,
         "login"             => "svenfuchs"}
-    }}
+    })}
   end
 
   describe "build for a tag push event" do
@@ -308,12 +308,12 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
     before  { get("/v3/build/#{build.id}") }
 
     example { expect(last_response).to be_ok  }
-    example { expect(parsed_body['tag']).to be == {
+    example { expect(parsed_body['tag']).to eql_json({
       "@type"           => "tag",
       "@representation" => "minimal",
       "repository_id"   => 1,
       "name"            => "v1.0.0",
       "last_build_id"   => nil
-    }}
+    })}
   end
 end

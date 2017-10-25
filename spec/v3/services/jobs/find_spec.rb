@@ -17,7 +17,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
   describe "jobs on public repository" do
     before     { get("/v3/build/#{build.id}/jobs") }
     example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"                   => "jobs",
       "@href"                   => "/v3/build/#{build.id}/jobs",
       "@representation"         => "standard",
@@ -270,7 +270,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "id"                  => 1,
           "login"               => "svenfuchs"}}
         ]
-      }
+      })
     }
   end
 
@@ -282,7 +282,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     before        { get("/v3/build/#{build.id}/jobs", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"                   => "jobs",
       "@href"                   => "/v3/build/#{build.id}/jobs",
       "@representation"         => "standard",
@@ -532,7 +532,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "id"                  => 1,
           "login"               => "svenfuchs"}}
         ]
-      }
+      })
     }
   end
 
@@ -546,7 +546,7 @@ describe "jobs private repository, private API, authenticated as user with push 
     before        { get("/v3/build/#{build.id}/jobs", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"              => "jobs",
       "@href"              => "/v3/build/#{build.id}/jobs",
       "@representation"    => "standard",
@@ -796,7 +796,7 @@ describe "jobs private repository, private API, authenticated as user with push 
           "id"             =>  1,
           "login"          => "svenfuchs"}}
         ]
-      }
+      })
     }
   end
 end
