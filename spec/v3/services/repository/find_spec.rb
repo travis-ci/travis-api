@@ -64,7 +64,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
 
   shared_examples '200 standard representation' do |opts|
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"              => "repository",
       "@href"              => "/v3/repo/#{repo.id}",
       "@representation"    => "standard",
@@ -87,26 +87,26 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "@representation"  => "minimal",
         "name"             => "master"},
       "starred"            => false,
-    }}
+    })}
   end
 
   shared_examples '404 not found' do
     example { expect(last_response).to be_not_found }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "not_found",
       "error_message" => "repository not found (or insufficient access)",
       "resource_type" => "repository"
-    }}
+    })}
   end
 
   shared_examples '400 wrong params' do |message|
     example { expect(last_response.status).to be == 400 }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "wrong_params",
       "error_message" => message
-    }}
+    })}
   end
 
   describe "fetching a non-existing repository by slug" do
