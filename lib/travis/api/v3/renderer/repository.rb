@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Renderer::Repository < ModelRenderer
     representation(:minimal,  :id, :name, :slug)
-    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred)
+    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :last_build_number, :last_build_started_at, :last_build_finished_at)
     representation(:experimental, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build)
 
     hidden_representations(:experimental)

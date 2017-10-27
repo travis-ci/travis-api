@@ -84,7 +84,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"           => "/v3/repo/#{repo.id}/branch/master",
             "@representation" => "minimal",
             "name"            => "master"},
-          "starred"           => false
+          "starred"           => false,
+          "last_build_number" =>nil,
+          "last_build_started_at"=>nil,
+          "last_build_finished_at"=>nil
         }]
       }}
     end
@@ -137,7 +140,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"         => "/v3/repo/#{repo.id}/branch/master",
             "@representation"=> "minimal",
             "name"          => "master"},
-          "starred"         => false
+          "starred"         => false,
+          "last_build_number"=>nil,
+          "last_build_started_at"=>nil,
+          "last_build_finished_at"=>nil
         }]
       }}
     end

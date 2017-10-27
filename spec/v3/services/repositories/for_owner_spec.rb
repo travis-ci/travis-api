@@ -68,6 +68,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@representation"  => "minimal",
           "name"             => "master"},
           "starred"          => false,
+          "last_build_number"  => repo.last_build_number,
+        "last_build_started_at"=>repo.last_build_started_at.iso8601,
+        "last_build_finished_at"=>repo.last_build_finished_at.iso8601
         }]}}
   end
 
@@ -149,7 +152,10 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@href"         => "/v3/repo/1/branch/master",
           "@representation"=>"minimal",
           "name"          => "master" },
-        "starred"         => false }, {
+        "starred"         => false,
+        "last_build_number"  => repo.last_build_number,
+        "last_build_started_at"=>repo.last_build_started_at.iso8601,
+        "last_build_finished_at"=>repo.last_build_finished_at.iso8601 }, {
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo2.id}",
         "@representation" => "standard",
@@ -183,6 +189,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@href"         => "/v3/repo/#{repo2.id}/branch/master",
           "@representation"=>"minimal",
           "name"           =>"master" },
-          "starred"        => false}]}
+          "starred"        => false,
+          "last_build_number"=>nil,
+          "last_build_started_at"=>nil,
+          "last_build_finished_at"=>nil}]}
   end
 end
