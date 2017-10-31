@@ -8,7 +8,7 @@ module Travis
         Dir.glob("#{dir}/*").sort.each { |dir| load_dir(dir) } if recursive
       end
 
-      def response(payload, headers = {}, content_type: '', status: 200)
+      def response(payload, headers = {}, content_type: nil, status: 200)
         payload = JSON.pretty_generate(payload) unless payload.is_a? String
         headers = { 'Content-Type'.freeze => content_type, 'Content-Length'.freeze => payload.bytesize.to_s }.merge!(headers)
         [status, headers, [payload]]
