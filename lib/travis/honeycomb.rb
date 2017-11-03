@@ -44,7 +44,7 @@ module Travis
       # * HONEYCOMB_DATASET
       # * HONEYCOMB_SAMPLE_RATE
       def api_requests
-        Thread.current[:honeycomb_client_api_requests] ||= Client.new('HONEYCOMB_')
+        Thread.current[:honeycomb_api_requests] ||= Client.new('HONEYCOMB_')
       end
 
       # env vars used to configure rpc client:
@@ -60,7 +60,7 @@ module Travis
       def api_requests_setup
         return unless api_requests.enabled?
 
-        Travis.logger.info 'honeycomb api_requests enabled'
+        Travis.logger.info 'honeycomb api requests enabled'
       end
 
       def rpc_setup
