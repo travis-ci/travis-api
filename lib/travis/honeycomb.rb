@@ -12,18 +12,18 @@ module Travis
 
       def setup
         honey_setup
-        sidekiq_setup
+        api_requests_setup
         rpc_setup
       end
 
       def override!
-        sidekiq.override!
+        api_requests.override!
         rpc.override!
       end
 
       def clear
         context.clear
-        sidekiq.clear
+        api_requests.clear
         rpc.clear
       end
 
@@ -32,20 +32,19 @@ module Travis
       end
 
       def honey_setup
-        return unless sidekiq.enabled? || rpc.enabled?
+        return unless api_requests.enabled? || rpc.enabled?
 
         # initialize shared client
         honey
       end
 
-      # env vars used to configure sidekiq client:
       # * HONEYCOMB_ENABLED
       # * HONEYCOMB_ENABLED_FOR_DYNOS
       # * HONEYCOMB_WRITEKEY
       # * HONEYCOMB_DATASET
       # * HONEYCOMB_SAMPLE_RATE
-      def sidekiq
-        Thread.current[:honeycomb_client_sidekiq] ||= Client.new('HONEYCOMB_')
+      def api_requests
+        Thread.current[:honeycomb_client_api_requests] ||= Client.new('HONEYCOMB_')
       end
 
       # env vars used to configure rpc client:
@@ -58,10 +57,10 @@ module Travis
         Thread.current[:honeycomb_client_rpc] ||= Client.new('HONEYCOMB_RPC_')
       end
 
-      def sidekiq_setup
-        return unless sidekiq.enabled?
+      def api_requests_setup
+        return unless api_requests.enabled?
 
-        Travis.logger.info 'honeycomb sidekiq enabled'
+        Travis.logger.info 'honeycomb api_requests enabled'
       end
 
       def rpc_setup
