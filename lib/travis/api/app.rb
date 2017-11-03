@@ -240,6 +240,9 @@ module Travis::Api
       def self.setup_monitoring
         Travis::Api::App::ErrorHandling.setup
 
+        Travis::Honeycomb::Context.add_permanent('app', 'api')
+        Travis::Honeycomb::Context.add_permanent('dyno', ENV['DYNO'])
+        Travis::Honeycomb::Context.add_permanent('site', ENV['TRAVIS_SITE'])
         Travis::Honeycomb.setup
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
