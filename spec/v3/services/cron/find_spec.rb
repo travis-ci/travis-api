@@ -7,7 +7,7 @@ describe Travis::API::V3::Services::Cron::Find, set_app: true do
   describe "fetching a cron job by id" do
     before     { get("/v3/cron/#{cron.id}") }
     example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
         "@type"               => "cron",
         "@href"               => "/v3/cron/#{cron.id}",
         "@representation"     => "standard",
@@ -33,18 +33,18 @@ describe Travis::API::V3::Services::Cron::Find, set_app: true do
         "last_run"            => cron.last_run,
         "next_run"            => cron.next_run.strftime('%Y-%m-%dT%H:%M:%SZ'),
         "created_at"          => cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
-    }}
+    })}
   end
 
   describe "fetching a non-existing cron job by id" do
     before     { get("/v3/cron/999999999999999")     }
     example { expect(last_response).to be_not_found }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "not_found",
       "error_message" => "cron not found (or insufficient access)",
       "resource_type" => "cron"
-    }}
+    })}
   end
 
   describe "private cron, not authenticated" do
@@ -52,12 +52,12 @@ describe Travis::API::V3::Services::Cron::Find, set_app: true do
     before  { get("/v3/cron/#{cron.id}")             }
     after   { repo.update_attribute(:private, false) }
     example { expect(last_response).to be_not_found  }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "not_found",
       "error_message" => "cron not found (or insufficient access)",
       "resource_type" => "cron"
-    }}
+    })}
   end
 
   describe "private cron, authenticated as user with access" do
@@ -68,7 +68,7 @@ describe Travis::API::V3::Services::Cron::Find, set_app: true do
     before        { get("/v3/cron/#{cron.id}", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example       { expect(parsed_body).to be == {
+    example       { expect(parsed_body).to eql_json({
       "@type"               => "cron",
       "@href"               => "/v3/cron/#{cron.id}",
       "@representation"     => "standard",
@@ -94,7 +94,7 @@ describe Travis::API::V3::Services::Cron::Find, set_app: true do
       "last_run"            => cron.last_run,
       "next_run"            => cron.next_run.strftime('%Y-%m-%dT%H:%M:%SZ'),
       "created_at"          => cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
-    }}
+    })}
   end
 
 end

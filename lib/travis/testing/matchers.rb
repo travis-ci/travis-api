@@ -1,3 +1,5 @@
+require 'hashdiff'
+
 # RSpec::Matchers.define :serve_result_image do |result|
 #   match do |request|
 #     path = "#{Rails.root}/public/images/result/#{result}.png"
@@ -48,3 +50,34 @@ RSpec::Matchers.define :publish_instrumentation_event do |data|
     non_matching.empty? && missing_keys.empty?
   end
 end
+
+RSpec::Matchers.define :eql_json do |expected|
+  match do |actual|
+    actual == expected
+  end
+
+  failure_message_for_should do |actual|
+    message = "expected to match JSON:\n"
+    diff = HashDiff.diff(expected, actual)
+    diff_messages = diff.map do |type, path, a, b|
+      if type == '-'
+        "missing #{path} == #{a}"
+      elsif type == '+'
+        "extra entry #{path} == #{a}"
+      elsif type == '~'
+        "entries @#{path} do not match, expected: #{a}, actual: #{b}"
+      else
+        raise 'this should not happen'
+      end
+    end
+
+    message << diff_messages.map { |m| "  #{m}" }.join("\n")
+    message
+  end
+
+  description do
+    "equal JSON"
+  end
+end
+
+

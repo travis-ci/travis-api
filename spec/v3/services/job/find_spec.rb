@@ -18,7 +18,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/job/#{job.id}")     }
     example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"                 => "job",
       "@href"                 => "/v3/job/#{job.id}",
       "@representation"       => "standard",
@@ -80,18 +80,18 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login}
-    }}
+    })}
   end
 
   describe "fetching a non-existing job" do
     before     { get("/v3/job/1233456789")     }
     example { expect(last_response).to be_not_found }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         =>  "error",
       "error_type"    =>  "not_found",
       "error_message" =>  "job not found (or insufficient access)",
       "resource_type" =>  "job"
-    }}
+    })}
   end
 
   describe "fetching job on private repository, private API, authenticated as user with access" do
@@ -103,7 +103,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
     before        { get("/v3/job/#{job.id}", {}, headers)                             }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example       { expect(parsed_body).to be == {
+    example       { expect(parsed_body).to eql_json({
       "@type"                 => "job",
       "@href"                 => "/v3/job/#{job.id}",
       "@representation"       => "standard",
@@ -165,6 +165,6 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login}
-    }}
+    })}
   end
 end

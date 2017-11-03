@@ -411,6 +411,7 @@ DEPENDENCIES
   faraday_middleware
   foreman
   gh!
+  hashdiff
   jemalloc
   knapsack
   libhoney!

@@ -63,7 +63,7 @@ module Travis::API::V3
         gh.post keys_path, {
           title: Travis.config.host.to_s,
           key: repository.key.encoded_public_key,
-          read_only: true
+          read_only: !Travis::Features.owner_active?(:read_write_github_keys, repository.owner)
         }
       end
     end

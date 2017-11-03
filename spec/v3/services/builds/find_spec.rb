@@ -22,18 +22,18 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
   describe "fetching builds on a non-existing repository by slug" do
     before     { get("/v3/repo/svenfuchs%2Fminimal1/builds")     }
     example { expect(last_response).to be_not_found }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "not_found",
       "error_message" => "repository not found (or insufficient access)",
       "resource_type" => "repository"
-    }}
+    })}
   end
 
   describe "builds on public repository" do
     before     { get("/v3/repo/#{repo.id}/builds?limit=1") }
     example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"                 => "builds",
       "@href"                 => "/v3/repo/#{repo.id}/builds?limit=1",
       "@representation"       => "standard",
@@ -141,7 +141,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "id"                => 1,
           "login"             => "svenfuchs"}
       }]
-    }}
+    })}
   end
 
   describe "builds private repository, private API, authenticated as user with access" do
@@ -152,7 +152,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     before        { get("/v3/repo/#{repo.id}/builds?limit=1", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"                 => "builds",
       "@href"                 => "/v3/repo/#{repo.id}/builds?limit=1",
       "@representation"       => "standard",
@@ -260,7 +260,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "id"                => 1,
           "login"             => "svenfuchs"}
       }]
-    }}
+    })}
   end
 
   describe "including branch.name params on existing branch" do
@@ -300,12 +300,12 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     before  { get("/v3/repo/svenfuchs%2Fminimal/builds")     }
 
     example { expect(last_response).to be_ok  }
-    example { expect(parsed_body['builds'][0]['tag']).to be == {
+    example { expect(parsed_body['builds'][0]['tag']).to eql_json({
       "@type"           => "tag",
       "@representation" => "minimal",
       "repository_id"   => 1,
       "name"            => "v1.0.0",
       "last_build_id"   => nil
-    }}
+    })}
   end
 end
