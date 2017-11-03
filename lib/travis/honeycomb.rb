@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
 require 'libhoney'
+require 'thread'
 
 module Travis
   class Honeycomb
     class << self
       def context
-        @context ||= Context.new
+        Thread.current[:honeycomb_context] ||= Context.new
       end
 
       def setup
+        honey_setup
         api_requests_setup
         rpc_setup
       end
@@ -25,14 +27,24 @@ module Travis
         rpc.clear
       end
 
-      # env vars used to configure api requests client:
+      def honey
+        @honey ||= Libhoney::Client.new
+      end
+
+      def honey_setup
+        return unless api_requests.enabled? || rpc.enabled?
+
+        # initialize shared client
+        honey
+      end
+
       # * HONEYCOMB_ENABLED
       # * HONEYCOMB_ENABLED_FOR_DYNOS
       # * HONEYCOMB_WRITEKEY
       # * HONEYCOMB_DATASET
       # * HONEYCOMB_SAMPLE_RATE
       def api_requests
-        @api_requests ||= Client.new('HONEYCOMB_')
+        Thread.current[:honeycomb_api_requests] ||= Client.new('HONEYCOMB_')
       end
 
       # env vars used to configure rpc client:
@@ -42,7 +54,7 @@ module Travis
       # * HONEYCOMB_RPC_DATASET
       # * HONEYCOMB_RPC_SAMPLE_RATE
       def rpc
-        @rpc ||= Client.new('HONEYCOMB_RPC_')
+        Thread.current[:honeycomb_client_rpc] ||= Client.new('HONEYCOMB_RPC_')
       end
 
       def api_requests_setup
@@ -67,8 +79,6 @@ module Travis
               event: name,
               duration_ms: ((finish - start) * 1000).to_i,
               id: id,
-              app: 'api',
-              dyno: ENV['DYNO'],
             )
 
             rpc.send(event)
@@ -85,8 +95,6 @@ module Travis
               event: name,
               duration_ms: ((finish - start) * 1000).to_i,
               id: id,
-              app: 'api',
-              dyno: ENV['DYNO'],
               method: env[:method],
               url: env[:url].to_s,
               host: env[:url].host,
@@ -103,7 +111,14 @@ module Travis
     end
 
     class Context
-      attr_accessor :data
+      class << self
+        attr_accessor :permanent
+
+        def add_permanent(field, value)
+          @permanent ||= {}
+          @permanent[field] = value
+        end
+      end
 
       def initialize
         @data = {}
@@ -116,6 +131,10 @@ module Travis
       def add(field, value)
         @data[field] = value
       end
+
+      def data
+        (self.class.permanent || {}).merge(@data)
+      end
     end
 
     class Client
@@ -126,9 +145,11 @@ module Travis
       def send(event)
         return unless enabled? && should_sample?
 
-        ev = honey.event
+        ev = Honeycomb.honey.event
         ev.add(event)
         ev.sample_rate = sample_rate
+        ev.writekey = env('WRITEKEY')
+        ev.dataset = env('DATASET')
         ev.send_presampled
       end
 
@@ -179,13 +200,6 @@ module Travis
 
       private def default_sample_rate
         @default_sample_rate ||= env('SAMPLE_RATE')&.to_i || 1
-      end
-
-      private def honey
-        @honey ||= Libhoney::Client.new(
-          writekey: env('WRITEKEY'),
-          dataset: env('DATASET'),
-        )
       end
 
       private def env(name)
