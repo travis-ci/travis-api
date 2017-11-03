@@ -95,8 +95,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-yaml
-  revision: 7a13e74133807d5ba02571aee56808503231db18
-  branch: meat-legit-minimal
+  revision: da2c9860299fa63769ac1ee120abeb9e83615555
   specs:
     travis-yaml (0.2.0)
 
