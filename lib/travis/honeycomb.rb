@@ -69,6 +69,7 @@ module Travis
               id: id,
               app: 'api',
               dyno: ENV['DYNO'],
+              site: ENV['TRAVIS_SITE'],
             )
 
             rpc.send(event)
@@ -86,7 +87,6 @@ module Travis
               duration_ms: ((finish - start) * 1000).to_i,
               id: id,
               app: 'api',
-              dyno: ENV['DYNO'],
               method: env[:method],
               url: env[:url].to_s,
               host: env[:url].host,
@@ -94,6 +94,8 @@ module Travis
               request_headers: env[:request_headers].to_h,
               status: env[:status],
               response_headers: env[:response_headers].to_h,
+              dyno: ENV['DYNO'],
+              site: ENV['TRAVIS_SITE'],
             )
 
             rpc.send(event)

@@ -60,7 +60,9 @@ class Travis::Api::App
           exception_cause_class:   e&.cause&.class&.name,
           exception_cause_message: e&.cause&.message,
 
+          app: 'api',
           dyno: ENV['DYNO'],
+          site: ENV['TRAVIS_SITE'],
         })
 
         event = event.merge(env_filter(env, [
