@@ -21,10 +21,7 @@ RSpec.feature 'Restart a Job', js: true, type: :feature do
   end
 
   scenario 'User restarts a job via jobs tab in organization view' do
-    visit "/organizations/#{organization.id}#jobs"
-
-    # Capybara needs this extra click
-    click_on('Jobs')
+    visit "/organizations/#{organization.id}/jobs"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/job/#{job.id}/restart").
       with(headers: {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).

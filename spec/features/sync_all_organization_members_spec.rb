@@ -6,7 +6,7 @@ RSpec.feature 'Sync with GitHub for all users in an organization', js: true, typ
   let!(:organization) { create(:organization, users: [katrin, aly]) }
 
   scenario 'Syncing several users' do
-    visit "/organizations/#{organization.id}#members"
+    visit "/organizations/#{organization.id}/members"
 
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/user/#{katrin.id}/sync").
       to_return(status: 200, body: '', headers: {})

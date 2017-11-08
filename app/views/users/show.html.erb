@@ -1,53 +1,16 @@
 <% title "User - #{describe(@user)}" %>
 
 <div id="tabs">
-  <span id="user" class="tab-switch"></span>
-  <a href="#user" class="tab-link">User</a>
-  <section class="tab-content two-columns">
-    <%= render partial: 'user' %>
-  </section>
-
-  <% if @subscription %>
-    <span id="subscription" class="tab-switch"></span>
-    <a href="#subscription" class="tab-link">Subscription</a>
-    <section class="tab-content">
-      <%= render partial: 'shared/subscription' %>
-    </section>
-
-    <span id="invoices" class="tab-switch"></span>
-    <a href="#invoices" class="tab-link">Invoices</a>
-    <section class="tab-content">
-      <%= render partial: 'shared/invoices' %>
-    </section>
-  <% end %>
-
-  <span id="organizations" class="tab-switch"></span>
-  <a href="#organizations" class="tab-link">Organizations</a>
-  <section class="tab-content">
-    <%= render partial: 'organizations' %>
-  </section>
-
-  <span id="repositories" class="tab-switch"></span>
-  <a href="#repositories" class="tab-link">Repositories</a>
-  <section class="tab-content">
-    <%= render partial: 'shared/repositories' %>
-  </section>
-
-  <span id="jobs" class="tab-switch"></span>
-  <a href="#jobs" class="tab-link">Jobs</a>
-  <section   class="tab-content">
-    <%= render partial: 'shared/jobs', locals: {owner: @user} %>
-  </section>
-
-  <span id="requests" class="tab-switch"></span>
-  <a href="#requests" class="tab-link">Requests</a>
-  <section class="tab-content requests-ajax">
-    <%= render partial: 'shared/requests', locals: {origin: @user } %>
-  </section>
-
-  <span id="broadcasts" class="tab-switch"></span>
-  <a href="#broadcasts" class="tab-link">Broadcasts</a>
-  <section   class="tab-content">
-    <%= render partial: 'shared/broadcasts', locals: {recipient: @user} %>
-  </section>
+  <%= link_to 'User', user_path(@user), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Subscription', subscription_user_path(@user), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Invoices', invoices_user_path(@user), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Organizations', organizations_user_path(@user), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Repositories', repositories_user_path(@user), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Jobs', jobs_user_path(@user), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Requests', requests_user_path(@user), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Broadcasts', broadcasts_user_path(@user), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
 </div>
+
+<section id="main-content">
+  <%= render @render_args %>
+</section>

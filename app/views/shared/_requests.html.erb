@@ -4,7 +4,7 @@
   <% if @requests.empty? %>
     <p><%= "No requests exist for this #{origin.class.to_s.downcase}." %></p>
   <% else %>
-    <ul>
+    <ul id="requests">
       <li class="inline-list request-item">
         <p class="info-label loading">Request</p>
         <p class="info-label build-name">Build</p>
@@ -29,5 +29,5 @@
       <% end %>
     </ul>
   <% end %>
-  <%= will_paginate @requests, param_name: 'request_page', params: {controller: controller_name, action: 'requests', id: params[:id], anchor: 'requests'}, 'data-remote': true %>
+  <%= will_paginate @requests, param_name: 'page', params: {controller: controller_name, action: 'requests', id: params[:id], anchor: 'requests'}, 'data-remote': true %>
 </section>

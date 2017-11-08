@@ -44,6 +44,14 @@ Rails.application.routes.draw do
       get  'jobs'
       get  'requests'
       post 'update_trial_builds'
+
+      get 'subscription'
+      get 'invoices'
+      get 'members'
+      get 'repositories'
+      get 'jobs'
+      get 'requests'
+      get 'broadcasts'
     end
   end
 
@@ -78,12 +86,19 @@ Rails.application.routes.draw do
       post 'display_token'
       post 'features'
       post 'hide_token'
-      get  'jobs'
-      get  'requests'
       post 'reset_2fa'
       post 'sync'
       post 'update_trial_builds'
+
+      get 'subscription'
+      get 'invoices'
+      get 'organizations'
+      get 'repositories'
+      get 'jobs'
+      get 'requests'
+      get 'broadcasts'
     end
+
     post 'sync_all', on: :collection
   end
 end
