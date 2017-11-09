@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Queries::Repositories < Query
-    params :active, :private, :starred, :slug_filter, prefix: :repository
+    params :active, :private, :starred, prefix: :repository
+    experimental_params :slug_filter, prefix: :repository
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active),
                 :'default_branch.last_build' => 'builds.started_at',
                 :current_build => "repositories.current_build_id %{order} NULLS LAST",
@@ -12,7 +13,7 @@ module Travis::API::V3
     # is an association. This prevents adding the join. We will probably be able
     # to remove it once we move to newer AR versions
     prevent_sortable_join :current_build
-    experimental_sortable_by :current_build
+    experimental_sortable_by :current_build, :slug_filter
 
     def for_member(user, **options)
       all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
