@@ -174,6 +174,11 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "@type"              =>"repository",
         "@href"              =>"/v3/repo/#{repo.id}",
         "@representation"    =>"standard",
+        "@warnings"        => [{
+          "@type"          => "warning",
+          "message"        => "current_build will soon be deprecated, please use last_started_build",
+          "warning_type"   => "deprecated_parameter",
+          "parameter"      => "current_build"}],
         "@permissions"       =>{
           "read"             =>true,
           "admin"            =>false,
