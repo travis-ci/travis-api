@@ -100,14 +100,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,
-        "login"               => owner.login},
-      "config"                => {
-        "rvm"                 =>"1.9.2",
-        "gemfile"             =>"test/Gemfile.rails-3.0.x",
-        "language"            =>"ruby",
-        "group"               =>"stable",
-        "dist"                =>"precise",
-        "os"                  =>"linux"}
+        "login"               => owner.login}
     })}
   end
 
@@ -193,22 +186,15 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,
-        "login"               => owner.login},
-      "config"                => {
-        "rvm"                 =>"1.9.2",
-        "gemfile"             =>"test/Gemfile.rails-3.0.x",
-        "language"            =>"ruby",
-        "group"               =>"stable",
-        "dist"                =>"precise",
-        "os"                  =>"linux"}
+        "login"               => owner.login}
     })}
   end
 
-  describe "config correctly obfuscated" do
+  describe "config is correctly obfuscated" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
-    before     { get("/v3/job/#{job2.id}")     }
+    before     { get("/v3/job/#{job2.id}?include=job.config")     }
     example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"                 => "job",
       "@href"                 => "/v3/job/#{job2.id}",
       "@representation"       => "standard",
@@ -281,6 +267,6 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
             {"secure"=>"foo"}
           ]
         }}}
-    }}
+    })}
   end
 end

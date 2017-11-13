@@ -17,11 +17,11 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
   end
 
   describe "jobs on public repository" do
-    before     { get("/v3/build/#{build.id}/jobs") }
+    before     { get("/v3/build/#{build.id}/jobs?include=job.config") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to eql_json({
       "@type"                   => "jobs",
-      "@href"                   => "/v3/build/#{build.id}/jobs",
+      "@href"                   => "/v3/build/#{build.id}/jobs?include=job.config",
       "@representation"         => "standard",
       "jobs"                    => [{
         "@type"                 => "job",
@@ -310,12 +310,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
-    before        { get("/v3/build/#{build.id}/jobs", {}, headers)                           }
+    before        { get("/v3/build/#{build.id}/jobs?include=job.config", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
     example    { expect(parsed_body).to eql_json({
       "@type"                   => "jobs",
-      "@href"                   => "/v3/build/#{build.id}/jobs",
+      "@href"                   => "/v3/build/#{build.id}/jobs?include=job.config",
       "@representation"         => "standard",
       "jobs"                    => [{
         "@type"                 => "job",
@@ -606,12 +606,12 @@ describe "jobs private repository, private API, authenticated as user with push 
     before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true) }
     before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:debug?).returns(true) }
     before        { repo.update_attribute(:private, true)                             }
-    before        { get("/v3/build/#{build.id}/jobs", {}, headers)                           }
+    before        { get("/v3/build/#{build.id}/jobs?include=job.config", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
     example    { expect(parsed_body).to eql_json({
       "@type"              => "jobs",
-      "@href"              => "/v3/build/#{build.id}/jobs",
+      "@href"              => "/v3/build/#{build.id}/jobs?include=job.config",
       "@representation"    => "standard",
       "jobs"             => [{
         "@type"            => "job",
