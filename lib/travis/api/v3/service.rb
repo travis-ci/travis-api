@@ -120,7 +120,6 @@ module Travis::API::V3
         result.deprecated_param('current_build', reason: "repository.last_started_build".freeze)
       end
       apply_warnings(result)
-      puts result.inspect
       result
     end
 
