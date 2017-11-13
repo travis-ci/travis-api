@@ -1,4 +1,5 @@
 describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
+  include Support::Formats
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
@@ -163,7 +164,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
             "@representation"=>"minimal",
             "id"          =>jobs[3].id}],
           "stages"        =>[],
-          "created_by"=>nil}}]}
+          "created_by"    =>nil,
+          "updated_at"    => json_format_time_with_ms(build.updated_at)}}]}
   end
 
   describe "include: current_build" do
@@ -262,7 +264,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
             "@representation"=>"minimal",
             "id"          =>jobs[3].id}],
           "stages"        =>[],
-          "created_by"=>nil}}]}
+          "created_by"    =>nil,
+          "updated_at"    => json_format_time_with_ms(build.updated_at)}}]}
   end
 
   describe "filter: private=false" do
