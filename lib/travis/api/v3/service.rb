@@ -116,7 +116,11 @@ module Travis::API::V3
     def run
       not_found unless result = run!
       result = paginate(result) if self.class.paginate?
+      if params['include'].include? 'repository.current_build'
+        result.deprecated_param('current_build', reason: "repository.last_started_build".freeze)
+      end
       apply_warnings(result)
+      puts result.inspect
       result
     end
 

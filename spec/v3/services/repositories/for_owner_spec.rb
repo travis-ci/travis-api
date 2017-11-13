@@ -170,15 +170,15 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
     before  { get("/v3/owner/svenfuchs/repos?include=repository.current_build", {}, headers)                           }
     example { expect(last_response)                   .to be_ok                                      }
     example { expect(JSON.load(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?include=repository.current_build"}
+    example { expect(JSON.load(body)['@warnings'])    .to be == [{
+        "@type"              =>"warning",
+        "message"            =>"current_build will soon be deprecated. Please use repository.last_started_build instead",
+        "warning_type"       =>"deprecated_parameter",
+        "parameter"          =>"current_build"}]}
     example { expect(JSON.load(body)['repositories']) .to be == [{
         "@type"              =>"repository",
         "@href"              =>"/v3/repo/#{repo.id}",
         "@representation"    =>"standard",
-        "@warnings"        => [{
-          "@type"          => "warning",
-          "message"        => "current_build will soon be deprecated, please use last_started_build",
-          "warning_type"   => "deprecated_parameter",
-          "parameter"      => "current_build"}],
         "@permissions"       =>{
           "read"             =>true,
           "admin"            =>false,
