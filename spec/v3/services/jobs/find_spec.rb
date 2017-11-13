@@ -17,11 +17,11 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
   end
 
   describe "jobs on public repository" do
-    before     { get("/v3/build/#{build.id}/jobs") }
+    before     { get("/v3/build/#{build.id}/jobs?include=job.config") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to eql_json({
       "@type"                   => "jobs",
-      "@href"                   => "/v3/build/#{build.id}/jobs",
+      "@href"                   => "/v3/build/#{build.id}/jobs?include=job.config",
       "@representation"         => "standard",
       "jobs"                    => [{
         "@type"                 => "job",
@@ -40,6 +40,13 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "finished_at"           => nil,
         "allow_failure"         => jobs[0].allow_failure,
         "updated_at"            => json_format_time_with_ms(jobs[0].updated_at),
+        "config"                => {
+          "rvm"                 => "1.8.7",
+          "gemfile"             => "test/Gemfile.rails-2.3.x",
+          "language"            => "ruby",
+          "group"               => "stable",
+          "dist"                => "precise",
+          "os"                  => "linux" },
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -102,6 +109,13 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "finished_at"           => nil,
         "allow_failure"         => jobs[1].allow_failure,
         "updated_at"            => json_format_time_with_ms(jobs[1].updated_at),
+        "config"                => {
+          "rvm"                 => "1.8.7",
+          "gemfile"             => "test/Gemfile.rails-3.0.x",
+          "language"            => "ruby",
+          "group"               => "stable",
+          "dist"                => "precise",
+          "os"                  => "linux" },
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -164,6 +178,13 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "finished_at"           => nil,
         "allow_failure"         => jobs[2].allow_failure,
         "updated_at"            => json_format_time_with_ms(jobs[2].updated_at),
+        "config"                => {
+          "rvm"                 => "1.9.2",
+          "gemfile"             => "test/Gemfile.rails-2.3.x",
+          "language"            => "ruby",
+          "group"               => "stable",
+          "dist"                => "precise",
+          "os"                  => "linux" },
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -226,6 +247,13 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "finished_at"           => nil,
         "allow_failure"         => jobs[3].allow_failure,
         "updated_at"            => json_format_time_with_ms(jobs[3].updated_at),
+        "config"                => {
+          "rvm"                 => "1.9.2",
+          "gemfile"             => "test/Gemfile.rails-3.0.x",
+          "language"            => "ruby",
+          "group"               => "stable",
+          "dist"                => "precise",
+          "os"                  => "linux" },
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -282,12 +310,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
-    before        { get("/v3/build/#{build.id}/jobs", {}, headers)                           }
+    before        { get("/v3/build/#{build.id}/jobs?include=job.config", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
     example    { expect(parsed_body).to eql_json({
       "@type"                   => "jobs",
-      "@href"                   => "/v3/build/#{build.id}/jobs",
+      "@href"                   => "/v3/build/#{build.id}/jobs?include=job.config",
       "@representation"         => "standard",
       "jobs"                    => [{
         "@type"                 => "job",
@@ -306,6 +334,13 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "finished_at"           => nil,
         "allow_failure"         => jobs[0].allow_failure,
         "updated_at"            => json_format_time_with_ms(jobs[0].updated_at),
+        "config"                => {
+          "rvm"                 => "1.8.7",
+          "gemfile"             => "test/Gemfile.rails-2.3.x",
+          "language"            => "ruby",
+          "group"               => "stable",
+          "dist"                => "precise",
+          "os"                  => "linux" },
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -367,6 +402,13 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "allow_failure"         => jobs[1].allow_failure,
         "updated_at"            => json_format_time_with_ms(jobs[1].updated_at),
+        "config"                => {
+          "rvm"                 => "1.8.7",
+          "gemfile"             => "test/Gemfile.rails-3.0.x",
+          "language"            => "ruby",
+          "group"               => "stable",
+          "dist"                => "precise",
+          "os"                  => "linux" },
         "finished_at"           => nil,
         "build"                 => {
           "@type"               => "build",
@@ -430,6 +472,13 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "finished_at"           => nil,
         "allow_failure"         => jobs[2].allow_failure,
         "updated_at"            => json_format_time_with_ms(jobs[2].updated_at),
+        "config"                => {
+          "rvm"                 => "1.9.2",
+          "gemfile"             => "test/Gemfile.rails-2.3.x",
+          "language"            => "ruby",
+          "group"               => "stable",
+          "dist"                => "precise",
+          "os"                  => "linux" },
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -492,6 +541,13 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "finished_at"           => nil,
         "allow_failure"         => jobs[3].allow_failure,
         "updated_at"            => json_format_time_with_ms(jobs[3].updated_at),
+        "config"                => {
+          "rvm"                 => "1.9.2",
+          "gemfile"             => "test/Gemfile.rails-3.0.x",
+          "language"            => "ruby",
+          "group"               => "stable",
+          "dist"                => "precise",
+          "os"                  => "linux" },
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -550,12 +606,12 @@ describe "jobs private repository, private API, authenticated as user with push 
     before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true) }
     before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:debug?).returns(true) }
     before        { repo.update_attribute(:private, true)                             }
-    before        { get("/v3/build/#{build.id}/jobs", {}, headers)                           }
+    before        { get("/v3/build/#{build.id}/jobs?include=job.config", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
     example    { expect(parsed_body).to eql_json({
       "@type"              => "jobs",
-      "@href"              => "/v3/build/#{build.id}/jobs",
+      "@href"              => "/v3/build/#{build.id}/jobs?include=job.config",
       "@representation"    => "standard",
       "jobs"             => [{
         "@type"            => "job",
@@ -574,6 +630,13 @@ describe "jobs private repository, private API, authenticated as user with push 
         "finished_at"      => nil,
         "allow_failure"    => jobs[0].allow_failure,
         "updated_at"       => json_format_time_with_ms(jobs[0].updated_at),
+        "config"           => {
+          "rvm"            => "1.8.7",
+          "gemfile"        => "test/Gemfile.rails-2.3.x",
+          "language"       => "ruby",
+          "group"          => "stable",
+          "dist"           => "precise",
+          "os"             => "linux" },
         "build"            => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
@@ -636,6 +699,13 @@ describe "jobs private repository, private API, authenticated as user with push 
         "finished_at"      => nil,
         "allow_failure"    => jobs[1].allow_failure,
         "updated_at"       => json_format_time_with_ms(jobs[1].updated_at),
+        "config"           => {
+          "rvm"            => "1.8.7",
+          "gemfile"        => "test/Gemfile.rails-3.0.x",
+          "language"       => "ruby",
+          "group"          => "stable",
+          "dist"           => "precise",
+          "os"             => "linux" },
         "build"            => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
@@ -698,6 +768,13 @@ describe "jobs private repository, private API, authenticated as user with push 
         "finished_at"      => nil,
         "allow_failure"    => jobs[2].allow_failure,
         "updated_at"       => json_format_time_with_ms(jobs[2].updated_at),
+        "config"           => {
+          "rvm"            => "1.9.2",
+          "gemfile"        => "test/Gemfile.rails-2.3.x",
+          "language"       => "ruby",
+          "group"          => "stable",
+          "dist"           => "precise",
+          "os"             => "linux" },
         "build"            => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
@@ -760,6 +837,13 @@ describe "jobs private repository, private API, authenticated as user with push 
         "finished_at"      => nil,
         "allow_failure"    => jobs[3].allow_failure,
         "updated_at"       => json_format_time_with_ms(jobs[3].updated_at),
+        "config"           => {
+          "rvm"            => "1.9.2",
+          "gemfile"        => "test/Gemfile.rails-3.0.x",
+          "language"       => "ruby",
+          "group"          => "stable",
+          "dist"           => "precise",
+          "os"             => "linux" },
         "build"            => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
