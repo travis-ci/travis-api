@@ -1,4 +1,5 @@
 describe Travis::API::V3::Services::Job::Find, set_app: true do
+  include Support::Formats
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:owner_href)  { repo.owner_type.downcase }
   let(:owner_type)  { repo.owner_type.constantize }
@@ -12,6 +13,10 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
     job.update_attributes!(stage: stage)
+    # for some reason update_attributes! doesn't update updated_at
+    # and it doesn't play well with out triggers (as triggers will update
+    # updated_at and instance variable in tests will have a different value)
+    job.reload
   end
 
   describe "fetching job on a public repository, no pull access" do
@@ -34,6 +39,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "state"                 => job.state,
       "started_at"            => "2010-11-12T12:00:00Z",
       "finished_at"           => "2010-11-12T12:00:10Z",
+      "updated_at"            => json_format_time_with_ms(job.updated_at),
       "build"                 => {
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",
@@ -119,6 +125,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "state"                 => job.state,
       "started_at"            => "2010-11-12T12:00:00Z",
       "finished_at"           => "2010-11-12T12:00:10Z",
+      "updated_at"            => json_format_time_with_ms(job.updated_at),
       "build"                 => {
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",

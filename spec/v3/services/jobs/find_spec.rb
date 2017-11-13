@@ -1,4 +1,5 @@
 describe Travis::API::V3::Services::Jobs::Find, set_app: true do
+  include Support::Formats
   let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build)  { repo.builds.first }
   let(:stages) { build.stages }
@@ -12,6 +13,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     deploy = build.stages.create(number: 2, name: 'deploy')
     jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
     jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+    jobs.each(&:reload)
   end
 
   describe "jobs on public repository" do
@@ -32,12 +34,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "debug"               => false,
           "delete_log"          => false },
         "id"                    => jobs[0].id,
-        "allow_failure"         => jobs[0].allow_failure,
         "number"                => "#{jobs[0].number}",
         "state"                 => "configured",
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[0].allow_failure,
+        "updated_at"            => json_format_time_with_ms(jobs[0].updated_at),
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -94,12 +96,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "debug"               => false,
           "delete_log"          => false},
         "id"                    => jobs[1].id,
-        "allow_failure"         => jobs[1].allow_failure,
         "number"                => "#{jobs[1].number}",
         "state"                 => "configured",
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[1].allow_failure,
+        "updated_at"            => json_format_time_with_ms(jobs[1].updated_at),
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -156,12 +158,12 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "debug"               => false,
           "delete_log"          => false},
         "id"                    => jobs[2].id,
-        "allow_failure"         => jobs[2].allow_failure,
         "number"                => "#{jobs[2].number}",
         "state"                 => "configured",
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[2].allow_failure,
+        "updated_at"            => json_format_time_with_ms(jobs[2].updated_at),
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -223,6 +225,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[3].allow_failure,
+        "updated_at"            => json_format_time_with_ms(jobs[3].updated_at),
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -302,6 +305,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[0].allow_failure,
+        "updated_at"            => json_format_time_with_ms(jobs[0].updated_at),
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -362,6 +366,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "state"                 => "configured",
         "started_at"            => "2010-11-12T13:00:00Z",
         "allow_failure"         => jobs[1].allow_failure,
+        "updated_at"            => json_format_time_with_ms(jobs[1].updated_at),
         "finished_at"           => nil,
         "build"                 => {
           "@type"               => "build",
@@ -424,6 +429,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[2].allow_failure,
+        "updated_at"            => json_format_time_with_ms(jobs[2].updated_at),
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -485,6 +491,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[3].allow_failure,
+        "updated_at"            => json_format_time_with_ms(jobs[3].updated_at),
         "build"                 => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -566,6 +573,7 @@ describe "jobs private repository, private API, authenticated as user with push 
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
         "allow_failure"    => jobs[0].allow_failure,
+        "updated_at"       => json_format_time_with_ms(jobs[0].updated_at),
         "build"            => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
@@ -627,6 +635,7 @@ describe "jobs private repository, private API, authenticated as user with push 
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
         "allow_failure"    => jobs[1].allow_failure,
+        "updated_at"       => json_format_time_with_ms(jobs[1].updated_at),
         "build"            => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
@@ -688,6 +697,7 @@ describe "jobs private repository, private API, authenticated as user with push 
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
         "allow_failure"    => jobs[2].allow_failure,
+        "updated_at"       => json_format_time_with_ms(jobs[2].updated_at),
         "build"            => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
@@ -749,6 +759,7 @@ describe "jobs private repository, private API, authenticated as user with push 
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
         "allow_failure"    => jobs[3].allow_failure,
+        "updated_at"       => json_format_time_with_ms(jobs[3].updated_at),
         "build"            => {
           "@type"          => "build",
           "@href"          => "/v3/build/#{build.id}",
