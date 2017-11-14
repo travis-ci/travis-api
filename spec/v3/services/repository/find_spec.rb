@@ -87,6 +87,9 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "@representation"  => "minimal",
         "name"             => "master"},
       "starred"            => false,
+      "last_build_number" => repo.last_build_number,
+      "last_build_started_at" => repo.last_build_started_at.iso8601,
+      "last_build_finished_at" => repo.last_build_finished_at.iso8601,
     })}
   end
 
@@ -326,8 +329,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   end
 
   describe "including non-existing field" do
-    before { get("/v3/repo/#{repo.id}?include=repository.owner,repository.last_build_number") }
-    include_examples '400 wrong params', 'no field "repository.last_build_number" to include'
+    before { get("/v3/repo/#{repo.id}?include=repository.owner,repository.last_build_state") }
+    include_examples '400 wrong params', 'no field "repository.last_build_state" to include'
   end
 
   describe "wrong include format" do

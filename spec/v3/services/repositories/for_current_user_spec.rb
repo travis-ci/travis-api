@@ -67,6 +67,9 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "@representation"  => "minimal",
           "name"             => "master"},
         "starred"            => false,
+        "last_build_number"  => repo.last_build_number,
+        "last_build_started_at"=>repo.last_build_started_at.iso8601,
+        "last_build_finished_at"=>repo.last_build_finished_at.iso8601
         }]
     }}
   end
