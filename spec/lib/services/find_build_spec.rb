@@ -32,7 +32,11 @@ describe Travis::Services::FindBuild do
 
   describe 'with newer associated record' do
     it 'returns updated_at of newest result' do
+      # we're using triggers to automatically set updated_at
+      # so if we want to force a give updated at we need to disable the trigger
+      ActiveRecord::Base.connection.execute("ALTER TABLE jobs DISABLE TRIGGER set_updated_at_on_jobs;")
       build.update_attribute(:updated_at, 5.minutes.ago)
+      ActiveRecord::Base.connection.execute("ALTER TABLE jobs ENABLE TRIGGER set_updated_at_on_jobs;")
       build.reload.updated_at.should < build.matrix.first.updated_at
       service.updated_at.to_s.should == build.matrix.first.updated_at.to_s
     end

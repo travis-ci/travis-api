@@ -37,7 +37,7 @@ describe Travis::Services::FindJob do
 
   describe 'updated_at' do
     it 'returns jobs updated_at attribute' do
-      service.updated_at.to_s.should == job.updated_at.to_s
+      service.updated_at.to_s.should == job.reload.updated_at.to_s
     end
   end
 
