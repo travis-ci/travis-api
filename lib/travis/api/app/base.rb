@@ -39,10 +39,17 @@ class Travis::Api::App
       # Being token based makes us invulnerable to common
       # CSRF attack.
       #
-      # Logging is set up by custom middleware
-      disable  :protection, :logging, :setup
+      
+      disable  :protection, :setup
       enable   :raise_errors
-      disable  :dump_errors
+      
+      # Logging is set up by custom middleware in hosted, but in Enterprise we need to dump them
+      if Travis.config.enterprise
+        enable   :logging, :dump_errors
+      else
+        disable  :logging, :dump_errors
+      end 
+      
       register :subclass_tracker, :expose_pattern
       helpers  :respond_with, :mime_types
     end
