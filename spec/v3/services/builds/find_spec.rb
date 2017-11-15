@@ -13,6 +13,8 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     deploy = build.stages.create(number: 2, name: 'deploy')
     build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
     build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+    build.reload
+    build.jobs.each(&:reload)
   end
 
   describe "fetching builds on a public repository by slug" do
