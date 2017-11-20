@@ -18,6 +18,8 @@ module Travis::API::V3
       primary_key: [:id,  :default_branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
+    alias last_started_build current_build
+
     after_initialize do
       update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
     end
