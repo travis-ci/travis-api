@@ -56,6 +56,7 @@ module Travis::API::V3
       resource :log do
         route '/log'
         get   :find
+        get   :find, '.txt'
         delete :delete
       end
 

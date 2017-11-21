@@ -17,6 +17,9 @@ module Travis::API::V3
       ::Metriks.meter("api.v3.total_requests").mark
 
       return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
+
+      process_txt_extension!(env)
+
       metrics         = @metrics_processor.create
       access_control  = AccessControl.new(env)
       env_params      = params(env)
@@ -69,6 +72,14 @@ module Travis::API::V3
       allowed_content_types = [default_content_type, 'text/plain'.freeze]
       content_type = env.fetch('HTTP_ACCEPT'.freeze, default_content_type)
       allowed_content_types.find{ |d| d == content_type} || default_content_type
+    end
+
+    def process_txt_extension!(env)
+      if env['PATH_INFO'] =~ /.txt$/
+        # if the URL ends with .txt we want to overwrite whatever is in Accept
+        # header as usually it's because the URL is opened in the browser
+        env['HTTP_ACCEPT'] = 'text/plain'.freeze
+      end
     end
 
     def params(env)
