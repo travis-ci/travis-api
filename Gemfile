@@ -47,7 +47,7 @@ gem 'rake', '~> 0.9.2'
 
 gem 'skylight'
 gem 'appsignal'
-gem 'libhoney', git: 'https://github.com/honeycombio/libhoney-rb'
+gem 'libhoney'
 
 gem 'faraday'
 gem 'faraday_middleware'
@@ -62,6 +62,7 @@ group :test do
   gem 'database_cleaner', '~> 0.8.0'
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'
+  gem 'hashdiff'
 end
 
 group :development do

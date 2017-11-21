@@ -17,18 +17,18 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
   describe "try deleting a cron job without login" do
     before     { delete("/v3/cron/#{cron.id}") }
     example    { expect(Travis::API::V3::Models::Cron.where(id: cron.id)).to exist }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "login_required",
       "error_message" => "login required"
-    }}
+    })}
   end
 
   describe "try deleting a cron job with a user without permissions" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
     before     { delete("/v3/cron/#{cron.id}", {}, headers) }
     example    { expect(Travis::API::V3::Models::Cron.where(id: cron.id)).to exist }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
         "@type"               => "error",
         "error_type"          => "insufficient_access",
         "error_message"       => "operation requires delete access to cron",
@@ -39,18 +39,18 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
             "@href"           => "/v3/cron/#{cron.id}",
             "@representation" => "minimal",
             "id"              => cron.id }
-    }}
+    })}
   end
 
   describe "try deleting a non-existing cron job" do
     before  { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
     before  { delete("/v3/cron/999999999999999", {}, headers) }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "not_found",
       "error_message" => "cron not found (or insufficient access)",
       "resource_type" => "cron"
-    }}
+    })}
   end
 
 end

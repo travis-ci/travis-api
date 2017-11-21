@@ -20,6 +20,11 @@ module Travis::API::V3
       warn(message, warning_type: :ignored_parameter, parameter: param, **info)
     end
 
+    def deprecated_param(param, reason: nil, **info)
+      message = reason ? "#{param} will soon be deprecated. Please use #{reason} instead" : "query paramater #{param} deprecated"
+      warn(message, warning_type: :deprecated_parameter, parameter: param, **info)
+    end
+
     def render(params, env)
       href    = self.href
       href    = V3.location(env) if href.nil? and env['REQUEST_METHOD'.freeze] == 'GET'.freeze

@@ -6,13 +6,6 @@ GIT
       metriks (>= 0.9.9.6)
 
 GIT
-  remote: https://github.com/honeycombio/libhoney-rb
-  revision: 87347222248a3b4497b3e3d8785cc110a3d471fd
-  specs:
-    libhoney (1.0.4)
-      http (~> 2.0)
-
-GIT
   remote: https://github.com/rkh/yard-sinatra
   revision: 00774d355123617ff0faa7e0ebd54c4cdcfcdf93
   specs:
@@ -95,7 +88,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-yaml
-  revision: 032caed23af8ed1ed55e9204bb91316f3ada2f74
+  revision: da2c9860299fa63769ac1ee120abeb9e83615555
   specs:
     travis-yaml (0.2.0)
 
@@ -144,8 +137,8 @@ GEM
     activesupport (3.2.22.5)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    addressable (2.5.1)
-      public_suffix (~> 2.0, >= 2.0.2)
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
     appsignal (2.2.1)
       rack
       thread_safe
@@ -251,6 +244,8 @@ GEM
     kgio (2.10.0)
     knapsack (1.14.0)
       rake
+    libhoney (1.3.2)
+      http (~> 2.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -288,7 +283,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    public_suffix (2.0.5)
+    public_suffix (3.0.0)
     pusher (0.14.6)
       httpclient (~> 2.5)
       multi_json (~> 1.0)
@@ -410,9 +405,10 @@ DEPENDENCIES
   faraday_middleware
   foreman
   gh!
+  hashdiff
   jemalloc
   knapsack
-  libhoney!
+  libhoney
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
   mime-types

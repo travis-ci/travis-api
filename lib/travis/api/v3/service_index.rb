@@ -106,9 +106,9 @@ module Travis::API::V3
           list    = resources[resource.display_identifier][:actions][service] ||= []
           pattern = sub_route ? resource.route + sub_route : resource.route
           factory = Services[resource.identifier][service]
+          query   = Queries[resource.display_identifier, false]
 
           if factory.params and factory.params.include? "sort_by".freeze
-            query = Queries[resource.display_identifier]
             if query and query.sortable?
               resources[resource.display_identifier][:sortable_by]  = query.sort_by.keys - query.experimental_sortable_by
               resources[resource.display_identifier][:default_sort] = query.default_sort unless query.default_sort.empty?
@@ -117,7 +117,12 @@ module Travis::API::V3
 
           pattern.to_templates.each do |template|
             params    = factory.params if request_method == 'GET'.freeze
-            params  &&= params.reject { |p| p.start_with? ?@.freeze }
+            params  &&= params.reject { |p| p.start_with?(?@.freeze) }
+
+            if query
+              params &&= params.reject { |p| query.get_experimental_params.include?(p) }
+            end
+
             template += "{?#{params.sort.join(?,)}}" if params and params.any?
             action    = {
               :@type => :template,

@@ -38,7 +38,6 @@ class Request < Travis::Model
   belongs_to :pull_request
   belongs_to :repository
   belongs_to :owner, polymorphic: true
-  belongs_to :repository
   has_many   :builds
   has_many   :events, as: :source
 

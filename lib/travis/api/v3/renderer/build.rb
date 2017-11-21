@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Renderer::Build < ModelRenderer
     representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at)
-    representation(:standard, *representations[:minimal], :repository, :branch, :tag, :commit, :jobs, :stages, :created_by)
+    representation(:standard, *representations[:minimal], :repository, :branch, :tag, :commit, :jobs, :stages, :created_by, :updated_at)
     representation(:active, *representations[:standard])
 
     hidden_representations(:active)
@@ -25,6 +25,10 @@ module Travis::API::V3
         payload['avatar_url'] = V3::Renderer::AvatarURL.avatar_url(creator) if include?('created_by.avatar_url')
         payload
       end
+    end
+
+    def updated_at
+      json_format_time_with_ms(model.updated_at)
     end
 
     private def created_by_href(creator)
