@@ -3,6 +3,7 @@ module Travis::API::V3
     representation(:minimal,  :id, :name, :slug)
     representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred)
     representation(:experimental, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build)
+    representation(:additional, :recent_builds)
 
     hidden_representations(:experimental)
 
@@ -56,6 +57,14 @@ module Travis::API::V3
 
     def owner_type
       @owner_type ||= model.owner_type.downcase if model.owner_type
+    end
+
+    def recent_builds
+      return model.builds.first(10) if include_recent_builds?
+    end
+
+    def include_recent_builds?
+      return true if include? 'repository.recent_builds'.freeze
     end
   end
 end
