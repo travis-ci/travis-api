@@ -65,7 +65,7 @@ FactoryGirl.define do
   factory :enginex, :parent => :repository do
     name 'enginex'
     owner_name 'josevalim'
-    owner_email 'josevalim@email.com'
+    owner_email 'josevalim@email.example.com'
     owner { User.find_by_login('josevalim') || Factory(:user, :login => 'josevalim') }
   end
 

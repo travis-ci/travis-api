@@ -78,9 +78,9 @@ module Scenario
               :ref => 'refs/heads/master',
               :message => 'Update Capybara',
               :author_name => 'Jose Valim',
-              :author_email => 'jose@email.com',
+              :author_email => 'jose@email.example.com',
               :committer_name => 'Jose Valim',
-              :committer_email => 'jose@email.com',
+              :committer_email => 'jose@email.example.com',
               :committed_at => '2010-11-11 11:55:00',
             },
             :jobs => [

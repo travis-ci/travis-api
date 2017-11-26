@@ -204,7 +204,7 @@ PAYLOADS[:github] = {
     "user_info" => {
       "name" => "John",
       "nickname" => "john",
-      "email" => "john@email.com"
+      "email" => "john@email.example.com"
     },
     "credentials" => {
       "token" => "1234567890abcdefg"
@@ -216,7 +216,7 @@ PAYLOADS[:github] = {
     "user_info" => {
       "name" => "Johnathan",
       "nickname" => "johnathan",
-      "email" => "johnathan@email.com"
+      "email" => "johnathan@email.example.com"
     },
     "credentials" => {
       "token" => "1234567890abcdefg"
