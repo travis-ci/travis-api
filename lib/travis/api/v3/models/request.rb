@@ -13,7 +13,7 @@ module Travis::API::V3
     end
 
     def payload
-      puts "[deprectated] Reading request.payload. Called from #{caller[0]}" # unless caller[0] =~ /(dirty.rb|request.rb|_spec.rb)/
+      puts "[deprecated] Reading request.payload. Called from #{caller[0]}" # unless caller[0] =~ /(dirty.rb|request.rb|_spec.rb)/
       super
     end
   end
