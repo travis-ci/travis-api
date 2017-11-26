@@ -336,7 +336,7 @@ describe 'Jobs', set_app: true do
         response.status.should == 400
       end
 
-      context 'when enqueueing for the Hub' do
+      context 'when enqueuing for the Hub' do
         before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
 
         it 'responds with 400' do
