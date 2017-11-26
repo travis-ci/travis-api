@@ -69,7 +69,7 @@ module Scenario
       build :repository => enginex,
             :owner => enginex.owner,
             :number => 1,
-            :state  => 'failes',
+            :state  => 'fails',
             :started_at => '2010-11-11 12:00:00',
             :finished_at => '2010-11-11 12:00:05',
             :commit => {
