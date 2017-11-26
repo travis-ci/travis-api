@@ -28,7 +28,7 @@
 #     # TODO @flippingbits, could you look into this?
 #     xit 'appends a message to the log' do
 #       job.force_finish
-#       job.reload.log.content.should == "some log.\n#{Job::Requeueing::FORCE_FINISH_MESSAGE}"
+#       job.reload.log.content.should == "some log.\n#{Job::Requeuing::FORCE_FINISH_MESSAGE}"
 #     end
 #
 #     it 'finishes the job' do
