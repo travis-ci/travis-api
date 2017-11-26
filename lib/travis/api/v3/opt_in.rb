@@ -39,7 +39,7 @@ module Travis::API::V3
     end
 
     def redirect(env)
-      [307, {'Location'.freeze => env['SCRIPT_NAME'.freeze] + prefix + ?/.freeze, 'Conent-Type'.freeze => 'text/plain'.freeze}, []]
+      [307, {'Location'.freeze => env['SCRIPT_NAME'.freeze] + prefix + ?/.freeze, 'Content-Type'.freeze => 'text/plain'.freeze}, []]
     end
 
     def cascade?(status, headers, body)
