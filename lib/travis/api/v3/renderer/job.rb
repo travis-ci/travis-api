@@ -6,7 +6,7 @@ module Travis::API::V3
     representation(:standard, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :updated_at)
     representation(:active, *representations[:standard])
 
-    # TODO: I don't want to config be visible in the regular represantation
+    # TODO: I don't want to config be visible in the regular representation
     # as I want it to be visible only after adding include=job.config
     # we probably need to have a better way of doing this
     representation(:with_config, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :config)
