@@ -71,6 +71,6 @@ describe Travis::API::V3::Services::Repository::Unstar, set_app: true do
   end
 
   describe "existing repository, push access"
-  #  this requires stubing a github request, which is difficult, so has been omitted for now
+  #  this requires stubbing a github request, which is difficult, so has been omitted for now
 
 end
