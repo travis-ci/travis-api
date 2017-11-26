@@ -43,7 +43,7 @@ class Repository < Travis::Model
       where(arel_table[:last_build_id].not_eq(nil))
     end
 
-    def administratable
+    def administrable
       includes(:permissions).where('permissions.admin = ?', true)
     end
 
