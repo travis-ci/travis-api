@@ -128,7 +128,7 @@ describe Request do
 
     describe 'returns false if repo data is not available' do
       let(:pull_request) { PullRequest.new }
-      it { request.same_repo_pull_request?.should be_falsy }
+      it { request.same_repo_pull_request?.should be_falsey }
     end
   end
 end

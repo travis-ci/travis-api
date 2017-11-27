@@ -21,7 +21,7 @@ module Travis::API::V3
     end
 
     def deprecated_param(param, reason: nil, **info)
-      message = reason ? "#{param} will soon be deprecated. Please use #{reason} instead" : "query paramater #{param} deprecated"
+      message = reason ? "#{param} will soon be deprecated. Please use #{reason} instead" : "query parameter #{param} deprecated"
       warn(message, warning_type: :deprecated_parameter, parameter: param, **info)
     end
 

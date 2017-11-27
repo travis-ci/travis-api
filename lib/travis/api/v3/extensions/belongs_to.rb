@@ -15,7 +15,7 @@ module Travis::API::V3
     #
     # ActiveRecord does not support this out of the box. We accomplish this feature by tracking polymorphic relations
     # and then adding the namespace when calling ActiveRecord::Base#[] with the foreign type key and removing it again
-    # in ActiveRecord::Base#[]=, so we don't break other code by accidentially writing the prefixed version to the
+    # in ActiveRecord::Base#[]=, so we don't break other code by accidentally writing the prefixed version to the
     # database.
     module BelongsTo
       class BaseClass

@@ -568,7 +568,7 @@ GITHUB_PAYLOADS = {
     "info" => {
       "name" => "John",
       "nickname" => "john",
-      "email" => "john@email.com"
+      "email" => "john@email.example.com"
     },
     "credentials" => {
       "token" => "1234567890abcdefg"
@@ -583,7 +583,7 @@ GITHUB_PAYLOADS = {
 
 GITHUB_OAUTH_DATA = {
   'name'               => 'John',
-  'email'              => 'john@email.com',
+  'email'              => 'john@email.example.com',
   'login'              => 'john',
   'github_id'          => 234423,
   'github_oauth_token' => '1234567890abcdefg',

@@ -68,7 +68,7 @@ class User < Travis::Model
   def service_hooks(options = {})
     hooks = repositories
     unless options[:all]
-      hooks = hooks.administratable
+      hooks = hooks.administrable
     end
     hooks = hooks.includes(:permissions).
               select('repositories.*, permissions.admin as admin, permissions.push as push')
