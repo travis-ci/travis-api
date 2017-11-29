@@ -205,6 +205,7 @@ class Job < Travis::Model
     end
 
     def process_env(env)
+      env = env.to_s if env.is_a?(Float)
       env = [env] unless env.is_a?(Array)
       env = normalize_env(env)
       env = if secure_env_enabled?
