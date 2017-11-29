@@ -17,6 +17,7 @@ module Travis
 
     def decrypt(config)
       return config if config.is_a?(String)
+      return config if config.is_a?(Float)
 
       config.inject(config.class.new) do |result, element|
         key, element = element if result.is_a?(Hash)
