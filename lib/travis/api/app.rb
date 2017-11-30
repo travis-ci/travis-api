@@ -119,6 +119,16 @@ module Travis::Api
           end
         end
 
+        if ENV['ZIPKIN_ENABLED'] == 'true'
+          use ZipkinTracer::RackHandler, {
+            service_name: 'api',
+            service_port: 443,
+            sample_rate: 1,
+            json_api_host: ENV['ZIPKIN_HOST'],
+            whitelist_plugin: lambda { |env| env['HTTP_TRACE'] == 'true' },
+          }
+        end
+
         if Travis::Honeycomb.api_requests.enabled?
           use Travis::Api::App::Middleware::Honeycomb
         end

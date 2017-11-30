@@ -48,6 +48,7 @@ gem 'rake', '~> 0.9.2'
 gem 'skylight'
 gem 'appsignal'
 gem 'libhoney'
+gem 'zipkin-tracer'
 
 gem 'faraday'
 gem 'faraday_middleware'
