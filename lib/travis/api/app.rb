@@ -123,7 +123,7 @@ module Travis::Api
           use ZipkinTracer::RackHandler, {
             service_name: 'api',
             service_port: 443,
-            sample_rate: 1,
+            sample_rate: 0,
             json_api_host: ENV['ZIPKIN_HOST'],
             whitelist_plugin: lambda { |env| env['HTTP_TRACE'] == 'true' },
           }
