@@ -125,7 +125,7 @@ module Travis::Api
             service_name: 'api',
             service_port: 443,
             sample_rate: 0,
-            json_api_host: ENV['ZIPKIN_HOST'],
+            json_api_host: ENV['ZIPKIN_URL'],
             whitelist_plugin: lambda { |env| env['HTTP_TRACE'] == 'true' },
           }
         end
