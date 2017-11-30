@@ -29,6 +29,7 @@ require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'securerandom'
 require 'fog/aws'
+require 'zipkin-tracer'
 
 module Travis::Api
 end
