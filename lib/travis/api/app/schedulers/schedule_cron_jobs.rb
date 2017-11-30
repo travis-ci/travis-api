@@ -32,12 +32,10 @@ class Travis::Api::App
         scheduled = Travis::API::V3::Models::Cron.scheduled
         count = scheduled.count
 
-        if Travis.config.enterprise
-          Travis.logger.debug "Found #{count} cron jobs to enqueue"
-        else
+        if count > 0 || !Travis.config.enterprise
           Travis.logger.info "Found #{count} cron jobs to enqueue"
         end
-        
+
         Metriks.gauge("api.v3.cron_scheduler.upcoming_jobs").set(count)
 
         scheduled.each do |cron|
