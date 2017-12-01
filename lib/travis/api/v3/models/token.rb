@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Models::Token < Model
     belongs_to        :user
-    validate          :token, presence: true
+    validates         :token, presence: true
     serialize         :token, Travis::Settings::EncryptedColumn.new(disable: true)
     before_validation :generate_token, on: :create
 
