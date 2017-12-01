@@ -9,7 +9,6 @@ class Travis::Api::App
     require 'travis/api/app/middleware/rewrite'
     require 'travis/api/app/middleware/request_id'
     require 'travis/api/app/middleware/scope_check'
-    require 'travis/api/app/middleware/skylight'
     require 'travis/api/app/middleware/honeycomb'
     require 'travis/api/app/middleware/user_agent_tracker'
   end
