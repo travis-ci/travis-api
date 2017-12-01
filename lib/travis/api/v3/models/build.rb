@@ -17,9 +17,8 @@ module Travis::API::V3
       class_name:  'Travis::API::V3::Models::Job'.freeze
 
     has_many :active_jobs,
-      -> { order('id') },
+      -> { where("jobs.state IN ('received', 'queued', 'started')".freeze).order('id') },
       foreign_key: :source_id,
-      conditions:  "jobs.state IN ('received', 'queued', 'started')".freeze,
       class_name:  'Travis::API::V3::Models::Job'.freeze
 
     has_one :branch,
