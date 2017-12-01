@@ -8,6 +8,7 @@ require 'travis/amqp'
 require 'travis/model'
 require 'travis/states_cache'
 require 'travis/honeycomb'
+require 'travis/zipkin'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib/config'
@@ -29,7 +30,6 @@ require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'securerandom'
 require 'fog/aws'
-require 'zipkin-tracer'
 
 module Travis::Api
 end
@@ -121,12 +121,15 @@ module Travis::Api
         end
 
         if ENV['ZIPKIN_ENABLED'] == 'true'
+          Travis::Zipkin.setup
+
           use ZipkinTracer::RackHandler, {
             service_name: 'api',
             service_port: 443,
             sample_rate: 0,
             json_api_host: ENV['ZIPKIN_URL'],
             whitelist_plugin: lambda { |env| env['HTTP_TRACE'] == 'true' },
+            sampled_as_boolean: false,
           }
         end
 
