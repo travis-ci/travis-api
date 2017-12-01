@@ -59,7 +59,7 @@ group :test do
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
-  gem 'database_cleaner', '~> 0.8.0'
+  gem 'database_cleaner', '~> 1.2.0'
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'
   gem 'hashdiff'
