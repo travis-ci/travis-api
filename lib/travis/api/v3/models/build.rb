@@ -11,8 +11,8 @@ module Travis::API::V3
     has_many :stages
 
     has_many :jobs,
+      -> { order('id') },
       foreign_key: :source_id,
-      order:       :id,
       dependent:   :destroy,
       class_name:  'Travis::API::V3::Models::Job'.freeze
 
