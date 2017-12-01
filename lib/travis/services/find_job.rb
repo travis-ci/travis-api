@@ -6,7 +6,7 @@ module Travis
       register :find_job
 
       def run
-        preload(result) if result
+        result
       end
 
       def final?
@@ -32,14 +32,9 @@ module Travis
           columns = scope(:job).column_names
           columns -= %w(config) if params[:exclude_config]
           columns = columns.map { |c| %Q{"jobs"."#{c}"} }
-          scope(:job).select(columns).find_by_id(params[:id]).tap do |res|
+          scope(:job).includes(:commit).select(columns).find_by_id(params[:id]).tap do |res|
             res.config = {} if params[:exclude_config]
           end
-        end
-
-        def preload(job)
-          ActiveRecord::Associations::Preloader.new(job, :commit).run
-          job
         end
     end
   end
