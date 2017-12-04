@@ -36,9 +36,6 @@ module Travis::API::V3
         access_control: access_control,
         meta_data:      meta_data,
         accept:         env.fetch('HTTP_ACCEPT'.freeze, 'application/json'.freeze))
-    rescue => e
-      puts e.message, e.backtrace
-      raise
     end
 
     def add_info(payload)
