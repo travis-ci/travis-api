@@ -6,7 +6,7 @@ module Travis
       register :find_jobs
 
       def run
-        preload(result)
+        result
       end
 
       private
@@ -29,13 +29,7 @@ module Travis
             jobs = jobs.where(queue: params[:queue]) if params[:queue]
             jobs
           end
-          jobs.limit(250)
-        end
-
-        def preload(jobs)
-          jobs = jobs.includes(:commit)
-          ActiveRecord::Associations::Preloader.new(jobs, :repository, :select => [:id, :owner_name, :name]).run
-          jobs
+          jobs.includes(:commit).limit(250)
         end
     end
   end
