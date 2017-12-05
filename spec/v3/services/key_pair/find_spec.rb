@@ -40,7 +40,7 @@ describe Travis::API::V3::Services::KeyPair::Find, set_app: true do
       describe 'existing repo, existing key pair' do
         before do
           Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-          repo.update_attributes(settings: JSON.generate(ssh_key: key_pair))
+          repo.update_attributes(settings: { ssh_key: key_pair })
           get("/v3/repo/#{repo.id}/key_pair", {}, auth_headers)
         end
 

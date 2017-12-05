@@ -19,7 +19,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
   describe 'authenticated, existing repo, wrong permissions' do
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-      repo.update_attributes(settings: JSON.generate(env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }]))
+      repo.update_attributes(settings: { env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }] })
       post("/v3/repo/#{repo.id}/env_vars", JSON.generate({}), auth_headers.merge(json_headers))
     end
 
@@ -54,7 +54,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
 
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
-      repo.update_attributes(settings: JSON.generate(env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }]))
+      repo.update_attributes(settings: { env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }] })
       post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers))
     end
 

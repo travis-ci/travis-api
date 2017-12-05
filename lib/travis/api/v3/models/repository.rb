@@ -68,7 +68,7 @@ module Travis::API::V3
     end
 
     def settings
-      JSON.load(super || '{}'.freeze)
+      super || {}
     end
 
     def user_settings
