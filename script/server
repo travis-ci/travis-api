@@ -22,5 +22,9 @@ fi
 
 cmd="unicorn config.ru -E $RACK_ENV -c config/unicorn.rb"
 [[ $RACK_ENV == "development" ]] && cmd="rerun -b -- $cmd"
-cmd="bin/start-nginx $bexec je $cmd"
+if [[ $BACKPLANE == "true" ]]; then
+  cmd="$bexec je $cmd"
+else
+  cmd="bin/start-nginx $bexec je $cmd"
+fi
 exec $cmd
