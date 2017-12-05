@@ -202,7 +202,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
         "client_email" => "travis-cache-org-api-production",
         "client_id" => "1234",
         "auth_uri" => "https://accounts.google.com/o/oauth2/auth",
-        "token_uri" => "https://accounts.google.com/oauth2/v3/token",
+        "token_uri" => "https://accounts.google.com/oauth2/v4/token",
         "auth_provider_x509_cert_url" => "https://www.googleapis.com/oauth2/v1/certs",
         "client_x509_cert_url" => "travis-cache-org-api-production"
       }),
@@ -216,7 +216,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
         to_return(:status => 200, :body => xml_content, :headers => {})
 
-        stub_request(:post, "https://www.googleapis.com/oauth2/v3/token").
+        stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
         to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
 
         stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=#{repo.id}/").
@@ -240,7 +240,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}/").
         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
-      stub_request(:post, "https://www.googleapis.com/oauth2/v3/token").
+      stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
         to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
 
       stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=#{repo.id}/#{result[0]["branch"]}/").
@@ -263,7 +263,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
       stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
         to_return(:status => 200, :body => empty_xml_content, :headers => {})
 
-      stub_request(:post, "https://www.googleapis.com/oauth2/v3/token").
+      stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
         to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
 
       stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/").
