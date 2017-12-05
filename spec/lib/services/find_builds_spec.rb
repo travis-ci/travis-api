@@ -25,9 +25,13 @@ describe Travis::Services::FindBuilds do
       service.run.should == [push]
     end
 
-    it 'finds builds older than the given number' do
-      @params = { :repository_id => repo.id, :after_number => 2 }
-      service.run.should == [push]
+    it 'finds builds later than the given number' do
+      a =  Factory(:build, repository: repo, event_type: 'push', state: :failed, number: 2)
+      b =  Factory(:build, repository: repo, event_type: 'push', state: :failed, number: 3)
+      c =  Factory(:build, repository: repo, event_type: 'push', state: :failed, number: 4)
+
+      @params = { :repository_id => repo.id, :after_number => 3 }
+      service.run.should == [c]
     end
 
     it 'finds builds with a given number, scoped by repository' do

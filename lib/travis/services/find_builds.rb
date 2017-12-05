@@ -31,7 +31,7 @@ module Travis
             if params[:number]
               builds.where(:number => params[:number].to_s)
             else
-              builds.older_than(params[:after_number])
+              builds.later_than(params[:after_number])
             end
           elsif params[:running]
             scope(:build).running.limit(25)
