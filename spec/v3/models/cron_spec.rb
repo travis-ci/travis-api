@@ -1,3 +1,11 @@
+require 'spec_helper'
+
+RSpec::Matchers.define :eq_datetime do |*expected|
+  match do |actual|
+    actual.to_i == DateTime.new(*expected).to_i
+  end
+end
+
 describe Travis::API::V3::Models::Cron do
   let(:subject) { Factory(:cron, branch_id: Factory(:branch).id) }
 
@@ -29,19 +37,19 @@ describe Travis::API::V3::Models::Cron do
 
     it "for daily builds" do
       subject.schedule_next_build(from: DateTime.now)
-      subject.next_run.should be == DateTime.new(2016, 1, 1, 16)
+      expect(subject.next_run).to eq_datetime(2016, 1, 1, 16)
     end
 
     it "for weekly builds" do
       subject.interval = "weekly"
       subject.schedule_next_build(from: DateTime.now)
-      subject.next_run.should be == DateTime.new(2016, 1, 7, 16)
+      expect(subject.next_run).to eq_datetime(2016, 1, 7, 16)
     end
 
     it "for monthly builds" do
       subject.interval = "monthly"
       subject.schedule_next_build(from: DateTime.now)
-      subject.next_run.should be == DateTime.new(2016, 1, 31, 16)
+      expect(subject.next_run).to eq_datetime(2016, 1, 31, 16)
     end
   end
 
