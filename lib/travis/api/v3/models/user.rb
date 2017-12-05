@@ -12,6 +12,10 @@ module Travis::API::V3
 
     serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
 
+    def repository_ids
+      repositories.pluck(:id)
+    end
+
     def repositories
       Repository.where(owner_type: 'User', owner_id: id)
     end
