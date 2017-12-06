@@ -120,22 +120,6 @@ class Travis::Api::App
         end
       end
 
-      get "/:job_id/annotations" do
-        respond_with service(:find_annotations, params)
-      end
-
-      post "/:job_id/annotations" do
-        if params[:status] && params[:description]
-          annotation = service(:update_annotation, params).run
-
-          status annotation ? 204 : 401
-        else
-          status 422
-
-          { "error" => "Must include status and description" }
-        end
-      end
-
       def archive_url(path)
         "https://s3.amazonaws.com/#{hostname('archive')}#{path}"
       end

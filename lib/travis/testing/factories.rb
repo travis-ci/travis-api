@@ -115,19 +115,6 @@ FactoryGirl.define do
     finished_at { Time.now.utc }
   end
 
-  factory :annotation do
-    url "https://travis-ci.org/travis-ci/travis-ci/jobs/12345"
-    description "Job passed"
-    job { Factory(:test) }
-    annotation_provider { Factory(:annotation_provider) }
-  end
-
-  factory :annotation_provider do
-    name "Travis CI"
-    api_username "travis-ci"
-    api_key "0123456789abcdef"
-  end
-
   factory :branch, class: Travis::API::V3::Models::Branch do
     name Random.rand(1..1000)
     repository_id { Factory(:repository).id }
@@ -150,4 +137,3 @@ FactoryGirl.define do
     dont_run_if_recent_build_exists false
   end
 end
-
