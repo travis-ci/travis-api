@@ -51,7 +51,7 @@ describe Job::Test do
       }.to change { build.canceled_at }
       }.to change { build.repository.reload.last_build_state }
 
-      build.reload.state.should == 'canceled'
+      build.reload.state.should == :canceled
       build.repository.last_build_state.should == 'canceled'
     end
 

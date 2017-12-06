@@ -61,7 +61,7 @@ describe Build do
         Factory(:build, state: 'failed')
         Factory(:build, state: 'created')
 
-        Build.recent.all.map(&:state).should == ['failed', 'passed']
+        Build.recent.all.map(&:state).should == [:failed, :passed]
       end
     end
 
@@ -71,7 +71,7 @@ describe Build do
         Factory(:build, state: 'started')
         Factory(:build, state: 'created')
 
-        Build.was_started.map(&:state).sort.should == ['passed', 'started']
+        Build.was_started.map(&:state).sort.should == [:passed, :started]
       end
     end
 
