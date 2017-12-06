@@ -43,7 +43,6 @@ module Travis
                   'finished_at' => format_date(job.finished_at),
                   'queue' => job.queue,
                   'allow_failure' => job.allow_failure,
-                  'annotation_ids' => job.annotation_ids
                 }.tap do |ret|
                   ret['log_id'] = job.log_id if include_log_id?
                 end

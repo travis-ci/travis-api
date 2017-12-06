@@ -132,13 +132,6 @@ describe Job::Test do
         log.expects(:clear!)
         job.reset!
       end
-
-      it 'destroys annotations' do
-        job.annotations << Factory(:annotation)
-        job.reload
-        job.reset!
-        job.reload.annotations.should be_empty
-      end
     end
   end
 end

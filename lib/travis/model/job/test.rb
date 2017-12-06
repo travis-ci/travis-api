@@ -51,7 +51,6 @@ class Job
       attrs = %w(started_at queued_at finished_at worker)
       attrs.each { |attr| write_attribute(attr, nil) }
       log.clear! if log
-      annotations.destroy_all
     end
 
     def cancel
