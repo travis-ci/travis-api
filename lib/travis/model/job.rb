@@ -103,7 +103,7 @@ class Job < Travis::Model
   end
 
   def state
-    super || 'created'
+    (super || :created).to_sym
   end
 
   def duration

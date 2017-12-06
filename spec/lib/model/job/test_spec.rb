@@ -105,7 +105,7 @@ describe Job::Test do
 
       it 'sets the state to the given result state' do
         job.finish(data)
-        job.state.should == 'passed'
+        job.state.should == :passed
       end
 
       it 'propagates the event to the source' do
@@ -119,7 +119,7 @@ describe Job::Test do
 
       it 'sets the state to :created' do
         job.reset!
-        job.reload.state.should == 'created'
+        job.reload.state.should == :created
       end
 
       it 'resets job attributes' do
