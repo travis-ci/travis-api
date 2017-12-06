@@ -3,6 +3,6 @@ describe Job do
     let(:job) { FactoryGirl.build(:job, state: nil) }
     subject { job.state }
 
-    it { should eq 'created' }
+    it { should eq :created }
   end
 end
