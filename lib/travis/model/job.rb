@@ -62,7 +62,6 @@ class Job < Travis::Model
   include Travis::Model::EnvHelpers
 
   has_many   :events, as: :source
-  has_many   :annotations, dependent: :destroy
 
   belongs_to :repository
   belongs_to :commit
