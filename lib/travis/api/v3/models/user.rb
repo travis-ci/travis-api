@@ -17,7 +17,7 @@ module Travis::API::V3
     end
 
     def repositories
-      Repository.where(owner_type: 'User', owner_id: id)
+      Models::Repository.where(owner_type: 'User', owner_id: id)
     end
 
     def token

@@ -5,7 +5,7 @@ module Travis::API::V3
     has_one  :subscription, as: :owner
 
     def repositories
-      Repository.where(owner_type: 'Organization', owner_id: id)
+      Models::Repository.where(owner_type: 'Organization', owner_id: id)
     end
 
     def subscription
