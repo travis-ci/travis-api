@@ -50,15 +50,15 @@ describe Repository do
       let(:minimal) { Factory(:repository) }
 
       it "should find a repository by it's github_id" do
-        Repository.by_params(github_id: minimal.github_id).should == minimal
+        Repository.by_params(github_id: minimal.github_id).to_a.first.should == minimal
       end
 
       it "should find a repository by it's id" do
-        Repository.by_params(id: minimal.id).id.should == minimal.id
+        Repository.by_params(id: minimal.id).to_a.first.id.should == minimal.id
       end
 
       it "should find a repository by it's name and owner_name" do
-        repo = Repository.by_params(name: minimal.name, owner_name: minimal.owner_name)
+        repo = Repository.by_params(name: minimal.name, owner_name: minimal.owner_name).to_a.first
         repo.owner_name.should == minimal.owner_name
         repo.name.should == minimal.name
       end
