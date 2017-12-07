@@ -1,6 +1,6 @@
 require 'travis/model'
 require 'travis/config/defaults'
-require 'active_support/core_ext/hash/deep_dup'
+require 'active_support/core_ext/object/deep_dup'
 require 'travis/model/build/config/language'
 
 # Job models a unit of work that is run on a remote worker.
@@ -102,7 +102,7 @@ class Job < Travis::Model
   end
 
   def state
-    super || 'created'
+    (super || :created).to_sym
   end
 
   def duration

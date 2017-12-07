@@ -1,6 +1,3 @@
-# these things need to go first
-require 'active_record_postgres_variables'
-
 # now actually load travis
 require 'travis'
 require 'travis/amqp'

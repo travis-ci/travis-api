@@ -51,7 +51,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
 
   describe 'authenticated, existing repo, repo has some settings' do
     before do
-      repo.update_attributes(settings: JSON.dump('build_pushes' => false))
+      repo.update_attributes(settings: { 'build_pushes' => false })
       get("/v3/repo/#{repo.id}/settings", {}, auth_headers)
     end
 
@@ -69,7 +69,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
           { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes", '@representation' => 'standard', 'name' => 'auto_cancel_pushes', 'value' => false },
           { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests", '@representation' => 'standard', 'name' => 'auto_cancel_pull_requests', 'value' => false },
         ]
-      )  
+      )
     end
   end
 end

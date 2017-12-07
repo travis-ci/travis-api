@@ -2,9 +2,9 @@ describe Repository do
   before { DatabaseCleaner.clean_with :truncation }
 
   describe '#last_completed_build' do
-    let(:repo)   { Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
-    let(:build1) { Factory(:build, finished_at: 1.hour.ago, state: :passed) }
-    let(:build2) { Factory(:build, finished_at: Time.now, state: :failed) }
+    let(:repo)   { Factory(:repository, name: 'foobarbaz') }
+    let(:build1) { Factory(:build, repository: repo, finished_at: 1.hour.ago, state: :passed) }
+    let(:build2) { Factory(:build, repository: repo, finished_at: Time.now, state: :failed) }
 
     before do
       build1.update_attributes(branch: 'master')

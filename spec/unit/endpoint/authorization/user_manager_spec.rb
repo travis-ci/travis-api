@@ -76,7 +76,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
     end
 
     context 'without existing user' do
-      let(:user)  { User.create(id: 1, login: 'drogus', github_id: 456) }
+      let(:user)  { User.create(login: 'drogus', github_id: 456) }
       let(:attrs) { { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false }.stringify_keys }
 
       before do

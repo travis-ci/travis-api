@@ -21,7 +21,7 @@ class Repository < Travis::Model
   has_many :permissions, dependent: :delete_all
   has_many :users, through: :permissions
 
-  has_one :last_build, class_name: 'Build', order: 'id DESC'
+  has_one :last_build, -> { order('id DESC') }, class_name: 'Build'
   has_one :key, class_name: 'SslKey'
   belongs_to :owner, polymorphic: true
 
@@ -78,9 +78,9 @@ class Repository < Travis::Model
 
     def find_by(params)
       if id = params[:repository_id] || params[:id]
-        find_by_id(id)
+        super(id: id)
       elsif params[:github_id]
-        find_by_github_id(params[:github_id])
+        super(github_id: params[:github_id])
       elsif params.key?(:slug)
         by_slug(params[:slug]).first
       elsif params.key?(:name) && params.key?(:owner_name)
