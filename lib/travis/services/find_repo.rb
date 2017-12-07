@@ -16,7 +16,7 @@ module Travis
       private
 
         def result
-          @result ||= scope(:repository).by_params(params)
+          @result ||= scope(:repository).by_params(params).first
         end
     end
   end
