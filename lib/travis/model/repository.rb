@@ -34,6 +34,18 @@ class Repository < Travis::Model
 
   delegate :public_key, to: :key
 
+  scope :by_params, ->(params) {
+    if id = params[:repository_id] || params[:id]
+      find_by(id: id)
+    elsif params[:github_id]
+      find_by(github_id: params[:github_id])
+    elsif params.key?(:slug)
+      by_slug(params[:slug]).first
+    elsif params.key?(:name) && params.key?(:owner_name)
+      by_slug("#{params[:owner_name]}/#{params[:name]}").first
+    end
+  }
+
   class << self
     def timeline
       active.order('last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC')
@@ -74,18 +86,6 @@ class Repository < Travis::Model
 
     def without_invalidated
       where(invalidated_at: nil)
-    end
-
-    def find_by(params)
-      if id = params[:repository_id] || params[:id]
-        super(id: id)
-      elsif params[:github_id]
-        super(github_id: params[:github_id])
-      elsif params.key?(:slug)
-        by_slug(params[:slug]).first
-      elsif params.key?(:name) && params.key?(:owner_name)
-        by_slug("#{params[:owner_name]}/#{params[:name]}").first
-      end
     end
 
     def by_name

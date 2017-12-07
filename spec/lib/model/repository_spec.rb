@@ -46,25 +46,25 @@ describe Repository do
   end
 
   describe 'class methods' do
-    describe 'find_by' do
+    describe 'by_params' do
       let(:minimal) { Factory(:repository) }
 
       it "should find a repository by it's github_id" do
-        Repository.find_by(github_id: minimal.github_id).should == minimal
+        Repository.by_params(github_id: minimal.github_id).should == minimal
       end
 
       it "should find a repository by it's id" do
-        Repository.find_by(id: minimal.id).id.should == minimal.id
+        Repository.by_params(id: minimal.id).id.should == minimal.id
       end
 
       it "should find a repository by it's name and owner_name" do
-        repo = Repository.find_by(name: minimal.name, owner_name: minimal.owner_name)
+        repo = Repository.by_params(name: minimal.name, owner_name: minimal.owner_name)
         repo.owner_name.should == minimal.owner_name
         repo.name.should == minimal.name
       end
 
       it "returns nil when a repository couldn't be found using params" do
-        Repository.find_by(name: 'emptiness').should be_nil
+        Repository.by_params(name: 'emptiness').to_a.should == []
       end
     end
 
