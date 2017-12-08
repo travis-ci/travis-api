@@ -39,9 +39,19 @@ module Travis::API::V3
         query = ActiveRecord::Base.sanitize(query)
 
         list = list.where(["(lower(branches.name)) LIKE ?", sql_phrase])
+        list = list.select("branches.*, similarity(lower(branches.name), #{query}) as name_filter")
       end
 
-      list
+      sort list
+    end
+
+    def sort(*args)
+      if params['sort_by']
+        sort_by_list = list(params['sort_by'])
+        name_filter_condition = lambda { |sort_by| sort_by =~ /^name_filter/ }
+      end
+
+      super(*args)
     end
   end
 end
