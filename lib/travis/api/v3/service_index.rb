@@ -136,13 +136,13 @@ module Travis::API::V3
         end
       end
 
-      {
+      set_to_a({
         :@type     => :home,
         :@href     => "#{prefix}/",
         :config    => config,
         :errors    => errors,
         :resources => resources
-      }
+      })
     end
 
     def render_json_home
@@ -186,11 +186,24 @@ module Travis::API::V3
         }]
       end
 
-      { resources: Hash[resources] }
+      set_to_a({ resources: Hash[resources] })
     end
 
     def json_home?(env)
       env['HTTP_ACCEPT'.freeze] == 'application/json-home'.freeze
+    end
+
+    def set_to_a(data)
+      case data
+      when Hash
+        data.map { |k,v| [set_to_a(k), set_to_a(v)] }.to_h
+      when Array
+        data.map { |v| set_to_a(v) }
+      when Set
+        data.map { |v| set_to_a(v) }.to_a
+      else
+        data
+      end
     end
   end
 end
