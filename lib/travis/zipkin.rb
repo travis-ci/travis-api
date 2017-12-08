@@ -9,7 +9,7 @@ module Travis
   class Zipkin
     class SqlListener
       def start(name, id, payload)
-        return unless Trace.tracer
+        return unless Trace.tracer && ZipkinTracer::TraceContainer.current
 
         trace_id = ZipkinTracer::TraceGenerator.new.next_trace_id
         span = Trace.tracer.start_span(trace_id, 'sql')
@@ -25,7 +25,7 @@ module Travis
       end
 
       def finish(name, id, payload)
-        return unless Trace.tracer
+        return unless Trace.tracer && ZipkinTracer::TraceContainer.current
 
         span_stack = Thread.current[:_zipkin_span_stack]
         span = span_stack.pop
