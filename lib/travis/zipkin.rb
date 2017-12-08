@@ -17,7 +17,9 @@ module Travis
         span.record payload[:name]
         span.record_tag('sql', payload[:sql], Trace::BinaryAnnotation::Type::STRING)
         span.record_tag('binds', payload[:binds].to_json, Trace::BinaryAnnotation::Type::STRING)
-        span.record_tag('cached', payload[:cached].to_json, Trace::BinaryAnnotation::Type::BOOL)
+        if payload[:cached]
+          span.record_tag('cached', 'true', Trace::BinaryAnnotation::Type::BOOL)
+        end
         span.record(Trace::Annotation::CLIENT_SEND)
 
         span_stack = Thread.current[:_zipkin_span_stack] ||= []
