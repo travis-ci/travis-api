@@ -1,7 +1,3 @@
-# these things need to go first
-require 'conditional_skylight'
-require 'active_record_postgres_variables'
-
 # now actually load travis
 require 'travis'
 require 'travis/amqp'
@@ -36,10 +32,8 @@ end
 
 require 'travis/api/app/endpoint'
 require 'travis/api/app/middleware'
-require 'travis/api/instruments'
 require 'travis/api/serialize/v2'
 require 'travis/api/v3'
-require 'travis/api/app/stack_instrumentation'
 require 'travis/api/app/error_handling'
 require 'travis/api/sidekiq'
 
@@ -110,9 +104,6 @@ module Travis::Api
 
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
-
-        extend StackInstrumentation
-        use Travis::Api::App::Middleware::Skylight
 
         use Rack::Config do |env|
           if env['HTTP_HONEYCOMB_OVERRIDE'] == 'true'

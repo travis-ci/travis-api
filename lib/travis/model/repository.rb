@@ -21,7 +21,7 @@ class Repository < Travis::Model
   has_many :permissions, dependent: :delete_all
   has_many :users, through: :permissions
 
-  has_one :last_build, class_name: 'Build', order: 'id DESC'
+  has_one :last_build, -> { order('id DESC') }, class_name: 'Build'
   has_one :key, class_name: 'SslKey'
   belongs_to :owner, polymorphic: true
 
@@ -34,70 +34,60 @@ class Repository < Travis::Model
 
   delegate :public_key, to: :key
 
-  class << self
-    def timeline
-      active.order('last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC')
+  scope :by_params, ->(params) {
+    if id = params[:repository_id] || params[:id]
+      where(id: id)
+    elsif params[:github_id]
+      where(github_id: params[:github_id])
+    elsif params.key?(:slug)
+      by_slug(params[:slug])
+    elsif params.key?(:name) && params.key?(:owner_name)
+      by_slug("#{params[:owner_name]}/#{params[:name]}")
+    else
+      none
     end
+  }
+  scope :timeline, -> {
+    active.order('last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC')
+  }
+  scope :with_builds, -> {
+    where(arel_table[:last_build_id].not_eq(nil))
+  }
+  scope :administrable, -> {
+    includes(:permissions).where('permissions.admin = ?', true)
+  }
+  scope :recent, -> {
+    limit(25)
+  }
+  scope :by_owner_name, ->(owner_name) {
+    without_invalidated.where(owner_name: owner_name)
+  }
+  scope :by_member, ->(login) {
+    without_invalidated.joins(:users).where(users: { login: login })
+  }
+  scope :by_slug, ->(slug) {
+    without_invalidated.where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC')
+  }
+  scope :search, ->(query) {
+    query = query.gsub('\\', '/')
+    without_invalidated.where("(repositories.owner_name || chr(47) || repositories.name) ILIKE ?", "%#{query}%")
+  }
+  scope :active, -> {
+    without_invalidated.where(active: true)
+  }
+  scope :without_invalidated, -> {
+    where(invalidated_at: nil)
+  }
 
-    def with_builds
-      where(arel_table[:last_build_id].not_eq(nil))
-    end
+  def self.by_name
+    Hash[*all.map { |repository| [repository.name, repository] }.flatten]
+  end
 
-    def administrable
-      includes(:permissions).where('permissions.admin = ?', true)
-    end
-
-    def recent
-      limit(25)
-    end
-
-    def by_owner_name(owner_name)
-      without_invalidated.where(owner_name: owner_name)
-    end
-
-    def by_member(login)
-      without_invalidated.joins(:users).where(users: { login: login })
-    end
-
-    def by_slug(slug)
-      without_invalidated.where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC')
-    end
-
-    def search(query)
-      query = query.gsub('\\', '/')
-      without_invalidated.where("(repositories.owner_name || chr(47) || repositories.name) ILIKE ?", "%#{query}%")
-    end
-
-    def active
-      without_invalidated.where(active: true)
-    end
-
-    def without_invalidated
-      where(invalidated_at: nil)
-    end
-
-    def find_by(params)
-      if id = params[:repository_id] || params[:id]
-        find_by_id(id)
-      elsif params[:github_id]
-        find_by_github_id(params[:github_id])
-      elsif params.key?(:slug)
-        by_slug(params[:slug]).first
-      elsif params.key?(:name) && params.key?(:owner_name)
-        by_slug("#{params[:owner_name]}/#{params[:name]}").first
-      end
-    end
-
-    def by_name
-      Hash[*all.map { |repository| [repository.name, repository] }.flatten]
-    end
-
-    def counts_by_owner_names(owner_names)
-      query = %(SELECT owner_name, count(*) FROM repositories WHERE owner_name IN (?) AND invalidated_at IS NULL GROUP BY owner_name)
-      query = sanitize_sql([query, owner_names])
-      rows = connection.select_all(query, owner_names)
-      Hash[*rows.map { |row| [row['owner_name'], row['count'].to_i] }.flatten]
-    end
+  def self.counts_by_owner_names(owner_names)
+    query = %(SELECT owner_name, count(*) FROM repositories WHERE owner_name IN (?) AND invalidated_at IS NULL GROUP BY owner_name)
+    query = sanitize_sql([query, owner_names])
+    rows = connection.select_all(query, owner_names)
+    Hash[*rows.map { |row| [row['owner_name'], row['count'].to_i] }.flatten]
   end
 
   delegate :builds_only_with_travis_yml?, to: :settings

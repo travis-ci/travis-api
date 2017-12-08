@@ -2,9 +2,9 @@ describe Repository do
   before { DatabaseCleaner.clean_with :truncation }
 
   describe '#last_completed_build' do
-    let(:repo)   { Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
-    let(:build1) { Factory(:build, finished_at: 1.hour.ago, state: :passed) }
-    let(:build2) { Factory(:build, finished_at: Time.now, state: :failed) }
+    let(:repo)   { Factory(:repository, name: 'foobarbaz') }
+    let(:build1) { Factory(:build, repository: repo, finished_at: 1.hour.ago, state: :passed) }
+    let(:build2) { Factory(:build, repository: repo, finished_at: Time.now, state: :failed) }
 
     before do
       build1.update_attributes(branch: 'master')
@@ -46,25 +46,25 @@ describe Repository do
   end
 
   describe 'class methods' do
-    describe 'find_by' do
+    describe 'by_params' do
       let(:minimal) { Factory(:repository) }
 
       it "should find a repository by it's github_id" do
-        Repository.find_by(github_id: minimal.github_id).should == minimal
+        Repository.by_params(github_id: minimal.github_id).to_a.first.should == minimal
       end
 
       it "should find a repository by it's id" do
-        Repository.find_by(id: minimal.id).id.should == minimal.id
+        Repository.by_params(id: minimal.id).to_a.first.id.should == minimal.id
       end
 
       it "should find a repository by it's name and owner_name" do
-        repo = Repository.find_by(name: minimal.name, owner_name: minimal.owner_name)
+        repo = Repository.by_params(name: minimal.name, owner_name: minimal.owner_name).to_a.first
         repo.owner_name.should == minimal.owner_name
         repo.name.should == minimal.name
       end
 
       it "returns nil when a repository couldn't be found using params" do
-        Repository.find_by(name: 'emptiness').should be_nil
+        Repository.by_params(name: 'emptiness').to_a.should == []
       end
     end
 
