@@ -11,9 +11,9 @@ describe Travis::API::V3::Services::Branches, set_app: true do
   let!(:jants_build)  { FactoryGirl.create(:v3_build, repository: repo, branch_name: "jants") }
   let!(:other_build)  { FactoryGirl.create(:v3_build, repository: repo, branch_name: "other") }
 
-  let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
-  let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
-  before        { Travis::API::V3::Models::Permission.create(repository: repo, user: user, pull: true, push: true, admin: true) }
+  let(:token)         { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
+  let(:headers)       {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+  before              { Travis::API::V3::Models::Permission.create(repository: repo, user: user, pull: true, push: true, admin: true) }
 
   it "filters by query", focus: true do
     # FIXME add name_filter sort?
