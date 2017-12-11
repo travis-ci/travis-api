@@ -34,11 +34,15 @@ module Travis::API::V3
       service  = factory.new(access_control, filtered.merge(params), env['rack.input'.freeze])
 
       metrics.tick(:prepare)
-      result   = service.run
+      result = ZipkinTracer::TraceClient.local_component_span 'service' do
+        service.run
+      end
       metrics.tick(:service)
 
       env_params.each_key { |key| result.ignored_param(key, reason: "not safelisted".freeze) unless filtered.include?(key) }
-      response = render(result, env_params, env, content_type)
+      response = ZipkinTracer::TraceClient.local_component_span 'render' do
+        render(result, env_params, env, content_type)
+      end
 
       response[1]['X-Endpoint'] = factory.name
 
