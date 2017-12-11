@@ -4,6 +4,7 @@ require 'travis/amqp'
 require 'travis/model'
 require 'travis/states_cache'
 require 'travis/honeycomb'
+require 'travis/marginalia'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib/config'
@@ -223,6 +224,8 @@ module Travis::Api
       end
 
       def self.setup_database_connections
+        Travis::Marginalia.setup
+
         Travis.config.database.variables                    ||= {}
         Travis.config.database.variables[:application_name] ||= ["api", Travis.env, ENV['DYNO']].compact.join(?-)
         Travis::Database.connect
