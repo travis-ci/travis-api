@@ -44,6 +44,14 @@ module Travis
       def clear
         ::Marginalia::Comment.reset!
       end
+
+      def endpoint=(endpoint)
+        ::Marginalia::Comment.endpoint = endpoint
+      end
+
+      def request_id=(request_id)
+        ::Marginalia::Comment.request_id = request_id
+      end
     end
   end
 end
