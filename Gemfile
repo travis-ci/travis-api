@@ -38,6 +38,7 @@ gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_met
 gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
+gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
 
 gem 'jemalloc'
 gem 'customerio'
