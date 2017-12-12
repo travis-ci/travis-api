@@ -8,6 +8,7 @@ module Marginalia
   module Comment
     def self.reset!
       @endpoint = nil
+      @request_id = nil
     end
 
     def self.endpoint=(endpoint)
@@ -16,6 +17,14 @@ module Marginalia
 
     def self.endpoint
       @endpoint
+    end
+
+    def self.request_id=(request_id)
+      @request_id = request_id
+    end
+
+    def self.request_id
+      @request_id
     end
   end
 end
@@ -29,9 +38,10 @@ module Travis
         end
 
         ::Marginalia.application_name = 'api'
-        ::Marginalia::Comment.components = [:application, :endpoint]
+        ::Marginalia::Comment.components = [:application, :endpoint, :request_id]
+      end
 
-        # todo do this before every request
+      def clear
         ::Marginalia::Comment.reset!
       end
     end
