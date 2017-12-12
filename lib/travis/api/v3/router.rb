@@ -34,7 +34,7 @@ module Travis::API::V3
       filtered = factory.filter_params(env_params)
       service  = factory.new(access_control, filtered.merge(params), env['rack.input'.freeze])
 
-      Travis::Marginalia.endpoint = factory.name
+      ::Marginalia.set('endpoint', factory.name)
 
       metrics.tick(:prepare)
       result   = service.run

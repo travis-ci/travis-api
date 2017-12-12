@@ -101,8 +101,9 @@ module Travis::Api
           Travis::Honeycomb.clear
           Travis::Honeycomb.context.add('x_request_id', env['HTTP_X_REQUEST_ID'])
 
-          Travis::Marginalia.clear
-          Travis::Marginalia.request_id = env['HTTP_X_REQUEST_ID']
+          ::Marginalia.clear
+          ::Marginalia.set('app', 'api')
+          ::Marginalia.set('request_id', env['HTTP_X_REQUEST_ID'])
         end
 
         use Travis::Api::App::Middleware::RequestId
@@ -227,7 +228,9 @@ module Travis::Api
       end
 
       def self.setup_database_connections
-        Travis::Marginalia.setup
+        if ENV['QUERY_COMMENTS_ENABLED'] == 'true'
+          Travis::Marginalia.setup
+        end
 
         Travis.config.database.variables                    ||= {}
         Travis.config.database.variables[:application_name] ||= ["api", Travis.env, ENV['DYNO']].compact.join(?-)
