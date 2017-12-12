@@ -101,7 +101,7 @@ module Travis::Api
           Travis::Honeycomb.clear
           Travis::Honeycomb.context.add('x_request_id', env['HTTP_X_REQUEST_ID'])
 
-          ::Marginalia.clear
+          ::Marginalia.clear!
           ::Marginalia.set('app', 'api')
           ::Marginalia.set('request_id', env['HTTP_X_REQUEST_ID'])
         end
