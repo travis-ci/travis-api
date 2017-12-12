@@ -102,7 +102,7 @@ module Travis::Api
           Travis::Honeycomb.context.add('x_request_id', env['HTTP_X_REQUEST_ID'])
 
           Travis::Marginalia.clear
-          Travis::Marginalia.request_id = env['HTTP_X_REQUEST_ID']
+          Travis::Marginalia::Comment.request_id = env['HTTP_X_REQUEST_ID']
         end
 
         use Travis::Api::App::Middleware::RequestId
