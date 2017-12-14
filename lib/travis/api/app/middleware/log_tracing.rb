@@ -72,7 +72,7 @@ class Travis::Api::App
           event = ActiveSupport::Notifications::Event.new *args
           duration = event.duration.round(3)
 
-          if event.payload[:cached]
+          if event.payload[:cached] || event.payload[:name] == 'CACHE'
             next
           end
 
