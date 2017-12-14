@@ -74,7 +74,7 @@ class Travis::Api::App
 
           log_line = ''
           if env['HTTP_X_REQUEST_ID']
-            log_line += "#{env['HTTP_X_REQUEST_ID']}: "
+            log_line += color("#{env['HTTP_X_REQUEST_ID']} ", YELLOW)
           end
           if event.payload[:cached]
             log_line += color("CACHE (#{duration}ms)  ", MAGENTA, true)
@@ -82,7 +82,11 @@ class Travis::Api::App
             log_line += color("#{event.payload[:name]} (#{duration}ms)  ", MAGENTA, true)
           end
           log_line += "#{event.payload[:sql]}  "
-          log_line += event.payload[:binds].map {|xs| xs.map(&:to_s)}.inspect
+
+          log_line += event.payload[:binds].map {|pair|
+            column, value = pair
+            [column.name, value]
+          }.to_h.inspect
 
           Travis.logger.info log_line
         end
