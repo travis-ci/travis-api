@@ -72,4 +72,3 @@ class Travis::Api::App
     end
   end
 end
-

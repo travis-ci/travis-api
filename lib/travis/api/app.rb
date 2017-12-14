@@ -119,6 +119,10 @@ module Travis::Api
           use Travis::Api::App::Middleware::Honeycomb
         end
 
+        if Travis::Api::App::Middleware::LogTracing.enabled?
+          use Travis::Api::App::Middleware::LogTracing
+        end
+
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
         if Travis::Api::App.use_monitoring?
           use Rack::Config do |env|
@@ -230,6 +234,10 @@ module Travis::Api
       def self.setup_database_connections
         if ENV['QUERY_COMMENTS_ENABLED'] == 'true'
           Travis::Marginalia.setup
+        end
+
+        if Travis::Api::App::Middleware::LogTracing.enabled?
+          Travis::Api::App::Middleware::LogTracing.setup
         end
 
         Travis.config.database.variables                    ||= {}
