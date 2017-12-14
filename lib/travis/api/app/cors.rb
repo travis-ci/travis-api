@@ -9,7 +9,7 @@ class Travis::Api::App
     before do
       headers['Access-Control-Allow-Origin']      = "*"
       headers['Access-Control-Allow-Credentials'] = "true"
-      headers['Access-Control-Expose-Headers']    = "Content-Type, Cache-Control, Expires, Etag, Last-Modified"
+      headers['Access-Control-Expose-Headers']    = "Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID"
     end
 
     options // do

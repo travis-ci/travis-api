@@ -18,7 +18,7 @@ describe Travis::Api::App::Cors do
     end
 
     it 'sets Access-Control-Expose-Headers' do
-      headers['Access-Control-Expose-Headers'].should == "Content-Type, Cache-Control, Expires, Etag, Last-Modified"
+      headers['Access-Control-Expose-Headers'].should == "Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-Id"
     end
   end
 
@@ -34,7 +34,7 @@ describe Travis::Api::App::Cors do
     end
 
     it 'sets Access-Control-Expose-Headers' do
-      headers['Access-Control-Expose-Headers'].should == "Content-Type, Cache-Control, Expires, Etag, Last-Modified"
+      headers['Access-Control-Expose-Headers'].should == "Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-Id"
     end
 
     it 'sets Access-Control-Allow-Methods' do
