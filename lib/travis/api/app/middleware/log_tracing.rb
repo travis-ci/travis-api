@@ -72,15 +72,15 @@ class Travis::Api::App
           event = ActiveSupport::Notifications::Event.new *args
           duration = event.duration.round(3)
 
+          if event.payload[:cached]
+            next
+          end
+
           log_line = ''
           if env['HTTP_X_REQUEST_ID']
             log_line += color("#{env['HTTP_X_REQUEST_ID']} ", YELLOW)
           end
-          if event.payload[:cached]
-            log_line += color("CACHE (#{duration}ms)  ", MAGENTA, true)
-          else
-            log_line += color("#{event.payload[:name]} (#{duration}ms)  ", MAGENTA, true)
-          end
+          log_line += color("#{event.payload[:name]} (#{duration}ms)  ", MAGENTA, true)
           log_line += "#{event.payload[:sql]}  "
 
           log_line += event.payload[:binds].map {|pair|
