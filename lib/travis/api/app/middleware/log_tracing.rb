@@ -76,7 +76,7 @@ class Travis::Api::App
             next
           end
 
-          log_line = ''
+          log_line = '[log-tracing] '
           if env['HTTP_X_REQUEST_ID']
             log_line += color("#{env['HTTP_X_REQUEST_ID']} ", YELLOW)
           end
