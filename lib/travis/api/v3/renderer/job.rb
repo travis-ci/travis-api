@@ -11,6 +11,7 @@ module Travis::API::V3
     # we probably need to have a better way of doing this
     representation(:with_config, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :created_at, :updated_at, :config)
 
+    hidden_representations(:with_config)
     hidden_representations(:active)
 
     def created_at
