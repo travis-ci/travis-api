@@ -51,6 +51,7 @@ class Travis::Api::App
           HTTP_STATUS:      status,
           REQUEST_TIME_MS:  request_time * 1000,
           request_queue_ms: request_queue,
+          timing_sql_ms:    Travis::Honeycomb.timing.data[:sql]&.to_i,
 
           user_id:    env['travis.access_token']&.user&.id,
           user_login: env['travis.access_token']&.user&.login,

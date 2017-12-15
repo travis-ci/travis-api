@@ -10,6 +10,10 @@ module Travis
         Thread.current[:honeycomb_context] ||= Context.new
       end
 
+      def timing
+        Thread.current[:honeycomb_timing] ||= Timing.new
+      end
+
       def setup
         honey_setup
         api_requests_setup
@@ -25,6 +29,7 @@ module Travis
         context.clear
         api_requests.clear
         rpc.clear
+        timing.clear
       end
 
       def honey
@@ -61,6 +66,11 @@ module Travis
         return unless api_requests.enabled?
 
         Travis.logger.info 'honeycomb api requests enabled'
+
+        ActiveSupport::Notifications.subscribe('sql.active_record') do |*args|
+          event = ActiveSupport::Notifications::Event.new *args
+          Timing.record(:sql, event.duration)
+        end
       end
 
       def rpc_setup
@@ -107,6 +117,25 @@ module Travis
             rpc.send(event)
           end
         end
+      end
+    end
+
+    class Timing
+      def initialize
+        @data = {}
+      end
+
+      def clear
+        @data = {}
+      end
+
+      def record(key, duration_ms)
+        @data[key] ||= 0.0
+        @data[key] += duration_ms
+      end
+
+      def data
+        @data
       end
     end
 
