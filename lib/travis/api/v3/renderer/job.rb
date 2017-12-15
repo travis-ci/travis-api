@@ -14,6 +14,10 @@ module Travis::API::V3
     hidden_representations(:with_config)
     hidden_representations(:active)
 
+    def created_at
+      json_format_time_with_ms(model.created_at)
+    end
+
     def updated_at
       json_format_time_with_ms(model.updated_at)
     end
