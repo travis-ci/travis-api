@@ -69,6 +69,11 @@ module Travis
 
         ActiveSupport::Notifications.subscribe('sql.active_record') do |*args|
           event = ActiveSupport::Notifications::Event.new *args
+
+          if event.payload[:cached] || event.payload[:name] == 'CACHE'
+            next
+          end
+
           Timing.record(:sql, event.duration)
         end
       end
@@ -123,19 +128,28 @@ module Travis
     class Timing
       def initialize
         @data = {}
+        @frequency = {}
       end
 
       def clear
         @data = {}
+        @frequency = {}
       end
 
       def record(key, duration_ms)
         @data[key] ||= 0.0
         @data[key] += duration_ms
+
+        @frequency[key] ||= 0
+        @frequency[key] += 1
       end
 
       def data
         @data
+      end
+
+      def frequency
+        @frequency
       end
     end
 
