@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/marginalia
-  revision: 42542d7769723e2846da163c9b3f1c55013d68f0
+  revision: 69b4a20d782dcab72091a59fae95a3acef4a4810
   specs:
     marginalia (1.5.0)
       activerecord (>= 2.3)
@@ -166,7 +166,7 @@ GEM
       descendants_tracker (~> 0.0.1)
     composite_primary_keys (8.1.6)
       activerecord (~> 4.2.0)
-    concurrent-ruby (1.0.2)
+    concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
@@ -374,7 +374,7 @@ GEM
     slop (3.6.0)
     stackprof (0.2.10)
     thor (0.19.1)
-    thread_safe (0.3.5)
+    thread_safe (0.3.6)
     tilt (2.0.5)
     timecop (0.8.1)
     tool (0.2.3)
