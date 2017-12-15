@@ -74,7 +74,7 @@ module Travis
             next
           end
 
-          Timing.record(:sql, event.duration)
+          timing.record(:sql, event.duration)
         end
       end
 
