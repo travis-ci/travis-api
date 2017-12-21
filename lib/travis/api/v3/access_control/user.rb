@@ -70,6 +70,11 @@ module Travis::API::V3
     end
 
     def permission?(type, id)
+      # permission fields can be included in the repository select()
+      # permission_pull, permission_push, permission_admin
+      if id.is_a?(Models::Repository) && id.has_attribute?("permission_#{type}") != nil
+        return id.send("permission_#{type}")
+      end
       id = id.id if id.is_a? ::Repository
       access_permissions.where(type => true, :repository_id => id).any?
     end

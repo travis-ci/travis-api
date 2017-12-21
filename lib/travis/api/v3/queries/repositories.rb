@@ -16,7 +16,7 @@ module Travis::API::V3
     experimental_sortable_by :current_build, :slug_filter
 
     def for_member(user, **options)
-      all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
+      all(user: user, **options).joins(:users).select('repositories.*, permissions.pull as permission_pull, permissions.push as permission_push, permissions.admin as permission_admin').where(users: user_condition(user), invalidated_at: nil)
     end
 
     def for_owner(owner, **options)
