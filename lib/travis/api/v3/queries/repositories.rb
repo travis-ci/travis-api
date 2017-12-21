@@ -33,6 +33,10 @@ module Travis::API::V3
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
 
+      if includes? 'repository.default_branch'.freeze
+        list = list.includes(default_branch: [{last_build: :branch}, :repository])
+      end
+
       if user and not starred.nil?
         if bool(starred)
           list = list.joins(:stars).where(stars: { user_id: user.id })
