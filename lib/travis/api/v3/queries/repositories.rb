@@ -50,6 +50,12 @@ module Travis::API::V3
         list = list.includes(last_build: :commit) if includes? 'build.commit'.freeze
       end
 
+      if includes? 'repository.current_build'.freeze or includes? 'build'.freeze
+        list = list.includes(:current_build)
+        list = list.includes(current_build: :commit) if includes? 'build.commit'.freeze
+        list = list.includes(current_build: [{branch: [:repository, :last_build]}]) if includes? 'build.branch'.freeze
+      end
+
       if slug_filter
         query = slug_filter.strip
         sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
