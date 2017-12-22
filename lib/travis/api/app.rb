@@ -240,6 +240,10 @@ module Travis::Api
           Travis::Api::App::Middleware::LogTracing.setup
         end
 
+        if ENV['MODEL_RENDERER_TRACING_ENABLED'] == 'true'
+          Travis::API::V3::ModelRenderer.install_tracer
+        end
+
         Travis.config.database.variables                    ||= {}
         Travis.config.database.variables[:application_name] ||= ["api", Travis.env, ENV['DYNO']].compact.join(?-)
         Travis::Database.connect
