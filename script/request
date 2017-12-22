@@ -40,7 +40,8 @@ require 'travis/api/app'
 app = Travis::Api::App.new
 
 headers = {
-  'HTTP_TRAVIS_API_VERSION' => "#{options[:api_version]}"
+  'HTTP_TRAVIS_API_VERSION' => "#{options[:api_version]}",
+  'HTTP_USER_AGENT' => 'curl', # plain text stack traces
 }
 if options[:user]
   user = User.find_by_login('igorwwwwwwwwwwwwwwwwwwww')
