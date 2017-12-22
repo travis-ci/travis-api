@@ -115,8 +115,13 @@ module Travis::API::V3
         end
       end
 
+      Thread.current[:model_renderer_trace] ||= []
+
       fields.each do |field|
         next if field == :value && !@model.public?
+
+        Thread.current[:model_renderer_trace] << "#{self.class.name.split('::').last}.#{field}"
+
         value  = Renderer.render_value(send(field),
                    access_control: access_control,
                    script_name:    script_name,
@@ -124,6 +129,8 @@ module Travis::API::V3
                    included:       nested_included,
                    mode:           modes[field])
         result[field] = value unless value == REDUNDANT
+
+        Thread.current[:model_renderer_trace].pop
       end
 
       result
@@ -131,6 +138,21 @@ module Travis::API::V3
 
     def json_format_time_with_ms(time)
       time.strftime('%Y-%m-%dT%H:%M:%S.%3NZ')
+    end
+
+    def self.install_tracer
+      ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
+        event = ActiveSupport::Notifications::Event.new *args
+        if event.payload[:cached] || event.payload[:name] == 'CACHE'
+          next
+        end
+        if Thread.current[:model_renderer_trace] && Thread.current[:model_renderer_trace].size > 0
+          Thread.current[:model_renderer_trace].each_with_index do |frame, i|
+            puts ('  ' * (i + 1)) + frame
+          end
+          puts
+        end
+      end
     end
   end
 end
