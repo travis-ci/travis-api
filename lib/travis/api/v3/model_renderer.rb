@@ -162,6 +162,11 @@ module Travis::API::V3
     # since we know the parent model during rendering,
     # we can pass it down, and when we detect a back reference,
     # short circuit and return the parent directly.
+    #
+    # TODO: walk back more than one level, e.g.
+    #   Repository.current_build
+    #     Build.branch
+    #       Branch.repository
     def back_reference(field, parent)
       if parent
         parent_name = underscore(parent.class.name.split('::').last)
