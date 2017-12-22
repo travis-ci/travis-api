@@ -51,6 +51,15 @@ if options[:user]
   headers['HTTP_AUTHORIZATION'] = "token #{token}"
 end
 
+Thread.current[:script_request_total_sql_queries] = 0
+ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
+  event = ActiveSupport::Notifications::Event.new *args
+  if event.payload[:cached] || event.payload[:name] == 'CACHE'
+    next
+  end
+  Thread.current[:script_request_total_sql_queries] += 1
+end
+
 env = Rack::MockRequest.env_for(
   url,
   headers
@@ -70,3 +79,5 @@ end
 if options[:verbose]
   puts body
 end
+
+puts "total sql queries: #{Thread.current[:script_request_total_sql_queries]}"
