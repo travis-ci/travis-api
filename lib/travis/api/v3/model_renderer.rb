@@ -46,16 +46,17 @@ module Travis::API::V3
       new(model, **options).render(representation)
     end
 
-    attr_reader :model, :options, :script_name, :include, :included, :access_control
+    attr_reader :model, :options, :script_name, :include, :included, :access_control, :parent
     attr_writer :href
 
-    def initialize(model, script_name: nil, include: [], included: [], access_control: nil, **options)
+    def initialize(model, script_name: nil, include: [], included: [], access_control: nil, parent: nil, **options)
       @model          = model
       @options        = options
       @script_name    = script_name
       @include        = include
       @included       = included
       @access_control = access_control || AccessControl::Anonymous.new
+      @parent         = parent
     end
 
     def href
@@ -122,12 +123,14 @@ module Travis::API::V3
 
         Thread.current[:model_renderer_trace] << "#{self.class.name.split('::').last}.#{field}"
 
-        value  = Renderer.render_value(send(field),
+        field_value = back_reference(field, parent) || send(field)
+        value  = Renderer.render_value(field_value,
                    access_control: access_control,
                    script_name:    script_name,
                    include:        include,
                    included:       nested_included,
-                   mode:           modes[field])
+                   mode:           modes[field],
+                   parent:         model)
         result[field] = value unless value == REDUNDANT
 
         Thread.current[:model_renderer_trace].pop
@@ -139,6 +142,42 @@ module Travis::API::V3
     def json_format_time_with_ms(time)
       time.strftime('%Y-%m-%dT%H:%M:%S.%3NZ')
     end
+
+    # activerecord does not populate reverse relationships
+    # which means something like this:
+    #
+    #   V3::Models::Repository.includes(:default_branch).limit(3).map(&:default_branch).map(&:repository)
+    #
+    # will cause 2+n queries:
+    # * get n repositories
+    # * get n branches belonging to those repositories
+    # * n queries to get the parent repository for each branch
+    #
+    # this can be optimized by doing a nested `includes`:
+    #
+    #  includes(default_branch: :repository)
+    #
+    # but that still requires 3*n queries in total.
+    #
+    # since we know the parent model during rendering,
+    # we can pass it down, and when we detect a back reference,
+    # short circuit and return the parent directly.
+    def back_reference(field, parent)
+      if parent
+        parent_name = underscore(parent.class.name.split('::').last)
+        if field == parent_name.to_sym
+          parent
+        end
+      end
+    end
+
+    def underscore(camel_cased_word)
+       camel_cased_word.to_s.gsub(/::/, '/').
+         gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+         gsub(/([a-z\d])([A-Z])/,'\1_\2').
+         tr("-", "_").
+         downcase
+     end
 
     def self.install_tracer
       ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
