@@ -103,9 +103,9 @@ PATH
   remote: .
   specs:
     travis-api (0.0.1)
-      activerecord (~> 4.2)
+      activerecord (~> 5.0)
       coder (~> 0.4.0)
-      composite_primary_keys (~> 8.0)
+      composite_primary_keys (~> 9.0)
       fog-aws (~> 0.12.0)
       fog-google (~> 0.4.2)
       google-api-client (~> 0.9.4)
@@ -131,26 +131,26 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    active_model_serializers (0.9.5)
+    active_model_serializers (0.9.7)
       activemodel (>= 3.2)
-    activemodel (4.2.10)
-      activesupport (= 4.2.10)
-      builder (~> 3.1)
-    activerecord (4.2.10)
-      activemodel (= 4.2.10)
-      activesupport (= 4.2.10)
-      arel (~> 6.0)
-    activesupport (4.2.10)
+      concurrent-ruby (~> 1.0)
+    activemodel (5.0.6)
+      activesupport (= 5.0.6)
+    activerecord (5.0.6)
+      activemodel (= 5.0.6)
+      activesupport (= 5.0.6)
+      arel (~> 7.0)
+    activesupport (5.0.6)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (~> 0.7)
       minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
     appsignal (2.2.1)
       rack
       thread_safe
-    arel (6.0.4)
+    arel (7.1.4)
     atomic (1.1.99)
     avl_tree (1.1.3)
     axiom-types (0.1.1)
@@ -164,8 +164,8 @@ GEM
     coderay (1.1.1)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    composite_primary_keys (8.1.6)
-      activerecord (~> 4.2.0)
+    composite_primary_keys (9.0.8)
+      activerecord (~> 5.0.0)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
     crack (0.4.3)
@@ -181,7 +181,7 @@ GEM
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.11)
-    excon (0.59.0)
+    excon (0.60.0)
     factory_girl (2.4.2)
       activesupport
     faraday (0.12.2)
@@ -299,6 +299,9 @@ GEM
       multi_json (~> 1.0)
       pusher-signature (~> 0.1.8)
     pusher-signature (0.1.8)
+    query_cache (1.1.1)
+      activerecord (>= 3.2)
+      rack
     rack (1.6.5)
     rack-attack (5.0.0.beta1)
       rack
@@ -426,6 +429,7 @@ DEPENDENCIES
   mustermann
   netaddr
   pry
+  query_cache
   rack-attack (= 5.0.0.beta1)
   rack-cache!
   rack-contrib
