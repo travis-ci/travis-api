@@ -80,4 +80,6 @@ if options[:verbose]
   puts body
 end
 
+puts
 puts "total sql queries: #{Thread.current[:script_request_total_sql_queries]}"
+puts "request url: #{url}"
