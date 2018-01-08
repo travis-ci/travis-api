@@ -24,7 +24,7 @@ describe Build::States do
           build.cancel!
         }.to change { created_job.reload.state }
 
-        created_job.state.should == 'canceled'
+        created_job.state.should == :canceled
         finished_jobs.map { |j| j.state.to_sym }.should == Job::Test::FINISHED_STATES
       end
     end

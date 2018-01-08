@@ -39,6 +39,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[0].allow_failure,
+        "created_at"            => json_format_time_with_ms(jobs[0].created_at),
         "updated_at"            => json_format_time_with_ms(jobs[0].updated_at),
         "config"                => {
           "rvm"                 => "1.8.7",
@@ -108,6 +109,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[1].allow_failure,
+        "created_at"            => json_format_time_with_ms(jobs[1].created_at),
         "updated_at"            => json_format_time_with_ms(jobs[1].updated_at),
         "config"                => {
           "rvm"                 => "1.8.7",
@@ -177,6 +179,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[2].allow_failure,
+        "created_at"            => json_format_time_with_ms(jobs[2].created_at),
         "updated_at"            => json_format_time_with_ms(jobs[2].updated_at),
         "config"                => {
           "rvm"                 => "1.9.2",
@@ -246,6 +249,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[3].allow_failure,
+        "created_at"            => json_format_time_with_ms(jobs[3].created_at),
         "updated_at"            => json_format_time_with_ms(jobs[3].updated_at),
         "config"                => {
           "rvm"                 => "1.9.2",
@@ -333,6 +337,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[0].allow_failure,
+        "created_at"            => json_format_time_with_ms(jobs[0].created_at),
         "updated_at"            => json_format_time_with_ms(jobs[0].updated_at),
         "config"                => {
           "rvm"                 => "1.8.7",
@@ -401,6 +406,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "state"                 => "configured",
         "started_at"            => "2010-11-12T13:00:00Z",
         "allow_failure"         => jobs[1].allow_failure,
+        "created_at"            => json_format_time_with_ms(jobs[1].created_at),
         "updated_at"            => json_format_time_with_ms(jobs[1].updated_at),
         "config"                => {
           "rvm"                 => "1.8.7",
@@ -471,6 +477,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[2].allow_failure,
+        "created_at"            => json_format_time_with_ms(jobs[2].created_at),
         "updated_at"            => json_format_time_with_ms(jobs[2].updated_at),
         "config"                => {
           "rvm"                 => "1.9.2",
@@ -540,6 +547,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "started_at"            => "2010-11-12T13:00:00Z",
         "finished_at"           => nil,
         "allow_failure"         => jobs[3].allow_failure,
+        "created_at"            => json_format_time_with_ms(jobs[3].created_at),
         "updated_at"            => json_format_time_with_ms(jobs[3].updated_at),
         "config"                => {
           "rvm"                 => "1.9.2",
@@ -629,6 +637,7 @@ describe "jobs private repository, private API, authenticated as user with push 
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
         "allow_failure"    => jobs[0].allow_failure,
+        "created_at"       => json_format_time_with_ms(jobs[0].created_at),
         "updated_at"       => json_format_time_with_ms(jobs[0].updated_at),
         "config"           => {
           "rvm"            => "1.8.7",
@@ -698,6 +707,7 @@ describe "jobs private repository, private API, authenticated as user with push 
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
         "allow_failure"    => jobs[1].allow_failure,
+        "created_at"       => json_format_time_with_ms(jobs[1].created_at),
         "updated_at"       => json_format_time_with_ms(jobs[1].updated_at),
         "config"           => {
           "rvm"            => "1.8.7",
@@ -767,6 +777,7 @@ describe "jobs private repository, private API, authenticated as user with push 
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
         "allow_failure"    => jobs[2].allow_failure,
+        "created_at"       => json_format_time_with_ms(jobs[2].created_at),
         "updated_at"       => json_format_time_with_ms(jobs[2].updated_at),
         "config"           => {
           "rvm"            => "1.9.2",
@@ -836,6 +847,7 @@ describe "jobs private repository, private API, authenticated as user with push 
         "started_at"       => "2010-11-12T13:00:00Z",
         "finished_at"      => nil,
         "allow_failure"    => jobs[3].allow_failure,
+        "created_at"       => json_format_time_with_ms(jobs[3].created_at),
         "updated_at"       => json_format_time_with_ms(jobs[3].updated_at),
         "config"           => {
           "rvm"            => "1.9.2",

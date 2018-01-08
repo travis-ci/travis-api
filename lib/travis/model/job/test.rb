@@ -12,6 +12,10 @@ class Job
     FINISHED_STATES = [:passed, :failed, :errored, :canceled]
     FAILED_STATES = [:failed, :errored, :canceled]
 
+    # this per class now, it no longer extends to sub-classes
+    # so we need to copy it from the parent Job
+    serialize :config
+
     include SimpleStates, Travis::Event
 
     states :created, :queued, :received, :started, :passed, :failed, :errored, :canceled
@@ -47,7 +51,6 @@ class Job
       attrs = %w(started_at queued_at finished_at worker)
       attrs.each { |attr| write_attribute(attr, nil) }
       log.clear! if log
-      annotations.destroy_all
     end
 
     def cancel

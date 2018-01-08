@@ -30,10 +30,6 @@ describe Travis::Api::Serialize::V2::Http::Job do
     end
   end
 
-  it 'annotations' do
-    data['annotations'].should eq(nil)
-  end
-
   context 'with encrypted env vars' do
     let(:test) do
       stub_test(:obfuscated_config => { 'env' => 'FOO=[secure]' })

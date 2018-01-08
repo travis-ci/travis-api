@@ -13,7 +13,7 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
 
   describe 'authenticated, wrong permissions' do
     before do
-      repo.update_attributes(settings: JSON.generate(env_vars: [env_var]))
+      repo.update_attributes(settings: { env_vars: [env_var] })
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
       delete("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", {}, auth_headers)
     end
@@ -52,7 +52,7 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
 
     describe 'existing repo, existing env var' do
       before do
-        repo.update_attributes(settings: JSON.generate(env_vars: [env_var], foo: 'bar'))
+        repo.update_attributes(settings: { env_vars: [env_var], foo: 'bar' })
         delete("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", {}, auth_headers)
       end
 

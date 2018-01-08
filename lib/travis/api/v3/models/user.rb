@@ -5,13 +5,20 @@ module Travis::API::V3
     has_many :emails,        dependent: :destroy
     has_many :tokens,        dependent: :destroy
     has_many :organizations, through:   :memberships
-    has_many :repositories,  as:        :owner
     has_many :stars
     has_one  :subscription,  as:        :owner
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
 
     serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
+
+    def repository_ids
+      repositories.pluck(:id)
+    end
+
+    def repositories
+      Models::Repository.where(owner_type: 'User', owner_id: id)
+    end
 
     def token
       tokens.first_or_create.token

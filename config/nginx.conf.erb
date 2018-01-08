@@ -17,7 +17,7 @@ http {
 
 	log_format l2met 'measure#nginx.service=$request_time request_id=$http_x_request_id';
 	access_log logs/nginx/access.log l2met;
-	error_log logs/nginx/error.log;
+	error_log logs/nginx/error.log <%= ENV["NGINX_ERROR_LOG_LEVEL"] %>;
 
 	include mime.types;
 	default_type application/octet-stream;
@@ -42,9 +42,9 @@ http {
 
 				add_header 'Access-Control-Allow-Origin' '*';
 				add_header 'Access-Control-Allow-Credentials' 'true';
-				add_header 'Access-Control-Expose-Headers' 'Content-Type, Cache-Control, Expires, Etag, Last-Modified';
+				add_header 'Access-Control-Expose-Headers' 'Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID';
 				add_header 'Access-Control-Allow-Methods' 'HEAD, GET, POST, PATCH, PUT, DELETE';
-				add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent, Travis-API-Version';
+				add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent, Travis-API-Version, Trace';
 				add_header 'Access-Control-Max-Age' 86400;
 
 				return 204;

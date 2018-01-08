@@ -8,7 +8,7 @@ class Url < Travis::Model
   before_validation :set_code, :on => :create
 
   def self.shorten(url)
-    find_or_create_by_url(url)
+    find_or_create_by(url: url)
   end
 
   def short_url

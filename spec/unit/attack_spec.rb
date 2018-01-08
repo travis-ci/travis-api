@@ -30,7 +30,7 @@ describe Rack::Attack do
     }
 
     it 'should not be safelisted' do
-      expect(Rack::Attack.safelisted?(request)).to be_falsy
+      expect(Rack::Attack.safelisted?(request)).to be_falsey
     end
   end
 end

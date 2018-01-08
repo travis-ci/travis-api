@@ -53,7 +53,7 @@ class Repository::Settings < Travis::Settings
     def validate(settings)
       [:hard_limit, :log_silence].each do |type|
         next if valid_timeout?(settings, type)
-        msg = "Invalid #{type} timout value (allowed: 0 - #{max_value(settings, type)})"
+        msg = "Invalid #{type} timeout value (allowed: 0 - #{max_value(settings, type)})"
         settings.errors.add :"timeout_#{type}", msg
       end
     end

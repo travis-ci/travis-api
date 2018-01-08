@@ -9,11 +9,9 @@ require 'travis/model'
 class Token < Travis::Model
   belongs_to :user
 
-  validate :token, :presence => true
+  validates :token, :presence => true
 
   before_validation :generate_token, on: :create
-
-  attr_accessible # nothing is changable
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 

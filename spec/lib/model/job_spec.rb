@@ -226,6 +226,19 @@ describe Job do
       }
     end
 
+    it 'handles float env' do
+      job = Job.new(repository: repo)
+      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+
+      job.config = { rvm: '1.8.7', env: 2.0, global_env: nil }
+
+      job.decrypted_config.should == {
+        rvm: '1.8.7',
+        env: ['2.0'],
+        global_env: nil
+      }
+    end
+
     it 'normalizes env vars which are hashes to strings' do
       job = Job.new(repository: repo)
       job.expects(:secure_env_enabled?).at_least_once.returns(true)

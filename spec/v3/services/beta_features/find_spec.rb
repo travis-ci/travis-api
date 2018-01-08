@@ -17,7 +17,7 @@ describe Travis::API::V3::Services::BetaFeatures::Find, set_app: true do
     include_examples 'missing user'
   end
 
-  describe 'authenticated, different user\'s beta feauters' do
+  describe 'authenticated, different user\'s beta features' do
     before do
       get("/v3/user/#{other_user.id}/beta_features", {}, auth_headers)
     end

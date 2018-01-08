@@ -23,7 +23,7 @@ describe Travis::API::V3::Services::EnvVar::Find, set_app: true do
 
   describe 'authenticated, existing repo, existing env var' do
     before do
-      repo.update_attributes(settings: JSON.generate(env_vars: [env_var]))
+      repo.update_attributes(settings: { env_vars: [env_var]} )
       get("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", {}, auth_headers)
     end
 

@@ -38,6 +38,7 @@ gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_met
 gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
+gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
 
 gem 'jemalloc'
 gem 'customerio'
@@ -45,7 +46,6 @@ gem 'customerio'
 gem 'redlock'
 gem 'rake', '~> 0.9.2'
 
-gem 'skylight'
 gem 'appsignal'
 gem 'libhoney'
 
@@ -59,7 +59,7 @@ group :test do
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
-  gem 'database_cleaner', '~> 0.8.0'
+  gem 'database_cleaner', '~> 1.2.0'
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'
   gem 'hashdiff'
