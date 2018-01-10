@@ -5,8 +5,6 @@ describe Travis::API::V3::Services::Messages::ForRequest, set_app: true do
   let!(:message) { Travis::API::V3::Models::Message.create!(subject_id: request.id, subject_type: 'Request')}
 
   describe "retrieve request messages on a public repository" do
-    before { puts message.inspect }
-    before { puts request.id}
     before     { get("/v3/repo/#{repo.id}/request/#{request.id}/messages")     }
     example    { expect(last_response).to be_ok }
     example    { expect(JSON.load(body).to_s).to include(
