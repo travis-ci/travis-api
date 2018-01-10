@@ -149,6 +149,11 @@ module Travis::API::V3
       resource :request do
         route '/request/{request.id}'
         get  :find
+
+        resource :messages do
+          route '/messages'
+          get :for_request
+        end
       end
 
       resource :user_settings, as: :settings do
