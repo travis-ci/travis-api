@@ -113,7 +113,7 @@ PATH
       memcachier
       multi_json
       mustermann (~> 1.0.0.beta2)
-      pg
+      pg (~> 0.21)
       pusher (~> 0.14.0)
       rack-contrib (~> 1.1)
       rack-ssl (~> 1.3, >= 1.3.3)
@@ -181,7 +181,7 @@ GEM
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.11)
-    excon (0.59.0)
+    excon (0.60.0)
     factory_girl (2.4.2)
       activesupport
     faraday (0.12.2)
@@ -460,4 +460,4 @@ RUBY VERSION
    ruby 2.3.5p376
 
 BUNDLED WITH
-   1.16.0
+   1.16.1

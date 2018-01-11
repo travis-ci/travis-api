@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email        = ['contact@travis-ci.org']
 
   s.add_dependency 'travis-support'
-  s.add_dependency 'pg'
+  s.add_dependency 'pg',                     '~> 0.21'
   s.add_dependency 'composite_primary_keys', '~> 8.0'
   s.add_dependency 'sinatra',                '~> 1.3'
   s.add_dependency 'sinatra-contrib',        '~> 1.3'
