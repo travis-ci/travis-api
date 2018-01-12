@@ -54,7 +54,7 @@ describe Travis::Api::App::Middleware::ScopeCheck do
 
     it 'rejects an invalid travis token' do
       get('/', token: token)
-      headers['X-OAuth-Scopes'].should == 'travis_token'
+      headers['X-OAuth-Scopes'].should == 'public,travis_token'
     end
 
     it 'sets the scope to travis_token' do

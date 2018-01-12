@@ -5,6 +5,7 @@ class Travis::Api::App
     class Rewrite < Middleware
       FORMAT      = %r(\.(json|xml|png|txt|atom|svg)$)
       V1_REPO_URL = %r(^(/[^/]+/[^/]+(?:/builds(?:/[\d]+)?|/cc)?)$)
+      V1_REPO_BY_ID_URL = %r(^(?:repos|repositories)/:id/cc$)
 
       helpers :accept
 
@@ -17,7 +18,7 @@ class Travis::Api::App
       end
 
       after do
-        redirect_v1_named_repo_path if (v1? || xml?) && not_found?
+        redirect_v1_named_repo_path if (v1? || xml?) && not_found? && not_by_id?
       end
 
       private
@@ -68,6 +69,10 @@ class Travis::Api::App
 
         def v1?
           accept_version == 'v1'
+        end
+
+        def not_by_id?
+          env['PATH_INFO'] =~ V1_REPO_BY_ID_URL
         end
     end
   end
