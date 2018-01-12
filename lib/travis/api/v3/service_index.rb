@@ -41,6 +41,7 @@ module Travis::API::V3
         all = routes.resources + [
           Routes::Resource.new(:broadcast), # dummy as there are only broadcasts routes right now
           Routes::Resource.new(:commit),    # dummy as commits can only be embedded
+          Routes::Resource.new(:message),   # dummy as there is only a message route right now
           Routes::Resource.new(:request),   # dummy as there are only requests routes right now
           Routes::Resource.new(:stage),     # dummy as there is no stage endpoint at the moment
           Routes::Resource.new(:error),
