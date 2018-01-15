@@ -45,7 +45,7 @@ headers = {
   'HTTP_USER_AGENT' => 'curl', # plain text stack traces
 }
 if options[:user]
-  user = User.find_by_login('igorwwwwwwwwwwwwwwwwwwww')
+  user = User.find_by_login(options[:user])
   access_token = Travis::Api::App::AccessToken.new(user: user, app_id: 0)
   token = access_token.token
   headers['HTTP_AUTHORIZATION'] = "token #{token}"
