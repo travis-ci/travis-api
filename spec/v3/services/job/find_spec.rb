@@ -212,8 +212,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "state"                 => job2.state,
       "started_at"            => "2010-11-12T12:00:00Z",
       "finished_at"           => "2010-11-12T12:00:10Z",
-      "created_at"            => json_format_time_with_ms(job.created_at),
-      "updated_at"            => json_format_time_with_ms(job.updated_at),
+      "created_at"            => json_format_time_with_ms(job2.created_at),
+      "updated_at"            => json_format_time_with_ms(job2.updated_at),
       "build"                 => {
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",
