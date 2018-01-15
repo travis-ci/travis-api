@@ -33,10 +33,6 @@ module Travis::API::V3
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
 
-      if includes? 'repository.default_branch'.freeze
-        list = list.includes(default_branch: [{last_build: :branch}, :repository])
-      end
-
       if user and not starred.nil?
         if bool(starred)
           list = list.joins(:stars).where(stars: { user_id: user.id })
@@ -48,12 +44,6 @@ module Travis::API::V3
       if includes? 'repository.last_build'.freeze or includes? 'build'.freeze
         list = list.includes(:last_build)
         list = list.includes(last_build: :commit) if includes? 'build.commit'.freeze
-      end
-
-      if includes? 'repository.current_build'.freeze or includes? 'build'.freeze
-        list = list.includes(:current_build)
-        list = list.includes(current_build: :commit) if includes? 'build.commit'.freeze
-        list = list.includes(current_build: [{branch: [:repository, :last_build]}]) if includes? 'build.branch'.freeze
       end
 
       if slug_filter
