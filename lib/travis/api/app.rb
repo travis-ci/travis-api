@@ -10,7 +10,6 @@ require 'rack/protection'
 require 'rack/contrib/config'
 require 'rack/contrib/jsonp'
 require 'rack/contrib/post_body_content_type_parser'
-require 'query_cache'
 require 'dalli'
 require 'memcachier'
 require 'rack/cache'
@@ -135,7 +134,8 @@ module Travis::Api
           use Raven::Rack
         end
         use Rack::SSL if Endpoint.production?
-        use QueryCache.for(ActiveRecord::Base)
+        use ActiveRecord::ConnectionAdapters::ConnectionManagement
+        use ActiveRecord::QueryCache
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
