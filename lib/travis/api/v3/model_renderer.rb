@@ -46,17 +46,17 @@ module Travis::API::V3
       new(model, **options).render(representation)
     end
 
-    attr_reader :model, :options, :script_name, :include, :included, :access_control, :parent
+    attr_reader :model, :options, :script_name, :include, :included, :access_control, :parents
     attr_writer :href
 
-    def initialize(model, script_name: nil, include: [], included: [], access_control: nil, parent: nil, **options)
+    def initialize(model, script_name: nil, include: [], included: [], access_control: nil, parents: [], **options)
       @model          = model
       @options        = options
       @script_name    = script_name
       @include        = include
       @included       = included
       @access_control = access_control || AccessControl::Anonymous.new
-      @parent         = parent
+      @parents        = parents
     end
 
     def href
@@ -123,14 +123,14 @@ module Travis::API::V3
 
         Thread.current[:model_renderer_trace] << "#{self.class.name.split('::').last}.#{field}"
 
-        field_value = back_reference(field, parent) || send(field)
+        field_value = back_reference(field, parents) || send(field)
         value  = Renderer.render_value(field_value,
                    access_control: access_control,
                    script_name:    script_name,
                    include:        include,
                    included:       nested_included,
                    mode:           modes[field],
-                   parent:         model)
+                   parent:         [model] + parents)
         result[field] = value unless value == REDUNDANT
 
         Thread.current[:model_renderer_trace].pop
@@ -163,14 +163,17 @@ module Travis::API::V3
     # we can pass it down, and when we detect a back reference,
     # short circuit and return the parent directly.
     #
-    # TODO: walk back more than one level, e.g.
+    # we pass a full trace of parents to handle nested
+    # cases like:
+    #
     #   Repository.current_build
     #     Build.branch
     #       Branch.repository
-    def back_reference(field, parent)
-      if parent
+    def back_reference(field, parents)
+      parents.each do |parent|
         parent_name = underscore(parent.class.name.split('::').last)
-        if field == parent_name.to_sym
+        id_method = field + '_id'
+        if field == parent_name.to_sym && parent.respond_to?(:id) && respond_to?(id_method) && parent.id == send(id_method)
           parent
         end
       end
