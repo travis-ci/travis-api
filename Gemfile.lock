@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/marginalia
-  revision: 69b4a20d782dcab72091a59fae95a3acef4a4810
+  revision: 1733a09de1dd8a4e9b6d92cee7413eacb38f0db1
   specs:
     marginalia (1.5.0)
       activerecord (>= 2.3)
@@ -275,7 +275,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.3.0)
-    minitest (5.10.3)
+    minitest (5.11.1)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multi_json (1.12.2)
