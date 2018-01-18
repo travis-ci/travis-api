@@ -22,6 +22,7 @@ module Travis::API::V3
     KeyPair       = Module.new { extend Services }
     Lint          = Module.new { extend Services }
     Log           = Module.new { extend Services }
+    Messages      = Module.new { extend Services }
     Organization  = Module.new { extend Services }
     Organizations = Module.new { extend Services }
     Owner         = Module.new { extend Services }
