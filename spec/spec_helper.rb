@@ -1,6 +1,6 @@
-require 'knapsack'
-
-Knapsack::Adapters::RspecAdapter.bind
+# require 'knapsack'
+#
+# Knapsack::Adapters::RspecAdapter.bind
 
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 
@@ -21,6 +21,8 @@ require 'travis/testing'
 require 'travis/testing/scenario'
 require 'travis/testing/factories'
 require 'travis/testing/matchers'
+require 'support/auth_helpers'
+require 'support/csv_formatter'
 require 'support/formats'
 require 'support/gcs'
 require 'support/matchers'
@@ -30,6 +32,8 @@ require 'support/s3'
 require 'support/test_helpers'
 require 'support/shared_examples'
 require 'support/active_record'
+
+FactoryBot = FactoryGirl
 
 module TestHelpers
   include Sinatra::TestHelpers
@@ -63,6 +67,7 @@ RSpec.configure do |c|
   c.mock_framework = :mocha
   c.expect_with :rspec
   c.include TestHelpers
+  c.include Support::AuthHelpers
 
   c.before :suite do
     Travis.testing = true

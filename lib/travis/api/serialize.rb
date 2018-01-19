@@ -25,9 +25,11 @@ module Travis
               if const && const.const_defined?(name.to_s.camelize, false)
                 const.const_get(name, false)
               else
+                puts "Could not find serialize builder for #{version} #{target} #{type}" unless type == ["Hash"]
                 nil
               end
             rescue NameError
+              puts "Could not find serialize builder for #{version} #{target}" unless type == ["Hash"]
               nil
             end
           end
