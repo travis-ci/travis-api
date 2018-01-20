@@ -10,6 +10,7 @@ require 'travis/model/encrypted_column'
 class Request < Travis::Model
   require 'travis/model/request/pr'
 
+  include Travis::ScopeAccess
   include SimpleStates
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)

@@ -3,7 +3,22 @@ describe 'Auth broadcasts', auth_helpers: true, site: :org, api_version: :v2, se
 
   before { Broadcast.create!(recipient: user) }
 
-  describe 'in public', mode: :public do
+  describe 'in private mode', mode: :private do
+    describe 'GET /broadcasts' do
+      it(:authenticated)   { should auth status: 200, empty: false }
+      it(:invalid_token)   { should auth status: 403 }
+      it(:unauthenticated) { should auth status: 401 }
+    end
+  end
+
+
+  # +-------------------------------------------------------------+
+  # |                                                             |
+  # |   !!! BELOW IS THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
+  # |                                                             |
+  # +-------------------------------------------------------------+
+
+  describe 'in org mode', mode: :org do
     describe 'GET /broadcasts' do
       it(:authenticated)   { should auth status: 200, empty: false }
       it(:invalid_token)   { should auth status: 403 }

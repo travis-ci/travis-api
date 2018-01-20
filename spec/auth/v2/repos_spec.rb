@@ -12,7 +12,178 @@ describe 'Auth repos', auth_helpers: true, site: :org, api_version: :v2, set_app
   # delete '/:repository_id/caches'
   # post '/:owner_name/:name/key'
 
-  describe 'in public mode, with a public repo', mode: :public, repo: :public do
+  describe 'in private mode, with a private repo', mode: :private, repo: :private do
+    describe 'GET /repos' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{user.login}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{user.login}.xml' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 406 } # not sure what this is, an empty collection?
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 406 } # 401 on com ... investigate why this is a 406
+    end
+
+    describe 'GET /repos/%{repo.id}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.id}/cc.xml' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 302 } # redirects to /repositories/repos/%{repo.id}/cc.xml
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 302 } # 401 on com, investigate if we can fix this
+    end
+
+    describe 'GET /repos/%{repo.id}/settings' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.id}/key' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.id}/branches' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # 401 on com, is this acceptable? can this be fixed?
+    end
+
+    describe 'GET /repos/%{repo.id}/branches/master' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.id}/caches' do
+      it(:with_permission)    { should auth status: 200, empty: true } # investigate how to setup tests to make this empty: true
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.slug}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.slug}.png' do
+      it(:with_permission)    { should auth status: 200, image: :passing }
+      it(:without_permission) { should auth status: 200, image: :unknown }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, image: :unknown } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.slug}.svg' do
+      it(:with_permission)    { should auth status: 200, image: :passing }
+      it(:without_permission) { should auth status: 200, image: :unknown }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, image: :unknown } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.slug}/builds' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # 401 on com, is this acceptable? can this be fixed?
+    end
+
+    describe 'GET /repos/%{repo.slug}/builds.atom' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 406 } # not sure what this is, an empty collection?
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 406 } # 401 on com, investigate why this is a 406, do we care about atom?
+    end
+
+    describe 'GET /repos/%{repo.slug}/builds?branches=master' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
+    end
+
+    describe 'GET /repos/%{repo.slug}/builds?branches=' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # 401 on com, is this acceptable? can this be fixed?
+    end
+
+    describe 'GET /repos/%{repo.slug}/builds/%{build.id}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc.xml' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.slug}/key' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+
+    describe 'GET /repos/%{repo.slug}/branches' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # 401 on com, is this acceptable? can this be fixed?
+    end
+
+    describe 'GET /repos/%{repo.id}/branches/master' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # 401 on com, i think this is acceptable
+    end
+  end
+
+
+
+  # +-------------------------------------------------------------+
+  # |                                                             |
+  # |   !!! BELOW IS THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
+  # |                                                             |
+  # +-------------------------------------------------------------+
+
+  describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /repos' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }

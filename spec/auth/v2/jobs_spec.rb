@@ -13,7 +13,37 @@ describe 'Auth jobs', auth_helpers: true, site: :org, api_version: :v2, set_app:
   # post '/jobs/:id/restart'
   # patch '/jobs/:id/log'
 
-  describe 'in public mode, with a public repo', mode: :public, repo: :public do
+  describe 'in private mode, with a private repo', mode: :private, repo: :private do
+    describe 'GET /jobs' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+    end
+
+    describe 'GET /jobs/%{job.id}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # was 401, i think this is acceptable
+    end
+
+    describe 'GET /jobs/%{job.id}/log' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      xit(:without_permission) { should auth status: 404 } # TODO this is not ok
+      it(:invalid_token)      { should auth status: 403 }
+      xit(:without_permission) { should auth status: 401 } # TODO this is not ok
+    end
+  end
+
+
+  # +-------------------------------------------------------------+
+  # |                                                             |
+  # |   !!! BELOW IS THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
+  # |                                                             |
+  # +-------------------------------------------------------------+
+
+  describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /jobs' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }

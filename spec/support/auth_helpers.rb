@@ -1,6 +1,6 @@
 RSpec::Matchers.define :auth do |expected|
   match do |actual|
-    status?(expected, actual) && body?(expected, actual)
+    status?(expected, actual) && body?(expected, actual) && image?(expected, actual)
   end
 
   def status?(expected, actual)
@@ -9,9 +9,15 @@ RSpec::Matchers.define :auth do |expected|
 
   def body?(expected, actual)
     return true unless expected.key?(:empty)
-    body = JSON.parse(last_response.body) rescue last_response.body
+    body = JSON.parse(actual[:body]) rescue actual[:body]
     body = compact(body)
     expected[:empty] ? body.blank? : body.present?
+  end
+
+  def image?(expected, actual)
+    return true unless expected.key?(:image)
+    image = /#{expected[:image]}\.(png|svg)/
+    actual[:headers]['Content-Disposition'] =~ image
   end
 
   def compact(obj)
@@ -29,8 +35,30 @@ end
 module Support
   module AuthHelpers
     def self.included(c)
-      c.after { Travis.config[:public_mode] = false }
+      c.before { Travis.config[:host] = 'example.com' }
+      c.before { |c| set_private(c.metadata[:repo] == :private) }
+      c.before { |c| set_mode(c.metadata[:mode]) }
+      c.after { Travis.config[:host] = 'travis-ci.org' }
+      c.after { Travis.config[:public_mode] = nil }
       c.subject { |a| send(a.description) }
+    end
+
+    def set_mode(mode)
+      case mode
+      when :org
+        Travis.config[:host] = 'travis-ci.org'
+        Travis.config[:public_mode] = true
+      when :public
+        Travis.config[:public_mode] = true
+      when :private
+        Travis.config[:public_mode] = false
+      end
+    end
+
+    def set_private(value)
+      Repository.update_all(private: value)
+      Build.update_all(private: value)
+      Job.update_all(private: value)
     end
 
     def with_permission
@@ -68,7 +96,7 @@ module Support
       path  = interpolate(self, path)
       query = { access_token: token }
       send(method.downcase, path, query, headers_for_version)
-      { status: last_response.status, body: last_response.body }
+      { status: last_response.status, body: last_response.body, headers: last_response.headers }
     end
 
     def headers_for_version

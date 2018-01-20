@@ -47,6 +47,7 @@ class Build < Travis::Model
   require 'travis/model/build/states'
   require 'travis/model/env_helpers'
 
+  include Travis::ScopeAccess
   include Matrix, States, SimpleStates
 
   belongs_to :commit

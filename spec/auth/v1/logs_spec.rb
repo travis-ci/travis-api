@@ -7,7 +7,24 @@ describe 'Auth logs', auth_helpers: true, site: :org, api_version: :v1, set_app:
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
   before { stub_request(:get, log_url).to_return(status: 200, body: %({"job_id": #{job.id}, "content": "content"})) }
 
-  describe 'in public mode, with a public repo', mode: :public, repo: :public do
+  describe 'in private mode, with a private repo', mode: :private, repo: :private do
+    describe 'GET /logs/1' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      xit(:without_permission) { should auth status: 302 } # redirects to /repositories/logs/1
+      it(:invalid_token)      { should auth status: 403 }
+      xit(:unauthenticated)    { should auth status: 401 }
+    end
+  end
+
+
+
+  # +-------------------------------------------------------------+
+  # |                                                             |
+  # |   !!! BELOW IS THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
+  # |                                                             |
+  # +-------------------------------------------------------------+
+
+  describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /logs/1' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }

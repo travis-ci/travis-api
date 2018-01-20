@@ -1,10 +1,12 @@
 require 'csv'
 require 'rspec/core/formatters/base_formatter'
 
-# $ bundle exec rspec spec/auth --require ./spec/support/csv_formatter.rb --format CsvFormatter
+# run auth specs with formatter, skip the first line:
+#
+# $ bundle exec rspec spec/auth --require ./spec/support/csv_formatter.rb --format CsvFormatter | tail -n +2
 
 class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
-  COLS = %i(site version resource mode repo context method path status result comment)
+  COLS = %i(result site version mode repo context method path status empty comment)
   DESC = /^Auth (?<resource>[\w\/]+) .* (?<method>HEAD|GET|PUT|POST|DELETE) (?<path>[^ ]+) .*/
 
   def stop
@@ -21,16 +23,16 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
     str, meta, result = example.full_description, example.metadata, example.execution_result[:status]
     match = str.match(DESC)
     [
+      result,
       meta[:site],
       meta[:api_version],
-      match[:resource],
       meta[:mode],
       meta[:repo],
       example.description,
       match[:method],
       match[:path],
       status(example),
-      result,
+      empty(example),
       comment(example)
     ]
   end
@@ -48,6 +50,11 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
   # anymore. So this parses the Ruby code instead.
   def status(example)
     code(example) =~ /status: +([\d]+)/ && $1.to_i
+  end
+
+  def empty(example)
+    return unless str = code(example) =~ /empty: ([\w]+)/ && $1
+    str == 'true' ? 'yes' : 'no'
   end
 
   def comment(example)

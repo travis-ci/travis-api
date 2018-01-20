@@ -73,5 +73,9 @@ module Travis
       super
       load_urls
     end
+
+    def org?
+      host.ends_with?('travis-ci.org')
+    end
   end
 end

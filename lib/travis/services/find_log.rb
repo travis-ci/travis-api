@@ -5,6 +5,8 @@ module Travis
     class FindLog < Base
       register :find_log
 
+      scope_access!
+
       def run(options = {})
         result
       end

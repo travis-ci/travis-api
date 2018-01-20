@@ -7,7 +7,53 @@ describe 'Auth builds', auth_helpers: true, site: :org, api_version: :v2, set_ap
   # post '/builds/:id/cancel'
   # post '/builds/:id/restart'
 
-  describe 'in public mode, with a public repo', mode: :public, repo: :public do
+  describe 'in private mode, with a private repo', mode: :private, repo: :private do
+    describe 'GET /builds' do
+      it(:with_permission)    { should auth status: 200, empty: true }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+    end
+
+    describe 'GET /builds?running=true' do
+      before { build.update_attributes(state: :started) }
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+    end
+
+    describe 'GET /builds?repository_id=%{repo.id}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+    end
+
+    describe 'GET /builds?repository_id=%{repo.id}&branches=%{build.branch}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+    end
+
+    describe 'GET /builds/%{build.id}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 } # was 401, i think this is acceptable
+    end
+  end
+
+
+
+  # +-------------------------------------------------------------+
+  # |                                                             |
+  # |   !!! BELOW IS THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
+  # |                                                             |
+  # +-------------------------------------------------------------+
+
+  describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /builds' do
       it(:with_permission)    { should auth status: 200, empty: true }
       it(:without_permission) { should auth status: 200, empty: true }
@@ -23,14 +69,14 @@ describe 'Auth builds', auth_helpers: true, site: :org, api_version: :v2, set_ap
       it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
-    describe 'GET /builds?repository_id=%{build.repository_id}' do
+    describe 'GET /builds?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
-    describe 'GET /builds?repository_id=%{build.repository_id}&branches=%{build.branch}' do
+    describe 'GET /builds?repository_id=%{repo.id}&branches=%{build.branch}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }

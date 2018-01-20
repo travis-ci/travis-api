@@ -11,6 +11,8 @@ require 'travis/model'
 # A repository also has a ServiceHook that can be used to de/activate service
 # hooks on Github.
 class Repository < Travis::Model
+  include Travis::ScopeAccess
+
   require 'travis/model/repository/status_image'
   require 'travis/model/repository/settings'
 

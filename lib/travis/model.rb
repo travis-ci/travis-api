@@ -7,6 +7,7 @@ require 'core_ext/active_record/base'
 
 module Travis
   class Model < ActiveRecord::Base
+    require 'travis/model/scope_access'
     require 'travis/model/account'
     require 'travis/model/branch'
     require 'travis/model/broadcast'

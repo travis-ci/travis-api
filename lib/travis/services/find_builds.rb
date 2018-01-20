@@ -9,6 +9,8 @@ module Travis
     class FindBuilds < Base
       register :find_builds
 
+      scope_access!
+
       def run
         preload(result)
       end
