@@ -1,4 +1,4 @@
-describe 'Auth repos', auth_helpers: true, site: :org, api_version: :v2, set_app: true do
+describe 'Auth repos', auth_helpers: true, site: :org, api_version: :v1, set_app: true do
   let(:user)  { FactoryBot.create(:user) }
   let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }
@@ -52,7 +52,7 @@ describe 'Auth repos', auth_helpers: true, site: :org, api_version: :v2, set_app
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 404 }
+      it(:unauthenticated)    { should auth status: 200 } # returns a status image???
     end
 
     describe 'GET /repos/%{repo.id}/key' do
@@ -80,7 +80,7 @@ describe 'Auth repos', auth_helpers: true, site: :org, api_version: :v2, set_app
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 404 }
+      it(:unauthenticated)    { should auth status: 200 } # returns a status image???
     end
 
     describe 'GET /repos/%{repo.slug}' do

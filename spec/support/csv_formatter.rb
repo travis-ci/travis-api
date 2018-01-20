@@ -47,7 +47,7 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
   # there's no way to access the last matcher within any RSpec formatter hook
   # anymore. So this parses the Ruby code instead.
   def status(example)
-    code(example) =~ /should +eq +([\d]+)/ && $1.to_i
+    code(example) =~ /status: +([\d]+)/ && $1.to_i
   end
 
   def comment(example)

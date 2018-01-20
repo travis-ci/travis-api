@@ -9,7 +9,7 @@ RSpec::Matchers.define :auth do |expected|
 
   def body?(expected, actual)
     return true unless expected.key?(:empty)
-    body = JSON.parse(last_response.body) rescue nil
+    body = JSON.parse(last_response.body) rescue last_response.body
     body = compact(body)
     expected[:empty] ? body.blank? : body.present?
   end
