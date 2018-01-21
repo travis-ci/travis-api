@@ -7,6 +7,8 @@ class Travis::Api::App
     class Jobs < Endpoint
       include Helpers::Accept
 
+      before { authenticate_by_mode! }
+
       get '/' do
         prefer_follower do
           respond_with service(:find_jobs, params), include_log_id: include_log_id?

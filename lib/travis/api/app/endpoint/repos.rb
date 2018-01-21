@@ -3,7 +3,9 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Repos < Endpoint
-       set :pattern, capture: { id: /\d+/ }
+      before { authenticate_by_mode! }
+
+      set :pattern, capture: { id: /\d+/ }
 
       # Endpoint for getting all repositories.
       #

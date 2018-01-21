@@ -32,6 +32,13 @@ class Travis::Api::App
 
     private
 
+      def authenticate_by_mode!
+        return if env['travis.access_token']
+        if Travis.config[:public_mode] == false
+          halt 401, 'no access token supplied'
+        end
+      end
+
       def redis
         Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
       end
