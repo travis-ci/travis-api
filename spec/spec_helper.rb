@@ -16,6 +16,9 @@ require 'pry'
 require 'stackprof'
 require 'webmock/rspec'
 
+require 'active_record'
+ActiveRecord::Base.raise_in_transactional_callbacks = true
+
 require 'travis/api/app'
 require 'travis/testing'
 require 'travis/testing/scenario'
@@ -67,7 +70,7 @@ RSpec.configure do |c|
   c.mock_framework = :mocha
   c.expect_with :rspec
   c.include TestHelpers
-  c.include Support::AuthHelpers
+  c.include Support::AuthHelpers, auth_helpers: true
 
   c.before :suite do
     Travis.testing = true
