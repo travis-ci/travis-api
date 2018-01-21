@@ -11,14 +11,14 @@ describe 'Auth requests', auth_helpers: true, site: :org, api_version: :v2, set_
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 404 } # was 401, i think this is acceptable
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /requests/%{request.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 404 } # was 401, i think this is acceptable
+      it(:unauthenticated)    { should auth status: 401 }
     end
   end
 

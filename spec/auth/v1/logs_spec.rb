@@ -12,7 +12,7 @@ describe 'Auth logs', auth_helpers: true, site: :org, api_version: :v1, set_app:
       it(:with_permission)    { should auth status: 200, empty: false }
       xit(:without_permission) { should auth status: 302 } # redirects to /repositories/logs/1
       it(:invalid_token)      { should auth status: 403 }
-      xit(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 401 }
     end
   end
 

@@ -18,21 +18,21 @@ describe 'Auth jobs', auth_helpers: true, site: :org, api_version: :v1, set_app:
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /jobs/%{job.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 302 } # redirects to /repositories/jobs/%{job.id}
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 302 } # was 401, probably acceptable?
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /jobs/%{job.id}/log' do
       it(:with_permission)    { should auth status: 200, empty: false }
       xit(:without_permission) { should auth status: 404 } # TODO not ok
       it(:invalid_token)      { should auth status: 403 }
-      xit(:unauthenticated)    { should auth status: 401 } # TODO not ok
+      it(:unauthenticated)    { should auth status: 401 }
     end
   end
 

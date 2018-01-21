@@ -12,7 +12,7 @@ describe 'Auth builds', auth_helpers: true, site: :org, api_version: :v2, set_ap
       it(:with_permission)    { should auth status: 200, empty: true }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /builds?running=true' do
@@ -20,28 +20,28 @@ describe 'Auth builds', auth_helpers: true, site: :org, api_version: :v2, set_ap
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /builds?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /builds?repository_id=%{repo.id}&branches=%{build.branch}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, empty: true } # was 401, i think this is acceptable
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /builds/%{build.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 404 } # was 401, i think this is acceptable
+      it(:unauthenticated)    { should auth status: 401 }
     end
   end
 

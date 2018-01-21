@@ -5,10 +5,13 @@ class Travis::Api::App
     # Checks access tokens and sets appropriate scopes.
     class ScopeCheck < Middleware
       before do
-        next unless token
-        access_token = AccessToken.find_by_token(token)
-        halt 403, 'access denied' unless access_token
-        env['travis.access_token'] = access_token
+        if token
+          access_token = AccessToken.find_by_token(token)
+          halt 403, 'access denied' unless access_token
+          env['travis.access_token'] = access_token
+        elsif Travis.config[:public_mode] == false
+          halt 401, 'no access token supplied'
+        end
       end
 
       after do
@@ -19,7 +22,8 @@ class Travis::Api::App
       end
 
       def token
-        @token ||= header_token || query_token || travis_token
+        return @token if instance_variable_defined?(:@token)
+        @token = header_token || query_token || travis_token
       end
 
       private

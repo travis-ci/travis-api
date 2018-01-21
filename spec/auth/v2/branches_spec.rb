@@ -5,24 +5,24 @@ describe 'Auth branches', auth_helpers: true, site: :org, api_version: :v2, set_
 
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /repos/%{repo.slug}/branches' do
-      it(:with_permission)     { should auth status: 200, empty: false }
-      it(:without_permission)  { should auth status: 200, empty: true }
-      it(:invalid_token)       { should auth status: 403 }
-      it(:unauthenticated)     { should auth status: 200, empty: true } # was 401, i think this is acceptable
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /branches?repository_id=%{repo.id}' do
-      it(:with_permission)     { should auth status: 200, empty: false }
-      it(:without_permission)  { should auth status: 200, empty: true }
-      it(:invalid_token)       { should auth status: 403 }
-      it(:unauthenticated)     { should auth status: 200, empty: true } # was 401, i think this is acceptable
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /branches?ids=%{build.id}' do
-      it(:with_permission)     { should auth status: 200, empty: false }
-      it(:without_permission)  { should auth status: 200, empty: true }
-      it(:invalid_token)       { should auth status: 403 }
-      it(:unauthenticated)     { should auth status: 200, empty: true } # was 401, i think this is acceptable
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
     end
   end
 
@@ -40,24 +40,24 @@ describe 'Auth branches', auth_helpers: true, site: :org, api_version: :v2, set_
 
     # documented https://docs.travis-ci.com/api/#branches
     describe 'GET /repos/%{repo.slug}/branches' do
-      it(:with_permission)     { should auth status: 200, empty: false }
-      it(:without_permission)  { should auth status: 200, empty: false }
-      it(:invalid_token)       { should auth status: 403 }
-      it(:unauthenticated)     { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
     describe 'GET /branches?repository_id=%{repo.id}' do
-      it(:with_permission)     { should auth status: 200, empty: false }
-      it(:without_permission)  { should auth status: 200, empty: false }
-      it(:invalid_token)       { should auth status: 403 }
-      it(:unauthenticated)     { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
     describe 'GET /branches?ids=%{build.id}' do
-      it(:with_permission)     { should auth status: 200, empty: false }
-      it(:without_permission)  { should auth status: 200, empty: false }
-      it(:invalid_token)       { should auth status: 403 }
-      it(:unauthenticated)     { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, empty: false }
     end
   end
 end
