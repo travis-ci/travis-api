@@ -162,6 +162,8 @@ module Travis::Api
         # if this is a v3 API request, ignore everything after
         use Travis::API::V3::OptIn
 
+        use Travis::Api::App::Middleware::AuthMode
+
         # rewrite should come after V3 hook
         use Travis::Api::App::Middleware::Rewrite
 
