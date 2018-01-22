@@ -131,6 +131,16 @@ class User < Travis::Model
     end
   end
 
+  def subscribed?
+    subscription.present? and subscription.active?
+  end
+
+  def subscription
+    return @subscription if instance_variable_defined?(:@subscription)
+    records = Subscription.where(owner_id: id, owner_type: "User")
+    @subscription = records.where(status: 'subscribed').last || records.last
+  end
+
   def _has
     self.respond_to?(field) and self.send(field).present?
   end

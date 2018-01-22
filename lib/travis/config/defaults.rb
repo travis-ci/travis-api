@@ -77,5 +77,9 @@ module Travis
     def org?
       host.ends_with?('travis-ci.org')
     end
+
+    def com?
+      host.ends_with?('travis-ci.com')
+    end
   end
 end

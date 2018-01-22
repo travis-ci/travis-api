@@ -23,6 +23,7 @@ module Travis
     require 'travis/model/repository'
     require 'travis/model/request'
     require 'travis/model/ssl_key'
+    require 'travis/model/subscription'
     require 'travis/model/token'
     require 'travis/model/user'
     require 'travis/model/url'
