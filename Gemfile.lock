@@ -73,7 +73,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-settings
-  revision: d510e63b6c6f059cccae141c265e7a0c7236d1fd
+  revision: debef595a6a54b082176edba630fdb5ee9d705af
   specs:
     travis-settings (0.0.1)
       activemodel
