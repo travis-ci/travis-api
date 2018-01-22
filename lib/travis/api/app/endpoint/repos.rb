@@ -31,25 +31,25 @@ class Travis::Api::App
       # json(:repository)
       get '/:id' do
         prefer_follower do
-          respond_with service(:find_repo, id: params[:id])
+          respond_with service(:find_repo, params)
         end
       end
 
       # Retrieves repositories for a given owner.
       get '/:owner_name' do
         prefer_follower do
-          respond_with service(:find_repos, owner_name: params[:owner_name]).run
+          respond_with service(:find_repos, params).run
         end
       end
 
       get '/:id/cc' do
-        respond_with service(:find_repo, id: params[:id], schema: 'cc')
+        respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
       # Get settings for a given repository
       #
       get '/:id/settings', scope: :private do
-        settings = service(:find_repo_settings, id: params[:id]).run
+        settings = service(:find_repo_settings, params).run
         if settings
           respond_with({ settings: settings.simple_attributes }, version: :v2)
         else
@@ -90,31 +90,32 @@ class Travis::Api::App
       #
       # json(:repository_key)
       get '/:id/key' do
-        respond_with service(:find_repo_key, id: params[:id]), version: :v2
+        respond_with service(:find_repo_key, params), version: :v2
       end
 
       post '/:id/key' do
-        respond_with service(:regenerate_repo_key, id: params[:id]), version: :v2
+        respond_with service(:regenerate_repo_key, params), version: :v2
       end
 
       # Gets list of branches
       get '/:repository_id/branches' do
-        respond_with service(:find_branches, repository_id: params[:repository_id]), type: :branches, version: :v2
+        respond_with service(:find_branches, params), type: :branches, version: :v2
       end
 
       # Gets latest build on a branch
       get '/:repository_id/branches/*' do
-        respond_with service(:find_branch, repository_id: params[:repository_id], branch: params[:splat]), type: :branch, version: :v2
+        params[:branch] = params[:splat]
+        respond_with service(:find_branch, params), type: :branch, version: :v2
       end
 
       # List caches for a given repo. Can be filtered with `branch` and `match` query parameter.
       get '/:repository_id/caches', scope: :private do
-        respond_with service(:find_caches, repository_id: params[:repository_id]), type: :caches, version: :v2
+        respond_with service(:find_caches, params), type: :caches, version: :v2
       end
 
       # Delete caches for a given repo. Can be filtered with `branch` and `match` query parameter.
       delete '/:repository_id/caches', scope: :private do
-        respond_with service(:delete_caches, repository_id: params[:repository_id]), type: :caches, version: :v2
+        respond_with service(:delete_caches, params), type: :caches, version: :v2
       end
 
       # Gets the repository with the given name.
@@ -124,7 +125,7 @@ class Travis::Api::App
       # json(:repository)
       get '/:owner_name/:name' do
         prefer_follower do
-          respond_with service(:find_repo, owner_name: params[:owner_name], name: params[:name]), type_hint: Repository
+          respond_with service(:find_repo, params), type_hint: Repository
         end
       end
 
@@ -135,7 +136,7 @@ class Travis::Api::App
       # json(:builds)
       get '/:owner_name/:name/builds' do
         name = params[:branches] ? :find_branches : :find_builds
-        params[:ids] = params[:ids].split(',') if params[:ids].respond_to?(:split)
+        params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
         respond_with service(:find_builds, params)
       end
 
