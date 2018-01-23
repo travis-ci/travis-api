@@ -8,6 +8,7 @@ module Travis
       def run(options = {})
         if repo && accept?
           regenerate
+          run_service(:github_set_key, params.merge(force: true)) if repo.private?
           repo.key
         end
       end
@@ -29,7 +30,6 @@ module Travis
         def has_permission?
           current_user && current_user.permission?(:admin, :repository_id => repo.id)
         end
-
     end
   end
 end
