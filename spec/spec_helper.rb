@@ -79,7 +79,6 @@ RSpec.configure do |c|
     Travis::Api::App.setup
     Travis.config.client_domain = "www.example.com"
     Travis.config.endpoints.ssh_key = true
-    Travis.config.public_mode = true
 
     DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
@@ -94,6 +93,7 @@ RSpec.configure do |c|
   c.before :each do
     DatabaseCleaner.start
     Redis.new.flushall
+    Travis.config.public_mode = true
     Travis.config.oauth2.scope = "user:email,public_repo"
   end
 
