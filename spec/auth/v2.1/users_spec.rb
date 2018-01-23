@@ -1,4 +1,4 @@
-describe 'Auth users', auth_helpers: true, api_version: :v2, set_app: true do
+describe 'Auth users', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user) { User.first }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 

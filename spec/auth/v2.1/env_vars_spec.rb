@@ -1,30 +1,16 @@
-describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :v2, set_app: true do
+describe 'Auth settings/env_vars', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
-  # before(:all) { SslKey.create(repository_id: 1) }
-  # before { SslKey.update_all(repository_id: repo.id) }
+  before { repo.settings.tap { |s| s.env_vars.create(name: 'FOO', value: 'foo') && s.save } }
 
-  before do
-    settings = repo.settings
-    record = settings.create(:ssh_key, description: 'key for my repo', value: TEST_PRIVATE_KEY)
-    settings.save
-  end
-
-  # TODO patch /settings/ssh_key/:repo_id
-  # TODO delete /settings/ssh_key/:repo_id
-
-  describe 'in public mode, with a private repo', mode: :public, repo: :private do
-    describe 'GET /settings/ssh_key/%{repo.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 404 }
-      it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 } # was 404? but also, the pro-api specs for this endpoint are somewhat weird
-    end
-  end
+  # TODO get /settings/env_vars/:id
+  # TODO post /settings/env_vars/
+  # TODO patch /settings/env_vars/:id
+  # TODO delete /settings/env_vars/:id
 
   describe 'in public mode, with a public repo', mode: :public, repo: :public do
-    describe 'GET /settings/ssh_key/%{repo.id}' do
+    describe 'GET /settings/env_vars?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
@@ -39,16 +25,16 @@ describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :v2, set_app:
   # +----------------------------------------------------+
 
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
-    describe 'GET /settings/ssh_key/%{repo.id}' do
+    describe 'GET /settings/env_vars?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 } # was 404? but also, the pro-api specs for this endpoint are somewhat weird
+      it(:unauthenticated)    { should auth status: 401 }
     end
   end
 
   describe 'in org mode, with a public repo', mode: :org, repo: :public do
-    describe 'GET /settings/ssh_key/%{repo.id}' do
+    describe 'GET /settings/env_vars?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }

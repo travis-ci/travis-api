@@ -33,10 +33,24 @@ class Travis::Api::App
     private
 
       def authenticate_by_mode!
-        return if env['travis.access_token']
-        if Travis.config[:public_mode] == false
-          halt 401, 'no access token supplied'
-        end
+        return if org? || authenticated?
+        halt 401 if public_mode? || pre_v2_1?
+      end
+
+      def authenticated?
+        !!env['travis.access_token']
+      end
+
+      def public_mode?
+        Travis.config[:public_mode] == false
+      end
+
+      def org?
+        Travis.config.org?
+      end
+
+      def pre_v2_1?
+        accept_version.to_s < 'v2.1'
       end
 
       def redis

@@ -12,6 +12,52 @@ describe 'Auth jobs', auth_helpers: true, api_version: :v2, set_app: true do
   # post '/jobs/:id/restart'
   # patch '/jobs/:id/log'
 
+  describe 'in public mode, with a private repo', mode: :public, repo: :private do
+    describe 'GET /jobs' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /jobs/%{job.id}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /jobs/%{job.id}/log' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      xit(:without_permission) { should auth status: 404 } # TODO this is not ok
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+  end
+
+  describe 'in public mode, with a public repo', mode: :public, repo: :public do
+    describe 'GET /jobs' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /jobs/%{job.id}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /jobs/%{job.id}/log' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+  end
+
   # +----------------------------------------------------+
   # |                                                    |
   # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |

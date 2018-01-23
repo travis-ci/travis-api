@@ -1,4 +1,4 @@
-describe 'Auth requests', auth_helpers: true, api_version: :v2, set_app: true do
+describe 'Auth requests', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user)    { FactoryBot.create(:user) }
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:request) { repo.requests.first }
@@ -11,14 +11,14 @@ describe 'Auth requests', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 404 }
     end
 
     describe 'GET /requests/%{request.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 404 }
     end
   end
 
@@ -27,14 +27,14 @@ describe 'Auth requests', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
     describe 'GET /requests/%{request.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 404 } # this is an exception, would serve 200/empty on other endpoints
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 404 }
     end
   end
 

@@ -104,6 +104,8 @@ module Support
       case api_version
       when :v2
         { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' }
+      when :'v2.1'
+        { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2.1+json' }
       else
         {}
       end

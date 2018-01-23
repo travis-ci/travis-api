@@ -1,10 +1,10 @@
-describe 'Auth accounts', auth_helpers: true, api_version: :v2, set_app: true do
+describe 'Auth broadcasts', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user) { FactoryBot.create(:user) }
 
   before { Broadcast.create!(recipient: user) }
 
   describe 'in public mode', mode: :public do
-    describe 'GET /accounts' do
+    describe 'GET /broadcasts' do
       it(:authenticated)   { should auth status: 200, empty: false }
       it(:invalid_token)   { should auth status: 403 }
       it(:unauthenticated) { should auth status: 401 }
@@ -18,7 +18,7 @@ describe 'Auth accounts', auth_helpers: true, api_version: :v2, set_app: true do
   # +----------------------------------------------------+
 
   describe 'in private mode', mode: :private do
-    describe 'GET /accounts' do
+    describe 'GET /broadcasts' do
       it(:authenticated)   { should auth status: 200, empty: false }
       it(:invalid_token)   { should auth status: 403 }
       it(:unauthenticated) { should auth status: 401 }
@@ -26,7 +26,7 @@ describe 'Auth accounts', auth_helpers: true, api_version: :v2, set_app: true do
   end
 
   describe 'in org mode', mode: :org do
-    describe 'GET /accounts' do
+    describe 'GET /broadcasts' do
       it(:authenticated)   { should auth status: 200, empty: false }
       it(:invalid_token)   { should auth status: 403 }
       it(:unauthenticated) { should auth status: 401 }

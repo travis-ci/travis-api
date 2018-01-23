@@ -1,4 +1,4 @@
-describe 'Auth builds', auth_helpers: true, api_version: :v2, set_app: true do
+describe 'Auth builds', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user)  { FactoryBot.create(:user) }
   let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }
@@ -9,10 +9,10 @@ describe 'Auth builds', auth_helpers: true, api_version: :v2, set_app: true do
 
   describe 'in public mode, with a private repo', mode: :public, repo: :private do
     describe 'GET /builds' do
-      it(:with_permission)    { should auth status: 200, empty: true } # TODO wait, why is this empty??
+      it(:with_permission)    { should auth status: 200, empty: true }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: true }
     end
 
     describe 'GET /builds?running=true' do
@@ -20,37 +20,37 @@ describe 'Auth builds', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: true }
     end
 
     describe 'GET /builds?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: true }
     end
 
     describe 'GET /builds?repository_id=%{repo.id}&branches=%{build.branch}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: true }
     end
 
     describe 'GET /builds/%{build.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 404 }
     end
   end
 
   describe 'in public mode, with a public repo', mode: :public, repo: :public do
     describe 'GET /builds' do
-      it(:with_permission)    { should auth status: 200, empty: true } # TODO wait, why is this empty??
+      it(:with_permission)    { should auth status: 200, empty: true }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: true }
     end
 
     describe 'GET /builds?running=true' do
@@ -58,28 +58,28 @@ describe 'Auth builds', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
     describe 'GET /builds?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
     describe 'GET /builds?repository_id=%{repo.id}&branches=%{build.branch}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
     describe 'GET /builds/%{build.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, empty: false }
     end
   end
 
@@ -91,7 +91,7 @@ describe 'Auth builds', auth_helpers: true, api_version: :v2, set_app: true do
 
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /builds' do
-      it(:with_permission)    { should auth status: 200, empty: true } # TODO wait, why is this empty??
+      it(:with_permission)    { should auth status: 200, empty: true }
       it(:without_permission) { should auth status: 200, empty: true }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }

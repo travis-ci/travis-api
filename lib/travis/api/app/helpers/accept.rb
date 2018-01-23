@@ -3,7 +3,7 @@ require 'travis/api/app'
 class Travis::Api::App
   module Helpers
     module Accept
-      HEADER_FORMAT   = /vnd\.travis-ci\.(\d+)\+(\w+)/
+      HEADER_FORMAT   = /vnd\.travis-ci\.([\d\.]+)\+(\w+)/
       DEFAULT_VERSION = 'v1'
       DEFAULT_FORMAT  = 'json'
 

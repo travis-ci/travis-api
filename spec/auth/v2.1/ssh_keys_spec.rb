@@ -1,4 +1,4 @@
-describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :v2, set_app: true do
+describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
@@ -19,7 +19,7 @@ describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :v2, set_app:
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 } # was 404? but also, the pro-api specs for this endpoint are somewhat weird
+      it(:unauthenticated)    { should auth status: 401 } # why is this a 401?? every other endpoint would 404 here, right?
     end
   end
 
@@ -28,7 +28,7 @@ describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :v2, set_app:
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 401 } # why is this a 401??
     end
   end
 

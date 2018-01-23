@@ -18,7 +18,7 @@ class Travis::Api::App
       # json(:repositories)
       get '/' do
         prefer_follower do
-          return Travis.config.org? ? 403 : 401 unless current_user
+          return Travis.config.org? && pre_v2_1? ? 403 : 401 unless current_user
           params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
           respond_with service(:find_repos, params).run
         end

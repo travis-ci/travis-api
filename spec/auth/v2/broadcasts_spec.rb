@@ -3,6 +3,14 @@ describe 'Auth broadcasts', auth_helpers: true, api_version: :v2, set_app: true 
 
   before { Broadcast.create!(recipient: user) }
 
+  describe 'in public mode', mode: :public do
+    describe 'GET /broadcasts' do
+      it(:authenticated)   { should auth status: 200, empty: false }
+      it(:invalid_token)   { should auth status: 403 }
+      it(:unauthenticated) { should auth status: 401 }
+    end
+  end
+
   # +----------------------------------------------------+
   # |                                                    |
   # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
