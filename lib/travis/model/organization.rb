@@ -17,7 +17,7 @@ class Organization < Travis::Model
 
   def subscription
     return @subscription if instance_variable_defined?(:@subscription)
-    records = Subscription.where(owner_id: id, owner_type: "User")
+    records = Subscription.where(owner_id: id, owner_type: "Organization")
     @subscription = records.where(status: 'subscribed').last || records.last
   end
 end
