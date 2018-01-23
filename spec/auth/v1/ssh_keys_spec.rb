@@ -1,4 +1,4 @@
-describe 'Auth settings/ssh_key', auth_helpers: true, site: :org, api_version: :v1, set_app: true do
+describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :v1, set_app: true do
   let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
@@ -14,6 +14,12 @@ describe 'Auth settings/ssh_key', auth_helpers: true, site: :org, api_version: :
   # TODO patch /settings/ssh_key/:repo_id
   # TODO delete /settings/ssh_key/:repo_id
 
+  # +----------------------------------------------------+
+  # |                                                    |
+  # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
+  # |                                                    |
+  # +----------------------------------------------------+
+
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /settings/ssh_key/%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false } # was 404, but pro-api specs are weird here, and shouldn't be a 404
@@ -22,14 +28,6 @@ describe 'Auth settings/ssh_key', auth_helpers: true, site: :org, api_version: :
       it(:unauthenticated)    { should auth status: 401 } # was 404, acceptable? also why's the difference?
     end
   end
-
-
-
-  # +-------------------------------------------------------------+
-  # |                                                             |
-  # |   !!! BELOW IS THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
-  # |                                                             |
-  # +-------------------------------------------------------------+
 
   describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /settings/ssh_key/%{repo.id}' do

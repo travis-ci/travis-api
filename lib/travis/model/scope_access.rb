@@ -42,6 +42,8 @@ module Travis
               where('false')
             elsif self == ::Repository
               where('repositories.id IN (?)', user.repository_ids)
+            elsif self == ::Request
+              where('requests.repository_id IN (?)', user.repository_ids)
             elsif self == ::Build
               where('builds.repository_id IN (?)', user.repository_ids)
             elsif self == ::Job

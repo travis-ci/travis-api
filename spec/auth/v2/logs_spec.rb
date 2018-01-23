@@ -1,4 +1,4 @@
-describe 'Auth logs', auth_helpers: true, site: :org, api_version: :v2, set_app: true do
+describe 'Auth logs', auth_helpers: true, api_version: :v2, set_app: true do
   let(:user)  { FactoryBot.create(:user) }
   let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }
@@ -6,6 +6,12 @@ describe 'Auth logs', auth_helpers: true, site: :org, api_version: :v2, set_app:
 
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
   before { stub_request(:get, log_url).to_return(status: 200, body: %({"job_id": #{job.id}, "content": "content"})) }
+
+  # +----------------------------------------------------+
+  # |                                                    |
+  # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
+  # |                                                    |
+  # +----------------------------------------------------+
 
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /logs/1' do
@@ -15,14 +21,6 @@ describe 'Auth logs', auth_helpers: true, site: :org, api_version: :v2, set_app:
       it(:unauthenticated)    { should auth status: 401 }
     end
   end
-
-
-
-  # +-------------------------------------------------------------+
-  # |                                                             |
-  # |   !!! BELOW IS THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
-  # |                                                             |
-  # +-------------------------------------------------------------+
 
   describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /logs/1' do

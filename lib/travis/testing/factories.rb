@@ -75,6 +75,9 @@ FactoryGirl.define do
     event 'build:started'
   end
 
+  factory :permission do
+  end
+
   factory :user do
     name  'Sven Fuchs'
     login 'svenfuchs'

@@ -1,9 +1,8 @@
-describe 'Auth jobs', auth_helpers: true, site: :org, api_version: :v1, set_app: true do
+describe 'Auth jobs', auth_helpers: true, api_version: :v1, set_app: true do
   let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
   let(:job)  { repo.builds.first.matrix.first }
 
-  # accesses the logs api for the job's log
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/#{job.id}?by=job_id&source=api" }
   before { stub_request(:get, log_url).to_return(status: 200, body: %({"job_id": #{job.id}, "content": "content"})) }
   before { Job.update_all(state: :started) }
@@ -12,6 +11,12 @@ describe 'Auth jobs', auth_helpers: true, site: :org, api_version: :v1, set_app:
   # post '/jobs/:id/cancel'
   # post '/jobs/:id/restart'
   # patch '/jobs/:id/log'
+
+  # +----------------------------------------------------+
+  # |                                                    |
+  # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
+  # |                                                    |
+  # +----------------------------------------------------+
 
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /jobs' do
@@ -35,14 +40,6 @@ describe 'Auth jobs', auth_helpers: true, site: :org, api_version: :v1, set_app:
       it(:unauthenticated)    { should auth status: 401 }
     end
   end
-
-
-
-  # +-------------------------------------------------------------+
-  # |                                                             |
-  # |   !!! BELOW IS THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
-  # |                                                             |
-  # +-------------------------------------------------------------+
 
   describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /jobs' do

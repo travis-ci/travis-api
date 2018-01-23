@@ -1,7 +1,13 @@
-describe 'Auth accounts', auth_helpers: true, site: :org, api_version: :v1, set_app: true do
+describe 'Auth accounts', auth_helpers: true, api_version: :v1, set_app: true do
   let(:user) { FactoryBot.create(:user) }
 
   before { Broadcast.create!(recipient: user) }
+
+  # +----------------------------------------------------+
+  # |                                                    |
+  # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
+  # |                                                    |
+  # +----------------------------------------------------+
 
   describe 'in private mode', mode: :private do
     describe 'GET /accounts' do
@@ -10,12 +16,6 @@ describe 'Auth accounts', auth_helpers: true, site: :org, api_version: :v1, set_
       it(:unauthenticated) { should auth status: 401 }
     end
   end
-
-  # +-------------------------------------------------------------+
-  # |                                                             |
-  # |   !!! BELOW IS THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
-  # |                                                             |
-  # +-------------------------------------------------------------+
 
   describe 'in org mode', mode: :org do
     describe 'GET /accounts' do
