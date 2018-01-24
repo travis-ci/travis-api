@@ -1,6 +1,8 @@
 require 'travis/api/app'
 require 'travis/api/enqueue/services/restart_model'
 require 'travis/api/enqueue/services/cancel_model'
+require 'travis/log_token'
+require 'travis/api/app/responders/base'
 
 class Travis::Api::App
   class Endpoint
@@ -8,6 +10,28 @@ class Travis::Api::App
       include Helpers::Accept
 
       before { authenticate_by_mode! }
+
+      class AttachLogTokenResponder < Travis::Api::App::Responders::Base
+        def apply?
+          true
+        end
+
+        def apply
+          attrs = {
+            app_id: 1, user: endpoint.current_user, expires_in: 1.day,
+            extra: {
+              required_params: { job_id: endpoint.params['job_id'] }
+            }
+          }
+
+          token = Travis::Api::App::AccessToken.new(attrs).tap(&:save)
+
+          endpoint.headers['X-Log-Access-Token'] = token.token
+          endpoint.headers['Access-Control-Expose-Headers'] = "Location, Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Log-Access-Token, X-Request-ID"
+
+          resource
+        end
+      end
 
       get '/' do
         prefer_follower do
@@ -75,14 +99,14 @@ class Travis::Api::App
         respond_with(result: result, flash: service.messages)
       end
 
-      get '/:job_id/log' do
+      get '/:job_id/log', scope: [:public, :log] do
         resource = service(:find_log, params).run
+        is_private = resource && Job.find(resource.job_id).private?
+        responders = is_private ? [AttachLogTokenResponder] : []
+
         if (resource && resource.removed_at) && accepts?('application/json')
-          respond_with resource
-        elsif resource.nil?
-          status 200
-          body empty_log(Integer(params[:job_id])).to_json
-        elsif resource.archived?
+          respond_with resource, responders: responders
+        elsif (resource && resource.archived?)
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')
@@ -96,6 +120,9 @@ class Travis::Api::App
               status 204
               headers['Access-Control-Expose-Headers'] = 'Location'
               headers['Location'] = archived_log_path
+              if is_private
+                AttachLogTokenResponder.new(self, nil).apply
+              end
             else
               redirect archived_log_path, 307
             end
@@ -103,7 +130,7 @@ class Travis::Api::App
             status 406
           end
         else
-          respond_with resource
+          respond_with resource, responders: responders
         end
       end
 

@@ -1,5 +1,6 @@
 require 'travis/api/app'
 require 'travis/api/app/helpers/accept'
+require 'travis/api/app/responders'
 
 class Travis::Api::App
   module Helpers
