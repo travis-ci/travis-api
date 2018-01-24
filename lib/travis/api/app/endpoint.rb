@@ -34,7 +34,7 @@ class Travis::Api::App
 
       def authenticate_by_mode!
         return if org? || authenticated?
-        halt 401 if public_mode? || pre_v2_1?
+        halt 401 if private_mode? || pre_v2_1?
       end
 
       def authenticated?
@@ -42,11 +42,19 @@ class Travis::Api::App
       end
 
       def public_mode?
-        Travis.config[:public_mode] == false
+        Travis.config[:public_mode]
+      end
+
+      def private_mode?
+        !public_mode?
       end
 
       def org?
         Travis.config.org?
+      end
+
+      def com?
+        !org?
       end
 
       def pre_v2_1?
