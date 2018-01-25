@@ -7,26 +7,31 @@ module Travis
 
       def run
         ([current_user] + orgs).map do |record|
-          ::Account.from(record, :repos_count => repos_counts[record.login])
+          ::Account.from(record, :repos_count => repos_counts[record.id])
         end
       end
 
       private
 
         def orgs
-          Organization.where(:login => account_names)
+          Organization.where(id: account_ids)
         end
 
         def repos_counts
-          @repos_counts ||= Repository.counts_by_owner_names(account_names)
+          @repos_counts ||= Repository.counts_by_owner_ids(account_ids)
         end
 
-        def account_names
+        def account_ids
           repos = current_user.repositories
           unless params[:all]
             repos = repos.administrable
           end
-          repos.select(:owner_name).map(&:owner_name).uniq
+          org_ids = repos
+                      .select('DISTINCT owner_id')
+                      .where("owner_type = 'Organization'")
+                      .map(&:owner_id)
+
+          [current_user.id] + org_ids
         end
     end
   end

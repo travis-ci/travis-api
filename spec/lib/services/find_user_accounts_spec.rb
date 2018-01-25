@@ -2,6 +2,7 @@ describe Travis::Services::FindUserAccounts do
   let!(:sven)    { Factory(:user, :login => 'sven') }
   let!(:travis)  { Factory(:org, :login => 'travis-ci') }
   let!(:sinatra) { Factory(:org, :login => 'sinatra') }
+  let!(:non_user_org) { Factory(:org, :login => 'travis-ci') }
 
   let!(:repos) do
     Factory(:repository, :owner => sven, :owner_name => 'sven', :name => 'minimal')
@@ -38,6 +39,10 @@ describe Travis::Services::FindUserAccounts do
 
   it 'does not include accounts where the user does not have admin access' do
     service.run.should_not include(Account.from(sinatra))
+  end
+
+  it 'does not include account of organizations that do not belong to the user, even though they match by name' do
+    service.run.should_not include(Account.from(non_user_org))
   end
 
   it 'includes repository counts' do

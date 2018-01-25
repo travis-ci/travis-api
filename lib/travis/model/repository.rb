@@ -83,11 +83,11 @@ class Repository < Travis::Model
     Hash[*all.map { |repository| [repository.name, repository] }.flatten]
   end
 
-  def self.counts_by_owner_names(owner_names)
-    query = %(SELECT owner_name, count(*) FROM repositories WHERE owner_name IN (?) AND invalidated_at IS NULL GROUP BY owner_name)
-    query = sanitize_sql([query, owner_names])
-    rows = connection.select_all(query, owner_names)
-    Hash[*rows.map { |row| [row['owner_name'], row['count'].to_i] }.flatten]
+  def self.counts_by_owner_ids(owner_ids)
+    query = %(SELECT owner_id, count(*) FROM repositories WHERE owner_id IN (?) AND invalidated_at IS NULL GROUP BY owner_id)
+    query = sanitize_sql([query, owner_ids])
+    rows = connection.select_all(query, owner_ids)
+    Hash[*rows.map { |row| [row['owner_id'].to_i, row['count'].to_i] }.flatten]
   end
 
   delegate :builds_only_with_travis_yml?, to: :settings
