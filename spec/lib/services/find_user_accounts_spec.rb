@@ -5,11 +5,17 @@ describe Travis::Services::FindUserAccounts do
   let!(:non_user_org) { Factory(:org, :login => 'travis-ci') }
 
   let!(:repos) do
-    Factory(:repository, :owner => sven, :owner_name => 'sven', :name => 'minimal')
-    Factory(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-ci')
-    Factory(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-core')
-    Factory(:repository, :owner => sinatra, :owner_name => 'sinatra', :name => 'sinatra')
+    [
+      Factory(:repository, :owner => sven, :owner_name => 'sven', :name => 'minimal'),
+      Factory(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-ci'),
+      Factory(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-core'),
+      Factory(:repository, :owner => sinatra, :owner_name => 'sinatra', :name => 'sinatra'),
+    ]
   end
+
+  let!(:repo_without_permissions) {
+    Factory(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'secret')
+  }
 
   let!(:org) { Factory(:org, id: sven.id) }
 
@@ -18,7 +24,7 @@ describe Travis::Services::FindUserAccounts do
   attr_reader :params
 
   before :each do
-    Repository.all.each do |repo|
+    repos.each do |repo|
       permissions = repo.name == 'sinatra' ? { :push => true } : { :admin => true }
       sven.permissions.create!(permissions.merge :repository => repo)
     end
