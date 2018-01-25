@@ -40,6 +40,7 @@ gem 'gh'
 gem 'metriks'
 gem 'rollout'
 gem 'rotp'
+gem 'sentry-raven'
 gem 'will_paginate', '~> 3.1.0'
 
 group :console, :test do
