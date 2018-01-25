@@ -1,5 +1,5 @@
 describe Travis::Services::FindUserAccounts do
-  let!(:sven)    { Factory(:user, :login => 'sven') }
+  let!(:sven)    { Factory(:user, id: 9999999, :login => 'sven') }
   let!(:travis)  { Factory(:org, :login => 'travis-ci') }
   let!(:sinatra) { Factory(:org, :login => 'sinatra') }
   let!(:non_user_org) { Factory(:org, :login => 'travis-ci') }
@@ -10,6 +10,8 @@ describe Travis::Services::FindUserAccounts do
     Factory(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-core')
     Factory(:repository, :owner => sinatra, :owner_name => 'sinatra', :name => 'sinatra')
   end
+
+  let!(:org) { Factory(:org, id: sven.id) }
 
   let(:service) { described_class.new(sven, params || {}) }
 
@@ -43,6 +45,10 @@ describe Travis::Services::FindUserAccounts do
 
   it 'does not include account of organizations that do not belong to the user, even though they match by name' do
     service.run.should_not include(Account.from(non_user_org))
+  end
+
+  it 'does not include organizations with the same id as a user' do
+    service.run.should_not include(Account.from(org))
   end
 
   it 'includes repository counts' do
