@@ -164,16 +164,16 @@ describe Repository do
       end
     end
 
-    describe 'counts_by_owner_names' do
+    describe 'counts_by_owner_ids' do
       let!(:repositories) do
-        Factory(:repository, owner_name: 'svenfuchs', name: 'minimal')
-        Factory(:repository, owner_name: 'travis-ci', name: 'travis-ci')
-        Factory(:repository, owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
+        Factory(:repository, owner_id: 1, owner_name: 'svenfuchs', name: 'minimal')
+        Factory(:repository, owner_id: 2, owner_name: 'travis-ci', name: 'travis-ci')
+        Factory(:repository, owner_id: 2, owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
       end
 
-      it 'returns repository counts per owner_name for the given owner_names' do
-        counts = Repository.counts_by_owner_names(%w(svenfuchs travis-ci))
-        counts.should == { 'svenfuchs' => 1, 'travis-ci' => 1 }
+      it 'returns repository counts per owner_id for the given owner_ids' do
+        counts = Repository.counts_by_owner_ids([1, 2])
+        counts.should == { 1 => 1, 2 => 1 }
       end
     end
   end
