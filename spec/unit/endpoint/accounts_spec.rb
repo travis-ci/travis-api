@@ -5,7 +5,7 @@ describe Travis::Api::App::Endpoint::Accounts, set_app: true do
   before do
     User.stubs(:find_by_github_id).returns(user)
     User.stubs(:find).returns(user)
-    Travis::Services::FindUserAccounts.any_instance.stubs(:account_ids).returns([user.id])
+    Travis::Services::FindUserAccounts.any_instance.stubs(:org_ids).returns([user.id])
     user.stubs(:attributes).returns(:id => user.id, :login => user.login, :name => user.name)
   end
 
