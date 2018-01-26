@@ -26,6 +26,7 @@ require 'travis/testing/factories'
 require 'travis/testing/matchers'
 require 'support/auth_helpers'
 require 'support/csv_formatter'
+require 'support/env'
 require 'support/formats'
 require 'support/gcs'
 require 'support/matchers'
@@ -71,6 +72,7 @@ RSpec.configure do |c|
   c.mock_framework = :mocha
   c.expect_with :rspec
   c.include TestHelpers
+  c.include Support::Env
   c.include Support::AuthHelpers, auth_helpers: true
 
   c.before :suite do

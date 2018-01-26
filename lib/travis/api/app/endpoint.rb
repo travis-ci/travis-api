@@ -17,6 +17,10 @@ class Travis::Api::App
     before { flash.clear }
     after { content_type :json unless content_type }
 
+    before do
+      halt 406 if accept_version == 'v2.1' && ENV['DISABLE_V2_1']
+    end
+
     error(ActiveRecord::RecordNotFound, Sinatra::NotFound) { not_found }
     not_found {
       if content_type =~ /json/
