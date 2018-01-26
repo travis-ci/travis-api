@@ -1,7 +1,6 @@
 require 'travis/api/app'
 require 'travis/api/enqueue/services/restart_model'
 require 'travis/api/enqueue/services/cancel_model'
-require 'travis/log_token'
 require 'travis/api/app/responders/base'
 
 class Travis::Api::App

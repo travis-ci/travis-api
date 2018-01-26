@@ -10,9 +10,9 @@ describe 'Auth logs', auth_helpers: true, api_version: :'v2.1', set_app: true do
   describe 'in public mode, with a private repo', mode: :public, repo: :private do
     describe 'GET /logs/1' do
       it(:with_permission)    { should auth status: 200, empty: false }
-      xit(:without_permission) { should auth status: 404 } # TODO
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      xit(:unauthenticated)    { should auth status: 404 } # TODO
+      it(:unauthenticated)    { should auth status: 404 }
     end
   end
 
@@ -34,7 +34,7 @@ describe 'Auth logs', auth_helpers: true, api_version: :'v2.1', set_app: true do
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /logs/1' do
       it(:with_permission)    { should auth status: 200, empty: false }
-      xit(:without_permission) { should auth status: 404 } # TODO
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
