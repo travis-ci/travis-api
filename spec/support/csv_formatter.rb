@@ -6,7 +6,7 @@ require 'rspec/core/formatters/base_formatter'
 # $ bundle exec rspec spec/auth --require ./spec/support/csv_formatter.rb --format CsvFormatter | tail -n +2
 
 class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
-  COLS = %i(result site version mode repo context method path status empty comment)
+  COLS = %i(result version mode repo context method path status empty comment)
   DESC = /^Auth (?<resource>[\w\/]+) .* (?<method>HEAD|GET|PUT|POST|DELETE) (?<path>[^ ]+) .*/
 
   def stop
@@ -24,7 +24,6 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
     match = str.match(DESC)
     [
       result,
-      meta[:site],
       meta[:api_version],
       meta[:mode],
       meta[:repo],

@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <style>
+      html, body {
+        font-family: Helvetica;
+      }
+      table {
+        border-collapse: collapse;
+      }
+      th {
+        text-align: left;
+        font-weight: normal;
+      }
+      th, td {
+        border: 1px solid #ccc;
+        padding: 0.5em 1em;
+        white-space: nowrap;
+      }
+      .status-200 {
+        background-color: #90ee902e;
+      }
+      .status-302 {
+        background-color: #edee902e;
+      }
+      .status-401 {
+        background-color: #eeb3902e;
+      }
+      .status-404 {
+        background-color: #db90ee2e;
+      }
+    </style>
+  </head>
+  <body>
+  </body>
+</html>
+<table>
+  <tr>
+    <th>Version</th>
+    <th></th>
+    <% versions.each do |version| %>
+      <th colspan="<%= modes.size * visibilities.size * contexts.size %>">
+        <%= version %>
+      </th>
+    <% end %>
+  </tr>
+  <tr>
+    <th>Mode</th>
+    <th></th>
+    <% versions.size.times do %>
+      <% modes.each do |mode| %>
+      <th colspan="<%= visibilities.size * contexts.size %>">
+        <%= mode %>
+      </th>
+      <% end %>
+    <% end %>
+  </tr>
+  <tr>
+    <th>Repo</th>
+    <th></th>
+    <% (versions.size * modes.size).times do %>
+      <% visibilities.each do |visibility| %>
+      <th colspan="<%= contexts.size %>">
+        <%= visibility %>
+      </th>
+      <% end %>
+    <% end %>
+  </tr>
+  <tr>
+    <th>Context</th>
+    <th></th>
+    <% (versions.size * modes.size * visibilities.size).times do %>
+      <% contexts.values.each do |context| %>
+        <th><%= context %></th>
+      <% end %>
+    <% end %>
+  </tr>
+  <% paths.each do |path| %>
+    <tr>
+      <td>GET</td>
+      <td><%= path %></td>
+      <% versions.each do |version| %>
+        <% modes.each do |mode| %>
+          <% visibilities.each do |visibility| %>
+            <% contexts.keys.each do |context| %>
+              <% code = status(path, version, mode, visibility, context.to_s) %>
+              <td class="status-<%= code.to_s.gsub(/\D+/, '') %>"><%= code %></td>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
