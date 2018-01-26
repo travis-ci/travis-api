@@ -99,13 +99,16 @@ class Travis::Api::App
       end
 
       get '/:job_id/log', scope: [:public, :log] do
-        resource = service(:find_log, params).run
-        is_private = resource && Job.find(resource.job_id).private?
+        resource = service(:find_log, job_id: params[:job_id]).run
+        is_private = resource && Job.find(params[:job_id]).private?
         responders = is_private ? [AttachLogTokenResponder] : []
 
-        if (resource && resource.removed_at) && accepts?('application/json')
+        if resource.nil?
+          status 200
+          body empty_log(Integer(params[:job_id])).to_json
+        elsif resource.removed_at && accepts?('application/json')
           respond_with resource, responders: responders
-        elsif (resource && resource.archived?)
+        elsif resource.archived?
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')

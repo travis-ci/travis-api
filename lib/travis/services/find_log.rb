@@ -21,6 +21,7 @@ module Travis
           end
         elsif params[:job_id]
           # this is only to check permissions with scope_check!
+
           job = scope(:job).find_by_id(params[:job_id])
           if job
             Travis::RemoteLog.find_by_job_id(Integer(params[:job_id]))
