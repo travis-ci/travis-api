@@ -42,14 +42,14 @@ class OrganizationsController < ApplicationController
   end
 
   def repositories
-    @repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :name)
+    @repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :name).paginate(page: params[:page], per_page: 30)
     render_either 'shared/repositories'
   end
 
   def jobs
     repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :name)
     @pending_jobs = Job.from_repositories(repositories).not_finished
-    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 20)
+    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 30)
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
     @build_counts = build_counts(@organization)
     @build_months = build_months(@organization)
@@ -57,13 +57,13 @@ class OrganizationsController < ApplicationController
   end
 
   def requests
-    @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 10)
+    @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 30)
     render_either 'shared/requests'
   end
 
   def broadcasts
     @active_broadcasts = Broadcast.active.for(@organization).includes(:recipient)
-    @inactive_broadcasts = Broadcast.inactive.for(@organization).includes(:recipient)
+    @inactive_broadcasts = Broadcast.inactive.for(@organization).includes(:recipient).paginate(page: params[:page], per_page: 20)
     render_either 'shared/broadcasts', locals: { recipient: @organization }
   end
 

@@ -11,4 +11,5 @@
 <section class="info-block">
   <h2 class="info-header">Expired</h2>
   <%= render partial: 'shared/broadcast_list', locals: {broadcasts: @inactive_broadcasts, recipient: recipient} %>
+  <%= will_paginate @inactive_broadcasts, param_name: 'page', params: {controller: controller_name, action: 'broadcasts', id: params[:id], anchor: 'broadcasts', 'data-remote': true } %>
 </section>
