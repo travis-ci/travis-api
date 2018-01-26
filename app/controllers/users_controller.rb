@@ -88,7 +88,7 @@ class UsersController < ApplicationController
   def jobs
     repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name)
     @pending_jobs = Job.from_repositories(repositories).not_finished
-    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 30)
+    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 10)
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
     @build_counts = build_counts(@user)
     @build_months = build_months(@user)
@@ -96,7 +96,7 @@ class UsersController < ApplicationController
   end
 
   def requests
-    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 30)
+    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 10)
     render_either 'shared/requests'
   end
 
