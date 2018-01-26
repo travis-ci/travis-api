@@ -49,7 +49,7 @@ class OrganizationsController < ApplicationController
   def jobs
     repositories = @organization.repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :name)
     @pending_jobs = Job.from_repositories(repositories).not_finished
-    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 10)
+    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 20)
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
     @build_counts = build_counts(@organization)
     @build_months = build_months(@organization)
