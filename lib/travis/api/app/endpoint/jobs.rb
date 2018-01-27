@@ -100,10 +100,12 @@ class Travis::Api::App
 
       get '/:job_id/log', scope: [:public, :log] do
         resource = service(:find_log, job_id: params[:job_id]).run
-        is_private = resource && Job.find(params[:job_id]).private?
-        responders = is_private ? [AttachLogTokenResponder] : []
+        job = Job.find(params[:job_id])
+        responders = job.try(:private?) ? [AttachLogTokenResponder] : []
 
-        if resource.nil?
+        if job.try(:private?) && !has_permission?(job)
+          halt 404
+        elsif resource.nil?
           status 200
           body empty_log(Integer(params[:job_id])).to_json
         elsif resource.removed_at && accepts?('application/json')
@@ -134,6 +136,10 @@ class Travis::Api::App
         else
           respond_with resource, responders: responders
         end
+      end
+
+      def has_permission?(job)
+        current_user && Permission.where(user: current_user, repository_id: job.repository_id).first
       end
 
       patch '/:id/log', scope: :private do |id|
