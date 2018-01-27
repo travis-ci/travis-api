@@ -2,9 +2,10 @@ describe 'Auth jobs', auth_helpers: true, api_version: :v1, set_app: true do
   let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
   let(:job)  { repo.builds.first.matrix.first }
+  let(:log)  { %({"job_id": #{job.id}, "content": "content"}) }
 
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/#{job.id}?by=job_id&source=api" }
-  before { stub_request(:get, log_url).to_return(status: 200, body: %({"job_id": #{job.id}, "content": "content"})) }
+  before { stub_request(:get, log_url).to_return(status: 200, body: log) }
   before { Job.update_all(state: :started) }
 
   # TODO
@@ -62,5 +63,13 @@ describe 'Auth jobs', auth_helpers: true, api_version: :v1, set_app: true do
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 200, empty: false }
     end
+
+    # describe 'GET /jobs/%{job.id}/log (archived)' do
+    #   let(:log)  { %({"job_id": #{job.id}, "content": "content", "archived_at": "2018-01-29", "archive_verified": true}) }
+    #   it(:with_permission)    { should auth status: 200, empty: false }
+    #   it(:without_permission) { should auth status: 200, empty: false }
+    #   it(:invalid_token)      { should auth status: 403 }
+    #   it(:unauthenticated)    { should auth status: 200, empty: false }
+    # end
   end
 end

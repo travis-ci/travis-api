@@ -1,3 +1,6 @@
+require 'support/auth_helpers/faraday'
+require 'support/auth_helpers/rack_test'
+
 RSpec::Matchers.define :auth do |expected|
   match do |actual|
     status?(expected, actual) && body?(expected, actual) && image?(expected, actual)
@@ -8,7 +11,7 @@ RSpec::Matchers.define :auth do |expected|
   end
 
   def body?(expected, actual)
-    return true unless expected.key?(:empty)
+    return true if !expected.key?(:empty) || ENV['AUTH_TESTS_ADAPTER'] == 'faraday'
     body = JSON.parse(actual[:body]) rescue actual[:body]
     body = compact(body)
     expected[:empty] ? body.blank? : body.present?
@@ -43,82 +46,13 @@ module Support
       c.subject { |a| send(a.description) }
     end
 
-    def set_mode(mode)
-      case mode
-      when :org
-        Travis.config[:host] = 'travis-ci.org'
-        Travis.config[:public_mode] = true
-      when :public
-        Travis.config[:public_mode] = true
-      when :private
-        Travis.config[:public_mode] = false
-      end
-    end
+    extend Forwardable
 
-    def set_private(value)
-      Repository.update_all(private: value)
-      Build.update_all(private: value)
-      Job.update_all(private: value)
-    end
+    def_delegators :adapter, :set_mode, :set_private, :authenticated,
+      :with_permission, :without_permission, :invalid_token, :unauthenticated
 
-    def with_permission
-      Permission.create!(user_id: user.id, repository_id: repo.id, admin: true, push: true)
-      request_by_description create_token
-    end
-
-    def authenticated
-      # TODO remove ... but something's weird about some repo endpoints when
-      # results are empty
-      if respond_to?(:repo)
-        Permission.create!(user_id: user.id, repository_id: repo.id, admin: true, push: true)
-      end
-      request_by_description create_token
-    end
-
-    def without_permission
-      request_by_description create_token
-    end
-
-    def invalid_token
-      request_by_description '12345'
-    end
-
-    def unauthenticated
-      request_by_description nil
-    end
-
-    def create_token
-      Travis::Api::App::AccessToken.create(user: user, app_id: -1).token
-    end
-
-    def request_by_description(token)
-      method, path = RSpec.current_example.example_group.description.split(' ')
-      path  = interpolate(self, path)
-      query = { access_token: token }
-      send(method.downcase, path, query, headers_for_version)
-      { status: last_response.status, body: last_response.body, headers: last_response.headers }
-    end
-
-    def headers_for_version
-      # v1 is the default version according to /lib/travis/api/app/helpers/accept.rb
-      case api_version
-      when :v2
-        { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' }
-      when :'v2.1'
-        { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2.1+json' }
-      else
-        {}
-      end
-    end
-
-    def api_version
-      RSpec.current_example.metadata[:api_version]
-    end
-
-    # assumes that, e.g. for `"%{repo.slug}"`, the rspec context responds to `repo`,
-    # e.g. via `let(:repo)`, and `repo` responds to `slug`
-    def interpolate(obj, str)
-      str % Hash.new { |_, key| key.to_s.split('.').inject(obj) { |o, key| o.send(key) } }
+    def adapter
+      @adapter ||= self.class.const_get(ENV.fetch('AUTH_TESTS_ADAPTER', 'rack_test').camelize).new(self)
     end
   end
 end

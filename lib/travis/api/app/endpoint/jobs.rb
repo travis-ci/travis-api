@@ -124,7 +124,7 @@ class Travis::Api::App
               status 204
               headers['Access-Control-Expose-Headers'] = 'Location'
               headers['Location'] = archived_log_path
-              if is_private
+              if job.private?
                 AttachLogTokenResponder.new(self, nil).apply
               end
             else

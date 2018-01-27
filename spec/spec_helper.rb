@@ -75,6 +75,10 @@ RSpec.configure do |c|
   c.include Support::Env
   c.include Support::AuthHelpers, auth_helpers: true
 
+  # for auth tests against staging, how the hell does this work, if at all
+  # c.filter_run mode: :private, repo: :private
+  # c.filter_run_excluding mode: :public, repo: :public
+
   c.before :suite do
     Travis.testing = true
     Travis.logger = Logger.new(StringIO.new)
