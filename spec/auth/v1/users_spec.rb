@@ -6,6 +6,33 @@ describe 'Auth users', auth_helpers: true, api_version: :v1, set_app: true do
   # TODO put /users/:id ?
   # TODO post /users/sync
 
+  describe 'in public mode, with a public repo', mode: :public, repo: :public do
+    describe 'GET /users' do
+      it(:authenticated)      { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /users/permissions' do
+      it(:with_permission)    { should auth status: 406 } # no v1 serializer for permissions
+      it(:without_permission) { should auth status: 406 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /users/%{user.id}' do
+      it(:authenticated)      { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /users/0' do
+      it(:authenticated)      { should auth status: 302 } # redirects to /repos/users/0
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+  end
+
   # +----------------------------------------------------+
   # |                                                    |
   # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |

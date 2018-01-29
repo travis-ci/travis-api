@@ -14,6 +14,15 @@ describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :v1, set_app:
   # TODO patch /settings/ssh_key/:repo_id
   # TODO delete /settings/ssh_key/:repo_id
 
+  describe 'in public mode, with a public repo', mode: :public, repo: :public do
+    describe 'GET /settings/ssh_key/%{repo.id}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+  end
+
   # +----------------------------------------------------+
   # |                                                    |
   # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |

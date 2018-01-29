@@ -66,17 +66,10 @@ module Support
       end
 
       def set_mode(mode)
-        case mode
-        when :org
-          ctx.skip unless ENV['AUTH_TESTS_TARGET'] == 'org'
-          @host = 'http://api-staging.travis-ci.org'
-        else
-          ctx.skip if ENV['AUTH_TESTS_TARGET'] == 'org' || mode == :public
-          ctx.skip if ENV['AUTH_TESTS_MODE'] == mode.to_s.to_sym
-          @host = 'http://api-staging.travis-ci.com'
-          # set env var on com staging? or
-          # check env var on com staging and raise if it does not match?
-        end
+        ctx.skip if ENV['AUTH_TESTS_MODE'] != mode.to_s
+        @host = "http://api-staging.travis-ci.#{mode == :org ? 'org' : 'com'}"
+        # set env var on com staging? or
+        # check env var on com staging and raise if it does not match?
       end
 
       def set_private(value)
