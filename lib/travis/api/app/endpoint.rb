@@ -42,7 +42,7 @@ class Travis::Api::App
       end
 
       def allow_public?
-        org? || (com? && public_mode?)
+        org? || public_mode?
       end
 
       def authenticated?
