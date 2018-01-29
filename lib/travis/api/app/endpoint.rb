@@ -41,6 +41,10 @@ class Travis::Api::App
         halt 401 if private_mode? || pre_v2_1?
       end
 
+      def allow_public?
+        org? || (com? && public_mode?)
+      end
+
       def authenticated?
         !!env['travis.access_token']
       end
