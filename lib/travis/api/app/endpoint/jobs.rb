@@ -103,7 +103,7 @@ class Travis::Api::App
         job = Job.find(params[:job_id])
         responders = job.try(:private?) ? [AttachLogTokenResponder] : []
 
-        if job.try(:private?) && !has_permission?(job)
+        if (job.try(:private?) || !allow_public?) && !has_permission?(job)
           halt 404
         elsif resource.nil?
           status 200
@@ -114,11 +114,7 @@ class Travis::Api::App
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')
-            archived_log_path = if resource.respond_to?(:archived_url)
-                                  resource.archived_url
-                                else
-                                  archive_url("/jobs/#{params[:job_id]}/log.txt")
-                                end
+            archived_log_path = resource.archived_url
 
             if params[:cors_hax]
               status 204
