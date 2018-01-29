@@ -25,6 +25,7 @@ module Travis
 
     define  host:  'travis-ci.org',
             shorten_host:  'trvs.io',
+            public_mode:   !!ENV['PUBLIC_MODE'],
             tokens:        { internal: 'token' },
             auth:          { target_origin: nil },
             assets:        { host: HOSTS[Travis.env.to_sym] },
