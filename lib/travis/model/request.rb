@@ -52,11 +52,11 @@ class Request < Travis::Model
   end
 
   def ref
-    commit.ref
+    commit.try(:ref)
   end
 
   def branch_name
-    commit.branch
+    commit.try(:branch)
   end
 
   def tag_name
