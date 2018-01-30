@@ -47,7 +47,7 @@ module Travis::API::V3
       end
 
       if slug_filter
-        query = slug_filter.strip
+        query = slug_filter.strip.downcase
         sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
 
         query = ActiveRecord::Base.sanitize(query)

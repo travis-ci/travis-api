@@ -12,7 +12,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   before        { Travis::API::V3::Models::Permission.create(repository: long_name, user: user, pull: true, push: true, admin: true) }
 
   it "filters by query" do
-    get("/v3/repos?slug_filter=trvs&sort_by=slug_filter:desc,id:desc", {}, headers)
+    get("/v3/repos?slug_filter=Trvs&sort_by=slug_filter:desc,id:desc", {}, headers)
 
     slugs = parsed_body['repositories'].map { |repo_data| repo_data['slug'] }
 
