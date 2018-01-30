@@ -6,37 +6,47 @@ module Travis
       register :find_user_accounts
 
       def run
-        user_account = ::Account.from(current_user, :repos_count => repos_count_for_user[current_user.id])
-        org_accounts = orgs.map do |record|
-          ::Account.from(record, :repos_count => repos_counts_for_orgs[record.id])
-        end
-
-        [user_account] + org_accounts
+        [user_account] + organizations_accounts
       end
 
       private
 
-        def orgs
-          Organization.where(id: org_ids)
-        end
+        def owners_with_counts
+          @owners_with_counts ||= begin
+            permissions_query = 'SELECT repository_id FROM permissions WHERE user_id = ?'
+            unless params[:all]
+              permissions_query << " AND permissions.admin = 't'"
+            end
 
-        def repos_counts_for_orgs
-          @repos_counts_for_orgs ||= Repository.counts_by_owner_ids(org_ids, 'Organization')
-        end
-
-        def repos_count_for_user
-          @repo_count_for_user ||= Repository.counts_by_owner_ids([current_user.id], 'User')
-        end
-
-        def org_ids
-          repos = current_user.repositories
-          unless params[:all]
-            repos = repos.administrable
+            query = <<-QUERY
+              SELECT owner_id, owner_type, count(id) AS repos_count
+              FROM repositories
+              WHERE id in (#{permissions_query})
+                AND (owner_type = 'Organization' OR (owner_type = 'User' AND owner_id = ?))
+                AND invalidated_at IS NULL
+              GROUP BY owner_id, owner_type;
+            QUERY
+            Repository.find_by_sql([query, current_user.id, current_user.id])
           end
-          repos
-            .select('DISTINCT owner_id')
-            .where("owner_type = 'Organization'")
-            .map(&:owner_id)
+        end
+
+        def organizations_accounts
+          orgs = owners_with_counts
+            .find_all { |r| r['owner_type'] == 'Organization' }
+
+          ids = orgs.map { |r| r['owner_id'] }
+          counts = Hash[*orgs.map { |o| [o['owner_id'].to_i, o['repos_count'].to_i] }.flatten]
+          Organization.find(ids).map { |org|
+            ::Account.from(org, repos_count: counts[org.id])
+          }
+        end
+
+        def user_account
+          user = owners_with_counts.detect { |r|
+            r['owner_type'] == 'User' && r['owner_id'].to_i == current_user.id
+          }
+
+          ::Account.from(current_user, repos_count: user['repos_count'])
         end
     end
   end
