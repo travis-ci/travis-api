@@ -60,4 +60,10 @@ describe Travis::Services::FindUserAccounts do
   it 'includes repository counts' do
     service.run.map(&:repos_count).should == [1, 2]
   end
+
+  it 'works when user doesn\'t have any repos' do
+    Permission.destroy_all
+
+    service.run.should include(Account.from(sven))
+  end
 end
