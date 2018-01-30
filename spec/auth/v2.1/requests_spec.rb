@@ -31,10 +31,10 @@ describe 'Auth requests', auth_helpers: true, api_version: :'v2.1', set_app: tru
     end
 
     describe 'GET /requests/%{request.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 404 }
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 404 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
   end
 

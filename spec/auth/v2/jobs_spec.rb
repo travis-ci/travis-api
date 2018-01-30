@@ -29,7 +29,7 @@ describe 'Auth jobs', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /jobs/%{job.id}/log' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: [200, 307], empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
@@ -52,8 +52,8 @@ describe 'Auth jobs', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /jobs/%{job.id}/log' do
-      it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: [200, 307], empty: false }
+      it(:without_permission) { should auth status: [200, 307], empty: false }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -81,7 +81,7 @@ describe 'Auth jobs', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /jobs/%{job.id}/log' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: [200, 307], empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
@@ -104,19 +104,10 @@ describe 'Auth jobs', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /jobs/%{job.id}/log' do
-      it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: [200, 307], empty: false }
+      it(:without_permission) { should auth status: [200, 307], empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, empty: false }
+      it(:unauthenticated)    { should auth status: [200, 307], empty: false }
     end
-
-    # # these ask for json, but the log is archived as text/plain, so this is rejected
-    # describe 'GET /jobs/%{job.id}/log (archived)' do
-    #   let(:log)  { %({"job_id": #{job.id}, "content": "content", "archived_at": "2018-01-29", "archive_verified": true}) }
-    #   it(:with_permission)    { should auth status: 406 }
-    #   it(:without_permission) { should auth status: 406 }
-    #   it(:invalid_token)      { should auth status: 403 }
-    #   it(:unauthenticated)    { should auth status: 406 }
-    # end
   end
 end

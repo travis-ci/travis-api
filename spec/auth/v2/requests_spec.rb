@@ -32,7 +32,7 @@ describe 'Auth requests', auth_helpers: true, api_version: :v2, set_app: true do
 
     describe 'GET /requests/%{request.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 404 } # this is an exception, would serve 200/empty on other endpoints
+      it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end

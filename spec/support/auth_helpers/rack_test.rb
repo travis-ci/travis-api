@@ -24,6 +24,7 @@ module Support
 
       def set_private(value)
         Repository.update_all(private: value)
+        Request.update_all(private: value)
         Build.update_all(private: value)
         Job.update_all(private: value)
       end

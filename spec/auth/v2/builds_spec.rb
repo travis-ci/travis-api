@@ -76,8 +76,8 @@ describe 'Auth builds', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /builds/%{build.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end

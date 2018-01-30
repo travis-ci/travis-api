@@ -7,7 +7,12 @@ RSpec::Matchers.define :auth do |expected|
   end
 
   def status?(expected, actual)
-    actual[:status] == expected[:status]
+    case expected[:status]
+    when Array
+      expected[:status].include?(actual[:status])
+    else
+      actual[:status] == expected[:status]
+    end
   end
 
   def body?(expected, actual)

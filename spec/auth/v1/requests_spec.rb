@@ -16,7 +16,7 @@ describe 'Auth requests', auth_helpers: true, api_version: :v1, set_app: true do
 
     describe 'GET /requests/%{request.id}' do
       it(:with_permission)    { should auth status: 406 } # no v1 serializer for requests
-      it(:without_permission) { should auth status: 302 } # redirects to /repositories/requests/%{request.id}
+      it(:without_permission) { should auth status: 406 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
