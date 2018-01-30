@@ -21,7 +21,7 @@ class Travis::Api::App
       def create_settings_class(name)
         klass = Class.new(self) do
           define_method(:name) { name }
-          before { authenticate_by_mode! }
+          set :authenticate_by_mode, true
           define_routes!
         end
       end

@@ -8,6 +8,15 @@ class Travis::Api::App
           env['travis.scope'].to_sym
         end
 
+        def allow_public_in_pre_v2_1?
+          allow = env['travis.allow_public_in_pre_v2_1']
+          if allow.respond_to?(:call)
+            instance_eval &allow
+          else
+            allow
+          end
+        end
+
         def public?
           scope == :public
         end
@@ -32,6 +41,12 @@ class Travis::Api::App
         condition do
           names  = [settings.default_scope] if names == [:default]
           scopes = env['travis.access_token'].try(:scopes) || settings.anonymous_scopes
+
+          if settings.respond_to?(:authenticate_by_mode) && settings.authenticate_by_mode
+            if !org? && !authenticated? && (private_mode? || pre_v2_1?) && !(allow_public_in_pre_v2_1? && public_mode?)
+              halt 401, "insufficient access"
+            end
+          end
 
           result = names.any? do |name|
             if scopes.include?(name) && required_params_match?
@@ -62,6 +77,8 @@ class Travis::Api::App
 
       def route(verb, path, options = {}, &block)
         options[:scope] ||= :default
+        allow_public = options.delete(:allow_public_in_pre_v2_1)
+        condition { env['travis.allow_public_in_pre_v2_1'] = allow_public; true }
         super(verb, path, options, &block)
       end
     end

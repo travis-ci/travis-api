@@ -48,7 +48,7 @@ RSpec::Matchers.define :deliver_result_image_for do |name|
   match do |response|
     header = response.headers['content-disposition']
     failure_message_for_should do
-      "expected #{response.env[:url].to_s} to return headers['content-disposition']  inline; filename=\"#{name}.png\" but it was: #{header.inspect}"
+      "expected response to return headers['content-disposition']  inline; filename=\"#{name}.png\" but it was: #{header.inspect}"
     end
     header.to_s.should =~ /^inline; filename="#{name}\.png"$/
   end

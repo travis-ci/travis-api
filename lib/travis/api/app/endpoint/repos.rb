@@ -3,10 +3,12 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Repos < Endpoint
-      before { authenticate_by_mode! }
-
       set :pattern, capture: { id: /\d+/ }
+      set :authenticate_by_mode, true
 
+      get '/:id/cc', scope: [:private, :public, :travis_token], allow_public_in_pre_v2_1: true do
+        respond_with service(:find_repo, params.merge(schema: 'cc'))
+      end
       # Endpoint for getting all repositories.
       #
       # You can filter the repositories by adding parameters to the request. For example, you can get all repositories
@@ -40,10 +42,6 @@ class Travis::Api::App
         prefer_follower do
           respond_with service(:find_repos, params).run
         end
-      end
-
-      get '/:id/cc' do
-        respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
       # Get settings for a given repository
@@ -123,9 +121,10 @@ class Travis::Api::App
       # ### Response
       #
       # json(:repository)
-      get '/:owner_name/:name' do
+      get '/:owner_name/:name', allow_public_in_pre_v2_1: proc { accepts_image? } do
         prefer_follower do
-          respond_with service(:find_repo, params), type_hint: Repository
+          only_image_responder = accepts_image? && allow_public_in_pre_v2_1? && pre_v2_1? && allow_public?
+          respond_with service(:find_repo, params), type_hint: Repository, only_image_responder: only_image_responder
         end
       end
 
@@ -147,10 +146,6 @@ class Travis::Api::App
       # json(:build)
       get '/:owner_name/:name/builds/:id' do
         respond_with service(:find_build, params)
-      end
-
-      get '/:owner_name/:name/cc' do
-        respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
       # Get the public key for a given repository.
@@ -189,6 +184,28 @@ class Travis::Api::App
       # Delete caches for a given repo. Can be filtered with `branch` and `match` query parameter.
       delete '/:owner_name/:name/caches', scope: :private do
         respond_with service(:delete_caches, params), type: :caches, version: :v2
+      end
+
+      # routes that need travis_token authentication
+      get '/:owner_name/:name/builds', provides: :atom, scope: [:private, :public, :travis_token] do
+        respond_with service(:find_builds, params)
+      end
+
+      get '/:owner_name', provides: :xml, scope: [:private, :public, :travis_token] do
+        respond_with service(:find_repos, params.merge(schema: 'cc'))
+      end
+
+
+      get '/:owner_name/:name/cc', scope: [:private, :public, :travis_token], allow_public_in_pre_v2_1: true do
+        respond_with service(:find_repo, params.merge(schema: 'cc')), only_xml_responder: allow_public?
+      end
+
+      get '/:owner_name/:name', provides: :png, scope: [:private, :public, :travis_token], allow_public_in_pre_v2_1: true do
+        respond_with service(:find_repo, params), type_hint: Repository
+      end
+
+      get '/:owner_name/:name', provides: :svg, scope: [:private, :public, :travis_token], allow_public_in_pre_v2_1: true do
+        respond_with service(:find_repo, params), type_hint: Repository
       end
     end
   end

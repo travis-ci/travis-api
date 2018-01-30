@@ -6,7 +6,7 @@ class Travis::Api::App
       include Helpers::Accept
 
       def apply?
-        super && !resource.is_a?(String) && !resource.nil? && accepts_log?
+        super && !resource.is_a?(String) && !resource.nil? && accepts_log? && !options[:only_image_responder] && !options[:only_xml_responder]
       end
 
       def apply

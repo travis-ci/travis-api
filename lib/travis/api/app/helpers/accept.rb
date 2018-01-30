@@ -67,7 +67,7 @@ class Travis::Api::App
       end
 
       def accepts?(mime_type)
-        accept_entries.any? { |e| e.accepts?(mime_type) }
+        acceptable_formats.any? { |e| e.accepts?(mime_type) }
       end
 
       def accept_entries
@@ -89,6 +89,10 @@ class Travis::Api::App
 
       def accept_format
         @accept_format ||= request.accept.join =~ HEADER_FORMAT && $2 || DEFAULT_FORMAT
+      end
+
+      def accepts_image?
+        accepts?('image/png') || accepts?('application/svg')
       end
     end
   end

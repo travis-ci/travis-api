@@ -18,7 +18,7 @@ module Travis::Api::App::Responders
     def apply?
       # :type_hint is returned by repos endpoint
       # so that we can return a 'unknown.png' image
-      (super && resource.is_a?(Repository)) || (acceptable_format? && resource.nil? && options[:type_hint] == Repository)
+      ((super && resource.is_a?(Repository)) || (acceptable_format? && resource.nil? && options[:type_hint] == Repository)) && !options[:only_xml_responder]
     end
 
     private

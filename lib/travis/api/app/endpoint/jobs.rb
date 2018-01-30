@@ -8,7 +8,7 @@ class Travis::Api::App
     class Jobs < Endpoint
       include Helpers::Accept
 
-      before { authenticate_by_mode! }
+      set :authenticate_by_mode, true
 
       class AttachLogTokenResponder < Travis::Api::App::Responders::Base
         def apply?

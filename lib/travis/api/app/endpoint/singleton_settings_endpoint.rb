@@ -7,7 +7,7 @@ class Travis::Api::App
       def create_settings_class(name)
         klass = Class.new(self) do
           define_method(:name) { name }
-          before { authenticate_by_mode! }
+          set :authenticate_by_mode, true
           get("/:repository_id", scope: :private) do show end
           patch("/:repository_id", scope: :private) do update end
           delete("/:repository_id", scope: :private) do destroy end

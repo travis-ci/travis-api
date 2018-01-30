@@ -36,11 +36,6 @@ class Travis::Api::App
 
     private
 
-      def authenticate_by_mode!
-        return if org? || authenticated?
-        halt 401 if private_mode? || pre_v2_1?
-      end
-
       def allow_public?
         org? || public_mode?
       end

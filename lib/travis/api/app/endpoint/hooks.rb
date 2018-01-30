@@ -3,7 +3,7 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Hooks < Endpoint
-      before { authenticate_by_mode! }
+      set :authenticate_by_mode, true
 
       get '/', scope: :private do
         respond_with service(:find_hooks, params), type: :hooks

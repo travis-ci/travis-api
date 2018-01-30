@@ -3,7 +3,7 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Logs < Endpoint
-      before { authenticate_by_mode! }
+      set :authenticate_by_mode, true
 
       get '/:id' do |id|
         resource = service(:find_log, id: params[:id]).run

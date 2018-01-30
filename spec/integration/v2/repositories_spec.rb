@@ -3,6 +3,9 @@
 describe 'Repos', set_app: true do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
+  let(:user)    { User.where(login: 'svenfuchs').first }
+  let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
+  before { user.permissions.create!(:repository_id => repo.id, :admin => true, :push => true) }
 
   it 'returns 403 if not authenticated' do
     repos = Repository.all
@@ -12,11 +15,7 @@ describe 'Repos', set_app: true do
   end
 
   describe 'with authenticated user' do
-    let(:user)    { User.where(login: 'svenfuchs').first }
-    let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
-
-    before { user.permissions.create!(:repository_id => repo.id, :admin => true, :push => true) }
 
     it 'POST /repos/:id/key' do
       repo.regenerate_key!
@@ -124,8 +123,32 @@ describe 'Repos', set_app: true do
 
   it 'GET /repos/1/cc.xml' do
     response = get "repos/#{repo.id}/cc.xml"
+    repo = Repository.by_slug('svenfuchs/minimal').first
+
+    response.status.should == 200
+    response.should deliver_cc_xml_for(repo)
+    response.content_type.should eq('application/xml;charset=utf-8')
+  end
+
+  it '[.com, public mode] GET /repos/1/cc.xml fetches the xml when repo is public' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = true
+
+    response = get "repos/svenfuchs/minimal/cc.xml"
+    response.status.should == 200
     response.should deliver_cc_xml_for(Repository.by_slug('svenfuchs/minimal').first)
     response.content_type.should eq('application/xml;charset=utf-8')
+  end
+
+  it '[.com, public mode] GET /repos/1/cc.xml responds with 302 when repo is private' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = true
+
+    repo = Repository.by_slug('svenfuchs/minimal').first
+    repo.update_column(:private, true)
+
+    response = get "repos/#{repo.id}/cc.xml"
+    response.status.should == 302
   end
 
   it 'GET /repos/svenfuchs/minimal' do
@@ -144,11 +167,134 @@ describe 'Repos', set_app: true do
   end
 
   it 'responds with 200 and image when repo can\'t be found and format is png' do
+    result = get('/repos/foo/bar', {}, 'HTTP_ACCEPT' => '*/*')
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/png'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('unknown')
+  end
+
+  it 'responds with 200 and image when repo can\'t be found and format is png' do
     result = get('/repos/foo/bar.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
     result.status.should == 200
     result.headers['Content-Type'].should == 'image/png'
     result.body.should_not == ''
     result.should deliver_result_image_for('unknown')
+  end
+
+  it '[.org, public_mode] responds with a passing image when the repo is public' do
+    Travis.config.host = 'travis-ci.org'
+    Travis.config.public_mode = true
+    Factory(:build, repository: repo, state: :passed)
+
+    result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/png'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('passing')
+  end
+
+  it '[.com, public_mode] responds with a passing image when the repo is public' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = true
+    Factory(:build, repository: repo, state: :passed)
+
+    result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/png'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('passing')
+  end
+
+  it '[.com, public_mode] responds with an unknown image when the repo is private' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = true
+
+    Factory(:build, repository: repo, state: :passed)
+    Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
+
+    result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/png'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('unknown')
+  end
+
+  it '[.com, private mode] responds with a 404 when the repo is public' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = false
+
+    Repository.by_slug('svenfuchs/minimal').first.update_column(:private, false)
+    Factory(:build, repository: repo, state: :passed)
+    result = get('/repos/svenfuchs/minimal.png', {})
+    result.status.should == 401
+  end
+
+  it '[.com, private mode] responds with a 404 image when the repo is private' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = false
+
+    Factory(:build, repository: repo, state: :passed)
+    Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
+
+    result = get('/repos/svenfuchs/minimal.png', {})
+    result.status.should == 401
+  end
+
+  it '[.com, private mode, authenticated] responds with a passing image when the repo is private' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = false
+
+    Factory(:build, repository: repo, state: :passed)
+    Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
+
+    result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_AUTHORIZATION' => "token #{token}")
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/png'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('passing')
+  end
+
+  it '[.com, private mode, with token] responds with a passing image when the repo is private' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = false
+
+    Factory(:build, repository: repo, state: :passed)
+    Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
+
+    result = get("/repos/svenfuchs/minimal.png?token=#{user.tokens.first.token}")
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/png'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('passing')
+  end
+
+  it '[.com, public mode, authenticated] responds with a passing image when the repo is private' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = true
+
+    Factory(:build, repository: repo, state: :passed)
+    Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
+
+    result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_AUTHORIZATION' => "token #{token}")
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/png'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('passing')
+  end
+
+  it '[.com, public mode, with token] responds with a passing image when the repo is private' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = true
+
+    Factory(:build, repository: repo, state: :passed)
+    Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
+
+    result = get("/repos/svenfuchs/minimal.png?token=#{user.tokens.first.token}")
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/png'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('passing')
   end
 
   it 'responds with 404 when repo can\'t be found and format is other than png' do
