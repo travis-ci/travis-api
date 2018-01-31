@@ -46,7 +46,7 @@ module Travis
             r['owner_type'] == 'User' && r['owner_id'].to_i == current_user.id
           }
 
-          ::Account.from(current_user, repos_count: user['repos_count'])
+          ::Account.from(current_user, repos_count: user ? user['repos_count'] : 0)
         end
     end
   end
