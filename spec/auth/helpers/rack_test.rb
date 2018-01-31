@@ -31,15 +31,18 @@ module Support
 
       def with_permission
         Permission.create!(user_id: ctx.user.id, repository_id: ctx.repo.id, admin: true, push: true)
-        request_with create_token
+        token = create_token unless query_token?
+        request_with token
       end
 
       def authenticated
-        request_with create_token
+        token = create_token unless query_token?
+        request_with token
       end
 
       def without_permission
-        request_with create_token
+        token = create_token unless query_token?
+        request_with token
       end
 
       def invalid_token

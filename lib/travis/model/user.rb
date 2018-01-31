@@ -39,6 +39,10 @@ class User < Travis::Model
     end
   end
 
+  def token
+    tokens.first.try(:token)
+  end
+
   def to_json
     keys = %w/id login email name locale github_id gravatar_id is_syncing synced_at updated_at created_at/
     { 'user' => attributes.slice(*keys) }.to_json

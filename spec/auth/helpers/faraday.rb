@@ -114,7 +114,7 @@ module Support
       end
 
       def token
-        ENV.fetch('AUTH_TESTS_USER_TOKEN')
+        ENV.fetch('AUTH_TESTS_USER_TOKEN') unless query_token?
       end
     end
   end

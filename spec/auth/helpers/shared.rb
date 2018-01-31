@@ -9,6 +9,14 @@ module Support
         interpolate(self, example_group_description.split(' ')[1])
       end
 
+      def query_token?
+        !!query_token
+      end
+
+      def query_token
+        path =~ /token=[^&]*(&|$)/ && $1
+      end
+
       def accept_header
         # v1 is the default version according to /lib/travis/api/app/helpers/accept.rb
         case api_version

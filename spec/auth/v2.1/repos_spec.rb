@@ -27,6 +27,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:unauthenticated)    { should auth status: 200, empty: true }
     end
 
+    describe 'GET /repos/%{user.login}.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 406 } # not sure what this is, an empty collection?
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 406 } # not sure what this is, an empty collection?
+    end
+
     describe 'GET /repos/%{user.login}.xml' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 406 } # not sure what this is, an empty collection?
@@ -39,6 +46,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 404 }
+    end
+
+    describe 'GET /repos/%{repo.id}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 302 } # redirects to /repositories/repos/%{repo.id}/cc.xml
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 302 } # redirects to /repositories/repos/%{repo.id}/cc.xml
     end
 
     describe 'GET /repos/%{repo.id}/cc.xml' do
@@ -97,7 +111,21 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:unauthenticated)    { should auth status: 404 }
     end
 
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, image: :passing }
+      it(:without_permission) { should auth status: 200, image: :unknown }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, image: :unknown }
+    end
+
     describe 'GET /repos/%{repo.slug}.png' do
+      it(:with_permission)    { should auth status: 200, image: :passing }
+      it(:without_permission) { should auth status: 200, image: :unknown }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, image: :unknown }
+    end
+
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
       it(:with_permission)    { should auth status: 200, image: :passing }
       it(:without_permission) { should auth status: 200, image: :unknown }
       it(:invalid_token)      { should auth status: 403 }
@@ -141,6 +169,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
 
     describe 'GET /repos/%{repo.slug}/builds/%{build.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 404 }
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 404 }
@@ -190,6 +225,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
+    describe 'GET /repos/%{user.login}.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
+    end
+
     describe 'GET /repos/%{user.login}.xml' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }
@@ -202,6 +244,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 200, empty: false }
+    end
+
+    describe 'GET /repos/%{repo.id}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
 
     describe 'GET /repos/%{repo.id}/cc.xml' do
@@ -260,7 +309,21 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:unauthenticated)    { should auth status: 200 }
     end
 
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
+    end
+
     describe 'GET /repos/%{repo.slug}.png' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
+    end
+
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
@@ -307,6 +370,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 200, empty: false }
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
 
     describe 'GET /repos/%{repo.slug}/cc.xml' do
@@ -359,6 +429,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:unauthenticated)    { should auth status: 401 }
     end
 
+    describe 'GET /repos/%{user.login}.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 406 } # not sure what this is, an empty collection?
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
     describe 'GET /repos/%{user.login}.xml' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 406 } # not sure what this is, an empty collection?
@@ -369,6 +446,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
     describe 'GET /repos/%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.id}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 302 } # redirects to /repositories/repos/%{repo.id}/cc.xml
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -429,7 +513,21 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:unauthenticated)    { should auth status: 401 }
     end
 
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, image: :passing }
+      it(:without_permission) { should auth status: 200, image: :unknown }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
     describe 'GET /repos/%{repo.slug}.png' do
+      it(:with_permission)    { should auth status: 200, image: :passing }
+      it(:without_permission) { should auth status: 200, image: :unknown }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
       it(:with_permission)    { should auth status: 200, image: :passing }
       it(:without_permission) { should auth status: 200, image: :unknown }
       it(:invalid_token)      { should auth status: 403 }
@@ -473,6 +571,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
 
     describe 'GET /repos/%{repo.slug}/builds/%{build.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
@@ -522,6 +627,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:unauthenticated)    { should auth status: 200, empty: false }
     end
 
+    describe 'GET /repos/%{user.login}.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:without_permission) { should auth status: 200, empty: false }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
+    end
+
     describe 'GET /repos/%{user.login}.xml' do
       it(:with_permission)    { should auth status: 200, empty: false }
       it(:without_permission) { should auth status: 200, empty: false }
@@ -534,6 +646,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 200, empty: false }
+    end
+
+    describe 'GET /repos/%{repo.id}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
 
     describe 'GET /repos/%{repo.id}/cc.xml' do
@@ -592,7 +711,21 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:unauthenticated)    { should auth status: 200 }
     end
 
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
+    end
+
     describe 'GET /repos/%{repo.slug}.png' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
+    end
+
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
@@ -639,6 +772,13 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
       it(:without_permission) { should auth status: 200, empty: false }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 200, empty: false }
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200 }
+      it(:without_permission) { should auth status: 200 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
 
     describe 'GET /repos/%{repo.slug}/cc.xml' do
