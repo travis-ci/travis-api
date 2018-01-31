@@ -35,8 +35,8 @@ class Travis::Api::App
 
         def respond(resource, options)
           resource = apply_service_responder(resource, options)
-
           response = nil
+
           acceptable_formats.find do |accept|
             responders(resource, options).find do |const|
               responder = const.new(self, resource, options.dup.merge(accept: accept))
@@ -62,6 +62,12 @@ class Travis::Api::App
           responder = Responders::Service.new(self, resource, options)
           resource  = responder.apply if responder.apply?
           resource
+        end
+
+        def format_responders(formats)
+          Array(formats).map do |name|
+            Responders.const_get(name.to_s.camelize)
+          end
         end
 
         def responders(resource, options)

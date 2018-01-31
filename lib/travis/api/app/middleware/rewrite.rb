@@ -59,10 +59,6 @@ class Travis::Api::App
           v1? && repo_path? && (image? || xml? || any_format?)
         end
 
-        def rewrite_pre_v21?
-          (v1? || v2?) && repo_path? && (image? || xml? || any_format?)
-        end
-
         def repo_path?
           routes_to?(Endpoint::Repos)
         end
@@ -72,6 +68,7 @@ class Travis::Api::App
         end
 
         def any_format?
+          # TODO change accept helpers to default to whatever env['travis.format'] has?
           # accept_entries.any? { |entry| entry.mime_type == '*/*' }
           env['HTTP_ACCEPT'].to_s.include?('*/*')
         end

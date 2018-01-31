@@ -3,7 +3,10 @@ require 'auth/helpers/rack_test'
 
 RSpec::Matchers.define :auth do |expected|
   match do |actual|
-    status?(expected, actual) && body?(expected, actual) && image?(expected, actual)
+    status?(expected, actual) &&
+      body?(expected, actual) &&
+      type?(expected, actual) &&
+      image?(expected, actual)
   end
 
   def status?(expected, actual)
@@ -20,6 +23,21 @@ RSpec::Matchers.define :auth do |expected|
     body = JSON.parse(actual[:body]) rescue actual[:body]
     body = compact(body)
     expected[:empty] ? body.blank? : body.present?
+  end
+
+  def type?(expected, actual)
+    return true if !expected.key?(:type)
+    type = actual[:headers]['Content-Type']
+    case expected[:type]
+    when :img
+      type.include?('image/png') || type.include?('image/svg')
+    when :json
+      type.include?('application/json')
+    when :xml
+      type.include?('application/xml')
+    when :atom
+      type.include?('application/atom')
+    end
   end
 
   def image?(expected, actual)
