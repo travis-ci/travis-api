@@ -65,7 +65,7 @@ describe 'Exception', set_app: true do
     expect(res.body).to eq("Sorry, we experienced an error.\n\nx_request_id:235dd08f-10d5-4fcc-9a4d-6b8e6a24f975\n")
     expect(res.headers).to eq({
       'Content-Type' => 'text/plain',
-      'Content-Length' => '81',
+      'Content-Length' => '83',
       'X-Request-ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975',
     })
     sleep 0.1
