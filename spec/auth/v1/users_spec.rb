@@ -27,7 +27,7 @@ describe 'Auth users', auth_helpers: true, api_version: :v1, set_app: true do
     end
 
     describe 'GET /users/0' do
-      it(:authenticated)      { should auth status: 302 } # redirects to /repos/users/0
+      it(:authenticated)      { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -60,7 +60,7 @@ describe 'Auth users', auth_helpers: true, api_version: :v1, set_app: true do
     end
 
     describe 'GET /users/0' do
-      it(:authenticated)      { should auth status: 302 } # redirects to /repos/users/0
+      it(:authenticated)      { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -87,7 +87,7 @@ describe 'Auth users', auth_helpers: true, api_version: :v1, set_app: true do
     end
 
     describe 'GET /users/0' do
-      it(:authenticated)      { should auth status: 302 } # redirects to /repos/users/0
+      it(:authenticated)      { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end

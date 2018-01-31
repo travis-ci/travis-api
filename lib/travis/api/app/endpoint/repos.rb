@@ -2,6 +2,34 @@ require 'travis/api/app'
 
 class Travis::Api::App
   class Endpoint
+    class RepoStatus < Endpoint
+      before { authenticate_by_mode! }
+
+      self.default_scope = [:public, :travis_token, :private]
+
+      set :pattern, capture: { id: /\d+/ }
+
+      get '/:id/cc' do
+        respond_with service(:find_repo, params.merge(schema: 'cc'))
+      end
+
+      get '/:owner_name' do
+        respond_with service(:find_repos, params.merge(schema: 'cc'))
+      end
+
+      get '/:owner_name/:name' do
+        respond_with service(:find_repo, params), type_hint: Repository
+      end
+
+      get '/:owner_name/:name/builds', provides: :atom do
+        respond_with service(:find_builds, params)
+      end
+
+      get '/:owner_name/:name/cc' do
+        respond_with service(:find_repo, params.merge(schema: 'cc'))
+      end
+    end
+
     class Repos < Endpoint
       before { authenticate_by_mode! }
 

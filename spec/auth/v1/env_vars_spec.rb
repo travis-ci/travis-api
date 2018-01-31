@@ -7,7 +7,7 @@ describe 'Auth settings/env_vars', auth_helpers: true, api_version: :v1, set_app
   describe 'in public mode, with a public repo', mode: :public, repo: :public do
     describe 'GET /settings/env_vars?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 302 } # redirects to /repositories/settings/env_vars?repository_id=%{repo.id}, which returns a repo
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -27,7 +27,7 @@ describe 'Auth settings/env_vars', auth_helpers: true, api_version: :v1, set_app
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /settings/env_vars?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 302 } # redirects to /repositories/settings/env_vars?repository_id=%{repo.id}, which returns a repo
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -36,7 +36,7 @@ describe 'Auth settings/env_vars', auth_helpers: true, api_version: :v1, set_app
   describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /settings/env_vars?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 302 } # redirects to /repositories/settings/env_vars?repository_id=%{repo.id}, which returns a repo
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end

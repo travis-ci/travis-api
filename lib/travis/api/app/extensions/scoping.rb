@@ -24,13 +24,13 @@ class Travis::Api::App
       end
 
       def self.registered(app)
-        app.set default_scope: :public, anonymous_scopes: [:public]
+        app.set default_scope: [:public, :travis_token], anonymous_scopes: [:public]
         app.helpers(Helpers)
       end
 
       def scope(*names)
         condition do
-          names  = [settings.default_scope] if names == [:default]
+          names  = [settings.default_scope].flatten if names == [:default]
           scopes = env['travis.access_token'].try(:scopes) || settings.anonymous_scopes
 
           result = names.any? do |name|

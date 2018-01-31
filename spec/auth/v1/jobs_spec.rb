@@ -52,7 +52,7 @@ describe 'Auth jobs', auth_helpers: true, api_version: :v1, set_app: true do
 
     describe 'GET /jobs/%{job.id}' do
       it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 302 } # redirects to /repositories/jobs/%{job.id}
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end

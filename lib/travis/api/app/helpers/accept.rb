@@ -67,6 +67,7 @@ class Travis::Api::App
       end
 
       def accepts?(mime_type)
+        # TODO shouldn't this really use acceptable_formats?
         accept_entries.any? { |e| e.accepts?(mime_type) }
       end
 

@@ -18,16 +18,15 @@ module Support
       end
 
       def accept_header
-        # v1 is the default version according to /lib/travis/api/app/helpers/accept.rb
-        case api_version
+        ctx.respond_to?(:accept) ? ctx.accept : case api_version
+        when :v1
+          ''
         when :v2
           # 'application/vnd.travis-ci.2+json,text/vnd.travis-ci.2.1+plain'
           'application/json; version=2, text/plain; version=2'
         when :'v2.1'
           # 'application/vnd.travis-ci.2.1+json,text/vnd.travis-ci.2.1+plain'
           'application/json; version=2.1, text/plain; version=2.1'
-        else
-          ''
         end
       end
 

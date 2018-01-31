@@ -48,14 +48,14 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
 
     describe 'GET /repos/%{repo.id}/cc.xml?token=%{user.token}' do
       it(:with_permission)    { should auth status: 200 }
-      it(:without_permission) { should auth status: 302 } # redirects to /repositories/repos/%{repo.id}/cc.xml
+      it(:without_permission) { should auth status: 404 }
     end
 
     describe 'GET /repos/%{repo.id}/cc.xml' do
       it(:with_permission)    { should auth status: 200 }
-      it(:without_permission) { should auth status: 302 } # redirects to /repositories/repos/%{repo.id}/cc.xml
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 302 } # redirects to /repositories/repos/%{repo.id}/cc.xml
+      it(:unauthenticated)    { should auth status: 404 }
     end
 
     describe 'GET /repos/%{repo.id}/settings' do
@@ -430,12 +430,12 @@ describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
 
     describe 'GET /repos/%{repo.id}/cc.xml?token=%{user.token}' do
       it(:with_permission)    { should auth status: 200 }
-      it(:without_permission) { should auth status: 302 } # redirects to /repositories/repos/%{repo.id}/cc.xml
+      it(:without_permission) { should auth status: 404 }
     end
 
     describe 'GET /repos/%{repo.id}/cc.xml' do
       it(:with_permission)    { should auth status: 200 }
-      it(:without_permission) { should auth status: 302 } # redirects to /repositories/repos/%{repo.id}/cc.xml
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
