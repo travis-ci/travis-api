@@ -1,4 +1,4 @@
-require 'support/auth_helpers/shared'
+require 'auth/helpers/shared'
 
 module Support
   module AuthHelpers

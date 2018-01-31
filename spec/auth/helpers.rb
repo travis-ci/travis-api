@@ -1,5 +1,5 @@
-require 'support/auth_helpers/faraday'
-require 'support/auth_helpers/rack_test'
+require 'auth/helpers/faraday'
+require 'auth/helpers/rack_test'
 
 RSpec::Matchers.define :auth do |expected|
   match do |actual|

@@ -1,5 +1,5 @@
 require 'faraday'
-require 'support/auth_helpers/shared'
+require 'auth/helpers/shared'
 
 # AUTH_TESTS_USER_TOKEN
 # AUTH_TESTS_REPO_ID_PRIVATE_WITH_PERMISSION
