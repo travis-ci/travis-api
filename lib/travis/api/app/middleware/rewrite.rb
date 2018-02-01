@@ -66,7 +66,7 @@ class Travis::Api::App
 
         def repo_path?
           # routes_to?(Endpoint::Repos)
-          env['PATH_INFO'].start_with?('/repos/')
+          env['PATH_INFO'].start_with?('/repos')
         end
 
         def repo_status_path?
@@ -79,20 +79,20 @@ class Travis::Api::App
 
         def png?
           # accepts?('image/png')
-          env['travis.format'] == 'png'
+          env['travis.format'] == 'png' || accept_headers.include?('image/png')
         end
 
         def svg?
           # accepts?('applciation/svg')
-          env['travis.format'] == 'svg'
+          env['travis.format'] == 'svg' || accept_headers.include?('image/svg')
         end
 
         def xml?
-          env['travis.format'] == 'xml'
+          env['travis.format'] == 'xml' || accept_headers.include?('application/xml')
         end
 
         def atom?
-          env['travis.format'] == 'atom'
+          env['travis.format'] == 'atom' || accept_headers.include?('application/atom')
         end
 
         PRE_V3 = %w(v1 v2 v2.1)
@@ -107,6 +107,10 @@ class Travis::Api::App
 
         def v2?
           accept_version == 'v2'
+        end
+
+        def accept_headers
+          env['HTTP_ACCEPT'].to_s
         end
 
         def routes_to?(const)
