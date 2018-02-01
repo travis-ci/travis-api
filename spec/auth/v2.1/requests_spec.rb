@@ -8,14 +8,14 @@ describe 'Auth requests', auth_helpers: true, api_version: :'v2.1', set_app: tru
 
   describe 'in public mode, with a private repo', mode: :public, repo: :private do
     describe 'GET /requests?repository_id=%{repo.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 404 }
     end
 
     describe 'GET /requests/%{request.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 404 }
@@ -24,17 +24,17 @@ describe 'Auth requests', auth_helpers: true, api_version: :'v2.1', set_app: tru
 
   describe 'in public mode, with a public repo', mode: :public, repo: :public do
     describe 'GET /requests?repository_id=%{repo.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, empty: false }
+      it(:unauthenticated)    { should auth status: 200, type: :json, empty: false }
     end
 
     describe 'GET /requests/%{request.id}' do
-      it(:with_permission)    { should auth status: 200 }
-      it(:without_permission) { should auth status: 200 }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200 }
+      it(:unauthenticated)    { should auth status: 200, type: :json, empty: false }
     end
   end
 
@@ -46,14 +46,14 @@ describe 'Auth requests', auth_helpers: true, api_version: :'v2.1', set_app: tru
 
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /requests?repository_id=%{repo.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /requests/%{request.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
@@ -62,17 +62,17 @@ describe 'Auth requests', auth_helpers: true, api_version: :'v2.1', set_app: tru
 
   describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /requests?repository_id=%{repo.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, empty: false }
+      it(:unauthenticated)    { should auth status: 200, type: :json, empty: false }
     end
 
     describe 'GET /requests/%{request.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, empty: false }
+      it(:unauthenticated)    { should auth status: 200, type: :json, empty: false }
     end
   end
 end

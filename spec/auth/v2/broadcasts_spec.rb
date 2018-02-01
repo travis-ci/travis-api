@@ -5,7 +5,7 @@ describe 'Auth broadcasts', auth_helpers: true, api_version: :v2, set_app: true 
 
   describe 'in public mode', mode: :public do
     describe 'GET /broadcasts' do
-      it(:authenticated)   { should auth status: 200, empty: false }
+      it(:authenticated)   { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)   { should auth status: 403 }
       it(:unauthenticated) { should auth status: 401 }
     end
@@ -19,7 +19,7 @@ describe 'Auth broadcasts', auth_helpers: true, api_version: :v2, set_app: true 
 
   describe 'in private mode', mode: :private do
     describe 'GET /broadcasts' do
-      it(:authenticated)   { should auth status: 200, empty: false }
+      it(:authenticated)   { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)   { should auth status: 403 }
       it(:unauthenticated) { should auth status: 401 }
     end
@@ -27,7 +27,7 @@ describe 'Auth broadcasts', auth_helpers: true, api_version: :v2, set_app: true 
 
   describe 'in org mode', mode: :org do
     describe 'GET /broadcasts' do
-      it(:authenticated)   { should auth status: 200, empty: false }
+      it(:authenticated)   { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)   { should auth status: 403 }
       it(:unauthenticated) { should auth status: 401 }
     end

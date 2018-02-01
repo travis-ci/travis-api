@@ -16,7 +16,7 @@ describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :'v2.1', set_
 
   describe 'in public mode, with a private repo', mode: :public, repo: :private do
     describe 'GET /settings/ssh_key/%{repo.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 } # why is this a 401?? every other endpoint would 404 here, right?
@@ -25,7 +25,7 @@ describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :'v2.1', set_
 
   describe 'in public mode, with a public repo', mode: :public, repo: :public do
     describe 'GET /settings/ssh_key/%{repo.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 } # why is this a 401??
@@ -40,7 +40,7 @@ describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :'v2.1', set_
 
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /settings/ssh_key/%{repo.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 } # was 404? but also, the pro-api specs for this endpoint are somewhat weird
@@ -49,7 +49,7 @@ describe 'Auth settings/ssh_key', auth_helpers: true, api_version: :'v2.1', set_
 
   describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /settings/ssh_key/%{repo.id}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }

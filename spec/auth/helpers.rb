@@ -1,8 +1,16 @@
 require 'auth/helpers/faraday'
 require 'auth/helpers/rack_test'
 
+RSpec.shared_context 'cache setup' do
+  include Support::S3
+  before { Travis.config.cache_options = { s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} } }
+  before { s3_bucket << "#{repo.github_id}/master/cache--example1.tbz" }
+end
+
 RSpec::Matchers.define :auth do |expected|
   match do |actual|
+    fail 'status 200 with no :type given' if expected[:status] == 200 && !expected.key?(:type)
+    fail 'status 200 with no :empty key given' if expected[:status] == 200 && !expected.key?(:empty) && expected[:type] != :img
     status?(expected, actual) &&
       body?(expected, actual) &&
       type?(expected, actual) &&
@@ -31,6 +39,8 @@ RSpec::Matchers.define :auth do |expected|
       JSON.parse(body)
     elsif type.include?('application/xml')
       Hash.from_xml(body)['Projects']
+    elsif type.include?('application/atom')
+      Hash.from_xml(body).fetch('feed', {})['entry']
     elsif type.include?('text/plain')
       body
     else
@@ -50,6 +60,10 @@ RSpec::Matchers.define :auth do |expected|
       type.include?('application/xml')
     when :atom
       type.include?('application/atom')
+    when :text
+      type.include?('text/plain')
+    else
+      fail "unknown type #{type}"
     end
   end
 

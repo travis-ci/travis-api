@@ -4,7 +4,7 @@ describe 'v2.1 switch', auth_helpers: true, api_version: :'v2.1', set_app: true 
 
   describe 'by default' do
     describe 'GET /repos/%{repo.id}' do
-      it(:with_permission) { should auth status: 200 }
+      it(:with_permission) { should auth status: 200, type: :json, empty: false }
     end
   end
 

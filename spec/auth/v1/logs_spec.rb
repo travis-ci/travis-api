@@ -10,8 +10,8 @@ describe 'Auth logs', auth_helpers: true, api_version: :v1, set_app: true do
 
   describe 'in public mode, with a public repo', mode: :public, repo: :public do
     describe 'GET /logs/%{log.id}' do
-      it(:with_permission)    { should auth status: [200, 307], empty: false }
-      it(:without_permission) { should auth status: [200, 307], empty: false }
+      it(:with_permission)    { should auth status: [200, 307], type: :text, empty: false }
+      it(:without_permission) { should auth status: [200, 307], type: :text, empty: false }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -25,7 +25,7 @@ describe 'Auth logs', auth_helpers: true, api_version: :v1, set_app: true do
 
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /logs/%{log.id}' do
-      it(:with_permission)    { should auth status: [200, 307], empty: false }
+      it(:with_permission)    { should auth status: [200, 307], type: :text, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
@@ -34,10 +34,10 @@ describe 'Auth logs', auth_helpers: true, api_version: :v1, set_app: true do
 
   describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /logs/%{log.id}' do
-      it(:with_permission)    { should auth status: [200, 307], empty: false }
-      it(:without_permission) { should auth status: [200, 307], empty: false }
+      it(:with_permission)    { should auth status: [200, 307], type: :text, empty: false }
+      it(:without_permission) { should auth status: [200, 307], type: :text, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: [200, 307], empty: false }
+      it(:unauthenticated)    { should auth status: [200, 307], type: :text, empty: false }
     end
   end
 end
