@@ -337,7 +337,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v1, set_app: true do
 
     describe 'GET /repos/%{repo.slug}' do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
-      it(:without_permission) { should auth status: 200, image: :unknown } # not sure why this serves a build status image, really
+      it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -492,7 +492,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v1, set_app: true do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, type: :img, image: :unknown } # returns a status image because it tries the :owner_name/:name route after failing on :id/settings
+      it(:unauthenticated)    { should auth status: 404 }
     end
 
     describe 'GET /repos/%{repo.id}/key' do
@@ -520,7 +520,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v1, set_app: true do
       it(:with_permission)    { should auth status: 200, type: :json }
       it(:without_permission) { should auth status: 200, type: :json }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, type: :img, image: :unknown  } # returns a status image because it tries the :owner_name/:name route after failing on :id/settings
+      it(:unauthenticated)    { should auth status: 404 }
     end
 
     describe 'GET /repos/%{repo.slug}' do

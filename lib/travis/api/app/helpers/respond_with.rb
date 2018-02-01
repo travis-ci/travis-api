@@ -64,10 +64,10 @@ class Travis::Api::App
           end
         end
 
-        RESPONDERS = [:Json, :Atom, :Image, :Xml, :Plain, :Badge]
+        RESPONDERS = [:Json, :Plain]
 
-        def responders_for(options)
-          names = Array(options[:responders] || options[:responder] || RESPONDERS)
+        def responders_for(opts)
+          names = Array(opts[:responders] || opts[:responder] || RESPONDERS)
           names.map { |name| Responders.const_get(name.to_s.camelize) }
         end
     end
