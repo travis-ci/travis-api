@@ -1,4 +1,4 @@
-describe 'Auth requests', auth_helpers: true, api_version: :'v2.1', set_app: true do
+describe 'v2.1 requests', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user)    { FactoryBot.create(:user) }
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:request) { repo.requests.first }

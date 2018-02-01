@@ -1,4 +1,4 @@
-describe 'Auth broadcasts', auth_helpers: true, api_version: :v2, set_app: true do
+describe 'v2 broadcasts', auth_helpers: true, api_version: :v2, set_app: true do
   let(:user) { FactoryBot.create(:user) }
 
   before { Broadcast.create!(recipient: user) }

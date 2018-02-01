@@ -3,11 +3,11 @@
 require 'csv'
 require 'erb'
 
-# $ bundle exec rspec spec/auth --require ./spec/support/csv_formatter.rb --format CsvFormatter | tail -n +2 > auth.csv
-# $ ruby script/auth_table.rb > auth.html
+# $ bundle exec rspec spec/auth --require ./spec/auth/helpers/csv_formatter.rb --format CsvFormatter | tail -n +2 > auth.csv
+# $ ruby spec/auth/bin/table.rb > spec/auth/auth.html
 
 
-versions = %w(v2.1 v2)
+versions = %w(v2.1 v2 v1)
 modes = %w(private public)
 visibilities = %w(private public)
 contexts = {
@@ -16,7 +16,8 @@ contexts = {
   unauthenticated: 'unauth'
 }
 
-@data = CSV.parse(File.read('auth.csv'), headers: true).map(&:to_h)
+csv   = File.read(File.expand_path('../auth.csv', __FILE__))
+@data = CSV.parse(csv, headers: true).map(&:to_h)
 paths = @data.map { |row| row['path'] }.uniq.sort
 
 def status(path, version, mode, visibility, context)
@@ -32,6 +33,10 @@ def status(path, version, mode, visibility, context)
     row['mode']    == mode &&
     row['context'] == context
   end
+  # if path == '/jobs/%{job.id}/log' && mode == 'public' && version == 'v2.1'
+  #   p [version, mode, visibility, context]
+  #   p row
+  # end
   if row
     blank = '(empty)' if row['empty'] == 'yes'
     [row['status'], blank].compact.join(' ')
@@ -42,5 +47,6 @@ def status(path, version, mode, visibility, context)
   end
 end
 
-erb = File.read(File.expand_path('../auth_table.erb', __FILE__))
-puts ERB.new(erb).result(binding)
+erb  = File.read(File.expand_path('../table.erb', __FILE__))
+html = ERB.new(erb).result(binding)
+puts html

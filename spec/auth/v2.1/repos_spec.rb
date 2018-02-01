@@ -1,4 +1,4 @@
-describe 'Auth repos', auth_helpers: true, api_version: :'v2.1', set_app: true do
+describe 'v2.1 repos', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user)  { FactoryBot.create(:user) }
   let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }

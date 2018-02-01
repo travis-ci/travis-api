@@ -7,11 +7,18 @@ require 'rspec/core/formatters/base_formatter'
 
 class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
   COLS = %i(result version mode repo context method path status empty comment)
-  DESC = /^Auth (?<resource>[\w\/]+) .* (?<method>HEAD|GET|PUT|POST|DELETE) (?<path>[^ ]+) .*/
+  DESC = /^v(?:[\d\.]+) (?<resource>[\w\/]+) .* (?<method>HEAD|GET|PUT|POST|DELETE) (?<path>[^ ]+) .*/
+
+  def example_started(example)
+    $stderr.puts example.full_description
+    super
+  end
 
   def stop
     super
     @data = examples.map { |example| parse(example) }
+  rescue => e
+    $stderr.puts e.message, e.backtrce
   end
 
   def close
@@ -21,7 +28,7 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
 
   def parse(example)
     str, meta, result = example.full_description, example.metadata, example.execution_result[:status]
-    match = str.match(DESC)
+    return [] unless match = str.match(DESC)
     [
       result,
       meta[:api_version],
@@ -30,10 +37,14 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
       example.description,
       match[:method],
       match[:path],
-      status(example),
+      # status(example),
+      meta[:response].status,
       empty(example),
       comment(example)
     ]
+  rescue => e
+    $stderr.puts e.message, e.backtrace
+    exit
   end
 
   def to_csv(data)
@@ -43,13 +54,13 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
     end
   end
 
-  # RSpec auto-generates a description for the last matcher, but only if the
-  # example does not have a description itself. If the description is set then
-  # there's no way to access the last matcher within any RSpec formatter hook
-  # anymore. So this parses the Ruby code instead.
-  def status(example)
-    code(example) =~ /status: +([\d]+)/ && $1.to_i
-  end
+  # # RSpec auto-generates a description for the last matcher, but only if the
+  # # example does not have a description itself. If the description is set then
+  # # there's no way to access the last matcher within any RSpec formatter hook
+  # # anymore. So this parses the Ruby code instead.
+  # def status(example)
+  #   code(example) =~ /status: +([\d]+)/ && $1.to_i
+  # end
 
   def empty(example)
     return unless str = code(example) =~ /empty: ([\w]+)/ && $1

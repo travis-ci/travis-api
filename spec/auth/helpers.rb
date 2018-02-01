@@ -94,6 +94,7 @@ module Support
       c.before { |c| set_mode(c.metadata[:mode]) }
       c.after { Travis.config[:host] = 'travis-ci.org' }
       c.after { Travis.config[:public_mode] = true }
+      c.after { |c| c.metadata[:response] = last_response }
       c.subject { |a| send(a.description) }
     end
 
