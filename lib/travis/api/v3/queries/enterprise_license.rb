@@ -7,7 +7,7 @@ module Travis::API::V3
       Models::Email
       .joins("INNER JOIN commits c ON LOWER(c.committer_email) = LOWER(emails.email)")
       .select('DISTINCT email')
-      .where("c.created_at >= '#{last_year}' AND c.created_at < '#{this_year}'")
+      .where("c.created_at >= ? AND c.created_at < ?", last_year, this_year)
     end
   end
 end

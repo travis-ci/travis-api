@@ -14,7 +14,7 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
     Factory(:commit, committer_email: user2.emails.first.email)
     Factory(:commit, created_at: "2017-05-12 08:43:23", committer_email: user3.emails.first.email)
 
-    replicated_endpoint = 'https://10.169.183.13:9880'
+    replicated_endpoint = 'https://fake.fakeserver.com:9880'
     ENV['REPLICATED_INTEGRATIONAPI'] = replicated_endpoint
     stub_request(:get, "#{replicated_endpoint}/license/v1/license")
       .to_return(body: File.read('spec/support/enterprise_license.json'), headers: { 'Content-Type' => 'application/json' })
@@ -25,6 +25,8 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
     example    { expect(last_response.status).to eq 200 }
     example    {
       expect(parsed_body).to be == {
+        "license_id" => "12345675ad",
+        "license_type" => "trial",
         "seats" => 20,
         "active_users" => 3,
         "expiration_time" => "2018-08-18T00:00:00Z"
