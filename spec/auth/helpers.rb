@@ -6,7 +6,7 @@ RSpec::Matchers.define :auth do |expected|
     status?(expected, actual) &&
       body?(expected, actual) &&
       type?(expected, actual) &&
-      image?(expected, actual)
+      file?(expected, actual)
   end
 
   def status?(expected, actual)
@@ -53,10 +53,11 @@ RSpec::Matchers.define :auth do |expected|
     end
   end
 
-  def image?(expected, actual)
-    return true unless expected.key?(:image)
-    image = /#{expected[:image]}\.(png|svg)/
-    actual[:headers]['Content-Disposition'] =~ image
+  def file?(expected, actual)
+    return true unless expected.key?(:file)
+    actual = actual[:headers]['Content-Disposition']
+    expected = %(inline; filename="#{expected[:file]}")
+    actual == expected
   end
 
   def compact(obj)
