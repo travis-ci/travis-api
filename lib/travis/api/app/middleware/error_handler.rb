@@ -13,7 +13,7 @@ class Travis::Api::App
         body = "Sorry, we experienced an error.\n"
         if env['HTTP_X_REQUEST_ID']
           body += "\n"
-          body += "x_request_id:#{env['HTTP_X_REQUEST_ID']}\n"
+          body += "request_id:#{env['HTTP_X_REQUEST_ID']}\n"
         end
         [500, {'Content-Type' => 'text/plain'}, [body]]
       end
