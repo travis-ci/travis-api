@@ -7,8 +7,6 @@ class Travis::Api::App
         halt 401 if private_mode? && !org? && !authenticated?
       end
 
-      self.default_scope = [:public, :travis_token, :private]
-
       set :pattern, capture: { id: /\d+/ }
 
       get '/:id/cc', scope: [:public, :travis_token] do

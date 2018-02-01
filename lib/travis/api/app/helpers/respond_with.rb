@@ -64,6 +64,7 @@ class Travis::Api::App
           end
         end
 
+        # TODO can we remove Plain?
         RESPONDERS = [:Json, :Plain]
 
         def responders_for(opts)

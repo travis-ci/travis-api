@@ -86,8 +86,8 @@ class Travis::Api::App
           status 200
           body empty_log(Integer(params[:job_id])).to_json
         elsif resource.removed_at && accepts?('application/json')
-          respond_with resource
           attach_log_token if job.try(:private?)
+          respond_with resource
         elsif resource.archived?
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
@@ -106,8 +106,8 @@ class Travis::Api::App
             status 406
           end
         else
-          respond_with resource
           attach_log_token if job.try(:private?)
+          respond_with resource
         end
       end
 
@@ -131,15 +131,15 @@ class Travis::Api::App
       end
 
       def attach_log_token
-        endpoint.headers['X-Log-Access-Token'] = log_token
-        endpoint.headers['Access-Control-Expose-Headers'] = "Location, Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Log-Access-Token, X-Request-ID"
+        headers['X-Log-Access-Token'] = log_token
+        headers['Access-Control-Expose-Headers'] = "Location, Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Log-Access-Token, X-Request-ID"
       end
 
       def log_token
         attrs = {
-          app_id: 1, user: endpoint.current_user, expires_in: 1.day,
+          app_id: 1, user: current_user, expires_in: 1.day,
           extra: {
-            required_params: { job_id: endpoint.params['job_id'] }
+            required_params: { job_id: params['job_id'] }
           }
         }
         token = Travis::Api::App::AccessToken.new(attrs).tap(&:save)

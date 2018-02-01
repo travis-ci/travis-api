@@ -73,12 +73,6 @@ class Travis::Api::App
           routes_to?(Endpoint::RepoStatus)
         end
 
-        def any_format?
-          # TODO change accept helpers to default to whatever env['travis.format'] has
-          # accept_entries.any? { |entry| entry.mime_type == '*/*' }
-          env['HTTP_ACCEPT'].to_s.include?('*/*')
-        end
-
         def image?
           png? || svg?
         end
