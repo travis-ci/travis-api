@@ -10,28 +10,6 @@ class Travis::Api::App
 
       before { authenticate_by_mode! }
 
-      class AttachLogTokenResponder < Travis::Api::App::Responders::Base
-        def apply?
-          true
-        end
-
-        def apply
-          attrs = {
-            app_id: 1, user: endpoint.current_user, expires_in: 1.day,
-            extra: {
-              required_params: { job_id: endpoint.params['job_id'] }
-            }
-          }
-
-          token = Travis::Api::App::AccessToken.new(attrs).tap(&:save)
-
-          endpoint.headers['X-Log-Access-Token'] = token.token
-          endpoint.headers['Access-Control-Expose-Headers'] = "Location, Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Log-Access-Token, X-Request-ID"
-
-          resource
-        end
-      end
-
       get '/' do
         prefer_follower do
           respond_with service(:find_jobs, params), include_log_id: include_log_id?
@@ -101,7 +79,6 @@ class Travis::Api::App
       get '/:job_id/log', scope: [:public, :log] do
         resource = service(:find_log, job_id: params[:job_id]).run
         job = Job.find(params[:job_id])
-        responders = job.try(:private?) ? [AttachLogTokenResponder] : []
 
         if (job.try(:private?) || !allow_public?) && !has_permission?(job)
           halt 404
@@ -109,7 +86,8 @@ class Travis::Api::App
           status 200
           body empty_log(Integer(params[:job_id])).to_json
         elsif resource.removed_at && accepts?('application/json')
-          respond_with resource, responders: responders
+          respond_with resource
+          attach_log_token if job.try(:private?)
         elsif resource.archived?
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
@@ -120,9 +98,7 @@ class Travis::Api::App
               status 204
               headers['Access-Control-Expose-Headers'] = 'Location'
               headers['Location'] = archived_log_path
-              if job.private?
-                AttachLogTokenResponder.new(self, nil).apply
-              end
+              attach_log_token if job.try(:private?)
             else
               redirect archived_log_path, 307
             end
@@ -130,12 +106,9 @@ class Travis::Api::App
             status 406
           end
         else
-          respond_with resource, responders: responders
+          respond_with resource
+          attach_log_token if job.try(:private?)
         end
-      end
-
-      def has_permission?(job)
-        current_user && Permission.where(user: current_user, repository_id: job.repository_id).first
       end
 
       patch '/:id/log', scope: :private do |id|
@@ -151,6 +124,26 @@ class Travis::Api::App
           status 500
           { error: { message: "Unexpected error occurred: #{e.message}" } }
         end
+      end
+
+      def has_permission?(job)
+        current_user && Permission.where(user: current_user, repository_id: job.repository_id).first
+      end
+
+      def attach_log_token
+        endpoint.headers['X-Log-Access-Token'] = log_token
+        endpoint.headers['Access-Control-Expose-Headers'] = "Location, Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Log-Access-Token, X-Request-ID"
+      end
+
+      def log_token
+        attrs = {
+          app_id: 1, user: endpoint.current_user, expires_in: 1.day,
+          extra: {
+            required_params: { job_id: endpoint.params['job_id'] }
+          }
+        }
+        token = Travis::Api::App::AccessToken.new(attrs).tap(&:save)
+        token.token
       end
 
       def archive_url(path)

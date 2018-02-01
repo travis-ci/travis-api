@@ -28,15 +28,15 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /repos/%{user.login}.xml?token=%{user.token}' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
       it(:without_permission) { should auth status: 406 } # not sure what this is, an empty collection?
     end
 
     describe 'GET /repos/%{user.login}.xml' do
-      it(:with_permission)    { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
       it(:without_permission) { should auth status: 406 } # not sure what this is, an empty collection?
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 406 }
     end
 
     describe 'GET /repos/%{repo.id}' do
@@ -62,7 +62,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 404 }
     end
 
     describe 'GET /repos/%{repo.id}/settings' do
@@ -123,7 +123,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200, image: :passing }
       it(:without_permission) { should auth status: 200, image: :unknown }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, image: :unknown }
     end
 
     describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
@@ -135,7 +135,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200, image: :passing }
       it(:without_permission) { should auth status: 200, image: :unknown }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, image: :unknown }
     end
 
     describe 'GET /repos/%{repo.slug}/builds' do
@@ -146,10 +146,10 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /repos/%{repo.slug}/builds.atom' do
-      it(:with_permission)    { should auth status: 200 }
+      it(:with_permission)    { should auth status: 200, type: :atom }
       it(:without_permission) { should auth status: 406 } # not sure what this is, an empty collection?
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 406 }
     end
 
     describe 'GET /repos/%{repo.slug}/builds?branches=master' do
@@ -182,7 +182,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 404 }
     end
 
     describe 'GET /repos/%{repo.slug}/key' do
@@ -228,10 +228,10 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /repos/%{user.login}.xml' do
-      it(:with_permission)    { should auth status: 200, empty: false }
-      it(:without_permission) { should auth status: 200, empty: false }
+      it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
+      it(:without_permission) { should auth status: 200, type: :xml, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, type: :xml, empty: false }
     end
 
     describe 'GET /repos/%{repo.id}' do
@@ -250,7 +250,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
 
     describe 'GET /repos/%{repo.id}/settings' do
@@ -311,7 +311,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
 
     describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
@@ -323,7 +323,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
 
     describe 'GET /repos/%{repo.slug}/builds' do
@@ -337,7 +337,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
 
     describe 'GET /repos/%{repo.slug}/builds?branches=master' do
@@ -370,7 +370,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v2, set_app: true do
       it(:with_permission)    { should auth status: 200 }
       it(:without_permission) { should auth status: 200 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200 }
     end
 
     describe 'GET /repos/%{repo.slug}/key' do

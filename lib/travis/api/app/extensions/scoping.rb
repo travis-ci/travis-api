@@ -24,7 +24,7 @@ class Travis::Api::App
       end
 
       def self.registered(app)
-        app.set default_scope: [:public, :travis_token], anonymous_scopes: [:public]
+        app.set default_scope: :public, anonymous_scopes: [:public]
         app.helpers(Helpers)
       end
 
@@ -32,7 +32,7 @@ class Travis::Api::App
         condition do
           names  = [settings.default_scope].flatten if names == [:default]
           scopes = env['travis.access_token'].try(:scopes) || settings.anonymous_scopes
-
+          # p [names, scopes]
           result = names.any? do |name|
             if scopes.include?(name) && required_params_match?
               headers['X-OAuth-Scopes'] = scopes.map(&:to_s).join(',')

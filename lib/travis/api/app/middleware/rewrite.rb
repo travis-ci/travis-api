@@ -12,13 +12,14 @@ class Travis::Api::App
 
       before do
         extract_format
-        rewrite_v1_repo_segment if rewrite?
-        rewrite_repo_status_segment if rewrite?
+        rewrite_v1_repo_segment if rewrite_v1?
+        rewrite_repo_status_segment if rewrite_pre_v3?
         rewrite_v1_named_repo_image_path if image?
+        # p env['PATH_INFO']
       end
 
       after do
-        redirect_v1_named_repo_path if not_found? && rewrite?
+        redirect_v1_named_repo_path if not_found? && rewrite_v1?
       end
 
       private
@@ -55,12 +56,17 @@ class Travis::Api::App
           redirect(path)
         end
 
-        def rewrite?
-          v1? && repo_path? && (image? || xml? || any_format?)
+        def rewrite_v1?
+          v1? && repo_path? && (image? || xml? || atom?)
+        end
+
+        def rewrite_pre_v3?
+          pre_v3? && repo_path? && (image? || xml? || atom?)
         end
 
         def repo_path?
-          routes_to?(Endpoint::Repos)
+          # routes_to?(Endpoint::Repos)
+          env['PATH_INFO'].start_with?('/repos/')
         end
 
         def repo_status_path?
@@ -68,7 +74,7 @@ class Travis::Api::App
         end
 
         def any_format?
-          # TODO change accept helpers to default to whatever env['travis.format'] has?
+          # TODO change accept helpers to default to whatever env['travis.format'] has
           # accept_entries.any? { |entry| entry.mime_type == '*/*' }
           env['HTTP_ACCEPT'].to_s.include?('*/*')
         end
@@ -93,6 +99,12 @@ class Travis::Api::App
 
         def atom?
           env['travis.format'] == 'atom'
+        end
+
+        PRE_V3 = %w(v1 v2 v2.1)
+
+        def pre_v3?
+          PRE_V3.include?(accept_version)
         end
 
         def v1?

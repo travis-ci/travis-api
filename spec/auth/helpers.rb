@@ -20,9 +20,22 @@ RSpec::Matchers.define :auth do |expected|
 
   def body?(expected, actual)
     return true if !expected.key?(:empty) || ENV['AUTH_TESTS_ADAPTER'] == 'faraday'
-    body = JSON.parse(actual[:body]) rescue actual[:body]
+    body = parse(actual[:body], actual[:headers]['Content-Type'])
     body = compact(body)
+    return true if expected[:empty] && body.blank?
     expected[:empty] ? body.blank? : body.present?
+  end
+
+  def parse(body, type)
+    if type.include?('application/json')
+      JSON.parse(body)
+    elsif type.include?('application/xml')
+      Hash.from_xml(body)['Projects']
+    elsif type.include?('text/plain')
+      body
+    else
+      fail "could not parse #{type}"
+    end
   end
 
   def type?(expected, actual)

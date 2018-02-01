@@ -36,7 +36,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v1, set_app: true do
       it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
       it(:without_permission) { should auth status: 200, type: :xml, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, type: :xml, empty: false }
     end
 
     describe 'GET /repos/%{repo.id}' do
@@ -55,7 +55,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v1, set_app: true do
       it(:with_permission)    { should auth status: 200, type: :xml }
       it(:without_permission) { should auth status: 200, type: :xml }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, type: :xml }
     end
 
     describe 'GET /repos/%{repo.id}/settings' do
@@ -101,46 +101,82 @@ describe 'Auth repos', auth_helpers: true, api_version: :v1, set_app: true do
     end
 
     describe 'GET /repos/%{repo.slug}/cc' do
-      it(:with_permission)    { should auth status: 200, type: :json }
+      it(:with_permission)    { should auth status: 200, type: :json } # oddly, this returns the repo json
       it(:without_permission) { should auth status: 200, type: :json }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc.xml' do
+      it(:with_permission)    { should auth status: 200, type: :xml }
+      it(:without_permission) { should auth status: 200, type: :xml }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, type: :xml }
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, type: :xml }
+      it(:without_permission) { should auth status: 200, type: :xml }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png' do
+      it(:with_permission)    { should auth status: 200, type: :img, image: :passing }
+      it(:without_permission) { should auth status: 200, type: :img, image: :passing }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 200, type: :img, image: :passing }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token} Accept */*' do
+      let(:accept) { '*/*' }
+      it(:with_permission)    { should auth status: 200, type: :img, image: :passing }
+      it(:without_permission) { should auth status: 200, type: :img, image: :passing }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token} Accept application/json' do
+      let(:accept) { 'application/json' }
+      it(:with_permission)    { should auth status: 200, type: :img, image: :passing }
+      it(:without_permission) { should auth status: 200, type: :img, image: :passing }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token} Accept image/png' do
+      let(:accept) { 'image/png' }
+      it(:with_permission)    { should auth status: 200, type: :img, image: :passing }
+      it(:without_permission) { should auth status: 200, type: :img, image: :passing }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, type: :img, image: :passing }
+      it(:without_permission) { should auth status: 200, type: :img, image: :passing }
     end
 
     describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept */*' do
       let(:accept) { '*/*' }
-      it(:with_permission)    { should auth status: 200, type: :json }
-      it(:without_permission) { should auth status: 200, type: :json }
+      it(:with_permission)    { should auth status: 403 }
+      it(:without_permission) { should auth status: 403 }
     end
 
     describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept application/json' do
       let(:accept) { 'application/json' }
-      it(:with_permission)    { should auth status: 200, type: :json }
-      it(:without_permission) { should auth status: 200, type: :json }
+      it(:with_permission)    { should auth status: 403 }
+      it(:without_permission) { should auth status: 403 }
     end
 
-    describe 'GET /repos/%{repo.slug}.png?token=%{user.token}' do
-      it(:with_permission)    { should auth status: 200, type: :img }
-      it(:without_permission) { should auth status: 200, type: :img }
-    end
-
-    describe 'GET /repos/%{repo.slug}.png' do
-      it(:with_permission)    { should auth status: 200, type: :img }
-      it(:without_permission) { should auth status: 200, type: :img }
-      it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+    describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept image/png' do
+      let(:accept) { 'image/png' }
+      it(:with_permission)    { should auth status: 403 }
+      it(:without_permission) { should auth status: 403 }
     end
 
     describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
-      it(:with_permission)    { should auth status: 200, type: :img }
-      it(:without_permission) { should auth status: 200, type: :img }
+      it(:with_permission)    { should auth status: 200, type: :img, image: :passing }
+      it(:without_permission) { should auth status: 200, type: :img, image: :passing }
     end
 
     describe 'GET /repos/%{repo.slug}.svg' do
-      it(:with_permission)    { should auth status: 200, type: :img }
-      it(:without_permission) { should auth status: 200, type: :img }
+      it(:with_permission)    { should auth status: 200, type: :img, image: :passing }
+      it(:without_permission) { should auth status: 200, type: :img, image: :passing }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, type: :img, image: :passing }
     end
 
     describe 'GET /repos/%{repo.slug}/builds' do
@@ -154,7 +190,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v1, set_app: true do
       it(:with_permission)    { should auth status: 200, type: :atom }
       it(:without_permission) { should auth status: 200, type: :atom }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, type: :atom }
     end
 
     describe 'GET /repos/%{repo.slug}/builds?branches=master' do
@@ -187,7 +223,7 @@ describe 'Auth repos', auth_helpers: true, api_version: :v1, set_app: true do
       it(:with_permission)    { should auth status: 200, type: :xml }
       it(:without_permission) { should auth status: 200, type: :xml }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 401 }
+      it(:unauthenticated)    { should auth status: 200, type: :xml }
     end
 
     describe 'GET /repos/%{repo.slug}/key' do

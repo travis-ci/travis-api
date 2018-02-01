@@ -36,17 +36,11 @@ class Travis::Api::App
         def respond(resource, options)
           resource = apply_service_responder(resource, options)
           response = nil
+          responders = responders_for(options)
 
           acceptable_formats.find do |accept|
-            responders(resource, options).find do |const|
+            responders.find do |const|
               responder = const.new(self, resource, options.dup.merge(accept: accept))
-              response = responder.apply if responder.apply?
-            end
-          end
-
-          if responders = options[:responders]
-            responders.each do |klass|
-              responder = klass.new(self, response, options)
               response = responder.apply if responder.apply?
             end
           end
@@ -70,10 +64,11 @@ class Travis::Api::App
           end
         end
 
-        def responders(resource, options)
-          [:Json, :Atom, :Image, :Xml, :Plain, :Badge].map do |name|
-            Responders.const_get(name)
-          end
+        RESPONDERS = [:Json, :Atom, :Image, :Xml, :Plain, :Badge]
+
+        def responders_for(options)
+          names = Array(options[:responders] || options[:responder] || RESPONDERS)
+          names.map { |name| Responders.const_get(name.to_s.camelize) }
         end
     end
   end
