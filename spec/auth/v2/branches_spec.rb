@@ -3,7 +3,7 @@ describe 'v2 branches', auth_helpers: true, api_version: :v2, set_app: true do
   let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }
 
-  describe 'in public mode, with a private repo', mode: :private, repo: :private do
+  describe 'in public mode, with a private repo', mode: :public, repo: :private do
     describe 'GET /repos/%{repo.slug}/branches' do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: true }

@@ -7,7 +7,7 @@ require 'rspec/core/formatters/base_formatter'
 
 class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
   COLS = %i(result version mode repo context method path status empty comment)
-  DESC = /^v(?:[\d\.]+) (?<resource>[\w\/]+) .* (?<method>HEAD|GET|PUT|POST|DELETE) (?<path>[^ ]+) .*/
+  PATH = /^(?<method>HEAD|GET|PUT|POST|DELETE) (?<path>.*)$/
 
   def example_started(example)
     $stderr.puts example.full_description
@@ -27,17 +27,18 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
   end
 
   def parse(example)
-    str, meta, result = example.full_description, example.metadata, example.execution_result[:status]
-    return [] unless match = str.match(DESC)
+    return [] unless match = example.example_group.description.match(PATH)
+    method, path = match[:method], match[:path]
+    meta, result = example.metadata, example.execution_result[:status]
+
     [
       result,
       meta[:api_version],
       meta[:mode],
       meta[:repo],
       example.description,
-      match[:method],
-      match[:path],
-      # status(example),
+      method,
+      path,
       meta[:response].status,
       empty(example),
       comment(example)

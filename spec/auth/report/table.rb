@@ -30,11 +30,6 @@ def status(path, version, mode, visibility, context)
     row['context'] == context
   end
 
-  # if path == '/repos/%{repo.slug}?token=%{user.token}' && mode == 'private' && visibility == 'private' && version == 'v2.1'
-  #   p [version, mode, visibility, context]
-  #   p row
-  # end
-
   if row
     blank = '(empty)' if row['empty'] == 'yes'
     [row['status'], blank].compact.join(' ')

@@ -28,6 +28,9 @@
       .status-404 {
         background-color: #db90ee2e;
       }
+      .change {
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
@@ -83,7 +86,11 @@
           <% visibilities.each do |visibility| %>
             <% contexts.keys.each do |context| %>
               <% code = status(path, version, mode, visibility, context.to_s) %>
-              <td class="status-<%= code.to_s.gsub(/\D+/, '') %>"><%= code %></td>
+              <% prev = version == 'v2.1' ? status(path, 'v2', mode, visibility, context.to_s) : nil %>
+              <td class="status-<%= code.to_s.gsub(/\D+/, '') %> <%= 'change' if version == 'v2.1' && code != prev %>">
+                <%= code %>
+                <%= "<br>#{prev} on v2" if prev && code != prev %>
+              </td>
             <% end %>
           <% end %>
         <% end %>
