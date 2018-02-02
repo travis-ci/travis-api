@@ -7,13 +7,14 @@ gem 's3',              git: 'https://github.com/travis-ci/s3'
 
 gem 'mime-types'
 
-gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
+gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support', branch: 'igor-rm-metrics'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 gem 'travis-rollout',  git: 'https://github.com/travis-ci/travis-rollout', branch: 'sf-refactor'
+gem 'travis-metrics',  git: 'https://github.com/travis-ci/travis-metrics'
 
 gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
 gem 'mustermann'
