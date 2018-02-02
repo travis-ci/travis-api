@@ -3,10 +3,6 @@
 require 'csv'
 require 'erb'
 
-# $ bundle exec rspec spec/auth --require ./spec/auth/helpers/csv_formatter.rb --format CsvFormatter | tail -n +2 > auth.csv
-# $ ruby spec/auth/bin/table.rb > spec/auth/auth.html
-
-
 versions = %w(v2.1 v2 v1)
 modes = %w(private public)
 visibilities = %w(private public)
@@ -33,10 +29,12 @@ def status(path, version, mode, visibility, context)
     row['mode']    == mode &&
     row['context'] == context
   end
-  # if path == '/jobs/%{job.id}/log' && mode == 'public' && version == 'v2.1'
+
+  # if path == '/repos/%{repo.slug}?token=%{user.token}' && mode == 'private' && visibility == 'private' && version == 'v2.1'
   #   p [version, mode, visibility, context]
   #   p row
   # end
+
   if row
     blank = '(empty)' if row['empty'] == 'yes'
     [row['status'], blank].compact.join(' ')
@@ -49,4 +47,4 @@ end
 
 erb  = File.read(File.expand_path('../table.erb', __FILE__))
 html = ERB.new(erb).result(binding)
-puts html
+# puts html
