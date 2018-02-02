@@ -70,10 +70,6 @@ class Travis::Api::App
         end
       end
 
-      get '/:id/cc' do
-        respond_with service(:find_repo, params.merge(schema: 'cc'))
-      end
-
       # Get settings for a given repository
       #
       get '/:id/settings', scope: :private do
@@ -175,10 +171,6 @@ class Travis::Api::App
       # json(:build)
       get '/:owner_name/:name/builds/:id' do
         respond_with service(:find_build, params)
-      end
-
-      get '/:owner_name/:name/cc' do
-        respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
       # Get the public key for a given repository.
