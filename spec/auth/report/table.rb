@@ -47,4 +47,4 @@ end
 
 erb  = File.read(File.expand_path('../table.erb', __FILE__))
 html = ERB.new(erb).result(binding)
-# puts html
+puts html
