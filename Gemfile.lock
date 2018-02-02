@@ -106,7 +106,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 21dfc8c57594ba2f013f599ff9fae1745b024b4a
+  revision: 68042c57ac8e60644a6dd7d2df80ff8b635729d2
   branch: igor-rm-metrics
   specs:
     travis-support (0.0.1)
