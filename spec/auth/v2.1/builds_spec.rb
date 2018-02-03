@@ -9,7 +9,7 @@ describe 'v2.1 builds', auth_helpers: true, api_version: :'v2.1', set_app: true 
 
   describe 'in public mode, with a private repo', mode: :public, repo: :private do
     describe 'GET /builds' do
-      it(:with_permission)    { should auth status: 200, type: :json, empty: true }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 200, type: :json, empty: true }
@@ -47,10 +47,10 @@ describe 'v2.1 builds', auth_helpers: true, api_version: :'v2.1', set_app: true 
 
   describe 'in public mode, with a public repo', mode: :public, repo: :public do
     describe 'GET /builds' do
-      it(:with_permission)    { should auth status: 200, type: :json, empty: true }
-      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, type: :json, empty: true }
+      it(:unauthenticated)    { should auth status: 200, type: :json, empty: false }
     end
 
     describe 'GET /builds?running=true' do
@@ -91,7 +91,7 @@ describe 'v2.1 builds', auth_helpers: true, api_version: :'v2.1', set_app: true 
 
   describe 'in private mode, with a private repo', mode: :private, repo: :private do
     describe 'GET /builds' do
-      it(:with_permission)    { should auth status: 200, type: :json, empty: true }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
@@ -129,10 +129,10 @@ describe 'v2.1 builds', auth_helpers: true, api_version: :'v2.1', set_app: true 
 
   describe 'in org mode, with a public repo', mode: :org, repo: :public do
     describe 'GET /builds' do
-      it(:with_permission)    { should auth status: 200, type: :json, empty: true }
-      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, type: :json, empty: true }
+      it(:unauthenticated)    { should auth status: 200, type: :json, empty: false }
     end
 
     describe 'GET /builds?running=true' do
