@@ -228,5 +228,11 @@ module Travis::API::V3
       route '/user'
       get :current
     end
+
+    resource :subscription do
+      capture id: :digit
+      route '/subscription/{subscription.id}'
+      get :find
+    end
   end
 end

@@ -5,6 +5,7 @@ class Organization < Travis::Model
   has_many :memberships
   has_many :users, :through => :memberships
   has_many :repositories, :as => :owner
+  has_one :subscription, as: :owner
 
   def education?
     Travis::Features.owner_active?(:educational_org, self)
@@ -21,4 +22,3 @@ class Organization < Travis::Model
     @subscription = records.where(status: 'subscribed').last || records.last
   end
 end
-
