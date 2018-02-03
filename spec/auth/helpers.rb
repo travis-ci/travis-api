@@ -18,16 +18,12 @@ RSpec::Matchers.define :auth do |expected|
   end
 
   def status?(expected, actual)
-    case expected[:status]
-    when Array
-      expected[:status].include?(actual[:status])
-    else
-      actual[:status] == expected[:status]
-    end
+    Array(expected[:status]).include?(actual[:status])
   end
 
   def body?(expected, actual)
-    return true if !expected.key?(:empty) || ENV['AUTH_TESTS_ADAPTER'] == 'faraday'
+    return true if !expected.key?(:empty) || redirect?(actual[:status])
+    # return true if ENV['AUTH_TESTS_ADAPTER'] == 'faraday'
     body = parse(actual[:body], actual[:headers]['Content-Type'])
     body = compact(body)
     return true if expected[:empty] && body.blank?
@@ -49,7 +45,7 @@ RSpec::Matchers.define :auth do |expected|
   end
 
   def type?(expected, actual)
-    return true if !expected.key?(:type)
+    return true if !expected.key?(:type) || redirect?(actual[:status])
     type = actual[:headers]['Content-Type']
     case expected[:type]
     when :img
@@ -74,6 +70,10 @@ RSpec::Matchers.define :auth do |expected|
     actual == expected
   end
 
+  def redirect?(status)
+    status.to_s[0] == '3'
+  end
+
   def compact(obj)
     case obj
     when Array
@@ -94,7 +94,7 @@ module Support
       c.before { |c| set_mode(c.metadata[:mode]) }
       c.after { Travis.config[:host] = 'travis-ci.org' }
       c.after { Travis.config[:public_mode] = true }
-      c.after { |c| c.metadata[:response] = last_response }
+      c.after { |c| c.metadata[:response] = last_response rescue nil }
       c.subject { |a| send(a.description) }
     end
 

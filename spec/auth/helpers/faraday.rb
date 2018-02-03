@@ -31,6 +31,10 @@ module Support
           env(:login)
         end
 
+        def token
+          env(:travis_token)
+        end
+
         def env(name)
           ENV.fetch(key(name))
         end
@@ -98,7 +102,9 @@ module Support
       end
 
       def request_with(token)
-        ctx.skip if ENV['AUTH_TESTS_BRANCH'] == 'master' && api_version == :'v2.1'
+        ctx.skip if master? && api_version == :'v2.1'
+        ctx.skip if master? && org? && path.include?('?token=')
+
         WebMock.allow_net_connect!
         resp = client(token).send(method, path)
         WebMock.disable_net_connect!
@@ -111,6 +117,14 @@ module Support
           c.request  :authorization, :token, token if token
           c.adapter  :net_http
         end
+      end
+
+      def master?
+        ENV['AUTH_TESTS_BRANCH'] == 'master'
+      end
+
+      def org?
+        ENV['AUTH_TESTS_TARGET'] == 'org'
       end
 
       def token

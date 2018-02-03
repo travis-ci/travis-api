@@ -87,9 +87,8 @@
             <% contexts.keys.each do |context| %>
               <% code = status(path, version, mode, visibility, context.to_s) %>
               <% prev = version == 'v2.1' ? status(path, 'v2', mode, visibility, context.to_s) : nil %>
-              <td class="status-<%= code.to_s.gsub(/\D+/, '') %> <%= 'change' if version == 'v2.1' && code != prev %>">
+              <td class="status-<%= code.to_s.gsub(/\D+/, '') %> <%= 'change' if version == 'v2.1' && code != prev %>" title="<%= "was #{prev} on v2" if prev && code != prev %>">
                 <%= code %>
-                <%= "<br>#{prev} on v2" if prev && code != prev %>
               </td>
             <% end %>
           <% end %>
