@@ -47,19 +47,21 @@ RSpec::Matchers.define :auth do |expected|
   def type?(expected, actual)
     return true if !expected.key?(:type) || redirect?(actual[:status])
     type = actual[:headers]['Content-Type']
-    case expected[:type]
-    when :img
-      type.include?('image/png') || type.include?('image/svg')
-    when :json
-      type.include?('application/json')
-    when :xml
-      type.include?('application/xml')
-    when :atom
-      type.include?('application/atom')
-    when :text
-      type.include?('text/plain')
-    else
-      fail "unknown type #{type}"
+    Array(expected[:type]).any? do |expected|
+      case expected
+      when :img
+        type.include?('image/png') || type.include?('image/svg')
+      when :json
+        type.include?('application/json')
+      when :xml
+        type.include?('application/xml')
+      when :atom
+        type.include?('application/atom')
+      when :text
+        type.include?('text/plain')
+      else
+        fail "unknown type #{type}"
+      end
     end
   end
 

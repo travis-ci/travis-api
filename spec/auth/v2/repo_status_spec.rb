@@ -222,6 +222,111 @@ describe 'v2 repos', auth_helpers: true, api_version: :v2, set_app: true do
     end
   end
 
+  describe 'in private mode, with a public repo', mode: :private, repo: :public do
+    describe 'GET /repos/%{user.login}.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
+      it(:without_permission) { should auth status: 406 }
+    end
+
+    describe 'GET /repos/%{user.login}.xml' do
+      it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
+      it(:without_permission) { should auth status: 406 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.id}/cc.xml' do
+      it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc.xml' do
+      it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.id}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
+      it(:without_permission) { should auth status: 404 }
+    end
+
+    describe 'GET /repos/%{repo.slug}/cc.xml?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, type: :xml, empty: false }
+      it(:without_permission) { should auth status: 404 }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png' do
+      it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.png' }
+      it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.png' }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token} Accept */*' do
+      let(:accept) { '*/*' }
+      it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.png' }
+      it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.png' }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token} Accept application/json' do
+      let(:accept) { 'application/json' }
+      it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.png' }
+      it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.png' }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token} Accept image/png' do
+      let(:accept) { 'image/png' }
+      it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.png' }
+      it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.png' }
+    end
+
+    describe 'GET /repos/%{repo.slug}.png?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.png' }
+      it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.png' }
+    end
+
+    describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept image/svg+xml' do
+      let(:accept) { 'image/svg+xml' }
+      it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
+      it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.svg' }
+    end
+
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
+      it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
+      it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.svg' }
+    end
+
+    describe 'GET /repos/%{repo.slug}.svg' do
+      it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
+      it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.svg' }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.slug}/builds.atom' do
+      it(:with_permission)    { should auth status: 200, type: :atom, empty: false }
+      it(:without_permission) { should auth status: 406 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept */*' do
+      let(:accept) { '*/*' }
+      it(:with_permission)    { should auth status: 403 }
+      it(:without_permission) { should auth status: 403 }
+    end
+
+    describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept application/json' do
+      let(:accept) { 'application/json' }
+      it(:with_permission)    { should auth status: 403 }
+      it(:without_permission) { should auth status: 403 }
+    end
+  end
+
   # +----------------------------------------------------+
   # |                                                    |
   # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |

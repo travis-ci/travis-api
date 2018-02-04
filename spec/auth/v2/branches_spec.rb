@@ -49,6 +49,28 @@ describe 'v2 branches', auth_helpers: true, api_version: :v2, set_app: true do
     end
   end
 
+  describe 'in private mode, with a public repo', mode: :private, repo: :public do
+    describe 'GET /repos/%{repo.slug}/branches' do
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /branches?repository_id=%{repo.id}' do
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+
+    describe 'GET /branches?ids=%{build.id}' do
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+  end
   # +----------------------------------------------------+
   # |                                                    |
   # |   !!! THE ORIGINAL BEHAVIOUR ... DON'T TOUCH !!!   |
