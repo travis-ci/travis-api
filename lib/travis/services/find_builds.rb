@@ -26,10 +26,6 @@ module Travis
         end
 
         def by_params
-          # params now include the :access_token, which makes the `recent` case
-          # not match. not sure why that is.
-          params = params.to_h.reject { |key, _| key == :access_token }.symbolize_keys
-
           if repo
             # TODO :after_number seems like a bizarre api why not just pass an id? pagination style?
             builds = repo.builds
@@ -41,7 +37,7 @@ module Travis
             end
           elsif params[:running]
             scope(:build).running.limit(25)
-          elsif params.nil? || params == {}
+          elsif params.nil? || params == {} || params.keys.map(&:to_s) == ['access_token']
             scope(:build).recent
           else
             scope(:build).none
