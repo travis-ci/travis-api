@@ -7,14 +7,15 @@ versions = %w(v2.1 v2 v1)
 modes = %w(private public)
 visibilities = %w(private public)
 contexts = {
-  with_permission: 'perm',
-  without_permission: 'no perm',
+  with_permission: 'auth/perm',
+  without_permission: 'auth/no perm',
   unauthenticated: 'unauth'
 }
 
 csv   = File.read(File.expand_path('../auth.csv', __FILE__))
 @data = CSV.parse(csv, headers: true).map(&:to_h)
 paths = @data.map { |row| [row['resource'], row['path']] }.uniq.sort
+paths = paths.reject { |resource, _| resource == 'switch' }
 
 def status(path, version, mode, visibility, context)
   row = @data.detect do |row|
@@ -35,9 +36,9 @@ def status(path, version, mode, visibility, context)
     blank = '(empty)' if row['empty'] == 'yes'
     [row['status'], blank].compact.join(' ')
   elsif context == 'with_permission'
+    # hrmmmm.
+    status(path, version, mode, visibility, 'authenticated') ||
     status(path, version, mode, nil, 'authenticated')
-  else
-    '-'
   end
 end
 

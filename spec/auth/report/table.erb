@@ -14,7 +14,8 @@
       }
       th.version,
       th.mode,
-      td.resource {
+      td.resource,
+      td.path {
         cursor: pointer;
       }
       th, td {
@@ -53,11 +54,12 @@
       $(function() {
         $('th.version').click(function() { toggle(this, 'version') });
         $('th.mode').click(function() { toggle(this, 'mode') });
-        $('tr.status').click(function() { hide(this) });
+        $('td.resource').click(function() { hide(this) });
+        $('td.path').click(function() { $(this).closest('tr').hide() });
       });
 
-      function hide(row) {
-        var resource = /resource-([\w]+)/.exec($('td.resource', row).attr('class'))[1];
+      function hide(td) {
+        var resource = /resource-([\w]+)/.exec($(td).attr('class'))[1];
         var rows = $('.resource-' + resource).closest('tr');
         rows.hide();
       }
@@ -217,7 +219,7 @@
     <tr class="status">
       <td>GET</td>
       <td class="resource resource-<%= resource %>"><%= resource %></td>
-      <td><%= path %></td>
+      <td class="path"><%= path %></td>
       <% versions.each do |version| %>
         <% modes.each do |mode| %>
           <% visibilities.each do |visibility| %>
@@ -226,7 +228,7 @@
               <% prev = status(path, 'v2', mode, visibility, context.to_s) if version == 'v2.1' %>
               <% changed = (version == 'v2.1' && code != prev) %>
               <td class="status version-<%= version.sub('.', '') %> mode-<%= mode %> status-<%= code.to_s.gsub(/\D+/, '') %><%= " changed" if changed %>" title="<%= "was #{prev} on v2" if changed %>">
-                <%= code %>
+                <%= code || '-' %>
               </td>
             <% end %>
           <% end %>

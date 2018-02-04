@@ -59,26 +59,26 @@ describe 'v2.1 jobs', auth_helpers: true, api_version: :'v2.1', set_app: true do
     end
   end
 
-  describe 'in public mode, with a private repo', mode: :public, repo: :private do
+  describe 'in private mode, with a public repo', mode: :private, repo: :public do
     describe 'GET /jobs' do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, type: :json, empty: true }
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /jobs/%{job.id}' do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 404 }
+      it(:unauthenticated)    { should auth status: 401 }
     end
 
     describe 'GET /jobs/%{job.id}/log' do
       it(:with_permission)    { should auth status: [200, 307], type: :json, empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 404 }
+      it(:unauthenticated)    { should auth status: 401 }
     end
   end
 
