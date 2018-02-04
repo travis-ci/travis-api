@@ -4,7 +4,6 @@ require 'csv'
 require 'erb'
 
 versions = %w(v2.1 v2 v1)
-# versions = %w(v2.1)
 modes = %w(private public)
 visibilities = %w(private public)
 contexts = {
@@ -28,6 +27,7 @@ def status(path, version, mode, visibility, context)
     row['path']    == path &&
     row['version'] == version &&
     row['mode']    == mode &&
+    (row['repo'].nil? && visibility.nil?) &&
     row['context'] == context
   end
 

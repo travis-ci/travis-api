@@ -2,9 +2,6 @@ describe 'v1 settings/ssh_key', auth_helpers: true, api_version: :v1, set_app: t
   let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
-  # before(:all) { SslKey.create(repository_id: 1) }
-  # before { SslKey.update_all(repository_id: repo.id) }
-
   before do
     settings = repo.settings
     record = settings.create(:ssh_key, description: 'key for my repo', value: TEST_PRIVATE_KEY)
