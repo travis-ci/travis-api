@@ -14,7 +14,7 @@ contexts = {
 
 csv   = File.read(File.expand_path('../auth.csv', __FILE__))
 @data = CSV.parse(csv, headers: true).map(&:to_h)
-paths = @data.map { |row| row['path'] }.uniq.sort
+paths = @data.map { |row| [row['resource'], row['path']] }.uniq.sort
 
 def status(path, version, mode, visibility, context)
   row = @data.detect do |row|

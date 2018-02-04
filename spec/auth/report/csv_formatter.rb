@@ -6,8 +6,9 @@ require 'rspec/core/formatters/base_formatter'
 # $ bundle exec rspec spec/auth --require ./spec/support/csv_formatter.rb --format CsvFormatter | tail -n +2
 
 class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
-  COLS = %i(result version mode repo context method path status empty comment)
+  COLS = %i(result version mode repo context method resource path status empty comment)
   PATH = /^(?<method>HEAD|GET|PUT|POST|DELETE) (?<path>.*)$/
+  RESOURCE = /^v[\d\.]+ (?<resource>[\w]+)/
 
   def example_started(example)
     $stderr.puts example.full_description
@@ -27,6 +28,8 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
   end
 
   def parse(example)
+    return [] unless match = example.full_description.match(RESOURCE)
+    resource = match[:resource]
     return [] unless match = example.example_group.description.match(PATH)
     method, path = match[:method], match[:path]
     meta, result = example.metadata, example.execution_result[:status]
@@ -38,6 +41,7 @@ class CsvFormatter < RSpec::Core::Formatters::BaseFormatter
       meta[:repo],
       example.description,
       method,
+      resource,
       path,
       meta[:response].status,
       empty(example),

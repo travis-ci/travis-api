@@ -13,7 +13,8 @@
         font-weight: normal;
       }
       th.version,
-      th.mode {
+      th.mode,
+      td.resource {
         cursor: pointer;
       }
       th, td {
@@ -52,18 +53,13 @@
       $(function() {
         $('th.version').click(function() { toggle(this, 'version') });
         $('th.mode').click(function() { toggle(this, 'mode') });
+        $('tr.status').click(function() { hide(this) });
       });
 
-      var dims = ['version', 'mode', 'visibility', 'context', 'status'];
-
-      function selectors(tag, dim) {
-        return dims.slice(dims.indexOf(dim)).map(function(dim) {
-          return tag + '.' + dim;
-        }).join(',');
-      }
-
-      function parentDims(dim) {
-        return dims.slice(0, dims.indexOf(dim));
+      function hide(row) {
+        var resource = /resource-([\w]+)/.exec($('td.resource', row).attr('class'))[1];
+        var rows = $('.resource-' + resource).closest('tr');
+        rows.hide();
       }
 
       function toggle(elem, dim) {
@@ -116,6 +112,18 @@
         $(elem).data('collapsed', false);
       }
 
+      var dims = ['version', 'mode', 'visibility', 'context', 'status'];
+
+      function selectors(tag, dim) {
+        return dims.slice(dims.indexOf(dim)).map(function(dim) {
+          return tag + '.' + dim;
+        }).join(',');
+      }
+
+      function parentDims(dim) {
+        return dims.slice(0, dims.indexOf(dim));
+      }
+
       function uncolspan(elems) {
         $(elems).each(function() {
           colspan = $(this).attr('colspan');
@@ -156,6 +164,7 @@
   <tr class="version">
     <th>Version</th>
     <th></th>
+    <th></th>
     <% versions.each do |version| %>
       <th colspan="<%= modes.size * visibilities.size * contexts.size %>" class="version version-<%= version.sub('.', '') %>">
         <%= version %>
@@ -164,6 +173,7 @@
   </tr>
   <tr class="mode">
     <th>Mode</th>
+    <th></th>
     <th></th>
     <% versions.each do |version| %>
       <% modes.each do |mode| %>
@@ -175,6 +185,7 @@
   </tr>
   <tr class="visibility">
     <th>Repo</th>
+    <th></th>
     <th></th>
     <% versions.each do |version| %>
       <% modes.each do |mode| %>
@@ -189,6 +200,7 @@
   <tr class="context">
     <th>Context</th>
     <th></th>
+    <th></th>
     <% versions.each do |version| %>
       <% modes.each do |mode| %>
         <% visibilities.each do |visibility| %>
@@ -201,9 +213,10 @@
       <% end %>
     <% end %>
   </tr>
-  <% paths.each do |path| %>
+  <% paths.each do |(resource, path)| %>
     <tr class="status">
       <td>GET</td>
+      <td class="resource resource-<%= resource %>"><%= resource %></td>
       <td><%= path %></td>
       <% versions.each do |version| %>
         <% modes.each do |mode| %>
