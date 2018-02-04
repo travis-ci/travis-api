@@ -8,6 +8,15 @@ describe 'v1 logs', auth_helpers: true, api_version: :v1, set_app: true do
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
   before { stub_request(:get, log_url).to_return(status: 200, body: %({"job_id": #{job.id}, "content": "content"})) }
 
+  describe 'in public mode, with a private repo', mode: :public, repo: :private do
+    describe 'GET /logs/%{log.id}' do
+      it(:with_permission)    { should auth status: [200, 307], type: :text, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+  end
+
   describe 'in public mode, with a public repo', mode: :public, repo: :public do
     describe 'GET /logs/%{log.id}' do
       it(:with_permission)    { should auth status: [200, 307], type: :text, empty: false }

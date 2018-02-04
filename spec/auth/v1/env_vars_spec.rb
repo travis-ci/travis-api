@@ -4,6 +4,15 @@ describe 'v1 settings/env_vars', auth_helpers: true, api_version: :v1, set_app: 
 
   before { repo.settings.tap { |s| s.env_vars.create(name: 'FOO', value: 'foo', private: true) && s.save } }
 
+  describe 'in public mode, with a private repo', mode: :public, repo: :private do
+    describe 'GET /settings/env_vars?repository_id=%{repo.id}' do
+      it(:with_permission)    { should auth status: 200, type: :json, empty: false }
+      it(:without_permission) { should auth status: 404 }
+      it(:invalid_token)      { should auth status: 403 }
+      it(:unauthenticated)    { should auth status: 401 }
+    end
+  end
+
   describe 'in public mode, with a public repo', mode: :public, repo: :public do
     describe 'GET /settings/env_vars?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
