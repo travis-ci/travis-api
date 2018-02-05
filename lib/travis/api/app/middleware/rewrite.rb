@@ -13,8 +13,8 @@ class Travis::Api::App
       before do
         extract_format
         rewrite_v1_repo_segment if rewrite_v1?
-        rewrite_repo_status_segment if rewrite_pre_v3?
         rewrite_v1_named_repo_image_path if image?
+        rewrite_repo_status_segment if rewrite_pre_v3?
         # p env['PATH_INFO']
       end
 

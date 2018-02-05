@@ -166,6 +166,18 @@ describe 'Repos', set_app: true do
     response.status.should == 403
   end
 
+  it 'responds with 200 and an image if a repo exists and with browser-like accept header' do
+    Travis.config.host = 'travis-ci.org'
+    Travis.config.public_mode = true
+    Factory(:build, repository: repo, state: :passed)
+
+    result = get('/svenfuchs/minimal.svg?branch=master', {}, 'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8')
+    result.status.should == 200
+    result.headers['Content-Type'].should == 'image/svg+xml'
+    result.body.should_not == ''
+    result.should deliver_result_image_for('passing.svg')
+  end
+
   it 'responds with 200 and image when repo can\'t be found and format is png' do
     result = get('/repos/foo/bar', {}, 'HTTP_ACCEPT' => 'image/png')
     result.status.should == 200
