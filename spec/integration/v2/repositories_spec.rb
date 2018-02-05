@@ -130,15 +130,6 @@ describe 'Repos', set_app: true do
     response.content_type.should eq('application/xml;charset=utf-8')
   end
 
-  it 'GET /repos/1/cc.xml works with */* accept header' do
-    response = get "svenfuchs/minimal/cc.xml", {}, { 'HTTP_ACCEPT' => '*/*' }
-    repo = Repository.by_slug('svenfuchs/minimal').first
-
-    response.status.should == 200
-    response.should deliver_cc_xml_for(repo)
-    response.content_type.should eq('application/xml;charset=utf-8')
-  end
-
   it '[.com, public mode] GET /repos/1/cc.xml fetches the xml when repo is public' do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = true

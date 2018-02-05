@@ -12,14 +12,14 @@ class Travis::Api::App
 
       before do
         extract_format
-        rewrite_v1_repo_segment if rewrite_v1?
-        rewrite_v1_named_repo_image_path if image? || xml?
+        rewrite_v1_repo_segment if v1? && repos_path?
+        rewrite_v1_named_repo_image_path if image?
         rewrite_repo_status_segment if rewrite_pre_v3?
         # p env['PATH_INFO']
       end
 
       after do
-        redirect_v1_named_repo_path if not_found? && rewrite_v1?
+        redirect_v1_named_repo_path if redirect_v1_named_repo_path?
       end
 
       private
@@ -42,10 +42,14 @@ class Travis::Api::App
           env['PATH_INFO'].sub!(V1_REPO_URL) { "/repos#{$1}" }
         end
 
+        def redirect_v1_named_repo_path?
+          not_found? && v1? && (image? || xml?) &&
+            !repos_path? && !repo_status_path? &&
+            request.path =~ V1_REPO_URL
+        end
+
         def redirect_v1_named_repo_path
-          if !repo_path? && !repo_status_path? && request.path =~ V1_REPO_URL
-            force_redirect("/repos#{$1}.#{env['travis.format']}")
-          end
+          force_redirect("/repos#{request.path}.#{env['travis.format']}")
         end
 
         def force_redirect(path)
@@ -57,20 +61,19 @@ class Travis::Api::App
         end
 
         def rewrite_v1?
-          v1? && repo_path? && (image? || xml? || atom?)
+          v1? && repos_path? && (image? || xml? || atom?)
         end
 
         def rewrite_pre_v3?
-          pre_v3? && repo_path? && (image? || xml? || atom?)
+          pre_v3? && repos_path? && (image? || xml? || atom?)
         end
 
-        def repo_path?
-          # routes_to?(Endpoint::Repos)
+        def repos_path?
           env['PATH_INFO'].start_with?('/repos')
         end
 
         def repo_status_path?
-          routes_to?(Endpoint::RepoStatus)
+          env['PATH_INFO'].start_with?('/repo_status/')
         end
 
         def image?
