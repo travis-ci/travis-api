@@ -12,8 +12,8 @@ module Travis::API::V3
       when has(:avatar_url)   then object.avatar_url
       when has(:gravatar_url) then object.gravatar_url
       when has(:gravatar_id)  then GRAVATAR_URL % object.gravatar_id
-      when has(:email)        then GRAVATAR_URL % Digest::MD5.hexdigest(object.email)
-      when String             then GRAVATAR_URL % Digest::MD5.hexdigest(object)
+      when has(:email)        then GRAVATAR_URL % Digest::MD5.hexdigest(object.email.downcase)
+      when String             then GRAVATAR_URL % Digest::MD5.hexdigest(object.downcase)
       end
     end
 

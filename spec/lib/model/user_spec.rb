@@ -113,7 +113,7 @@ describe User do
 
     it 'returns a MD5 hash of the email if no gravatar_id and an email is set' do
       user.gravatar_id = nil
-      user.profile_image_hash.should == Digest::MD5.hexdigest(user.email)
+      user.profile_image_hash.should == Digest::MD5.hexdigest(user.email.downcase)
     end
 
     it 'returns 32 zeros if no gravatar_id or email is set' do

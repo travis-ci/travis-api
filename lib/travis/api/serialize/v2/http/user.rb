@@ -30,7 +30,7 @@ module Travis
                   'name' => user.name,
                   'login' => user.login,
                   'email' => user.email,
-                  'gravatar_id' => user.email ? Digest::MD5.hexdigest(user.email) : "",
+                  'gravatar_id' => user.email ? Digest::MD5.hexdigest(user.email.downcase) : "",
                   'avatar_url' => user.avatar_url,
                   'locale' => user.locale,
                   'is_syncing' => user.syncing?,
