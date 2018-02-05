@@ -14,11 +14,15 @@ gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 gem 'travis-rollout',  git: 'https://github.com/travis-ci/travis-rollout', branch: 'sf-refactor'
+gem 'travis-metrics',  git: 'https://github.com/travis-ci/travis-metrics'
 
 gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
 gem 'mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
+
+gem 'metriks',                 git: 'https://github.com/travis-ci/metriks'
+gem 'metriks-librato_metrics', git: 'https://github.com/travis-ci/metriks-librato_metrics'
 
 gem 'simple_states',   '1.0.2'
 
@@ -33,8 +37,6 @@ gem 'gh', git: 'https://github.com/travis-ci/gh'
 gem 'bunny',           '~> 0.8.0'
 gem 'dalli'
 gem 'pry'
-gem 'metriks',         '0.9.9.6'
-gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
 gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
