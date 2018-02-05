@@ -3,6 +3,7 @@ require 'travis'
 require 'travis/amqp'
 require 'travis/model'
 require 'travis/states_cache'
+require 'travis/metrics'
 require 'travis/honeycomb'
 require 'travis/marginalia'
 require 'rack'
@@ -259,7 +260,7 @@ module Travis::Api
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         Travis::Notification.setup(instrumentation: false)
-        Travis::Metrics.setup
+        Travis::Metrics.setup(Travis.config.metrics, Travis.logger)
       end
 
       def self.setup_endpoints
