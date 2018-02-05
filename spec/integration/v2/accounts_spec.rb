@@ -14,7 +14,7 @@ describe 'Accounts', set_app: true do
           "name" => user.name,
           "login" => user.login,
           "type" => "user",
-          "repos_count" => nil,
+          "repos_count" => 0,
           "avatar_url" => nil
         }
       ]
