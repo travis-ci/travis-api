@@ -6,8 +6,6 @@ module Travis
     class FindBranch < Base
       register :find_branch
 
-      scope_access!
-
       def run
         result
       end

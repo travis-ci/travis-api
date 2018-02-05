@@ -3,19 +3,8 @@ require 'travis/services/helpers'
 module Travis
   module Services
     class Base
-      class << self
-        def register(key)
-          Travis.services.add(key, self)
-        end
-
-        def scope_access!
-          @scope_access = true
-        end
-
-        def scope_access?
-          self.name
-          !!@scope_access
-        end
+      def self.register(key)
+        Travis.services.add(key, self)
       end
 
       include Helpers
@@ -28,9 +17,7 @@ module Travis
       end
 
       def scope(key)
-        scope = key.to_s.camelize.constantize
-        scope = scope.viewable_by(current_user) if self.class.scope_access?
-        scope
+        key.to_s.camelize.constantize
       end
 
       def logger

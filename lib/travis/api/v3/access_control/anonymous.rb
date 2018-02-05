@@ -14,7 +14,7 @@ module Travis::API::V3
     end
 
     def visible_repositories(list)
-      return V3::Models::Repository.none unless unrestricted_api?
+      return [] unless unrestricted_api?
       list.where(private: false)
     end
 

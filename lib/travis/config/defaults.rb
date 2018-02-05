@@ -25,7 +25,6 @@ module Travis
 
     define  host:  'travis-ci.org',
             shorten_host:  'trvs.io',
-            public_mode:   !!ENV['PUBLIC_MODE'],
             tokens:        { internal: 'token' },
             auth:          { target_origin: nil },
             assets:        { host: HOSTS[Travis.env.to_sym] },
@@ -73,14 +72,6 @@ module Travis
     def initialize(*)
       super
       load_urls
-    end
-
-    def org?
-      host.ends_with?('travis-ci.org')
-    end
-
-    def com?
-      host.ends_with?('travis-ci.com')
     end
   end
 end

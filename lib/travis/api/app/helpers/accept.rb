@@ -3,7 +3,7 @@ require 'travis/api/app'
 class Travis::Api::App
   module Helpers
     module Accept
-      HEADER_FORMAT   = /vnd\.travis-ci\.([\d\.]+)\+(\w+)/
+      HEADER_FORMAT   = /vnd\.travis-ci\.(\d+)\+(\w+)/
       DEFAULT_VERSION = 'v1'
       DEFAULT_FORMAT  = 'json'
 
@@ -67,7 +67,6 @@ class Travis::Api::App
       end
 
       def accepts?(mime_type)
-        # TODO shouldn't this really use acceptable_formats?
         accept_entries.any? { |e| e.accepts?(mime_type) }
       end
 

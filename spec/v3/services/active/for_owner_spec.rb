@@ -75,51 +75,23 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
     let(:org_build) { V3::Models::Build.create(repository: org_repo, owner: org, state: 'created') }
     let!(:org_job)  { V3::Models::Job.create(source_id: org_build.id, source_type: 'Build', owner: org, state: 'queued', repository: org_repo) }
 
-    describe 'in public mode' do
-      before { Travis.config[:public_mode] = true }
+    describe 'viewing a user' do
+      before { get("/v3/owner/#{user.login}/active?include=build.jobs", {}, json_headers) }
 
-      describe 'viewing a user' do
-        before { get("/v3/owner/#{user.login}/active?include=build.jobs", {}, json_headers) }
+      example { expect(last_response).to be_ok }
+      example { expect(last_response).to contain_builds user_build }
+      example { expect(last_response).to contain_jobs user_job }
 
-        example { expect(last_response).to be_ok }
-        example { expect(last_response).to contain_builds user_build }
-        example { expect(last_response).to contain_jobs user_job }
-
-        example { expect(last_response).to not_contain_builds private_build }
-        example { expect(last_response).to not_contain_jobs err_job, private_job }
-      end
-
-      describe 'viewing an org' do
-        before { get("/v3/owner/#{org.login}/active?include=build.jobs", {}, json_headers) }
-
-        example { expect(last_response).to be_ok }
-        example { expect(last_response).to contain_builds org_build }
-        example { expect(last_response).to contain_jobs org_job }
-      end
+      example { expect(last_response).to not_contain_builds private_build }
+      example { expect(last_response).to not_contain_jobs err_job, private_job }
     end
 
-    describe 'in private mode' do
-      before { Travis.config[:public_mode] = false }
+    describe 'viewing an org' do
+      before { get("/v3/owner/#{org.login}/active?include=build.jobs", {}, json_headers) }
 
-      describe 'viewing a user' do
-        before { get("/v3/owner/#{user.login}/active?include=build.jobs", {}, json_headers) }
-
-        example { expect(last_response).to be_ok }
-        example { expect(last_response).to_not contain_builds user_build }
-        example { expect(last_response).to_not contain_jobs user_job }
-
-        # TODO it seems like the body is empty, but the spec still fails
-        xexample { expect(last_response).to_not not_contain_builds private_build }
-        xexample { expect(last_response).to_not not_contain_jobs err_job, private_job }
-      end
-
-      describe 'viewing an org' do
-        before { get("/v3/owner/#{org.login}/active?include=build.jobs", {}, json_headers) }
-
-        example { expect(last_response).to be_ok }
-        example { expect(last_response).to_not contain_builds org_build }
-        example { expect(last_response).to_not contain_jobs org_job }
-      end
+      example { expect(last_response).to be_ok }
+      example { expect(last_response).to contain_builds org_build }
+      example { expect(last_response).to contain_jobs org_job }
     end
   end
 

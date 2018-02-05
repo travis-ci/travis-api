@@ -5,8 +5,6 @@ require 'travis/api/enqueue/services/cancel_model'
 class Travis::Api::App
   class Endpoint
     class Builds < Endpoint
-      before { authenticate_by_mode! }
-
       get '/' do
         prefer_follower do
           name = params[:branches] ? :find_branches : :find_builds

@@ -10,7 +10,7 @@ module Travis::API::V3
       @routes            = routes
       @metrics_processor = Metrics::Processor.new
 
-      metrics_processor.start unless ENV['ENV'] == 'test'
+      metrics_processor.start
       routes.draw_routes
     end
 

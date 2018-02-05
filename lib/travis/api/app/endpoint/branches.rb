@@ -3,8 +3,6 @@ require 'travis/api/app'
 class Travis::Api::App
   class Endpoint
     class Branches < Endpoint
-      before { authenticate_by_mode! }
-
       get '/' do
         respond_with service(:find_branches, params), type: :branches
       end

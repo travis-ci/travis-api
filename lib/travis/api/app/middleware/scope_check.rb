@@ -19,8 +19,7 @@ class Travis::Api::App
       end
 
       def token
-        return @token if instance_variable_defined?(:@token)
-        @token = header_token || query_token || travis_token
+        @token ||= header_token || query_token || travis_token
       end
 
       private

@@ -1,4 +1,0 @@
-```
-$ ./spec/auth/report/generate
-$ open ./spec/auth/report/auth.html
-```

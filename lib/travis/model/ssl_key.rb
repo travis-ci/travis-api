@@ -6,8 +6,6 @@ require 'travis/model'
 # data so it can be added to a public `.travis.yml` file (e.g. Campfire
 # credentials).
 class SslKey < Travis::Model
-  include Travis::ScopeAccess
-
   belongs_to :repository
 
   validates :repository_id, :presence => true, :uniqueness => true

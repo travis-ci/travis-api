@@ -1,5 +1,4 @@
 require 'travis/github/services/set_hook'
-require 'travis/github/services/set_key'
 
 module Travis
   module Github

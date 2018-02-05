@@ -5,8 +5,6 @@ module Travis
     class FindRepoKey < FindRepo
       register :find_repo_key
 
-      scope_access!
-
       def run(options = {})
         result
       end

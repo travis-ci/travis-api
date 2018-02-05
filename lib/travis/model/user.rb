@@ -39,10 +39,6 @@ class User < Travis::Model
     end
   end
 
-  def token
-    tokens.first.try(:token)
-  end
-
   def to_json
     keys = %w/id login email name locale github_id gravatar_id is_syncing synced_at updated_at created_at/
     { 'user' => attributes.slice(*keys) }.to_json
@@ -133,16 +129,6 @@ class User < Travis::Model
     else
       GRAVATAR_URL % Digest::MD5.hexdigest(email)
     end
-  end
-
-  def subscribed?
-    subscription.present? and subscription.active?
-  end
-
-  def subscription
-    return @subscription if instance_variable_defined?(:@subscription)
-    records = Subscription.where(owner_id: id, owner_type: "User")
-    @subscription = records.where(status: 'subscribed').last || records.last
   end
 
   def _has

@@ -30,9 +30,9 @@ class Travis::Api::App
 
       def scope(*names)
         condition do
-          names  = [settings.default_scope].flatten if names == [:default]
+          names  = [settings.default_scope] if names == [:default]
           scopes = env['travis.access_token'].try(:scopes) || settings.anonymous_scopes
-          # p [names, scopes]
+
           result = names.any? do |name|
             if scopes.include?(name) && required_params_match?
               headers['X-OAuth-Scopes'] = scopes.map(&:to_s).join(',')

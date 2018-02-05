@@ -47,7 +47,6 @@ class Build < Travis::Model
   require 'travis/model/build/states'
   require 'travis/model/env_helpers'
 
-  include Travis::ScopeAccess
   include Matrix, States, SimpleStates
 
   belongs_to :commit
@@ -197,7 +196,7 @@ class Build < Travis::Model
   end
 
   def config
-    @config ||= Config.new(super, multi_os: repository.try(:multi_os_enabled?)).normalize
+    @config ||= Config.new(super, multi_os: repository.multi_os_enabled?).normalize
   end
 
   def obfuscated_config

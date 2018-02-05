@@ -12,14 +12,12 @@ class Travis::Api::App
 
       before do
         extract_format
-        rewrite_v1_repo_segment if rewrite_v1?
-        rewrite_repo_status_segment if rewrite_pre_v3?
-        rewrite_v1_named_repo_image_path if image?
-        # p env['PATH_INFO']
+        rewrite_v1_repo_segment if v1? || xml?
+        rewrite_v1_named_repo_image_path if png? || svg?
       end
 
       after do
-        redirect_v1_named_repo_path if not_found? && rewrite_v1?
+        redirect_v1_named_repo_path if (v1? || xml?) && not_found?
       end
 
       private
@@ -34,17 +32,13 @@ class Travis::Api::App
           env['PATH_INFO'].sub!(%r(^/repositories), '/repos')
         end
 
-        def rewrite_repo_status_segment
-          env['PATH_INFO'].sub!(%r(^/repos/), '/repo_status/')
-        end
-
         def rewrite_v1_named_repo_image_path
           env['PATH_INFO'].sub!(V1_REPO_URL) { "/repos#{$1}" }
         end
 
         def redirect_v1_named_repo_path
-          if !repo_path? && !repo_status_path? && request.path =~ V1_REPO_URL
-            force_redirect("/repos#{$1}.#{env['travis.format']}")
+          if request.path =~ V1_REPO_URL
+            force_redirect("/repositories#{$1}.#{env['travis.format']}")
           end
         end
 
@@ -56,65 +50,24 @@ class Travis::Api::App
           redirect(path)
         end
 
-        def rewrite_v1?
-          v1? && repo_path? && (image? || xml? || atom?)
-        end
-
-        def rewrite_pre_v3?
-          pre_v3? && repo_path? && (image? || xml? || atom?)
-        end
-
-        def repo_path?
-          # routes_to?(Endpoint::Repos)
-          env['PATH_INFO'].start_with?('/repos')
-        end
-
-        def repo_status_path?
-          routes_to?(Endpoint::RepoStatus)
-        end
-
-        def image?
-          png? || svg?
-        end
-
         def png?
-          # accepts?('image/png')
-          env['travis.format'] == 'png' || accept_headers.include?('image/png')
+          env['travis.format'] == 'png'
         end
 
         def svg?
-          # accepts?('applciation/svg')
-          env['travis.format'] == 'svg' || accept_headers.include?('image/svg')
+          env['travis.format'] == 'svg'
         end
 
         def xml?
-          env['travis.format'] == 'xml' || accept_headers.include?('application/xml')
+          env['travis.format'] == 'xml'
         end
 
         def atom?
-          env['travis.format'] == 'atom' || accept_headers.include?('application/atom')
-        end
-
-        PRE_V3 = %w(v1 v2 v2.1)
-
-        def pre_v3?
-          PRE_V3.include?(accept_version)
+          env['travis.format'] == 'atom'
         end
 
         def v1?
           accept_version == 'v1'
-        end
-
-        def v2?
-          accept_version == 'v2'
-        end
-
-        def accept_headers
-          env['HTTP_ACCEPT'].to_s
-        end
-
-        def routes_to?(const)
-          const.routes['GET'].any? { |r| r[0].match(env['PATH_INFO']) }
         end
     end
   end

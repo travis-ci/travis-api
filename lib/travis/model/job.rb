@@ -15,8 +15,6 @@ class Job < Travis::Model
   require 'travis/model/job/test'
   require 'travis/model/env_helpers'
 
-  include Travis::ScopeAccess
-
   SAFELISTED_ADDONS = %w(
     apt
     apt_packages

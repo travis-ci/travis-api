@@ -1,5 +1,4 @@
 require 'digest/md5'
-require 'travis/api/app/responders/base'
 
 module Travis::Api
   class App

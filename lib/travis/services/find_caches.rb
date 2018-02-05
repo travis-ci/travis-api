@@ -110,7 +110,7 @@ module Travis
         end
 
         def permission?
-          current_user && repo && current_user.permission?(required_role, repository_id: repo.id)
+          current_user.permission?(required_role, repository_id: repo.id)
         end
 
         def required_role

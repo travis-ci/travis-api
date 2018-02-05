@@ -5,8 +5,6 @@ require 'travis/api/enqueue/services/restart_model'
 class Travis::Api::App
   class Endpoint
     class Requests < Endpoint
-      before { authenticate_by_mode! }
-
       get '/' do
         begin
           respond_with(service(:find_requests, params).run)

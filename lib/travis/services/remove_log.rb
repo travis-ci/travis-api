@@ -5,7 +5,6 @@ module Travis
       include Travis::Logging
 
       register :remove_log
-      scope_access!
 
       FORMAT = "Log removed by %s at %s"
 

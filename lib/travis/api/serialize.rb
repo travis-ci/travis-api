@@ -15,25 +15,19 @@ module Travis
 
         def builder(resource, options = {})
           target  = (options[:for] || 'http').to_s.camelize
-          version = (options[:version] || default_version(options)).to_s
-          type    = options[:type] || type_for(resource)
+          version = (options[:version] || default_version(options)).to_s.camelize
+          type    = (options[:type] || type_for(resource)).to_s.camelize.split('::')
 
           Travis::Honeycomb.context.add('api_version', version.downcase)
 
-          version = 'v2' if version.start_with?('v2.')
-          parts = [version, target] + type.to_s.split('::')
-          parts = parts.map { |part| part.to_s.camelize }
-
-          parts.inject(self) do |const, name|
+          ([version, target] + type).inject(self) do |const, name|
             begin
-              if const && const.const_defined?(name, false)
+              if const && const.const_defined?(name.to_s.camelize, false)
                 const.const_get(name, false)
               else
-                # puts "Could not find serialize builder for #{version} #{target} #{type}" unless [['Hash'], ['RemoteLog']].include?(type)
                 nil
               end
             rescue NameError
-              # puts "Could not find serialize builder for #{version} #{target}" unless [['Hash'], ['RemoteLog']].include?(type)
               nil
             end
           end

@@ -5,8 +5,6 @@ module Travis
     class FindJob < Base
       register :find_job
 
-      scope_access!
-
       def run
         result
       end

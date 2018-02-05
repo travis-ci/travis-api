@@ -3,7 +3,7 @@ require 's3'
 module Support
   module S3
     class FakeObject
-      attr_accessor :key, :size, :last_modified
+      attr_accessor :key, :size
       def initialize(key, options = {})
         @key  = key
         @size = options[:size] || "0"

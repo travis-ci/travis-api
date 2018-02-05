@@ -5,8 +5,6 @@ module Travis
     class FindBuild < Base
       register :find_build
 
-      scope_access!
-
       def run
         result
       end
