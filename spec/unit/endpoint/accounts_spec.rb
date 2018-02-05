@@ -5,8 +5,9 @@ describe Travis::Api::App::Endpoint::Accounts, set_app: true do
   before do
     User.stubs(:find_by_github_id).returns(user)
     User.stubs(:find).returns(user)
-    user.stubs(:repositories).returns(stub(administrable: stub(select: [repository])))
+    Travis::Services::FindUserAccounts.any_instance.stubs(:owners_with_counts).returns([{ 'owner_id' => user.id, 'owner_type' => 'User', 'repos_count' => 1}])
     user.stubs(:attributes).returns(:id => user.id, :login => user.login, :name => user.name)
+
   end
 
   it 'includes accounts' do

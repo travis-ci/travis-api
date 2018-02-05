@@ -6,6 +6,14 @@ module Travis::API::V3
 
     hidden_representations(:active)
 
+    def self.available_attributes
+      super + ['request']
+    end
+
+    def request
+      Renderer.render_model(model.request, mode: :minimal)
+    end
+
     def jobs
       return model.active_jobs if include_full_jobs? && representation?(:active)
       return model.jobs if include_full_jobs?

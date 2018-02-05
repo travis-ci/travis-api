@@ -321,4 +321,21 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "last_build_id"   => nil
     })}
   end
+
+  describe 'including a request' do
+    before { get("/v3/build/#{build.id}?include=build.request") }
+
+    example { expect(last_response).to be_ok }
+    example do
+      expect(parsed_body['request']).to include(
+        '@type',
+        '@href',
+        '@representation',
+        'id',
+        'state',
+        'result',
+        'message'
+      )
+    end
+  end
 end
