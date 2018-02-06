@@ -1,21 +1,25 @@
 module Travis::API::V3
   class Services::EnterpriseLicense::Find < Service
     def run!
-      response = Faraday.get("#{replicated_endpoint}/license/v1/license")
-      replicated_response = JSON.parse(response.body)
-      license_id = replicated_response["license_id"]
-      license_type = replicated_response["license_type"]
-      seats = get_seats(replicated_response)
-      expiration_time = replicated_response["expiration_time"]
-      active_users = query.active_users
+      if replicated_endpoint
+        response = Faraday.get("#{replicated_endpoint}/license/v1/license")
+        replicated_response = JSON.parse(response.body)
+        license_id = replicated_response["license_id"]
+        license_type = replicated_response["license_type"]
+        seats = get_seats(replicated_response)
+        expiration_time = replicated_response["expiration_time"]
+        active_users = query.active_users
 
-      result({
-        license_id: license_id,
-        license_type: license_type,
-        seats: seats,
-        active_users: active_users,
-        expiration_time: expiration_time
-      })
+        result({
+          license_id: license_id,
+          license_type: license_type,
+          seats: seats,
+          active_users: active_users,
+          expiration_time: expiration_time
+        })
+      else
+        raise InsufficientAccess
+      end
     end
 
     private

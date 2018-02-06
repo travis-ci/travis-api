@@ -9,10 +9,6 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
       .to_return(body: File.read('spec/support/enterprise_license.json'), headers: { 'Content-Type' => 'application/json' })
   end
 
-  after do
-    ENV.delete('REPLICATED_INTEGRATIONAPI')
-  end
-
   describe "fetching enterprise license" do
     before     { get("/v3/enterprise_license") }
     example    { expect(last_response.status).to eq 200 }
@@ -25,5 +21,21 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
         "expiration_time" => "2018-08-18T00:00:00Z"
       }
     }
+  end
+
+  describe "no REPLICATED_INTEGRATIONAPI" do
+    before { ENV.delete('REPLICATED_INTEGRATIONAPI') }
+
+    describe "fetching enterprise license" do
+      before     { get("/v3/enterprise_license") }
+      example    { expect(last_response.status).to eq 403 }
+      example    {
+        expect(parsed_body).to be == {
+          "@type"        => "error",
+          "error_type"   =>"insufficient_access",
+          "error_message"=>"forbidden"
+        }
+      }
+    end
   end
 end
