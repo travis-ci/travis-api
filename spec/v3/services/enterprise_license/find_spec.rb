@@ -32,8 +32,8 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
       example    {
         expect(parsed_body).to be == {
           "@type"        => "error",
-          "error_type"   =>"insufficient_access",
-          "error_message"=>"forbidden"
+          "error_type"   => "insufficient_access",
+          "error_message"=> "forbidden"
         }
       }
     end

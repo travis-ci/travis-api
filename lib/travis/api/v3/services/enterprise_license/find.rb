@@ -2,7 +2,8 @@ module Travis::API::V3
   class Services::EnterpriseLicense::Find < Service
     def run!
       if replicated_endpoint
-        response = Faraday.get("#{replicated_endpoint}/license/v1/license")
+        # response = Faraday.get("#{replicated_endpoint}/license/v1/license")
+        response = Faraday.new(ssl: Travis.config.ssl.to_h || {}).get("#{replicated_endpoint}/license/v1/license")
         replicated_response = JSON.parse(response.body)
         license_id = replicated_response["license_id"]
         license_type = replicated_response["license_type"]
