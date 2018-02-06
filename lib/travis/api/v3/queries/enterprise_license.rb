@@ -1,13 +1,11 @@
+require 'redis'
+
 module Travis::API::V3
   class Queries::EnterpriseLicense < Query
-    def active_users(expiration_time)
-      this_year = Date.parse(expiration_time)
-      last_year = this_year - 365
-
-      Models::Email
-      .joins("INNER JOIN commits c ON LOWER(c.committer_email) = LOWER(emails.email)")
-      .select('DISTINCT email')
-      .where("c.created_at >= ? AND c.created_at < ?", last_year, this_year)
+    def active_users
+      redis = Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
+      # redis = ::Redis.connect(url: ENV['REDIS_URL'])
+      redis.keys("t:*").count
     end
   end
 end

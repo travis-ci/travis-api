@@ -7,13 +7,13 @@ module Travis::API::V3
       license_type = replicated_response["license_type"]
       seats = get_seats(replicated_response)
       expiration_time = replicated_response["expiration_time"]
-      active_users = query.active_users(expiration_time)
+      active_users = query.active_users
 
       result({
         license_id: license_id,
         license_type: license_type,
         seats: seats,
-        active_users: active_users.count,
+        active_users: active_users,
         expiration_time: expiration_time
       })
     end
