@@ -20,9 +20,6 @@ gem 'mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
 
-gem 'metriks',                 git: 'https://github.com/travis-ci/metriks'
-gem 'metriks-librato_metrics', git: 'https://github.com/travis-ci/metriks-librato_metrics'
-
 gem 'simple_states',   '1.0.2'
 
 gem 'active_model_serializers'
@@ -36,6 +33,8 @@ gem 'gh', git: 'https://github.com/travis-ci/gh'
 gem 'bunny',           '~> 0.8.0'
 gem 'dalli'
 gem 'pry'
+gem 'metriks',         '0.9.9.6'
+gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
 gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
