@@ -75,13 +75,6 @@ GIT
     travis-lock (0.1.1)
 
 GIT
-  remote: https://github.com/travis-ci/travis-metrics
-  revision: ce620aecdf179ea82280872ec56aa3095a2e59a5
-  specs:
-    travis-metrics (2.0.0)
-      metriks-librato_metrics (~> 1.0)
-
-GIT
   remote: https://github.com/travis-ci/travis-rollout
   revision: 71cc9102dff01f95c281f99183e54b6695faa7ec
   branch: sf-refactor
@@ -106,8 +99,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 21dfc8c57594ba2f013f599ff9fae1745b024b4a
-  branch: igor-rm-metrics
+  revision: 4dda53ffa96b804db22c261551256caa18c4a2cc
   specs:
     travis-support (0.0.1)
 
@@ -463,7 +455,6 @@ DEPENDENCIES
   travis-api!
   travis-config!
   travis-lock!
-  travis-metrics!
   travis-rollout!
   travis-settings!
   travis-sidekiqs!
