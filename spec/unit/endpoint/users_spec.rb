@@ -1,11 +1,17 @@
 describe Travis::Api::App::Endpoint::Users, set_app: true do
   include Travis::Testing::Stubs
   let(:access_token) { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
-
+  let(:scopes) { ["read:org",
+                  "user:email",
+                  "public_repo",
+                  "repo_deployment",
+                  "repo:status",
+                  "write:repo_hook"
+                ] }
   before do
     User.stubs(:find_by_github_id).returns(user)
     User.stubs(:find).returns(user)
-    user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
+    user.stubs(:github_scopes).returns(scopes)
   end
 
   it 'needs to be authenticated' do

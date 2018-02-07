@@ -3,9 +3,15 @@ describe Travis::Api::Serialize::V2::Http::User do
 
   let(:user) { stub_user(repository_ids: [1, 4, 8]) }
   let(:data) { described_class.new(user).data }
-
+  let(:scopes) { ["read:org",
+                  "user:email",
+                  "public_repo",
+                  "repo_deployment",
+                  "repo:status",
+                  "write:repo_hook"
+                ] }
   before do
-    user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
+    user.stubs(:github_scopes).returns(scopes)
   end
 
   it 'user' do
