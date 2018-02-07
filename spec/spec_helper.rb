@@ -100,7 +100,7 @@ RSpec.configure do |c|
     Redis.new.flushall
     Travis.config.public_mode = true
     Travis.config.host = 'travis-ci.org'
-    Travis.config.oauth2.scope = "user:email,public_repo"
+    Travis.config.oauth2.scope = "read:org,user:email,public_repo,repo_deployment,repo:status,write:repo_hook"
   end
 
   c.before :each, set_app: true do
