@@ -18,6 +18,7 @@ describe Travis::Services::FindJob do
     it 'raises RecordNotFound if a SubclassNotFound error is raised during find' do
       find_by_id = stub.tap do |s|
         s.stubs(:column_names).returns(%w(id config))
+        s.stubs(:includes).returns(s)
         s.stubs(:select).returns(s)
         s.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
       end
@@ -37,7 +38,7 @@ describe Travis::Services::FindJob do
 
   describe 'updated_at' do
     it 'returns jobs updated_at attribute' do
-      service.updated_at.to_s.should == job.updated_at.to_s
+      service.updated_at.to_s.should == job.reload.updated_at.to_s
     end
   end
 

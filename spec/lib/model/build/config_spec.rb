@@ -131,7 +131,7 @@ describe Build::Config do
     )
     Build::Config.new(config).normalize.slice(:env, :global_env).should == {
       env: [
-        [{ 'secure' => 'encrypted-value' }, 'FOO=foo'],
+        [{ secure: 'encrypted-value' }, 'FOO=foo'],
         ['BAR=bar BAZ=baz']
       ]
     }

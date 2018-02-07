@@ -52,6 +52,7 @@ module Travis
                   'sha' => commit.commit,
                   'branch' => commit.branch,
                   'branch_is_default' => branch_is_default,
+                  'tag' => commit.tag_name,
                   'message' => commit.message,
                   'committed_at' => format_date(commit.committed_at),
                   'author_name' => commit.author_name,
@@ -76,7 +77,6 @@ module Travis
                   'queue' => job.queue,
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags,
-                  'annotation_ids' => job.annotation_ids,
                 }.tap do |ret|
                   ret['log_id'] = job.log_id if include_log_id?
                 end

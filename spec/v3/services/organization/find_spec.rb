@@ -4,7 +4,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
   after     { org.delete                             }
 
   describe 'existing org, public api' do
-    before  { get("/v3/org/#{org.id}")       }
+    before  { Travis.config.public_mode = true }
+    before  { get("/v3/org/#{org.id}") }
     example { expect(last_response).to be_ok }
     example { expect(JSON.load(body)).to be == {
       "@type"            => "organization",
@@ -20,9 +21,9 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
   end
 
   describe 'existing org, private api' do
-    before  { Travis.config.private_api = true      }
-    before  { get("/v3/org/#{org.id}")              }
-    after   { Travis.config.private_api = false     }
+    before  { Travis.config.public_mode = false }
+    before  { get("/v3/org/#{org.id}") }
+    after   { Travis.config.public_mode = true }
     example { expect(last_response).to be_not_found }
     example { expect(JSON.load(body)).to be ==      {
       "@type"         => "error",

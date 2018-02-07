@@ -62,7 +62,7 @@ describe Travis::Api::App::Middleware::ScopeCheck do
     end
   end
 
-  describe 'reject requests with an invalide token' do
+  describe 'reject requests with an invalid token' do
     it 'rejects Authorization token header' do
       get('/', {}, 'HTTP_AUTHORIZATION' => "token foo").should_not be_ok
     end

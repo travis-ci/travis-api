@@ -1,4 +1,5 @@
 require 'faraday'
+require 'faraday_middleware'
 require 'core_ext/hash/compact'
 require 'core_ext/hash/deep_symbolize_keys'
 require 'active_support/core_ext/string'
@@ -78,7 +79,8 @@ module Travis
       def http
         @http ||= Faraday.new(http_options) do |f|
           f.request :url_encoded
-          f.adapter :net_http
+          f.use :instrumentation
+          f.adapter :net_http_persistent
         end
       end
 

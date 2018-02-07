@@ -43,7 +43,7 @@ module Travis
         end
 
         def preload(builds)
-          builds.includes(:commit)
+          builds.includes(:commit, :matrix)
         end
 
         def repo

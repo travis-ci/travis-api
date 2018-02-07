@@ -9,6 +9,7 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
       'id' => 1,
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
+      'tag' => nil,
       'message' => 'the commit message',
       'committed_at' => json_format_time(time - 1.hour),
       'committer_name' => 'Sven Fuchs',
@@ -17,6 +18,16 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
     }
+  end
+
+  describe 'with a tag' do
+    before do
+      test.commit.stubs(tag_name: 'v1.0.0')
+    end
+
+    it 'includes the tag name to commit' do
+      data['commits'][0]['tag'].should == 'v1.0.0'
+    end
   end
 end
 

@@ -22,6 +22,7 @@ module Travis::API::V3
     KeyPair       = Module.new { extend Services }
     Lint          = Module.new { extend Services }
     Log           = Module.new { extend Services }
+    Messages      = Module.new { extend Services }
     Organization  = Module.new { extend Services }
     Organizations = Module.new { extend Services }
     Owner         = Module.new { extend Services }
@@ -30,6 +31,7 @@ module Travis::API::V3
     Request       = Module.new { extend Services }
     Requests      = Module.new { extend Services }
     SslKey        = Module.new { extend Services }
+    Stages        = Module.new { extend Services }
     User          = Module.new { extend Services }
     UserSetting   = Module.new { extend Services }
     UserSettings  = Module.new { extend Services }

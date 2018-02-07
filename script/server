@@ -10,9 +10,6 @@ cd "$(dirname "$0")/.."
 
 echo "port=$PORT rack_env=$RACK_ENV web_concurrency=$WEB_CONCURRENCY nginx_workers=$NGINX_WORKERS" >&2
 
-ruby="ruby -I lib -S"
-bexc="$ruby bundle exec"
-
 if [[ $RACK_ENV == "production" ]]; then
   export tmp_dir=/tmp
 else
@@ -22,5 +19,11 @@ fi
 
 cmd="unicorn config.ru -E $RACK_ENV -c config/unicorn.rb"
 [[ $RACK_ENV == "development" ]] && cmd="rerun -b -- $cmd"
-cmd="bin/start-nginx $bexec je $cmd"
+
+if [ -z "$DYNO" ]; then
+  cmd="bundle exec je $cmd"
+else
+  cmd="bin/start-nginx je $cmd"
+fi
+
 exec $cmd

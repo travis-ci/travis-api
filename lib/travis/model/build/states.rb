@@ -1,5 +1,6 @@
 require 'active_support/concern'
 require 'simple_states'
+require 'travis/event'
 
 class Build
 

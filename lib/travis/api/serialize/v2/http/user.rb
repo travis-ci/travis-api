@@ -42,7 +42,7 @@ module Travis
               end
 
               def channels
-                ["user-#{user.id}"] + user.repository_ids.map { |id| "repo-#{id}" }
+                ["private-user-#{user.id}"]
               end
           end
         end

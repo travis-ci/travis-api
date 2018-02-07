@@ -7,8 +7,8 @@ module Travis::API::V3
       list.each { |e| (AccessControl::REGISTER[e] ||= []) << self }
     end
 
-    def visible?(object)
-      full_access? or dispatch(object, :visible?)
+    def visible?(object, type = nil)
+      full_access? or dispatch(object, :visible?, type)
     end
 
     def cancelable?(object)
@@ -112,7 +112,7 @@ module Travis::API::V3
     end
 
     def organization_visible?(organization)
-      full_access? or public_api?
+      full_access? or public_mode?(organization)
     end
 
     def ssl_key_visible?(ssl_key)
@@ -124,12 +124,21 @@ module Travis::API::V3
     end
 
     def user_visible?(user)
-      unrestricted_api?
+      unrestricted_api?(user) || logged_in?
     end
 
     def user_writable?(user)
       self.user == user
     end
+
+    def is_current_user?(user)
+      self.user == user
+    end
+
+    def beta_features_visible?(user)
+      is_current_user?(user)
+    end
+    alias_method :beta_feature_visible?, :beta_features_visible?
 
     def user_setting_visible?(user_setting)
       visible? user_setting.repository
@@ -144,7 +153,7 @@ module Travis::API::V3
     end
 
     def repository_visible?(repository)
-      return true if unrestricted_api? and not repository.private?
+      return true if unrestricted_api?(repository.owner) and not repository.private?
       private_repository_visible?(repository)
     end
 
@@ -163,18 +172,18 @@ module Travis::API::V3
       alias_method m, :repository_attr_visible?
     end
 
-    def public_api?
-      !Travis.config.private_api
+    def public_mode?(owner = nil)
+      Travis.config.public_mode || owner && Travis::Features.owner_active?(:public_mode, owner)
     end
 
-    def unrestricted_api?
-      full_access? or logged_in? or public_api?
+    def unrestricted_api?(owner = nil)
+      full_access? or public_mode?(owner)
     end
 
     private
 
-    def dispatch(object, method)
-      method = method_for(object.class, method)
+    def dispatch(object, method, type = nil)
+      method = method_for(type || object.class, method)
       send(method, object) if respond_to?(method, true)
     end
 
@@ -194,7 +203,11 @@ module Travis::API::V3
     end
 
     def normalize_type(type)
-      type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore.to_sym
+      if type.is_a?(Symbol)
+        type
+      else
+        type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore.to_sym
+      end
     end
   end
 end

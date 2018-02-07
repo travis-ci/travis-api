@@ -30,6 +30,18 @@ module Travis::API::V3
       ['ssh-rsa ', "\0\0\0\assh-rsa#{sized_bytes(key.e)}#{sized_bytes(key.n)}"].pack('a*m').gsub("\n", '')
     end
 
+    def encrypt(string)
+      build_key.public_encrypt(string)
+    end
+
+    def decrypt(string)
+      build_key.private_decrypt(string)
+    end
+
+    def encode(string)
+      Base64.encode64(encrypt(string)).strip
+    end
+
     private
 
       def build_key

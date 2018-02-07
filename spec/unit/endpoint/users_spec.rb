@@ -5,8 +5,6 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
   before do
     User.stubs(:find_by_github_id).returns(user)
     User.stubs(:find).returns(user)
-    user.stubs(:repositories).returns(stub(administratable: stub(select: [repository])))
-    user.stubs(:repository_ids).returns([1, 2, 3])
     user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
   end
 
@@ -28,7 +26,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       'created_at'     => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'synced_at'      => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'correct_scopes' => true,
-      'channels'       => ["user-1", "repo-1", "repo-2", "repo-3"]
+      'channels'       => ["private-user-1"]
     }
   end
 

@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+# encoding: UTF-8
+
+require 'bundler/setup'
+require 'optparse'
+require 'pry'
+
+ENV['RACK_ENV'] ||= ENV['RAILS_ENV'] || ENV['ENV']
+ENV['RAILS_ENV']  = ENV['RACK_ENV']
+
+$stdout.sync = true
+
+options = {
+  api_version: 3,
+}
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: script/request [options] URL"
+
+  opts.on("--user LOGIN", "user login to log in as") do |u|
+    options[:user] = u
+  end
+
+  opts.on("--api-version VERSION", "api version (default 3)") do |v|
+    options[:api_version] = v
+  end
+
+  opts.on("--verbose", "output response body") do |v|
+    options[:verbose] = v
+  end
+end
+parser.parse!
+if ARGV.size != 1
+  puts parser.banner
+  exit 1
+end
+url = ARGV.shift
+
+require 'travis/api/app'
+
+app = Travis::Api::App.new
+
+headers = {
+  'HTTP_TRAVIS_API_VERSION' => "#{options[:api_version]}"
+}
+if options[:user]
+  user = User.find_by_login('igorwwwwwwwwwwwwwwwwwwww')
+  access_token = Travis::Api::App::AccessToken.new(user: user, app_id: 0)
+  token = access_token.token
+  headers['HTTP_AUTHORIZATION'] = "token #{token}"
+end
+
+env = Rack::MockRequest.env_for(
+  url,
+  headers
+)
+resp = app.call(env)
+
+# force response
+status = resp[0]
+body = resp[2].to_a.join
+
+if status != 200
+  puts "status code #{status}"
+  puts body
+  exit 1
+end
+
+if options[:verbose]
+  puts body
+end

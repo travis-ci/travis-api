@@ -13,18 +13,18 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
   describe "fetching branches on a non-existing repository by slug" do
     before  { get("/v3/repo/svenfuchs%2Fminimal1/branches")     }
     example { expect(last_response).to be_not_found }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "not_found",
       "error_message" => "repository not found (or insufficient access)",
       "resource_type" => "repository"
-    }}
+    })}
   end
 
   describe "builds on public repository" do
     before     { get("/v3/repo/#{repo.id}/branches?limit=1") }
     example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"              => "branches",
       "@href"              => "/v3/repo/#{repo.id}/branches?limit=1",
       "@representation"    => "standard",
@@ -71,7 +71,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
           "pull_request_number" => build.pull_request_number,
           "pull_request_title" => build.pull_request_title,
           "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil }}]}
+          "finished_at"    => nil }}]})
     }
   end
 
@@ -83,7 +83,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
     before        { get("/v3/repo/#{repo.id}/branches?limit=1", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"              => "branches",
       "@href"              => "/v3/repo/#{repo.id}/branches?limit=1",
       "@representation"    => "standard",
@@ -130,7 +130,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
           "pull_request_number" => build.pull_request_number,
           "pull_request_title" => build.pull_request_title,
           "started_at"     => "2010-11-12T13:00:00Z",
-          "finished_at"    => nil }}]}
+          "finished_at"    => nil }}]})
     }
   end
 
@@ -151,7 +151,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
   describe "sorting by name" do
     before  { get("/v3/repo/#{repo.id}/branches?sort_by=name&limit=1") }
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body["@pagination"]).to be == {
+    example { expect(parsed_body["@pagination"]).to eql_json({
         "limit"            => 1,
         "offset"           => 0,
         "count"            => 1,
@@ -166,14 +166,41 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
         "last"             => {
           "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=name&limit=1",
           "offset"         => 0,
-          "limit"          => 1 }}
+          "limit"          => 1 }})
     }
+  end
+
+  describe "sorting by last_build" do
+    let!(:repo) { FactoryGirl.create(:repository) }
+    let!(:build1) { FactoryGirl.create(:v3_build) }
+    let!(:build2) { FactoryGirl.create(:v3_build) }
+    let!(:branch1) { FactoryGirl.create(:branch, name: 'older', last_build: build1, repository: repo) }
+    let!(:branch2) { FactoryGirl.create(:branch, name: 'newer', last_build: build2, repository: repo) }
+    let!(:branch3) { FactoryGirl.create(:branch, name: 'no-builds', last_build: nil, repository: repo) }
+
+    context 'desc' do
+      before  { get("/v3/repo/#{repo.id}/branches?sort_by=last_build:desc&limit=10") }
+      example { expect(last_response).to be_ok }
+      example {
+        branch_names = parsed_body["branches"].map { |branch| branch['name'] }
+        expect(branch_names).to be == ['newer', 'older']
+      }
+    end
+
+    context 'asc' do
+      before  { get("/v3/repo/#{repo.id}/branches?sort_by=last_build:asc&limit=10") }
+      example { expect(last_response).to be_ok }
+      example {
+        branch_names = parsed_body["branches"].map { |branch| branch['name'] }
+        expect(branch_names).to be == ['older', 'newer']
+      }
+    end
   end
 
   describe "sorting by name:desc" do
     before  { get("/v3/repo/#{repo.id}/branches?sort_by=name%3Adesc&limit=1") }
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body["@pagination"]).to be == {
+    example { expect(parsed_body["@pagination"]).to eql_json({
         "limit"            => 1,
         "offset"           => 0,
         "count"            => 1,
@@ -188,14 +215,14 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
         "last"             => {
           "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=name%3Adesc&limit=1",
           "offset"         => 0,
-          "limit"          => 1 }}
+          "limit"          => 1 }})
     }
   end
 
   describe "sorting by exists_on_github" do
     before  { get("/v3/repo/#{repo.id}/branches?sort_by=exists_on_github&limit=1") }
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body["@pagination"]).to be == {
+    example { expect(parsed_body["@pagination"]).to eql_json({
         "limit"            => 1,
         "offset"           => 0,
         "count"            => 1,
@@ -210,14 +237,14 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
         "last"             => {
           "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=exists_on_github&limit=1",
           "offset"         => 0,
-          "limit"          => 1 }}
+          "limit"          => 1 }})
     }
   end
 
   describe "sorting by default_branch" do
     before  { get("/v3/repo/#{repo.id}/branches?sort_by=default_branch&limit=1") }
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body["@pagination"]).to be == {
+    example { expect(parsed_body["@pagination"]).to eql_json({
         "limit"            => 1,
         "offset"           => 0,
         "count"            => 1,
@@ -232,19 +259,19 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
         "last"             => {
           "@href"          => "/v3/repo/#{repo.id}/branches?sort_by=default_branch&limit=1",
           "offset"         => 0,
-          "limit"          => 1 }}
+          "limit"          => 1 }})
     }
   end
 
   describe "sorting by unknown sort field" do
     before  { get("/v3/repo/#{repo.id}/branches?sort_by=name:desc,foo&limit=1") }
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body["@warnings"]).to be == [{
+    example { expect(parsed_body["@warnings"]).to eql_json([{
       "@type"       => "warning",
       "message"     => "query value foo for sort_by not a valid sort mode, ignored",
       "warning_type"=> "ignored_value",
       "parameter"   => "sort_by",
       "value"       => "foo"
-    }]}
+    }])}
   end
 end

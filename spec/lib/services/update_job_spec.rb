@@ -40,13 +40,13 @@ describe Travis::Services::UpdateJob do
         service.expects(:cancel_job_in_worker)
 
         service.run
-        job.reload.state.should == 'canceled'
+        job.reload.state.should == :canceled
       end
     end
 
     it 'sets the job state to received' do
       service.run
-      job.reload.state.should == 'received'
+      job.reload.state.should == :received
     end
 
     it 'sets the job received_at' do
@@ -61,7 +61,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to received' do
       service.run
-      job.reload.source.state.should == 'received'
+      job.reload.source.state.should == :received
     end
 
     it 'sets the build received_at' do
@@ -71,7 +71,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to received' do
       service.run
-      job.reload.source.state.should == 'received'
+      job.reload.source.state.should == :received
     end
   end
 
@@ -90,13 +90,13 @@ describe Travis::Services::UpdateJob do
         service.expects(:cancel_job_in_worker)
 
         service.run
-        job.reload.state.should == 'canceled'
+        job.reload.state.should == :canceled
       end
     end
 
     it 'sets the job state to started' do
       service.run
-      job.reload.state.should == 'started'
+      job.reload.state.should == :started
     end
 
     it 'sets the job started_at' do
@@ -106,7 +106,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to started' do
       service.run
-      job.reload.source.state.should == 'started'
+      job.reload.source.state.should == :started
     end
 
     it 'sets the build started_at' do
@@ -116,7 +116,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to started' do
       service.run
-      job.reload.source.state.should == 'started'
+      job.reload.source.state.should == :started
     end
 
     it 'sets the repository last_build_state to started' do
@@ -144,13 +144,13 @@ describe Travis::Services::UpdateJob do
         service.expects(:cancel_job_in_worker)
 
         service.run
-        job.reload.state.should == 'canceled'
+        job.reload.state.should == :canceled
       end
     end
 
     it 'sets the job state to passed' do
       service.run
-      job.reload.state.should == 'passed'
+      job.reload.state.should == :passed
     end
 
     it 'sets the job finished_at' do
@@ -160,7 +160,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to passed' do
       service.run
-      job.reload.source.state.should == 'passed'
+      job.reload.source.state.should == :passed
     end
 
     it 'sets the build finished_at' do
@@ -204,7 +204,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the job state to created' do
       service.run
-      job.reload.state.should == 'created'
+      job.reload.state.should == :created
     end
 
     it 'resets the job started_at' do
@@ -219,7 +219,7 @@ describe Travis::Services::UpdateJob do
 
     it 'resets the build state to started' do
       service.run
-      job.reload.source.state.should == 'created'
+      job.reload.source.state.should == :created
     end
 
     it 'resets the build started_at' do
@@ -229,7 +229,7 @@ describe Travis::Services::UpdateJob do
 
     it 'resets the build state to started' do
       service.run
-      job.reload.source.state.should == 'created'
+      job.reload.source.state.should == :created
     end
 
     it 'resets the repository last_build_state to started' do

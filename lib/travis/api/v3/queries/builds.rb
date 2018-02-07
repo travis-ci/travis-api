@@ -17,15 +17,14 @@ module Travis::API::V3
     end
 
     def filter(relation)
-      relation = relation.where(state:          list(state))          if state
-      relation = relation.where(previous_state: list(previous_state)) if previous_state
-      relation = relation.where(event_type:     list(event_type))     if event_type
-      relation = relation.where(branch:         list(branch_name))    if branch_name
-      relation = for_owner(relation)                                  if created_by
+      relation = relation.where(state:          list(state))                  if state
+      relation = relation.where(previous_state: list(previous_state))         if previous_state
+      relation = relation.where(event_type:     list(event_type))             if event_type
+      relation = relation.where('builds.branch IN (?)', list(branch_name))    if branch_name
+      relation = for_owner(relation)                                          if created_by
 
-      relation = relation.includes(:commit).includes(branch: :last_build).includes(:repository)
+      relation = relation.includes(:commit).includes(branch: :last_build).includes(:tag).includes(:repository)
       relation = relation.includes(branch: { last_build: :commit }) if includes? 'build.commit'.freeze
-      relation = relation.includes(:jobs) if includes? 'build.jobs'.freeze or includes? 'job'.freeze
       relation
     end
 

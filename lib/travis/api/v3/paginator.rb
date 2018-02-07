@@ -19,7 +19,7 @@ module Travis::API::V3
       offset &&= Integer(offset, :offset)
       offset   = 0 if offset.nil? or offset < 0
 
-      count = result.resource.count
+      count = result.resource.count(:all)
       result.resource = result.resource.limit(limit)   unless limit  == 0
       result.resource = result.resource.offset(offset) unless offset == 0
 

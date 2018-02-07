@@ -13,8 +13,6 @@ class User < Travis::Model
   has_many :repositories, through: :permissions
   has_many :emails, dependent: :destroy
 
-  attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id, :locale, :education, :first_logged_in_at
-
   before_create :set_as_recent
   after_create :create_a_token
   before_save :track_previous_changes
@@ -68,7 +66,7 @@ class User < Travis::Model
   def service_hooks(options = {})
     hooks = repositories
     unless options[:all]
-      hooks = hooks.administratable
+      hooks = hooks.administrable
     end
     hooks = hooks.includes(:permissions).
               select('repositories.*, permissions.admin as admin, permissions.push as push')

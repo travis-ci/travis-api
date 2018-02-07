@@ -4,7 +4,9 @@ describe Travis::Api::Serialize::V2::Http::User do
   let(:user) { stub_user(repository_ids: [1, 4, 8]) }
   let(:data) { described_class.new(user).data }
 
-  before { user.stubs(:github_scopes).returns(['public_repo', 'user:email']) }
+  before do
+    user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
+  end
 
   it 'user' do
     data['user'].should == {
@@ -19,7 +21,7 @@ describe Travis::Api::Serialize::V2::Http::User do
       'synced_at' => json_format_time(Time.now.utc - 1.hour),
       'correct_scopes' => true,
       'created_at' => json_format_time(Time.now.utc - 2.hours),
-      'channels' => ["user-1", "repo-1", "repo-4", "repo-8"]
+      'channels' => ["private-user-1"]
     }
   end
 end

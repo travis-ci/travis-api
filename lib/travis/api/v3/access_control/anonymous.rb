@@ -3,7 +3,7 @@ require 'travis/api/v3/access_control/generic'
 module Travis::API::V3
   class AccessControl::Anonymous < AccessControl::Generic
     def self.new
-      @instace ||= super
+      @instance ||= super
     end
 
     # use when Authorization header is not set

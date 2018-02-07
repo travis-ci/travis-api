@@ -35,7 +35,7 @@ describe Travis::Services::FindAdmin do
     end
 
     describe 'given an error occurs while retrieving the repository info' do
-      let(:error) { stub('error', :backtrace => [], :response => stub('reponse')) }
+      let(:error) { stub('error', :backtrace => [], :response => stub('response')) }
 
       before :each do
         GH.stubs(:[]).with("repos/#{repository.slug}").raises(GH::Error.new(error))
