@@ -3,8 +3,7 @@ require 'redis'
 module Travis::API::V3
   class Queries::EnterpriseLicense < Query
     def active_users
-      redis = Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
-      redis.keys("t:*").count
+      Travis::API::V3::Models::User.where('github_oauth_token IS NOT NULL')
     end
   end
 end

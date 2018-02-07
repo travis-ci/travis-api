@@ -14,7 +14,7 @@ module Travis::API::V3
           license_id: license_id,
           license_type: license_type,
           seats: seats,
-          active_users: active_users,
+          active_users: active_users.count,
           expiration_time: expiration_time
         })
       else
