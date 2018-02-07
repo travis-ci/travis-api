@@ -22,7 +22,7 @@ addons:
   postgresql: 9.3
 
 services:
-  - redis
+  - redis-server
 
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
