@@ -7,7 +7,7 @@ gem 's3',              git: 'https://github.com/travis-ci/s3'
 
 gem 'mime-types'
 
-gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
+gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support', branch: 'igor-rm-metrics'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
