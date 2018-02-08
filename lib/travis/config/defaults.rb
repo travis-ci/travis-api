@@ -73,5 +73,9 @@ module Travis
       super
       load_urls
     end
+
+    def metrics
+      super.to_h.merge(librato: librato.to_h.merge(source: librato_source), graphite: graphite)
+    end
   end
 end

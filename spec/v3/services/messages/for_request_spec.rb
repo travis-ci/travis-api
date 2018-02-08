@@ -44,4 +44,9 @@ describe Travis::API::V3::Services::Messages::ForRequest, set_app: true do
     }
 
   end
+
+  describe 'raise not_found when request id is bad' do
+    before  { get("/v3/repo/#{repo.id}/request/undefined/messages")     }
+    example { expect(last_response).to be_not_found }
+  end
 end
