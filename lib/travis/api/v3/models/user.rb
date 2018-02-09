@@ -25,7 +25,10 @@ module Travis::API::V3
     end
 
     def subscription
-      super if Features.use_subscriptions?
+      if Features.use_subscriptions?
+        subs = Models::Subscription.where(owner_id: id, owner_type: "User")
+        @subscription ||= subs.where(status: 'subscribed').last || subs.last
+      end
     end
 
     def starred_repository_ids

@@ -269,5 +269,48 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "parameter"      => "user.id"}]
       }}
     end
+
+    describe "authenticated as user with access on .com and has a subscription" do
+      let(:valid_to) { Time.now.utc + 1.month }
+      let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
+      let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
+      let!(:subscription) { Travis::API::V3::Models::Subscription.create(owner: user, valid_to: valid_to,source: "stripe", status: "subscribed", selected_plan: "travis-ci-two-builds") }
+      before  { get("/v3/owner/example-user?include=owner.subscription", {}, headers) }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be ==        {
+        "@type"            => "user",
+        "@href"            => "/v3/user/#{user.id}",
+        "@representation"  => "standard",
+        "@permissions"     => {"read"=>true, "sync"=>true},
+        "id"               => user.id,
+        "login"            => user.login,
+        "name"             => user.name,
+        "github_id"        => user.github_id,
+        "avatar_url"       => nil,
+        "is_syncing"       => user.is_syncing,
+        "synced_at"        => user.synced_at,
+        "is_syncing"       => nil,
+        "synced_at"        => nil,
+        "subscription"     => {
+          "@type"          => "subscription",
+          "@href"          => "/v3/subscription/#{subscription.id}",
+          "@representation"=> "standard",
+          "id"             => subscription.id,
+          "valid_to"       => subscription.valid_to.strftime('%Y-%m-%dT%H:%M:%SZ'),
+          "first_name"     => nil,
+          "last_name"      => nil,
+          "company"        => nil,
+          "zip_code"       => nil,
+          "address"        => nil,
+          "address2"       => nil,
+          "city"           => nil,
+          "state"          => nil,
+          "country"        => nil,
+          "vat_id"         => nil,
+          "status"         => "subscribed",
+          "source"         => "stripe",
+          "selected_plan"  => "travis-ci-two-builds" }
+      }}
+    end
   end
 end
