@@ -9,7 +9,10 @@ module Travis::API::V3
     end
 
     def subscription
-      super if Features.use_subscriptions?
+      if Features.use_subscriptions?
+        subs = Models::Subscription.where(owner_id: id, owner_type: "Organization")
+        @subscription ||= subs.where(status: 'subscribed').last || subs.last
+      end
     end
 
     alias members users

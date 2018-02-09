@@ -22,7 +22,6 @@ module Travis::API::V3
 
     def subscription
       subscription = query(:subscription).for_owner(@model)
-      #access_control.visible_repositories(repositories)
     end
 
   end
