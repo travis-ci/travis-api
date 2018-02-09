@@ -1,5 +1,6 @@
 require 'travis/api/app'
 require 'travis/api/app/helpers/accept'
+require 'travis/api/app/responders'
 
 class Travis::Api::App
   module Helpers
@@ -34,18 +35,12 @@ class Travis::Api::App
 
         def respond(resource, options)
           resource = apply_service_responder(resource, options)
-
           response = nil
-          acceptable_formats.find do |accept|
-            responders(resource, options).find do |const|
-              responder = const.new(self, resource, options.dup.merge(accept: accept))
-              response = responder.apply if responder.apply?
-            end
-          end
+          responders = responders_for(options)
 
-          if responders = options[:responders]
-            responders.each do |klass|
-              responder = klass.new(self, response, options)
+          acceptable_formats.find do |accept|
+            responders.find do |const|
+              responder = const.new(self, resource, options.dup.merge(accept: accept))
               response = responder.apply if responder.apply?
             end
           end
@@ -63,10 +58,18 @@ class Travis::Api::App
           resource
         end
 
-        def responders(resource, options)
-          [:Json, :Atom, :Image, :Xml, :Plain, :Badge].map do |name|
-            Responders.const_get(name)
+        def format_responders(formats)
+          Array(formats).map do |name|
+            Responders.const_get(name.to_s.camelize)
           end
+        end
+
+        # TODO can we remove Plain?
+        RESPONDERS = [:Json, :Plain]
+
+        def responders_for(opts)
+          names = Array(opts[:responders] || opts[:responder] || RESPONDERS)
+          names.map { |name| Responders.const_get(name.to_s.camelize) }
         end
     end
   end

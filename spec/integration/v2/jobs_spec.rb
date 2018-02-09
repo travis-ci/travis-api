@@ -22,6 +22,21 @@ describe 'Jobs', set_app: true do
     parsed.should == expected
   end
 
+  it "doesn't allow access with travis-token in private mode and with private repo" do
+    Travis.config.public_mode = false
+    Travis.config.host = 'api.travis-ci.com'
+    user = User.first
+    Permission.create(push: true, pull: true, admin: true, repository: job.repository, user: user)
+
+    job.update_column(:private, true)
+    job.repository.update_column(:private, true)
+
+    token = user.tokens.first.token
+
+    response = get "/jobs/#{job.id}?token=#{token}", {}, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2.1+json'
+    response.status.should == 403
+  end
+
   context 'GET /jobs/:job_id/log.txt' do
     it 'returns log for a job' do
       stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")

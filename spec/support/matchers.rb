@@ -45,12 +45,13 @@ RSpec::Matchers.define :deliver_as_txt do |expected, options = {}|
 end
 
 RSpec::Matchers.define :deliver_result_image_for do |name|
+  name = name.include?('.') ? name : name + ".png"
   match do |response|
     header = response.headers['content-disposition']
     failure_message_for_should do
-      "expected #{response.env[:url].to_s} to return headers['content-disposition']  inline; filename=\"#{name}.png\" but it was: #{header.inspect}"
+      "expected to return headers['content-disposition']  inline; filename=\"#{name}\" but it was: #{header.inspect}"
     end
-    header.to_s.should =~ /^inline; filename="#{name}\.png"$/
+    header.to_s.should =~ /^inline; filename="#{name}"$/
   end
 end
 

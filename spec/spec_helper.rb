@@ -1,6 +1,6 @@
-require 'knapsack'
-
-Knapsack::Adapters::RspecAdapter.bind
+# require 'knapsack'
+#
+# Knapsack::Adapters::RspecAdapter.bind
 
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 
@@ -16,20 +16,28 @@ require 'pry'
 require 'stackprof'
 require 'webmock/rspec'
 
+require 'active_record'
+ActiveRecord::Base.raise_in_transactional_callbacks = true
+
 require 'travis/api/app'
 require 'travis/testing'
 require 'travis/testing/scenario'
 require 'travis/testing/factories'
 require 'travis/testing/matchers'
+require 'auth/helpers'
+require 'support/env'
 require 'support/formats'
 require 'support/gcs'
 require 'support/matchers'
 require 'support/payloads'
 require 'support/private_key'
 require 'support/s3'
+require 'support/ssl_keys'
 require 'support/test_helpers'
 require 'support/shared_examples'
 require 'support/active_record'
+
+FactoryBot = FactoryGirl
 
 module TestHelpers
   include Sinatra::TestHelpers
@@ -63,6 +71,12 @@ RSpec.configure do |c|
   c.mock_framework = :mocha
   c.expect_with :rspec
   c.include TestHelpers
+  c.include Support::Env
+  c.include Support::AuthHelpers, auth_helpers: true
+
+  # for auth tests against staging, how the hell does this work, if at all
+  # c.filter_run mode: :private, repo: :private
+  # c.filter_run_excluding mode: :public, repo: :public
 
   c.before :suite do
     Travis.testing = true
@@ -70,7 +84,6 @@ RSpec.configure do |c|
     Travis::Api::App.setup
     Travis.config.client_domain = "www.example.com"
     Travis.config.endpoints.ssh_key = true
-    Travis.config.public_mode = true
 
     DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
@@ -85,6 +98,8 @@ RSpec.configure do |c|
   c.before :each do
     DatabaseCleaner.start
     Redis.new.flushall
+    Travis.config.public_mode = true
+    Travis.config.host = 'travis-ci.org'
     Travis.config.oauth2.scope = "user:email,public_repo"
   end
 
