@@ -4,6 +4,8 @@ class Travis::Api::App
   class Endpoint
     # TODO should this be /profile?
     class Users < Endpoint
+      before { authenticate_by_mode! }
+
       # Gives information about the currently logged in user.
       #
       # Example:

@@ -10,5 +10,15 @@ class Organization < Travis::Model
     Travis::Features.owner_active?(:educational_org, self)
   end
   alias education education?
+
+  def subscribed?
+    subscription.present? and subscription.active?
+  end
+
+  def subscription
+    return @subscription if instance_variable_defined?(:@subscription)
+    records = Subscription.where(owner_id: id, owner_type: "Organization")
+    @subscription = records.where(status: 'subscribed').last || records.last
+  end
 end
 
