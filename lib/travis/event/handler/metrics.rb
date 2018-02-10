@@ -1,4 +1,4 @@
-require 'metriks'
+require 'travis/support/metrics'
 
 module Travis
   module Event
@@ -40,10 +40,11 @@ module Travis
 
           def meter(events, started_at, finished_at)
             events.each do |event|
-              Metriks.timer(event).update(finished_at - started_at)
+              Travis::Metrics.meter(event, started_at: started_at, finished_at: finished_at)
             end
           end
       end
     end
   end
 end
+

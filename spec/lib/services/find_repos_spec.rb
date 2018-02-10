@@ -51,20 +51,6 @@ describe Travis::Services::FindRepos do
       @params = { :member => 'joshk' }
       service.run.should_not include(repo)
     end
-
-    # TODO ... we now include all :active repos (i.e. including those that haven't built yet)
-    # and last_build_started_at is nil for them, too. since there's no easy way to detect
-    # queued builds on the repo timeline i'm just disabling this for now.
-    #
-    # it 'sorts by latest build, putting queued (no last_build_started_at) at the front' do
-    #   repo.update_column(:last_build_started_at, Time.now - 10)
-    #   queued = Factory(:repository, name: 'queued', last_build_started_at: nil, :active => true)
-    #   just_started = Factory(:repository,  name: 'just-started',last_build_started_at: Time.now, :active => true)
-    #   josh = Factory(:user, :login => 'joshk')
-    #   [repo, queued, just_started].each { |r| r.users << josh }
-    #   @params = { :member => 'joshk' }
-    #   service.run.map(&:name).should == [queued, just_started, repo].map(&:name)
-    # end
   end
 
   describe 'given an owner_name name' do
@@ -121,6 +107,75 @@ describe Travis::Services::FindRepos do
     it 'does not find a repositories that are not included' do
       @params = { :ids => [repo.id + 1] }
       service.run.should_not include(repo)
+    end
+  end
+
+  context do
+    let(:user) { Factory.create(:user, login: :rkh) }
+    let(:org)  { Factory.create(:org, login: :travis) }
+    let(:private_repo) { Factory.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { Factory.create(:repository, owner: org, private: false) }
+
+    before { Travis.config.host = 'example.com' }
+
+    describe 'in public mode' do
+      before { Travis.config.public_mode = true }
+
+      describe 'given the current user has a permission on the repository' do
+        it 'finds a private repository' do
+          Factory.create(:permission, user: user, repository: private_repo)
+          service = described_class.new(user, id: private_repo.id)
+          service.run.should include(private_repo)
+        end
+
+        it 'finds a public repository' do
+          Factory.create(:permission, user: user, repository: public_repo)
+          service = described_class.new(user, id: public_repo.id)
+          service.run.should include(public_repo)
+        end
+      end
+
+      describe 'given the current user does not have a permission on the repository' do
+        it 'does not find a private repository' do
+          service = described_class.new(user, id: private_repo.id)
+          service.run.should_not include(private_repo)
+        end
+
+        it 'finds a public repository' do
+          service = described_class.new(user, id: public_repo.id)
+          service.run.should include(public_repo)
+        end
+      end
+    end
+
+    describe 'in private mode' do
+      before { Travis.config.public_mode = false }
+
+      describe 'given the current user has a permission on the repository' do
+        it 'finds a private repository' do
+          Factory.create(:permission, user: user, repository: private_repo)
+          service = described_class.new(user, id: private_repo.id)
+          service.run.should include(private_repo)
+        end
+
+        it 'finds a public repository' do
+          Factory.create(:permission, user: user, repository: public_repo)
+          service = described_class.new(user, id: public_repo.id)
+          service.run.should include(public_repo)
+        end
+      end
+
+      describe 'given the current user does not have a permission on the repository' do
+        it 'does not find a private repository' do
+          service = described_class.new(user, id: private_repo.id)
+          service.run.should_not include(private_repo)
+        end
+
+        it 'does not find a public repository' do
+          service = described_class.new(user, id: public_repo.id)
+          service.run.should_not include(public_repo)
+        end
+      end
     end
   end
 end

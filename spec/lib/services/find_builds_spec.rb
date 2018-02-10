@@ -83,4 +83,75 @@ describe Travis::Services::FindBuilds do
       end
     end
   end
+
+  context do
+    let(:user) { Factory.create(:user, login: :rkh) }
+    let(:org)  { Factory.create(:org, login: :travis) }
+    let(:private_repo)   { Factory.create(:repository, owner: org, private: true) }
+    let(:public_repo)    { Factory.create(:repository, owner: org, private: false) }
+    let!(:private_build) { Factory.create(:build, repository: private_repo, private: true) }
+    let!(:public_build)  { Factory.create(:build, repository: public_repo, private: false) }
+
+    before { Travis.config.host = 'example.com' }
+
+    describe 'in public mode' do
+      before { Travis.config.public_mode = true }
+
+      describe 'given the current user has a permission on the repository' do
+        it 'finds a private build' do
+          Factory.create(:permission, user: user, repository: private_repo)
+          service = described_class.new(user)
+          service.run.should include(private_build)
+        end
+
+        it 'finds a public build' do
+          Factory.create(:permission, user: user, repository: public_repo)
+          service = described_class.new(user)
+          service.run.should include(public_build)
+        end
+      end
+
+      describe 'given the current user does not have a permission on the repository' do
+        it 'does not find a private build' do
+          service = described_class.new(user)
+          service.run.should_not include(private_build)
+        end
+
+        it 'finds a public build' do
+          service = described_class.new(user)
+          service.run.should include(public_build)
+        end
+      end
+    end
+
+    describe 'in private mode' do
+      before { Travis.config.public_mode = false }
+
+      describe 'given the current user has a permission on the repository' do
+        it 'finds a private build' do
+          Factory.create(:permission, user: user, repository: private_repo)
+          service = described_class.new(user)
+          service.run.should include(private_build)
+        end
+
+        it 'finds a public build' do
+          Factory.create(:permission, user: user, repository: public_repo)
+          service = described_class.new(user)
+          service.run.should include(public_build)
+        end
+      end
+
+      describe 'given the current user does not have a permission on the repository' do
+        it 'does not find a private build' do
+          service = described_class.new(user)
+          service.run.should_not include(private_build)
+        end
+
+        it 'does not find a public build' do
+          service = described_class.new(user)
+          service.run.should_not include(public_build)
+        end
+      end
+    end
+  end
 end

@@ -265,7 +265,9 @@ module Travis
           synced_at: Time.now.utc - 3600,
           tokens: [stub('token', token: 'token')],
           github_scopes: Travis.config.oauth2.scopes.to_s.split(','),
-          created_at: Time.now.utc - 7200
+          created_at: Time.now.utc - 7200,
+          subscribed?: false,
+          education: false
         )
       end
 
@@ -274,7 +276,9 @@ module Travis
           id: 1,
           login: 'travis-ci',
           name: 'Travis CI',
-          email: 'contact@travis-ci.org'
+          email: 'contact@travis-ci.org',
+          subscribed?: false,
+          education: false
         )
       end
 

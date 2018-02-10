@@ -5,6 +5,8 @@ module Travis
     class FindRequests < Base
       register :find_requests
 
+      scope_access!
+
       def run
         preload(result)
       end

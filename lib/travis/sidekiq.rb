@@ -2,7 +2,6 @@
 require 'sidekiq'
 require 'travis'
 require 'travis/support/amqp'
-require 'travis/metrics'
 require 'travis/customerio'
 
 pool_size = ENV['SIDEKIQ_DB_POOL_SIZE'] || 5
@@ -13,7 +12,7 @@ Travis::Database.connect
 
 Travis::Async.enabled = true
 Travis::Amqp.config = Travis.config.amqp.to_h
-Travis::Metrics.setup(Travis.config.metrics, Travis.logger)
+Travis::Metrics.setup
 Travis::Notification.setup
 
 Sidekiq.configure_server do |config|

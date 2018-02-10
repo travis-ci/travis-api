@@ -25,6 +25,7 @@ module Travis
 
     define  host:  'travis-ci.org',
             shorten_host:  'trvs.io',
+            public_mode:   !!ENV['PUBLIC_MODE'],
             tokens:        { internal: 'token' },
             auth:          { target_origin: nil },
             assets:        { host: HOSTS[Travis.env.to_sym] },
@@ -74,8 +75,12 @@ module Travis
       load_urls
     end
 
-    def metrics
-      super.to_h.merge(librato: librato.to_h.merge(source: librato_source), graphite: graphite)
+    def org?
+      host.ends_with?('travis-ci.org')
+    end
+
+    def com?
+      host.ends_with?('travis-ci.com')
     end
   end
 end
