@@ -1,8 +1,14 @@
 describe Travis::Github::Oauth do
   let(:user) { Factory(:user, github_oauth_token: 'token', github_scopes: scopes) }
+  let(:scopes) { ["read:org",
+                  "user:email",
+                  "public_repo",
+                  "repo_deployment",
+                  "repo:status",
+                  "write:repo_hook"
+                ] }
 
   describe 'correct_scopes?' do
-    let(:scopes) { ['public_repo', 'user:email'] }
     subject { described_class.correct_scopes?(user) }
 
     it 'accepts correct scopes' do
@@ -24,8 +30,6 @@ describe Travis::Github::Oauth do
     before { user.reload }
 
     describe 'the token did not change' do
-      let(:scopes) { ['public_repo', 'user:email'] }
-
       it 'does not resolve github scopes' do
         Travis::Github::Oauth.expects(:scopes_for).never
         described_class.update_scopes(user)
@@ -33,8 +37,6 @@ describe Travis::Github::Oauth do
     end
 
     describe 'the token has changed' do
-      let(:scopes) { ['public_repo', 'user:email'] }
-
       before do
         user.github_oauth_token = 'changed'
         user.save!
