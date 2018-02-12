@@ -301,7 +301,7 @@ class Travis::Api::App
         end
 
         def get_token(endpoint, values)
-          conn = Faraday.new(ssl: Travis.config.github.ssl || {}) do |conn|
+          conn = Faraday.new(ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact) do |conn|
             conn.request :json
             conn.use :instrumentation
             conn.adapter :net_http_persistent
