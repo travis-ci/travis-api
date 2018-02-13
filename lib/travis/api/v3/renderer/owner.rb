@@ -22,6 +22,7 @@ module Travis::API::V3
 
     def subscription
       subscription = query(:subscription).for_owner(@model)
+      subscription if access_control.visible_subscription?(subscription.owner)
     end
 
   end

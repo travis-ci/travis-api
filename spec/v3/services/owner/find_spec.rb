@@ -185,17 +185,21 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
 
     describe "authenticated as user with access on .com and has an org with a subscription" do
       let(:user) { Travis::API::V3::Models::User.create(login: 'example-user', github_id: 5678) }
+      let(:membership) { Travis::API::V3::Models::User.create(login: 'example-user', github_id: 5678) }
       let(:valid_to) { Time.now.utc + 1.month }
       let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
       let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
       let!(:subscription) { Travis::API::V3::Models::Subscription.create(owner: org, valid_to: valid_to,source: "stripe", status: "subscribed", selected_plan: "travis-ci-two-builds") }
-      before  { get("/v3/owner/example-org?include=owner.subscription", {}, headers) }
+      before do
+        org.memberships.create(user: user)
+        get("/v3/owner/example-org?include=owner.subscription", {}, headers)
+      end
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be ==        {
         "@type"            => "organization",
         "@href"            => "/v3/org/#{org.id}",
         "@representation"  => "standard",
-        "@permissions"     => {"read"=>true, "sync"=>false},
+        "@permissions"     => {"read"=>true, "sync"=>true},
         "id"               => org.id,
         "login"            => org.login,
         "name"             => org.name,
@@ -350,6 +354,32 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "status"         => "subscribed",
           "source"         => "stripe",
           "selected_plan"  => "travis-ci-two-builds" }
+      }}
+    end
+
+    describe "authenticated as user don't have access to other user's subscription" do
+      let(:other) { Travis::API::V3::Models::User.new(login: 'other-user') }
+      let(:valid_to) { Time.now.utc + 1.month }
+      let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
+      let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
+      let!(:subscription) { Travis::API::V3::Models::Subscription.create(owner: other, valid_to: valid_to,source: "stripe", status: "subscribed", selected_plan: "travis-ci-two-builds") }
+      before  { get("/v3/owner/other-user?include=owner.subscription", {}, headers) }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be ==        {
+        "@type"            => "user",
+        "@href"            => "/v3/user/#{other.id}",
+        "@representation"  => "standard",
+        "@permissions"     => {"read"=>true, "sync"=>false},
+        "id"               => other.id,
+        "login"            => other.login,
+        "name"             => other.name,
+        "github_id"        => other.github_id,
+        "avatar_url"       => nil,
+        "is_syncing"       => other.is_syncing,
+        "synced_at"        => other.synced_at,
+        "is_syncing"       => nil,
+        "synced_at"        => nil,
+        "subscription"     => nil
       }}
     end
   end
