@@ -1,6 +1,8 @@
 describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
   let(:parsed_body) { JSON.load(body) }
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
+  let(:user2) { Travis::API::V3::Models::User.find_by_login('josevalim') }
+
 
   before do
     replicated_endpoint = 'https://fake.fakeserver.com:9880'
@@ -11,6 +13,7 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
 
   describe "with REPLICATED_INTEGRATIONAPI" do
     before { user.update_attribute(:github_oauth_token, nil) }
+    before { user2.update_attribute(:suspended, false) }
 
     describe "fetching enterprise license" do
       before     { get("/v3/enterprise_license") }
