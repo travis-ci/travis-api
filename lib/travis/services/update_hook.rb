@@ -10,6 +10,7 @@ module Travis
 
       def run
         run_service(:github_set_hook, id: repo.id, active: active?)
+        run_service(:github_set_key, params) if repo.private?
         repo.update_column(:active, active?)
         sync_repo if active?
         true
