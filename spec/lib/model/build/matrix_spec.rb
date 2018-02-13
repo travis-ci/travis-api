@@ -750,20 +750,11 @@ describe Build, 'matrix' do
     let(:build)      { Factory(:build, repository: repository, config: matrix_with_includes_os_ruby) }
 
     it 'expands on :os if the feature is active' do
-      repository.stubs(:multi_os_enabled?).returns(true)
       build.matrix.map(&:config).should == [
         { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'gcc' },
         { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'clang' },
         { os: 'osx',   language: 'ruby', group: 'stable', dist: 'precise', compiler: 'gcc' },
         { os: 'osx',   language: 'ruby', group: 'stable', dist: 'precise', compiler: 'clang' }
-      ]
-    end
-
-    it 'ignores the os key if the feature is inactive' do
-      repository.stubs(:multi_os_enabled?).returns(false)
-      build.matrix.map(&:config).should == [
-        { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'gcc' },
-        { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'clang' }
       ]
     end
   end
