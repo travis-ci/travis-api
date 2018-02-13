@@ -197,7 +197,7 @@ class Build < Travis::Model
   end
 
   def config
-    @config ||= Config.new(super, multi_os: repository.try(:multi_os_enabled?)).normalize
+    @config ||= Config.new(super).normalize
   end
 
   def obfuscated_config

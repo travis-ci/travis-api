@@ -77,7 +77,7 @@ class Build
     private
 
       def matrix_config
-        @matrix_config ||= Config::Matrix.new(config, multi_os: repository.multi_os_enabled?, dist_group_expansion: repository.dist_group_expansion_enabled?)
+        @matrix_config ||= Config::Matrix.new(config, dist_group_expansion: repository.dist_group_expansion_enabled?)
       end
 
       def matrix_allow_failures

@@ -718,30 +718,15 @@ describe Build, 'matrix' do
     let(:repository) { Factory(:repository)}
     let(:test) { Factory(:test, repository: repository) }
 
-    context 'the feature is active' do
-      it 'expands on :os' do
-        repository.stubs(:multi_os_enabled?).returns(true)
-        build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
+    it 'expands on :os' do
+      build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
 
-        build.matrix.map(&:config).should == [
-          { os: 'osx', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
-          { os: 'osx', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
-          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
-          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
-        ]
-      end
-    end
-
-    context 'the feature is inactive' do
-      it 'does not expand on :os' do
-        repository.stubs(:multi_os_enabled?).returns(false)
-        build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
-
-        build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
-          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
-        ]
-      end
+      build.matrix.map(&:config).should == [
+        { os: 'osx', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+        { os: 'osx', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+        { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+        { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+      ]
     end
   end
 
