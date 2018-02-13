@@ -88,8 +88,6 @@ module Travis::API::V3
       user and account.members.include?(user)
     end
 
-
-
     def build_visible?(build)
       visible? build.repository
     end
