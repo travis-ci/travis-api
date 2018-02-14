@@ -10,7 +10,7 @@ require 'travis/model/build/config/yaml'
 
 class Build
   class Config
-    NORMALIZERS = [Features, Yaml, Env, Language, Group, Dist]
+    NORMALIZERS = [Features, Yaml, Env, Language, Group, Dist, OS]
 
     DEFAULT_LANG = 'ruby'
 
@@ -48,8 +48,6 @@ class Build
       :xcode_sdk
     ]
 
-    EXPANSION_KEYS_FEATURE = [:os]
-
     EXPANSION_KEYS_LANGUAGE = {
       'c'           => [:compiler],
       'c++'         => [:compiler],
@@ -82,7 +80,7 @@ class Build
       'visualbasic' => [:visualbasic, :mono]
     }
 
-    EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
+    EXPANSION_KEYS_UNIVERSAL = [:env, :branch, :os]
 
     def self.matrix_keys_for(config, options = {})
       keys = matrix_keys(config, options)
@@ -93,7 +91,6 @@ class Build
       lang = Array(config.symbolize_keys[:language]).first
       keys = ENV_KEYS
       keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
-      keys << :os if options[:multi_os]
       keys += [:dist, :group] if options[:dist_group_expansion]
       keys | EXPANSION_KEYS_UNIVERSAL
     end
@@ -106,8 +103,7 @@ class Build
     end
 
     def normalize
-      normalizers = options[:multi_os] ? NORMALIZERS : NORMALIZERS + [OS]
-      normalizers.inject(config) do |config, normalizer|
+      NORMALIZERS.inject(config) do |config, normalizer|
         normalizer.new(config, options).run
       end
     end

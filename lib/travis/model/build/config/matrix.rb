@@ -101,7 +101,7 @@ class Build
         end
 
         def known_env_key?(key)
-          (ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key)
+          ENV_KEYS.include?(key)
         end
     end
   end

@@ -57,9 +57,8 @@ describe Build::Config::Dist do
     end
   end
 
-  context 'with multi_os option and override language set' do
+  context 'with an override language set' do
     let(:config) { { language: language } }
-    let(:options) { { multi_os: true } }
     let(:language) { described_class::DIST_LANGUAGE_MAP.keys.sample }
 
     it 'sets the override for that language' do
@@ -69,28 +68,9 @@ describe Build::Config::Dist do
     end
   end
 
-  context 'with multi_os option and non-override language set' do
+  context 'with a non-override language set' do
     let(:config) { { language: 'goober' } }
-    let(:options) { { multi_os: true } }
     let(:language) { described_class::DIST_LANGUAGE_MAP.keys.sample }
-
-    it 'sets dist to the default' do
-      subject.run[:dist].should eql(described_class::DEFAULT_DIST)
-    end
-  end
-
-  context 'without multi_os and os array with override first entry' do
-    let(:config) { { os: %w(osx linux) } }
-    let(:options) { { multi_os: false } }
-
-    it 'sets the override for that os' do
-      subject.run[:dist].should eql(described_class::DIST_OS_MAP['osx'])
-    end
-  end
-
-  context 'without multi_os and os array without override first entry' do
-    let(:config) { { os: %w(freebsd osx linux) } }
-    let(:options) { { multi_os: false } }
 
     it 'sets dist to the default' do
       subject.run[:dist].should eql(described_class::DEFAULT_DIST)
