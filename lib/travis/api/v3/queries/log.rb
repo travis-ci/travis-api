@@ -1,5 +1,9 @@
 module Travis::API::V3
   class Queries::Log < RemoteQuery
+    def find_by_job_id(job_id)
+      find Models::Job.find(job_id)
+    end
+
     def find(job)
       @job = job
       remote_log = Travis::RemoteLog.find_by_job_id(@job.id)

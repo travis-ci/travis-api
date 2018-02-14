@@ -20,5 +20,9 @@ module Travis::API::V3
     def state
       super || 'created'
     end
+
+    def public?
+      !private?
+    end
   end
 end
