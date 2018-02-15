@@ -14,7 +14,7 @@ user = Travis::API::V3::Models::User.find_by_login(login)
 if user
 	user.update_attributes(suspended: true, suspended_at: Time.now.utc.iso8601)
 	user.save!
-	Travis.logger.info "Suspending User id: #{user.id}, login: #{login}, suspended: #{user.suspended}, suspended_at: #{user.suspended_at}."
+	Travis.logger.info "Suspending User id=#{user.id} login=#{login} suspended_at=#{user.suspended_at}."
 else
-	Travis.logger.error "User #{login} not found. No changes made."
+	Travis.logger.error "User login=#{login} not found."
 end

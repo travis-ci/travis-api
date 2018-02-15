@@ -11,9 +11,9 @@ login = ARGV[1]
 user = Travis::Api::V3::Models.User.find_by_login(login)
 
 if user
-	user.update_attributes(suspended: false, suspended_at: nil)
+  user.update_attributes(suspended: false, suspended_at: nil)
 	user.save!
-	Travis.logger.info "Unsuspending User id: #{user.id}, login: #{login}, suspended: #{user.suspended}."
+	Travis.logger.info "Unsuspending User id=#{user.id} login=#{login}, suspended=#{user.suspended}."
 else
-	Travis.logger.error "User #{login} not found. No changes made."
+	Travis.logger.error "User login=#{login} not found"
 end
