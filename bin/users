@@ -20,5 +20,9 @@ else
 end
 
 users.each do |user|
-  puts user.login
+  if user.suspended == true
+    puts "#{user.login}  suspended #{user.suspended_at.strftime('%F')}"
+  else
+    puts user.login
+  end
 end if users
