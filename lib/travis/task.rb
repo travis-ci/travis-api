@@ -85,7 +85,7 @@ module Travis
       end
 
       def http_options
-        { ssl: Travis.config.ssl.compact.to_h }
+        { ssl: Travis.config.ssl.to_h.compact }
       end
 
       def timeout(options = { after: 60 }, &block)
