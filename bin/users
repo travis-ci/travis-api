@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+$stdout.sync = true
+
+$LOAD_PATH << 'lib'
+
+require 'bundler/setup'
+require 'travis/api/v3/models/user'
+
+option = ARGV[1]
+
+if option == '--active'
+  users = User.where('github_oauth_token IS NOT NULL AND suspended=false')
+elsif option == '--suspended'
+	users = User.where(suspended: true)
+elsif option == nil
+	users = User.all
+else
+	Travis.logger.error "Option #{option} not recognised."
+end
+
+users.each do |user|
+	puts user.login
+end
