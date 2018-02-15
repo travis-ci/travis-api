@@ -21,4 +21,4 @@ end
 
 users.each do |user|
   puts user.login
-end
+end if users
