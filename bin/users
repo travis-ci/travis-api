@@ -9,17 +9,16 @@ require 'travis/api/v3/models/user'
 
 option = ARGV[1]
 
-if option == '--active'
-  users = User.where('github_oauth_token IS NOT NULL AND suspended=false')
+users = if option == '--active'
+  User.where('github_oauth_token IS NOT NULL AND suspended=false').order(login: :asc)
 elsif option == '--suspended'
-  users = User.where(suspended: true)
+  User.where(suspended: true).order(login: :asc)
 elsif option == nil
-  users = User.all
+  User.all.order(login: :asc)
 else
   Travis.logger.error "Option #{option} not recognised."
 end
 
-users = users.sort{|a,b| a.login<=>b.login}
 users.each do |user|
   puts user.login
 end
