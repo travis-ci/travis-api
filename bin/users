@@ -19,6 +19,7 @@ else
 	Travis.logger.error "Option #{option} not recognised."
 end
 
+users = users.sort{|a,b| a.login<=>b.login}
 users.each do |user|
 	puts user.login
 end
