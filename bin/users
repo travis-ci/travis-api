@@ -2,27 +2,34 @@
 
 $stdout.sync = true
 
-$LOAD_PATH << 'lib'
+$LOAD_PATH << File.expand_path('../../lib', __FILE__)
 
 require 'bundler/setup'
+require 'travis/api/app'
 require 'travis/api/v3/models/user'
 
-option = ARGV[1]
+# Setup app (can we simplify this?)
+Travis::Api::App.new
+V3 = Travis::API::V3
 
+option = ARGV[1]
 users = if option == '--active'
-  User.where('github_oauth_token IS NOT NULL AND suspended=false').order(login: :asc)
+  V3::Models::User.where('github_oauth_token IS NOT NULL AND suspended = false').order(login: :asc)
 elsif option == '--suspended'
-  User.where(suspended: true).order(login: :asc)
+  V3::Models::User.where(suspended: true).order(login: :asc)
 elsif option == nil
-  User.all.order(login: :asc)
+  V3::Models::User.all.order(login: :asc)
 else
-  Travis.logger.error "Option #{option} not recognised."
+  puts "Option #{option} not recognised." and exit 1
 end
 
-users.each do |user|
-  if user.suspended == true
-    puts "#{user.login}  suspended #{user.suspended_at.strftime('%F')}"
-  else
-    puts user.login
+if users
+  col_width = users.pluck(:login).map(&:length).max
+  users.each do |user|
+    puts [
+      user.login.ljust(col_width),
+      (user.suspended? ? "Suspended at #{user.suspended_at.strftime('%F')}" : '').ljust(col_width)
+    ].join(' ' * 5)
   end
-end if users
+  exit 0
+end
