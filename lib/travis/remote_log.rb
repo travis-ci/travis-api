@@ -3,6 +3,7 @@ require 'json'
 
 require 'faraday'
 require 'faraday_middleware'
+require 'core_ext/hash/compact'
 require 'virtus'
 
 module Travis
