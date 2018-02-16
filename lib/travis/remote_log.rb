@@ -3,7 +3,6 @@ require 'json'
 
 require 'faraday'
 require 'faraday_middleware'
-require 'core_ext/hash/compact'
 require 'virtus'
 
 module Travis
@@ -234,7 +233,7 @@ module Travis
       end
 
       private def http_options
-        { ssl: Travis.config.ssl.to_h.compact }
+        { ssl: Travis.config.ssl.to_h }
       end
     end
 
