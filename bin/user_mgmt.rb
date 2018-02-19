@@ -17,8 +17,8 @@ ensure
   $stderr = previous_stderr
 end
 
-# Setup app (can we simplify this?)
-c = ActiveRecord::Base.establish_connection(Travis::Config.load.database.to_h)
+# Setup model
+ActiveRecord::Base.establish_connection(Travis::Config.load.database.to_h)
 class User < ActiveRecord::Base
   scope :active,    -> { where('github_oauth_token IS NOT NULL AND suspended = false') }
   scope :inactive,  -> { where('github_oauth_token IS NULL AND suspended = false') }
@@ -36,5 +36,6 @@ class User < ActiveRecord::Base
     end
   end
 end
+
 # Triggers autoloading of pg gem, which has deprecation warnings at v0.21.0
 silence { User.connection }
