@@ -1,20 +1,17 @@
 #!/usr/bin/env ruby
 
-$stdout.sync = true
+require_relative './user_mgmt'
 
-$LOAD_PATH << 'lib'
+unless login = ARGV.first
+  puts "You must provide a login"
+  exit 1
+end
 
-require 'bundler/setup'
-require 'time'
-require 'travis/api/v3/models/user'
-
-login = ARGV[1]
-user = Travis::API::V3::Models::User.find_by_login(login)
-
-if user
-  user.update_attributes(suspended: true, suspended_at: Time.now.utc.iso8601)
-  user.save!
-  Travis.logger.info "Suspending User id=#{user.id} login=#{login} suspended_at=#{user.suspended_at}."
+if user = User.find_by_login(login)
+  user.update_attributes!(suspended: true, suspended_at: Time.now.utc)
+  puts "Suspending user id=#{user.id} login=#{login}"
+  exit 0
 else
-  Travis.logger.error "User login=#{login} not found."
+  puts "User login=#{login} not found"
+  exit 1
 end
