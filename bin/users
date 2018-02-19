@@ -12,7 +12,8 @@ elsif option == '--suspended'
 elsif [nil, '--all'].include?(option)
   User.all.alpha
 else
-  puts "Option #{option} not recognised." and exit 1
+  puts "Option #{option} not recognised."
+  exit 1
 end
 
 if users
