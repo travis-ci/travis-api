@@ -1,24 +1,55 @@
 #!/usr/bin/env ruby
 
+$LOAD_PATH << File.expand_path('../../lib', __FILE__)
 $stdout.sync = true
 
-$LOAD_PATH << File.expand_path('../../lib', __FILE__)
-
 require 'bundler/setup'
-require 'travis/api/app'
-require 'travis/api/v3/models/user'
+
+require 'active_record'
+require "stringio"
+require 'travis/config'
+
+# Temp redirect of output
+def silence(&block)
+  previous_stdout, $stdout = $stdout, StringIO.new
+  previous_stderr, $stderr = $stderr, StringIO.new
+  block.call
+ensure
+  $stdout = previous_stdout
+  $stderr = previous_stderr
+end
 
 # Setup app (can we simplify this?)
-Travis::Api::App.new
-V3 = Travis::API::V3
+c = ActiveRecord::Base.establish_connection(Travis::Config.load.database.to_h)
+class User < ActiveRecord::Base
+  scope :active,    -> { where('github_oauth_token IS NOT NULL AND suspended = false') }
+  scope :inactive,  -> { where('github_oauth_token IS NULL AND suspended = false') }
+  scope :suspended, -> { where(suspended: true) }
+  scope :alpha,     -> { order(login: :asc) }
 
-option = ARGV[1]
+  def enterprise_status
+    case
+    when suspended
+      "Suspended #{suspended_at.strftime('%F')}"
+    when !github_oauth_token
+      'Inactive'
+    else
+      'Active'
+    end
+  end
+end
+# Triggers autoloading of pg gem, which has deprecation warnings at v0.21.0
+silence { User.connection }
+
+option = ARGV.first
 users = if option == '--active'
-  V3::Models::User.where('github_oauth_token IS NOT NULL AND suspended = false').order(login: :asc)
+  User.active.alpha
+elsif option == '--inactive'
+  User.inactive.alpha
 elsif option == '--suspended'
-  V3::Models::User.where(suspended: true).order(login: :asc)
-elsif option == nil
-  V3::Models::User.all.order(login: :asc)
+  User.suspended.alpha
+elsif [nil, '--all'].include?(option)
+  User.all.alpha
 else
   puts "Option #{option} not recognised." and exit 1
 end
@@ -26,10 +57,7 @@ end
 if users
   col_width = users.pluck(:login).map(&:length).max
   users.each do |user|
-    puts [
-      user.login.ljust(col_width),
-      (user.suspended? ? "Suspended at #{user.suspended_at.strftime('%F')}" : '').ljust(col_width)
-    ].join(' ' * 5)
+    puts [user.login.ljust(col_width), user.enterprise_status.ljust(col_width)].join(' ' * 5)
   end
   exit 0
 end
