@@ -41,7 +41,7 @@ describe Travis::API::V3::Services::KeyPair::Create, set_app: true do
             end
 
             before do
-              repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem) }))
+              repo.update_attribute(:settings, ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem) })
               post("/v3/repo/#{repo.id}/key_pair", JSON.generate(params), auth_headers.merge(json_headers))
             end
 

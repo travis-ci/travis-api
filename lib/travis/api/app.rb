@@ -86,7 +86,7 @@ module Travis::Api
     attr_accessor :app
 
     def initialize
-      @app = Rack::Builder.app do
+      @app = Rack::Builder.new do
         # if stackprof = ENV['STACKPROF']
         #   require 'stackprof'
         #   modes = ['wall', 'cpu', 'object', 'custom']
@@ -133,8 +133,11 @@ module Travis::Api
           use Raven::Rack
         end
         use Rack::SSL if Endpoint.production?
-        use ActiveRecord::ConnectionAdapters::ConnectionManagement
-        use ActiveRecord::QueryCache
+
+        # TODO this is no longer a Rack middleware :(
+        # It's now meant to be added as an "Executor"
+        # Figure out how to put this back
+        # use ActiveRecord::QueryCache
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers

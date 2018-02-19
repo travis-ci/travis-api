@@ -166,21 +166,12 @@ class Build < Travis::Model
 
   after_save do
     unless cached_matrix_ids
-      update_column(:cached_matrix_ids, to_postgres_array(matrix_ids))
+      update_column(:cached_matrix_ids, matrix_ids)
     end
   end
 
   def state
     (super || :created).to_sym
-  end
-
-  # AR 3.2 does not handle pg arrays and the plugins supporting them
-  # do not work well with jdbc drivers
-  # TODO: remove this once we're on >= 4.0
-  def cached_matrix_ids
-    if (value = super) && value =~ /^{/
-      value.gsub(/^{|}$/, '').split(',').map(&:to_i)
-    end
   end
 
   def matrix_ids
@@ -225,10 +216,5 @@ class Build < Travis::Model
 
     def last_finished_state_on_branch
       repository.builds.finished.last_state_on(branch: commit.branch)
-    end
-
-    def to_postgres_array(ids)
-      ids = ids.compact.uniq
-      "{#{ids.map { |id| id.to_i.to_s }.join(',')}}" unless ids.empty?
     end
 end
