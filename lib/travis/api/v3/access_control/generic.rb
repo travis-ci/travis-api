@@ -72,6 +72,8 @@ module Travis::API::V3
       factory.new(self, object)
     end
 
+    protected
+
     def admin_member?(owner)
       self.user.memberships.where(role: ADMIN_ROLES, organization_id: owner.id).count > 0
     end
@@ -81,8 +83,6 @@ module Travis::API::V3
       self.user.memberships.where(role: ADMIN_ROLES).joins(:organization).map(&:organization)).uniq
       orgs.include?(owner)
     end
-
-    protected
 
     def account_visible?(account)
       user and account.members.include?(user)
