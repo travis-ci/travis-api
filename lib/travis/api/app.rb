@@ -1,6 +1,7 @@
 # now actually load travis
 require 'travis'
 require 'travis/amqp'
+require 'travis/qc'
 require 'travis/model'
 require 'travis/states_cache'
 require 'travis/honeycomb'
@@ -134,10 +135,7 @@ module Travis::Api
         end
         use Rack::SSL if Endpoint.production?
 
-        # TODO this is no longer a Rack middleware :(
-        # It's now meant to be added as an "Executor"
-        # Figure out how to put this back
-        # use ActiveRecord::QueryCache
+        use QC
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
