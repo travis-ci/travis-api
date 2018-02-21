@@ -1,3 +1,5 @@
+require 'travis/api/v3/log_token'
+
 describe Travis::API::V3::Services::Job::Find, set_app: true do
   include Support::Formats
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
@@ -114,6 +116,15 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "error_message" =>  "job not found (or insufficient access)",
       "resource_type" =>  "job"
     })}
+  end
+
+  describe "fetching job on private repository, private API, with a log.token" do
+    let(:log_token) { Travis::API::V3::LogToken.create(job).to_s }
+    before        { repo.update_attribute(:private, true)                   }
+    before        { get("/v3/job/#{job.id}?log.token=#{log_token}", {}, {}) }
+    after         { repo.update_attribute(:private, false)                  }
+    example       { expect(last_response).to_not be_ok                      }
+    example       { expect(last_response.status).to eq 404                  }
   end
 
   describe "fetching job on private repository, private API, authenticated as user with access" do

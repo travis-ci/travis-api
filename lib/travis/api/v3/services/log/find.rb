@@ -3,8 +3,9 @@ module Travis::API::V3
     params 'log.token'
 
     def run!
-      job = find(:job)
-      result query.find(job)
+      log = query.find_by_job_id(params['job.id'])
+      raise(NotFound, :log) unless access_control.visible? log
+      result log
     end
   end
 end
