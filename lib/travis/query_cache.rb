@@ -9,7 +9,7 @@ require 'active_support/executor'
 #
 # Implementation cribbed from
 # https://github.com/rails/rails/commit/d3c9d808e3e242155a44fd2a89ef272cfade8fe8#diff-7521c0bb452244663b689e77658e63e3R212
-class QC
+class QueryCache
   def initialize(app)
     @app = app
     @exec = Class.new(ActiveSupport::Executor)

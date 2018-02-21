@@ -1,7 +1,8 @@
 # now actually load travis
 require 'travis'
 require 'travis/amqp'
-require 'travis/qc'
+require 'travis/connection_management'
+require 'travis/query_cache'
 require 'travis/model'
 require 'travis/states_cache'
 require 'travis/honeycomb'
@@ -135,7 +136,8 @@ module Travis::Api
         end
         use Rack::SSL if Endpoint.production?
 
-        use QC
+        use ConnectionManagement
+        use QueryCache
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
