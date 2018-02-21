@@ -37,7 +37,7 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
     describe 'GET /settings/env_vars' do
       it 'returns a list of env vars' do
         settings = repo.settings
-        record = settings.env_vars.create(name: 'FOO', value: 'bar')
+        record = settings.env_vars.create(name: 'FOO', value: 'zażółć gęślą jaźń', public: true)
         settings.save
 
         response = get '/settings/env_vars', { repository_id: repo.id }, headers
@@ -49,9 +49,8 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
         key['id'].should == record.id
         key['repository_id'].should == repo.id
 
-        key['public'].should == false
-        # key.should_not have_key('value')
-        key['value'].should be_nil
+        key['public'].should == true
+        key['value'].should == 'zażółć gęślą jaźń'
       end
     end
 

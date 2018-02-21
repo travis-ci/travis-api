@@ -3,7 +3,7 @@ module Travis::API::V3
     paginate
 
     def run!
-      request = query(:request).find
+      raise NotFound unless request = query(:request).find
       result query.for_request(request)
     end
   end

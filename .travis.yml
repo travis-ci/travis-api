@@ -2,7 +2,7 @@ language: ruby
 
 sudo: false
 
-rvm: 2.3.5
+rvm: 2.3.6
 
 script: "bundle exec rake knapsack:rspec"
 env:
@@ -22,7 +22,7 @@ addons:
   postgresql: 9.3
 
 services:
-  - redis
+  - redis-server
 
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'

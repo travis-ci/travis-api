@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-ruby '2.3.5'
+ruby '2.3.6'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 

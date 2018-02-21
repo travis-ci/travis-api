@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export SKIP_COVERAGE=true
+
+bundle exec rspec spec/auth \
+  --require ./spec/auth/report/csv_formatter.rb \
+  --format CsvFormatter | tail -n +2 > spec/auth/report/auth.csv
+
+ruby spec/auth/report/table.rb > spec/auth/report/auth.html

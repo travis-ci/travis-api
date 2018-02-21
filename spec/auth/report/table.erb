@@ -1,0 +1,239 @@
+<html>
+  <head>
+    <style>
+      html, body, table {
+        font-family: Helvetica;
+        font-size: 0.9em;
+      }
+      table {
+        border-collapse: collapse;
+      }
+      th {
+        text-align: left;
+        font-weight: normal;
+      }
+      th.version,
+      th.mode,
+      td.resource,
+      td.path {
+        cursor: pointer;
+      }
+      th, td {
+        border: 1px solid #ccc;
+        padding: 0.5em 1em;
+        white-space: nowrap;
+      }
+      .status-200 {
+        background-color: #90ee902e;
+      }
+      .status-302 {
+        background-color: #edee902e;
+      }
+      .status-401 {
+        background-color: #eeb3902e;
+      }
+      .status-403 {
+        background-color: #ffdbcbf2;
+      }
+      .status-404 {
+        background-color: #db90ee2e;
+      }
+      .status-406 {
+        background-color: #ee90a64a;
+      }
+      .changed {
+        font-weight: bold;
+      }
+      .collapsed {
+        background-color: white;
+      }
+    </style>
+    <script src="http://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+    <script>
+      $(function() {
+        $('th.version').click(function() { toggle(this, 'version') });
+        $('th.mode').click(function() { toggle(this, 'mode') });
+        $('td.resource').click(function() { hide(this) });
+        $('td.path').click(function() { $(this).closest('tr').hide() });
+      });
+
+      function hide(td) {
+        var resource = /resource-([\w]+)/.exec($(td).attr('class'))[1];
+        var rows = $('.resource-' + resource).closest('tr');
+        rows.hide();
+      }
+
+      function toggle(elem, dim) {
+        if($(elem).data('collapsed')) {
+          expand(elem, dim);
+        } else {
+          collapse(elem, dim);
+        }
+      }
+
+      function collapse(elem, dim) {
+        var version = /version-(v[\d]+)/.exec($(elem).attr('class'))[1]
+        var value = $(elem).text().trim().replace('.', '');
+
+        $(selectors('tr', dim)).each(function() {
+          var cells = $('.version-' + version, this)
+          cells = cells.filter('.' + dim + '-' + value);
+          uncolspan(cells);
+          empty(cells.filter(':first:not(.' + dim + ')'));
+          cells.filter(':not(:first)').hide();
+        });
+
+        $.each(parentDims(dim), function() {
+          $('th.' + this + '.version-' + version).each(function() {
+            var colspan = $(this).attr('colspan');
+            $(this).data('colspan', colspan);
+            $(this).attr('colspan', colspan / 2 + 1)
+          });
+        });
+
+        $(elem).data('collapsed', true);
+      }
+
+      function expand(elem, dim) {
+        var version = /version-(v[\d]+)/.exec($(elem).attr('class'))[1]
+        var value = $(elem).text().trim().replace('.', '');
+
+        $(selectors('tr', dim)).each(function() {
+          var cells = $('.version-' + version, this)
+          cells = cells.filter('.' + dim + '-' + value);
+          recolspan(cells);
+          unempty(cells.filter(':first:not(.' + dim + ')'));
+          cells.filter(':not(:first)').show();
+        });
+
+        $.each(parentDims(dim), function() {
+          recolspan($('th.' + this + '.version-' + version));
+        });
+
+        $(elem).data('collapsed', false);
+      }
+
+      var dims = ['version', 'mode', 'visibility', 'context', 'status'];
+
+      function selectors(tag, dim) {
+        return dims.slice(dims.indexOf(dim)).map(function(dim) {
+          return tag + '.' + dim;
+        }).join(',');
+      }
+
+      function parentDims(dim) {
+        return dims.slice(0, dims.indexOf(dim));
+      }
+
+      function uncolspan(elems) {
+        $(elems).each(function() {
+          colspan = $(this).attr('colspan');
+          $(this).data('colspan', colspan);
+          $(this).attr('colspan', 1);
+        });
+      }
+
+      function recolspan(elems) {
+        $(elems).each(function() {
+          $(this).attr('colspan', $(this).data('colspan'));
+          $(this).removeData('colspan')
+        });
+      }
+
+      function empty(elems) {
+        $(elems).each(function() {
+          $(this).addClass('collapsed');
+          $(this).data('text', $(this).text());
+          $(this).text('');
+        });
+      }
+
+      function unempty(elems) {
+        $(elems).each(function() {
+          $(this).removeClass('collapsed');
+          $(this).text($(this).data('text'));
+          $(this).removeData('text')
+        });
+      }
+    </script>
+
+  </head>
+  <body>
+  </body>
+</html>
+<table>
+  <tr class="version">
+    <th>Version</th>
+    <th></th>
+    <th></th>
+    <% versions.each do |version| %>
+      <th colspan="<%= modes.size * visibilities.size * contexts.size %>" class="version version-<%= version.sub('.', '') %>">
+        <%= version %>
+      </th>
+    <% end %>
+  </tr>
+  <tr class="mode">
+    <th>Mode</th>
+    <th></th>
+    <th></th>
+    <% versions.each do |version| %>
+      <% modes.each do |mode| %>
+        <th colspan="<%= visibilities.size * contexts.size %>" class="mode version-<%= version.sub('.', '') %> mode-<%= mode %>">
+          <%= mode %>
+        </th>
+      <% end %>
+    <% end %>
+  </tr>
+  <tr class="visibility">
+    <th>Repo</th>
+    <th></th>
+    <th></th>
+    <% versions.each do |version| %>
+      <% modes.each do |mode| %>
+        <% visibilities.each do |visibility| %>
+          <th colspan="<%= contexts.size %>" class="visibility version-<%= version.sub('.', '') %> mode-<%= mode %>">
+            <%= visibility %>
+          </th>
+        <% end %>
+      <% end %>
+    <% end %>
+  </tr>
+  <tr class="context">
+    <th>Context</th>
+    <th></th>
+    <th></th>
+    <% versions.each do |version| %>
+      <% modes.each do |mode| %>
+        <% visibilities.each do |visibility| %>
+          <% contexts.values.each do |context| %>
+            <th class="context version-<%= version.sub('.', '') %> mode-<%= mode %>">
+              <%= context %>
+            </th>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </tr>
+  <% paths.each do |(resource, path)| %>
+    <tr class="status">
+      <td>GET</td>
+      <td class="resource resource-<%= resource %>"><%= resource %></td>
+      <td class="path"><%= path %></td>
+      <% versions.each do |version| %>
+        <% modes.each do |mode| %>
+          <% visibilities.each do |visibility| %>
+            <% contexts.keys.each do |context| %>
+              <% code = status(path, version, mode, visibility, context.to_s) %>
+              <% prev = status(path, 'v2', mode, visibility, context.to_s) if version == 'v2.1' %>
+              <% changed = (version == 'v2.1' && code != prev) %>
+              <td class="status version-<%= version.sub('.', '') %> mode-<%= mode %> status-<%= code.to_s.gsub(/\D+/, '') %><%= " changed" if changed %>" title="<%= "was #{prev} on v2" if changed %>">
+                <%= code || '-' %>
+              </td>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+</table>

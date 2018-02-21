@@ -18,6 +18,10 @@ module Travis::API::V3
       @prefix ||= ""
     end
 
+    def enterprise(&block)
+      block.call if Travis.env == 'test' || Travis.config.enterprise
+    end
+
     def resource(identifier, **args, &block)
       resource = Routes::Resource.new(identifier, **args)
       with_resource(resource, &block)

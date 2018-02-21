@@ -42,17 +42,74 @@ describe Travis::Services::FindJob do
     end
   end
 
-  # TODO jobs can be requeued, so finished jobs are no more final
-  #
-  # describe 'final?' do
-  #   it 'returns true if the job is finished' do
-  #     job.update_attributes!(state: :errored)
-  #     service.final?.should be_truthy
-  #   end
+  context do
+    let(:user) { Factory.create(:user, login: :rkh) }
+    let(:org)  { Factory.create(:org, login: :travis) }
+    let(:private_repo) { Factory.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { Factory.create(:repository, owner: org, private: false) }
+    let!(:private_job) { Factory.create(:job, repository: private_repo, private: true) }
+    let!(:public_job)  { Factory.create(:job, repository: public_repo, private: false) }
 
-  #   it 'returns false if the job is not finished' do
-  #     job.update_attributes!(state: :started)
-  #     service.final?.should be false
-  #   end
-  # end
+    before { Travis.config.host = 'example.com' }
+
+    describe 'in public mode' do
+      before { Travis.config.public_mode = true }
+
+      describe 'given the current user has a permission on the repository' do
+        it 'finds a private job' do
+          Factory.create(:permission, user: user, repository: private_repo)
+          service = described_class.new(user, id: private_job.id)
+          service.run.should == private_job
+        end
+
+        it 'finds a public job' do
+          Factory.create(:permission, user: user, repository: public_repo)
+          service = described_class.new(user, id: public_job.id)
+          service.run.should == public_job
+        end
+      end
+
+      describe 'given the current user does not have a permission on the repository' do
+        it 'does not find a private job' do
+          service = described_class.new(user, id: private_job.id)
+          service.run.should be_nil
+        end
+
+        it 'finds a public job' do
+          service = described_class.new(user, id: public_job.id)
+          service.run.should == public_job
+        end
+      end
+    end
+
+    describe 'in private mode' do
+      before { Travis.config.private_mode = true }
+
+      describe 'given the current user has a permission on the repository' do
+        it 'finds a private job' do
+          Factory.create(:permission, user: user, repository: private_repo)
+          service = described_class.new(user, id: private_job.id)
+          service.run.should == private_job
+        end
+
+        it 'finds a public job' do
+          Factory.create(:permission, user: user, repository: public_repo)
+          service = described_class.new(user, id: public_job.id)
+          service.run.should == public_job
+        end
+      end
+
+      describe 'given the current user does not have a permission on the repository' do
+        it 'does not find a private job' do
+          service = described_class.new(user, id: private_job.id)
+          service.run.should be_nil
+        end
+
+        it 'does not find a public job' do
+          service = described_class.new(user, id: public_job.id)
+          service.run.should == public_job
+        end
+      end
+    end
+  end
 end

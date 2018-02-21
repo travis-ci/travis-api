@@ -9,6 +9,8 @@ module Travis
     class FindBuilds < Base
       register :find_builds
 
+      scope_access!
+
       def run
         preload(result)
       end
@@ -35,7 +37,7 @@ module Travis
             end
           elsif params[:running]
             scope(:build).running.limit(25)
-          elsif params.nil? || params == {}
+          elsif params.nil? || params == {} || params.keys.map(&:to_s) == ['access_token']
             scope(:build).recent
           else
             scope(:build).none
