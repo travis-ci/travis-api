@@ -40,13 +40,23 @@ require 'travis/api/app'
 app = Travis::Api::App.new
 
 headers = {
-  'HTTP_TRAVIS_API_VERSION' => "#{options[:api_version]}"
+  'HTTP_TRAVIS_API_VERSION' => "#{options[:api_version]}",
+  'HTTP_USER_AGENT' => 'curl', # plain text stack traces
 }
 if options[:user]
-  user = User.find_by_login('igorwwwwwwwwwwwwwwwwwwww')
+  user = User.find_by_login(options[:user])
   access_token = Travis::Api::App::AccessToken.new(user: user, app_id: 0)
   token = access_token.token
   headers['HTTP_AUTHORIZATION'] = "token #{token}"
+end
+
+Thread.current[:script_request_total_sql_queries] = 0
+ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
+  event = ActiveSupport::Notifications::Event.new *args
+  if event.payload[:cached] || event.payload[:name] == 'CACHE'
+    next
+  end
+  Thread.current[:script_request_total_sql_queries] += 1
 end
 
 env = Rack::MockRequest.env_for(
@@ -68,3 +78,7 @@ end
 if options[:verbose]
   puts body
 end
+
+puts
+puts "total sql queries: #{Thread.current[:script_request_total_sql_queries]}"
+puts "request url: #{url}"
