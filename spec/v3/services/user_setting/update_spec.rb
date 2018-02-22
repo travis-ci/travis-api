@@ -62,7 +62,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
 
   describe 'authenticated, existing repo, old params' do
     before do
-      repo.update_attribute(:settings, JSON.dump('env_vars' => ['something']))
+      repo.update_attribute(:settings, 'env_vars' => ['something'])
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
       patch("/v3/repo/#{repo.id}/setting/build_pushes", old_params, json_headers.merge(auth_headers))
     end
@@ -71,7 +71,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
 
   describe 'authenticated, existing repo, new params' do
     before do
-      repo.update_attribute(:settings, JSON.dump('env_vars' => ['something']))
+      repo.update_attribute(:settings, 'env_vars' => ['something'])
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
       patch("/v3/repo/#{repo.id}/setting/build_pushes", new_params, json_headers.merge(auth_headers))
     end
