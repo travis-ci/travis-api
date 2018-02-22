@@ -1,8 +1,6 @@
 # now actually load travis
 require 'travis'
 require 'travis/amqp'
-require 'travis/connection_management'
-require 'travis/query_cache'
 require 'travis/model'
 require 'travis/states_cache'
 require 'travis/honeycomb'
@@ -88,7 +86,7 @@ module Travis::Api
     attr_accessor :app
 
     def initialize
-      @app = Rack::Builder.new do
+      @app = Rack::Builder.app do
         # if stackprof = ENV['STACKPROF']
         #   require 'stackprof'
         #   modes = ['wall', 'cpu', 'object', 'custom']
@@ -135,9 +133,8 @@ module Travis::Api
           use Raven::Rack
         end
         use Rack::SSL if Endpoint.production?
-
-        use ConnectionManagement
-        use QueryCache
+        use ActiveRecord::ConnectionAdapters::ConnectionManagement
+        use ActiveRecord::QueryCache
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers

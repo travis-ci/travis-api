@@ -68,8 +68,7 @@ module Travis::API::V3
     end
 
     def settings
-      _settings = super || {}
-      String === _settings ? MultiJson.load(_settings) : _settings
+      super || {}
     end
 
     def user_settings

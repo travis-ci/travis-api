@@ -252,7 +252,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     end
 
     describe "overrides default request limit if included in repository.settings" do
-      before { repo.update_attribute(:settings, api_builds_rate_limit: 12) }
+      before { repo.update_attribute(:settings, { api_builds_rate_limit: 12 }.to_json) }
 
       before { 10.times { repo.requests.create(event_type: 'api') } }
       before { post("/v3/repo/#{repo.id}/requests", {}, headers) }

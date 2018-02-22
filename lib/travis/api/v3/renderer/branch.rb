@@ -5,13 +5,7 @@ module Travis::API::V3
     representation(:additional, :recent_builds)
 
     def recent_builds
-      if include_recent_builds?
-        V3::Models::Build.where(
-          event_type: 'push',
-          repository_id: model.repository_id,
-          branch_id: model.id
-        ).order(created_at: :desc).first(10)
-      end
+      return model.builds.first(10) if include_recent_builds?
     end
 
     def include_recent_builds?

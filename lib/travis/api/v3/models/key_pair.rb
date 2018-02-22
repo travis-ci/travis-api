@@ -38,7 +38,7 @@ module Travis::API::V3
     end
 
     def delete(repository)
-      repository.settings = repository.settings.tap { |setting| setting.delete("ssh_key")}
+      repository.settings = repository.settings.tap { |setting| setting.delete("ssh_key")}.to_json
       repository.save!
     end
 
