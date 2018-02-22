@@ -7,6 +7,7 @@ require 'pry'
 
 ENV['RACK_ENV'] ||= ENV['RAILS_ENV'] || ENV['ENV']
 ENV['RAILS_ENV']  = ENV['RACK_ENV']
+ENV['MODEL_RENDERER_TRACING_ENABLED'] = 'true'
 
 $stdout.sync = true
 
