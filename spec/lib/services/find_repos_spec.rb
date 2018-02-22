@@ -40,6 +40,22 @@ describe Travis::Services::FindRepos do
     service.run.should include(repo)
   end
 
+  context 'on .com' do
+    before { Travis.config.host = "travis-ci.com" }
+    after { Travis.config.host = "travis-ci.org" }
+
+    it "doesn't return public repos that don't belong to a user" do
+      repo = Factory(:repository, :owner_name => 'drogus', :name => 'test-project')
+      public_repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', private: false)
+      user = Factory(:user)
+      repo.users << user
+      other_user = Factory(:user)
+      Factory(:repository, private: true).users << other_user
+      service = described_class.new(user)
+      service.run.should == [repo]
+    end
+  end
+
   describe 'given a member name' do
     it 'finds a repository where that member has permissions' do
       @params = { :member => 'joshk' }
@@ -141,9 +157,9 @@ describe Travis::Services::FindRepos do
           service.run.should_not include(private_repo)
         end
 
-        it 'finds a public repository' do
+        it 'does not find a public repository' do
           service = described_class.new(user, id: public_repo.id)
-          service.run.should include(public_repo)
+          service.run.should_not include(public_repo)
         end
       end
     end

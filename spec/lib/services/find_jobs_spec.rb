@@ -95,9 +95,9 @@ describe Travis::Services::FindJobs do
           service.run.should_not include(private_job)
         end
 
-        it 'finds a public job' do
+        it 'does not find a public job' do
           service = described_class.new(user, id: public_job.id)
-          service.run.should include(public_job)
+          service.run.should_not include(public_job)
         end
       end
     end
@@ -130,6 +130,32 @@ describe Travis::Services::FindJobs do
           service.run.should_not include(public_job)
         end
       end
+    end
+  end
+
+  context 'on .com' do
+    before { Travis.config.host = "travis-ci.com" }
+    after { Travis.config.host = "travis-ci.org" }
+
+    it "doesn't return public jobs that don't belong to a user" do
+      public_repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', private: false)
+      public_build = Factory(:build, repository: public_repo)
+      Factory(:test, :state => :started, :source => public_build, repository: public_repo)
+
+      user = Factory(:user)
+      repo = Factory(:repository, :owner_name => 'drogus', :name => 'test-project')
+      repo.users << user
+      build = Factory(:build, repository: repo)
+      job = Factory(:test, :state => :started, :source => build, repository: repo)
+
+      other_user = Factory(:user)
+      other_repo = Factory(:repository, private: true)
+      other_repo.users << other_user
+      other_build = Factory(:build, repository: other_repo)
+      Factory(:test, :state => :started, :source => other_build, repository: other_repo)
+
+      service = described_class.new(user)
+      service.run.should == [job]
     end
   end
 end
