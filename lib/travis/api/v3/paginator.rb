@@ -1,3 +1,5 @@
+require 'digest'
+
 module Travis::API::V3
   class Paginator
     attr_accessor :default_limit, :max_limit
@@ -19,7 +21,20 @@ module Travis::API::V3
       offset &&= Integer(offset, :offset)
       offset   = 0 if offset.nil? or offset < 0
 
-      count = result.resource.count(:all)
+      if ENV['PAGINATION_COUNT_CACHE_ENABLED'] == 'true'
+        count_query_hash = Digest::SHA1.hexdigest(result.resource.to_sql)
+        key = "api:count_query:#{count_query_hash}"
+        count = Travis.redis.get(key)&.to_i
+
+        unless count
+          count = result.resource.count(:all)
+          ttl = ENV['PAGINATION_COUNT_CACHE_TTL']&.to_i || 60*60*24
+          Travis.redis.setex(key, ttl, count)
+        end
+      else
+        count = result.resource.count(:all)
+      end
+
       result.resource = result.resource.limit(limit)   unless limit  == 0
       result.resource = result.resource.offset(offset) unless offset == 0
 
