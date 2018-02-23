@@ -23,13 +23,17 @@ module Travis::API::V3
 
       if ENV['PAGINATION_COUNT_CACHE_ENABLED'] == 'true'
         count_query_hash = Digest::SHA1.hexdigest(result.resource.to_sql)
-        key = "api:count_query:#{count_query_hash}"
-        count = Travis.redis.get(key)&.to_i
+        cache_key = "api:count_query:#{count_query_hash}"
+        count = Travis.redis.get(cache_key)&.to_i
 
         unless count
-          count = result.resource.count(:all)
           ttl = ENV['PAGINATION_COUNT_CACHE_TTL']&.to_i || 60*60*24
-          Travis.redis.setex(key, ttl, count)
+          threshold = ENV['PAGINATION_COUNT_CACHE_THRESHOLD']&.to_i || 100
+
+          count = result.resource.count(:all)
+          if count >= threshold
+            Travis.redis.setex(cache_key, ttl, count)
+          end
         end
       else
         count = result.resource.count(:all)
