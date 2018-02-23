@@ -58,9 +58,10 @@ module Travis::API::V3
                               || lower(repositories.name), #{query}) as slug_filter")
       end
 
-      list = list.includes(default_branch: :last_build)
-      list = list.includes(current_build: [:repository, :branch, :commit, :stages, :sender]) if includes? 'repository.current_build'.freeze
+      list = list.includes(default_branch: [:last_build, :repository])
+      list = list.includes(current_build: [:repository, { branch: [:last_build, :repository] }, :commit, :stages, :sender]) if includes? 'repository.current_build'.freeze
       list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
+      list = list.includes(default_branch: { last_build: :branch }) if includes? 'build.branch'.freeze
       sort list
     end
 
