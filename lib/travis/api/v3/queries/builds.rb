@@ -25,7 +25,7 @@ module Travis::API::V3
       relation = relation.where('builds.branch IN (?)', list(branch_name))    if branch_name
       relation = for_owner(relation)                                          if created_by
 
-      relation = relation.includes(:commit).includes(branch: :last_build).includes(:tag).includes(:repository)
+      relation = relation.includes(:commit).includes(branch: :last_build).includes(:tag).includes(:stages).includes(:repository)
       relation = relation.includes(branch: { last_build: :commit }) if includes? 'build.commit'.freeze
       relation
     end
