@@ -17,6 +17,8 @@ module Travis::API::V3
     end
 
     def filter(relation)
+      relation = relation.select(Build.column_names - ['config']) unless includes? 'build.config'.freeze
+
       relation = relation.where(state:          list(state))                  if state
       relation = relation.where(previous_state: list(previous_state))         if previous_state
       relation = relation.where(event_type:     list(event_type))             if event_type
