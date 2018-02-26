@@ -1,5 +1,7 @@
 module Travis::API::V3
   class AccessControl::Generic
+    ADMIN_ROLES = ['admin', 'billing_manager']
+
     def self.for_request(type, payload, env)
     end
 
@@ -60,12 +62,27 @@ module Travis::API::V3
       list.select { |r| visible?(r) }
     end
 
+    def visible_subscription?(owner)
+      return owner == self.user unless owner.is_a? Models::Organization
+      admin_member?(owner) || admin_organizations(owner)
+    end
+
     def permissions(object)
       return unless factory = permission_class(object.class)
       factory.new(self, object)
     end
 
     protected
+
+    def admin_member?(owner)
+      self.user.memberships.where(role: ADMIN_ROLES, organization_id: owner.id).count > 0
+    end
+
+    def admin_organizations(owner)
+      orgs = (self.user.organizations.where(login: owner.login) +
+      self.user.memberships.where(role: ADMIN_ROLES).joins(:organization).map(&:organization)).uniq
+      orgs.include?(owner)
+    end
 
     def account_visible?(account)
       user and account.members.include?(user)
