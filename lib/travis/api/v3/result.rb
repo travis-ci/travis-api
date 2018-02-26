@@ -39,7 +39,7 @@ module Travis::API::V3
     end
 
     def add_info(payload)
-      if warnings.any?
+      if warnings.any? && !payload.is_a?(String)
         payload = { :@warnings => [] }.merge!(payload) unless payload.include? :@warnings
         payload[:@warnings].concat(warnings)
       end

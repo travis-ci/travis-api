@@ -233,7 +233,7 @@ module Travis
       end
 
       private def http_options
-        { ssl: Travis.config.ssl.compact.to_h }
+        { ssl: Travis.config.ssl.to_h }
       end
     end
 

@@ -23,8 +23,8 @@ module Travis::API::V3
       false
     end
 
-    def job_visible?(job)
-      token_for_job?(job, token)
+    def log_visible?(log)
+      token_for_job?(log.job, token)
     end
 
     private

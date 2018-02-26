@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require_relative './user_mgmt'
+
+option = ARGV.first
+users = if option == '--active'
+  User.active.alpha
+elsif option == '--inactive'
+  User.inactive.alpha
+elsif option == '--suspended'
+  User.suspended.alpha
+elsif [nil, '--all'].include?(option)
+  User.all.alpha
+else
+  puts "Option #{option} not recognised."
+  exit 1
+end
+
+if users
+  col_width = users.pluck(:login).map(&:length).max
+  users.each do |user|
+    puts [user.login.ljust(col_width), user.enterprise_status.ljust(col_width)].join(' ' * 5)
+  end
+  exit 0
+end
