@@ -233,6 +233,10 @@ module Travis::API::V3
       capture id: :digit
       route '/subscription/{subscription.id}'
       get :find
+
+      post :create
+      post :cancel
+      patch :edit_address
     end
   end
 end
