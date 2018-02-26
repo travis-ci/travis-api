@@ -4,7 +4,7 @@ describe Travis::API::V3::Queries::Subscription do
   let!(:subscription) { Travis::API::V3::Models::Subscription.create(owner: org, valid_to: Time.now.utc, source: "stripe", status: "subscribed", selected_plan: "travis-ci-two-builds") }
 
   before do
-    Travis.config.billing = {url:'https://billing-v2.travis-ci.com'}
+    Travis.config.billing = {url:'https://billing-v2-test.travis-ci.com'}
     ENV['BILLING_AUTH_KEY'] = 'abc123'
   end
 

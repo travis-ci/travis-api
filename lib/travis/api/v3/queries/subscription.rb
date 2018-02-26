@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Queries::Subscription < RemoteQuery
     params :id
+    params :current_user_id, :subscription
 
     def find
       return Models::Subscription.find_by_id(id) if id
@@ -10,8 +11,8 @@ module Travis::API::V3
       owner.subscription
     end
 
-    def create(current_user_id, subscription_params)
-      Billing.new(current_user_id).create_subscription(subscription_params)
+    def create(current_user_id, subscription)
+      Billing.new(current_user_id).create_subscription(subscription)
     end
 
     def cancel(current_user_id)
@@ -21,8 +22,5 @@ module Travis::API::V3
     def edit_address(current_user_id, address_params)
       Billing.new(current_user_id, id).edit_address(address_params)
     end
-
-    #def resubscribe
-    #end
   end
 end

@@ -9,6 +9,7 @@ module Travis::API::V3
 
     def create_subscription(subscription_params)
       post('/subscriptions', {user_id: user_id, subscription: subscription_params})
+      #what will Billing return? -> subscription id?
     end
 
     def cancel_subscription
