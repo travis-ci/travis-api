@@ -21,4 +21,3 @@ class Organization < Travis::Model
     @subscription = records.where(status: 'subscribed').last || records.last
   end
 end
-
