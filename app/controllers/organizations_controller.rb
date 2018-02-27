@@ -1,7 +1,7 @@
 class OrganizationsController < ApplicationController
   include BuildCounters, RenderEither
 
-  before_action :get_organization
+  before_action :get_organization, :get_repositories
 
   def boost
     limit = params[:boost][:owner_limit].to_i
@@ -42,14 +42,14 @@ class OrganizationsController < ApplicationController
   end
 
   def repositories
-    @repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active)
+    @repositories
     render_either 'shared/repositories'
   end
 
   def jobs
-    repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active)
-    @pending_jobs = Job.from_repositories(repositories).not_finished
-    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 10)
+    @jobs = Job.from_repositories(@repositories)
+    @pending_jobs = @jobs.not_finished
+    @finished_jobs = @jobs.finished.paginate(page: params[:page], per_page: 10)
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
     @build_counts = build_counts(@organization)
     @build_months = build_months(@organization)
@@ -86,6 +86,10 @@ class OrganizationsController < ApplicationController
   def get_organization
     @organization = Organization.find_by(id: params[:id])
     return redirect_to not_found_path, flash: {error: "There is no organization associated with ID #{params[:id]}."} if @organization.nil?
+  end
+
+  def get_repositories
+    @repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active)
   end
 
   def feature_params
