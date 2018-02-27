@@ -13,11 +13,12 @@ module Travis::API::V3
     end
 
     def cancel_subscription
-      post("/subscriptions/#{subscription_id}/cancel", {user_id: user_id})
+      post("/subscriptions/#{@subscription_id}/cancel", {user_id: user_id})
     end
 
     def edit_address(address)
-      patch("/subscriptions/#{subscription_id}/address", {user_id: user_id, address: address})
+      patch("/subscriptions/#{@subscription_id}/address", {user_id: user_id, address: address})
+      #what will Billing return? -> subscription id?
     end
 
     def patch(url, payload)

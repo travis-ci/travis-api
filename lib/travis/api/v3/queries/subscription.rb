@@ -1,7 +1,8 @@
 module Travis::API::V3
   class Queries::Subscription < RemoteQuery
     params :id
-    params :current_user_id, :subscription
+    params :current_user_id, :id
+
 
     def find
       return Models::Subscription.find_by_id(id) if id
