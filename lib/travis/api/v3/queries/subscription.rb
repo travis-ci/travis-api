@@ -5,11 +5,11 @@ module Travis::API::V3
 
 
     def find
-      return Models::Subscription.find_by_id(id) if id
+      #call Billing service
     end
 
     def for_owner(owner)
-      owner.subscription
+      ##call Billing service to get subscription from specific owner
     end
 
     def create(current_user_id, subscription)

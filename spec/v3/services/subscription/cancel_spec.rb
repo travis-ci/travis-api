@@ -19,8 +19,7 @@ describe Travis::API::V3::Services::Subscription::Create, set_app: true do
       post("/v3/subscription/#{subscription.id}/cancel", {}, headers)
     end
 
-    example { expect(last_response).to be_ok   }
-    example { expect(last_response.status).to be 201 }
+    example { expect(last_response.status).to be 202 }
   end
 
 end
