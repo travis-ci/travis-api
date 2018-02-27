@@ -37,7 +37,7 @@ class OrganizationsController < ApplicationController
   end
 
   def members
-    @memberships = @organization.memberships.includes(user: :subscription).order(:role, 'users.name')
+    @members = @organization.users.select('users.*, memberships.role as role').order(:name)
     render_either 'members'
   end
 
