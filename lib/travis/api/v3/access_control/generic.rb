@@ -64,7 +64,7 @@ module Travis::API::V3
 
     def visible_subscription?(owner)
       return owner == self.user unless owner.is_a? Models::Organization
-      admin_member?(owner) || admin_organizations(owner)
+      admin_member?(owner)
     end
 
     def permissions(object)
@@ -76,12 +76,6 @@ module Travis::API::V3
 
     def admin_member?(owner)
       self.user.memberships.where(role: ADMIN_ROLES, organization_id: owner.id).count > 0
-    end
-
-    def admin_organizations(owner)
-      orgs = (self.user.organizations.where(login: owner.login) +
-      self.user.memberships.where(role: ADMIN_ROLES).joins(:organization).map(&:organization)).uniq
-      orgs.include?(owner)
     end
 
     def account_visible?(account)
@@ -106,6 +100,10 @@ module Travis::API::V3
 
     def cron_writable?(cron)
       writable? cron.branch.repository
+    end
+
+    def log_visible?(log)
+      visible? log.job
     end
 
     def job_visible?(job)
