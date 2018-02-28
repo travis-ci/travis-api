@@ -14,7 +14,7 @@ describe Travis::API::V3::Services::Subscription::Create, set_app: true do
 
   describe 'cancel existing subscription' do
     before do
-      Travis::API::V3::Billing.any_instance.stubs(:cancel_subscription).returns({body: {id: '111'}, status: 200})
+      Travis::API::V3::Billing.any_instance.stubs(:cancel_subscription).returns({body: {id: '111'}, status: 202})
 
       post("/v3/subscription/#{subscription.id}/cancel", {}, headers)
     end

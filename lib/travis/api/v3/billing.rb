@@ -9,7 +9,7 @@ module Travis::API::V3
 
     def create_subscription(subscription_params)
       post('/subscriptions', {subscription: subscription_params})
-      #what will Billing return? -> subscription id?
+      #Billing will return a JSON representation of the created subscription
     end
 
     def cancel_subscription
@@ -18,7 +18,6 @@ module Travis::API::V3
 
     def edit_address(address)
       patch("/subscriptions/#{subscription_id}/address", {address: address})
-      #what will Billing return? -> subscription id?
     end
 
     def patch(url, payload)
