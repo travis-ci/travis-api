@@ -1,6 +1,5 @@
 module Travis::API::V3
   class AccessControl::Generic
-
     def self.for_request(type, payload, env)
     end
 

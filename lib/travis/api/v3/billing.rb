@@ -8,17 +8,16 @@ module Travis::API::V3
     end
 
     def create_subscription(subscription_params)
-      post('/subscriptions', {user_id: user_id, subscription: subscription_params})
-      #what will Billing return? -> subscription id?
+      post('/subscriptions', {subscription: subscription_params})
+      #Billing will return a JSON representation of the created subscription
     end
 
     def cancel_subscription
-      post("/subscriptions/#{subscription_id}/cancel", {user_id: user_id})
+      post("/subscriptions/#{subscription_id}/cancel")
     end
 
     def edit_address(address)
-      patch("/subscriptions/#{subscription_id}/address", {user_id: user_id, address: address})
-      #what will Billing return? -> subscription id?
+      patch("/subscriptions/#{subscription_id}/address", {address: address})
     end
 
     def patch(url, payload)
@@ -41,6 +40,7 @@ module Travis::API::V3
       return unless billing_url && billing_auth_key
       @connect ||= Faraday.new(billing_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |client|
         client.basic_auth 'admin', billing_auth_key
+        client.headers['X-Travis-User-Id'] = user_id
         client.adapter :net_http
       end
     end

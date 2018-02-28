@@ -23,11 +23,11 @@ describe Travis::API::V3::Services::Subscription::Create, set_app: true do
 
   describe 'edit subscription address' do
     before do
-      Travis::API::V3::Billing.any_instance.stubs(:edit_address).returns({body: {id: '111'}, status: 200})
+      Travis::API::V3::Billing.any_instance.stubs(:edit_address).returns({status: 202})
 
       patch("/v3/subscription/#{subscription.id}/edit_address", address_payload, headers)
     end
-    example { expect(last_response).to be_ok   }
+
     example { expect(last_response.status).to be 201 }
   end
 
