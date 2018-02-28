@@ -97,7 +97,7 @@ class UsersController < ApplicationController
 
   def requests
     @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 10)
-    render_either 'shared/requests'
+    render_either 'shared/requests', locals: { origin: @user }
   end
 
   def broadcasts

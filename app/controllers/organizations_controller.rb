@@ -58,7 +58,7 @@ class OrganizationsController < ApplicationController
 
   def requests
     @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 10)
-    render_either 'shared/requests'
+    render_either 'shared/requests', locals: { origin: @organization }
   end
 
   def broadcasts
