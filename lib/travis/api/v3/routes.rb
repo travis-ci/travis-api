@@ -230,9 +230,17 @@ module Travis::API::V3
     end
 
     resource :subscription do
+      route '/subscription'
+      post :create
+    end
+
+    resource :subscription do
       capture id: :digit
       route '/subscription/{subscription.id}'
       get :find
+
+      post :cancel, '/cancel'
+      patch :edit_address, '/edit_address'
     end
   end
 end
