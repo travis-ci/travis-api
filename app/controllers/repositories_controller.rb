@@ -93,11 +93,7 @@ class RepositoriesController < ApplicationController
 
   def show
     @active_admin = @repository.find_admin
-
-    # there is a bug, so that .includes(:subscription) is not working and we get N+1 queries for subscriptions,
-    # this is a workaround to get all the subscriptions at once and avoid the N+1 queries (see issue #150)
-    @subscriptions = Subscription.where(owner_id: @repository.users.map(&:id)).where('owner_type = ?', 'User').includes(:owner)
-    @subscriptions_by_user_id = @subscriptions.group_by { |s| s.owner.id }
+    @users = @repository.users.select('users.*, permissions.admin as admin, permissions.push as push, permissions.pull as pull').order(:name)
 
     @builds = @repository.builds.includes(:commit).order('id DESC').paginate(page: params[:build_page], per_page: 10)
     @requests = @repository.requests.includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
