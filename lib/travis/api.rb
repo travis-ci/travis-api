@@ -40,13 +40,12 @@ module Travis
       end
     end
 
-    def delete(url, access_token, body={})
+    def delete(url, access_token)
       conn.delete do |req|
         req.url url
         req.headers['Content-Type']       = 'application/json'
         req.headers['Authorization']      = "token #{access_token}"
         req.headers['Travis-API-Version'] = '3'
-        req.body                          = body
       end
     end
   end
