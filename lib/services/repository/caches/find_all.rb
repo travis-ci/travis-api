@@ -1,10 +1,10 @@
-require 'travis/legacy_api'
+require 'travis/api'
 
 module Services
   module Repository
     module Caches
       class FindAll
-        include Travis::LegacyAPI
+        include Travis::API
         attr_reader :repository
 
         def initialize(repository)
@@ -17,7 +17,7 @@ module Services
         end
 
         def call
-          url = "/repos/#{repository.id}/caches"
+          url = "/repo/#{repository.id}/caches"
           extract_caches(get(url, access_token))
         end
 

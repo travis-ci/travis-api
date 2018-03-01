@@ -1,10 +1,10 @@
-require 'travis/legacy_api'
+require 'travis/api'
 
 module Services
   module Repository
     module Caches
       class Delete
-        include Travis::LegacyAPI
+        include Travis::API
         attr_reader :repository
 
         def initialize(repository)
