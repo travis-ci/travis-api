@@ -12,7 +12,7 @@ module Services
 
       def call
         url = "/job/#{job.id}/log"
-        get_log(url, access_token)
+        get(url, access_token)
       end
 
       private

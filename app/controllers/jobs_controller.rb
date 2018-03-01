@@ -7,9 +7,10 @@ class JobsController < ApplicationController
     @active_admin = @job.repository.find_admin
 
     if @active_admin
-      @log = Services::Job::GetLog.new(@job).call
-      # @log_url = Services::Job::GenerateLogUrl.new(@job).call
-      @log_url = "log_url"
+      get_log = Services::Job::GetLog.new(@job).call
+      parsed_body = JSON.parse get_log.body
+      @log = parsed_body["content"]
+      @log_url = parsed_body["@raw_log_href"]
     end
 
     @previous_job = @job.previous
