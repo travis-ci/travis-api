@@ -32,7 +32,7 @@ module Travis
     end
 
     def get_log(url, access_token)
-      conn.post do |req|
+      conn.get do |req|
         req.url url
         req.headers['Accept']             = 'text/plain'
         req.headers['Content-Type']       = 'application/json'

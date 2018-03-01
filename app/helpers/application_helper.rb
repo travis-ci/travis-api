@@ -39,7 +39,7 @@ module ApplicationHelper
   end
 
   def format_log(log)
-    log = log.force_encoding(Encoding::UTF_8)
+    log = log.body.force_encoding(Encoding::UTF_8)
     Timeout.timeout(5) do
       log_without_cr = log.to_s.gsub(/\r+/, "\r").gsub("\r\n", "\n").each_line.map { |line| line.split("\r").last }.join
       Bcat::ANSI.new(log_without_cr).to_html

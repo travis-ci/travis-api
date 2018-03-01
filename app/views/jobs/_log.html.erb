@@ -1,7 +1,6 @@
 <section class="info-block">
   <% if @active_admin %>
     <% if @log %>
-    <% puts @log.inspect %>
       <pre class="log">
         <div class="log-header">
           <%= link_to 'Raw Log', @log_url, class: "log-download" %>
