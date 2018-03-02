@@ -41,8 +41,6 @@ Rails.application.routes.draw do
     member do
       post 'boost'
       post 'features'
-      get  'jobs'
-      get  'requests'
       post 'update_trial_builds'
 
       get 'subscription'
@@ -58,16 +56,20 @@ Rails.application.routes.draw do
   resources :repositories, only: [:show] do
     member do
       post 'add_hook_event'
-      get  'builds'
       post 'check_hook'
       post 'delete_last_build'
       post 'disable'
       post 'enable'
       post 'features'
-      get  'requests'
       post 'set_hook_url'
       post 'settings', to: 'settings#update', as: :repository_settings
       post 'test_hook'
+
+      get  'broadcasts'
+      get  'builds'
+      get  'caches'
+      get  'requests'
+      get  'users'
     end
   end
 

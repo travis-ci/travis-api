@@ -27,4 +27,5 @@
       <% end %>
     </ul>
   <% end %>
+  <%= will_paginate @members, param_name: 'page', params: {controller: controller_name, action: 'members', id: params[:id], anchor: 'members'}, 'data-remote': true %>
 </section>

@@ -1,4 +1,5 @@
 class RepositoriesController < ApplicationController
+  include BuildCounters, RenderEither
   before_action :get_repository
 
   def add_hook_event
@@ -6,10 +7,6 @@ class RepositoriesController < ApplicationController
     Services::AuditTrail::AddHookEvent.new(current_user, @repository, params[:event].gsub('_', ' ')).call
     flash[:notice] = "Added #{params[:event].gsub('_', ' ')} event to #{@repository.slug}."
     redirect_to @repository
-  end
-
-  def builds
-    @builds = @repository.builds.includes(:commit).order('id DESC').paginate(page: params[:build_page], per_page: 10)
   end
 
   def check_hook
@@ -73,14 +70,37 @@ class RepositoriesController < ApplicationController
     redirect_to @repository
   end
 
+  def broadcasts
+    @active_broadcasts = Broadcast.active.for(@repository).includes(:recipient)
+    @inactive_broadcasts = Broadcast.inactive.for(@repository).includes(:recipient)
+    render_either 'shared/broadcasts', locals: { recipient: @repository }
+  end
+
+  def builds
+    @builds = @repository.builds.includes(:commit).order('id DESC').paginate(page: params[:page], per_page: 20)
+    render_either 'builds' 
+  end
+
+  def caches
+    @caches = Services::Repository::Caches::FindAll.new(@repository).call
+    render_either 'caches'
+  end
+
   def features
     Services::Features::Update.new(@repository, current_user).call(feature_params)
     flash[:notice] = "Updated feature flags for #{@repository.slug}."
-    redirect_to repository_path(@repository, anchor: "settings")
+    @features = Features.for(@repository)
+    render_either 'features'
   end
 
   def requests
-    @requests = @repository.requests.includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
+    @requests = @repository.requests.includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 20)
+    render_either 'shared/requests', locals: { origin: @repository }
+  end
+
+  def users
+    @users = @repository.users.select('users.*, permissions.admin as admin, permissions.push as push, permissions.pull as pull').order(:name).paginate(page: params[:page], per_page: 25)
+    render_either 'users'
   end
 
   def set_hook_url
@@ -93,19 +113,8 @@ class RepositoriesController < ApplicationController
 
   def show
     @active_admin = @repository.find_admin
-    @users = @repository.users.select('users.*, permissions.admin as admin, permissions.push as push, permissions.pull as pull').order(:name)
-
-    @builds = @repository.builds.includes(:commit).order('id DESC').paginate(page: params[:build_page], per_page: 10)
-    @requests = @repository.requests.includes(builds: :repository).order('id DESC').paginate(page: params[:request_page], per_page: 10)
-
-    @active_broadcasts = Broadcast.active.for(@repository).includes(:recipient)
-    @inactive_broadcasts = Broadcast.inactive.for(@repository).includes(:recipient)
-
-    @features = Features.for(@repository)
-
     @settings = Settings.new(@repository.settings)
-
-    @caches = Services::Repository::Caches::FindAll.new(@repository).call
+    render_either 'repository'
   end
 
   def test_hook

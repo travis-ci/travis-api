@@ -37,7 +37,7 @@ class OrganizationsController < ApplicationController
   end
 
   def members
-    @members = @organization.users.select('users.*, memberships.role as role').order(:name)
+    @members = @organization.users.select('users.*, memberships.role as role').order(:name).paginate(page: params[:page], per_page: 25)
     render_either 'members'
   end
 
@@ -49,7 +49,7 @@ class OrganizationsController < ApplicationController
   def jobs
     @jobs = Job.from_repositories(@repositories)
     @pending_jobs = @jobs.not_finished
-    @finished_jobs = @jobs.finished.paginate(page: params[:page], per_page: 10)
+    @finished_jobs = @jobs.finished.paginate(page: params[:page], per_page: 20)
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
     @build_counts = build_counts(@organization)
     @build_months = build_months(@organization)
@@ -57,7 +57,7 @@ class OrganizationsController < ApplicationController
   end
 
   def requests
-    @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 10)
+    @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 20)
     render_either 'shared/requests', locals: { origin: @organization }
   end
 
@@ -89,7 +89,7 @@ class OrganizationsController < ApplicationController
   end
 
   def get_repositories
-    @repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active)
+    @repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active).paginate(page: params[:page], per_page: 20)
   end
 
   def feature_params
