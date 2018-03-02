@@ -46,7 +46,7 @@ RSpec.feature 'Create a Broadcast', js: true, type: :feature do
   end
 
   scenario 'Create a broadcast for repository' do
-    visit "/repositories/#{repository.id}#broadcasts"
+    visit "/repositories/#{repository.id}/broadcasts"
 
     fill_in('broadcast_message', with: 'This is a message.')
     find_button('Create').trigger('click')
