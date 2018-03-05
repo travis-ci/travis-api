@@ -86,11 +86,11 @@ class RepositoriesController < ApplicationController
     render_either 'caches'
   end
 
+  # This updates feature flags for the repo when submitting the form.
   def features
     Services::Features::Update.new(@repository, current_user).call(feature_params)
     flash[:notice] = "Updated feature flags for #{@repository.slug}."
-    @features = Features.for(@repository)
-    render_either 'features'
+    redirect_to repository_path(@repository, anchor: "feature-flags")
   end
 
   def requests
@@ -114,6 +114,7 @@ class RepositoriesController < ApplicationController
   def show
     @active_admin = @repository.find_admin
     @settings = Settings.new(@repository.settings)
+    @features = Features.for(@repository)
     render_either 'repository'
   end
 
