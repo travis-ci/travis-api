@@ -1,4 +1,5 @@
 require 'digest'
+require 'travis/honeycomb'
 
 module Travis::API::V3
   class Paginator
@@ -25,14 +26,19 @@ module Travis::API::V3
         count_query_hash = Digest::SHA1.hexdigest(result.resource.to_sql)
         cache_key = "api:count_query:#{count_query_hash}"
         count = Travis.redis.get(cache_key)&.to_i
-
-        unless count
+        
+        if count
+          Travis::Honeycomb.context.add('pagination.count_cache.hit', 1)
+        else
           ttl = ENV['PAGINATION_COUNT_CACHE_TTL']&.to_i || 60*60*24
           threshold = ENV['PAGINATION_COUNT_CACHE_THRESHOLD']&.to_i || 100
 
           count = result.resource.count(:all)
           if count >= threshold
             Travis.redis.setex(cache_key, ttl, count)
+            Travis::Honeycomb.context.add('pagination.count_cache.miss', 1)
+          else
+            Travis::Honeycomb.context.add('pagination.count_cache.bypass', 1)
           end
         end
       else
