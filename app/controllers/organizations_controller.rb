@@ -89,10 +89,6 @@ class OrganizationsController < ApplicationController
     return redirect_to not_found_path, flash: {error: "There is no organization associated with ID #{params[:id]}."} if @organization.nil?
   end
 
-  def get_repositories
-    @repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active).paginate(page: params[:page], per_page: 20)
-  end
-
   def feature_params
     params.require(:features).permit(Features.for(@organization).keys)
   end
