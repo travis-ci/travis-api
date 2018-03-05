@@ -1,7 +1,7 @@
 class OrganizationsController < ApplicationController
   include BuildCounters, RenderEither
 
-  before_action :get_organization, :get_repositories
+  before_action :get_organization
 
   def boost
     limit = params[:boost][:owner_limit].to_i
@@ -42,12 +42,13 @@ class OrganizationsController < ApplicationController
   end
 
   def repositories
-    @repositories
+    @repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active).paginate(page: params[:page], per_page: 20)
     render_either 'shared/repositories'
   end
 
   def jobs
-    @jobs = Job.from_repositories(@repositories)
+    repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active)
+    @jobs = Job.from_repositories(repositories)
     @pending_jobs = @jobs.not_finished
     @finished_jobs = @jobs.finished.paginate(page: params[:page], per_page: 20)
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
