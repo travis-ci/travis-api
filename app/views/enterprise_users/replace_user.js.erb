@@ -1,0 +1,1 @@
+$('#user-<%= @user.id %>').replaceWith('<%= j(render partial: 'user', locals: { user: @user }) %>');

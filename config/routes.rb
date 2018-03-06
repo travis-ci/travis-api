@@ -103,4 +103,11 @@ Rails.application.routes.draw do
 
     post 'sync_all', on: :collection
   end
+
+  resources :enterprise_users, only: [:index] do
+    member do
+      post 'suspend'
+      post 'unsuspend'
+    end
+  end
 end

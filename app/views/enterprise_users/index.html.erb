@@ -1,0 +1,20 @@
+<%= title "Manage enterprise users" %>
+
+<section class="info-block">
+  <h2 class="info-header">Users</h2>
+  <% if @users.empty? %>
+    <p>No users.</p>
+  <% else %>
+    <ul>
+      <li class="inline-list member-item">
+        <p class="info-label">Name</p>
+        <p class="info-label">Status</p>
+        <p>&nbsp;</p>
+      </li>
+      <% @users.each do |user| %>
+        <%= render partial: 'user', locals: { user: user } %>
+      <% end %>
+    </ul>
+  <% end %>
+  <%= will_paginate @users, param_name: 'page', 'data-remote': true %>
+</section>

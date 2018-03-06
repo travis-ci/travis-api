@@ -25,4 +25,16 @@ class User < ApplicationRecord
   def latest_trial
     trials.underway.order(created_at: :desc).first
   end
+
+  def enterprise_status
+    case
+    when suspended?
+      time = suspended_at.in_time_zone
+      "Suspended on %s at %s" % [time.strftime('%-d %B %Y'), time.strftime('%R')]
+    when !suspended? && !github_oauth_token
+      'Inactive'
+    else
+      'Active'
+    end
+  end
 end
