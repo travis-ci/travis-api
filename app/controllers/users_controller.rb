@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :get_user, except: [:admins, :sync_all]
 
   def admins
-    @admins = User.where(login: Travis::Config.load.admins).order(:name)
+    @admins = User.where(login: travis_config.admins).order(:name)
   end
 
   def boost

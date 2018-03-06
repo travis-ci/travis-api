@@ -92,4 +92,8 @@ module ApplicationHelper
     when User then update_trial_builds_user_path(owner)
     end
   end
+
+  def travis_config
+    Rails.configuration.travis_config
+  end
 end

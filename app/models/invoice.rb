@@ -9,6 +9,6 @@ class Invoice < ApplicationRecord
 
   def as_pdf
     invoice_hash = Digest::SHA1.hexdigest(stripe_id + invoice_id)
-    "#{Travis::Config.load.billing_endpoint}/invoices/#{invoice_hash}.pdf"
+    "#{travis_config.billing_endpoint}/invoices/#{invoice_hash}.pdf"
   end
 end

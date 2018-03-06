@@ -22,7 +22,7 @@ class RepositoriesController < ApplicationController
     when !hook['events'].include?('push')
       @event = 'push'
       render :check_hook
-    when hook_url != hook_url(Travis::Config.load.service_hook_url)
+    when hook_url != hook_url(travis_config.service_hook_url)
       @hook_url = hook_url(hook['config']['domain'])
     else
       flash[:notice] = 'That hook seems legit.'
@@ -104,10 +104,10 @@ class RepositoriesController < ApplicationController
   end
 
   def set_hook_url
-    config = hook['config'].merge('domain' => hook_url(Travis::Config.load.service_hook_url))
+    config = hook['config'].merge('domain' => hook_url(travis_config.service_hook_url))
     Services::Repository::SetHookUrl.new(@repository, config, hook_link).call
-    Services::AuditTrail::SetHookUrl.new(current_user, @repository, Travis::Config.load.service_hook_url).call
-    flash[:notice] = "Set notification target to #{Travis::Config.load.service_hook_url}."
+    Services::AuditTrail::SetHookUrl.new(current_user, @repository, travis_config.service_hook_url).call
+    flash[:notice] = "Set notification target to #{travis_config.service_hook_url}."
     redirect_to @repository
   end
 

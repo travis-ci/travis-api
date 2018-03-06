@@ -1,3 +1,5 @@
+require 'travis_config'
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -52,22 +54,18 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  Travis::Config.class_eval do
-    define admins: []
-  end
+  config.travis_config = TravisConfig.load
 
-  configuration = Travis::Config.load
-
-  if configuration.disable_otp?
+  if config.travis_config.disable_otp?
     config.middleware.use Travis::SSO,
       mode: :session,
-      endpoint: configuration.api_endpoint,
-      authorized?:    -> u { configuration.admins.include? u['login'] }
+      endpoint: config.travis_config.api_endpoint,
+      authorized?:    -> u { config.travis_config.admins.include? u['login'] }
   else
     config.middleware.use Travis::SSO,
       mode: :session,
-      endpoint: configuration.api_endpoint,
-      authorized?:    -> u { configuration.admins.include? u['login'] },
+      endpoint: config.travis_config.api_endpoint,
+      authorized?:    -> u { config.travis_config.admins.include? u['login'] },
       get_otp_secret: -> u   { Travis::DataStores.redis.get("admin-v2:otp:#{u['login']}")    },
       set_otp_secret: -> u,s { Travis::DataStores.redis.set("admin-v2:otp:#{u['login']}", s) }
   end
