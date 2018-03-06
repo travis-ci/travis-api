@@ -9,4 +9,6 @@ services:
   - redis
 before_script:
   - cp config/travis.example.yml config/travis.yml
-script: RAILS_ENV=test bundle exec rake db:create db:structure:load spec
+  - "createdb travis_test || true"
+  - "curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test"
+script: RAILS_ENV=test bundle exec rake spec
