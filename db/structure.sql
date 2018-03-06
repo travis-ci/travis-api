@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.3
--- Dumped by pg_dump version 9.6.3
+-- Dumped from database version 9.6.1
+-- Dumped by pg_dump version 9.6.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -70,29 +70,48 @@ CREATE TYPE source_type AS ENUM (
 );
 
 
+--
+-- Name: set_updated_at(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION set_updated_at() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+      BEGIN
+        IF TG_OP = 'INSERT' OR
+             (TG_OP = 'UPDATE' AND NEW.* IS DISTINCT FROM OLD.*) THEN
+          NEW.updated_at := statement_timestamp();
+        END IF;
+        RETURN NEW;
+      END;
+      $$;
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: annotation_providers; Type: TABLE; Schema: public; Owner: -
+-- Name: abuses; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE annotation_providers (
+CREATE TABLE abuses (
     id integer NOT NULL,
-    name character varying,
-    api_username character varying,
-    api_key character varying,
+    owner_id integer,
+    owner_type character varying,
+    request_id integer,
+    level integer NOT NULL,
+    reason character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
 
 
 --
--- Name: annotation_providers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: abuses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE annotation_providers_id_seq
+CREATE SEQUENCE abuses_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -101,45 +120,22 @@ CREATE SEQUENCE annotation_providers_id_seq
 
 
 --
--- Name: annotation_providers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: abuses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE annotation_providers_id_seq OWNED BY annotation_providers.id;
+ALTER SEQUENCE abuses_id_seq OWNED BY abuses.id;
 
 
 --
--- Name: annotations; Type: TABLE; Schema: public; Owner: -
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE annotations (
-    id integer NOT NULL,
-    job_id integer NOT NULL,
-    url character varying,
-    description text NOT NULL,
+CREATE TABLE ar_internal_metadata (
+    key character varying NOT NULL,
+    value character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    annotation_provider_id integer NOT NULL,
-    status character varying
+    updated_at timestamp without time zone NOT NULL
 );
-
-
---
--- Name: annotations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE annotations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: annotations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE annotations_id_seq OWNED BY annotations.id;
 
 
 --
@@ -1067,7 +1063,8 @@ CREATE TABLE subscriptions (
     canceled_at timestamp without time zone,
     canceled_by_id integer,
     status character varying,
-    source source_type DEFAULT 'unknown'::source_type NOT NULL
+    source source_type DEFAULT 'unknown'::source_type NOT NULL,
+    concurrency integer
 );
 
 
@@ -1311,7 +1308,9 @@ CREATE TABLE users (
     github_scopes text,
     education boolean,
     first_logged_in_at timestamp without time zone,
-    avatar_url character varying
+    avatar_url character varying,
+    suspended boolean DEFAULT false,
+    suspended_at timestamp without time zone
 );
 
 
@@ -1335,17 +1334,10 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
--- Name: annotation_providers id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: abuses id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY annotation_providers ALTER COLUMN id SET DEFAULT nextval('annotation_providers_id_seq'::regclass);
-
-
---
--- Name: annotations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY annotations ALTER COLUMN id SET DEFAULT nextval('annotations_id_seq'::regclass);
+ALTER TABLE ONLY abuses ALTER COLUMN id SET DEFAULT nextval('abuses_id_seq'::regclass);
 
 
 --
@@ -1552,19 +1544,19 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 
 --
--- Name: annotation_providers annotation_providers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: abuses abuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY annotation_providers
-    ADD CONSTRAINT annotation_providers_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY abuses
+    ADD CONSTRAINT abuses_pkey PRIMARY KEY (id);
 
 
 --
--- Name: annotations annotations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY annotations
-    ADD CONSTRAINT annotations_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY ar_internal_metadata
+    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
 
 
 --
@@ -1816,10 +1808,17 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: index_annotations_on_job_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_abuses_on_owner; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_annotations_on_job_id ON annotations USING btree (job_id);
+CREATE INDEX index_abuses_on_owner ON abuses USING btree (owner_id);
+
+
+--
+-- Name: index_abuses_on_owner_id_and_owner_type_and_level; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_abuses_on_owner_id_and_owner_type_and_level ON abuses USING btree (owner_id, owner_type, level);
 
 
 --
@@ -1848,6 +1847,13 @@ CREATE INDEX index_broadcasts_on_recipient_id_and_recipient_type ON broadcasts U
 --
 
 CREATE INDEX index_builds_on_repository_id ON builds USING btree (repository_id);
+
+
+--
+-- Name: index_builds_on_repository_id_and_branch_and_event_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_builds_on_repository_id_and_branch_and_event_type ON builds USING btree (repository_id, branch, event_type) WHERE ((state)::text = ANY ((ARRAY['created'::character varying, 'queued'::character varying, 'received'::character varying])::text[]));
 
 
 --
@@ -1960,6 +1966,13 @@ CREATE INDEX index_jobs_on_state ON jobs USING btree (state);
 --
 
 CREATE INDEX index_jobs_on_type_and_source_id_and_source_type ON jobs USING btree (type, source_id, source_type);
+
+
+--
+-- Name: index_jobs_on_updated_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_jobs_on_updated_at ON jobs USING btree (updated_at);
 
 
 --
@@ -2268,6 +2281,20 @@ CREATE UNIQUE INDEX subscriptions_owner ON subscriptions USING btree (owner_id, 
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+
+
+--
+-- Name: builds set_updated_at_on_builds; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER set_updated_at_on_builds BEFORE INSERT OR UPDATE ON builds FOR EACH ROW EXECUTE PROCEDURE set_updated_at();
+
+
+--
+-- Name: jobs set_updated_at_on_jobs; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER set_updated_at_on_jobs BEFORE INSERT OR UPDATE ON jobs FOR EACH ROW EXECUTE PROCEDURE set_updated_at();
 
 
 --
@@ -2781,4 +2808,22 @@ INSERT INTO schema_migrations (version) VALUES ('20170713162000');
 INSERT INTO schema_migrations (version) VALUES ('20170822171600');
 
 INSERT INTO schema_migrations (version) VALUES ('20170831000000');
+
+INSERT INTO schema_migrations (version) VALUES ('20170911172800');
+
+INSERT INTO schema_migrations (version) VALUES ('20171017104500');
+
+INSERT INTO schema_migrations (version) VALUES ('20171024000000');
+
+INSERT INTO schema_migrations (version) VALUES ('20171025000000');
+
+INSERT INTO schema_migrations (version) VALUES ('20171103000000');
+
+INSERT INTO schema_migrations (version) VALUES ('20171211000000');
+
+INSERT INTO schema_migrations (version) VALUES ('20180212000000');
+
+INSERT INTO schema_migrations (version) VALUES ('20180213000000');
+
+INSERT INTO schema_migrations (version) VALUES ('20180222164100');
 
