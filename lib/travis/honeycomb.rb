@@ -33,7 +33,9 @@ module Travis
       end
 
       def honey
-        @honey ||= Libhoney::Client.new
+        @honey ||= Libhoney::Client.new(
+          max_concurrent_batches: ENV['HONEYCOMB_POOL_SIZE']&.to_i || 10,
+        )
       end
 
       def honey_setup
