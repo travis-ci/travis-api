@@ -40,6 +40,10 @@ gem 'stackprof'
 gem 'netaddr'
 gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
 
+gem 'rbtrace'
+gem 'memory_profiler'
+gem 'allocation_tracer'
+
 gem 'jemalloc'
 gem 'customerio'
 
