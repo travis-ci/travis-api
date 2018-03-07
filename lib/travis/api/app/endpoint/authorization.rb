@@ -301,7 +301,12 @@ class Travis::Api::App
         end
 
         def get_token(endpoint, values)
-          conn = Faraday.new(ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact) do |conn|
+          # Get base URL for when we setup Faraday since otherwise it'll ignore no_proxy
+          url = URI.parse(endpoint)
+          base_url = "#{url.scheme}://#{url.host}"
+          http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact} 
+
+          conn = Faraday.new(http_options) do |conn|
             conn.request :json
             conn.use :instrumentation
             conn.adapter :net_http_persistent
