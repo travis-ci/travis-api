@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-ruby '2.3.6'
+ruby '2.5.0'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
@@ -39,6 +39,10 @@ gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
 gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
+
+gem 'rbtrace'
+gem 'memory_profiler'
+gem 'allocation_tracer'
 
 gem 'jemalloc'
 gem 'customerio'
