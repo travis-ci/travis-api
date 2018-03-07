@@ -88,7 +88,7 @@ class Travis::Model::EncryptedColumn
     aes = OpenSSL::Cipher::AES.new(256, :CBC)
 
     aes.send(mode)
-    aes.key = key
+    aes.key = key[0..31]
     aes.iv  = iv
 
     aes
