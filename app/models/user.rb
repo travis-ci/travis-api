@@ -13,6 +13,10 @@ class User < ApplicationRecord
 
   serialize :github_oauth_token, Travis::EncryptedColumn.new
 
+  scope :active, -> { where('suspended = false AND github_oauth_token IS NOT NULL') }
+  scope :inactive, -> { where('suspended = false AND github_oauth_token IS NULL') }
+  scope :suspended, -> { where(suspended: true) }
+
   def has_2fa?
     Travis::DataStores.redis.get("admin-v2:otp:#{login}")
   end

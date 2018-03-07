@@ -1,7 +1,13 @@
 <%= title "Manage enterprise users" %>
 
+<div id="tabs">
+  <%= link_to 'All', enterprise_users_path, class: 'regular-tab-link' %>
+  <%= link_to 'Active', enterprise_users_path(filter: 'active'), class: 'regular-tab-link' %>
+  <%= link_to 'Inactive', enterprise_users_path(filter: 'inactive'), class: 'regular-tab-link' %>
+  <%= link_to 'Suspended', enterprise_users_path(filter: 'suspended'), class: 'regular-tab-link' %>
+</div>
+
 <section class="info-block">
-  <h2 class="info-header">Users</h2>
   <% if @users.empty? %>
     <p>No users.</p>
   <% else %>
@@ -16,5 +22,5 @@
       <% end %>
     </ul>
   <% end %>
-  <%= will_paginate @users, param_name: 'page', 'data-remote': true %>
+  <%= will_paginate @users, param_name: 'page' %>
 </section>
