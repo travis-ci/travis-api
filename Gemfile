@@ -40,7 +40,7 @@ gem 'stackprof'
 gem 'netaddr'
 gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
 
-gem 'jemalloc'
+gem 'jemalloc', git: 'https://github.com/igorwwwwwwwwwwwwwwwwwwww/jemalloc-rb', branch: 'update-5.0.1'
 gem 'customerio'
 
 gem 'redlock'

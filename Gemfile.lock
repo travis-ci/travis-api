@@ -6,6 +6,13 @@ GIT
       metriks (>= 0.9.9.6)
 
 GIT
+  remote: https://github.com/igorwwwwwwwwwwwwwwwwwwww/jemalloc-rb
+  revision: a85455232256d3b12ce3176a297b0cbbd241b8b2
+  branch: update-5.0.1
+  specs:
+    jemalloc (1.0.2)
+
+GIT
   remote: https://github.com/rkh/yard-sinatra
   revision: 00774d355123617ff0faa7e0ebd54c4cdcfcdf93
   specs:
@@ -247,7 +254,6 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     ipaddress (0.8.3)
-    jemalloc (1.0.1)
     json (2.1.0)
     jwt (2.1.0)
     kgio (2.10.0)
@@ -415,7 +421,7 @@ DEPENDENCIES
   foreman
   gh!
   hashdiff
-  jemalloc
+  jemalloc!
   knapsack
   libhoney
   marginalia!
