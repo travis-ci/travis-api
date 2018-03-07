@@ -4,6 +4,7 @@ RSpec.feature 'suspend/unsuspend a user in enterprise mode', js: true, type: :fe
   let!(:user) { create(:user) }
 
   before { Rails.configuration.travis_config.enterprise = true }
+  after { Rails.configuration.travis_config.enterprise = false }
 
   scenario 'suspending' do
     visit "/enterprise_users"

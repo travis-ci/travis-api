@@ -17,7 +17,7 @@ RSpec.feature 'Search', js: true, type: :feature do
     fill_in('q', with: 'lisbethmarianne')
     find_button('search-submit').trigger('click')
 
-    expect(page).to have_text('User - Katrin (lisbethmarianne)')
+    expect(page).to have_text('Katrin (lisbethmarianne)')
   end
 
   scenario "User searches for organization login 'rubymonstas' and gets redirected to the organization view" do
@@ -25,7 +25,7 @@ RSpec.feature 'Search', js: true, type: :feature do
     fill_in('q', with: 'rubymonstas')
     find_button('search-submit').trigger('click')
 
-    expect(page).to have_text('Organization - Ruby Monstas (rubymonstas)')
+    expect(page).to have_text('Ruby Monstas (rubymonstas)')
   end
 
   scenario "User searches for repository name 'test1' and gets the search results page with 2 results" do
@@ -51,62 +51,62 @@ RSpec.feature 'Search', js: true, type: :feature do
     fill_in('q', with: 'help')
     find_button('search-submit').trigger('click')
 
-    expect(page).to have_text('Search Help')
+    expect(page).to have_text('Help')
   end
 
   scenario 'User searches for Committer Name via button on Build view' do
     visit "/builds/#{build.id}"
     find_button('search-committer_name').trigger('click')
 
-    expect(page).to have_text('User - Katrin (lisbethmarianne)')
+    expect(page).to have_text('Katrin (lisbethmarianne)')
   end
 
   scenario 'User searches for Committer Email via button on Build view' do
     visit "/builds/#{build.id}"
     find_button('search-committer_email').trigger('click')
 
-    expect(page).to have_text('User - Katrin (lisbethmarianne)')
+    expect(page).to have_text('Katrin (lisbethmarianne)')
   end
 
   scenario 'User searches for Author Name via button on Build view' do
     visit "/builds/#{build.id}"
     find_button('search-author_name').trigger('click')
 
-    expect(page).to have_text('User - Katrin (lisbethmarianne)')
+    expect(page).to have_text('Katrin (lisbethmarianne)')
   end
 
   scenario 'User searches for Author Email via button on Build view' do
     visit "/builds/#{build.id}"
     find_button('search-author_email').trigger('click')
 
-    expect(page).to have_text('User - Katrin (lisbethmarianne)')
+    expect(page).to have_text('Katrin (lisbethmarianne)')
   end
 
   scenario 'User searches for Committer Name via button on Job view' do
     visit "/jobs/#{job.id}"
     find_button('search-committer_name').trigger('click')
 
-    expect(page).to have_text('User - Katrin (lisbethmarianne)')
+    expect(page).to have_text('Katrin (lisbethmarianne)')
   end
 
   scenario 'User searches for Committer Email via button on Job view' do
     visit "/jobs/#{job.id}"
     find_button('search-committer_email').trigger('click')
 
-    expect(page).to have_text('User - Katrin (lisbethmarianne)')
+    expect(page).to have_text('Katrin (lisbethmarianne)')
   end
 
   scenario 'User searches for Author Name via button on Job view' do
     visit "/jobs/#{job.id}"
     find_button('search-author_name').trigger('click')
 
-    expect(page).to have_text('User - Katrin (lisbethmarianne)')
+    expect(page).to have_text('Katrin (lisbethmarianne)')
   end
 
   scenario 'User searches for Author Email via button on Job view' do
     visit "/jobs/#{job.id}"
     find_button('search-author_email').trigger('click')
 
-    expect(page).to have_text('User - Katrin (lisbethmarianne)')
+    expect(page).to have_text('Katrin (lisbethmarianne)')
   end
 end

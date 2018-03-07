@@ -1,15 +1,19 @@
-<% title "Search Help" %>
+<% title "Help" %>
 
 <section class="info-block">
-  <h2 class="info-header"><%= current_user ? "Welcome #{current_user.name || current_user.login}!" : "Welcome!" %></h2>
-  <p>Enter whatever you're searching for in the search field above.</p>
-  <p>Currently supported values include:</p>
+  <% if travis_config.enterprise? %>
+    <h2 class="info-header">Travis CI Enterprise</h2>
+    <p>This application is running in <b>enterprise mode</b>. Please contact <a href="mailto:enterprise@travis-ci.com">enterprise@travis-ci.com</a> with any questions.</p>
+  <% end %>
+
+  <h2 class="info-header">Search</h2>
+  <p>Enter whatever you're searching for in the search field above. Currently supported search terms:</p>
 
   <ul>
     <li class="inline-list search-info">
-      <p class="info-label">Field</p>
-      <p class="info-label">Type</p>
-      <p class="info-label">Example</p>
+      <p class="info-label">Search term type</p>
+      <p class="info-label">Indexed records</p>
+      <p class="info-label">Example search term</p>
     </li>
 
     <li class="inline-list search-info">
@@ -61,13 +65,13 @@
     </li>
 
     <li class="inline-list search-info">
-      <p>Github Urls</p>
+      <p>GitHub URL</p>
       <p>User, Organization, Repository</p>
       <p>https://github.com/travis-ci</p>
     </li>
 
     <li class="inline-list search-info">
-      <p>Travis CI Urls</p>
+      <p>Travis CI URL</p>
       <p>User, Organization, Repository, Build, Job</p>
       <p>https://travis-ci.com/travis-ci/emerald/builds/6397</p>
     </li>

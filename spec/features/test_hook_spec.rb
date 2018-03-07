@@ -27,7 +27,7 @@ RSpec.feature 'Check Hook', js: true, type: :feature do
 
     WebMock.stub_request(:post, "https://api.github.com/repos/#{repository.slug}/hooks/8993326/test")
 
-    find_button('Test Hook').trigger('click')
+    find_button('Test hook').trigger('click')
 
     expect(page).to have_text('Test hook fired.')
   end

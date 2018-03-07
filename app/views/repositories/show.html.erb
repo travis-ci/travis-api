@@ -1,4 +1,4 @@
-<% title "Repository - #{describe(@repository)}" %>
+<% title describe(@repository) %>
 
 <div id="tabs">
   <%= link_to 'Repository', repository_path(@repository), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>

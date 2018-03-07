@@ -2,10 +2,10 @@
   <h2 class="info-header">Account information</h2>
 
   <dl class="simple-info">
-    <dt class="info-label">Travis ID:</dt>
+    <dt class="info-label">Travis ID</dt>
     <dd><%= owner.id %></dd>
 
-    <dt class="info-label">Account Creation:</dt>
+    <dt class="info-label">Account creation</dt>
     <dd>
       <time>
         <%= owner.created_at %>
@@ -13,7 +13,7 @@
     </dd>
 
 
-    <dt class="info-label">Trial: </dt>
+    <dt class="info-label">Trial</dt>
     <dd>
       <% if owner.latest_trial %>
         <ul style="margin: 0;">
@@ -30,7 +30,7 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Subscription:</dt>
+    <dt class="info-label">Subscription</dt>
     <dd class="inline">
       <p>
         <% if owner.subscription %>
@@ -55,13 +55,13 @@
     </dd>
 
     <% if @last_build %>
-      <dt class="info-label">Last Build:</dt>
+      <dt class="info-label">Last build</dt>
       <dd>
         <%= link_to describe(@last_build), @last_build %>
       </dd>
     <% end %>
 
-    <dt class="info-label">Job Boost:</dt>
+    <dt class="info-label">Boost jobs</dt>
     <dd>
       <%= form_for :boost, url: {action: 'boost', controller: "#{owner.class.table_name}"}, html: {class: 'job-boost inline'} do |f| %>
         <div>
@@ -79,12 +79,12 @@
 <div class="break"></div>
 
 <section class="info-block">
-  <h2 class="info-header">Feature Flags</h2>
+  <h2 class="info-header">Feature flags</h2>
   <%= render partial: 'shared/features_for', locals: {owner: owner} %>
 </section>
 
 <section class="info-block">
-  <h2 class="info-header">Abuse Flags</h2>
+  <h2 class="info-header">Abuse</h2>
   <%= form_for :offender, url: {controller: "offenders", action: "update", login: owner.login}, html: {class: "abuse-form inline"}, method: :put do |f| %>
     <div>
       <% Offender::LISTS.each do |key, description| %>

@@ -7,8 +7,10 @@
       <ul>
         <li class="inline-list org-item">
           <p class="info-label">Name</p>
-          <p class="info-label">Subscription</p>
-          <p class="info-label">Trial Builds</p>
+          <% unless travis_config.enterprise? %>
+            <p class="info-label">Subscription</p>
+            <p class="info-label">Trial Builds</p>
+          <% end %>
         </li>
         <% @organizations.each do |org| %>
             <li class="inline-list org-item">
@@ -16,16 +18,19 @@
                 <%= image_tag(org.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") if org.avatar_url %>
                 <%= link_to org.name.present? ? describe(org) : org.login, org %>
               </p>
-              <p>
-                <% if @subscriptions_by_organization_id[org.id].present? %>
-                  <%= link_to format_subscription(@subscriptions_by_organization_id[org.id].first), organization_path(org, anchor: 'subscription') %>
-                <% else %>
-                  none
-                <% end %>
-              </p>
-              <p>
-                <%= check_trial_builds(org) %>
-              </p>
+
+              <% unless travis_config.enterprise? %>
+                <p>
+                  <% if @subscriptions_by_organization_id[org.id].present? %>
+                    <%= link_to format_subscription(@subscriptions_by_organization_id[org.id].first), organization_path(org, anchor: 'subscription') %>
+                  <% else %>
+                    none
+                  <% end %>
+                </p>
+                <p>
+                  <%= check_trial_builds(org) %>
+                </p>
+              <% end %>
             </li>
         <% end %>
       </ul>

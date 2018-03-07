@@ -1,12 +1,12 @@
 <section class="info-block">
-  <h2 class="info-header">Basic Information</h2>
+  <h2 class="info-header">Basic information</h2>
 
   <% if @user.travis_admin? %>
     <p>This user has <%= link_to "admin access", admins_path %>.</p>
   <% end %>
 
   <dl class="simple-info">
-    <dt class="info-label">Name:</dt>
+    <dt class="info-label">Name</dt>
     <dd class="inline become">
       <p><%= @user.name %></p>
       <div>
@@ -21,17 +21,17 @@
       </div>
     </dd>
 
-    <dt class="info-label">GitHub Login:</dt>
+    <dt class="info-label">GitHub login</dt>
     <dd>
       <%= image_tag(@user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if @user.avatar_url %>
       <%= @user.login %>
       <%= link_to fa_icon("github"), "https://github.com/#{@user.login}", target: "_blank" %>
     </dd>
 
-    <dt class="info-label">GitHub ID:</dt>
+    <dt class="info-label">GitHub ID</dt>
     <dd><%= @user.github_id %></dd>
 
-    <dt class="info-label">Token:</dt>
+    <dt class="info-label">Token</dt>
     <dd class="inline">
       <% if @display_gh_token %>
         <pre><%= @user.github_oauth_token %></pre>
@@ -45,7 +45,7 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Scopes:</dt>
+    <dt class="info-label">Scopes</dt>
     <dd>
       <% if @user.github_scopes.present? %>
         <%= @user.github_scopes %>
@@ -54,7 +54,7 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Last Sync:</dt>
+    <dt class="info-label">Last sync</dt>
     <dd class="inline">
       <p>
         <% if @user.is_syncing? %>
@@ -68,18 +68,20 @@
   </dl>
 </section>
 
-<%= render partial: 'shared/account', locals: {owner: @user} %>
+<% unless travis_config.enterprise? %>
+  <%= render partial: 'shared/account', locals: {owner: @user} %>
+<% end %>
 
 <section class="info-block">
-  <h2 class="info-header">Contact Information</h2>
+  <h2 class="info-header">Contact information</h2>
   <dl class="simple-info">
-    <dt class="info-label">Primary E-mail Address:</dt>
+    <dt class="info-label">Primary e-mail address</dt>
     <dd>
       <%= @user.email %>
       <%= mail_to @user.email, fa_icon("envelope-o") %>
     </dd>
 
-    <dt class="info-label">Additional E-Mail Addresses:</dt>
+    <dt class="info-label">Additional e-mail addresses</dt>
     <dd>
       <% @user.emails.each do |entry| %>
         <% if entry.email != @user.email %>
