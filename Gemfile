@@ -43,12 +43,13 @@ gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
 gem 'rbtrace'
 gem 'memory_profiler'
 gem 'allocation_tracer'
+gem 'derailed_benchmarks', group: :development
 
 gem 'jemalloc'
 gem 'customerio'
 
 gem 'redlock'
-gem 'rake', '~> 0.9.2'
+gem 'rake'
 
 gem 'appsignal'
 gem 'libhoney'
