@@ -46,7 +46,6 @@ gem 'customerio'
 gem 'redlock'
 gem 'rake', '~> 0.9.2'
 
-gem 'appsignal'
 gem 'libhoney'
 
 gem 'faraday'
