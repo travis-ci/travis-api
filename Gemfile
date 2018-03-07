@@ -38,8 +38,11 @@ gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_met
 gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
-gem 'rbtrace'
 gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
+
+gem 'rbtrace'
+gem 'memory_profiler'
+gem 'allocation_tracer'
 
 gem 'jemalloc'
 gem 'customerio'
