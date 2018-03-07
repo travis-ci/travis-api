@@ -147,6 +147,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    allocation_tracer (0.6.3)
     appsignal (2.2.1)
       rack
       thread_safe
@@ -184,7 +185,7 @@ GEM
     excon (0.60.0)
     factory_girl (2.4.2)
       activesupport
-    faraday (0.12.2)
+    faraday (0.14.0)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
@@ -229,7 +230,7 @@ GEM
       multi_json (~> 1.11)
       os (~> 0.9)
       signet (~> 0.7)
-    hashdiff (0.3.1)
+    hashdiff (0.3.7)
     hashr (2.0.0)
     hitimes (1.2.4)
     http (2.2.2)
@@ -265,6 +266,7 @@ GEM
       multi_json (~> 1.10)
     memcachier (0.0.2)
     memoist (0.16.0)
+    memory_profiler (0.9.10)
     metaclass (0.0.4)
     method_source (0.8.2)
     metriks (0.9.9.6)
@@ -278,6 +280,7 @@ GEM
     minitest (5.11.1)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
+    msgpack (1.2.4)
     multi_json (1.12.2)
     multipart-post (2.0.0)
     mustermann (1.0.0.beta2)
@@ -293,19 +296,19 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    public_suffix (3.0.0)
+    public_suffix (3.0.2)
     pusher (0.14.6)
       httpclient (~> 2.5)
       multi_json (~> 1.0)
       pusher-signature (~> 0.1.8)
     pusher-signature (0.1.8)
-    rack (1.6.5)
+    rack (1.6.9)
     rack-attack (5.0.0.beta1)
       rack
     rack-contrib (1.4.0)
       git-version-bump (~> 0.15)
       rack (~> 1.4)
-    rack-protection (1.5.3)
+    rack-protection (1.5.4)
       rack
     rack-ssl (1.4.1)
       rack
@@ -316,8 +319,12 @@ GEM
     rb-fsevent (0.9.8)
     rb-inotify (0.9.7)
       ffi (>= 0.5.0)
+    rbtrace (0.4.10)
+      ffi (>= 1.0.6)
+      msgpack (>= 0.4.3)
+      trollop (>= 1.16.2)
     redcarpet (3.4.0)
-    redis (3.3.2)
+    redis (3.3.5)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
     redlock (0.1.8)
@@ -355,12 +362,12 @@ GEM
       multi_json (~> 1.10)
     simple_states (1.0.2)
       activesupport
-    simplecov (0.12.0)
+    simplecov (0.15.1)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
-    simplecov-html (0.10.0)
-    sinatra (1.4.7)
+    simplecov-html (0.10.2)
+    sinatra (1.4.8)
       rack (~> 1.5)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
@@ -375,9 +382,10 @@ GEM
     stackprof (0.2.10)
     thor (0.19.1)
     thread_safe (0.3.6)
-    tilt (2.0.5)
+    tilt (2.0.8)
     timecop (0.8.1)
     tool (0.2.3)
+    trollop (2.1.2)
     tzinfo (1.2.4)
       thread_safe (~> 0.1)
     uber (0.0.15)
@@ -393,7 +401,7 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    webmock (2.1.0)
+    webmock (3.3.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
@@ -404,6 +412,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
+  allocation_tracer
   appsignal
   bunny (~> 0.8.0)
   customerio
@@ -419,6 +428,7 @@ DEPENDENCIES
   knapsack
   libhoney
   marginalia!
+  memory_profiler
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
   mime-types
@@ -431,6 +441,7 @@ DEPENDENCIES
   rack-contrib
   rake (~> 0.9.2)
   rb-fsevent (~> 0.9.1)
+  rbtrace
   redlock
   rerun
   rspec (~> 2.13)
@@ -457,7 +468,7 @@ DEPENDENCIES
   yard-sinatra!
 
 RUBY VERSION
-   ruby 2.3.6p384
+   ruby 2.5.0p0
 
 BUNDLED WITH
    1.16.1
