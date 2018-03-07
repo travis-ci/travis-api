@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function(){
+  // TODO: Ideally this will be removed when there are no longer any
+  // pages using anchor-based tabbed content
   if (!window.location.hash && document.querySelector('.tab-link')) {
     var hash = document.querySelector('.tab-link').href;
     window.history.replaceState(undefined, undefined, hash);
