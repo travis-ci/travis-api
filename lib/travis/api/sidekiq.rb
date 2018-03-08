@@ -17,10 +17,6 @@ module Travis::API
       end
 
       def gatekeeper_client
-        if ENV['REDIS_GATEKEEPER_ENABLED'] != 'true'
-          return client
-        end
-
         @gatekeeper_client ||= ::Sidekiq::Client.new(gatekeeper_pool)
       end
 
