@@ -6,7 +6,7 @@ module Travis::API::V3
 
     representation(:minimal,    :id, :login)
     representation(:standard,   :id, :login, :name, :github_id, :avatar_url)
-    representation(:additional, :repositories)
+    representation(:additional, :repositories, :subscription)
 
     def initialize(*)
       super
@@ -18,6 +18,10 @@ module Travis::API::V3
     def repositories
       repositories = query(:repositories).for_owner(@model)
       access_control.visible_repositories(repositories)
+    end
+
+    def subscription
+      query(:subscription).for_owner(@model)
     end
   end
 end

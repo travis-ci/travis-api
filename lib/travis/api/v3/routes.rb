@@ -228,5 +228,18 @@ module Travis::API::V3
       route '/user'
       get :current
     end
+
+    resource :subscription do
+      route '/subscription'
+      post :create
+    end
+
+    resource :subscription do
+      capture id: :digit
+      route '/subscription/{subscription.id}'
+      get :find
+
+      post :cancel, '/cancel'
+    end
   end
 end
