@@ -45,7 +45,7 @@ gem 'rbtrace'
 gem 'memory_profiler'
 gem 'allocation_tracer'
 
-gem 'jemalloc', git: 'https://github.com/igorwwwwwwwwwwwwwwwwwwww/jemalloc-rb', branch: 'update-5.0.1'
+gem 'jemalloc', git: 'https://github.com/travis-ci/jemalloc-rb'
 gem 'customerio'
 
 gem 'redlock'

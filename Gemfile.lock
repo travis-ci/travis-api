@@ -6,13 +6,6 @@ GIT
       metriks (>= 0.9.9.6)
 
 GIT
-  remote: https://github.com/igorwwwwwwwwwwwwwwwwwwww/jemalloc-rb
-  revision: a85455232256d3b12ce3176a297b0cbbd241b8b2
-  branch: update-5.0.1
-  specs:
-    jemalloc (1.0.2)
-
-GIT
   remote: https://github.com/rkh/yard-sinatra
   revision: 00774d355123617ff0faa7e0ebd54c4cdcfcdf93
   specs:
@@ -37,6 +30,12 @@ GIT
       multi_json (~> 1.0)
       net-http-persistent (~> 2.9)
       net-http-pipeline
+
+GIT
+  remote: https://github.com/travis-ci/jemalloc-rb
+  revision: e9528e26aff663efa2c124cdeca47700e389097d
+  specs:
+    jemalloc (1.0.2)
 
 GIT
   remote: https://github.com/travis-ci/marginalia
