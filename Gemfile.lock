@@ -80,14 +80,6 @@ GIT
       virtus
 
 GIT
-  remote: https://github.com/travis-ci/travis-sidekiqs
-  revision: c5d4a4abc6c3737f9c43d3333efb94daa18b9fbb
-  specs:
-    travis-sidekiqs (0.0.1)
-      redis-namespace
-      sidekiq
-
-GIT
   remote: https://github.com/travis-ci/travis-support
   revision: 4dda53ffa96b804db22c261551256caa18c4a2cc
   specs:
@@ -438,12 +430,14 @@ DEPENDENCIES
   rake (~> 0.9.2)
   rb-fsevent (~> 0.9.1)
   rbtrace
+  redis-namespace
   redlock
   rerun
   rspec (~> 2.13)
   rspec-its
   s3!
   sentry-raven
+  sidekiq
   simple_states (= 1.0.2)
   simplecov
   sinatra
@@ -456,7 +450,6 @@ DEPENDENCIES
   travis-lock!
   travis-rollout!
   travis-settings!
-  travis-sidekiqs!
   travis-support!
   travis-yaml!
   unicorn

@@ -1,5 +1,4 @@
 require 'multi_json'
-require 'travis/sidekiq/build_request'
 require 'travis/services/base'
 
 class Travis::Api::App
