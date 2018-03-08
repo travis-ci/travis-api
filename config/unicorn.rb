@@ -16,6 +16,7 @@ end
 require 'fileutils'
 before_fork do |server, worker|
   # preload travis so we can have copy on write
+  $: << 'lib'
   require 'travis/api/app'
 
   # signal to nginx we're ready
