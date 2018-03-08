@@ -7,9 +7,8 @@ require 'core_ext/active_record/base'
 
 module Travis
   class Model < ActiveRecord::Base
+    require 'travis/model/scope_access'
     require 'travis/model/account'
-    require 'travis/model/annotation'
-    require 'travis/model/annotation_provider'
     require 'travis/model/branch'
     require 'travis/model/broadcast'
     require 'travis/model/build'
@@ -24,6 +23,7 @@ module Travis
     require 'travis/model/repository'
     require 'travis/model/request'
     require 'travis/model/ssl_key'
+    require 'travis/model/subscription'
     require 'travis/model/token'
     require 'travis/model/user'
     require 'travis/model/url'

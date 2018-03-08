@@ -10,6 +10,7 @@ require 'travis/model/encrypted_column'
 class Request < Travis::Model
   require 'travis/model/request/pr'
 
+  include Travis::ScopeAccess
   include SimpleStates
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
@@ -38,7 +39,6 @@ class Request < Travis::Model
   belongs_to :pull_request
   belongs_to :repository
   belongs_to :owner, polymorphic: true
-  belongs_to :repository
   has_many   :builds
   has_many   :events, as: :source
 
@@ -52,11 +52,11 @@ class Request < Travis::Model
   end
 
   def ref
-    commit.ref
+    commit.try(:ref)
   end
 
   def branch_name
-    commit.branch
+    commit.try(:branch)
   end
 
   def tag_name

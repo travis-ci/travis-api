@@ -1,71 +1,104 @@
 # frozen_string_literal: true
 
-require 'libhoney'
+require 'travis/honeycomb'
 
 class Travis::Api::App
   class Middleware
     class Honeycomb
       attr_reader :app
 
-      ##
-      # @param  [#call]                       app
-      # @param  [Hash{Symbol => Object}]      options
-      # @option options [String]  :writekey   (nil)
-      # @option options [String]  :dataset    (nil)
-      # @option options [String]  :api_host   (nil)
-      def initialize(app, options = {})
+      def initialize(app)
         @app = app
-        @honey = Libhoney::Client.new(options)
       end
 
       def call(env)
-        ev = @honey.event
         request_started_at = Time.now
-        status, headers, response = @app.call(env)
-        request_ended_at = Time.now
+        begin
+          response = @app.call(env)
+          request_ended_at = Time.now
+          request_time = request_ended_at - request_started_at
 
-        ev.add(headers)
-        if headers['CONTENT_LENGTH'] != nil
-          # Content-Length (if present) is a string.  let's change it to an int.
-          ev.add_field('CONTENT_LENGTH', headers['CONTENT_LENGTH'].to_i)
+          honeycomb(env, response, request_time)
+
+          response
+        rescue StandardError => e
+          request_ended_at = Time.now
+          request_time = request_ended_at - request_started_at
+
+          honeycomb(env, [500, {}, nil], request_time, e)
+
+          raise e
         end
-        add_field(ev, 'HTTP_STATUS', status)
-        add_field(ev, 'REQUEST_TIME_MS', (request_ended_at - request_started_at) * 1000)
-
-        # we can't use `ev.add(env)` because json serialization fails.
-        # pull out some interesting and potentially useful fields.
-        add_env(ev, env, 'rack.version')
-        add_env(ev, env, 'rack.multithread')
-        add_env(ev, env, 'rack.multiprocess')
-        add_env(ev, env, 'rack.run_once')
-        add_env(ev, env, 'SCRIPT_NAME')
-        add_env(ev, env, 'QUERY_STRING')
-        add_env(ev, env, 'SERVER_PROTOCOL')
-        add_env(ev, env, 'SERVER_SOFTWARE')
-        add_env(ev, env, 'GATEWAY_INTERFACE')
-        add_env(ev, env, 'REQUEST_METHOD')
-        add_env(ev, env, 'REQUEST_PATH')
-        add_env(ev, env, 'REQUEST_URI')
-        add_env(ev, env, 'HTTP_VERSION')
-        add_env(ev, env, 'HTTP_HOST')
-        add_env(ev, env, 'HTTP_CONNECTION')
-        add_env(ev, env, 'HTTP_CACHE_CONTROL')
-        add_env(ev, env, 'HTTP_UPGRADE_INSECURE_REQUESTS')
-        add_env(ev, env, 'HTTP_USER_AGENT')
-        add_env(ev, env, 'HTTP_ACCEPT')
-        add_env(ev, env, 'HTTP_ACCEPT_LANGUAGE')
-        add_env(ev, env, 'REMOTE_ADDR')
-        ev.send
-
-        [status, headers, response]
       end
 
-      private def add_field(ev, field, value)
-        ev.add_field(field, value) if value != nil && value != ''
+      private def honeycomb(env, response, request_time, e = nil)
+        status, headers, body = response
+
+        event = {}
+
+        event = event.merge(Travis::Honeycomb.context.data)
+        event = event.merge(headers)
+
+        request_queue = nil
+        if env['HTTP_X_REQUEST_START'] && env['metriks.request.start']
+          request_queue = env['metriks.request.start'].to_f*1000 - env['HTTP_X_REQUEST_START'].to_i
+          request_queue = request_queue.to_i
+          request_queue = request_queue > 0 ? request_queue : 0
+        end
+
+        event = event.merge({
+          CONTENT_LENGTH:   headers['CONTENT_LENGTH']&.to_i,
+          HTTP_STATUS:      status,
+          REQUEST_TIME_MS:  request_time * 1000,
+          request_queue_ms: request_queue,
+
+          timing_sql_ms:    Travis::Honeycomb.timing.data[:sql]&.to_i,
+          timing_sql_count: Travis::Honeycomb.timing.frequency[:sql],
+
+          user_id:    env['travis.access_token']&.user&.id,
+          user_login: env['travis.access_token']&.user&.login,
+
+          exception_class:         e&.class&.name,
+          exception_message:       e&.message,
+          exception_cause_class:   e&.cause&.class&.name,
+          exception_cause_message: e&.cause&.message,
+        })
+
+        event = event.merge(env_filter(env, [
+          'SCRIPT_NAME',
+          'QUERY_STRING',
+          'SERVER_PROTOCOL',
+          'SERVER_SOFTWARE',
+          'GATEWAY_INTERFACE',
+          'REQUEST_METHOD',
+          'REQUEST_PATH',
+          'REQUEST_URI',
+          'HTTP_VERSION',
+          'HTTP_HOST',
+          'HTTP_CONNECTION',
+          'HTTP_CACHE_CONTROL',
+          'HTTP_UPGRADE_INSECURE_REQUESTS',
+          'HTTP_USER_AGENT',
+          'HTTP_ACCEPT',
+          'HTTP_ACCEPT_LANGUAGE',
+          'REMOTE_ADDR',
+          'HTTP_X_FORWARDED_FOR',
+          'HTTP_VIA',
+          'HTTP_TRAVIS_API_VERSION',
+          'HTTP_HONEYCOMB_OVERRIDE',
+          'HTTP_REFERER',
+          'rack.attack.matched',
+          'rack.attack.match_type',
+        ]))
+
+        # remove nil and blank values
+        event = event.reject { |k,v| v.nil? || v == '' }
+
+        Travis::Honeycomb.api_requests.send(event)
       end
 
-      private def add_env(ev, env, field)
-        add_field(ev, field, env[field])
+      private def env_filter(env, keys)
+        keys.map { |k| [k, env[k]] }.to_h
       end
     end
   end

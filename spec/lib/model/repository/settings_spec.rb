@@ -128,7 +128,7 @@ describe Repository::Settings do
             it 'adds an error message if invalid' do
               model = settings(type, - 1)
               model.valid?
-              model.errors[:"timeout_#{type}"].should == ["Invalid #{type} timout value (allowed: 0 - #{max})"]
+              model.errors[:"timeout_#{type}"].should == ["Invalid #{type} timeout value (allowed: 0 - #{max})"]
             end
           end
         end

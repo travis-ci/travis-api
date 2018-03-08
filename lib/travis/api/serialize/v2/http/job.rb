@@ -42,7 +42,6 @@ module Travis
                   'queue' => job.queue,
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags,
-                  'annotation_ids' => job.annotation_ids,
                 }
                 data['log_id'] = job.log_id if include_log_id?
                 data

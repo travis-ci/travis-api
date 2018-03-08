@@ -11,15 +11,14 @@ module Travis::API::V3
     has_many :stages
 
     has_many :jobs,
+      -> { order('id') },
       foreign_key: :source_id,
-      order:       :id,
       dependent:   :destroy,
       class_name:  'Travis::API::V3::Models::Job'.freeze
 
     has_many :active_jobs,
+      -> { where("jobs.state IN ('received', 'queued', 'started')".freeze).order('id') },
       foreign_key: :source_id,
-      order:       :id,
-      conditions:  "jobs.state IN ('received', 'queued', 'started')".freeze,
       class_name:  'Travis::API::V3::Models::Job'.freeze
 
     has_one :branch,

@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-ruby '2.3.4'
+ruby '2.5.0'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
@@ -11,7 +11,6 @@ gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
-gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 gem 'travis-rollout',  git: 'https://github.com/travis-ci/travis-rollout', branch: 'sf-refactor'
 
@@ -38,6 +37,13 @@ gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_met
 gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
+gem 'sidekiq'
+gem 'redis-namespace'
+gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
+
+gem 'rbtrace'
+gem 'memory_profiler'
+gem 'allocation_tracer'
 
 gem 'jemalloc'
 gem 'customerio'
@@ -45,9 +51,7 @@ gem 'customerio'
 gem 'redlock'
 gem 'rake', '~> 0.9.2'
 
-gem 'skylight'
-gem 'appsignal'
-gem 'libhoney', git: 'https://github.com/honeycombio/libhoney-rb'
+gem 'libhoney'
 
 gem 'faraday'
 gem 'faraday_middleware'
@@ -59,9 +63,10 @@ group :test do
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
-  gem 'database_cleaner', '~> 0.8.0'
+  gem 'database_cleaner', '~> 1.2.0'
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'
+  gem 'hashdiff'
 end
 
 group :development do

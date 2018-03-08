@@ -6,8 +6,6 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
     User.stubs(:find_by_github_id).returns(user)
     User.stubs(:find).returns(user)
     user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
-    pusher_channel_instance = stub('pusher_channel_instance', channels: ['user-1', 'repo-1', 'repo-2', 'repo-3'])
-    Travis::Api::Serialize::V2::Http::User::PusherChannels.stubs(:new).returns(pusher_channel_instance)
   end
 
   it 'needs to be authenticated' do
@@ -28,7 +26,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       'created_at'     => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'synced_at'      => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'correct_scopes' => true,
-      'channels'       => ["user-1", "repo-1", "repo-2", "repo-3"]
+      'channels'       => ["private-user-1"]
     }
   end
 

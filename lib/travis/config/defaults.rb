@@ -25,13 +25,13 @@ module Travis
 
     define  host:  'travis-ci.org',
             shorten_host:  'trvs.io',
+            public_mode:   !!ENV['PUBLIC_MODE'],
             tokens:        { internal: 'token' },
             auth:          { target_origin: nil },
             assets:        { host: HOSTS[Travis.env.to_sym] },
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
-            logs_readonly_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_api:      { url: logs_api_url, token: logs_api_auth_token },
             log_options:   { s3: { access_key_id: '', secret_access_key: ''}},
             s3:            { access_key_id: '', secret_access_key: ''},
@@ -72,6 +72,14 @@ module Travis
     def initialize(*)
       super
       load_urls
+    end
+
+    def org?
+      host.ends_with?('travis-ci.org')
+    end
+
+    def com?
+      host.ends_with?('travis-ci.com')
     end
   end
 end

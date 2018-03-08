@@ -22,6 +22,21 @@ describe 'Jobs', set_app: true do
     parsed.should == expected
   end
 
+  it "doesn't allow access with travis-token in private mode and with private repo" do
+    Travis.config.public_mode = false
+    Travis.config.host = 'api.travis-ci.com'
+    user = User.first
+    Permission.create(push: true, pull: true, admin: true, repository: job.repository, user: user)
+
+    job.update_column(:private, true)
+    job.repository.update_column(:private, true)
+
+    token = user.tokens.first.token
+
+    response = get "/jobs/#{job.id}?token=#{token}", {}, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2.1+json'
+    response.status.should == 403
+  end
+
   context 'GET /jobs/:job_id/log.txt' do
     it 'returns log for a job' do
       stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
@@ -210,48 +225,6 @@ describe 'Jobs', set_app: true do
     end
   end
 
-  it "GET /jobs/:id/annotations" do
-    annotation_provider = Factory(:annotation_provider)
-    annotation = annotation_provider.annotations.create(job_id: job.id, status: "passed", description: "Foobar")
-    response = get "/jobs/#{job.id}/annotations", {}, headers
-    response.should deliver_json_for(Annotation.where(id: annotation.id), version: 'v2')
-  end
-
-  describe "POST /jobs/:id/annotations" do
-    context "with valid credentials" do
-      it "responds with a 204" do
-        Travis::Services::UpdateAnnotation.any_instance.stubs(:annotations_enabled?).returns(true)
-
-        annotation_provider = Factory(:annotation_provider)
-        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, status: "passed", description: "Foobar" }, headers
-        response.status.should eq(204)
-      end
-    end
-
-    context "without a description" do
-      it "responds with a 422" do
-        annotation_provider = Factory(:annotation_provider)
-        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, status: "errored" }, headers
-        response.status.should eq(422)
-      end
-    end
-
-    context "without a status" do
-      it "responds with a 422" do
-        annotation_provider = Factory(:annotation_provider)
-        response = post "/jobs/#{job.id}/annotations", { username: annotation_provider.api_username, key: annotation_provider.api_key, description: "Foobar" }, headers
-        response.status.should eq(422)
-      end
-    end
-
-    context "with invalid credentials" do
-      it "responds with a 401" do
-        response = post "/jobs/#{job.id}/annotations", { username: "invalid-username", key: "invalid-key", status: "passed", description: "Foobar" }, headers
-        response.status.should eq(401)
-      end
-    end
-  end
-
   describe 'POST /jobs/:id/cancel' do
     let(:user)    { User.where(login: 'svenfuchs').first }
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
@@ -336,7 +309,7 @@ describe 'Jobs', set_app: true do
         response.status.should == 400
       end
 
-      context 'when enqueueing for the Hub' do
+      context 'when enqueuing for the Hub' do
         before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
 
         it 'responds with 400' do

@@ -2,7 +2,7 @@ module Travis::API::V3
   class Renderer::Repository < ModelRenderer
     representation(:minimal,  :id, :name, :slug)
     representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred)
-    representation(:experimental, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build)
+    representation(:experimental, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build)
 
     hidden_representations(:experimental)
 
@@ -28,7 +28,7 @@ module Travis::API::V3
     def include_default_branch?
       return true if include? 'repository.default_branch'.freeze
       return true if include.any? { |i| i.start_with? 'branch'.freeze }
-      return true if included.any? { |i| i.is_a? Models::Branch and i.respository_id == id and i.name == i.default_branch_name }
+      return true if included.any? { |i| i.is_a? Models::Branch and i.repository_id == id and i.name == i.default_branch_name }
     end
 
     def owner

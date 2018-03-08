@@ -1,6 +1,6 @@
 require 'travis/model'
 require 'travis/config/defaults'
-require 'active_support/core_ext/hash/deep_dup'
+require 'active_support/core_ext/object/deep_dup'
 require 'travis/model/build/config/language'
 
 # Job models a unit of work that is run on a remote worker.
@@ -14,6 +14,8 @@ class Job < Travis::Model
   require 'travis/model/job/queue'
   require 'travis/model/job/test'
   require 'travis/model/env_helpers'
+
+  include Travis::ScopeAccess
 
   SAFELISTED_ADDONS = %w(
     apt
@@ -62,7 +64,6 @@ class Job < Travis::Model
   include Travis::Model::EnvHelpers
 
   has_many   :events, as: :source
-  has_many   :annotations, dependent: :destroy
 
   belongs_to :repository
   belongs_to :commit
@@ -103,7 +104,7 @@ class Job < Travis::Model
   end
 
   def state
-    super || 'created'
+    (super || :created).to_sym
   end
 
   def duration
@@ -205,6 +206,7 @@ class Job < Travis::Model
     end
 
     def process_env(env)
+      env = env.to_s if env.is_a?(Float)
       env = [env] unless env.is_a?(Array)
       env = normalize_env(env)
       env = if secure_env_enabled?

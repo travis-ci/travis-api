@@ -65,6 +65,6 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
   end
 
   describe "existing repository, push access"
-  # as this reqires a call to github, and stubbing this request has proven difficult,
+  # as this requires a call to github, and stubbing this request has proven difficult,
   # this test has been omitted for now
 end

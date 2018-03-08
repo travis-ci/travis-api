@@ -25,7 +25,7 @@ describe Repository::StatusImage do
       image.result.should == :passing
     end
 
-    it 'saves state of the build to the cache with its branch even if brianch is not given' do
+    it 'saves state of the build to the cache with its branch even if branch is not given' do
       image = described_class.new(repo, nil)
       cache.expects(:fetch_state).with(repo.id, nil).returns(nil)
       cache.expects(:write).with(repo.id, 'master', build)

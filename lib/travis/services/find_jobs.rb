@@ -5,8 +5,10 @@ module Travis
     class FindJobs < Base
       register :find_jobs
 
+      scope_access!
+
       def run
-        preload(result)
+        result
       end
 
       private
@@ -29,13 +31,12 @@ module Travis
             jobs = jobs.where(queue: params[:queue]) if params[:queue]
             jobs
           end
-          jobs.limit(250)
-        end
 
-        def preload(jobs)
-          jobs = jobs.includes(:commit)
-          ActiveRecord::Associations::Preloader.new(jobs, :repository, :select => [:id, :owner_name, :name]).run
-          jobs
+          if !Travis.config.org? && current_user
+            jobs = jobs.where(repository_id: current_user.repository_ids)
+          end
+
+          jobs.includes(:commit).limit(250)
         end
     end
   end

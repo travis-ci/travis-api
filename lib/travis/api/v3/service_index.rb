@@ -41,6 +41,7 @@ module Travis::API::V3
         all = routes.resources + [
           Routes::Resource.new(:broadcast), # dummy as there are only broadcasts routes right now
           Routes::Resource.new(:commit),    # dummy as commits can only be embedded
+          Routes::Resource.new(:message),   # dummy as there is only a messages route right now
           Routes::Resource.new(:request),   # dummy as there are only requests routes right now
           Routes::Resource.new(:stage),     # dummy as there is no stage endpoint at the moment
           Routes::Resource.new(:error),
@@ -106,9 +107,9 @@ module Travis::API::V3
           list    = resources[resource.display_identifier][:actions][service] ||= []
           pattern = sub_route ? resource.route + sub_route : resource.route
           factory = Services[resource.identifier][service]
+          query   = Queries[resource.display_identifier, false]
 
           if factory.params and factory.params.include? "sort_by".freeze
-            query = Queries[resource.display_identifier]
             if query and query.sortable?
               resources[resource.display_identifier][:sortable_by]  = query.sort_by.keys - query.experimental_sortable_by
               resources[resource.display_identifier][:default_sort] = query.default_sort unless query.default_sort.empty?
@@ -117,7 +118,12 @@ module Travis::API::V3
 
           pattern.to_templates.each do |template|
             params    = factory.params if request_method == 'GET'.freeze
-            params  &&= params.reject { |p| p.start_with? ?@.freeze }
+            params  &&= params.reject { |p| p.start_with?(?@.freeze) }
+
+            if query
+              params &&= params.reject { |p| query.get_experimental_params.include?(p) }
+            end
+
             template += "{?#{params.sort.join(?,)}}" if params and params.any?
             action    = {
               :@type => :template,
@@ -131,13 +137,13 @@ module Travis::API::V3
         end
       end
 
-      {
+      set_to_a({
         :@type     => :home,
         :@href     => "#{prefix}/",
         :config    => config,
         :errors    => errors,
         :resources => resources
-      }
+      })
     end
 
     def render_json_home
@@ -181,11 +187,24 @@ module Travis::API::V3
         }]
       end
 
-      { resources: Hash[resources] }
+      set_to_a({ resources: Hash[resources] })
     end
 
     def json_home?(env)
       env['HTTP_ACCEPT'.freeze] == 'application/json-home'.freeze
+    end
+
+    def set_to_a(data)
+      case data
+      when Hash
+        data.map { |k,v| [set_to_a(k), set_to_a(v)] }.to_h
+      when Array
+        data.map { |v| set_to_a(v) }
+      when Set
+        data.map { |v| set_to_a(v) }.to_a
+      else
+        data
+      end
     end
   end
 end

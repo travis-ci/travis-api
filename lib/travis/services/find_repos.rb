@@ -5,6 +5,8 @@ module Travis
     class FindRepos < Base
       register :find_repos
 
+      scope_access!
+
       def run
         result
       end
@@ -28,6 +30,11 @@ module Travis
           if params[:search].present?
             scope = scope.search(params[:search]).order('last_build_started_at DESC NULLS LAST')
           end
+
+          if !Travis.config.org? && current_user && timeline?
+            scope = scope.where(id: current_user.repository_ids)
+          end
+
           scope = scope.limit(limit) if limit
           scope
         end

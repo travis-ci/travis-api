@@ -45,6 +45,23 @@ module Travis::API::V3
       name[/[^:]+$/].underscore
     end
 
+    def self.experimental_params(*list, prefix: nil, method_name: nil)
+      @experimental_params ||= []
+
+      list.each do |entry|
+        @experimental_params << [prefix, entry].compact.map(&:to_s).join('.')
+        @experimental_params << entry.to_s
+      end
+
+      params(*list, prefix: prefix, method_name: method_name)
+
+      @experimental_params
+    end
+
+    def self.get_experimental_params
+      @experimental_params || []
+    end
+
     def self.params(*list, prefix: nil, method_name: nil)
       prefix   ||= type.to_s
       check_type = method_name.nil? and type != prefix

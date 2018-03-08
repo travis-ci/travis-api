@@ -1,4 +1,5 @@
 describe Travis::API::V3::Services::Builds::Find, set_app: true do
+  include Support::Formats
   let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build)  { repo.builds.first }
   let(:stages) { build.stages }
@@ -12,6 +13,8 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     deploy = build.stages.create(number: 2, name: 'deploy')
     build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
     build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+    build.reload
+    build.jobs.each(&:reload)
   end
 
   describe "fetching builds on a public repository by slug" do
@@ -22,18 +25,18 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
   describe "fetching builds on a non-existing repository by slug" do
     before     { get("/v3/repo/svenfuchs%2Fminimal1/builds")     }
     example { expect(last_response).to be_not_found }
-    example { expect(parsed_body).to be == {
+    example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "not_found",
       "error_message" => "repository not found (or insufficient access)",
       "resource_type" => "repository"
-    }}
+    })}
   end
 
   describe "builds on public repository" do
     before     { get("/v3/repo/#{repo.id}/builds?limit=1") }
     example    { expect(last_response).to be_ok }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"                 => "builds",
       "@href"                 => "/v3/repo/#{repo.id}/builds?limit=1",
       "@representation"       => "standard",
@@ -74,6 +77,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "pull_request_title"  => build.pull_request_title,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
+        "updated_at"          => json_format_time_with_ms(build.updated_at),
         "repository"          => {
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -141,7 +145,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "id"                => 1,
           "login"             => "svenfuchs"}
       }]
-    }}
+    })}
   end
 
   describe "builds private repository, private API, authenticated as user with access" do
@@ -152,7 +156,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     before        { get("/v3/repo/#{repo.id}/builds?limit=1", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example    { expect(parsed_body).to be == {
+    example    { expect(parsed_body).to eql_json({
       "@type"                 => "builds",
       "@href"                 => "/v3/repo/#{repo.id}/builds?limit=1",
       "@representation"       => "standard",
@@ -193,6 +197,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "pull_request_title"  => build.pull_request_title,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
+        "updated_at"          => json_format_time_with_ms(build.updated_at),
         "repository"          => {
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -260,7 +265,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
           "id"                => 1,
           "login"             => "svenfuchs"}
       }]
-    }}
+    })}
   end
 
   describe "including branch.name params on existing branch" do
@@ -300,12 +305,12 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     before  { get("/v3/repo/svenfuchs%2Fminimal/builds")     }
 
     example { expect(last_response).to be_ok  }
-    example { expect(parsed_body['builds'][0]['tag']).to be == {
+    example { expect(parsed_body['builds'][0]['tag']).to eql_json({
       "@type"           => "tag",
       "@representation" => "minimal",
       "repository_id"   => 1,
       "name"            => "v1.0.0",
       "last_build_id"   => nil
-    }}
+    })}
   end
 end

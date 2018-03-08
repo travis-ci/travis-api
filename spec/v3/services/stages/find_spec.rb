@@ -17,7 +17,7 @@ describe Travis::API::V3::Services::Stages::Find, set_app: true do
   describe "stages on public repository" do
     before     { get("/v3/build/#{build.id}/stages") }
     example    { expect(last_response).to be_ok }
-    example       { expect(parsed_body).to be == {
+    example       { expect(parsed_body).to eql_json({
       "@type"=>"stages",
       "@href"=>"/v3/build/#{build.id}/stages",
       "@representation"=>"standard",
@@ -58,7 +58,7 @@ describe Travis::API::V3::Services::Stages::Find, set_app: true do
           "@representation"=>"minimal",
           "id"=>stages[1].jobs[1].id}
         ]}
-      ]}
+      ]})
     }
   end
 
@@ -70,7 +70,7 @@ describe Travis::API::V3::Services::Stages::Find, set_app: true do
     before        { get("/v3/build/#{build.id}/stages", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example       { expect(parsed_body).to be == {
+    example       { expect(parsed_body).to eql_json({
       "@type"=>"stages",
       "@href"=>"/v3/build/#{build.id}/stages",
       "@representation"=>"standard",
@@ -111,7 +111,7 @@ describe Travis::API::V3::Services::Stages::Find, set_app: true do
           "@representation"=>"minimal",
           "id"=>stages[1].jobs[1].id}
         ]}
-      ]}
+      ]})
     }
   end
 
@@ -125,7 +125,7 @@ describe "stages private repository, private API, authenticated as user with pus
     before        { get("/v3/build/#{build.id}/stages", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example       { expect(parsed_body).to be == {
+    example       { expect(parsed_body).to eql_json({
       "@type"=>"stages",
       "@href"=>"/v3/build/#{build.id}/stages",
       "@representation"=>"standard",
@@ -166,7 +166,7 @@ describe "stages private repository, private API, authenticated as user with pus
           "@representation"=>"minimal",
           "id"=>stages[1].jobs[1].id}
         ]}
-      ]}
+      ]})
     }
   end
 end

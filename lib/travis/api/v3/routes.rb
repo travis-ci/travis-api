@@ -32,11 +32,23 @@ module Travis::API::V3
       get :for_current_user
     end
 
+    resource :jobs do
+      route '/jobs'
+      get :for_current_user
+    end
+
     resource :cron do
       capture id: :digit
       route '/cron/{cron.id}'
       get :find
       delete :delete
+    end
+
+    enterprise do
+      resource :enterprise_license do
+        get :find
+        route '/enterprise_license'
+      end
     end
 
     resource :job do
@@ -51,6 +63,7 @@ module Travis::API::V3
       resource :log do
         route '/log'
         get   :find
+        get   :find, '.txt'
         delete :delete
       end
 
@@ -143,6 +156,11 @@ module Travis::API::V3
       resource :request do
         route '/request/{request.id}'
         get  :find
+
+        resource :messages do
+          route '/messages'
+          get :for_request
+        end
       end
 
       resource :user_settings, as: :settings do

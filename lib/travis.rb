@@ -6,6 +6,8 @@ require 'travis/errors'
 
 module Travis
   class << self
+    attr_accessor :testing
+
     def services=(services)
       @services = services
     end

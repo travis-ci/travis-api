@@ -13,8 +13,6 @@ class User < Travis::Model
   has_many :repositories, through: :permissions
   has_many :emails, dependent: :destroy
 
-  attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id, :locale, :education, :first_logged_in_at
-
   before_create :set_as_recent
   after_create :create_a_token
   before_save :track_previous_changes
@@ -39,6 +37,10 @@ class User < Travis::Model
     def with_email(email_address)
       Email.where(email: email_address).first.try(:user)
     end
+  end
+
+  def token
+    tokens.first.try(:token)
   end
 
   def to_json
@@ -68,7 +70,7 @@ class User < Travis::Model
   def service_hooks(options = {})
     hooks = repositories
     unless options[:all]
-      hooks = hooks.administratable
+      hooks = hooks.administrable
     end
     hooks = hooks.includes(:permissions).
               select('repositories.*, permissions.admin as admin, permissions.push as push')
@@ -131,6 +133,16 @@ class User < Travis::Model
     else
       GRAVATAR_URL % Digest::MD5.hexdigest(email)
     end
+  end
+
+  def subscribed?
+    subscription.present? and subscription.active?
+  end
+
+  def subscription
+    return @subscription if instance_variable_defined?(:@subscription)
+    records = Subscription.where(owner_id: id, owner_type: "User")
+    @subscription = records.where(status: 'subscribed').last || records.last
   end
 
   def _has

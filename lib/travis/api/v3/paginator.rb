@@ -19,7 +19,12 @@ module Travis::API::V3
       offset &&= Integer(offset, :offset)
       offset   = 0 if offset.nil? or offset < 0
 
-      count = result.resource.count
+      if ENV['PAGINATION_COUNT_CACHE_ENABLED'] == 'true'
+        count = CountCache.new(result).count
+      else
+        count = result.resource.count(:all)
+      end
+
       result.resource = result.resource.limit(limit)   unless limit  == 0
       result.resource = result.resource.offset(offset) unless offset == 0
 

@@ -1,13 +1,10 @@
-# these things need to go first
-require 'conditional_skylight'
-require 'active_record_postgres_variables'
-
 # now actually load travis
 require 'travis'
 require 'travis/amqp'
 require 'travis/model'
 require 'travis/states_cache'
 require 'travis/honeycomb'
+require 'travis/marginalia'
 require 'rack'
 require 'rack/protection'
 require 'rack/contrib/config'
@@ -29,16 +26,15 @@ require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'securerandom'
 require 'fog/aws'
+require 'rbtrace'
 
 module Travis::Api
 end
 
 require 'travis/api/app/endpoint'
 require 'travis/api/app/middleware'
-require 'travis/api/instruments'
 require 'travis/api/serialize/v2'
 require 'travis/api/v3'
-require 'travis/api/app/stack_instrumentation'
 require 'travis/api/app/error_handling'
 require 'travis/api/sidekiq'
 
@@ -100,28 +96,39 @@ module Travis::Api
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
 
+        use Rack::Config do |env|
+          env['metriks.request.start'] ||= Time.now.utc
+
+          Travis::Honeycomb.clear
+          Travis::Honeycomb.context.add('request_id', env['HTTP_X_REQUEST_ID'])
+
+          ::Marginalia.clear!
+          ::Marginalia.set('app', 'api')
+          ::Marginalia.set('request_id', env['HTTP_X_REQUEST_ID'])
+        end
+
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
 
-        extend StackInstrumentation
-        use Travis::Api::App::Middleware::Skylight
-        use(Rack::Config) { |env| env['metriks.request.start'] ||= Time.now.utc }
+        use Rack::Config do |env|
+          if env['HTTP_HONEYCOMB_OVERRIDE'] == 'true'
+            Travis::Honeycomb.override!
+          end
+        end
 
-        Travis::Honeycomb.rpc_setup
+        if Travis::Honeycomb.api_requests.enabled?
+          use Travis::Api::App::Middleware::Honeycomb
+        end
 
-        if ENV['HONEYCOMB_ENABLED_FOR_DYNOS']&.split(' ')&.include?(ENV['DYNO'])
-          Travis.logger.info 'honeycomb enabled'
-          use Travis::Api::App::Middleware::Honeycomb,
-            writekey: ENV['HONEYCOMB_WRITEKEY'],
-            dataset: ENV['HONEYCOMB_DATASET'],
-            sample_rate: ENV['HONEYCOMB_SAMPLE_RATE']&.to_i || 1
+        if Travis::Api::App::Middleware::LogTracing.enabled?
+          use Travis::Api::App::Middleware::LogTracing
         end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
         if Travis::Api::App.use_monitoring?
           use Rack::Config do |env|
             if env['HTTP_X_REQUEST_ID']
-              Raven.tags_context(x_request_id: env['HTTP_X_REQUEST_ID'])
+              Raven.tags_context(request_id: env['HTTP_X_REQUEST_ID'])
             end
           end
           use Raven::Rack
@@ -226,6 +233,18 @@ module Travis::Api
       end
 
       def self.setup_database_connections
+        if ENV['QUERY_COMMENTS_ENABLED'] == 'true'
+          Travis::Marginalia.setup
+        end
+
+        if Travis::Api::App::Middleware::LogTracing.enabled?
+          Travis::Api::App::Middleware::LogTracing.setup
+        end
+
+        if ENV['MODEL_RENDERER_TRACING_ENABLED'] == 'true'
+          Travis::API::V3::ModelRenderer.install_tracer
+        end
+
         Travis.config.database.variables                    ||= {}
         Travis.config.database.variables[:application_name] ||= ["api", Travis.env, ENV['DYNO']].compact.join(?-)
         Travis::Database.connect
@@ -233,6 +252,11 @@ module Travis::Api
 
       def self.setup_monitoring
         Travis::Api::App::ErrorHandling.setup
+
+        Travis::Honeycomb::Context.add_permanent('app', 'api')
+        Travis::Honeycomb::Context.add_permanent('dyno', ENV['DYNO'])
+        Travis::Honeycomb::Context.add_permanent('site', ENV['TRAVIS_SITE'])
+        Travis::Honeycomb.setup
 
         Travis::LogSubscriber::ActiveRecordMetrics.attach
         Travis::Notification.setup(instrumentation: false)

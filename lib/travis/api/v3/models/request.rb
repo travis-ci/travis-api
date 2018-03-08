@@ -7,13 +7,14 @@ module Travis::API::V3
     has_many   :builds
     serialize  :config
     serialize  :payload
+    has_many   :messages, as: :subject
 
     def branch_name
       commit.branch if commit
     end
 
     def payload
-      puts "[deprectated] Reading request.payload. Called from #{caller[0]}" # unless caller[0] =~ /(dirty.rb|request.rb|_spec.rb)/
+      puts "[deprecated] Reading request.payload. Called from #{caller[0]}" # unless caller[0] =~ /(dirty.rb|request.rb|_spec.rb)/
       super
     end
   end

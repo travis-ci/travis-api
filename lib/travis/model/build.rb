@@ -47,6 +47,7 @@ class Build < Travis::Model
   require 'travis/model/build/states'
   require 'travis/model/env_helpers'
 
+  include Travis::ScopeAccess
   include Matrix, States, SimpleStates
 
   belongs_to :commit
@@ -54,7 +55,7 @@ class Build < Travis::Model
   belongs_to :pull_request
   belongs_to :repository, autosave: true
   belongs_to :owner, polymorphic: true
-  has_many   :matrix, as: :source, order: :id, class_name: 'Job::Test', dependent: :destroy
+  has_many   :matrix, -> { order('id') }, as: :source, class_name: 'Job::Test', dependent: :destroy
   has_many   :events, as: :source
 
   validates :repository_id, :commit_id, :request_id, presence: true
@@ -170,7 +171,7 @@ class Build < Travis::Model
   end
 
   def state
-    super || 'created'
+    (super || :created).to_sym
   end
 
   # AR 3.2 does not handle pg arrays and the plugins supporting them
@@ -196,7 +197,7 @@ class Build < Travis::Model
   end
 
   def config
-    @config ||= Config.new(super, multi_os: repository.multi_os_enabled?).normalize
+    @config ||= Config.new(super, multi_os: repository.try(:multi_os_enabled?)).normalize
   end
 
   def obfuscated_config
