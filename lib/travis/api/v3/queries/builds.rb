@@ -12,7 +12,7 @@ module Travis::API::V3
     def active_from(repositories)
       V3::Models::Build.where(
         repository_id: repositories.pluck(:id),
-        state: ['created'.freeze, 'started'.freeze]
+        state: ['created'.freeze, 'queued'.freeze, 'received'.freeze, 'started'.freeze]
       ).includes(:active_jobs)
     end
 
