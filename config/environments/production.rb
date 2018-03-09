@@ -86,12 +86,12 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.travis_config = TravisConfig.load
+  tc = config.travis_config = TravisConfig.load
 
   config.middleware.use Travis::SSO,
     mode: :session,
-    endpoint: config.travis_config.api_endpoint,
-    authorized?:    -> u   { config.travis_config.admins.include? u['login'] },
+    endpoint: tc.api_endpoint,
+    authorized?:    -> u   { tc.admins.include? u['login'] },
     get_otp_secret: -> u   { Travis::DataStores.redis.get("admin-v2:otp:#{u['login']}")    },
     set_otp_secret: -> u,s { Travis::DataStores.redis.set("admin-v2:otp:#{u['login']}", s) }
 end
