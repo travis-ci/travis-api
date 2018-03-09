@@ -1,8 +1,8 @@
 <section class="info-block">
-  <h2 class="info-header">General Information</h2>
+  <h2 class="info-header">Information</h2>
 
   <dl class="simple-info">
-    <dt class="info-label">State:</dt>
+    <dt class="info-label">State</dt>
     <dd class="inline">
       <p><%= @job.state %></p>
       <% if @job.not_finished? %>
@@ -12,49 +12,49 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Repository:</dt>
+    <dt class="info-label">Repository</dt>
     <dd><%= link_to describe(@job.repository), @job.repository %></dd>
 
-    <dt class="info-label">Owner:</dt>
+    <dt class="info-label">Owner</dt>
     <dd>
       <%= image_tag(@job.owner.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if @job.owner.avatar_url %>
       <%= link_to describe(@job.owner), @job.owner %>
     </dd>
 
-    <dt class="info-label">Build:</dt>
+    <dt class="info-label">Build</dt>
     <dd><%= link_to describe(@job.build), @job.build %></dd>
 
-    <dt class="info-label">Created:</dt>
+    <dt class="info-label">Created</dt>
     <dd><time><%= @job.created_at %></time></dd>
 
-    <dt class="info-label">Queued:</dt>
+    <dt class="info-label">Queued</dt>
     <dd><time><%= @job.queued_at %></time></dd>
 
-    <dt class="info-label">Received:</dt>
+    <dt class="info-label">Received</dt>
     <dd><time><%= @job.received_at %></time></dd>
 
-    <dt class="info-label">Started:</dt>
+    <dt class="info-label">Started</dt>
     <dd><time><%= @job.started_at %></time></dd>
 
-    <dt class="info-label">Finished:</dt>
+    <dt class="info-label">Finished</dt>
     <dd><time><%= @job.finished_at %></time></dd>
 
-    <dt class="info-label">Duration:</dt>
+    <dt class="info-label">Duration</dt>
     <dd><time><%= format_duration(@job.duration) %></time></dd>
 
-    <dt class="info-label">Queued:</dt>
+    <dt class="info-label">Queued</dt>
     <dd><time><%= format_short_duration(@job.time_queued) %></time></dd>
 
-    <dt class="info-label">Branch:</dt>
+    <dt class="info-label">Branch</dt>
     <dd><%= @job.commit.branch %></dd>
 
-    <dt class="info-label">Commit:</dt>
+    <dt class="info-label">Commit</dt>
     <dd><%= @job.commit.commit %></dd>
 
-    <dt class="info-label">Subject:</dt>
+    <dt class="info-label">Subject</dt>
     <dd><%= @job.commit.message %></dd>
 
-    <dt class="info-label">Committer:</dt>
+    <dt class="info-label">Committer</dt>
     <dd class="inline committer">
       <p>
         <%= @job.commit.committer_name %>
@@ -78,7 +78,7 @@
       </div>
     </dd>
 
-    <dt class="info-label">Author:</dt>
+    <dt class="info-label">Author</dt>
     <dd class="inline author">
       <p>
         <%= @job.commit.author_name %>
@@ -102,7 +102,7 @@
       </div>
     </dd>
 
-    <dt class="info-label">Config Status:</dt>
+    <dt class="info-label">Config status</dt>
     <dd><%= @job.config ? @job.config_result : 'pending' %></dd>
   </dl>
 </section>
