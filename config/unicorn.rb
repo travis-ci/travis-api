@@ -16,6 +16,7 @@ end
 require 'fileutils'
 before_fork do |server, worker|
   # preload travis so we can have copy on write
+  $: << 'lib'
   require 'nakayoshi_fork'
   require 'travis/api/app'
 
