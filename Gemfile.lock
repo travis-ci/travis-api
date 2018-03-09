@@ -249,6 +249,7 @@ GEM
     multi_json (1.12.2)
     multipart-post (2.0.0)
     mustermann (1.0.0.beta2)
+    nakayoshi_fork (0.0.3)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
     netaddr (1.5.1)
@@ -407,6 +408,7 @@ DEPENDENCIES
   mocha (~> 0.12)
   multi_json
   mustermann
+  nakayoshi_fork
   netaddr
   pg (~> 0.21)
   pry
