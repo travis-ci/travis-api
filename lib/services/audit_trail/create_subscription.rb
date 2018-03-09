@@ -2,12 +2,13 @@ module Services
   module AuditTrail
     class CreateSubscription < Struct.new(:current_user, :subscription)
       include Services::AuditTrail::Base
-      include SubscriptionsHelper
-
-      private
 
       def message
-        "created a #{format_plan(subscription.selected_plan)} subscription for #{describe(subscription.owner)}"
+        'created a subscription'
+      end
+
+      def args
+        { owner: subscription.owner, plan: subscription.selected_plan }
       end
     end
   end

@@ -3,10 +3,12 @@ module Services
     class Sync < Struct.new(:current_user, :user)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "triggered sync for #{user.class.to_s == 'User' ? describe(user) : user.join(', ')}"
+        'triggered sync'
+      end
+
+      def args
+        { user_id: Array(user).join(',') }
       end
     end
   end

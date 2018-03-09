@@ -163,6 +163,7 @@ GEM
     json (2.0.2)
     launchy (2.4.3)
       addressable (~> 2.3)
+    logfmt (0.0.8)
     loofah (2.2.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -321,6 +322,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   launchy
+  logfmt
   metriks
   pg
   poltergeist

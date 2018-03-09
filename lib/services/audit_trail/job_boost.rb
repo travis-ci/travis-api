@@ -3,10 +3,12 @@ module Services
     class JobBoost < Struct.new(:current_user, :hours, :limit)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "set job boost to #{limit}, expires after #{hours} hours"
+        'set job boost'
+      end
+
+      def args
+        { limit: limit, hours: hours }
       end
     end
   end

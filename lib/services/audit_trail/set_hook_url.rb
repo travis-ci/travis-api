@@ -3,10 +3,12 @@ module Services
     class SetHookUrl < Struct.new(:current_user, :repository, :hook_url)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "set notification target for #{repository.slug} to #{hook_url}"
+        'set notification target'
+      end
+
+      def args
+        { repo: repository.slug, hook: hook_url }
       end
     end
   end

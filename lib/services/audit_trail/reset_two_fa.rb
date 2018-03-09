@@ -3,10 +3,12 @@ module Services
     class ResetTwoFa < Struct.new(:current_user, :user)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "reset #{user.login}'s two-factor auth secret"
+        'reset two-factor auth secret'
+      end
+
+      def args
+        { user: user.login }
       end
     end
   end

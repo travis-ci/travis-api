@@ -42,6 +42,7 @@ gem 'rollout'
 gem 'rotp'
 gem 'sentry-raven'
 gem 'will_paginate', '~> 3.1.0'
+gem 'logfmt'
 
 group :console, :test do
   gem 'pry'

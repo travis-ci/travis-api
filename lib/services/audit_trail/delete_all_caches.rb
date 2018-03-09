@@ -3,10 +3,12 @@ module Services
     class DeleteAllCaches < Struct.new(:current_user, :repository)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "deleted all caches for #{repository.slug}"
+        'deleted all caches'
+      end
+
+      def args
+        { repo: repository.slug }
       end
     end
   end

@@ -3,10 +3,12 @@ module Services
     class DisplayToken < Struct.new(:current_user, :user)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "is displaying #{user.login}'s GitHub token"
+        'displayed token'
+      end
+
+      def args
+        { user: user.login, admin: current_user.login }
       end
     end
   end
