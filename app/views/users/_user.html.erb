@@ -9,16 +9,18 @@
     <dt class="info-label">Name</dt>
     <dd class="inline become">
       <p><%= @user.name %></p>
-      <div>
-        <%= form_tag(become_url(@user), class: 'become-button') do %>
-          <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
-          <%= submit_tag("Log in as", class: "button") %>
-        <% end %>
-        <%= form_tag("#{become_url(@user)}?billing=true", class: 'billing-button') do %>
-          <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
-          <%= submit_tag("Billing", class: "button") %>
-        <% end %>
-      </div>
+      <% unless travis_config.enterprise? %>
+        <div>
+          <%= form_tag(become_url(@user), class: 'become-button') do %>
+            <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
+            <%= submit_tag("Log in as", class: "button") %>
+          <% end %>
+          <%= form_tag("#{become_url(@user)}?billing=true", class: 'billing-button') do %>
+            <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
+            <%= submit_tag("Billing", class: "button") %>
+          <% end %>
+        </div>
+      <% end %>
     </dd>
 
     <dt class="info-label">GitHub login</dt>
