@@ -8,7 +8,7 @@ module Services
       end
 
       def args
-        { user_id: Array(user).join(',') }
+        { user_login: Array(user).join(',') }
       end
     end
   end
