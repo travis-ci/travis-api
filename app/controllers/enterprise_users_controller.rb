@@ -6,12 +6,14 @@ class EnterpriseUsersController < ApplicationController
   def suspend
     @user = User.find(params[:id])
     @user.update_attributes!(suspended: true, suspended_at: Time.now.utc)
+    Services::AuditTrail::SuspendUser.new(current_user, @user).call
     request.xhr? ? render('replace_user') : redirect_to(enterprise_users_url(params.slice(:page, :filter)))
   end
 
   def unsuspend
     @user = User.find(params[:id])
     @user.update_attributes!(suspended: false, suspended_at: nil)
+    Services::AuditTrail::UnsuspendUser.new(current_user, @user).call
     request.xhr? ? render('replace_user') : redirect_to(enterprise_users_url(params.slice(:page, :filter)))
   end
 
