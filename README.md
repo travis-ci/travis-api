@@ -58,6 +58,23 @@ $ bundle exec rake
 ```sh-session
 ENV=development bundle exec ruby -Ilib -S rackup
 ```
+
+### To test your branch locally:
+- checkout your branch
+- run the local server:
+`ENV=development bundle exec ruby -Ilib -S rackup`
+
+- get the correct token in another window:
+`travis login --api-endpoint=http://localhost:9292`
+`travis token --api-endpoint=http://localhost:9292`
+
+- run a request:
+```
+curl -H "Travis-API-Version: 3" \
+     -H "Authorization: token xxxxxxxxxxxx" \
+     http://localhost:9292/repos
+```
+
 (The database connection can be overwritten by setting a DATABASE_URL env var. Please ensure you also set ENV to the corresponding env and add encryption key config to `config/travis.yml`)
 
 ### Run the server (production)
