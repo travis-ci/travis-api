@@ -58,7 +58,64 @@ $ bundle exec rake
 ```sh-session
 ENV=development bundle exec ruby -Ilib -S rackup
 ```
+
+### To test your branch locally:
+- checkout your branch
+- run the local server:
+```sh-session
+ENV=development bundle exec ruby -Ilib -S rackup
+```
+
+- get the correct token in another window:
+```sh-session
+travis login --api-endpoint=http://localhost:9292
+travis token --api-endpoint=http://localhost:9292
+```
+- run a request:
+```sh-session
+curl -H "Travis-API-Version: 3" \
+     -H "Authorization: token xxxxxxxxxxxx" \
+     http://localhost:9292/repos
+```
+
 (The database connection can be overwritten by setting a DATABASE_URL env var. Please ensure you also set ENV to the corresponding env and add encryption key config to `config/travis.yml`)
+
+### Test billing locally:
+To test billing locally add the following code to the config/travis.yml:
+
+```
+development:
+  billing:
+    url: "http://localhost:9292"
+    auth_key: "auth_keys"
+```
+go to your local api repo and make sure API is running on port 9293:
+
+```
+ENV=development  bundle exec ruby -Ilib -S rackup -p 9293
+```
+
+go to your local billing repo and run which runs on 9292:
+```
+make start
+```
+and then you can run:
+
+```
+curl -H "Travis-API-Version: 3" \
+     -H "Authorization: token kqYocxHlFDSWRSgmmL7zuA" \
+     http://localhost:9293/subscriptions
+{
+  "@type": "subscriptions",
+  "@href": "/subscriptions",
+  "@representation": "standard",
+  "subscriptions": [
+
+  ]
+}
+```
+
+
 
 ### Run the server (production)
 ```sh-session

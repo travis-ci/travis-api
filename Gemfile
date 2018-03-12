@@ -8,7 +8,7 @@ gem 'mime-types'
 
 gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
-gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config'
+gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config', branch: 'fix-docker-redis-url'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 gem 'travis-rollout',  git: 'https://github.com/travis-ci/travis-rollout', branch: 'sf-refactor'
