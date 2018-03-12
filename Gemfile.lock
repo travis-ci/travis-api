@@ -32,6 +32,12 @@ GIT
       net-http-pipeline
 
 GIT
+  remote: https://github.com/travis-ci/jemalloc-rb
+  revision: e9528e26aff663efa2c124cdeca47700e389097d
+  specs:
+    jemalloc (1.0.2)
+
+GIT
   remote: https://github.com/travis-ci/marginalia
   revision: 1733a09de1dd8a4e9b6d92cee7413eacb38f0db1
   specs:
@@ -91,35 +97,6 @@ GIT
   revision: da2c9860299fa63769ac1ee120abeb9e83615555
   specs:
     travis-yaml (0.2.0)
-
-PATH
-  remote: .
-  specs:
-    travis-api (0.0.1)
-      activerecord (~> 4.2)
-      coder (~> 0.4.0)
-      composite_primary_keys (~> 8.0)
-      fog-aws (~> 0.12.0)
-      fog-google (~> 0.4.2)
-      google-api-client (~> 0.9.4)
-      hashr
-      memcachier
-      multi_json
-      mustermann (~> 1.0.0.beta2)
-      pg (~> 0.21)
-      pusher (~> 0.14.0)
-      rack-contrib (~> 1.1)
-      rack-ssl (~> 1.3, >= 1.3.3)
-      redcarpet (>= 3.2.3)
-      redis (~> 3.0)
-      rollout (~> 1.1.0)
-      simple_states
-      sinatra (~> 1.3)
-      sinatra-contrib (~> 1.3)
-      tool
-      travis-support
-      useragent
-      virtus (~> 1.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -238,7 +215,6 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     ipaddress (0.8.3)
-    jemalloc (1.0.1)
     json (2.1.0)
     jwt (2.1.0)
     kgio (2.10.0)
@@ -274,6 +250,7 @@ GEM
     multi_json (1.12.2)
     multipart-post (2.0.0)
     mustermann (1.0.0.beta2)
+    nakayoshi_fork (0.0.3)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
     netaddr (1.5.1)
@@ -402,38 +379,54 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
+  activerecord (~> 4.2)
   allocation_tracer
   bunny (~> 0.8.0)
+  coder (~> 0.4.0)
+  composite_primary_keys (~> 8.0)
   customerio
   dalli
   database_cleaner (~> 1.2.0)
   factory_girl (~> 2.4.0)
   faraday
   faraday_middleware
+  fog-aws (~> 0.12.0)
+  fog-google (~> 0.4.2)
   foreman
   gh!
+  google-api-client (~> 0.9.4)
   hashdiff
-  jemalloc
+  hashr
+  jemalloc!
   knapsack
   libhoney
   marginalia!
+  memcachier
   memory_profiler
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
   mime-types
   mocha (~> 0.12)
+  multi_json
   mustermann
+  nakayoshi_fork
   netaddr
+  pg (~> 0.21)
   pry
+  pusher (~> 0.14.0)
   rack-attack (= 5.0.0.beta1)
   rack-cache!
   rack-contrib
+  rack-ssl (~> 1.3, >= 1.3.3)
   rake (~> 0.9.2)
   rb-fsevent (~> 0.9.1)
   rbtrace
+  redcarpet (>= 3.2.3)
+  redis (~> 3.0)
   redis-namespace
   redlock
   rerun
+  rollout (~> 1.1.0)
   rspec (~> 2.13)
   rspec-its
   s3!
@@ -445,8 +438,8 @@ DEPENDENCIES
   sinatra-contrib
   stackprof
   timecop (~> 0.8.0)
+  tool
   travis-amqp!
-  travis-api!
   travis-config!
   travis-lock!
   travis-rollout!
@@ -454,6 +447,8 @@ DEPENDENCIES
   travis-support!
   travis-yaml!
   unicorn
+  useragent
+  virtus (~> 1.0.0)
   webmock
   yard-sinatra!
 
