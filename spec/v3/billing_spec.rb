@@ -9,15 +9,15 @@ describe Travis::API::V3::Billing do
     Travis.config.billing.auth_key = auth_key
   end
 
+  let(:subscription_id) { rand(999) }
+
   describe '#get_subscription' do
     subject { billing.get_subscription(subscription_id) }
 
-    let(:subscription_id) { rand(999) }
-
     it 'returns the subscription' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}").to_return(body: JSON.dump(id: subscription_id))
-      subject.should be_a(described_class::Subscription)
-      subject.id.should == subscription_id
+      expect(subject).to be_a(described_class::Subscription)
+      expect(subject.id).to eq(subscription_id)
       # TODO: More attributes
     end
 
@@ -25,6 +25,16 @@ describe Travis::API::V3::Billing do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}").to_return(status: 404)
 
       expect { subject }.to raise_error(described_class::NotFoundError)
+    end
+  end
+
+  describe '#all' do
+    subject { billing.all }
+
+    it 'returns the list of subscriptions' do
+      stub_billing_request(:get, '/subscriptions').to_return(body: JSON.dump([{id: subscription_id}]))
+
+      expect(subject).to eq([described_class::Subscription.new('id' => subscription_id)])
     end
   end
 

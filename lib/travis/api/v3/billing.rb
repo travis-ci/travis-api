@@ -17,6 +17,12 @@ module Travis::API::V3
       end
     end
 
+    def all
+      connection.get('/subscriptions').body.map do |subscription_data|
+        Subscription.new(subscription_data)
+      end
+    end
+
     private
 
     def connection
