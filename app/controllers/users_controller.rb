@@ -150,6 +150,20 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def suspend
+    @user.update_attributes!(suspended: true, suspended_at: Time.now.utc)
+    Services::AuditTrail::SuspendUser.new(current_user, @user).call
+    flash[:notice] = "Suspended #{@user.login}."
+    redirect_to @user
+  end
+
+  def unsuspend
+    @user.update_attributes!(suspended: false, suspended_at: nil)
+    Services::AuditTrail::UnsuspendUser.new(current_user, @user).call
+    flash[:notice] = "Unsuspended #{@user.login}."
+    redirect_to @user
+  end
+
   private
 
   def get_user

@@ -91,6 +91,8 @@ Rails.application.routes.draw do
       post 'reset_2fa'
       post 'sync'
       post 'update_trial_builds'
+      post 'suspend'
+      post 'unsuspend'
 
       get 'subscription'
       get 'invoices'

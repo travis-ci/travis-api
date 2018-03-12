@@ -67,6 +67,19 @@
       </p>
       <%= button_to 'Sync', sync_user_path(@user), disabled: @user.is_syncing?, form_class: "sync-button", class: 'button' %>
     </dd>
+     <% if travis_config.enterprise? %>
+      <dt class="info-label">Enterprise Status</dt>
+      <dd class="inline">
+        <p>
+          <%= @user.enterprise_status %>
+          <% if @user.suspended? %>
+            <div class="call-to-action"><%= button_to "Unsuspend", unsuspend_user_path(@user), class: "button", data: { disable_with: 'Loading' } %>
+          <% else %>
+            <div class="call-to-action"><%= button_to "Suspend", suspend_user_path(@user), class: "button", data: { disable_with: 'Loading' } %>
+          <% end %>
+        </p>
+      </dd>
+    <% end %>
   </dl>
 </section>
 
