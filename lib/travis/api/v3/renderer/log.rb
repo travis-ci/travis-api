@@ -15,7 +15,7 @@ module Travis::API::V3
       # So let's make sure we're not talking to that before making a change
       if raw_log_href !~ /^\/v3/ && raw_log_href !~ /^\/api/ 
         raw_log_href = "/v3#{raw_log_href}"
-      elsif raw_log_href ~ /^\/api/ && raw_log_href !~ /^\/api\/v3/ 
+      elsif raw_log_href =~ /^\/api/ && raw_log_href !~ /^\/api\/v3/ 
         raw_log_href.gsub!(/^\/api/, "/api/v3")
       end
       if model.repository_private?
