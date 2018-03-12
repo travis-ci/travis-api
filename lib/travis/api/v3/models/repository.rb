@@ -92,5 +92,11 @@ module Travis::API::V3
         kp.sync(self, :settings)
       end
     end
+
+    def debug_tools_enabled?
+      return true if private?
+      return true if Travis::Features.active?(:debug_tools, self)
+      return false
+    end
   end
 end

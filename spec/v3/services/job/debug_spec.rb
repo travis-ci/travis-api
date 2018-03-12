@@ -13,13 +13,21 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
-
-    Travis.config.debug_tools_enabled = true
+    Travis::Features.activate_repository(:debug_tools, job.repository)
   end
 
   after do
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = @original_sidekiq
+  end
+
+  shared_examples_for "returns 202 but no error" do
+    example { expect(last_response.status).to be == 202 }
+    example { expect(job.reload.debug_options).to include(
+      stage: "before_install",
+      created_by: owner.login,
+      quiet: false
+    ) }
   end
 
   describe "#run" do
@@ -52,16 +60,38 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
       context "with sufficient authorization" do
         let(:params) {{}}
 
-        before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-        before { post("/v3/job/#{job.id}/debug", {}, headers) }
+        before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true) }
 
-        example { expect(last_response.status).to be == 202 }
+        context "for a public repo" do
+          context "with debug_tools enabled" do
+            before { post("/v3/job/#{job.id}/debug", {}, headers) }
 
-        example { expect(job.reload.debug_options).to include(
-          stage: "before_install",
-          created_by: owner.login,
-          quiet: false
-        ) }
+            include_examples "returns 202 but no error"
+          end
+
+          context "with debug_tools disabled" do
+            before do
+              Travis::Features.deactivate_repository(:debug_tools, job.repository)
+              post("/v3/job/#{job.id}/debug", {}, headers)
+            end
+
+            example { expect(last_response.status).to be == 403 }
+            example { expect(JSON.load(body)).to include(
+              "@type"         => "error",
+              "error_message" => "access denied",
+              "error_type" => "wrong_credentials"
+            )}
+          end
+        end
+
+        context "for a private repo" do
+          before do
+            job.repository.update_attributes!(private: true)
+            post("/v3/job/#{job.id}/debug", {}, headers)
+          end
+
+          include_examples "returns 202 but no error"
+        end
       end
     end
   end
