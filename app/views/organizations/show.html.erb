@@ -4,8 +4,10 @@
   <%= link_to 'Organization', organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
   <%= link_to 'Members', members_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
   <%= link_to 'Repositories', repositories_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-  <%= link_to 'Jobs', jobs_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-  <%= link_to 'Requests', requests_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <% unless travis_config.enterprise? %>
+    <%= link_to 'Jobs', jobs_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+    <%= link_to 'Requests', requests_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <% end %>
   <%= link_to 'Broadcasts', broadcasts_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
   <% unless travis_config.enterprise? %>
     <%= link_to 'Subscription', subscription_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
