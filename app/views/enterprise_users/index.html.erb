@@ -1,10 +1,10 @@
 <%= title "Manage enterprise users" %>
 
 <div id="tabs">
-  <%= link_to 'All', enterprise_users_path, class: 'regular-tab-link' %>
-  <%= link_to 'Active', enterprise_users_path(filter: 'active'), class: 'regular-tab-link' %>
-  <%= link_to 'Inactive', enterprise_users_path(filter: 'inactive'), class: 'regular-tab-link' %>
-  <%= link_to 'Suspended', enterprise_users_path(filter: 'suspended'), class: 'regular-tab-link' %>
+  <%= current_link_to 'All', enterprise_users_path, class: 'regular-tab-link' %>
+  <%= current_link_to 'Active', enterprise_users_path(filter: 'active'), class: 'regular-tab-link' %>
+  <%= current_link_to 'Inactive', enterprise_users_path(filter: 'inactive'), class: 'regular-tab-link' %>
+  <%= current_link_to 'Suspended', enterprise_users_path(filter: 'suspended'), class: 'regular-tab-link' %>
 </div>
 
 <section class="info-block">

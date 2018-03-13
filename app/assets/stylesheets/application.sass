@@ -28,7 +28,6 @@
 @import "popup"
 @import "loading_indicator"
 
-
 /* Following styles are for development purposes and can be replaced */
 
 /* Welcome & Goodbye */
@@ -52,7 +51,7 @@ p.welcome-sub, p.goodbye-sub, p.not-found-sub
 
 #tabs
   margin-top: 20px
-
+Tabs
 #tabs::after
   display: block
   content: ""
@@ -84,6 +83,11 @@ p.welcome-sub, p.goodbye-sub, p.not-found-sub
   &:hover
     &::after
       border-bottom: 2px solid $oxide-blue
+  &.tab-active
+    color: $oxide-blue
+    &::after
+      border-bottom: 2px solid $oxide-blue
+
 
 .tab-content
   box-sizing: border-box
@@ -234,7 +238,7 @@ dd
   border-width: 0
   padding: 0 10px
   border-radius: 4px
-  background-color: lighten($cement-grey, 20)
+  background-color: #e5e5e5
   font-size: $font-size-s
   text-decoration: none
   &:hover
@@ -254,7 +258,6 @@ dd
       .button
         padding: 0 10px
         margin-left: 0.2em
-
 
 /* Flashes */
 
@@ -438,3 +441,11 @@ pre.log
       margin-right: 10px
       &:hover
         background-color: #999a98
+
+/* Pagination */
+
+.pagination
+  margin: 4em 0
+  .current, .next, .previous_page, a
+    padding-right: 0.35em
+

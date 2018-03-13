@@ -96,4 +96,10 @@ module ApplicationHelper
   def travis_config
     Rails.configuration.travis_config
   end
+
+  def current_link_to(name, path, options)
+    class_name = options[:class]
+    class_name << ' tab-active' if current_page?(path)
+    link_to(name, path, options)
+  end
 end
