@@ -38,6 +38,18 @@ describe Travis::API::V3::Billing do
     end
   end
 
+  describe '#update_address' do
+    let(:address_data) { { 'street' => 'Rigaer Strasse' } }
+    subject { billing.update_address(subscription_id, address_data) }
+
+    it 'requests the update' do
+      stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/address").with { |r| r.body == address_data }.to_return(status: 202)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
   def stub_billing_request(method, path)
     url = URI(billing_url).tap do |url|
       url.path = path

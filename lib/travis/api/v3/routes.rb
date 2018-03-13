@@ -233,5 +233,10 @@ module Travis::API::V3
       route '/subscriptions'
       get :all
     end
+
+    resource :subscription do
+      route '/subscription/{subscription.id}'
+      patch :update_address, '/address'
+    end
   end
 end
