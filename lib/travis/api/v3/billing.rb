@@ -23,6 +23,10 @@ module Travis::API::V3
       end
     end
 
+    def update_address(subscription_id, address_data)
+      connection.patch("/subscriptions/#{subscription_id}/address", address_data)
+    end
+
     private
 
     def connection
@@ -30,6 +34,7 @@ module Travis::API::V3
         conn.basic_auth '_', billing_auth_key
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
         conn.headers['Content-Type'] = 'application/json'
+        conn.request :json
         conn.response :json
         conn.adapter :net_http
       end

@@ -20,17 +20,15 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true do
     let(:user) { Factory(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
-    let(:response_json) { JSON.dump([{"id" => 1234}]) }
+    let(:client) { stub(:billing_client) }
+    let(:subscriptions) { [Travis::API::V3::Billing::Subscription.new('id' => 1234)]}
+
+    before do
+      Travis::API::V3::Billing.stubs(:new).with(user.id).returns(client)
+    end
 
     it 'responds with list of subscriptions' do
-      stub_request(:get, billing_url + '/subscriptions').
-        with(
-          basic_auth: ['_', billing_auth_key],
-          headers: {
-            'Content-Type' => 'application/json',
-            'X-Travis-User-Id' => user.id.to_s
-          }).
-          to_return(status: 200, body: response_json)
+      client.stubs(:all).returns(subscriptions)
 
       get('/v3/subscriptions', {}, headers)
 
