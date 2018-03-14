@@ -5,5 +5,10 @@ module Travis::API::V3
       client = Billing.new(user_id)
       client.update_address(params['subscription.id'], address_data)
     end
+
+    def cancel(user_id)
+      client = Billing.new(user_id)
+      client.cancel_subscription(params['subscription.id'])
+    end
   end
 end

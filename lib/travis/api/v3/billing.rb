@@ -27,6 +27,10 @@ module Travis::API::V3
       connection.patch("/subscriptions/#{subscription_id}/address", address_data)
     end
 
+    def cancel_subscription(id)
+      connection.post("/subscriptions/#{id}/cancel")
+    end
+
     private
 
     def connection

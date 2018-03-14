@@ -237,6 +237,7 @@ module Travis::API::V3
     resource :subscription do
       route '/subscription/{subscription.id}'
       patch :update_address, '/address'
+      post :cancel, '/cancel'
     end
   end
 end
