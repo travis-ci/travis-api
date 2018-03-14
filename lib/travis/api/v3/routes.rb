@@ -228,5 +228,10 @@ module Travis::API::V3
       route '/user'
       get :current
     end
+
+    resource :subscriptions do
+      route '/subscriptions'
+      get :all
+    end
   end
 end
