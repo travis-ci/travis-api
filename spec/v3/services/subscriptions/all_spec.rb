@@ -21,7 +21,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true do
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     let(:client) { stub(:billing_client) }
-    let(:subscriptions) { [Travis::API::V3::Billing::Subscription.new('id' => 1234)]}
+    let(:subscriptions) { [Travis::API::V3::Models::Subscription.new('id' => 1234)]}
 
     before do
       Travis::API::V3::Billing.stubs(:new).with(user.id).returns(client)
@@ -38,6 +38,8 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true do
         '@representation' => 'standard',
         '@href' => '/v3/subscriptions',
         'subscriptions' => [{
+          '@type' => 'subscription',
+          '@representation' => 'standard',
           'id' => 1234
         }]
       })

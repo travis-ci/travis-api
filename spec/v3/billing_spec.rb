@@ -16,7 +16,7 @@ describe Travis::API::V3::Billing do
 
     it 'returns the subscription' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}").to_return(body: JSON.dump(id: subscription_id))
-      expect(subject).to be_a(described_class::Subscription)
+      expect(subject).to be_a(Travis::API::V3::Models::Subscription)
       expect(subject.id).to eq(subscription_id)
       # TODO: More attributes
     end
@@ -34,7 +34,7 @@ describe Travis::API::V3::Billing do
     it 'returns the list of subscriptions' do
       stub_billing_request(:get, '/subscriptions').to_return(body: JSON.dump([{id: subscription_id}]))
 
-      expect(subject).to eq([described_class::Subscription.new('id' => subscription_id)])
+      expect(subject).to eq([Travis::API::V3::Models::Subscription.new('id' => subscription_id)])
     end
   end
 
