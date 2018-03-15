@@ -30,6 +30,10 @@ module Travis::API::V3
     def cancel_subscription(id)
       connection.post("/subscriptions/#{id}/cancel")
     end
+    
+    def update_creditcard(subscription_id, creditcard_data)
+      connection.patch("/subscriptions/#{subscription_id}/creditcard", creditcard_data)
+    end
 
     private
 
