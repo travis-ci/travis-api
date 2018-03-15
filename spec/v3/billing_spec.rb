@@ -50,6 +50,18 @@ describe Travis::API::V3::Billing do
     end
   end
 
+  describe '#update_creditcard' do
+    let(:creditcard_data) { { 'creditcard_number' => '12345678' } }
+    subject { billing.update_creditcard(subscription_id, creditcard_data) }
+
+    it 'requests the update' do
+      stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard").with(body: JSON.dump(creditcard_data)).to_return(status: 202)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
   def stub_billing_request(method, path)
     url = URI(billing_url).tap do |url|
       url.path = path
