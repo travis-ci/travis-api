@@ -238,6 +238,7 @@ module Travis::API::V3
       route '/subscription/{subscription.id}'
       patch :update_address, '/address'
       patch :update_creditcard, '/creditcard'
+      post :cancel, '/cancel'
     end
   end
 end
