@@ -62,6 +62,18 @@ describe Travis::API::V3::Billing do
     end
   end
 
+  describe '#create_subscription' do
+    let(:subscription_data) {{ 'street' => 'Rigaer' }}
+    subject { billing.create_subscription(subscription_data) }
+
+    it 'requests the creation and returns the representation' do
+      stubbed_request = stub_billing_request(:post, "/subscriptions").with(body: JSON.dump(subscription_data)).to_return(status: 202, body: JSON.dump('id' => 456))
+
+      expect(subject).to eq(Travis::API::V3::Models::Subscription.new('id' => 456))
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
   def stub_billing_request(method, path)
     url = URI(billing_url).tap do |url|
       url.path = path

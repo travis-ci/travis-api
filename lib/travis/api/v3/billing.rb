@@ -35,6 +35,15 @@ module Travis::API::V3
       connection.patch("/subscriptions/#{subscription_id}/creditcard", creditcard_data)
     end
 
+    def create_subscription(subscription_data)
+      response = connection.post('/subscriptions', subscription_data)
+      if response.success?
+        Travis::API::V3::Models::Subscription.new(response.body)
+      else
+        raise Error, "TODO: Different errors according to status messages"
+      end
+    end
+
     private
 
     def connection
