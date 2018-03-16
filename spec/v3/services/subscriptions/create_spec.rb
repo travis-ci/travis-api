@@ -21,7 +21,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true do
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
-    let(:subscription_data) {{ 'street'=> 'Rigaer' }}
+    let(:subscription_data) {{ 'address'=> 'Rigaer' }}
     let(:client) { stub(:billing_client) }
     let(:subscription) { Travis::API::V3::Models::Subscription.new('id' => 1234)}
 

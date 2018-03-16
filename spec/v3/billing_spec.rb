@@ -39,11 +39,11 @@ describe Travis::API::V3::Billing do
   end
 
   describe '#update_address' do
-    let(:address_data) { { 'street' => 'Rigaer Strasse' } }
+    let(:address_data) { { 'address' => 'Rigaer Strasse' } }
     subject { billing.update_address(subscription_id, address_data) }
 
     it 'requests the update' do
-      stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/address").with(body: JSON.dump(address_data)).to_return(status: 202)
+      stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/address").with(body: JSON.dump(subscription: address_data)).to_return(status: 202)
 
       expect { subject }.to_not raise_error
       expect(stubbed_request).to have_been_made
@@ -51,11 +51,11 @@ describe Travis::API::V3::Billing do
   end
 
   describe '#update_creditcard' do
-    let(:creditcard_data) { { 'creditcard_number' => '12345678' } }
+    let(:creditcard_data) { { 'cc_owner' => 'Hans' } }
     subject { billing.update_creditcard(subscription_id, creditcard_data) }
 
     it 'requests the update' do
-      stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard").with(body: JSON.dump(creditcard_data)).to_return(status: 202)
+      stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard").with(body: JSON.dump(subscription: creditcard_data)).to_return(status: 203)
 
       expect { subject }.to_not raise_error
       expect(stubbed_request).to have_been_made
@@ -63,11 +63,11 @@ describe Travis::API::V3::Billing do
   end
 
   describe '#create_subscription' do
-    let(:subscription_data) {{ 'street' => 'Rigaer' }}
+    let(:subscription_data) {{ 'address' => 'Rigaer' }}
     subject { billing.create_subscription(subscription_data) }
 
     it 'requests the creation and returns the representation' do
-      stubbed_request = stub_billing_request(:post, "/subscriptions").with(body: JSON.dump(subscription_data)).to_return(status: 202, body: JSON.dump('id' => 456))
+      stubbed_request = stub_billing_request(:post, "/subscriptions").with(body: JSON.dump(subscription: subscription_data)).to_return(status: 202, body: JSON.dump('id' => 456))
 
       expect(subject).to eq(Travis::API::V3::Models::Subscription.new('id' => 456))
       expect(stubbed_request).to have_been_made
