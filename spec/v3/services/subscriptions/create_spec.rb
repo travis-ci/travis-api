@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Subscriptions::All, set_app: true do
+describe Travis::API::V3::Services::Subscriptions::Create, set_app: true do
   let(:parsed_body) { JSON.load(last_response.body) }
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
@@ -19,29 +19,26 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true do
   context 'authenticated' do
     let(:user) { Factory(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
+                     'CONTENT_TYPE' => 'application/json' }}
+    let(:subscription_data) {{ 'street'=> 'Rigaer' }}
     let(:client) { stub(:billing_client) }
-    let(:subscriptions) { [Travis::API::V3::Models::Subscription.new('id' => 1234)]}
+    let(:subscription) { Travis::API::V3::Models::Subscription.new('id' => 1234)}
 
     before do
       Travis::API::V3::Billing.stubs(:new).with(user.id).returns(client)
     end
 
-    it 'responds with list of subscriptions' do
-      client.stubs(:all).returns(subscriptions)
+    it 'Creates the subscription and responds with its representation' do
+      client.expects(:create_subscription).with(subscription_data).returns(subscription)
 
-      get('/v3/subscriptions', {}, headers)
+      post('/v3/subscriptions', JSON.dump(subscription_data), headers)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body).to eql_json({
-        '@type' => 'subscriptions',
+        '@type' => 'subscription',
         '@representation' => 'standard',
-        '@href' => '/v3/subscriptions',
-        'subscriptions' => [{
-          '@type' => 'subscription',
-          '@representation' => 'standard',
-          'id' => 1234
-        }]
+        'id' => 1234
       })
     end
   end

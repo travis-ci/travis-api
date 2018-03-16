@@ -16,7 +16,7 @@ describe Travis::API::V3::Billing do
 
     it 'returns the subscription' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}").to_return(body: JSON.dump(id: subscription_id))
-      expect(subject).to be_a(described_class::Subscription)
+      expect(subject).to be_a(Travis::API::V3::Models::Subscription)
       expect(subject.id).to eq(subscription_id)
       # TODO: More attributes
     end
@@ -34,7 +34,7 @@ describe Travis::API::V3::Billing do
     it 'returns the list of subscriptions' do
       stub_billing_request(:get, '/subscriptions').to_return(body: JSON.dump([{id: subscription_id}]))
 
-      expect(subject).to eq([described_class::Subscription.new('id' => subscription_id)])
+      expect(subject).to eq([Travis::API::V3::Models::Subscription.new('id' => subscription_id)])
     end
   end
 
@@ -58,6 +58,18 @@ describe Travis::API::V3::Billing do
       stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard").with(body: JSON.dump(creditcard_data)).to_return(status: 202)
 
       expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
+  describe '#create_subscription' do
+    let(:subscription_data) {{ 'street' => 'Rigaer' }}
+    subject { billing.create_subscription(subscription_data) }
+
+    it 'requests the creation and returns the representation' do
+      stubbed_request = stub_billing_request(:post, "/subscriptions").with(body: JSON.dump(subscription_data)).to_return(status: 202, body: JSON.dump('id' => 456))
+
+      expect(subject).to eq(Travis::API::V3::Models::Subscription.new('id' => 456))
       expect(stubbed_request).to have_been_made
     end
   end

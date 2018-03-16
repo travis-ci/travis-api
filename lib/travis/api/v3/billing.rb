@@ -11,7 +11,7 @@ module Travis::API::V3
     def get_subscription(id)
       response = connection.get("/subscriptions/#{id}")
       if response.success?
-        Subscription.new(response.body)
+        Travis::API::V3::Models::Subscription.new(response.body)
       else
         raise NotFoundError, "Subscription ##{id} not found (HTTP Status: #{response.status})"
       end
@@ -19,7 +19,7 @@ module Travis::API::V3
 
     def all
       connection.get('/subscriptions').body.map do |subscription_data|
-        Subscription.new(subscription_data)
+        Travis::API::V3::Models::Subscription.new(subscription_data)
       end
     end
 
@@ -30,9 +30,18 @@ module Travis::API::V3
     def cancel_subscription(id)
       connection.post("/subscriptions/#{id}/cancel")
     end
-    
+
     def update_creditcard(subscription_id, creditcard_data)
       connection.patch("/subscriptions/#{subscription_id}/creditcard", creditcard_data)
+    end
+
+    def create_subscription(subscription_data)
+      response = connection.post('/subscriptions', subscription_data)
+      if response.success?
+        Travis::API::V3::Models::Subscription.new(response.body)
+      else
+        raise Error, "TODO: Different errors according to status messages"
+      end
     end
 
     private
@@ -54,12 +63,6 @@ module Travis::API::V3
 
     def billing_auth_key
       Travis.config.billing.auth_key || raise(ConfigurationError, 'No billing auth key configured')
-    end
-
-    class Subscription < Struct.new(:id)
-      def initialize(attributes = {})
-        super(attributes.fetch('id'))
-      end
     end
   end
 end

@@ -232,6 +232,7 @@ module Travis::API::V3
     resource :subscriptions do
       route '/subscriptions'
       get :all
+      post :create
     end
 
     resource :subscription do

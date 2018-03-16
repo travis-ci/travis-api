@@ -4,5 +4,10 @@ module Travis::API::V3
       client = Billing.new(user_id)
       client.all
     end
+
+    def create(user_id)
+      client = Billing.new(user_id)
+      client.create_subscription(params)
+    end
   end
 end
