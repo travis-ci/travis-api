@@ -20,7 +20,7 @@ describe Travis::API::V3::Services::Subscription::UpdateCreditcard, set_app: tru
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
-    let(:creditcard_data) { { "creditcard_number" => "12345" } }
+    let(:creditcard_data) { { "cc_owner" => "Hans" } }
     let(:client) { stub(:billing_client) }
     let(:subscription_id) { rand(999) }
 

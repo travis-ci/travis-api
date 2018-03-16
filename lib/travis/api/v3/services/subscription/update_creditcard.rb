@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Services::Subscription::UpdateCreditcard < Service
-    params :creditcard_number
+    params :cc_owner
 
     def run!
       raise LoginRequired unless access_control.full_access_or_logged_in?

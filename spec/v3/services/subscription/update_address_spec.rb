@@ -20,7 +20,7 @@ describe Travis::API::V3::Services::Subscription::UpdateAddress, set_app: true d
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
-    let(:address_data) { { "street" => "Rigaer Strasse" } }
+    let(:address_data) { { "address" => "Rigaer Strasse" } }
     let(:client) { stub(:billing_client) }
     let(:subscription_id) { rand(999) }
 
