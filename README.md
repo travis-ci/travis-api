@@ -103,8 +103,12 @@ and then you can run:
 
 ```
 curl -H "Travis-API-Version: 3" \
-     -H "Authorization: token kqYocxHlFDSWRSgmmL7zuA" \
+     -H "content-type: application/json" \
+     -H "Authorization: token <your-token>" \
      http://localhost:9293/subscriptions
+```
+and get:
+```  
 {
   "@type": "subscriptions",
   "@href": "/subscriptions",
