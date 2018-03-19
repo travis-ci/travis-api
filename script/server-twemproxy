@@ -13,7 +13,7 @@ if [ ! -f "bin/start-twemproxy" ]; then
   export TWEMPROXY_ENABLED=false
 fi
 
-if [ "$TWEMPROXY_ENABLED" = '1' ] || [ "$TWEMPROXY_ENABLED" = 'true' ]; then
+if [ "$TWEMPROXY_ENABLED" = 'true' ]; then
   exec bin/start-twemproxy script/server-pgbouncer
 else
   exec script/server-pgbouncer
