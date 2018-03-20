@@ -11,6 +11,8 @@ module Travis::API::V3
     end
 
     def filter(relation)
+      relation = relation.select(Job.column_names - ['config']) unless includes? 'job.config'.freeze
+
       relation = relation.where(state: active_states) if bool(active)
       relation = relation.where(state: list(state))   if state
       relation = for_owner(relation)                  if created_by

@@ -16,7 +16,7 @@ module Travis::API::V3
     experimental_sortable_by :current_build, :slug_filter
 
     def for_member(user, **options)
-      all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
+      all(user: user, **options).joins(:users).select('repositories.*, permissions.pull as permission_pull, permissions.push as permission_push, permissions.admin as permission_admin').where(users: user_condition(user), invalidated_at: nil)
     end
 
     def for_owner(owner, **options)
@@ -58,9 +58,21 @@ module Travis::API::V3
                               || lower(repositories.name), #{query}) as slug_filter")
       end
 
-      list = list.includes(default_branch: :last_build)
-      list = list.includes(current_build: [:repository, :branch, :commit, :stages, :sender]) if includes? 'repository.current_build'.freeze
+      list = list.includes(default_branch: [:last_build, :repository])
       list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
+      list = list.includes(default_branch: { last_build: :branch }) if includes? 'build.branch'.freeze
+
+      if includes? 'repository.current_build'.freeze
+        list = list.includes(current_build: [:repository, { branch: [{ last_build: :branch }, :repository] }, :commit, :stages, :sender])
+        list = list.includes(current_build: { branch: { last_build: :commit } }) if includes? 'build.commit'.freeze
+      end
+
+      if includes? 'build.request'.freeze
+        list = list.includes(default_branch: { last_build: :request })
+        list = list.includes(current_build: { branch: { last_build: :request } }) if includes? 'repository.current_build'.freeze
+        list = list.includes(current_build: :request) if includes? 'repository.current_build'.freeze
+      end
+
       sort list
     end
 
