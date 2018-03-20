@@ -275,7 +275,7 @@ GEM
     rack-contrib (1.4.0)
       git-version-bump (~> 0.15)
       rack (~> 1.4)
-    rack-protection (1.5.4)
+    rack-protection (1.5.5)
       rack
     rack-ssl (1.4.1)
       rack
