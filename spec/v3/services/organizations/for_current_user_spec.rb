@@ -9,8 +9,18 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
 
   let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org')   }
   before    { org.save!                                }
-  before    { org.memberships.create(user: repo.owner) }
+  before    { org.memberships.create(user: repo.owner, role: 'admin') }
   after     { org.delete                               }
+
+  context "with role query param" do
+    it "filters by role" do
+      another_org = Travis::API::V3::Models::Organization.create(login: 'another-org')
+      another_org.memberships.create(user: repo.owner, role: 'member')
+
+      get("/v3/orgs", {role: 'admin'}, headers)
+      JSON.load(body)['organizations'].map { |o| o['id'] }.should == [org.id]
+    end
+  end
 
   describe "authenticated as user with access" do
     before  { get("/v3/orgs", {}, headers)     }
