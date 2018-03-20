@@ -45,6 +45,16 @@ development:
 
 > Note: When using atom or other text editors, "gitignored" files  like `config/.travis.yml`can be hidden by default. [Here's how to fix this in atom](https://discuss.atom.io/t/gitignored-files-are-hidden-from-tree-view-regardless-of-setting/8724).
 
+#### Enterprise
+
+Add `enterprise: true` to the development section of your `config/.travis.yml` like so:
+
+```
+development:
+  enterprise: true
+
+```
+
 #### Test
 
 Append to the `travis.yml` file, the test data from `travis.example.yml`.
