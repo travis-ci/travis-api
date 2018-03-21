@@ -42,7 +42,11 @@ module Travis::API::V3
 
     def pagination_info
       return meta_data[:pagination] unless href
-      generator = V3::Paginator::URLGenerator.new(href, **meta_data[:pagination])
+      if ENV['EFFICIENT_PAGINATION_ENABLED'] == 'true'
+        generator = V3::Paginator::EfficientPagination::URLGenerator.new(href, **meta_data[:pagination])
+      else
+        generator = V3::Paginator::URLGenerator.new(href, **meta_data[:pagination])
+      end
       meta_data[:pagination].merge generator.to_h
     end
 

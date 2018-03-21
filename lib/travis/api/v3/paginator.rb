@@ -19,20 +19,34 @@ module Travis::API::V3
       offset &&= Integer(offset, :offset)
       offset   = 0 if offset.nil? or offset < 0
 
-      if ENV['PAGINATION_COUNT_CACHE_ENABLED'] == 'true'
-        count = CountCache.new(result).count
+      if ENV['EFFICIENT_PAGINATION_ENABLED'] == 'true'
+        # TODO make id field and sort order configurable
+        result.resource = result.resource.limit(limit)   unless limit  == 0
+        result.resource = result.resource.where('id < ?', offset) unless offset == 0
+
+        # TODO materialize lazily?
+        result.resource = result.resource.all
+
+        pagination_info = {
+          limit:  limit,
+          offset: result.resource.last&.id,
+        }
       else
-        count = result.resource.count(:all)
+        if ENV['PAGINATION_COUNT_CACHE_ENABLED'] == 'true'
+          count = CountCache.new(result).count
+        else
+          count = result.resource.count(:all)
+        end
+
+        result.resource = result.resource.limit(limit)   unless limit  == 0
+        result.resource = result.resource.offset(offset) unless offset == 0
+
+        pagination_info = {
+          limit:  limit,
+          offset: offset,
+          count:  count,
+        }
       end
-
-      result.resource = result.resource.limit(limit)   unless limit  == 0
-      result.resource = result.resource.offset(offset) unless offset == 0
-
-      pagination_info = {
-        limit:  limit,
-        offset: offset,
-        count:  count,
-      }
 
       result.meta_data[:pagination] = pagination_info
       result
