@@ -36,6 +36,15 @@ module ApplicationHelper
     end
   end
 
+  def current_tab(action)
+    action = action.split('/')
+    if action.length == 3 && action_name == 'show'
+      'tab-active'
+    else
+      action_name == action.last ? 'tab-active' : ''
+    end
+  end
+
   def describe(object)
     case object.class.to_s
     when 'User', 'Organization' then object.name.present? ? "#{object.name} (#{object.login})" : object.login
