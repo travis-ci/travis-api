@@ -1,17 +1,25 @@
 <% title describe(@organization) %>
 
 <div id="tabs">
-  <%= current_link_to 'Organization', organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-  <%= current_link_to 'Members', members_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-  <%= current_link_to 'Repositories', repositories_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Organization', organization_path(@organization),
+  class: "#{active_tab(organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Members', members_organization_path(@organization),
+  class: "#{active_tab(members_organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Repositories', repositories_organization_path(@organization),
+  class: "#{active_tab(repositories_organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <% unless travis_config.enterprise? %>
-    <%= current_link_to 'Jobs', jobs_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-    <%= current_link_to 'Requests', requests_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+    <%= link_to 'Jobs', jobs_organization_path(@organization),
+    class: "#{active_tab(jobs_organization_path)}remote-tab-link", remote: true, data: { content: 'main-content' } %>
+    <%= link_to 'Requests', requests_organization_path(@organization),
+    class: "#{active_tab(requests_organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <% end %>
-  <%= current_link_to 'Broadcasts', broadcasts_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Broadcasts', broadcasts_organization_path(@organization),
+  class: "#{active_tab(broadcasts_organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <% unless travis_config.enterprise? %>
-    <%= current_link_to 'Subscription', subscription_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-    <%= current_link_to 'Invoices', invoices_organization_path(@organization), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+    <%= link_to 'Subscription', subscription_organization_path(@organization),
+    class: "#{active_tab(subscription_organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
+    <%= link_to 'Invoices', invoices_organization_path(@organization),
+    class: "#{active_tab(invoices_organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <% end %>
 </div>
 

@@ -18,6 +18,12 @@ document.addEventListener('DOMContentLoaded', function(){
     $('#' + this.dataset.content).html(response);
   });
 
+  // Hightlight active tab and remove highlight from unactive tab
+  $('.remote-tab-link').click(function(e) {
+    $('#tabs a').removeClass('tab-active');
+    $(this).addClass('tab-active');
+  });
+
   $(window).on('popstate', function(e) {
     var state = e.originalEvent.state;
     if (state && state.hasOwnProperty('href') && state.hasOwnProperty('content')) {

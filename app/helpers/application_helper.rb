@@ -3,6 +3,25 @@ module ApplicationHelper
     Travis::AccessToken.create(user: user, app_id: 2) if user
   end
 
+  def active_tab(action)
+    action = action.split('/')
+    if action.length == 3 && action_name == 'show'
+      'tab-active'
+    else
+      action_name == action.last ? 'tab-active' : ''
+    end
+  end
+
+  def active_tab_enterprise(action)
+    action = action.split('=')
+    puts "#{params['filter'].to_s}"
+    if action.length == 1  && params['filter'] == nil
+      'tab-active'
+    else
+      params['filter'].to_s == action.last ? 'tab-active' : ''
+    end
+  end
+
   def breadcrumbs(breadcrumbs)
     content_for(:breadcrumbs) { raw(breadcrumbs) }
   end
@@ -95,11 +114,5 @@ module ApplicationHelper
 
   def travis_config
     Rails.configuration.travis_config
-  end
-
-  def current_link_to(name, path, options)
-    class_name = options[:class]
-    class_name << ' tab-active' if current_page?(path)
-    link_to(name, path, options)
   end
 end
