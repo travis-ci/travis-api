@@ -1,8 +1,9 @@
 <section class="info-block">
   <h2 class="info-header">Basic information</h2>
-
-  <% if @user.travis_admin? %>
-    <p>This user has <%= link_to "admin access", admins_path %>.</p>
+  <% unless travis_config.enterprise? %>
+    <% if @user.travis_admin? %>
+      <p>This user has <%= link_to "admin access", admins_path %>.</p>
+    <% end %>
   <% end %>
 
   <dl class="simple-info">
