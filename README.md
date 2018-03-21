@@ -12,6 +12,11 @@ Travis Admin is an application for administrating the Travis system. Built by th
 - [Bundler](http://bundler.io/)
 - [PhantomJS](http://phantomjs.org/)
 
+### Travis CI Repository Requirements
+- [Trvs](https://github.com/travis-ci/trvs)
+- [Travis-Keychain](https://github.com/travis-pro/travis-keychain)
+- [Travis-Pro-Keychain](https://github.com/travis-pro/travis-pro-keychain)
+
 ### First steps
 
 - Clone the repository locally, in the same path as other travis repos like `travis-pro-keychain` or `travis-keychain`.
@@ -25,14 +30,15 @@ bundle install
 ### Generate config
 
 #### Development
+To generate the config please run the command below. This file is already ignored by Git and it should **never** be committed.
 
-Generate the config. This file is already ignored by Git – it should never be committed.
 
 ```
 trvs generate-config --pro admin staging  > config/travis.yml
 ```
 
-Manually add `development:` as a parent, nest the updated config data under that, and remove the config for redis (so that we use our local redis instance). Also make sure to remove `travis_config=---` if it appears at the top of the file.
+#### Edit config/travis.yml
+Manually add `development:` as the top parent attribute, nest the updated config data under it, and remove the config for redis (so that we use our local redis instance). Also make sure to remove `travis_config=---` if it appears at the top of the file.
 
 This will look like the following:
 
@@ -40,10 +46,22 @@ This will look like the following:
 development:
   logs_database:
     adapter: postgresql
+  admins:
+  - someone
 ...
 ```
 
 > Note: When using atom or other text editors, "gitignored" files  like `config/.travis.yml`can be hidden by default. [Here's how to fix this in atom](https://discuss.atom.io/t/gitignored-files-are-hidden-from-tree-view-regardless-of-setting/8724).
+
+#### Enterprise
+
+Add `enterprise: true` to the development section of your `config/.travis.yml` like so:
+
+```
+development:
+  enterprise: true
+
+```
 
 #### Test
 
