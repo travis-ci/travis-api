@@ -21,7 +21,7 @@ module Travis::API::V3
 
       if ENV['EFFICIENT_PAGINATION_ENABLED'] == 'true'
         # TODO make id field and sort order configurable
-        result.resource = result.resource.limit(limit)   unless limit  == 0
+        result.resource = result.resource.limit(limit)            unless limit  == 0
         result.resource = result.resource.where('id < ?', offset) unless offset == 0
 
         # TODO materialize lazily?
