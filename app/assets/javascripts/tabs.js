@@ -18,6 +18,15 @@ document.addEventListener('DOMContentLoaded', function(){
     $('#' + this.dataset.content).html(response);
   });
 
+  $(function() {
+    console.log(window.location.pathname);
+  })
+  $('.remote-tab-link').click(function(e) {
+    console.log(e);
+    $('#tabs a').removeClass('tab-active');
+    $(this).addClass('tab-active');
+  });
+
   $(window).on('popstate', function(e) {
     var state = e.originalEvent.state;
     if (state && state.hasOwnProperty('href') && state.hasOwnProperty('content')) {

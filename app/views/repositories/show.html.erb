@@ -1,12 +1,15 @@
 <% title describe(@repository) %>
 
 <div id="tabs">
-  <%= current_link_to 'Repository', repository_path(@repository), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-  <%= current_link_to 'Users', users_repository_path(@repository), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-  <%= current_link_to 'Builds', builds_repository_path(@repository), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-  <%= current_link_to 'Requests', requests_repository_path(@repository), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-  <%= current_link_to 'Caches', caches_repository_path(@repository), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
-  <%= current_link_to 'Broadcasts', broadcasts_repository_path(@repository), class: 'remote-tab-link', remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Repository', repository_path(@repository),
+  class: "#{current_tab(repository_path)} remote-tab-link", remote: true,
+  data: { content: 'main-content'} %>
+  <%= link_to 'Users', users_repository_path(@repository),
+  class: "#{current_tab(users_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content'} %>
+  <%= link_to 'Builds', builds_repository_path(@repository), class: "#{current_tab(builds_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content'} %>
+  <%= link_to 'Requests', requests_repository_path(@repository), class: "#{current_tab(requests_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Caches', caches_repository_path(@repository), class: "#{current_tab(caches_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Broadcasts', broadcasts_repository_path(@repository), class: "#{current_tab(broadcasts_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
 </div>
 
 <section id="main-content">
