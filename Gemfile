@@ -37,7 +37,7 @@ gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
 gem 'nakayoshi_fork'
-gem 'sidekiq'
+gem 'sidekiq', git: 'https://github.com/travis-ci/sidekiq', branch: 'igor-client-push-bypass-multi-exec'
 gem 'redis-namespace'
 gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
 
