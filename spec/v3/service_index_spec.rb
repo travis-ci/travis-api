@@ -5,6 +5,33 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
   let(:response)  { get(path, {}, headers)   }
   let(:resources) { json.fetch('resources')  }
 
+  describe 'hidden_resource' do
+    let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.3+json' } }
+
+    it 'hides a resource from the service index' do
+      Travis::API::V3::Services.const_set('Foo', Module.new { extend Travis::API::V3::Services })
+      Travis::API::V3::Services::Foo.const_set('Find', Class.new(Travis::API::V3::Service))
+      Travis::API::V3::Services.const_set('Bar', Module.new { extend Travis::API::V3::Services })
+      Travis::API::V3::Services::Bar.const_set('Find', Class.new(Travis::API::V3::Service))
+      Travis::API::V3::Routes.module_eval do
+        resource :foo do
+          route '/foo'
+          get :find
+        end
+
+        hidden_resource :bar do
+          route '/bar'
+          get :find
+        end
+      end
+
+      expect(json['resources']).to have_key('foo')
+      expect(json['resources']).to_not have_key('bar')
+
+      #TODO: it would be nice to remove extra routes after finishing this spec
+    end
+  end
+
   describe "custom json entry point" do
     shared_examples 'service index' do
       describe "requests resource" do
