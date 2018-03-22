@@ -217,7 +217,15 @@ module Travis::Api
 
         if use_monitoring?
           Sidekiq.configure_client do |config|
-            config.redis = Travis.config.redis.to_h.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
+            config.redis = Travis.config.redis.to_h.merge(
+              size: 1,
+              namespace: Travis.config.sidekiq.namespace,
+              # this is required to prevent sidekiq from
+              # overriding the client id -- we need to
+              # keep it nil because twemproxy does not
+              # support `client setname`
+              id: nil,
+            )
           end
         end
 
