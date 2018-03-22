@@ -83,6 +83,7 @@ module Travis::API::V3
     def render_json
       resources = { }
       all_resources.each do |resource|
+        next if resource.meta_data[:hidden]
         data = resources[resource.display_identifier] ||= { :@type => :resource, :actions => {} }
         data.merge! resource.meta_data
 
@@ -104,6 +105,7 @@ module Travis::API::V3
         end
 
         resource.services.each do |(request_method, sub_route), service|
+          next if resource.service_hidden?(service)
           list    = resources[resource.display_identifier][:actions][service] ||= []
           pattern = sub_route ? resource.route + sub_route : resource.route
           factory = Services[resource.identifier][service]
