@@ -7,16 +7,19 @@ module Travis::API::V3
       model.content
     end
 
+    # Override the inherited Rederer.href for Enterprise to have no script_name since that will always resolve to
+    # /api in Enterprise, as Enterprise's API lives in a path not a subdomain, and will throw off the manipulations
+    # we do in the render method we do in this class.
+    def href
+      Renderer.href(self.class.type, model.attributes, script_name: '')
+    end
+
     def render(representation)
       result = super
 
       raw_log_href = "#{href}.txt"
-      # Travis Enterprise uses the /api path, instead of an api subdomain.
-      # So let's make sure we're not talking to that before making a change
-      if raw_log_href !~ /^\/v3/ && raw_log_href !~ /^\/api/ 
+      if raw_log_href !~ /^\/v3/
         raw_log_href = "/v3#{raw_log_href}"
-      elsif raw_log_href =~ /^\/api/ && raw_log_href !~ /^\/api\/v3/ 
-        raw_log_href.gsub!(/^\/api/, "/api/v3")
       end
       if model.repository_private?
         token = LogToken.create(model.job)
