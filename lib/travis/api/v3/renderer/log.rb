@@ -7,6 +7,17 @@ module Travis::API::V3
       model.content
     end
 
+    # Override the inherited Rederer.href for Enterprise to have no script_name since that will always resolve to
+    # /api in Enterprise, as Enterprise's API lives in a path not a subdomain, and will throw off the manipulations
+    # we do in the render method we do in this class.
+    def href
+      if Travis.config.enterprise
+        Renderer.href(self.class.type, model.attributes, script_name: '')
+      else
+        super
+      end
+    end
+
     def render(representation)
       result = super
 
