@@ -76,7 +76,7 @@ RSpec.configure do |c|
   c.include TestHelpers
   c.include Support::Env
   c.include Support::AuthHelpers, auth_helpers: true
-  c.include BillingSpecHelper, billing_spec_helper: true
+  c.include Support::BillingSpecHelper, billing_spec_helper: true
 
   # for auth tests against staging, how the hell does this work, if at all
   # c.filter_run mode: :private, repo: :private

@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Subscription::Cancel, set_app: true do
+describe Travis::API::V3::Services::Subscription::Cancel, set_app: true, billing_spec_helper: true do
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
 
@@ -20,19 +20,18 @@ describe Travis::API::V3::Services::Subscription::Cancel, set_app: true do
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
-    let(:client) { stub(:billing_client) }
     let(:subscription_id) { rand(999) }
 
-    before do
-      Travis::API::V3::BillingClient.stubs(:new).with(user.id).returns(client)
+    let!(:stubbed_request) do
+      stub_billing_request(:post, "/subscriptions/#{subscription_id}/cancel", auth_key: billing_auth_key, user_id: user.id)
+        .to_return(status: 200)
     end
 
     it 'updates the address' do
-      client.expects(:cancel_subscription).with(subscription_id.to_s)
-
       post("/v3/subscription/#{subscription_id}/cancel", nil, headers)
 
       expect(last_response.status).to eq(202)
+      expect(stubbed_request).to have_been_made.once
     end
   end
 end

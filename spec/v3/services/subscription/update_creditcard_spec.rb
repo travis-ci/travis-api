@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Subscription::UpdateCreditcard, set_app: true do
+describe Travis::API::V3::Services::Subscription::UpdateCreditcard, set_app: true, billing_spec_helper: true do
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
 
@@ -21,19 +21,19 @@ describe Travis::API::V3::Services::Subscription::UpdateCreditcard, set_app: tru
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
     let(:creditcard_data) { { "cc_owner" => "Hans" } }
-    let(:client) { stub(:billing_client) }
     let(:subscription_id) { rand(999) }
 
-    before do
-      Travis::API::V3::BillingClient.stubs(:new).with(user.id).returns(client)
+    let!(:stubbed_request) do
+      stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard", auth_key: billing_auth_key, user_id: user.id)
+        .to_return(status: 200)
+        # TODO: check sent data
     end
 
     it 'updates the creditcard' do
-      client.expects(:update_creditcard).with(subscription_id.to_s, creditcard_data)
-
       patch("/v3/subscription/#{subscription_id}/creditcard", JSON.generate(creditcard_data), headers)
 
       expect(last_response.status).to eq(202)
+      expect(stubbed_request).to have_been_made.once
     end
   end
 end

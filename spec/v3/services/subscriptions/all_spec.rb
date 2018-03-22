@@ -20,16 +20,13 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
     let(:user) { Factory(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
-    let(:client) { stub(:billing_client) }
-    let(:subscriptions) { [Travis::API::V3::Models::Subscription.new(billing_response_body('id' => 1234))]}
 
     before do
-      Travis::API::V3::BillingClient.stubs(:new).with(user.id).returns(client)
+      stub_billing_request(:get, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
+        .to_return(status: 200, body: JSON.dump([billing_response_body('id' => 1234)]))
     end
 
     it 'responds with list of subscriptions' do
-      client.stubs(:all).returns(subscriptions)
-
       get('/v3/subscriptions', {}, headers)
 
       expect(last_response.status).to eq(200)

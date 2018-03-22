@@ -22,16 +22,14 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
     let(:subscription_data) {{ 'address'=> 'Rigaer' }}
-    let(:client) { stub(:billing_client) }
-    let(:subscription) { Travis::API::V3::Models::Subscription.new(billing_response_body('id' => 1234))}
 
-    before do
-      Travis::API::V3::BillingClient.stubs(:new).with(user.id).returns(client)
+    let!(:stubbed_request) do
+      stub_billing_request(:post, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
+        .to_return(status: 200, body: JSON.dump(billing_response_body('id' => 1234)))
+        # TODO: Check sent data
     end
 
     it 'Creates the subscription and responds with its representation' do
-      client.expects(:create_subscription).with(subscription_data).returns(subscription)
-
       post('/v3/subscriptions', JSON.dump(subscription_data), headers)
 
       expect(last_response.status).to eq(200)
@@ -66,6 +64,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           'id' => 43
         }
       })
+      expect(stubbed_request).to have_been_made.once
     end
   end
 end

@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Subscription::UpdateAddress, set_app: true do
+describe Travis::API::V3::Services::Subscription::UpdateAddress, set_app: true, billing_spec_helper: true do
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
 
@@ -21,19 +21,19 @@ describe Travis::API::V3::Services::Subscription::UpdateAddress, set_app: true d
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
     let(:address_data) { { "address" => "Rigaer Strasse" } }
-    let(:client) { stub(:billing_client) }
     let(:subscription_id) { rand(999) }
 
-    before do
-      Travis::API::V3::BillingClient.stubs(:new).with(user.id).returns(client)
+    let!(:stubbed_request) do
+      stub_billing_request(:patch, "/subscriptions/#{subscription_id}/address", auth_key: billing_auth_key, user_id: user.id)
+        .to_return(status: 200)
+        # TODO: check sent data
     end
 
     it 'updates the address' do
-      client.expects(:update_address).with(subscription_id.to_s, address_data)
-
       patch("/v3/subscription/#{subscription_id}/address", JSON.generate(address_data), headers)
 
       expect(last_response.status).to eq(202)
+      expect(stubbed_request).to have_been_made.once
     end
   end
 end
