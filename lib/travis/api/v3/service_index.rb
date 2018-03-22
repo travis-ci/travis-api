@@ -83,6 +83,7 @@ module Travis::API::V3
     def render_json
       resources = { }
       all_resources.each do |resource|
+        next if resource.meta_data[:hidden]
         data = resources[resource.display_identifier] ||= { :@type => :resource, :actions => {} }
         data.merge! resource.meta_data
 
