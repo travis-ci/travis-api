@@ -60,6 +60,10 @@ module Travis::API::V3
       end
     end
 
+    def hide(service)
+      current_resource.hide_service(service)
+    end
+
     def get(*args)
       current_resource.add_service('GET'.freeze, *args)
     end

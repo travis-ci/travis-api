@@ -5,6 +5,7 @@
 $: << 'lib'
 
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
+ENV.delete('DATABASE_URL')
 
 require 'support/coverage' unless ENV['SKIP_COVERAGE']
 

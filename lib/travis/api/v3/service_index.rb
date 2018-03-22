@@ -105,6 +105,7 @@ module Travis::API::V3
         end
 
         resource.services.each do |(request_method, sub_route), service|
+          next if resource.service_hidden?(service)
           list    = resources[resource.display_identifier][:actions][service] ||= []
           pattern = sub_route ? resource.route + sub_route : resource.route
           factory = Services[resource.identifier][service]
