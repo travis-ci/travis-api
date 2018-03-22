@@ -53,7 +53,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/sidekiq
-  revision: 90e8ef6e7917e5b2f5a553ec50d64af68093dd22
+  revision: 3276552606dc302ec3350df37a6e635a7c1036a7
   branch: igor-client-push-bypass-multi-exec
   specs:
     sidekiq (5.1.2)
