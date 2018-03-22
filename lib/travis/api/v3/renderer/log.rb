@@ -11,7 +11,11 @@ module Travis::API::V3
     # /api in Enterprise, as Enterprise's API lives in a path not a subdomain, and will throw off the manipulations
     # we do in the render method we do in this class.
     def href
-      Renderer.href(self.class.type, model.attributes, script_name: '')
+      Travis.config.enterprise ?
+        Renderer.href(self.class.type, model.attributes, script_name: '')
+      else
+        super
+      end
     end
 
     def render(representation)
