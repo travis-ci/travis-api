@@ -1,4 +1,4 @@
-describe Travis::API::V3::Billing do
+describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   let(:billing) { described_class.new(user_id) }
   let(:user_id) { rand(999) }
   let(:billing_url) { 'https://billing.travis-ci.com/' }
@@ -15,10 +15,10 @@ describe Travis::API::V3::Billing do
     subject { billing.get_subscription(subscription_id) }
 
     it 'returns the subscription' do
-      stub_billing_request(:get, "/subscriptions/#{subscription_id}").to_return(body: JSON.dump(id: subscription_id))
+      stub_billing_request(:get, "/subscriptions/#{subscription_id}").to_return(body: JSON.dump(billing_response_body('id' => subscription_id, 'plan' => 'travis-ci-two-builds' )))
       expect(subject).to be_a(Travis::API::V3::Models::Subscription)
       expect(subject.id).to eq(subscription_id)
-      # TODO: More attributes
+      expect(subject.plan).to eq('travis-ci-two-builds')
     end
 
     it 'raises error if subscription is not found' do
@@ -32,9 +32,10 @@ describe Travis::API::V3::Billing do
     subject { billing.all }
 
     it 'returns the list of subscriptions' do
-      stub_billing_request(:get, '/subscriptions').to_return(body: JSON.dump([{id: subscription_id}]))
+      stub_billing_request(:get, '/subscriptions').to_return(body: JSON.dump([billing_response_body('id' => subscription_id)]))
 
-      expect(subject).to eq([Travis::API::V3::Models::Subscription.new('id' => subscription_id)])
+      expect(subject.size).to eq 1
+      expect(subject.first.id).to eq(subscription_id)
     end
   end
 
@@ -67,9 +68,9 @@ describe Travis::API::V3::Billing do
     subject { billing.create_subscription(subscription_data) }
 
     it 'requests the creation and returns the representation' do
-      stubbed_request = stub_billing_request(:post, "/subscriptions").with(body: JSON.dump(subscription: subscription_data)).to_return(status: 202, body: JSON.dump('id' => 456))
+      stubbed_request = stub_billing_request(:post, "/subscriptions").with(body: JSON.dump(subscription: subscription_data)).to_return(status: 202, body: JSON.dump(billing_response_body('id' => 456)))
 
-      expect(subject).to eq(Travis::API::V3::Models::Subscription.new('id' => 456))
+      expect(subject.id).to eq(456)
       expect(stubbed_request).to have_been_made
     end
   end
@@ -80,4 +81,5 @@ describe Travis::API::V3::Billing do
     end.to_s
     stub_request(method, url).with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
   end
+
 end

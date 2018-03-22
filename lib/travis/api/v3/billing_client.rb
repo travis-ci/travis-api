@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Billing
+  class BillingClient
     class Error < StandardError; end
     class ConfigurationError < Error; end
     class NotFoundError < Error; end

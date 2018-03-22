@@ -27,6 +27,8 @@ require 'travis/testing/scenario'
 require 'travis/testing/factories'
 require 'travis/testing/matchers'
 require 'auth/helpers'
+require 'support/active_record'
+require 'support/billing_spec_helper'
 require 'support/env'
 require 'support/formats'
 require 'support/gcs'
@@ -34,10 +36,9 @@ require 'support/matchers'
 require 'support/payloads'
 require 'support/private_key'
 require 'support/s3'
+require 'support/shared_examples'
 require 'support/ssl_keys'
 require 'support/test_helpers'
-require 'support/shared_examples'
-require 'support/active_record'
 
 FactoryBot = FactoryGirl
 
@@ -75,6 +76,7 @@ RSpec.configure do |c|
   c.include TestHelpers
   c.include Support::Env
   c.include Support::AuthHelpers, auth_helpers: true
+  c.include BillingSpecHelper, billing_spec_helper: true
 
   # for auth tests against staging, how the hell does this work, if at all
   # c.filter_run mode: :private, repo: :private

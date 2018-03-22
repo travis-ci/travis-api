@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::Subscription::Cancel, set_app: true do
     let(:subscription_id) { rand(999) }
 
     before do
-      Travis::API::V3::Billing.stubs(:new).with(user.id).returns(client)
+      Travis::API::V3::BillingClient.stubs(:new).with(user.id).returns(client)
     end
 
     it 'updates the address' do
