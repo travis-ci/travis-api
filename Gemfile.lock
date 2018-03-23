@@ -52,6 +52,17 @@ GIT
       proxies (~> 0.2.0)
 
 GIT
+  remote: https://github.com/travis-ci/sidekiq
+  revision: 3276552606dc302ec3350df37a6e635a7c1036a7
+  branch: igor-client-push-bypass-multi-exec
+  specs:
+    sidekiq (5.1.2)
+      concurrent-ruby (~> 1.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      rack-protection (>= 1.5.0)
+      redis (>= 3.3.5, < 5)
+
+GIT
   remote: https://github.com/travis-ci/travis-amqp
   revision: 3966b3651adfd1c544f53d49d5986ac16cd9c4bc
   specs:
@@ -317,11 +328,6 @@ GEM
     safe_yaml (1.0.4)
     sentry-raven (2.5.3)
       faraday (>= 0.7.6, < 1.0)
-    sidekiq (4.2.6)
-      concurrent-ruby (~> 1.0)
-      connection_pool (~> 2.2, >= 2.2.0)
-      rack-protection (>= 1.5.0)
-      redis (~> 3.2, >= 3.2.1)
     signet (0.8.1)
       addressable (~> 2.3)
       faraday (~> 0.9)
@@ -431,7 +437,7 @@ DEPENDENCIES
   rspec-its
   s3!
   sentry-raven
-  sidekiq
+  sidekiq!
   simple_states (= 1.0.2)
   simplecov
   sinatra
