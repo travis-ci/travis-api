@@ -222,6 +222,7 @@ module Travis::Api
           config.redis =  ConnectionPool.new(:timeout => options[:pool_timeout] || 1, :size => 1) do
             client = Travis.redis
             if namespace
+              require 'redis/namespace'
               client = Redis::Namespace.new(namespace, :redis => client)
             end
             client
