@@ -18,6 +18,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
 
   context 'authenticated' do
     let(:user) { Factory(:user) }
+    let(:organization) { Factory(:org, login: 'travis') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
@@ -25,7 +26,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
 
     let!(:stubbed_request) do
       stub_billing_request(:post, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump(billing_response_body('id' => 1234)))
+        .to_return(status: 200, body: JSON.dump(billing_response_body('id' => 1234, 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
         # TODO: Check sent data
     end
 
@@ -43,6 +44,8 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
         'status' => 'canceled',
         'source' => 'stripe',
         'billing_info' => {
+          '@type' => 'billing_info',
+          '@representation' => 'minimal',
           'first_name' => 'ana',
           'last_name' => 'rosas',
           'company' => '',
@@ -52,16 +55,22 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           'address2' => '',
           'city' => 'Comala',
           'state' => nil,
-          'country' => 'Mexico'
+          'country' => 'Mexico',
+          'vat_id' => '123456'
         },
         'credit_card_info' => {
+          '@type' => 'credit_card_info',
+          '@representation' => 'minimal',
           'card_owner' => 'ana',
           'last_digits' => '4242',
           'expiration_date' => '9/2021'
         },
         'owner'=> {
-          'type' => 'Organization',
-          'id' => 43
+          '@type' => 'organization',
+          '@representation' => 'minimal',
+          '@href' => "/v3/org/#{organization.id}",
+          'id' => organization.id,
+          'login' => 'travis'
         }
       })
       expect(stubbed_request).to have_been_made.once

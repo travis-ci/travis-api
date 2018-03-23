@@ -18,12 +18,13 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
 
   context 'authenticated' do
     let(:user) { Factory(:user) }
+    let(:organization) { Factory(:org, login: 'travis') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 
     before do
       stub_billing_request(:get, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump([billing_response_body('id' => 1234)]))
+        .to_return(status: 200, body: JSON.dump([billing_response_body('id' => 1234, 'owner' => { 'type' => 'Organization', 'id' => organization.id })]))
     end
 
     it 'responds with list of subscriptions' do
@@ -44,6 +45,8 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           'status' => 'canceled',
           'source' => 'stripe',
           'billing_info' => {
+            '@type' => 'billing_info',
+            '@representation' => 'minimal',
             'first_name' => 'ana',
             'last_name' => 'rosas',
             'company' => '',
@@ -53,16 +56,22 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             'address2' => '',
             'city' => 'Comala',
             'state' => nil,
-            'country' => 'Mexico'
+            'country' => 'Mexico',
+            'vat_id' => '123456'
           },
           'credit_card_info' => {
+            '@type' => 'credit_card_info',
+            '@representation' => 'minimal',
             'card_owner' => 'ana',
             'last_digits' => '4242',
             'expiration_date' => '9/2021'
           },
           'owner'=> {
-            'type' => 'Organization',
-            'id' => 43
+            '@type' => 'organization',
+            '@representation' => 'minimal',
+            '@href' => "/v3/org/#{organization.id}",
+            'id' => organization.id,
+            'login' => 'travis'
           }
         }]
       })
