@@ -7,13 +7,13 @@ module Travis
     sidekiq_options queue: 'customerio'
 
     def self.update(user)
-      return unless Travis.config.customerio.site_id
+      return unless site_id?
 
       perform_async(user.id)
     end
 
     def perform(user_id)
-      return unless Travis.config.customerio.site_id
+      return unless self.class.site_id?
 
       user = User.find(user_id)
 
@@ -36,6 +36,11 @@ module Travis
     end
 
     private
+
+    def self.site_id?
+      Travis.config.customerio && Travis.config.customerio.site_id
+    end
+
     def client
       @client ||= ::Customerio::Client.new(Travis.config.customerio.site_id, Travis.config.customerio.api_key, :json => true)
     end
