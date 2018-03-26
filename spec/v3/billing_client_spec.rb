@@ -3,6 +3,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   let(:user_id) { rand(999) }
   let(:billing_url) { 'https://billing.travis-ci.com/' }
   let(:auth_key) { 'supersecret' }
+  let(:organization) { Factory(:org, login: 'travis') }
 
   before do
     Travis.config.billing.url = billing_url
@@ -16,7 +17,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns the subscription' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}", auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump(billing_response_body('id' => subscription_id, 'plan' => 'travis-ci-two-builds' )))
+        .to_return(body: JSON.dump(billing_response_body('id' => subscription_id, 'plan' => 'travis-ci-two-builds', 'owner' => { 'type' => 'Organization', 'id' => organization.id } )))
       expect(subject).to be_a(Travis::API::V3::Models::Subscription)
       expect(subject.id).to eq(subscription_id)
       expect(subject.plan).to eq('travis-ci-two-builds')
@@ -35,7 +36,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns the list of subscriptions' do
       stub_billing_request(:get, '/subscriptions', auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump([billing_response_body('id' => subscription_id)]))
+        .to_return(body: JSON.dump([billing_response_body('id' => subscription_id, 'owner' => { 'type' => 'Organization', 'id' => organization.id })]))
 
       expect(subject.size).to eq 1
       expect(subject.first.id).to eq(subscription_id)
@@ -77,7 +78,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     it 'requests the creation and returns the representation' do
       stubbed_request = stub_billing_request(:post, "/subscriptions", auth_key: auth_key, user_id: user_id)
         .with(body: JSON.dump(subscription: subscription_data))
-        .to_return(status: 202, body: JSON.dump(billing_response_body('id' => 456)))
+        .to_return(status: 202, body: JSON.dump(billing_response_body('id' => 456, 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
 
       expect(subject.id).to eq(456)
       expect(stubbed_request).to have_been_made

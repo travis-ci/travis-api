@@ -25,7 +25,8 @@ module Support
           "address2" => "",
           "city" => "Comala",
           "state" => nil,
-          "country" => "Mexico"
+          "country" => "Mexico",
+          "vat_id" => "123456"
         },
         "credit_card_info" => {
           "card_owner" => "ana",
@@ -36,7 +37,7 @@ module Support
           "type" => "Organization",
           "id" => 43
         }
-      }.merge(attributes)
+      }.deep_merge(attributes)
     end
   end
 end
