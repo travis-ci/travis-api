@@ -23,9 +23,11 @@ if [ ! -f "bin/start-pgbouncer-stunnel" ]; then
   export PGBOUNCER_ENABLED=false
 fi
 
-if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
+cmd="script/server"
+
+if [ "$PGBOUNCER_ENABLED" = 'true' ]; then
   export PGBOUNCER_PREPARED_STATEMENTS=false
-  exec bin/start-pgbouncer-stunnel script/server
-else
-  exec script/server
+  cmd="bin/start-pgbouncer-stunnel $cmd"
 fi
+
+exec $cmd
