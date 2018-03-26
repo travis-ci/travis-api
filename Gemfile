@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
-gemspec
 
-ruby '2.3.5'
+ruby '2.5.0'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
@@ -9,9 +8,8 @@ gem 'mime-types'
 
 gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
-gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config'
+gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config', branch: 'fix-docker-redis-url'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
-gem 'travis-sidekiqs', git: 'https://github.com/travis-ci/travis-sidekiqs'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 gem 'travis-rollout',  git: 'https://github.com/travis-ci/travis-rollout', branch: 'sf-refactor'
 
@@ -38,21 +36,46 @@ gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_met
 gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
+gem 'nakayoshi_fork'
+gem 'sidekiq'
+gem 'redis-namespace'
 gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
 
-gem 'jemalloc'
+gem 'rbtrace'
+gem 'memory_profiler'
+gem 'allocation_tracer'
+
+gem 'jemalloc', git: 'https://github.com/travis-ci/jemalloc-rb'
 gem 'customerio'
 
 gem 'redlock'
 gem 'rake', '~> 0.9.2'
 
-gem 'appsignal'
 gem 'libhoney'
 
 gem 'faraday'
 gem 'faraday_middleware'
 
 gem 'knapsack'
+
+gem 'pg',                     '~> 0.21'
+gem 'composite_primary_keys', '~> 8.0'
+gem 'redcarpet',              '>= 3.2.3'
+gem 'rack-ssl',               '~> 1.3', '>= 1.3.3'
+gem 'memcachier'
+gem 'useragent'
+gem 'tool'
+gem 'google-api-client', '~> 0.9.4'
+gem 'fog-aws',           '~> 0.12.0'
+gem 'fog-google',        '~> 0.4.2'
+gem 'activerecord',      '~> 4.2'
+gem 'rollout',           '~> 1.1.0'
+gem 'coder',             '~> 0.4.0'
+gem 'virtus',            '~> 1.0.0'
+gem 'redis',             '~> 3.0'
+gem 'hashr'
+gem 'pusher',            '~> 0.14.0'
+gem 'multi_json'
 
 group :test do
   gem 'rspec',         '~> 2.13'

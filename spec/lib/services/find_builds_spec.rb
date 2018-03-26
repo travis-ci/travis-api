@@ -117,9 +117,9 @@ describe Travis::Services::FindBuilds do
           service.run.should_not include(private_build)
         end
 
-        it 'finds a public build' do
+        it 'does not fine a public build' do
           service = described_class.new(user)
-          service.run.should include(public_build)
+          service.run.should_not include(public_build)
         end
       end
     end
@@ -152,6 +152,35 @@ describe Travis::Services::FindBuilds do
           service.run.should_not include(public_build)
         end
       end
+    end
+  end
+
+  context 'on .com with public mode' do
+    before do
+      Travis.config.public_mode = true
+      Travis.config.host = "travis-ci.com"
+    end
+    after { Travis.config.host = "travis-ci.org" }
+
+    it "doesn't return public builds that don't belong to a user" do
+      public_repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', private: false)
+      public_build = Factory(:build, repository: public_repo)
+      Factory(:test, :state => :started, :source => public_build, repository: public_repo)
+
+      user = Factory(:user)
+      repo = Factory(:repository, :owner_name => 'drogus', :name => 'test-project')
+      repo.users << user
+      build = Factory(:build, repository: repo)
+      job = Factory(:test, :state => :started, :source => build, repository: repo)
+
+      other_user = Factory(:user)
+      other_repo = Factory(:repository, private: true)
+      other_repo.users << other_user
+      other_build = Factory(:build, repository: other_repo)
+      Factory(:test, :state => :started, :source => other_build, repository: other_repo)
+
+      service = described_class.new(user)
+      service.run.should == [build]
     end
   end
 end

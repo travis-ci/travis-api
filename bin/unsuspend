@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require_relative './user_mgmt'
+
+unless login = ARGV.first
+  puts "You must provide a login"
+  exit 1
+end
+
+if user = User.find_by_login(login)
+  user.update_attributes!(suspended: false, suspended_at: nil)
+  puts "Unsuspending user id=#{user.id} login=#{login}"
+  exit 0
+else
+  puts "User login=#{login} not found"
+  exit 1
+end

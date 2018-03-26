@@ -5,7 +5,7 @@ module Travis::API::V3
     def run!
       repository = super(true).resource
 
-      if repository.private?
+      if repository.private? || access_control.enterprise?
         admin = access_control.admin_for(repository)
         github(admin).upload_key(repository)
       end
