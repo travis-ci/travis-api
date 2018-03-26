@@ -229,13 +229,13 @@ module Travis::API::V3
       get :current
     end
 
-    hidden_resource :subscriptions do
+    resource :subscriptions do
       route '/subscriptions'
       get :all
       post :create
     end
 
-    hidden_resource :subscription do
+    resource :subscription do
       route '/subscription/{subscription.id}'
       patch :update_address, '/address'
       patch :update_creditcard, '/creditcard'
