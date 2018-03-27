@@ -220,6 +220,12 @@ module Travis::Api
           options = Travis.config.redis.to_h
           namespace = Travis.config.sidekiq.namespace
 
+          # share connection with Travis.redis to ensure
+          # that we only create one redis connection per
+          # unicorn worker.
+          #
+          # this is so that we do not run into redis
+          # connection limits.
           config.redis = ConnectionPool.new(timeout: options[:pool_timeout] || 1, size: 1) do
             client = Travis.redis
             if namespace
