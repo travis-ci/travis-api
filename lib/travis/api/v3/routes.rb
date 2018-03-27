@@ -98,6 +98,8 @@ module Travis::API::V3
         route '/active'
         get :for_owner
       end
+
+      hide(post :import, '/import')
     end
 
     resource :repositories do
