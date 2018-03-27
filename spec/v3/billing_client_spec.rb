@@ -77,7 +77,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'requests the creation and returns the representation' do
       stubbed_request = stub_billing_request(:post, "/subscriptions", auth_key: auth_key, user_id: user_id)
-        .with(body: JSON.dump(subscription: subscription_data))
+        .with(body: JSON.dump(subscription_data))
         .to_return(status: 202, body: JSON.dump(billing_response_body('id' => 456, 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
 
       expect(subject.id).to eq(456)

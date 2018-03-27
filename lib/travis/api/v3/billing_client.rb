@@ -36,7 +36,7 @@ module Travis::API::V3
     end
 
     def create_subscription(subscription_data)
-      response = connection.post('/subscriptions', subscription: subscription_data)
+      response = connection.post('/subscriptions', subscription_data)
       if response.success?
         Travis::API::V3::Models::Subscription.new(response.body)
       else
