@@ -1,7 +1,6 @@
 require 'pusher'
 require 'travis/support'
 require 'travis/support/database'
-require 'travis/redis_pool'
 require 'travis/errors'
 
 module Travis
@@ -36,9 +35,10 @@ module Travis
   class JobUnfinished     < StandardError; end
 
   class << self
+    attr_accessor :config
+
     def setup(options = {})
       @config = Config.load(*options[:configs])
-      @redis = Travis::RedisPool.new(config.redis.to_h)
 
       Travis.logger.info("Setting up module Travis")
 
@@ -47,7 +47,9 @@ module Travis
       Github::Services.register
     end
 
-    attr_accessor :redis, :config
+    def redis
+      @redis ||= Redis.new(config.redis.to_h)
+    end
 
     def pusher
       @pusher ||= ::Pusher.tap do |pusher|
