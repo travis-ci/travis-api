@@ -119,6 +119,10 @@ module Travis::API::V3
       full_access? or public_mode?(organization)
     end
 
+    def organization_adminable?(organization)
+      full_access? or organization.memberships.where(user: self.user, role: 'admin').exists?
+    end
+
     def ssl_key_visible?(ssl_key)
       visible? ssl_key.repository
     end
