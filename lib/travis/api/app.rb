@@ -219,7 +219,8 @@ module Travis::Api
         Sidekiq.configure_client do |config|
           options = Travis.config.redis.to_h
           namespace = Travis.config.sidekiq.namespace
-          config.redis = ConnectionPool.new(:timeout => options[:pool_timeout] || 1, :size => 1) do
+
+          config.redis = ConnectionPool.new(timeout: options[:pool_timeout] || 1, size: 1) do
             client = Travis.redis
             if namespace
               require 'redis/namespace'
