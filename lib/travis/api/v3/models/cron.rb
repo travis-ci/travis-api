@@ -39,11 +39,8 @@ module Travis::API::V3
     end
 
     def enqueue
-      if !branch.repository&.github_id
-        raise StandardError, "Repository does not have a github_id"
-      end
-
       if !branch.repository&.active? or !branch.exists_on_github
+        Travis.logger.info "Removing cron #{self.id} because either the associated repo is inactive or branch doesn't exist on Github"
         self.destroy
         return false
       end
