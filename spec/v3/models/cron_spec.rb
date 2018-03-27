@@ -99,11 +99,6 @@ describe Travis::API::V3::Models::Cron do
       subject.next_run.should be == DateTime.now.utc + 1.day
     end
 
-    it "raises error when repo doesn't have a github id" do
-      subject.branch.repository.github_id = nil
-      expect { subject.enqueue }.to raise_error(StandardError)
-    end
-
     it "destroys cron if branch does not exist on github" do
       subject.branch.exists_on_github = false
       expect{ subject.enqueue }.to change { Travis::API::V3::Models::Cron.count}.by(-1)
