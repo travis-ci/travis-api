@@ -49,7 +49,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'requests the update' do
       stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/address", auth_key: auth_key, user_id: user_id)
-        .with(body: JSON.dump(subscription: address_data))
+        .with(body: JSON.dump(address_data))
         .to_return(status: 202)
 
       expect { subject }.to_not raise_error
@@ -63,7 +63,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'requests the update' do
       stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard", auth_key: auth_key, user_id: user_id)
-        .with(body: JSON.dump(subscription: creditcard_data))
+        .with(body: JSON.dump(creditcard_data))
         .to_return(status: 203)
 
       expect { subject }.to_not raise_error

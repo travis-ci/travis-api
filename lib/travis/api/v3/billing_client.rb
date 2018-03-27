@@ -24,7 +24,7 @@ module Travis::API::V3
     end
 
     def update_address(subscription_id, address_data)
-      connection.patch("/subscriptions/#{subscription_id}/address", subscription: address_data)
+      connection.patch("/subscriptions/#{subscription_id}/address", address_data)
     end
 
     def cancel_subscription(id)
@@ -32,7 +32,7 @@ module Travis::API::V3
     end
 
     def update_creditcard(subscription_id, creditcard_data)
-      connection.patch("/subscriptions/#{subscription_id}/creditcard", subscription: creditcard_data)
+      connection.patch("/subscriptions/#{subscription_id}/creditcard", creditcard_data)
     end
 
     def create_subscription(subscription_data)

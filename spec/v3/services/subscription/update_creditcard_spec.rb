@@ -20,13 +20,17 @@ describe Travis::API::V3::Services::Subscription::UpdateCreditcard, set_app: tru
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
-    let(:creditcard_data) { { "cc_owner" => "Hans" } }
+    let(:creditcard_data) { { "card_owner" => "Travis Schmidt",'expiration_date' => '11/21', 'last_digits' => '1111' } }
     let(:subscription_id) { rand(999) }
 
     let!(:stubbed_request) do
       stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard", auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200)
-        # TODO: check sent data
+      .with(body: {
+          'card_owner' => 'Travis Schmidt',
+          'expiration_date' => '11/21',
+          'last_digits' => '1111'
+          })
+      .to_return(status: 200)
     end
 
     it 'updates the creditcard' do
