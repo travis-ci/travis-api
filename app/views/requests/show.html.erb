@@ -35,6 +35,7 @@
   </dl>
 </section>
 
+<% unless travis_config.enterprise? %>
 <section class="info-block">
   <h2 class="info-header">Payload</h2>
 
@@ -46,3 +47,4 @@
     <dd><a href="<%= @request.payload['compare']%>">compare URL</a></dd>
   </dl>
 </section>
+<% end %>

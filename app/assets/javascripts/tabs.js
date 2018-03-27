@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function(){
+  // TODO: Ideally this will be removed when there are no longer any
+  // pages using anchor-based tabbed content
   if (!window.location.hash && document.querySelector('.tab-link')) {
     var hash = document.querySelector('.tab-link').href;
     window.history.replaceState(undefined, undefined, hash);
@@ -14,6 +16,12 @@ document.addEventListener('DOMContentLoaded', function(){
   }).on('ajax:success', function(e, response, status, xhr) {
     window.history.pushState({ href: this.href, content: this.dataset.content }, null, this.href);
     $('#' + this.dataset.content).html(response);
+  });
+
+  // Hightlight active tab and remove highlight from unactive tab
+  $('.remote-tab-link').click(function(e) {
+    $('#tabs a').removeClass('tab-active');
+    $(this).addClass('tab-active');
   });
 
   $(window).on('popstate', function(e) {

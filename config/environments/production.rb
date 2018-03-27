@@ -1,3 +1,5 @@
+require 'travis_config'
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -84,16 +86,12 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  Travis::Config.class_eval do
-    define admins: []
-  end
-
-  configuration = Travis::Config.load
+  tc = config.travis_config = TravisConfig.load
 
   config.middleware.use Travis::SSO,
     mode: :session,
-    endpoint: configuration.api_endpoint,
-    authorized?:    -> u   { configuration.admins.include? u['login'] },
+    endpoint: tc.api_endpoint,
+    authorized?:    -> u   { tc.admins.include? u['login'] },
     get_otp_secret: -> u   { Travis::DataStores.redis.get("admin-v2:otp:#{u['login']}")    },
     set_otp_secret: -> u,s { Travis::DataStores.redis.set("admin-v2:otp:#{u['login']}", s) }
 end

@@ -3,10 +3,12 @@ module Services
     class DeleteLastBuild < Struct.new(:current_user, :repository)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "dropped last build reference for #{repository.slug}"
+        'dropped last build reference'
+      end
+
+      def args
+        { repo: repository.slug }
       end
     end
   end

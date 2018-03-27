@@ -3,10 +3,12 @@ module Services
     class EnableRepository < Struct.new(:current_user, :repository)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "enabled hook for #{repository.slug}"
+        'enabled repo hook'
+      end
+
+      def args
+        { repo: repository.slug }
       end
     end
   end

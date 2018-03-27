@@ -1,6 +1,6 @@
 module UsersHelper
   def become_url(user)
-    "#{Travis::Config.load.become_endpoint}/#{user.login}"
+    "#{travis_config.become_endpoint}/#{user.login}"
   end
 
   def hidden(user, field)
@@ -11,5 +11,9 @@ module UsersHelper
 
   def truncate(string, max)
     string.length > max ? "#{string[0...max]}" : string
+  end
+
+  def travis_config
+    Rails.configuration.travis_config
   end
 end

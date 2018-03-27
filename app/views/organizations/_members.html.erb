@@ -1,42 +1,31 @@
 <section class="info-block">
   <h2 class="info-header">Members</h2>
-  <% if @memberships.empty? %>
+  <% if @members.empty? %>
     <p>No members.</p>
   <% else %>
     <%= form_for :sync_all, url: {action: 'sync_all', controller: 'users'} do |f| %>
       <%= f.hidden_field :back_link, value: request.fullpath %>
-      <%= f.hidden_field :user_ids, value: @memberships.map(&:user_id).join(',') %>
+      <%= f.hidden_field :user_ids, value: @members.map(&:id).join(',') %>
       <%= f.submit 'Sync all', class: 'button' %>
     <% end %>
     <ul>
       <li class="inline-list member-item">
         <p class="info-label">Name</p>
         <p class="info-label">Role</p>
-        <p class="info-label">Subscription</p>
-        <p class="info-label">Trial Builds</p>
       </li>
-      <% @memberships.each do |membership| %>
-        <% if membership.user %>
+      <% @members.each do |member| %>
+        <% if member %>
           <li class="inline-list member-item">
             <p>
               <!-- TODO: Display a default avatar image if there isn't one defined -->
-              <%= image_tag(membership.user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if membership.user.avatar_url %>
-              <%= link_to describe(membership.user), membership.user %>
+              <%= image_tag(member.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if member.avatar_url %>
+              <%= link_to describe(member), member %>
             </p>
-            <p><%= membership.role %></p>
-            <p>
-              <% if membership.user.subscription %>
-                <%= link_to format_subscription(membership.user.subscription), membership.user.subscription %>
-              <% else %>
-                none
-              <% end %>
-            </p>
-            <p>
-              <%= check_trial_builds(membership.user) %>
-            </p>
+            <p><%= member.role %></p>
           </li>
         <% end %>
       <% end %>
     </ul>
   <% end %>
+  <%= will_paginate @members, param_name: 'page', params: {controller: controller_name, action: 'members', id: params[:id], anchor: 'members'}, 'data-remote': true %>
 </section>

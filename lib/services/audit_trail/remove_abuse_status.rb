@@ -3,10 +3,12 @@ module Services
     class RemoveAbuseStatus < Struct.new(:current_user, :login, :status)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "removed #{login} as #{status}"
+        'removed abuse status'
+      end
+
+      def args
+        { owner: login, status: status }
       end
     end
   end

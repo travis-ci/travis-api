@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :get_user, except: [:admins, :sync_all]
 
   def admins
-    @admins = User.where(login: Travis::Config.load.admins).order(:name)
+    @admins = User.where(login: travis_config.admins).order(:name)
   end
 
   def boost
@@ -81,14 +81,14 @@ class UsersController < ApplicationController
   end
 
   def repositories
-    @repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name)
+    @repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name).paginate(page: params[:page], per_page: 20)
     render_either 'shared/repositories'
   end
 
   def jobs
     repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name)
     @pending_jobs = Job.from_repositories(repositories).not_finished
-    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 10)
+    @finished_jobs = Job.from_repositories(repositories).finished.paginate(page: params[:page], per_page: 20)
     @last_build = @finished_jobs.first.build unless @finished_jobs.empty?
     @build_counts = build_counts(@user)
     @build_months = build_months(@user)
@@ -96,8 +96,8 @@ class UsersController < ApplicationController
   end
 
   def requests
-    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 10)
-    render_either 'shared/requests'
+    @requests = Request.from_owner('User', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 20)
+    render_either 'shared/requests', locals: { origin: @user }
   end
 
   def broadcasts
@@ -147,6 +147,20 @@ class UsersController < ApplicationController
   def update_trial_builds
     Services::TrialBuilds::Update.new(@user, current_user).call(params[:builds_allowed])
     flash[:notice] = "Added #{params[:builds_allowed]} trial builds for #{@user.login}."
+    redirect_to @user
+  end
+
+  def suspend
+    @user.update_attributes!(suspended: true, suspended_at: Time.now.utc)
+    Services::AuditTrail::SuspendUser.new(current_user, @user).call
+    flash[:notice] = "Suspended #{@user.login}."
+    redirect_to @user
+  end
+
+  def unsuspend
+    @user.update_attributes!(suspended: false, suspended_at: nil)
+    Services::AuditTrail::UnsuspendUser.new(current_user, @user).call
+    flash[:notice] = "Unsuspended #{@user.login}."
     redirect_to @user
   end
 

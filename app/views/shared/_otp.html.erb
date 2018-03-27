@@ -3,12 +3,12 @@
     <h3 class="popup-header">This action requires a one time password</h3>
     <button class="popup-close" title="Close popup" type="button">close</button>
 
-    <% if current_user.has_2fa? && !Travis::Config.load.disable_otp? %>
+    <% if current_user.has_2fa? && !travis_config.disable_otp? %>
       <p class="popup-text">If you are 100% certain, please verify your identity by providing a one time password:</p>
       <%= text_field_tag 'otp', '', autofocus: true, autocomplete: :off %>
       <%= submit_tag 'Confirm', class: 'button', id: 'confirm-otp' %>
-    <% elsif !Travis::Config.load.disable_otp? %>
-      <p class="popup-text">You need to set up Two Factor Authentication in order to perform this action.</p>
+    <% elsif !travis_config.disable_otp? %>
+      <p class="popup-text">You need to set up two-factor authentication in order to perform this action.</p>
     <% else %>
       <p class="popup-text">OTP is disabled, confirm if you want to continue.</p>
       <%= hidden_field_tag 'otp' %>

@@ -3,10 +3,12 @@ module Services
     class AddAbuseStatus < Struct.new(:current_user, :login, :status)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "marked #{login} as #{status}"
+        'added abuse status'
+      end
+
+      def args
+        { owner: login, status: status }
       end
     end
   end

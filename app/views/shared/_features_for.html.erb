@@ -1,4 +1,4 @@
-<% if @features.any? %>
+<% if @features %>
   <%= form_for :features, url: {action: 'features', controller: "#{owner.class.table_name}"}, html: {class: "inline-list"} do |f| %>
     <div>
     <% @features.each do |feature, flag| %>

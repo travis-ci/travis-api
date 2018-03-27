@@ -10,11 +10,11 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
+ *= require normalize
  *= require jquery-ui/datepicker
  *= require_self
  */
 
-@import url("https://necolas.github.io/normalize.css/3.0.2/normalize.css")
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600")
 @import font-awesome
 @import "_vars"
@@ -27,7 +27,6 @@
 @import "_layout"
 @import "popup"
 @import "loading_indicator"
-
 
 /* Following styles are for development purposes and can be replaced */
 
@@ -52,7 +51,7 @@ p.welcome-sub, p.goodbye-sub, p.not-found-sub
 
 #tabs
   margin-top: 20px
-
+Tabs
 #tabs::after
   display: block
   content: ""
@@ -68,7 +67,7 @@ p.welcome-sub, p.goodbye-sub, p.not-found-sub
       + .tab-content
         display: block
 
-.tab-link, .remote-tab-link
+.tab-link, .remote-tab-link, .regular-tab-link
   position: relative
   display: inline-block
   text-decoration: none
@@ -80,10 +79,15 @@ p.welcome-sub, p.goodbye-sub, p.not-found-sub
     display: block
     width: 106%
     height: 8px
-    border-bottom: 1px solid lighten($cement-grey, 20%)
+    border-bottom: 2px solid lighten($cement-grey, 20%)
   &:hover
     &::after
       border-bottom: 2px solid $oxide-blue
+  &.tab-active
+    color: $oxide-blue
+    &::after
+      border-bottom: 2px solid $oxide-blue
+
 
 .tab-content
   box-sizing: border-box
@@ -210,13 +214,7 @@ dd
 .log-list
   list-style: none
   li
-    padding: 0.5em
-    display: flex
-    flex-direction: row-reverse
-    justify-content: space-between
-    time
-      font-weight: $font-weight-bold
-      flex-shrink: 0
+    padding: 0.5em 0
 
 .org-item, .user-item, .feature-item, .search-info, .admin
   > *
@@ -240,7 +238,7 @@ dd
   border-width: 0
   padding: 0 10px
   border-radius: 4px
-  background-color: lighten($cement-grey, 20)
+  background-color: #e5e5e5
   font-size: $font-size-s
   text-decoration: none
   &:hover
@@ -260,7 +258,6 @@ dd
       .button
         padding: 0 10px
         margin-left: 0.2em
-
 
 /* Flashes */
 
@@ -444,3 +441,11 @@ pre.log
       margin-right: 10px
       &:hover
         background-color: #999a98
+
+/* Pagination */
+
+.pagination
+  margin: 4em 0
+  .current, .next, .previous_page, a
+    padding-right: 0.35em
+

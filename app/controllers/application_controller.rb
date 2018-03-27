@@ -9,9 +9,13 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def otp_valid?
-    return true if Travis::Config.load.disable_otp? && !Rails.env.production?
+    return true if travis_config.disable_otp? && !Rails.env.production?
 
     secret = Travis::DataStores.redis.get("admin-v2:otp:#{current_user.login}")
     return ROTP::TOTP.new(secret).verify(params[:otp])
+  end
+
+  def travis_config
+    Rails.configuration.travis_config
   end
 end

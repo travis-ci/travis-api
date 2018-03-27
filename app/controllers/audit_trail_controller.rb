@@ -1,5 +1,15 @@
 class AuditTrailController < ApplicationController
   def index
-    @logs = Travis::DataStores.redis.lrange("admin-v2:logs", 0, -1)
+    @logs = redis.lrange("admin-v2:logs", 0, -1).map { |log| fmt(log) }
+  end
+
+  private
+
+  def fmt(log)
+    Logfmt.parse(log)
+  end
+
+  def redis
+    Travis::DataStores.redis
   end
 end

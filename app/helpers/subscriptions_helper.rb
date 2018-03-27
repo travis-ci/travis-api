@@ -1,6 +1,6 @@
 module SubscriptionsHelper
   def format_plan(plan)
-    plan.gsub(/-/, ' ').remove('travis ci ')
+    plan.gsub(/-/, ' ').remove('travis ci ') if plan
   end
 
   def format_price(amount)

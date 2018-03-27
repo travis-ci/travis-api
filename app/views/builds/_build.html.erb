@@ -1,8 +1,8 @@
 <section class="info-block">
-  <h2 class="info-header">Status</h2>
+  <h2 class="info-header">Information</h2>
 
   <dl class="simple-info">
-    <dt class="info-label">State:</dt>
+    <dt class="info-label">State</dt>
     <dd class="inline">
       <p><%= @build.state %></p>
       <% if @build.not_finished? %>
@@ -12,46 +12,46 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Previous State:</dt>
+    <dt class="info-label">Previous state</dt>
     <dd><%= @build.previous_state %></dd>
 
-    <dt class="info-label">Repository:</dt>
+    <dt class="info-label">Repository</dt>
     <dd><%= link_to describe(@build.repository), @build.repository %></dd>
 
-    <dt class="info-label">Request:</dt>
+    <dt class="info-label">Request</dt>
     <dd><%= link_to describe(@build.request), @build.request %></dd>
 
-    <dt class="info-label">Owner:</dt>
+    <dt class="info-label">Owner</dt>
     <dd>
       <%= image_tag(@build.owner.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if @build.owner.avatar_url %>
       <%= link_to describe(@build.owner), @build.owner %>
     </dd>
 
-    <dt class="info-label">Event Type:</dt>
+    <dt class="info-label">Event type</dt>
     <dd><%= @build.event_type %></dd>
 
-    <dt class="info-label">Created:</dt>
+    <dt class="info-label">Created</dt>
     <dd><time><%= @build.created_at %></time></dd>
 
-    <dt class="info-label">Started:</dt>
+    <dt class="info-label">Started</dt>
     <dd><time><%= @build.started_at %></time></dd>
 
-    <dt class="info-label">Finished:</dt>
+    <dt class="info-label">Finished</dt>
     <dd><time><%= @build.finished_at %></time></dd>
 
-    <dt class="info-label">Duration:</dt>
+    <dt class="info-label">Duration</dt>
     <dd><%= format_duration(@build.duration) %></dd>
 
-    <dt class="info-label">Branch:</dt>
+    <dt class="info-label">Branch</dt>
     <dd><%= @build.branch %></dd>
 
-    <dt class="info-label">Commit:</dt>
+    <dt class="info-label">Commit</dt>
     <dd><%= @build.commit.commit %></dd>
 
-    <dt class="info-label">Message:</dt>
+    <dt class="info-label">Message</dt>
     <dd><%= @build.commit.message %></dd>
 
-    <dt class="info-label">Committer:</dt>
+    <dt class="info-label">Committer</dt>
     <dd class="inline committer">
       <p>
         <%= @build.commit.committer_name %>
@@ -75,7 +75,7 @@
       </div>
     </dd>
 
-    <dt class="info-label">Author:</dt>
+    <dt class="info-label">Author</dt>
     <dd class="inline author">
       <p>
         <%= @build.commit.author_name %>
@@ -99,7 +99,7 @@
       </div>
     </dd>
 
-    <dt class="info-label">Config Status:</dt>
+    <dt class="info-label">Config status</dt>
     <dd><%= @build.config ? @build.config_result : 'pending' %></dd>
   </dl>
 </section>

@@ -11,7 +11,7 @@ class Job < ApplicationRecord
 
   serialize  :config
 
-  scope :from_repositories, -> (repositories) { where(repository_id: repositories.map(&:id)).includes(:repository, :build) }
+  scope :from_repositories, -> (repositories) { where(repository_id: repositories.pluck(:id)).includes(:repository, :build) }
   scope :not_finished,      -> { where(state: %w[started received queued created]).sort_by {|job|
                                    %w[started received queued created].index(job.state.to_s) } }
   scope :finished,          -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }

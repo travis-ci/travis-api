@@ -1,14 +1,14 @@
 module Services
   module AuditTrail
-    class Sync < Struct.new(:current_user, :user)
+    class SuspendUser < Struct.new(:current_user, :user)
       include Services::AuditTrail::Base
 
       def message
-        'triggered sync'
+        'suspended user'
       end
 
       def args
-        { user_login: Array(user).join(',') }
+        { user_id: user.id, user_login: user.login }
       end
     end
   end

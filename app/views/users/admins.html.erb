@@ -1,25 +1,27 @@
-<% title "Users with Admin Access" %>
+<% unless travis_config.enterprise? %>
+  <% title "Admin users" %>
 
-<section class="info-block">
-  <ul>
-    <li class="inline-list admin">
-      <p class="info-label">Name</p>
-      <p class="info-label">Two Factor Authentication</p>
-      <p></p>
-    </li>
-    <% @admins.each do |admin| %>
+  <section class="info-block">
+    <ul>
       <li class="inline-list admin">
-        <p><%= link_to describe(admin), admin %></p>
-        <p><%= admin.has_2fa? ? "has two-factor auth set up" : "not set up yet" %></p>
-        <div class="call-to-action">
-          <% if admin.has_2fa? %>
-            <%= form_tag({action: 'reset_2fa', controller: "users", id: admin.id, method: 'post'}, {class: 'reset-2fa'}) do %>
-              <%= render partial: "shared/otp" %>
-              <%= submit_tag 'Reset Secret', class: 'button otp', id: "reset-2fa-#{admin.id}" %>
-            <% end %>
-          <% end %>
-        </div>
+        <p class="info-label">Name</p>
+        <p class="info-label">Two Factor Authentication</p>
+        <p></p>
       </li>
-    <% end %>
-  </ul>
-</section>
+      <% @admins.each do |admin| %>
+        <li class="inline-list admin">
+          <p><%= link_to describe(admin), admin %></p>
+          <p><%= admin.has_2fa? ? "has two-factor auth set up" : "not set up yet" %></p>
+          <div class="call-to-action">
+            <% if admin.has_2fa? %>
+              <%= form_tag({action: 'reset_2fa', controller: "users", id: admin.id, method: 'post'}, {class: 'reset-2fa'}) do %>
+                <%= render partial: "shared/otp" %>
+                <%= submit_tag 'Reset Secret', class: 'button otp', id: "reset-2fa-#{admin.id}" %>
+              <% end %>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

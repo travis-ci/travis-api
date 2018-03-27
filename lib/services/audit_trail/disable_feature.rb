@@ -11,10 +11,16 @@ module Services
         @recipient = recipient
       end
 
-      private
-
       def message
-        "disabled feature #{format_feature(feature)} for #{describe(recipient)}"
+        'disabled feature'
+      end
+
+      def args
+        { recipient: recipient_login, feature: feature }
+      end
+
+      def recipient_login
+        recipient.respond_to?(:login) ? recipient.login : recipient.name
       end
     end
   end

@@ -3,10 +3,12 @@ module Services
     class DisableRepository < Struct.new(:current_user, :repository)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "disabled hook for #{repository.slug}"
+        'disabled repo hook'
+      end
+
+      def args
+        { repo: repository.slug }
       end
     end
   end

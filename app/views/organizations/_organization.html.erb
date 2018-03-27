@@ -1,11 +1,11 @@
 <section class="info-block">
-  <h2 class="info-header">Basic Information</h2>
+  <h2 class="info-header">Basic information</h2>
 
   <dl class="simple-info">
-    <dt class="info-label">Name:</dt>
+    <dt class="info-label">Name</dt>
     <dd><%= @organization.name %></dd>
 
-    <dt class="info-label">GitHub Login</dt>
+    <dt class="info-label">GitHub login</dt>
     <dd>
       <%= image_tag(@organization.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") if @organization.avatar_url %>
       <%= @organization.login %>
@@ -17,20 +17,22 @@
   </dl>
 </section>
 
-<%= render partial: 'shared/account', locals: {owner: @organization} %>
+<% unless travis_config.enterprise? %>
+  <%= render partial: 'shared/account', locals: {owner: @organization} %>
+<% end %>
 
-<h2 class="info-header">Contact Information</h2>
+<h2 class="info-header">Contact information</h2>
 
 <dl class="simple-info">
-  <dt class="info-label">Primary E-mail Address:</dt>
+  <dt class="info-label">Primary e-mail address</dt>
   <dd>
     <%= @organization.email %>
     <%= mail_to @organization.email, fa_icon("envelope-o") %>
   </dd>
 
-  <dt class="info-label">Homepage:</dt>
+  <dt class="info-label">Homepage</dt>
   <dd><%= link_to @organization.homepage, @organization.homepage, target: "_blank" %></dd>
 
-  <dt class="info-label">Location:</dt>
+  <dt class="info-label">Location</dt>
   <dd><%= @organization.location %></dd>
 </dl>

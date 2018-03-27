@@ -1,3 +1,5 @@
+require 'travis_config'
+
 module Travis
   class EncryptedColumn
     attr_reader :disable, :options
@@ -86,7 +88,7 @@ module Travis
     end
 
     def config
-      Travis::Config.load.encryption
+      TravisConfig.load.encryption
     end
 
     def decode(str)

@@ -1,41 +1,20 @@
-<% title "Repository - #{describe(@repository)}" %>
-
-<% breadcrumbs "#{link_to describe(@repository.owner), @repository.owner} > #{@repository.name}" %>
+<% title describe(@repository) %>
 
 <div id="tabs">
-  <span id="repository" class="tab-switch"></span>
-  <a href="#repository" class="tab-link">Repository</a>
-  <section class="tab-content two-columns">
-    <%= render partial: 'repository' %>
-  </section>
-
-  <span id="users" class="tab-switch"></span>
-  <a href="#users" class="tab-link">Users</a>
-  <section class="tab-content">
-    <%= render partial: 'users' %>
-  </section>
-
-  <span id="builds" class="tab-switch"></span>
-  <a href="#builds" class="tab-link">Builds</a>
-  <section class="tab-content builds-ajax">
-    <%= render partial: 'builds' %>
-  </section>
-
-  <span id="requests" class="tab-switch"></span>
-  <a href="#requests" class="tab-link">Requests</a>
-  <section class="tab-content requests-ajax">
-    <%= render partial: 'shared/requests', locals: {origin: @repository } %>
-  </section>
-
-  <span id="caches" class="tab-switch"></span>
-  <a href="#caches" class="tab-link">Caches</a>
-  <section class="tab-content">
-    <%= render partial: 'caches' %>
-  </section>
-
-  <span id="broadcasts" class="tab-switch"></span>
-  <a href="#broadcasts" class="tab-link">Broadcasts</a>
-  <section   class="tab-content">
-    <%= render partial: 'shared/broadcasts', locals: {recipient: @repository} %>
-  </section>
+  <%= link_to 'Repository', repository_path(@repository),
+  class: "#{active_tab(repository_path)} remote-tab-link", remote: true, data: { content: 'main-content'} %>
+  <%= link_to 'Users', users_repository_path(@repository),
+  class: "#{active_tab(users_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content'} %>
+  <%= link_to 'Builds', builds_repository_path(@repository),
+  class: "#{active_tab(builds_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content'} %>
+  <%= link_to 'Requests', requests_repository_path(@repository),
+  class: "#{active_tab(requests_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Caches', caches_repository_path(@repository),
+  class: "#{active_tab(caches_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Broadcasts', broadcasts_repository_path(@repository),
+  class: "#{active_tab(broadcasts_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
 </div>
+
+<section id="main-content">
+  <%= render @render_args %>
+</section>

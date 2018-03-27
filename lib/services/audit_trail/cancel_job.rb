@@ -3,10 +3,12 @@ module Services
     class CancelJob < Struct.new(:current_user, :job)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "canceled job #{describe(job)}"
+        'job cancelled'
+      end
+
+      def args
+        { job_id: job.id }
       end
     end
   end

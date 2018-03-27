@@ -3,10 +3,12 @@ module Services
     class CancelBuild < Struct.new(:current_user, :build)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "canceled build #{describe(build)}"
+        'cancelled build'
+      end
+
+      def args
+        { build_id: build.id }
       end
     end
   end

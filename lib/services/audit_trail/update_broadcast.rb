@@ -3,10 +3,12 @@ module Services
     class UpdateBroadcast < Struct.new(:current_user, :broadcast)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "#{broadcast.expired ? 'disabled' : 'enabled'} a broadcast for #{describe(broadcast.recipient)}: \"#{broadcast.message}\""
+        "#{broadcast.expired ? 'disabled' : 'enabled'} a broadcast"
+      end
+
+      def args
+        { recipient: broadcast.recipient.login, broadcast_id: broadcast.id }
       end
     end
   end

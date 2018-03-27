@@ -3,10 +3,12 @@ module Services
     class RestartJob < Struct.new(:current_user, :job)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "restarted job #{describe(job)}"
+        'job restarted'
+      end
+
+      def args
+        { job_id: job.id }
       end
     end
   end

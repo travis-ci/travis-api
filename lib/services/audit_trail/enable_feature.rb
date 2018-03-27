@@ -1,6 +1,6 @@
 module Services
   module AuditTrail
-    class EnableFeature < Struct.new(:current_user, :feature, :recipient)
+    class EnableFeature
       include Services::AuditTrail::Base
 
       attr_reader :current_user, :feature, :recipient
@@ -11,10 +11,16 @@ module Services
         @recipient = recipient
       end
 
-      private
-
       def message
-        "enabled feature #{format_feature(feature)} for #{describe(recipient)}"
+        'enabled feature'
+      end
+
+      def args
+        { recipient: recipient_login, feature: feature }
+      end
+
+      def recipient_login
+        recipient.respond_to?(:login) ? recipient.login : recipient.name
       end
     end
   end

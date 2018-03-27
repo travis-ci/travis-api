@@ -63,4 +63,14 @@ RSpec.describe User, type: :model do
       expect(user_with_subscription.subscription.owner_id).to eql user_with_subscription.id
     end
   end
+
+  describe '.enterprise_status' do
+    let(:active_user) { create(:user, github_oauth_token: 'abc') }
+    let(:inactive_user) { create(:user, github_oauth_token: nil) }
+    let(:suspended_user) { create(:user, suspended: true, suspended_at: Time.new(2018, 1, 1, 10, 0, 0)) }
+
+    specify { expect(active_user.enterprise_status).to eq 'Active' }
+    specify { expect(inactive_user.enterprise_status).to eq 'Inactive' }
+    specify { expect(suspended_user.enterprise_status).to match %r{Suspended on 1 January 2018 at \d{2}:\d{2}} }
+  end
 end

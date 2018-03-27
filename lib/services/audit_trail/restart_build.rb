@@ -3,10 +3,12 @@ module Services
     class RestartBuild < Struct.new(:current_user, :build)
       include Services::AuditTrail::Base
 
-      private
-
       def message
-        "restarted build #{describe(build)}"
+        'restarted build'
+      end
+
+      def args
+        { build_id: build.id }
       end
     end
   end

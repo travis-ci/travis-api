@@ -12,14 +12,14 @@ RSpec.feature 'Drop last build reference', js: true, type: :feature do
 
     visit "/repositories/#{repository.id}"
 
-    expect(page).to have_text('Last Build: #4 (passed at 2016-11-10 19:39:00 UTC)')
+    expect(page).to have_text('#4 (passed at 2016-11-10 19:39:00 UTC)')
 
     find_button('Drop').trigger('click')
     fill_in('otp', with: '123456')
     find_button('Confirm').trigger('click')
 
-    expect(page).to have_text('Last Build: No Build.')
-    expect(page).to have_no_text('Last Build: #4 (passed at 2016-11-10 19:39:00 UTC)')
+    expect(page).to have_text('None.')
+    expect(page).to have_no_text('#4 (passed at 2016-11-10 19:39:00 UTC)')
     expect(page).to have_no_button('Drop')
   end
 end

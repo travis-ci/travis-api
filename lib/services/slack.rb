@@ -1,6 +1,7 @@
 require 'thread'
 require 'faraday'
 require 'json'
+require 'travis_config'
 
 module Services
   module Slack
@@ -8,7 +9,7 @@ module Services
     attr_reader :queue
 
     def setup
-      return unless config = Travis::Config.load.slack and queue.nil?
+      return unless config = travis_config.slack and queue.nil?
       @queue = Queue.new
       Thread.new do
         loop do
@@ -23,6 +24,10 @@ module Services
 
     def <<(message)
       @queue.try(:<<, message)
+    end
+
+    def travis_config
+      TravisConfig.load
     end
   end
 end

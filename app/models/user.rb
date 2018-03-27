@@ -13,17 +13,32 @@ class User < ApplicationRecord
 
   serialize :github_oauth_token, Travis::EncryptedColumn.new
 
+  scope :active, -> { where('suspended = false AND github_oauth_token IS NOT NULL') }
+  scope :inactive, -> { where('suspended = false AND github_oauth_token IS NULL') }
+  scope :suspended, -> { where(suspended: true) }
+
   def has_2fa?
     Travis::DataStores.redis.get("admin-v2:otp:#{login}")
   end
 
   def travis_admin?
-    travis_config = Travis::Config.load
     admins = travis_config.admins
     admins.respond_to?(:include?) && admins.include?(login)
   end
 
   def latest_trial
     trials.underway.order(created_at: :desc).first
+  end
+
+  def enterprise_status
+    case
+    when suspended?
+      time = suspended_at.in_time_zone
+      "Suspended on %s at %s" % [time.strftime('%-d %B %Y'), time.strftime('%R')]
+    when !suspended? && !github_oauth_token
+      'Inactive'
+    else
+      'Active'
+    end
   end
 end

@@ -1,9 +1,20 @@
-<% title "Event Logs" %>
+<% title "Audit trail" %>
 
 <section class="info-block">
+  <p></p>
+  <%= @info %>
   <ul class="log-list">
-    <% @logs.each do |log| %>
-      <li><%= raw(log) %></li>
+    <% if @logs.empty? %>
+      <li>No logs found.</li>
+    <% else %>
+      <% @logs.each do |log| %>
+        <li>
+          <b><%= log.delete('time') %></b> |
+          <%= link_to log.delete('admin_login'), user_path(log.delete('admin_id')) %> |
+          <%= log.delete('message') %> |
+          <%= log.map { |k, v| '%s=%s' % [k, v] }.join ' ' %>
+        </li>
+      <% end %>
     <% end %>
   </ul>
 </section>

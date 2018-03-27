@@ -1,37 +1,40 @@
 <section class="info-block">
-  <h2 class="info-header">Basic Information</h2>
-
-  <% if @user.travis_admin? %>
-    <p>This user has <%= link_to "admin access", admins_path %>.</p>
+  <h2 class="info-header">Basic information</h2>
+  <% unless travis_config.enterprise? %>
+    <% if @user.travis_admin? %>
+      <p>This user has <%= link_to "admin access", admins_path %>.</p>
+    <% end %>
   <% end %>
 
   <dl class="simple-info">
-    <dt class="info-label">Name:</dt>
+    <dt class="info-label">Name</dt>
     <dd class="inline become">
       <p><%= @user.name %></p>
-      <div>
-        <%= form_tag(become_url(@user), class: 'become-button') do %>
-          <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
-          <%= submit_tag("Log in as", class: "button") %>
-        <% end %>
-        <%= form_tag("#{become_url(@user)}?billing=true", class: 'billing-button') do %>
-          <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
-          <%= submit_tag("Billing", class: "button") %>
-        <% end %>
-      </div>
+      <% unless travis_config.enterprise? %>
+        <div>
+          <%= form_tag(become_url(@user), class: 'become-button') do %>
+            <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
+            <%= submit_tag("Log in as", class: "button") %>
+          <% end %>
+          <%= form_tag("#{become_url(@user)}?billing=true", class: 'billing-button') do %>
+            <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
+            <%= submit_tag("Billing", class: "button") %>
+          <% end %>
+        </div>
+      <% end %>
     </dd>
 
-    <dt class="info-label">GitHub Login:</dt>
+    <dt class="info-label">GitHub login</dt>
     <dd>
       <%= image_tag(@user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if @user.avatar_url %>
       <%= @user.login %>
       <%= link_to fa_icon("github"), "https://github.com/#{@user.login}", target: "_blank" %>
     </dd>
 
-    <dt class="info-label">GitHub ID:</dt>
+    <dt class="info-label">GitHub ID</dt>
     <dd><%= @user.github_id %></dd>
 
-    <dt class="info-label">Token:</dt>
+    <dt class="info-label">Token</dt>
     <dd class="inline">
       <% if @display_gh_token %>
         <pre><%= @user.github_oauth_token %></pre>
@@ -45,7 +48,7 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Scopes:</dt>
+    <dt class="info-label">Scopes</dt>
     <dd>
       <% if @user.github_scopes.present? %>
         <%= @user.github_scopes %>
@@ -54,7 +57,7 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Last Sync:</dt>
+    <dt class="info-label">Last sync</dt>
     <dd class="inline">
       <p>
         <% if @user.is_syncing? %>
@@ -65,21 +68,36 @@
       </p>
       <%= button_to 'Sync', sync_user_path(@user), disabled: @user.is_syncing?, form_class: "sync-button", class: 'button' %>
     </dd>
+     <% if travis_config.enterprise? %>
+      <dt class="info-label">Enterprise Status</dt>
+      <dd class="inline">
+        <p>
+          <%= @user.enterprise_status %>
+          <% if @user.suspended? %>
+            <div class="call-to-action"><%= button_to "Unsuspend", unsuspend_user_path(@user), class: "button", data: { disable_with: 'Loading' } %>
+          <% else %>
+            <div class="call-to-action"><%= button_to "Suspend", suspend_user_path(@user), class: "button", data: { disable_with: 'Loading' } %>
+          <% end %>
+        </p>
+      </dd>
+    <% end %>
   </dl>
 </section>
 
-<%= render partial: 'shared/account', locals: {owner: @user} %>
+<% unless travis_config.enterprise? %>
+  <%= render partial: 'shared/account', locals: {owner: @user} %>
+<% end %>
 
 <section class="info-block">
-  <h2 class="info-header">Contact Information</h2>
+  <h2 class="info-header">Contact information</h2>
   <dl class="simple-info">
-    <dt class="info-label">Primary E-mail Address:</dt>
+    <dt class="info-label">Primary e-mail address</dt>
     <dd>
       <%= @user.email %>
       <%= mail_to @user.email, fa_icon("envelope-o") %>
     </dd>
 
-    <dt class="info-label">Additional E-Mail Addresses:</dt>
+    <dt class="info-label">Additional e-mail addresses</dt>
     <dd>
       <% @user.emails.each do |entry| %>
         <% if entry.email != @user.email %>

@@ -1,0 +1,29 @@
+<%= title "Manage enterprise users" %>
+
+<div id="tabs">
+  <%= link_to 'All', enterprise_users_path, class: "#{active_tab_enterprise(enterprise_users_path)} regular-tab-link" %>
+  <%= link_to 'Active', enterprise_users_path(filter: 'active'),
+  class: "#{active_tab_enterprise(enterprise_users_path(filter:'active'))} regular-tab-link" %>
+  <%= link_to 'Inactive', enterprise_users_path(filter: 'inactive'),
+  class: "#{active_tab_enterprise(enterprise_users_path(filter: 'inactive'))} regular-tab-link" %>
+  <%= link_to 'Suspended', enterprise_users_path(filter: 'suspended'),
+  class: "#{active_tab_enterprise(enterprise_users_path(filter: 'suspended'))} regular-tab-link" %>
+</div>
+
+<section class="info-block">
+  <% if @users.empty? %>
+    <p>No users.</p>
+  <% else %>
+    <ul>
+      <li class="inline-list member-item">
+        <p class="info-label">Name</p>
+        <p class="info-label">Status</p>
+        <p>&nbsp;</p>
+      </li>
+      <% @users.each do |user| %>
+        <%= render partial: 'user', locals: { user: user } %>
+      <% end %>
+    </ul>
+  <% end %>
+  <%= will_paginate @users, param_name: 'page' %>
+</section>
