@@ -30,13 +30,13 @@ describe Travis::API::V3::Services::Subscription::UpdateCreditcard, set_app: tru
           'expiration_date' => '11/21',
           'last_digits' => '1111'
           })
-      .to_return(status: 200)
+      .to_return(status: 204)
     end
 
     it 'updates the creditcard' do
       patch("/v3/subscription/#{subscription_id}/creditcard", JSON.generate(creditcard_data), headers)
 
-      expect(last_response.status).to eq(202)
+      expect(last_response.status).to eq(204)
       expect(stubbed_request).to have_been_made.once
     end
   end
