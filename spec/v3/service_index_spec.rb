@@ -326,6 +326,18 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
           specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}user/{user.id}{?include}") }
         end
       end
+
+      describe "subscriptions resource" do
+        it 'is hidden' do
+          expect(resources).to_not have_key('subscriptions')
+        end
+      end
+
+      describe "subscription resource" do
+        it 'is hidden' do
+          expect(resources).to_not have_key('subscription')
+        end
+      end
     end
 
     describe 'with /v3 prefix' do
