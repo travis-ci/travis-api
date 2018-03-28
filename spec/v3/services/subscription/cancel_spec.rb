@@ -24,13 +24,13 @@ describe Travis::API::V3::Services::Subscription::Cancel, set_app: true, billing
 
     let!(:stubbed_request) do
       stub_billing_request(:post, "/subscriptions/#{subscription_id}/cancel", auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200)
+        .to_return(status: 204)
     end
 
     it 'updates the address' do
       post("/v3/subscription/#{subscription_id}/cancel", nil, headers)
 
-      expect(last_response.status).to eq(202)
+      expect(last_response.status).to eq(204)
       expect(stubbed_request).to have_been_made.once
     end
   end

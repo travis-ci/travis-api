@@ -44,13 +44,13 @@ describe Travis::API::V3::Services::Subscription::UpdateAddress, set_app: true, 
             'zip_code' => '10001',
             'billing_email' => 'travis@example.org'
           })
-        .to_return(status: 200)
+        .to_return(status: 204)
     end
 
     it 'updates the address' do
       patch("/v3/subscription/#{subscription_id}/address", JSON.generate(address_data), headers)
 
-      expect(last_response.status).to eq(202)
+      expect(last_response.status).to eq(204)
       expect(stubbed_request).to have_been_made.once
     end
   end
