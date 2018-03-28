@@ -94,7 +94,14 @@ module Travis::API::V3
       modes                    = {}
 
       if permissions = access_control.permissions(model) and (representation != :minimal or include? :@permissions)
-        result[:@permissions] = permissions.to_h
+        hash = permissions.to_h
+
+        if (model.is_a?(Models::User) || model.is_a?(Models::Organization)) &&
+            !Travis::Features.owner_active?(:import_owner, model)
+          hash.delete(:import)
+        end
+
+        result[:@permissions] = hash
       end
 
       if include.any?
