@@ -84,7 +84,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"           => "/v3/repo/#{repo.id}/branch/master",
             "@representation" => "minimal",
             "name"            => "master"},
-          "starred"           => false
+          "starred"           => false,
+          "managed_by_gh_installation"=>false,
+          "active_on_org"     =>nil
         }]
       }}
     end
@@ -137,7 +139,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"         => "/v3/repo/#{repo.id}/branch/master",
             "@representation"=> "minimal",
             "name"          => "master"},
-          "starred"         => false
+          "starred"         => false,
+          "managed_by_gh_installation"=>false,
+          "active_on_org"   =>nil
         }]
       }}
     end

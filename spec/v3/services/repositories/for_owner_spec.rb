@@ -70,6 +70,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@representation"  => "minimal",
           "name"             => "master"},
           "starred"          => false,
+          "managed_by_gh_installation"=>false,
+          "active_on_org"    =>nil
         }]}}
   end
 
@@ -111,6 +113,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@representation"  =>"minimal",
           "name"             =>"master"},
         "starred"          =>false,
+        "managed_by_gh_installation"=>false,
+        "active_on_org"     =>nil,
         "last_started_build"=>{
           "@type"          =>"build",
           "@href"          =>"/v3/build/#{build.id}",
@@ -211,6 +215,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@representation"  =>"minimal",
           "name"             =>"master"},
         "starred"          =>false,
+        "managed_by_gh_installation"=>false,
+        "active_on_org"    =>nil,
         "current_build"=>{
           "@type"          =>"build",
           "@href"          =>"/v3/build/#{build.id}",
@@ -346,7 +352,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@href"         => "/v3/repo/1/branch/master",
           "@representation"=>"minimal",
           "name"          => "master" },
-        "starred"         => false }, {
+        "starred"         => false,
+        "managed_by_gh_installation"=>false,
+        "active_on_org"   =>nil }, {
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo2.id}",
         "@representation" => "standard",
@@ -380,6 +388,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@href"         => "/v3/repo/#{repo2.id}/branch/master",
           "@representation"=>"minimal",
           "name"           =>"master" },
-          "starred"        => false}]}
+          "starred"        => false,
+          "managed_by_gh_installation"=>false,
+          "active_on_org"  =>nil}]}
   end
 end

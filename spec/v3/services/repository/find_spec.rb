@@ -87,6 +87,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "@representation"  => "minimal",
         "name"             => "master"},
       "starred"            => false,
+      "active_on_org"      => nil,
+      "managed_by_gh_installation" => false
     })}
   end
 
@@ -333,5 +335,11 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   describe "wrong include format" do
     before  { get("/v3/repo/#{repo.id}?include=repository.last_build.branch") }
     include_examples '400 wrong params', 'illegal format for include parameter'
+  end
+
+  describe "repo managed by a github installation" do
+    before { repo.update_attribute(:activated_by_github_installation_on, "2017-11-12T12:00:00Z") }
+    before  { get("/v3/repo/#{repo.id}") }
+    example { expect(parsed_body).to include("managed_by_gh_installation" => true )}
   end
 end
