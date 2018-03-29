@@ -100,7 +100,7 @@ module Travis::API::V3
     end
 
     def managed_by_gh_installation
-      return true if read_attribute(:activated_by_github_installation_on)
+      return true if read_attribute(:managed_by_github_installation_on)
       return false
     end
   end
