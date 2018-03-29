@@ -87,7 +87,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "@representation"  => "minimal",
         "name"             => "master"},
       "starred"            => false,
-      "migrated_to_com"      => nil,
+      "active_on_org"      => nil,
       "managed_by_gh_installation" => false
     })}
   end
