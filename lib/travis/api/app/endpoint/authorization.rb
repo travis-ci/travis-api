@@ -301,22 +301,11 @@ class Travis::Api::App
         end
 
         def get_token(endpoint, values)
-<<<<<<< HEAD
-          response   = Faraday.new(ssl: Travis.config.github.ssl).post(endpoint, values)
-=======
           # Get base URL for when we setup Faraday since otherwise it'll ignore no_proxy
           url = URI.parse(endpoint)
           base_url = "#{url.scheme}://#{url.host}"
-          http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact} 
-
-          conn = Faraday.new(http_options) do |conn|
-            conn.request :json
-            conn.use :instrumentation
-            conn.adapter :net_http_persistent
-          end
-          response = conn.post(endpoint, values)
-
->>>>>>> f0b0c48b... Include base urls in Faraday.new, otherwise Faraday won't use no_proxy (#684)
+          http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact}
+          response   = Faraday.new(http_options).post(endpoint, values)
           parameters = Addressable::URI.form_unencode(response.body)
           token_info = parameters.assoc("access_token")
           halt 401, 'could not resolve github token' unless token_info
