@@ -86,7 +86,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "name"            => "master"},
           "starred"           => false,
           "managed_by_gh_installation"=>false,
-          "active_on_org"     =>nil
+          "migrated_to_com"     =>nil
         }]
       }}
     end
@@ -141,7 +141,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "name"          => "master"},
           "starred"         => false,
           "managed_by_gh_installation"=>false,
-          "active_on_org"   =>nil
+          "migrated_to_com"   =>nil
         }]
       }}
     end
