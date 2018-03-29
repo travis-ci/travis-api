@@ -194,5 +194,4 @@ class Repository < Travis::Model
   def dist_group_expansion_enabled?
     Travis::Features.enabled_for_all?(:dist_group_expansion) || Travis::Features.active?(:dist_group_expansion, self)
   end
-
 end
