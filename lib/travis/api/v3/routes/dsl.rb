@@ -28,6 +28,10 @@ module Travis::API::V3
       resources << resource
     end
 
+    def hidden_resource(identifier, **args, &block)
+      resource(identifier, **args.merge(hidden: true), &block)
+    end
+
     def with_resource(resource)
       resource_was, @current_resource = current_resource, resource
       prefix_was, @prefix             = @prefix, resource_was.route if resource_was
@@ -54,6 +58,10 @@ module Travis::API::V3
         key = "#{current_resource.display_identifier}.#{key}" if current_resource and not key.to_s.include?(?.)
         mustermann_options[:capture][key.to_sym] = value
       end
+    end
+
+    def hide(service)
+      current_resource.hide_service(service)
     end
 
     def get(*args)

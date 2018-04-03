@@ -113,6 +113,10 @@ module Travis::API::V3
       head(status: 204)
     end
 
+    def no_content
+      head(status: 204)
+    end
+
     def run
       not_found unless result = run!
       result = paginate(result) if self.class.paginate?

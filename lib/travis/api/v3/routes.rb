@@ -98,6 +98,8 @@ module Travis::API::V3
         route '/active'
         get :for_owner
       end
+
+      hide(post :import, '/import')
     end
 
     resource :repositories do
@@ -227,6 +229,21 @@ module Travis::API::V3
     resource :user do
       route '/user'
       get :current
+    end
+
+    if ENV['BILLING_V2_ENABLED']
+      hidden_resource :subscriptions do
+        route '/subscriptions'
+        get :all
+        post :create
+      end
+
+      hidden_resource :subscription do
+        route '/subscription/{subscription.id}'
+        patch :update_address, '/address'
+        patch :update_creditcard, '/creditcard'
+        post :cancel, '/cancel'
+      end
     end
   end
 end

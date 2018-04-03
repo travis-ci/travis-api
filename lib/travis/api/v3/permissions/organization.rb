@@ -5,5 +5,9 @@ module Travis::API::V3
     def sync?
       write?
     end
+
+    def import?
+      adminable?
+    end
   end
 end
