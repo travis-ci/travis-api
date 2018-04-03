@@ -98,5 +98,10 @@ module Travis::API::V3
       return true if Travis::Features.active?(:debug_tools, self)
       return false
     end
+
+    def managed_by_gh_installation
+      return true if read_attribute(:managed_by_github_installation_on)
+      return false
+    end
   end
 end

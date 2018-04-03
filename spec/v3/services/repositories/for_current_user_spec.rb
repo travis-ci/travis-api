@@ -67,6 +67,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "@representation"  => "minimal",
           "name"             => "master"},
         "starred"            => false,
+        "managed_by_gh_installation"=>false,
+        "active_on_org"=>nil
         }]
     }}
   end

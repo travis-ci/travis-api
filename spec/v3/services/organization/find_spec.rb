@@ -16,7 +16,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "login"            => "example-org",
       "name"             => nil,
       "github_id"        => nil,
-      "avatar_url"       => nil
+      "avatar_url"       => nil,
+      "github_installation_id"=>nil
     }}
   end
 
