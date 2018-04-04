@@ -3,13 +3,10 @@ require 'travis/config/defaults'
 require 'active_support/core_ext/object/deep_dup'
 require 'travis/model/build/config/language'
 
-# Job models a unit of work that is run on a remote worker.
-#
-# There currently only one job type:
-#
-#  * Job::Test belongs to a Build (one or many Job::Test instances make up a
-#    build matrix) and executes a test suite with parameters defined in the
-#    configuration.
+class JobConfig < ActiveRecord::Base
+  serialize :config
+end
+
 class Job < Travis::Model
   require 'travis/model/job/queue'
   require 'travis/model/job/test'
@@ -69,6 +66,7 @@ class Job < Travis::Model
   belongs_to :commit
   belongs_to :source, polymorphic: true, autosave: true
   belongs_to :owner, polymorphic: true
+  belongs_to :config, foreign_key: :config_id, class_name: JobConfig
 
   validates :repository_id, :commit_id, :source_id, :source_type, :owner_id, :owner_type, presence: true
 
@@ -116,7 +114,14 @@ class Job < Travis::Model
   end
 
   def config=(config)
-    super normalize_config(config)
+    raise unless config.nil? || ENV['RACK_ENV'] == 'test'
+    config = normalize_config(config)
+    config = JobConfig.new(repository_id: repository_id, key: 'key', config: config)
+    super(config)
+  end
+
+  def config
+    super&.config || read_attribute(:config) || {}
   end
 
   def obfuscated_config

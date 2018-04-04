@@ -1,4 +1,8 @@
 module Travis::API::V3
+  class Models::BuildConfig < Model
+    serialize :config
+  end
+
   class Models::Build < Model
     belongs_to :commit
     belongs_to :tag
@@ -7,6 +11,7 @@ module Travis::API::V3
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
     belongs_to :sender, polymorphic: true
+    belongs_to :config, foreign_key: :config_id, class_name: Models::BuildConfig
 
     has_many :stages
 
@@ -55,6 +60,16 @@ module Travis::API::V3
       # TODO: remove this once we're on >= 4.0
       cached = cached.gsub(/^{|}$/, '').split(',').map(&:to_i) unless cached.is_a? Array
       cached
+    end
+
+    def config=(config)
+      raise unless ENV['RACK_ENV'] == 'test'
+      config = Models::BuildConfig.new(repository_id: repository_id, key: 'key', config: config)
+      super(config)
+    end
+
+    def config
+      super&.config || read_attribute(:config) || {}
     end
 
     def branch_name=(value)
