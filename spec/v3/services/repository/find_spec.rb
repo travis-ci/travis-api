@@ -88,7 +88,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "name"             => "master"},
       "starred"            => false,
       "active_on_org"      => nil,
-      "managed_by_gh_installation" => false
+      "managed_by_installation" => false
     })}
   end
 
@@ -338,8 +338,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   end
 
   describe "repo managed by a github installation" do
-    before { repo.update_attribute(:managed_by_github_installation_on, "2017-11-12T12:00:00Z") }
+    before { repo.update_attribute(:managed_by_installation_on, "2017-11-12T12:00:00Z") }
     before  { get("/v3/repo/#{repo.id}") }
-    example { expect(parsed_body).to include("managed_by_gh_installation" => true )}
+    example { expect(parsed_body).to include("managed_by_installation" => true )}
   end
 end

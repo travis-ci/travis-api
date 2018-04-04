@@ -88,7 +88,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@representation" => "minimal",
             "name"            => "master"},
           "starred"           => false,
-          "managed_by_gh_installation"=>false,
+          "managed_by_installation"=>false,
           "active_on_org"     =>nil
         }]
       }}
@@ -144,7 +144,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@representation"=> "minimal",
             "name"          => "master"},
           "starred"         => false,
-          "managed_by_gh_installation"=>false,
+          "managed_by_installation"=>false,
           "active_on_org"   =>nil
         }]
       }}

@@ -99,8 +99,8 @@ module Travis::API::V3
       return false
     end
 
-    def managed_by_gh_installation
-      return true if read_attribute(:managed_by_github_installation_on)
+    def managed_by_installation
+      return true if read_attribute(:managed_by_installation_on)
       return false
     end
   end
