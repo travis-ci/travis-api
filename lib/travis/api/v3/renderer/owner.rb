@@ -21,7 +21,7 @@ module Travis::API::V3
     end
 
     def github_installation_id
-      installation = query(:installation).for_owner(@model).first
+      installation = query(:installation).for_owner(@model)
     end
   end
 end
