@@ -1,6 +1,8 @@
 describe Travis::API::V3::Services::Owner::Find, set_app: true do
   describe "organization" do
     let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
+    let!(:installation) { Travis::API::V3::Models::Installation.new(owner_id: org.id, owner_type: 'Organization', github_installation_id: 123).save!}
+
     before    { org.save!                              }
     after     { org.delete                             }
 
@@ -17,7 +19,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "github_installation_id"=>nil
+        "github_installation_id"=>123
       }}
     end
 
@@ -34,7 +36,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "github_installation_id"=>nil
+        "github_installation_id"=>123
       }}
     end
 

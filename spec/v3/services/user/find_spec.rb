@@ -1,6 +1,6 @@
 describe Travis::API::V3::Services::User::Find, set_app: true do
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
-  let(:installation) { Travis::API::V3::Models::Installation.new(owner_id: user.id, owner_type: 'User', github_installation_id: 123)}
+  let!(:installation) { Travis::API::V3::Models::Installation.new(owner_id: user.id, owner_type: 'User', github_installation_id: 123).save!}
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
