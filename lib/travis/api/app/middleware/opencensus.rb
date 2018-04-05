@@ -34,12 +34,11 @@ class Travis::Api::App
         def handle_notification_event event
           span_context = ::OpenCensus::Trace.span_context
           if span_context
-            ns = ::OpenCensus::Trace.configure.notifications.attribute_namespace
             span = span_context.start_span event.name, skip_frames: 2
             span.start_time = event.time
             span.end_time = event.end
             event.payload.each do |k, v|
-              span.put_attribute "#{ns}#{k}", v.to_s
+              span.put_attribute "#{k}", v.to_s
             end
           end
         end
