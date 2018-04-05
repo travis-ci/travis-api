@@ -160,7 +160,7 @@ module Travis::Api
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
 
-        if ENV['OPENCENSUS_TRACING_ENABLED' == 'true']
+        if ENV['OPENCENSUS_TRACING_ENABLED'] == 'true'
           use OpenCensus::Trace::Integrations::RackMiddleware
           OpenCensus.configure do |c|
             c.trace.exporter = OpenCensus::Trace::Exporters::Stackdriver.new
