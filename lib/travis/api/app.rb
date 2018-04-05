@@ -160,13 +160,7 @@ module Travis::Api
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
 
-        if ENV['OPENCENSUS_TRACING_ENABLED'] == 'true'
-          sampling_rate = ENV['OPENCENSUS_SAMPLING_RATE']&.to_f || 1
-          OpenCensus.configure do |c|
-            c.trace.exporter = OpenCensus::Trace::Exporters::Stackdriver.new
-            c.trace.default_sampler = OpenCensus::Trace::Samplers::Probability.new sampling_rate
-            c.trace.default_max_attributes = 16
-          end
+        if Travis::Api::App::Middleware::OpenCensus.enabled?
           use OpenCensus::Trace::Integrations::RackMiddleware
         end
 
@@ -267,6 +261,10 @@ module Travis::Api
         if Travis::Api::App::Middleware::LogTracing.enabled?
           Travis::Api::App::Middleware::LogTracing.setup
         end
+        if Travis::Api::App::Middleware::OpenCensus.enabled?
+          Travis::Api::App::Middleware::OpenCensus.setup
+        end
+
 
         if ENV['MODEL_RENDERER_TRACING_ENABLED'] == 'true'
           Travis::API::V3::ModelRenderer.install_tracer
