@@ -22,7 +22,7 @@ module Travis::API::V3
 
     def find_by_github_installation_id(github_installation_id)
       installation = Models::Installation.where(github_installation_id: github_installation_id).first
-      Models::User.find(installation.owner_id) if installation
+      Models::User.find(installation.owner_id) if installation.owner_type == "User"
     end
 
     def sync(user)
