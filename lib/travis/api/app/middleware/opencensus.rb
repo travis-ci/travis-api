@@ -27,7 +27,9 @@ class Travis::Api::App
         def setup_notifications
           ActiveSupport::Notifications.subscribe('sql.active_record') do |*args|
             event = ActiveSupport::Notifications::Event.new(*args)
-            handle_notification_event event
+            unless event.payload[:cached] || event.payload[:name] == 'CACHE'
+              handle_notification_event event
+            end
           end
         end
 

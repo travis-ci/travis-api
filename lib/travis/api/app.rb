@@ -125,6 +125,10 @@ module Travis::Api
           use Travis::Api::App::Middleware::LogTracing
         end
 
+        if Travis::Api::App::Middleware::OpenCensus.enabled?
+          use OpenCensus::Trace::Integrations::RackMiddleware
+        end
+
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
         if Travis::Api::App.use_monitoring?
           use Rack::Config do |env|
@@ -157,10 +161,6 @@ module Travis::Api
         use Travis::Api::App::Middleware::Logging
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
-
-        if Travis::Api::App::Middleware::OpenCensus.enabled?
-          use OpenCensus::Trace::Integrations::RackMiddleware
-        end
 
         # make sure this is below ScopeCheck so we have the token
         use Rack::Attack if Endpoint.production? and not Travis.config.enterprise
