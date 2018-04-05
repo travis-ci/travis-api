@@ -42,6 +42,23 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
       }}
     end
 
+    describe 'existing org, public api, by github_installation_id' do
+      before  { get("/v3/owner/github_installation_id/234")     }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be == {
+        "@type"            => "organization",
+        "@href"            => "/v3/org/#{org.id}",
+        "@representation"  => "standard",
+        "@permissions"     => { "read"=>true, "sync"=>false },
+        "id"               => org.id,
+        "login"            => "example-org",
+        "name"             => nil,
+        "github_id"        => 1234,
+        "avatar_url"       => nil,
+        "github_installation_id"=>installation.github_installation_id
+      }}
+    end
+
     describe 'eager loading repositories via organization.repositories' do
       let(:repo) { Travis::API::V3::Models::Repository.new(name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
 
@@ -200,7 +217,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
 
   describe "user" do
     let(:user) { Travis::API::V3::Models::User.new(login: 'example-user', github_id: 5678) }
+    let(:installation) { Travis::API::V3::Models::Installation.new(owner_id: user.id, owner_type: 'User', github_installation_id: 123) }
     before     { user.save!                      }
+    before     { installation.save!              }
     after      { user.delete                     }
 
     describe 'existing user, public api, by login' do
@@ -216,7 +235,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"           => nil,
         "github_id"      => 5678,
         "avatar_url"     => nil,
-        "github_installation_id"=>nil,
+        "github_installation_id"=>installation.github_installation_id,
         "is_syncing"     => nil,
         "synced_at"      => nil
       }}
@@ -235,7 +254,26 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"           => nil,
         "github_id"      => 5678,
         "avatar_url"     => nil,
-        "github_installation_id"=>nil,
+        "github_installation_id"=>installation.github_installation_id,
+        "is_syncing"     => nil,
+        "synced_at"      => nil
+      }}
+    end
+
+    describe 'existing user, public api, by github_installation_id' do
+      before  { get("/v3/owner/github_installation_id/123")   }
+      example { expect(last_response).to be_ok   }
+      example { expect(JSON.load(body)).to be == {
+        "@type"          => "user",
+        "@href"          => "/v3/user/#{user.id}",
+        "@representation"=> "standard",
+        "@permissions"   => {"read"=>true, "sync"=>false},
+        "id"             => user.id,
+        "login"          => "example-user",
+        "name"           => nil,
+        "github_id"      => 5678,
+        "avatar_url"     => nil,
+        "github_installation_id"=>installation.github_installation_id,
         "is_syncing"     => nil,
         "synced_at"      => nil
       }}
@@ -254,7 +292,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 5678,
         "avatar_url"       => nil,
-        "github_installation_id"=>nil,
+        "github_installation_id"=>installation.github_installation_id,
         "is_syncing"       => nil,
         "synced_at"        => nil
       }}
@@ -278,7 +316,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 5678,
         "avatar_url"       => nil,
         "is_syncing"       => nil,
-        "github_installation_id"=>nil,
+        "github_installation_id"=>installation.github_installation_id,
         "synced_at"        => nil,
         "@warnings"        => [{
           "@type"          => "warning",
