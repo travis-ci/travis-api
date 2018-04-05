@@ -28,6 +28,7 @@ require 'fileutils'
 require 'securerandom'
 require 'fog/aws'
 require 'rbtrace'
+require 'opencensus/trace/integrations/rack_middleware'
 
 module Travis::Api
 end
@@ -157,6 +158,13 @@ module Travis::Api
         use Travis::Api::App::Middleware::Logging
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
+
+        use OpenCensus::Trace::Integrations::RackMiddleware
+        OpenCensus.configure do |c|
+          c.trace.exporter = OpenCensus::Trace::Exporters::Stackdriver.new
+          c.trace.default_sampler = OpenCensus::Trace::Samplers::Probability.new
+          c.trace.default_max_attributes = 16
+        end
 
         # make sure this is below ScopeCheck so we have the token
         use Rack::Attack if Endpoint.production? and not Travis.config.enterprise
