@@ -164,7 +164,8 @@ class Build < Travis::Model
   alias addons_enabled? secure_env_enabled?
 
   def config=(config)
-    raise unless config.nil? || ENV['RACK_ENV'] == 'test'
+    return super if config.nil?
+    raise unless ENV['RACK_ENV'] == 'test'
     config = config.deep_symbolize_keys
     config = BuildConfig.new(repository_id: repository_id, key: 'key', config: config)
     super(config)
