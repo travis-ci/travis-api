@@ -28,8 +28,6 @@ require 'fileutils'
 require 'securerandom'
 require 'fog/aws'
 require 'rbtrace'
-require 'opencensus/trace/integrations/rack_middleware'
-require 'opencensus/stackdriver'
 
 module Travis::Api
 end

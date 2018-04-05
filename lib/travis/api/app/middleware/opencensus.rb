@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'opencensus/trace/integrations/rack_middleware'
+require 'opencensus/stackdriver'
 
 class Travis::Api::App
   class Middleware
@@ -13,9 +15,9 @@ class Travis::Api::App
           return unless enabled?
 
           sampling_rate = ENV['OPENCENSUS_SAMPLING_RATE']&.to_f || 1
-          OpenCensus.configure do |c|
-            c.trace.exporter = OpenCensus::Trace::Exporters::Stackdriver.new
-            c.trace.default_sampler = OpenCensus::Trace::Samplers::Probability.new sampling_rate
+          ::OpenCensus.configure do |c|
+            c.trace.exporter = ::OpenCensus::Trace::Exporters::Stackdriver.new
+            c.trace.default_sampler = ::OpenCensus::Trace::Samplers::Probability.new sampling_rate
             c.trace.default_max_attributes = 16
           end
 
@@ -30,9 +32,9 @@ class Travis::Api::App
         end
 
         def handle_notification_event event
-          span_context = OpenCensus::Trace.span_context
+          span_context = ::OpenCensus::Trace.span_context
           if span_context
-            ns = OpenCensus::Trace.configure.notifications.attribute_namespace
+            ns = ::OpenCensus::Trace.configure.notifications.attribute_namespace
             span = span_context.start_span event.name, skip_frames: 2
             span.start_time = event.time
             span.end_time = event.end
