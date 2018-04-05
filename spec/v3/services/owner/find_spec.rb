@@ -2,7 +2,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
 
   describe "organization" do
     let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
-    let(:installation) { Travis::API::V3::Models::Installation.new(owner_id: org.id, owner_type: 'Organization', github_installation_id: 234) }
+    let(:installation) { Travis::API::V3::Models::Installation.new(owner_id: org.id, owner_type: 'Organization', github_id: 234) }
 
     before    { org.save! }
     before    { installation.save!                     }
@@ -21,7 +21,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "github_installation_id"=>installation.github_installation_id
+        "github_installation_id"=>installation.github_id
       }}
     end
 
@@ -38,7 +38,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "github_installation_id"=>installation.github_installation_id
+        "github_installation_id"=>installation.github_id
       }}
     end
 
@@ -55,7 +55,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "github_installation_id"=>installation.github_installation_id
+        "github_installation_id"=>installation.github_id
       }}
     end
 
@@ -77,7 +77,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"                => nil,
         "github_id"           => 1234,
         "avatar_url"          => nil,
-        "github_installation_id"=>installation.github_installation_id,
+        "github_installation_id"=>installation.github_id,
         "repositories"        => [{
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -133,7 +133,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"              => nil,
         "github_id"         => 1234,
         "avatar_url"        => nil,
-        "github_installation_id"=>installation.github_installation_id,
+        "github_installation_id"=>installation.github_id,
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
@@ -184,7 +184,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "github_installation_id"=>installation.github_installation_id
+        "github_installation_id"=>installation.github_id
       }}
     end
 
@@ -205,7 +205,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"           => nil,
         "github_id"      => 1234,
         "avatar_url"     => nil,
-        "github_installation_id"=>installation.github_installation_id,
+        "github_installation_id"=>installation.github_id,
         "@warnings"      => [{
           "@type"        => "warning",
           "message"      => "query parameter organization.id not safelisted, ignored",
@@ -217,7 +217,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
 
   describe "user" do
     let(:user) { Travis::API::V3::Models::User.new(login: 'example-user', github_id: 5678) }
-    let(:installation) { Travis::API::V3::Models::Installation.new(owner_id: user.id, owner_type: 'User', github_installation_id: 123) }
+    let(:installation) { Travis::API::V3::Models::Installation.new(owner_id: user.id, owner_type: 'User', github_id: 123) }
     before     { user.save!                      }
     before     { installation.save!              }
     after      { user.delete                     }
@@ -235,7 +235,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"           => nil,
         "github_id"      => 5678,
         "avatar_url"     => nil,
-        "github_installation_id"=>installation.github_installation_id,
+        "github_installation_id"=>installation.github_id,
         "is_syncing"     => nil,
         "synced_at"      => nil
       }}
@@ -254,7 +254,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"           => nil,
         "github_id"      => 5678,
         "avatar_url"     => nil,
-        "github_installation_id"=>installation.github_installation_id,
+        "github_installation_id"=>installation.github_id,
         "is_syncing"     => nil,
         "synced_at"      => nil
       }}
@@ -273,7 +273,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"           => nil,
         "github_id"      => 5678,
         "avatar_url"     => nil,
-        "github_installation_id"=>installation.github_installation_id,
+        "github_installation_id"=>installation.github_id,
         "is_syncing"     => nil,
         "synced_at"      => nil
       }}
@@ -292,7 +292,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 5678,
         "avatar_url"       => nil,
-        "github_installation_id"=>installation.github_installation_id,
+        "github_installation_id"=>installation.github_id,
         "is_syncing"       => nil,
         "synced_at"        => nil
       }}
@@ -316,7 +316,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 5678,
         "avatar_url"       => nil,
         "is_syncing"       => nil,
-        "github_installation_id"=>installation.github_installation_id,
+        "github_installation_id"=>installation.github_id,
         "synced_at"        => nil,
         "@warnings"        => [{
           "@type"          => "warning",

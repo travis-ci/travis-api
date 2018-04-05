@@ -22,7 +22,7 @@ module Travis::API::V3
 
     def github_installation_id
       installation = query(:installation).for_owner(@model).first
-      installation.github_installation_id if installation
+      installation.github_id if installation
     end
   end
 end
