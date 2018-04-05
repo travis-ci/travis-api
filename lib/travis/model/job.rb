@@ -76,10 +76,6 @@ class Job < Travis::Model
   delegate :pull_request?, to: :commit
   delegate :secure_env_enabled?, :addons_enabled?, to: :source
 
-  after_initialize do
-    self.config = {} if config.nil? rescue nil
-  end
-
   before_create do
     self.state = :created if self.state.nil?
     self.queue = Queue.for(self).name
@@ -114,7 +110,8 @@ class Job < Travis::Model
   end
 
   def config=(config)
-    raise unless config.nil? || ENV['RACK_ENV'] == 'test'
+    return super if config.nil?
+    raise unless ENV['RACK_ENV'] == 'test'
     config = normalize_config(config)
     config = JobConfig.new(repository_id: repository_id, key: 'key', config: config)
     super(config)
