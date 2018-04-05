@@ -160,11 +160,13 @@ module Travis::Api
         use Travis::Api::App::Middleware::ScopeCheck
         use Travis::Api::App::Middleware::UserAgentTracker
 
-        use OpenCensus::Trace::Integrations::RackMiddleware
-        OpenCensus.configure do |c|
-          c.trace.exporter = OpenCensus::Trace::Exporters::Stackdriver.new
-          c.trace.default_sampler = OpenCensus::Trace::Samplers::Probability.new
-          c.trace.default_max_attributes = 16
+        if ENV['OPENCENSUS_TRACING_ENABLED' == 'true']
+          use OpenCensus::Trace::Integrations::RackMiddleware
+          OpenCensus.configure do |c|
+            c.trace.exporter = OpenCensus::Trace::Exporters::Stackdriver.new
+            c.trace.default_sampler = OpenCensus::Trace::Samplers::Probability.new
+            c.trace.default_max_attributes = 16
+          end
         end
 
         # make sure this is below ScopeCheck so we have the token
