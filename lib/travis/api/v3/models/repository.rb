@@ -100,8 +100,7 @@ module Travis::API::V3
     end
 
     def managed_by_installation
-      return true if read_attribute(:managed_by_installation_on)
-      return false
+      !!managed_by_installation_at
     end
   end
 end
