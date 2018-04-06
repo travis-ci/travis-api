@@ -6,7 +6,6 @@ module Travis::API::V3
     def find
       return Models::User.find_by_id(id) if id
       return Models::User.find_by_github_id(github_id) if github_id
-      return find_by_github_installation_id(github_installation_id) if github_installation_id
       return Models::User.where('lower(login) = ?'.freeze, login.downcase).order("id DESC").first if login
       return find_by_email(email) if email
       raise WrongParams, 'missing user.id or user.login'.freeze
@@ -18,11 +17,6 @@ module Travis::API::V3
       else
         User.find_by_email(email)
       end
-    end
-
-    def find_by_github_installation_id(github_installation_id)
-      installation = Models::Installation.where(github_id: github_installation_id).first
-      Models::User.find(installation.owner_id) if installation.owner_type == "User"
     end
 
     def sync(user)
