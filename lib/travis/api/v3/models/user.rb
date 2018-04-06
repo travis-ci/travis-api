@@ -9,8 +9,6 @@ module Travis::API::V3
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
 
-    has_one :installation, as: :owner
-
     serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
 
     def repository_ids
@@ -36,5 +34,10 @@ module Travis::API::V3
       scope.any?
     end
 
+    # has_one :installation, as: :owner
+    def installation
+      return @installation if defined? @installation
+      @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id)
+    end
   end
 end
