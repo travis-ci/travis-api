@@ -1,10 +1,9 @@
 module Travis::API::V3
   class Queries::Installation < Query
-  	params :id
+  	params :github_id
 
   	def find
-      return Models::Installation.where(github_id: id) if id
-      raise WrongParams, 'missing github_id'.freeze
+      Models::Installation.find_by_github_id(github_id) if github_id
     end
   end
 end

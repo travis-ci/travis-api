@@ -29,6 +29,7 @@ module Travis::API::V3
         args.keys.each do |key|
           case key.to_s
           when /\./        then key_mapping[key.to_sym]        = key unless key.is_a? Symbol
+          when 'github_id' then key_mapping[:"#{type}.#{key}"] = key
           when /^(.+)_id$/ then key_mapping[:"#{$1}.id"]       = key
           else                  key_mapping[:"#{type}.#{key}"] = key
           end
