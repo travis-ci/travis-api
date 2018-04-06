@@ -2,7 +2,6 @@ require 'travis/config/defaults'
 
 module Travis::API::V3
   class Models::JobConfig < Model
-    serialize :config
   end
 
   class Models::Job < Model
@@ -37,7 +36,8 @@ module Travis::API::V3
     end
 
     def config
-      super&.config || read_attribute(:config) || {}
+      config = super&.config || read_attribute(:config) || {}
+      config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
     end
   end
 end

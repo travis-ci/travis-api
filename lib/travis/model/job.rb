@@ -4,7 +4,6 @@ require 'active_support/core_ext/object/deep_dup'
 require 'travis/model/build/config/language'
 
 class JobConfig < ActiveRecord::Base
-  serialize :config
 end
 
 class Job < Travis::Model
@@ -118,7 +117,8 @@ class Job < Travis::Model
   end
 
   def config
-    super&.config || read_attribute(:config) || {}
+    config = super&.config || read_attribute(:config) || {}
+    config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
   end
 
   def obfuscated_config

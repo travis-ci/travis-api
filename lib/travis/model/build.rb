@@ -4,7 +4,6 @@ require 'travis/model'
 require 'travis/services/next_build_number'
 
 class BuildConfig < ActiveRecord::Base
-  serialize :config
 end
 
 class Build < Travis::Model
@@ -174,6 +173,7 @@ class Build < Travis::Model
   def config
     @config ||= begin
       config = super&.config || read_attribute(:config) || {}
+      config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
       Config.new(config, multi_os: repository.try(:multi_os_enabled?)).normalize
     end
   end

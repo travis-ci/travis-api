@@ -2,6 +2,9 @@ require 'active_record'
 require 'simple_states'
 require 'travis/model/encrypted_column'
 
+class RequestConfig < ActiveRecord::Base
+end
+
 # Models an incoming request. The only supported source for requests currently is Github.
 #
 # The Request will be configured by fetching `.travis.yml` from the Github API
@@ -39,6 +42,7 @@ class Request < Travis::Model
   belongs_to :pull_request
   belongs_to :repository
   belongs_to :owner, polymorphic: true
+  belongs_to :config, foreign_key: :config_id, class_name: RequestConfig
   has_many   :builds
   has_many   :events, as: :source
 
@@ -110,6 +114,11 @@ class Request < Travis::Model
     Build::Config::Matrix.new(
       Build::Config.new(config).normalize, multi_os: repository.multi_os_enabled?, dist_group_expansion: repository.dist_group_expansion_enabled?
     ).expand.size > 0
+  end
+
+  def config
+    config = super&.config || read_attribute(:config) || {}
+    config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
   end
 
   private
