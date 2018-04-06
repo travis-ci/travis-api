@@ -4,7 +4,7 @@ module Travis::API::V3
     has_many :users, through: :memberships
 
     has_one :installation, as: :owner
-  
+
     def repositories
       Models::Repository.where(owner_type: 'Organization', owner_id: id)
     end

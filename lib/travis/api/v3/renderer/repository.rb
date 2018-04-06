@@ -57,5 +57,9 @@ module Travis::API::V3
     def owner_type
       @owner_type ||= model.owner_type.downcase if model.owner_type
     end
+
+    def managed_by_installation
+      model.managed_by_installation?
+    end
   end
 end

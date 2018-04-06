@@ -95,7 +95,6 @@ module Travis::API::V3
       visible? installation.owner
     end
 
-
     def log_visible?(log)
       visible? log.job
     end
