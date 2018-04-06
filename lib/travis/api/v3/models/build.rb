@@ -1,6 +1,5 @@
 module Travis::API::V3
   class Models::BuildConfig < Model
-    serialize :config
   end
 
   class Models::Build < Model
@@ -69,7 +68,8 @@ module Travis::API::V3
     end
 
     def config
-      super&.config || read_attribute(:config) || {}
+      config = super&.config || read_attribute(:config) || {}
+      config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
     end
 
     def branch_name=(value)
