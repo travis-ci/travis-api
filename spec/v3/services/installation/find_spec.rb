@@ -16,8 +16,36 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
       "@representation"  => "standard",
       "id"               => installation.id,
       "github_id"        => installation.github_id,
-      "owner_type"       => installation.owner_type,
-      "owner_id"         => installation.owner_id
+      "owner"            =>{
+        "@type"=>"user",
+        "@href"=>"/v3/user/#{user.id}",
+        "@representation"=>"minimal",
+        "id"=>user.id,
+        "login"=>user.login}
+    }}
+  end
+
+  describe "authenticated as user with access" do
+    before  { get("/v3/installation/#{installation.github_id}?include=installation.owner", {}, headers) }
+    example { expect(last_response).to be_ok          }
+    example { expect(JSON.load(body)).to be ==        {
+      "@type"            => "installation",
+      "@href"            => "/v3/installation/#{installation.github_id}",
+      "@representation"  => "standard",
+      "id"               => installation.id,
+      "github_id"        => installation.github_id,
+      "owner"            =>{
+        "@type"=>"user",
+        "@href"=>"/v3/user/#{user.id}",
+        "@representation"=>"standard",
+        "@permissions"=>{"read"=>true, "sync"=>true},
+        "id"=>1,
+        "login"=>user.login,
+        "name"=>user.name,
+        "github_id"=>nil,
+        "avatar_url"=>"https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
+        "is_syncing"=>nil,
+        "synced_at"=>nil}
     }}
   end
 end
