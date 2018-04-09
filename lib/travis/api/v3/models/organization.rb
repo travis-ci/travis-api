@@ -7,7 +7,6 @@ module Travis::API::V3
       Models::Repository.where(owner_type: 'Organization', owner_id: id)
     end
 
-    # has_one :installation, as: :owner
     def installation
       return @installation if defined? @installation
       @installation = Models::Installation.find_by(owner_type: 'Organization', owner_id: id)
