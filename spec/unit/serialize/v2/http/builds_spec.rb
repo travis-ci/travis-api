@@ -80,6 +80,6 @@ describe Travis::Api::Serialize::V2::Http::Builds, 'using Travis::Services::Buil
   end
 
   it 'queries' do
-    lambda { data }.should issue_queries(5)
+    lambda { data }.should issue_queries(7)
   end
 end

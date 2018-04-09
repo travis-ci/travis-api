@@ -51,6 +51,11 @@ module Travis::API::V3
       end
     end
 
+    resource :installation do
+      route '/installation/{installation.github_id}'
+      get :find
+    end
+
     resource :job do
       capture id: :digit
       route '/job/{job.id}'

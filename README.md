@@ -37,6 +37,7 @@ $ sudo -u postgres psql -c "CREATE USER yourusername WITH SUPERUSER PASSWORD 'yo
 ```
 
 Databases are set up with a Rake task that uses the database schemas (`structure.sql`) in `travis-migrations`. Details can be found in the `Rakefile`.
+You can override the `travis-migrations` branch that is being used by setting the environment variable `TRAVIS_MIGRATIONS_BRANCH`.
 
 
 To create and migrate the Databases:
