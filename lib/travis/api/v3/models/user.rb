@@ -34,5 +34,9 @@ module Travis::API::V3
       scope.any?
     end
 
+    def installation
+      return @installation if defined? @installation
+      @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id)
+    end
   end
 end

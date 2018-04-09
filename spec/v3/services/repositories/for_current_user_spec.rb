@@ -67,6 +67,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "@representation"  => "minimal",
           "name"             => "master"},
         "starred"            => false,
+        "managed_by_installation"=>false,
+        "active_on_org"=>nil
         }]
     }}
   end
@@ -113,5 +115,19 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
     example { expect(last_response)                   .to be_ok                              }
     example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=false"    }
     example { expect(JSON.load(body)['repositories']) .to be_empty                           }
+  end
+
+  describe "filter: managed_by_installation=true" do
+    before  { get("/v3/repos", {"managed_by_installation" => "true"}, headers)                               }
+    example { expect(last_response)                   .to be_ok                                              }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?managed_by_installation=true"     }
+    example { expect(JSON.load(body)['repositories']) .to be_empty                                           }
+  end
+
+  describe "filter: managed_by_installation=false" do
+    before  { get("/v3/repos", {"managed_by_installation" => "false"}, headers)                              }
+    example { expect(last_response)                   .to be_ok                                              }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?managed_by_installation=false"    }
+    example { expect(JSON.load(body)['repositories']) .not_to be_empty                                       }
   end
 end

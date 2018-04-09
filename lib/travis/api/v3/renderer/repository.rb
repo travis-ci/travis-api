@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Renderer::Repository < ModelRenderer
     representation(:minimal,  :id, :name, :slug)
-    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred)
+    representation(:standard, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :managed_by_installation, :active_on_org)
     representation(:experimental, :id, :name, :slug, :description, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build)
 
     hidden_representations(:experimental)
@@ -56,6 +56,10 @@ module Travis::API::V3
 
     def owner_type
       @owner_type ||= model.owner_type.downcase if model.owner_type
+    end
+
+    def managed_by_installation
+      model.managed_by_installation?
     end
   end
 end
