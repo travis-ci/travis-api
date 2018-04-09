@@ -12,5 +12,6 @@ class Travis::Api::App
     require 'travis/api/app/middleware/honeycomb'
     require 'travis/api/app/middleware/log_tracing'
     require 'travis/api/app/middleware/user_agent_tracker'
+    require 'travis/api/app/middleware/opencensus'
   end
 end
