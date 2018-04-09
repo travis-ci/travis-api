@@ -6,6 +6,7 @@ require 'bundler/setup'
 require 'active_record'
 require "stringio"
 require 'travis/config'
+require 'marginalia'
 
 # Temp redirect of output
 def silence(&block)
@@ -16,6 +17,9 @@ ensure
   $stdout = previous_stdout
   $stderr = previous_stderr
 end
+
+Marginalia.set('app', 'api')
+Marginalia.set('script', 'user_mgmt')
 
 # Setup model
 ActiveRecord::Base.establish_connection(Travis::Config.load.database.to_h)

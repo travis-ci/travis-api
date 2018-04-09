@@ -7,6 +7,10 @@ $LOAD_PATH << 'lib'
 require 'bundler/setup'
 require 'travis/api/app'
 require 'travis/api/app/schedulers/schedule_cron_jobs'
+require 'marginalia'
+
+Marginalia.set('app', 'api')
+Marginalia.set('script', 'cron')
 
 Travis::Api::App.new
 Travis.logger.info "Starting cron jobs scheduler now"
