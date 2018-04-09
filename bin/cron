@@ -11,6 +11,7 @@ require 'marginalia'
 
 Marginalia.set('app', 'api')
 Marginalia.set('script', 'cron')
+Marginalia.set('dyno', ENV['DYNO'])
 
 Travis::Api::App.new
 Travis.logger.info "Starting cron jobs scheduler now"

@@ -19,6 +19,7 @@ end
 
 Marginalia.set('app', 'api')
 Marginalia.set('script', 'console')
+Marginalia.set('dyno', ENV['DYNO'])
 
 V3 = Travis::API::V3
 
