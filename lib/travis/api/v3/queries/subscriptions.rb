@@ -2,7 +2,7 @@ module Travis::API::V3
   class Queries::Subscriptions < Query
     params :plan, :coupon, :organization_id
     params :first_name, :last_name, :company, :address, :address2, :city, :country, :state, :vat_id, :zip_code, :billing_email, prefix: :billing_info
-    params :card_owner, :expiration_date, :last_digits, prefix: :credit_card_info
+    params :token, prefix: :credit_card_info
 
     def all(user_id)
       client = BillingClient.new(user_id)
