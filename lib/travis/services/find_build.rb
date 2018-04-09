@@ -41,9 +41,10 @@ module Travis
           columns = scope(:build).column_names
           columns -= %w(config) if params[:exclude_config]
           columns = columns.map { |c| %Q{"builds"."#{c}"} }
-          scope(:build).includes([:matrix, :commit, :request]).select(columns).find_by_id(params[:id]).tap do |res|
-            res.config = {} if params[:exclude_config]
-          end
+          scope = scope(:build).includes([:matrix, :commit, :request, :config])
+          build = scope.select(columns).find_by_id(params[:id])
+          build.config = nil if params[:exclude_config]
+          build
         end
     end
   end
