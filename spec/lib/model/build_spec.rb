@@ -224,7 +224,7 @@ describe Build do
 
       it 'deep_symbolizes keys on write' do
         build = Factory(:build, config: { 'foo' => { 'bar' => 'bar' } })
-        build.read_attribute(:config)[:foo].should == { bar: 'bar' }
+        build.config[:foo].should == { bar: 'bar' }
       end
 
       it 'downcases the language on config' do

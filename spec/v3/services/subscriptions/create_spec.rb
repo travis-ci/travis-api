@@ -34,9 +34,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
         'billing_info.country' => 'Germany',
         'billing_info.zip_code' => '10001',
         'billing_info.billing_email' => 'travis@example.org',
-        'credit_card_info.card_owner' => 'Travis Schmidt',
-        'credit_card_info.expiration_date' => '11/21',
-        'credit_card_info.last_digits' => '1111',
+        'credit_card_info.token' => 'token_from_stripe'
       }
     end
 
@@ -58,9 +56,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
               'billing_email' => 'travis@example.org',
             },
             'credit_card_info' => {
-              'card_owner' => 'Travis Schmidt',
-              'expiration_date' => '11/21',
-              'last_digits' => '1111'
+              'token' => 'token_from_stripe'
             }})
           .to_return(status: 201, body: JSON.dump(billing_response_body(
             'id' => 1234,
