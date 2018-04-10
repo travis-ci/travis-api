@@ -20,16 +20,12 @@ describe Travis::API::V3::Services::Subscription::UpdateCreditcard, set_app: tru
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
-    let(:creditcard_data) { { "card_owner" => "Travis Schmidt",'expiration_date' => '11/21', 'last_digits' => '1111' } }
+    let(:creditcard_token) { { 'token' => "token_from_stripe" } }
     let(:subscription_id) { rand(999) }
 
     let!(:stubbed_request) do
       stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard", auth_key: billing_auth_key, user_id: user.id)
-      .with(body: {
-          'card_owner' => 'Travis Schmidt',
-          'expiration_date' => '11/21',
-          'last_digits' => '1111'
-          })
+      .with(body: { 'token' => 'token_from_stripe' })
       .to_return(status: 204)
     end
 
