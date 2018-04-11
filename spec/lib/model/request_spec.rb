@@ -55,11 +55,6 @@ describe Request do
       request.event_type = 'pull_request'
       request.pull_request_title.should == 'A pull request'
     end
-
-    it 'returns nil for non pull request' do
-      request.event_type = 'push'
-      request.pull_request_title.should be_nil
-    end
   end
 
   describe 'pull_request_number' do
@@ -69,11 +64,6 @@ describe Request do
     it 'returns the title of the pull request from payload' do
       request.event_type = 'pull_request'
       request.pull_request_number.should == 1
-    end
-
-    it 'returns nil for non pull request' do
-      request.event_type = 'push'
-      request.pull_request_number.should be_nil
     end
   end
 
