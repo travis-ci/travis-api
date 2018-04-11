@@ -58,12 +58,12 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   end
 
   describe '#update_creditcard' do
-    let(:creditcard_data) { { 'cc_owner' => 'Hans' } }
-    subject { billing.update_creditcard(subscription_id, creditcard_data) }
+    let(:creditcard_token) { 'token' }
+    subject { billing.update_creditcard(subscription_id, creditcard_token) }
 
     it 'requests the update' do
       stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard", auth_key: auth_key, user_id: user_id)
-        .with(body: JSON.dump(creditcard_data))
+        .with(body: JSON.dump(token: creditcard_token))
         .to_return(status: 204)
 
       expect { subject }.to_not raise_error
