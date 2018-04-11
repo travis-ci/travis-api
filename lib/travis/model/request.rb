@@ -11,14 +11,16 @@ end
 # and needs to be approved based on the configuration. Once approved the
 # Request creates a Build.
 class Request < Travis::Model
-  require 'travis/model/request/pr'
-
   include Travis::ScopeAccess
   include SimpleStates
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 
   class << self
+    def columns
+      super.reject { |c| c.name == 'payload' }
+    end
+
     def last_by_head_commit(head_commit)
       where(head_commit: head_commit).order(:id).last
     end
@@ -76,15 +78,15 @@ class Request < Travis::Model
   end
 
   def pull_request_title
-    pull_request ? pull_request.title : pr.title if pull_request?
+    pull_request.title if pull_request
   end
 
   def pull_request_number
-    pull_request ? pull_request.number : pr.number if pull_request?
+    pull_request.number if pull_request
   end
 
   def head_repo
-    pull_request ? pull_request.head_repo_slug : pr.head_repo
+    pull_request.head_repo_slug if pull_request
   end
 
   def base_repo
@@ -92,7 +94,7 @@ class Request < Travis::Model
   end
 
   def head_branch
-    pull_request ? pull_request.head_ref : pr.head_branch
+    pull_request.head_ref if pull_request
   end
 
   def base_branch
@@ -120,10 +122,4 @@ class Request < Travis::Model
     config = super&.config || read_attribute(:config) || {}
     config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
   end
-
-  private
-
-    def pr
-      @pr ||= Pr.new(payload && payload['pull_request'])
-    end
 end

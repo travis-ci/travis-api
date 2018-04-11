@@ -3,6 +3,10 @@ module Travis::API::V3
   end
 
   class Models::Request < Model
+    def self.columns
+      super.reject { |c| c.name == 'payload' }
+    end
+
     belongs_to :commit
     belongs_to :pull_request
     belongs_to :repository
