@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Repositories < Query
-    params :active, :private, :starred, prefix: :repository
+    params :active, :private, :starred, :managed_by_installation, prefix: :repository
     experimental_params :slug_filter, prefix: :repository
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active),
                 :'default_branch.last_build' => 'builds.started_at',
@@ -32,6 +32,7 @@ module Travis::API::V3
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
+      list = list.where("managed_by_installation_at #{bool(managed_by_installation) ? 'is not' : 'is'} null") unless managed_by_installation.nil?
 
       if user and not starred.nil?
         if bool(starred)

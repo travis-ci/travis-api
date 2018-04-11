@@ -1,7 +1,9 @@
 describe Travis::API::V3::Services::Owner::Find, set_app: true do
+
   describe "organization" do
     let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
-    before    { org.save!                              }
+
+    before    { org.save! }
     after     { org.delete                             }
 
     describe 'existing org, public api, by login' do
@@ -84,7 +86,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"           => "/v3/repo/#{repo.id}/branch/master",
             "@representation" => "minimal",
             "name"            => "master"},
-          "starred"           => false
+          "starred"           => false,
+          "managed_by_installation"=>false,
+          "active_on_org"     =>nil
         }]
       }}
     end
@@ -137,7 +141,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"         => "/v3/repo/#{repo.id}/branch/master",
             "@representation"=> "minimal",
             "name"          => "master"},
-          "starred"         => false
+          "starred"         => false,
+          "managed_by_installation"=>false,
+          "active_on_org"   =>nil
         }]
       }}
     end

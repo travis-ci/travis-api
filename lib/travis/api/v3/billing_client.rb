@@ -22,8 +22,8 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
-    def update_creditcard(subscription_id, creditcard_data)
-      response = connection.patch("/subscriptions/#{subscription_id}/creditcard", creditcard_data)
+    def update_creditcard(subscription_id, creditcard_token)
+      response = connection.patch("/subscriptions/#{subscription_id}/creditcard", token: creditcard_token)
       handle_errors_and_respond(response)
     end
 

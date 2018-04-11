@@ -98,5 +98,9 @@ module Travis::API::V3
       return true if Travis::Features.active?(:debug_tools, self)
       return false
     end
+
+    def managed_by_installation?
+      !!managed_by_installation_at
+    end
   end
 end

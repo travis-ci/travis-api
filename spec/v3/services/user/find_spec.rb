@@ -4,6 +4,8 @@ describe Travis::API::V3::Services::User::Find, set_app: true do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
 
+  before { user.save! }
+
   describe "authenticated as user with access" do
     before  { get("/v3/user/#{user.id}", {}, headers) }
     example { expect(last_response).to be_ok          }

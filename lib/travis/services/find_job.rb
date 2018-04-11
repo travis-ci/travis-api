@@ -34,9 +34,10 @@ module Travis
           columns = scope(:job).column_names
           columns -= %w(config) if params[:exclude_config]
           columns = columns.map { |c| %Q{"jobs"."#{c}"} }
-          scope(:job).includes(:commit).select(columns).find_by_id(params[:id]).tap do |res|
-            res.config = {} if params[:exclude_config]
-          end
+          scope = scope(:job).includes(:commit, :config).select(columns)
+          job = scope.find_by_id(params[:id])
+          job.config = nil if params[:exclude_config]
+          job
         end
     end
   end
