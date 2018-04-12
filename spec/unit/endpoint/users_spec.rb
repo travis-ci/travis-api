@@ -13,12 +13,6 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
   end
 
   it 'replies with the current user' do
-    secure_user_hash = OpenSSL::HMAC.hexdigest(
-      'sha256',
-      'USER_HASH_SECRET_KEY',
-      "#{user.id}"
-    )
-
     get('/users', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01').should be_ok
     parsed_body['user'].should == {
       'id'                 => user.id,
@@ -31,7 +25,6 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       'is_syncing'         => user.is_syncing,
       'created_at'         => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'first_logged_in_at' => user.first_logged_in_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-      'secure_user_hash' => secure_user_hash,
       'synced_at'          => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'correct_scopes'     => true,
       'channels'           => ["private-user-1"]

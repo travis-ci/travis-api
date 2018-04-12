@@ -25,7 +25,7 @@ module Travis
             private
 
               def user_data
-                {
+                data = {
                   'id' => user.id,
                   'name' => user.name,
                   'login' => user.login,
@@ -38,19 +38,28 @@ module Travis
                   'correct_scopes' => Github::Oauth.correct_scopes?(user),
                   'created_at' => format_date(user.created_at),
                   'first_logged_in_at' => format_date(user.first_logged_in_at),
-                  'secure_user_hash' => secure_user_hash,
                   'channels' => channels
                 }
+
+                if hmac_secret_key
+                  data['secure_user_hash'] = secure_user_hash
+                end
+
+                data
               end
 
               def channels
                 ["private-user-#{user.id}"]
               end
 
+              def hmac_secret_key
+                Travis.config.intercom && Travis.config.intercom.hmac_secret_key
+              end
+
               def secure_user_hash
                 OpenSSL::HMAC.hexdigest(
                   'sha256',
-                  ENV['USER_HASH_SECRET_KEY'] || 'USER_HASH_SECRET_KEY',
+                  hmac_secret_key,
                   "#{user.id}"
                 )
               end
