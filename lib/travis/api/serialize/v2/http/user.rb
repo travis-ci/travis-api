@@ -38,7 +38,7 @@ module Travis
                   'correct_scopes' => Github::Oauth.correct_scopes?(user),
                   'created_at' => format_date(user.created_at),
                   'first_logged_in_at' => format_date(user.first_logged_in_at),
-                  'intercom_user_hash' => intercom_user_hash,
+                  'secure_user_hash' => secure_user_hash,
                   'channels' => channels
                 }
               end
@@ -47,10 +47,10 @@ module Travis
                 ["private-user-#{user.id}"]
               end
 
-              def intercom_user_hash
+              def secure_user_hash
                 OpenSSL::HMAC.hexdigest(
                   'sha256',
-                  ENV['INTERCOM_SECRET_KEY'] || 'intercom_secret_key',
+                  ENV['USER_HASH_SECRET_KEY'] || 'USER_HASH_SECRET_KEY',
                   user.id
                 )
               end

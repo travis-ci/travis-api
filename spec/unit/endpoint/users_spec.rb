@@ -13,9 +13,9 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
   end
 
   it 'replies with the current user' do
-    intercom_user_hash = OpenSSL::HMAC.hexdigest(
+    secure_user_hash = OpenSSL::HMAC.hexdigest(
       'sha256',
-      'intercom_secret_key',
+      'USER_HASH_SECRET_KEY',
       "#{user.id}"
     )
 
@@ -31,7 +31,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       'is_syncing'         => user.is_syncing,
       'created_at'         => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'first_logged_in_at' => user.first_logged_in_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-      'intercom_user_hash' => intercom_user_hash,
+      'secure_user_hash' => secure_user_hash,
       'synced_at'          => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'correct_scopes'     => true,
       'channels'           => ["private-user-1"]

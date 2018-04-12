@@ -9,9 +9,9 @@ describe Travis::Api::Serialize::V2::Http::User do
   end
 
   it 'user' do
-    intercom_user_hash = OpenSSL::HMAC.hexdigest(
+    secure_user_hash = OpenSSL::HMAC.hexdigest(
       'sha256',
-      'intercom_secret_key',
+      'USER_HASH_SECRET_KEY',
       '1'
     )
 
@@ -28,7 +28,7 @@ describe Travis::Api::Serialize::V2::Http::User do
       'correct_scopes' => true,
       'created_at' => json_format_time(Time.now.utc - 2.hours),
       'first_logged_in_at' => json_format_time(Time.now.utc - 4.hours),
-      'intercom_user_hash' => intercom_user_hash,
+      'secure_user_hash' => secure_user_hash,
       'channels' => ["private-user-1"]
     }
   end
