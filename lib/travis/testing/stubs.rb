@@ -266,6 +266,7 @@ module Travis
           tokens: [stub('token', token: 'token')],
           github_scopes: Travis.config.oauth2.scopes.to_s.split(','),
           created_at: Time.now.utc - 7200,
+          first_logged_in_at: Time.now.utc - 14400,
           subscribed?: false,
           education: false
         )
