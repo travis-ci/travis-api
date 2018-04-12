@@ -12,7 +12,7 @@ describe Travis::Api::Serialize::V2::Http::User do
     intercom_user_hash = OpenSSL::HMAC.hexdigest(
       'sha256',
       'intercom_secret_key',
-      1
+      '1'
     )
 
     data['user'].should == {

@@ -16,7 +16,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
     intercom_user_hash = OpenSSL::HMAC.hexdigest(
       'sha256',
       'intercom_secret_key',
-      user.id
+      "#{user.id}"
     )
 
     get('/users', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01').should be_ok
