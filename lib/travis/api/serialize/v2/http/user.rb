@@ -50,7 +50,7 @@ module Travis
               def intercom_user_hash
                 OpenSSL::HMAC.hexdigest(
                   'sha256',
-                  ENV['INTERCOM_SECRET_KEY'] || 'different_secret_key',
+                  ENV['INTERCOM_SECRET_KEY'] || 'intercom_secret_key',
                   user.id
                 )
               end
