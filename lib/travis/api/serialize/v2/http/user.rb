@@ -51,7 +51,7 @@ module Travis
                 OpenSSL::HMAC.hexdigest(
                   'sha256',
                   ENV['USER_HASH_SECRET_KEY'] || 'USER_HASH_SECRET_KEY',
-                  user.id
+                  "#{user.id}"
                 )
               end
           end
