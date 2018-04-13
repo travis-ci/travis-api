@@ -52,7 +52,7 @@ describe Travis::Api::Serialize::V2::Http::User do
         'synced_at' => json_format_time(Time.now.utc - 1.hour),
         'correct_scopes' => true,
         'created_at' => json_format_time(Time.now.utc - 2.hours),
-        'first_logged_in_at' => json_format_time(Time.now.utc - 4.hours),
+        'first_logged_in_at' => json_format_time(Time.now.utc - 1.5.hours),
         'secure_user_hash' => secure_user_hash,
         'channels' => ["private-user-1"]
       }
