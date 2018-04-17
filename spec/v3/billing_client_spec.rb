@@ -11,6 +11,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   end
 
   let(:subscription_id) { rand(999) }
+  let(:invoice_id) { "TP#{rand(999)}" }
 
   describe '#get_subscription' do
     subject { billing.get_subscription(subscription_id) }
@@ -25,6 +26,24 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'raises error if subscription is not found' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}", auth_key: auth_key, user_id: user_id)
+        .to_return(status: 404, body: JSON.dump(error: 'Not Found'))
+
+      expect { subject }.to raise_error(Travis::API::V3::NotFound)
+    end
+  end
+
+  describe '#get_invoices_for_subscription' do
+    subject { billing.get_invoices_for_subscription(subscription_id) }
+
+    it 'returns a list of invoices' do
+      stub_billing_request(:get, "/subscriptions/#{subscription_id}/invoices", auth_key: auth_key, user_id: user_id)
+        .to_return(body: JSON.dump([{'id' => invoice_id, 'created_at' => Time.now, 'url' => 'https://billing-test.travis-ci.com/invoices/111.pdf' }]))
+      expect(subject.first).to be_a(Travis::API::V3::Models::Invoice)
+      expect(subject.first.id).to eq(invoice_id)
+    end
+
+    it 'raises error if subscription is not found' do
+      stub_billing_request(:get, "/subscriptions/#{subscription_id}/invoices", auth_key: auth_key, user_id: user_id)
         .to_return(status: 404, body: JSON.dump(error: 'Not Found'))
 
       expect { subject }.to raise_error(Travis::API::V3::NotFound)
