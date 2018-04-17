@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Renderer::Subscription < ModelRenderer
-    representation(:standard, :id, :valid_to, :plan, :coupon, :status, :source, :billing_info, :credit_card_info, :owner)
+    representation(:standard, :id, :valid_to, :plan, :coupon, :status, :source, :billing_info, :credit_card_info, :owner, :invoices)
   end
 
   class Renderer::BillingInfo < ModelRenderer
@@ -9,5 +9,14 @@ module Travis::API::V3
 
   class Renderer::CreditCardInfo < ModelRenderer
     representation(:minimal, :card_owner, :expiration_date, :last_digits)
+  end
+
+  class Renderer::Invoices < CollectionRenderer
+    type  :invoices
+    collection_key :invoices
+  end
+
+  class Renderer::Invoice < ModelRenderer
+    representation(:standard, :id, :created_at, :url)
   end
 end
