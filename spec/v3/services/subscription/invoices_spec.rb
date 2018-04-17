@@ -22,7 +22,7 @@ describe Travis::API::V3::Services::Subscription::Invoices, set_app: true, billi
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     let(:invoice_id) { "TP#{rand(999)}" }
-    let(:created_at) {Time.now }
+    let(:created_at) { '2018-04-17T18:30:32Z' }
     let(:url) { 'https://billing-test.travis-ci.com/invoices/111.pdf' }
     let(:subscription_id) { rand(999) }
     before do
@@ -37,12 +37,12 @@ describe Travis::API::V3::Services::Subscription::Invoices, set_app: true, billi
       expect(parsed_body).to eql_json({
         '@type' => 'invoices',
         '@representation' => 'standard',
-        '@href' => '/v3/subscription/1/invoices',
+        '@href' => "/v3/subscription/#{subscription_id}/invoices",
         'invoices' => [{
           '@type' => 'invoice',
           '@representation' => 'standard',
           'id' => invoice_id,
-          'created' => created_at,
+          'created_at' => created_at,
           'url' => url,
 
         }]
