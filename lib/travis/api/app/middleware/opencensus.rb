@@ -128,16 +128,16 @@ class Travis::Api::App
       
       def start_request span, env
         span.kind = ::OpenCensus::Trace::SpanBuilder::SERVER
-        span.put_attribute "/app", "travis-api"
-        span.put_attribute "/site", ENV["TRAVIS_SITE"]
-        span.put_attribute "/request_id", env["HTTP_X_REQUEST_ID"]
-        span.put_attribute "/http/host", get_host(env)
-        span.put_attribute "/http/url", get_url(env)
-        span.put_attribute "/http/method", env["REQUEST_METHOD"]
-        span.put_attribute "/http/client_protocol", env["SERVER_PROTOCOL"]
-        span.put_attribute "/http/user_agent", env["HTTP_USER_AGENT"]
-        span.put_attribute "/pid", ::Process.pid.to_s
-        span.put_attribute "/tid", ::Thread.current.object_id.to_s
+        span.put_attribute "app", "travis-api"
+        span.put_attribute "site", ENV["TRAVIS_SITE"]
+        span.put_attribute "request_id", env["HTTP_X_REQUEST_ID"]
+        span.put_attribute "http/host", get_host(env)
+        span.put_attribute "http/url", get_url(env)
+        span.put_attribute "http/method", env["REQUEST_METHOD"]
+        span.put_attribute "http/client_protocol", env["SERVER_PROTOCOL"]
+        span.put_attribute "http/user_agent", env["HTTP_USER_AGENT"]
+        span.put_attribute "pid", ::Process.pid.to_s
+        span.put_attribute "tid", ::Thread.current.object_id.to_s
       end
       
       def finish_request span, response
