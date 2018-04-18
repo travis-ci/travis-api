@@ -15,5 +15,10 @@ module Travis::API::V3
       client = BillingClient.new(user_id)
       client.update_creditcard(params['subscription.id'], params['token'])
     end
+
+    def invoices(user_id)
+      client = BillingClient.new(user_id)
+      client.get_invoices_for_subscription(params['subscription.id'])
+    end
   end
 end
