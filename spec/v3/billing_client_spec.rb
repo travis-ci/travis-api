@@ -42,11 +42,11 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
       expect(subject.first.id).to eq(invoice_id)
     end
 
-    it 'raises error if subscription is not found' do
+    it 'returns an empty list if there are no invoices' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}/invoices", auth_key: auth_key, user_id: user_id)
-        .to_return(status: 404, body: JSON.dump(error: 'Not Found'))
+        .to_return(body: JSON.dump([]))
 
-      expect { subject }.to raise_error(Travis::API::V3::NotFound)
+        expect(subject.size).to eq 0
     end
   end
 
