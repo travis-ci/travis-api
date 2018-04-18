@@ -147,6 +147,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    amq-protocol (2.3.0)
     appsignal (2.2.1)
       rack
       thread_safe
@@ -159,7 +160,8 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     backports (3.8.0)
     builder (3.2.3)
-    bunny (0.8.0)
+    bunny (2.9.2)
+      amq-protocol (~> 2.3.0)
     coder (0.4.0)
     coderay (1.1.1)
     coercible (1.0.0)
@@ -405,7 +407,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers
   appsignal
-  bunny (~> 0.8.0)
+  bunny (~> 2.9.2)
   customerio
   dalli
   database_cleaner (~> 1.2.0)
