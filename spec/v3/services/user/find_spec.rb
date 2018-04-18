@@ -4,7 +4,10 @@ describe Travis::API::V3::Services::User::Find, set_app: true do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
 
-  before { user.save! }
+  before do
+    user.education = true
+    user.save!
+  end
 
   describe "authenticated as user with access" do
     before  { get("/v3/user/#{user.id}", {}, headers) }
@@ -20,7 +23,8 @@ describe Travis::API::V3::Services::User::Find, set_app: true do
       "github_id"        => user.github_id,
       "avatar_url"       => "https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
       "is_syncing"       => user.is_syncing,
-      "synced_at"        => user.synced_at
+      "synced_at"        => user.synced_at,
+      "education"        => true
     }}
   end
 end

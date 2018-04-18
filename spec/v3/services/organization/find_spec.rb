@@ -17,7 +17,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "login"            => "example-org",
       "name"             => nil,
       "github_id"        => nil,
-      "avatar_url"       => nil
+      "avatar_url"       => nil,
+      "education"        => nil
     }}
   end
 
@@ -29,7 +30,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
     example { expect(JSON.load(body)).to be ==      {
       "@type"         => "error",
       "error_type"    => "not_found",
-      "error_message" =>"organization not found (or insufficient access)",
+      "error_message" => "organization not found (or insufficient access)",
       "resource_type" => "organization"
     }}
   end
