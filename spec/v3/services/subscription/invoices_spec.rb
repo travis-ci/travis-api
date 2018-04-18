@@ -43,8 +43,7 @@ describe Travis::API::V3::Services::Subscription::Invoices, set_app: true, billi
           '@representation' => 'standard',
           'id' => invoice_id,
           'created_at' => created_at,
-          'url' => url,
-
+          'url' => url
         }]
       })
     end

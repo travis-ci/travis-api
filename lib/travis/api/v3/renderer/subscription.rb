@@ -10,13 +10,4 @@ module Travis::API::V3
   class Renderer::CreditCardInfo < ModelRenderer
     representation(:minimal, :card_owner, :expiration_date, :last_digits)
   end
-
-  class Renderer::Invoices < CollectionRenderer
-    type  :invoices
-    collection_key :invoices
-  end
-
-  class Renderer::Invoice < ModelRenderer
-    representation(:standard, :id, :created_at, :url)
-  end
 end
