@@ -73,6 +73,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "name"               => "minimal",
       "slug"               => "svenfuchs/minimal",
       "description"        => nil,
+      "github_id"          => repo.github_id,
       "github_language"    => nil,
       "active"             => true,
       "private"            => opts[:private],

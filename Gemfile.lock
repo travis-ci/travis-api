@@ -118,6 +118,7 @@ GEM
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
     allocation_tracer (0.6.3)
+    amq-protocol (2.3.0)
     arel (6.0.4)
     atomic (1.1.99)
     avl_tree (1.1.3)
@@ -127,7 +128,8 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     backports (3.8.0)
     builder (3.2.3)
-    bunny (0.8.0)
+    bunny (2.9.2)
+      amq-protocol (~> 2.3.0)
     coder (0.4.0)
     coderay (1.1.1)
     coercible (1.0.0)
@@ -414,7 +416,7 @@ DEPENDENCIES
   active_model_serializers
   activerecord (~> 4.2)
   allocation_tracer
-  bunny (~> 0.8.0)
+  bunny (~> 2.9.2)
   coder (~> 0.4.0)
   composite_primary_keys (~> 8.0)
   customerio
