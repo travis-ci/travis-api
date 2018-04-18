@@ -83,7 +83,7 @@ class Travis::Api::App
         end
 
         if env['HTTP_TRACE'] == 'true' 
-          sampler = ::OpenCensus::Trace::Samplers::AlwaysSample
+          sampler = ::OpenCensus::Trace::Samplers::AlwaysSample.new
         else 
           sampler = ::OpenCensus::Trace.config.default_sampler
         end
