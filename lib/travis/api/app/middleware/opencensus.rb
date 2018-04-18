@@ -23,13 +23,9 @@ class Travis::Api::App
       # @param [#export] exporter The exported used to export captured spans
       #     at the end of the request. Optional: If omitted, uses the exporter
       #     in the current config.
-      # @param [#sampler] sampler The sampler used to determine which spans
-      #     get captured. Optional: If omitted, uses the default sampler
-      #     in the current config.
-      def initialize app, exporter: nil, sampler: nil
+      def initialize app, exporter: nil
         @app = app
         @exporter = exporter || ::OpenCensus::Trace.config.exporter
-        @sampler = sampler || ::OpenCensus::Trace.config.default_sampler
       end
       
       def self.enabled?
@@ -85,12 +81,18 @@ class Travis::Api::App
         if formatter
           context = formatter.deserialize env[formatter.rack_header_name]
         end
-        
+
+        if env['HTTP_TRACE'] == 'true' 
+          sampler = ::OpenCensus::Trace::Samplers::AlwaysSample
+        else 
+          sampler = ::OpenCensus::Trace.config.default_sampler
+        end
+
         ::OpenCensus::Trace.start_request_trace \
         trace_context: context,
         same_process_as_parent: false do |span_context|
           begin
-            span_context.in_span get_path(env), sampler: @sampler do |span|
+            span_context.in_span get_path(env), sampler: sampler do |span|
               start_request span, env
               @app.call(env).tap do |response|
                 finish_request span, response
@@ -126,7 +128,9 @@ class Travis::Api::App
       
       def start_request span, env
         span.kind = ::OpenCensus::Trace::SpanBuilder::SERVER
-        span.put_attribute "app", "travis-api"
+        span.put_attribute "/app", "travis-api"
+        span.put_attribute "/site", ENV["TRAVIS_SITE"]
+        span.put_attribute "/request_id", env["HTTP_X_REQUEST_ID"]
         span.put_attribute "/http/host", get_host(env)
         span.put_attribute "/http/url", get_url(env)
         span.put_attribute "/http/method", env["REQUEST_METHOD"]
