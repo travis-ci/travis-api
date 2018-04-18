@@ -127,6 +127,8 @@ module Travis::Api
 
         if Travis::Api::App::Middleware::OpenCensus.enabled?
           use OpenCensus::Trace::Integrations::RackMiddleware
+          span_context = ::OpenCensus::Trace.span_context
+          span_context.this_span.put_attribute("app", "travis-api")
         end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
