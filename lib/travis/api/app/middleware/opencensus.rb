@@ -128,7 +128,7 @@ class Travis::Api::App
       
       def start_request span, env
         span.kind = ::OpenCensus::Trace::SpanBuilder::SERVER
-        span.put_attribute "app", "travis-api"
+        span.put_attribute "app", "api"
         span.put_attribute "site", ENV["TRAVIS_SITE"]
         span.put_attribute "request_id", env["HTTP_X_REQUEST_ID"]
         span.put_attribute "http/host", get_host(env)
