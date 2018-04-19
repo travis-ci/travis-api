@@ -61,7 +61,14 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           .to_return(status: 201, body: JSON.dump(billing_response_body(
             'id' => 1234,
             'owner' => { 'type' => 'Organization', 'id' => organization.id },
-            'plan' => 'travis-ci-ten-builds',
+            'plan' => {
+              'id' => 'travis-ci-ten-builds',
+              'name' => 'Startup',
+              'builds' => 10,
+              'price' => 12500,
+              'currency' => 'USD',
+              'annual' => false
+            },
             'billing_info' => {
               'first_name' => 'Travis',
               'last_name' => 'Schmidt',
@@ -91,7 +98,16 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           '@representation' => 'standard',
           'id' => 1234,
           'valid_to' => '2017-11-28T00:09:59Z',
-          'plan' => 'travis-ci-ten-builds',
+          'plan' => {
+            '@type' => 'plan',
+            '@representation' => 'minimal',
+            'id' => 'travis-ci-ten-builds',
+            'name' => 'Startup',
+            'builds' => 10,
+            'price' => 12500,
+            'currency' => 'USD',
+            'annual' => false
+          },
           'coupon' => '',
           'status' => 'canceled',
           'source' => 'stripe',

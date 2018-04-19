@@ -11,7 +11,14 @@ module Support
       {
         "id" => 81,
         "valid_to" => "2017-11-28T00:09:59.502Z",
-        "plan" => "travis-ci-ten-builds",
+        "plan" => {
+          "id" => "travis-ci-ten-builds",
+          "name" => "Startup",
+          "builds" => 10,
+          "annual" => false,
+          "price" => 12500,
+          "currency" => "USD"
+        },
         "coupon" => "",
         "status" => "canceled",
         "source" => "stripe",
