@@ -19,7 +19,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "education"        => nil
+        "education"        => false
       }}
     end
 
@@ -36,7 +36,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "education"        => nil
+        "education"        => false
       }}
     end
 
@@ -58,7 +58,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"                => nil,
         "github_id"           => 1234,
         "avatar_url"          => nil,
-        "education"           => nil,
+        "education"           => false,
         "repositories"        => [{
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -115,7 +115,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"              => nil,
         "github_id"         => 1234,
         "avatar_url"        => nil,
-        "education"         => nil,
+        "education"         => false,
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
@@ -167,7 +167,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "education"        => nil
+        "education"        => false
       }}
     end
 
@@ -188,7 +188,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"           => nil,
         "github_id"      => 1234,
         "avatar_url"     => nil,
-        "education"      => nil,
+        "education"      => false,
         "@warnings"      => [{
           "@type"        => "warning",
           "message"      => "query parameter organization.id not safelisted, ignored",

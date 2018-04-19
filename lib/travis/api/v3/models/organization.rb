@@ -13,7 +13,7 @@ module Travis::API::V3
     end
 
     def education
-      true if Travis::Features.feature_active?(:education) || Travis::Features.owner_active?(:education, self)
+      Travis::Features.owner_active?(:education, self)
     end
 
     alias members users
