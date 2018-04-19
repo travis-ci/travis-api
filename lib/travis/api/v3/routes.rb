@@ -248,6 +248,7 @@ module Travis::API::V3
         patch :update_address, '/address'
         patch :update_creditcard, '/creditcard'
         post :cancel, '/cancel'
+        get :invoices, '/invoices'
       end
     end
   end

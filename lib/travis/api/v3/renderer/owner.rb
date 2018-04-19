@@ -5,7 +5,7 @@ module Travis::API::V3
     include Renderer::AvatarURL
 
     representation(:minimal,    :id, :login)
-    representation(:standard,   :id, :login, :name, :github_id, :avatar_url)
+    representation(:standard,   :id, :login, :name, :github_id, :avatar_url, :education)
     representation(:additional, :repositories, :installation)
 
     def initialize(*)

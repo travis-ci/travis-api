@@ -12,6 +12,10 @@ module Travis::API::V3
       @installation = Models::Installation.find_by(owner_type: 'Organization', owner_id: id)
     end
 
+    def education
+      Travis::Features.owner_active?(:education, self)
+    end
+
     alias members users
   end
 end

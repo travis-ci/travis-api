@@ -126,7 +126,7 @@ module Travis::Api
         end
 
         if Travis::Api::App::Middleware::OpenCensus.enabled?
-          use OpenCensus::Trace::Integrations::RackMiddleware
+          use Travis::Api::App::Middleware::OpenCensus
         end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
