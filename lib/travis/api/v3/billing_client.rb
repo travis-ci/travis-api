@@ -17,6 +17,12 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
+    def get_invoices_for_subscription(id)
+      connection.get("/subscriptions/#{id}/invoices").body.map do |invoice_data|
+        Travis::API::V3::Models::Invoice.new(invoice_data)
+      end
+    end
+
     def update_address(subscription_id, address_data)
       response = connection.patch("/subscriptions/#{subscription_id}/address", address_data)
       handle_errors_and_respond(response)
