@@ -43,6 +43,11 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
+    def resubscribe(id)
+      response = connection.patch("/subscriptions/#{id}/resubscribe")
+      handle_errors_and_respond(response)
+    end
+
     private
 
     def handle_errors_and_respond(response)
