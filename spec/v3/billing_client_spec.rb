@@ -90,6 +90,18 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#resubscribe' do
+    subject { billing.resubscribe(subscription_id) }
+
+    it 'requests the resubscription' do
+      stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/resubscribe", auth_key: auth_key, user_id: user_id)
+        .to_return(status: 204)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
   describe '#create_subscription' do
     let(:subscription_data) {{ 'address' => 'Rigaer' }}
     subject { billing.create_subscription(subscription_data) }
