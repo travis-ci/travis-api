@@ -18,10 +18,10 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns the subscription' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}", auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump(billing_response_body('id' => subscription_id, 'plan' => 'travis-ci-two-builds', 'owner' => { 'type' => 'Organization', 'id' => organization.id } )))
+        .to_return(body: JSON.dump(billing_response_body('id' => subscription_id, 'owner' => { 'type' => 'Organization', 'id' => organization.id } )))
       expect(subject).to be_a(Travis::API::V3::Models::Subscription)
       expect(subject.id).to eq(subscription_id)
-      expect(subject.plan).to eq('travis-ci-two-builds')
+      expect(subject.plan).to be_a(Travis::API::V3::Models::Plan)
     end
 
     it 'raises error if subscription is not found' do
@@ -69,6 +69,20 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     it 'requests the update' do
       stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/address", auth_key: auth_key, user_id: user_id)
         .with(body: JSON.dump(address_data))
+        .to_return(status: 204)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
+  describe '#update_plan' do
+    let(:plan_data) { { 'plan' => 'travis-ci-ten-builds' } }
+    subject { billing.update_plan(subscription_id, plan_data) }
+
+    it 'requests the update' do
+      stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/plan", auth_key: auth_key, user_id: user_id)
+        .with(body: JSON.dump(plan_data))
         .to_return(status: 204)
 
       expect { subject }.to_not raise_error
