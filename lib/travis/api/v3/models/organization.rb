@@ -9,7 +9,11 @@ module Travis::API::V3
 
     def installation
       return @installation if defined? @installation
-      @installation = Models::Installation.find_by(owner_type: 'Organization', owner_id: id)
+      @installation = Models::Installation.find_by(owner_type: 'Organization', owner_id: id, removed_by_id: nil)
+    end
+
+    def education
+      Travis::Features.owner_active?(:education, self)
     end
 
     alias members users
