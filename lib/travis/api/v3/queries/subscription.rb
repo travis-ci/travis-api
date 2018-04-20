@@ -16,12 +16,6 @@ module Travis::API::V3
       client.update_creditcard(params['subscription.id'], params['token'])
     end
 
-    def update_plan(user_id)
-      plan_data = params.dup.tap { |h| h.delete('subscription.id') }
-      client = BillingClient.new(user_id)
-      client.update_plan(params['subscription.id'], plan_data)
-    end
-
     def invoices(user_id)
       client = BillingClient.new(user_id)
       client.get_invoices_for_subscription(params['subscription.id'])

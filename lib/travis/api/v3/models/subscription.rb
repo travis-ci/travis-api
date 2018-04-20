@@ -5,7 +5,7 @@ module Travis::API::V3
     def initialize(attributes = {})
       @id = attributes.fetch('id')
       @valid_to = attributes.fetch('valid_to') && DateTime.parse(attributes.fetch('valid_to'))
-      @plan = Models::Plan.new(attributes.fetch('plan'))
+      @plan = attributes.fetch('plan')
       @coupon = attributes['coupon']
       @status = attributes.fetch('status')
       @source = attributes.fetch('source')
