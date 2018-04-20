@@ -27,7 +27,7 @@ describe Travis::API::V3::Services::Subscription::Cancel, set_app: true, billing
         .to_return(status: 204)
     end
 
-    it 'updates the address' do
+    it 'cancels the subscription' do
       post("/v3/subscription/#{subscription_id}/cancel", nil, headers)
 
       expect(last_response.status).to eq(204)
