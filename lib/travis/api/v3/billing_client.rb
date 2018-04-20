@@ -43,6 +43,12 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
+    def plans
+      connection.get('/plans').body.map do |plan_data|
+        Travis::API::V3::Models::Plan.new(plan_data)
+      end
+    end
+
     private
 
     def handle_errors_and_respond(response)

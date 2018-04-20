@@ -46,5 +46,16 @@ module Support
         }
       }.deep_merge(attributes)
     end
+
+    def billing_plan_response_body(attributes={})
+      {
+        "id" => "travis-ci-ten-builds",
+        "name" => "Startup",
+        "builds" => 10,
+        "annual" => false,
+        "price" => 12500,
+        "currency" => "USD"
+      }.deep_merge(attributes)
+    end
   end
 end
