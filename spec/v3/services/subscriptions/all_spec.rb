@@ -40,7 +40,16 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           '@representation' => 'standard',
           'id' => 1234,
           'valid_to' => '2017-11-28T00:09:59Z',
-          'plan' => 'travis-ci-ten-builds',
+          'plan' => {
+            '@type' => 'plan',
+            '@representation' => 'minimal',
+            'id' => 'travis-ci-ten-builds',
+            'name' => 'Startup',
+            'builds' => 10,
+            'price' => 12500,
+            'currency' => 'USD',
+            'annual' => false
+          },
           'coupon' => '',
           'status' => 'canceled',
           'source' => 'stripe',
