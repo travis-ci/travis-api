@@ -103,4 +103,16 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
       expect(stubbed_request).to have_been_made
     end
   end
+
+  describe '#plans' do
+    subject { billing.plans }
+
+    it 'returns the list of plans' do
+      stub_billing_request(:get, '/plans', auth_key: auth_key, user_id: user_id)
+        .to_return(body: JSON.dump([billing_plan_response_body('id' => 'plan-id')]))
+
+      expect(subject.size).to eq 1
+      expect(subject.first.id).to eq('plan-id')
+    end
+  end
 end

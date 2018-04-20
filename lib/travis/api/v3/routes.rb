@@ -250,6 +250,11 @@ module Travis::API::V3
         post :cancel, '/cancel'
         get :invoices, '/invoices'
       end
+
+      hidden_resource :plans do
+        route '/plans'
+        get :all
+      end
     end
   end
 end
