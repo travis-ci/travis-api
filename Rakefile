@@ -10,7 +10,7 @@ namespace :db do
     branch = 'master'
   end
 
-  url   = "https://raw.githubusercontent.com/travis-ci/travis-migrations/cd-schema/db/main/structure.sql"
+  url   = "https://raw.githubusercontent.com/travis-ci/travis-migrations/#{branch}/db/main/structure.sql"
   file  = 'db/structure.sql'
   puts url
   system "curl -fs #{url} -o #{file} --create-dirs"
