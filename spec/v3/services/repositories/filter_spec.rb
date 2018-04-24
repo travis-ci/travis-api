@@ -33,4 +33,18 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
     warning = parsed_body['@warnings'][0]
     expect(warning['message']).to eql("slug_filter sort was selected, but slug_filter param is not supplied, ignoring")
   end
+
+  describe "filter: active_on_org=true" do
+    before  { get("/v3/repos", {"active_on_org" => "true"}, headers)                            }
+    example { expect(last_response)                   .to be_ok                                 }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?active_on_org=true"  }
+    example { expect(JSON.load(body)['repositories']) .to be_empty                              }
+  end
+
+  describe "filter: active_on_org=false" do
+    before  { get("/v3/repos", {"active_on_org" => "false"}, headers)                           }
+    example { expect(last_response)                   .to be_ok                                 }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?active_on_org=false" }
+    example { expect(JSON.load(body)['repositories']) .not_to be_empty                          }
+  end
 end
