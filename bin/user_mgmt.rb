@@ -25,10 +25,11 @@ Marginalia.set('dyno', ENV['DYNO'])
 # Setup model
 ActiveRecord::Base.establish_connection(Travis::Config.load.database.to_h)
 class User < ActiveRecord::Base
-  scope :active,    -> { where('github_oauth_token IS NOT NULL AND suspended = false AND login IS NOT NULL') }
-  scope :inactive,  -> { where('github_oauth_token IS NULL AND suspended = false AND login IS NOT NULL') }
-  scope :suspended, -> { where(suspended: true).where('login IS NOT NULL') }
-  scope :alpha,     -> { order(login: :asc).where('login IS NOT NULL') }
+  default_scope { where('login IS NOT NULL') }
+  scope :active,    -> { where('github_oauth_token IS NOT NULL AND suspended = false') }
+  scope :inactive,  -> { where('github_oauth_token IS NULL AND suspended = false') }
+  scope :suspended, -> { where(suspended: true) }
+  scope :alpha,     -> { order(login: :asc) }
 
   def enterprise_status
     case
