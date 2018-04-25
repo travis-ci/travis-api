@@ -39,10 +39,10 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/marginalia
-  revision: 1733a09de1dd8a4e9b6d92cee7413eacb38f0db1
+  revision: 46bbe301640efb5ea81828cb7deeaf874516de78
   specs:
     marginalia (1.5.0)
-      activerecord (>= 2.3)
+      pg (~> 0.21)
 
 GIT
   remote: https://github.com/travis-ci/s3
@@ -238,7 +238,7 @@ GEM
     http_parser.rb (0.6.0)
     httpclient (2.8.3)
     hurley (0.2)
-    i18n (0.9.1)
+    i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     ipaddress (0.8.3)
@@ -270,7 +270,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.3.0)
-    minitest (5.11.1)
+    minitest (5.11.3)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     msgpack (1.2.4)
@@ -388,7 +388,7 @@ GEM
     timecop (0.8.1)
     tool (0.2.3)
     trollop (2.1.2)
-    tzinfo (1.2.4)
+    tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uber (0.0.15)
     unf (0.1.4)
