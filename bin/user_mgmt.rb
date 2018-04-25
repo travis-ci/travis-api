@@ -25,6 +25,7 @@ Marginalia.set('dyno', ENV['DYNO'])
 # Setup model
 ActiveRecord::Base.establish_connection(Travis::Config.load.database.to_h)
 class User < ActiveRecord::Base
+  default_scope        { where('login IS NOT NULL') }
   scope :active,    -> { where('github_oauth_token IS NOT NULL AND suspended = false') }
   scope :inactive,  -> { where('github_oauth_token IS NULL AND suspended = false') }
   scope :suspended, -> { where(suspended: true) }
