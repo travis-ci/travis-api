@@ -36,7 +36,7 @@ module Travis::API::V3
 
     def installation
       return @installation if defined? @installation
-      @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id)
+      @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
     end
   end
 end
