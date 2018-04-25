@@ -21,10 +21,22 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
     let(:organization) { Factory(:org, login: 'travis') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+    let(:plan) do
+      {
+        '@type' => 'plan',
+        '@representation' => 'minimal',
+        'id' => 'travis-ci-ten-builds',
+        'name' => 'Startup',
+        'builds' => 10,
+        'price' => 12500,
+        'currency' => 'USD',
+        'annual' => false
+      }
+    end
 
     before do
       stub_billing_request(:get, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump([billing_response_body('id' => 1234, 'owner' => { 'type' => 'Organization', 'id' => organization.id })]))
+        .to_return(status: 200, body: JSON.dump([billing_response_body('id' => 1234, 'plan' => plan, 'owner' => { 'type' => 'Organization', 'id' => organization.id })]))
     end
 
     it 'responds with list of subscriptions' do
@@ -40,7 +52,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           '@representation' => 'standard',
           'id' => 1234,
           'valid_to' => '2017-11-28T00:09:59Z',
-          'plan' => 'travis-ci-ten-builds',
+          'plan' => plan,
           'coupon' => '',
           'status' => 'canceled',
           'source' => 'stripe',
@@ -75,6 +87,17 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           }
         }]
       })
+    end
+
+    context 'with a null plan' do
+      let(:plan) { nil }
+
+      it 'responds with a null plan' do
+        get('/v3/subscriptions', {}, headers)
+
+        expect(last_response.status).to eq(200)
+        expect(parsed_body['subscriptions'][0].fetch('plan')).to eq(nil)
+      end
     end
   end
 end
