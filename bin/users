@@ -17,7 +17,7 @@ elsif option == '--suspended'
 elsif [nil, '--all'].include?(option)
   users = User.all.alpha
   counts = "Total: #{users.count} Active: #{User.active.count} Inactive: #{User.inactive.count} Suspended: #{User.suspended.count}"
-elsif ['--help']
+elsif option == '--help'
   puts "Shows status of users in Travis Enterpise installation"
   puts "--all or no arguments shows all users and their status"
   puts "--active shows active users"
