@@ -11,14 +11,7 @@ module Support
       {
         "id" => 81,
         "valid_to" => "2017-11-28T00:09:59.502Z",
-        "plan" => {
-          "id" => "travis-ci-ten-builds",
-          "name" => "Startup",
-          "builds" => 10,
-          "annual" => false,
-          "price" => 12500,
-          "currency" => "USD"
-        },
+        "plan" => billing_plan_response_body,
         "coupon" => "",
         "status" => "canceled",
         "source" => "stripe",
@@ -44,6 +37,17 @@ module Support
           "type" => "Organization",
           "id" => 43
         }
+      }.deep_merge(attributes)
+    end
+
+    def billing_plan_response_body(attributes={})
+      {
+        "id" => "travis-ci-ten-builds",
+        "name" => "Startup",
+        "builds" => 10,
+        "annual" => false,
+        "price" => 12500,
+        "currency" => "USD"
       }.deep_merge(attributes)
     end
   end
