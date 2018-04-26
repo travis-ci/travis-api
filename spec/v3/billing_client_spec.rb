@@ -76,6 +76,20 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#update_plan' do
+    let(:plan_data) { { 'plan' => 'travis-ci-ten-builds' } }
+    subject { billing.update_plan(subscription_id, plan_data) }
+
+    it 'requests the update' do
+      stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/plan", auth_key: auth_key, user_id: user_id)
+        .with(body: JSON.dump(plan_data))
+        .to_return(status: 204)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
   describe '#update_creditcard' do
     let(:creditcard_token) { 'token' }
     subject { billing.update_creditcard(subscription_id, creditcard_token) }
