@@ -22,6 +22,11 @@ module Travis::API::V3
       client.update_plan(params['subscription.id'], plan_data)
     end
 
+    def resubscribe(user_id)
+      client = BillingClient.new(user_id)
+      client.resubscribe(params['subscription.id'])
+    end
+
     def invoices(user_id)
       client = BillingClient.new(user_id)
       client.get_invoices_for_subscription(params['subscription.id'])
