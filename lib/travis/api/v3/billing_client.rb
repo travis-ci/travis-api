@@ -33,6 +33,11 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
+    def update_plan(subscription_id, plan_data)
+      response = connection.patch("/subscriptions/#{subscription_id}/plan", plan_data)
+      handle_errors_and_respond(response)
+    end
+
     def create_subscription(subscription_data)
       response = connection.post('/subscriptions', subscription_data)
       handle_errors_and_respond(response)
@@ -41,6 +46,12 @@ module Travis::API::V3
     def cancel_subscription(id)
       response = connection.post("/subscriptions/#{id}/cancel")
       handle_errors_and_respond(response)
+    end
+
+    def plans
+      connection.get('/plans').body.map do |plan_data|
+        Travis::API::V3::Models::Plan.new(plan_data)
+      end
     end
 
     def resubscribe(id)
