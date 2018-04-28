@@ -11,6 +11,8 @@ module Travis::API::V3
       repository = check_login_and_find(:repository)
       access_control.permissions(repository).create_request!
 
+      raise RepositoryInactive, repository: repository unless repository.active?
+
       user      = find(:user) if access_control.full_access? and params_for? 'user'.freeze
       user    ||= access_control.user
       max       = limit(repository)
