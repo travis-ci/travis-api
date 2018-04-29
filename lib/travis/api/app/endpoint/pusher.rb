@@ -34,7 +34,7 @@ class Travis::Api::App
         end
 
         def find_job(id)
-          Travis.run_service(:find_job, current_user, id: id)
+          Travis.run_service(:find_job, current_user, id: id, columns: ['id'])
         end
 
         def authenticate(channel)
