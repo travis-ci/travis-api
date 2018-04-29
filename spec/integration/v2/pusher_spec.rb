@@ -11,9 +11,68 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
   describe 'when i am not signed in' do
-    it 'returns a 401' do
-      post '/pusher/auth', {}, headers
-      last_response.status.should == 401
+    it 'does not authorize a user channel (private-user-:id)' do
+      post '/pusher/auth', { channels: [ "private-user-#{rkh.id}.common"], :socket_id => '123.456' }, headers
+      auth.should == ""
+    end
+
+    it "does not authorize a repository channel (private-repo-:id)" do
+      post '/pusher/auth', { channels: [ "private-user-#{rkh.id}.common"], :socket_id => '123.456' }, headers
+      auth.should == ""
+    end
+
+    describe 'job channels (private-job-:id)' do
+      after { Travis.config.host = 'travis-ci.org' }
+      after { Travis.config.public_mode = false }
+
+      describe 'for a private repo' do
+        before { job.update_attributes!(private: true) }
+
+        it 'does not authorize a channel for a job that belongs to a repository that i do not have permissions on' do
+          post '/pusher/auth', { channels: ["private-job-1"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should == ""
+        end
+      end
+
+      describe 'for a public repo (org)' do
+        before { Travis.config.host = 'travis-ci.org' }
+        before { Travis.config.public_mode = false }
+        before { job.update_attributes!(private: false) }
+
+        it 'authorizes a channel for a job that belongs to a repository that i do not have permissions on' do
+          Permission.delete_all
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should =~ /#{Travis.pusher.key}:.+$/
+        end
+      end
+
+      describe 'for a public repo (public mode)' do
+        before { Travis.config.host = 'travis-ci.com' }
+        before { Travis.config.public_mode = true }
+        before { job.update_attributes!(private: false) }
+
+        it 'authorizes a channel for a job that belongs to a repository that i do not have permissions on' do
+          Permission.delete_all
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should =~ /#{Travis.pusher.key}:.+$/
+        end
+      end
+
+      describe 'for a public repo (private mode)' do
+        before { Travis.config.host = 'enterprise.travis-ci.com' }
+        before { Travis.config.public_mode = false }
+        before { job.update_attributes!(private: false) }
+
+        it 'does not authorize a channel for a job that belongs to a repository that i do not have permissions on' do
+          Permission.delete_all
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should == ""
+        end
+      end
     end
   end
 
