@@ -36,27 +36,93 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
       auth.should == ""
     end
 
-    it 'authorizes a channel for repositories that i am allowed to see (private-repo-:id)' do
+    it 'authorizes a channel for repositories that i have permissions on (private-repo-:id)' do
       post '/pusher/auth', { channels: ["private-repo-#{travis.id}"], socket_id: '123.456' }, headers
       last_response.status.should == 200
       auth.should =~ /#{Travis.pusher.key}:.+$/
     end
 
-    it "does not authorize a channel for a repository that i am not allowed to see (private-repo-:id)" do
+    it "does not authorize a channel for a repository that i do not have permissions on (private-repo-:id)" do
       post '/pusher/auth', { channels: ["private-org-#{sinatra.id}"], socket_id: '123.456' }, headers
       auth.should == ""
     end
 
-    it 'authorizes a channel for a job that belongs to a repository that i am allowed to see (private-job-:id)' do
-      post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
-      last_response.status.should == 200
-      auth.should =~ /#{Travis.pusher.key}:.+$/
-    end
+    describe 'job channels' do
+      after { Travis.config.host = 'travis-ci.org' }
+      after { Travis.config.public_mode = false }
 
-    it 'does not authorize a channel for a job that belongs to a repository that i am not allowed to see (private-job-:id)' do
-      post '/pusher/auth', { channels: ["private-job-1"], socket_id: '123.456' }, headers
-      last_response.status.should == 200
-      auth.should == ""
+      describe 'for a private repo' do
+        before { job.update_attributes!(private: true) }
+
+        it 'authorizes a channel for a job that belongs to a repository that i have permissions on (private-job-:id)' do
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should =~ /#{Travis.pusher.key}:.+$/
+        end
+
+        it 'does not authorize a channel for a job that belongs to a repository that i do not have permissions on (private-job-:id)' do
+          post '/pusher/auth', { channels: ["private-job-1"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should == ""
+        end
+      end
+
+      describe 'for a public repo (org)' do
+        before { Travis.config.host = 'travis-ci.org' }
+        before { Travis.config.public_mode = false }
+        before { job.update_attributes!(private: false) }
+
+        it 'authorizes a channel for a job that belongs to a repository that i have permissions on (private-job-:id)' do
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should =~ /#{Travis.pusher.key}:.+$/
+        end
+
+        it 'does not authorize a channel for a job that belongs to a repository that i do not have permissions on (private-job-:id)' do
+          Permission.delete_all
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should =~ /#{Travis.pusher.key}:.+$/
+        end
+      end
+
+      describe 'for a public repo (public mode)' do
+        before { Travis.config.host = 'travis-ci.com' }
+        before { Travis.config.public_mode = true }
+        before { job.update_attributes!(private: false) }
+
+        it 'authorizes a channel for a job that belongs to a repository that i have permissions on (private-job-:id)' do
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should =~ /#{Travis.pusher.key}:.+$/
+        end
+
+        it 'does not authorize a channel for a job that belongs to a repository that i do not have permissions on (private-job-:id)' do
+          Permission.delete_all
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should =~ /#{Travis.pusher.key}:.+$/
+        end
+      end
+
+      describe 'for a public repo (private mode)' do
+        before { Travis.config.host = 'enterprise.travis-ci.com' }
+        before { Travis.config.public_mode = false }
+        before { job.update_attributes!(private: false) }
+
+        it 'authorizes a channel for a job that belongs to a repository that i have permissions on (private-job-:id)' do
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should =~ /#{Travis.pusher.key}:.+$/
+        end
+
+        it 'does not authorize a channel for a job that belongs to a repository that i do not have permissions on (private-job-:id)' do
+          Permission.delete_all
+          post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
+          last_response.status.should == 200
+          auth.should == ""
+        end
+      end
     end
   end
 end

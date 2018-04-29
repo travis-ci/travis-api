@@ -27,10 +27,14 @@ class Travis::Api::App
           when 'repo'
             current_user.repository_ids.include?(id)
           when 'job'
-            !!Travis.run_service(:find_job, current_user, id: id)
+            !!find_job(id)
           else
             false
           end
+        end
+
+        def find_job(id)
+          Travis.run_service(:find_job, current_user, id: id)
         end
 
         def authenticate(channel)
