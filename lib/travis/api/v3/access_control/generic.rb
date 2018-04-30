@@ -72,7 +72,7 @@ module Travis::API::V3
     end
 
     def build_visible?(build)
-      visible? build.repository
+      repository_visible? build.repository, !build.private?
     end
 
     def build_writable?(build)
@@ -84,7 +84,7 @@ module Travis::API::V3
     end
 
     def cron_visible?(cron)
-      visible? cron.branch.repository
+      visible? cron.branch
     end
 
     def cron_writable?(cron)
@@ -100,7 +100,7 @@ module Travis::API::V3
     end
 
     def job_visible?(job)
-      visible? job.repository
+      repository_visible? job.repository, !job.private?
     end
 
     def job_cancelable?(job)
@@ -164,13 +164,13 @@ module Travis::API::V3
       false
     end
 
-    def repository_visible?(repository)
-      return true if unrestricted_api?(repository.owner) and not repository.private?
+    def repository_visible?(repository, show_public = true)
+      return true if show_public and unrestricted_api?(repository.owner) and not repository.private?
       private_repository_visible?(repository)
     end
 
     def request_visible?(request)
-      repository_visible?(request.repository)
+      repository_visible? request.repository, !request.private?
     end
 
     def private_repository_visible?(repository)
