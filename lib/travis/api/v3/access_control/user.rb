@@ -20,10 +20,26 @@ module Travis::API::V3
     end
 
     def visible_repositories(list)
-      list.where('repositories.private = false OR repositories.id IN (?)'.freeze, access_permissions.map(&:repository_id))
+      list.where('repositories.private = false OR repositories.id IN (?)'.freeze, private_access_repository_ids)
+    end
+
+    def visible_builds(list)
+      list.where('builds.private = false OR builds.repository_id IN (?)'.freeze, private_access_repository_ids)
+    end
+
+    def visible_jobs(list)
+      list.where('jobs.private = false OR jobs.repository_id IN (?)'.freeze, private_access_repository_ids)
+    end
+
+    def visible_requests(list)
+      list.where('requests.private = false OR requests.repository_id IN (?)'.freeze, private_access_repository_ids)
     end
 
     protected
+
+    def private_access_repository_ids
+      @private_access_repository_ids ||= access_permissions.map(&:repository_id)
+    end
 
     def build_cancelable?(build)
       permission?(:pull, build.repository)

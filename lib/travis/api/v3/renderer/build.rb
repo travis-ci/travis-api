@@ -11,10 +11,12 @@ module Travis::API::V3
     end
 
     def request
+      # no filtering here, we assume that request.private == request.build.private
       Renderer.render_model(model.request, mode: :minimal)
     end
 
     def jobs
+      # no filtering here, we assume that job.private == job.build.private
       return model.active_jobs if include_full_jobs? && representation?(:active)
       return model.jobs if include_full_jobs?
       return model.job_ids.map { |id| job(id) } unless representation?(:active)

@@ -118,6 +118,18 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
     })}
   end
 
+  describe "fetching job on private job on public repository, not authenticated" do
+    before  { job.update_attribute(:private, true)  }
+    before  { get("/v3/job/#{job.id}", {}, {})      }
+    example { expect(last_response).to be_not_found }
+    example { expect(parsed_body).to eql_json({
+      "@type"         =>  "error",
+      "error_type"    =>  "not_found",
+      "error_message" =>  "job not found (or insufficient access)",
+      "resource_type" =>  "job"
+    })}
+  end
+
   describe "fetching job on private repository, private API, with a log.token" do
     let(:log_token) { Travis::API::V3::LogToken.create(job).to_s }
     before        { repo.update_attribute(:private, true)                   }

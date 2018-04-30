@@ -20,6 +20,16 @@ module Travis::API::V3
       }
     end
 
+    def current_build
+      build = model.current_build
+      build if access_control.visible? build
+    end
+
+    def last_started_build
+      build = model.last_started_build
+      build if access_control.visible? build
+    end
+
     def starred
       return false unless user = access_control.user
       user.starred_repository_ids.include? id

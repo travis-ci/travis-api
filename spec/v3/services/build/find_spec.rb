@@ -338,4 +338,16 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       )
     end
   end
+
+  describe "private build on public repository, no pull access" do
+    before     { build.update_attribute(:private, true) }
+    before     { get("/v3/build/#{build.id}") }
+    example { expect(last_response).to be_not_found }
+    example { expect(parsed_body).to eql_json({
+      "@type"         => "error",
+      "error_type"    => "not_found",
+      "error_message" => "build not found (or insufficient access)",
+      "resource_type" => "build"
+    })}
+  end
 end
