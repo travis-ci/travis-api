@@ -224,8 +224,8 @@ describe 'visibilty', set_app: true do
   # </feed>
 
   describe 'GET /repos/%{repo.slug}/builds.atom' do
-    it { expect(response.body).to include(public_build.id.to_s) }
-    it { expect(response.body).to_not include(private_build.id.to_s) }
+    it { expect(response.body).to include("build:#{public_build.id.to_s}") }
+    it { expect(response.body).to_not include("build:#{private_build.id.to_s}") }
   end
 
   def method
