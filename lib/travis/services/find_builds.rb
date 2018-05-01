@@ -27,7 +27,7 @@ module Travis
 
         def by_params
           scope = if repo
-            builds = repo.builds
+            builds = scope(:build).where(repository_id: repo.id)
             builds = builds.by_event_type(params[:event_type]) if params[:event_type]
             if params[:number]
               builds.where(:number => params[:number].to_s)

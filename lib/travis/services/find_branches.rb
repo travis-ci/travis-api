@@ -23,7 +23,12 @@ module Travis
         end
 
         def by_params
-          repo ? repo.last_finished_builds_by_branches : scope(:build).none
+          return scope(:build).none unless repo
+          scope = scope(:build).select('DISTINCT ON (branch) id')
+          scope = scope.where(repository_id: repo.id, event_type: 'push')
+          scope = scope.group(:branch, :id)
+          scope = scope.order('branch, finished_at DESC')
+          scope(:build).where(id: scope).limit(50).order('finished_at DESC')
         end
 
         def repo

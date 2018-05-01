@@ -27,7 +27,8 @@ module Travis
         end
 
         def by_params
-          repo.last_build_on params[:branch] if repo and params[:branch]
+          return unless repo and params[:branch]
+          scope(:build).merge(repo.last_builds_on(params[:branch])).first
         end
 
         def repo

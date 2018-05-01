@@ -5,7 +5,7 @@ module Travis
         class << self
           def viewable_by(user)
             if Travis.config.org?
-              self
+              self.unscoped
             elsif Travis.config[:public_mode]
               viewable_in_public_mode(user)
             else
