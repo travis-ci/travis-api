@@ -86,7 +86,7 @@ class Travis::Api::App
           max_trace_id = ::OpenCensus::Trace::SpanContext::MAX_TRACE_ID
           trace_id = rand 1..max_trace_id
           trace_id = trace_id.to_s(16).rjust(32, "0")
-          context = ::OpenCensus::Trace::TraceContextData(trace_id, '', 0x01)
+          context = ::OpenCensus::Trace::TraceContextData.new(trace_id, '', 0x01)
         end
 
         ::OpenCensus::Trace.start_request_trace \
