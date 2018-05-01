@@ -56,22 +56,22 @@ module Travis::API::V3
 
     def visible_repositories(list)
       # naïve implementation, can be replaced with smart implementation in specific subclasses
-      visible_objects(list)
+      visible_objects(list, Models::Repository)
     end
 
     def visible_builds(list)
       # naïve implementation, can be replaced with smart implementation in specific subclasses
-      visible_objects(list)
+      visible_objects(list, Models::Build)
     end
 
     def visible_jobs(list)
       # naïve implementation, can be replaced with smart implementation in specific subclasses
-      visible_objects(list)
+      visible_objects(list, Models::Job)
     end
 
     def visible_requests(list)
       # naïve implementation, can be replaced with smart implementation in specific subclasses
-      visible_objects(list)
+      visible_objects(list, Models::Request)
     end
 
     def permissions(object)
@@ -236,7 +236,7 @@ module Travis::API::V3
       end
     end
 
-    def visible_objects(list)
+    def visible_objects(list, factory)
       return list if full_access?
       list.select { |r| visible?(r) }
     end

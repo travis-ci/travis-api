@@ -19,8 +19,8 @@ module Travis::API::V3
 
     private
 
-    def visible_objects(list)
-      return V3::Models::Repository.none unless unrestricted_api?
+    def visible_objects(list, factory)
+      return factory.none unless unrestricted_api?
       list.where(private: false)
     end
   end
