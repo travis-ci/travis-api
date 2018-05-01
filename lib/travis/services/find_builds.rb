@@ -34,9 +34,9 @@ module Travis
             else
               builds.older_than(params[:after_number])
             end
-          elsif params[:running]
+          elsif params[:running] && current_user
             scope_with_current_user(scope(:build).running.limit(25))
-          elsif params.nil? || params == {} || params.keys.map(&:to_s) == ['access_token']
+          elsif empty_params? && current_user
             scope_with_current_user(scope(:build).recent)
           else
             scope(:build).none
@@ -45,11 +45,15 @@ module Travis
           scope
         end
 
+        def empty_params?
+          params.nil? || params == {} || params.keys.map(&:to_s) == ['access_token']
+        end
+
         def scope_with_current_user(scope)
-          if !Travis.config.org? && current_user
-            scope.where(repository_id: current_user.repository_ids)
-          else
+          if Travis.config.org?
             scope
+          else
+            scope.where(repository_id: current_user.repository_ids)
           end
         end
 
