@@ -82,17 +82,18 @@ class Travis::Api::App
           context = formatter.deserialize env[formatter.rack_header_name]
         end
 
-        if env['HTTP_TRACE'] == 'true' 
-          sampler = ::OpenCensus::Trace::Samplers::AlwaysSample.new
-        else 
-          sampler = ::OpenCensus::Trace.config.default_sampler
+        if env['HTTP_TRACE'] == 'true'
+          max_trace_id = OpenCensus::Trace::SpanContext.MAX_TRACE_ID
+          trace_id = rand 1..max_trace_id
+          trace_id = trace_id.to_s(16).rjust(32, "0")
+          context = OpenCensus::Trace::TraceContextData(trace_id, '', 0x01)
         end
 
         ::OpenCensus::Trace.start_request_trace \
         trace_context: context,
         same_process_as_parent: false do |span_context|
           begin
-            span_context.in_span get_path(env), sampler: sampler do |span|
+            span_context.in_span get_path(env) do |span|
               start_request span, env
               @app.call(env).tap do |response|
                 finish_request span, response
