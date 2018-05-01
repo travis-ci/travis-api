@@ -20,9 +20,9 @@ describe Travis::Services::FindBuilds do
       service.run.should == [running]
     end
 
-    it 'finds recent builds when no repo given' do
+    it 'finds no recent builds when no repo given' do
       @params = nil
-      service.run.should == [push]
+      service.run.should == []
     end
 
     it 'finds builds older than the given number' do
