@@ -110,6 +110,15 @@ module Travis::Api
 
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
+        
+        if Travis::Api::App.use_monitoring?
+          use Rack::Config do |env|
+            if env['HTTP_X_REQUEST_ID']
+              Raven.tags_context(request_id: env['HTTP_X_REQUEST_ID'])
+            end
+          end
+          use Raven::Rack
+        end
 
         use Rack::Config do |env|
           if env['HTTP_HONEYCOMB_OVERRIDE'] == 'true'
@@ -130,14 +139,7 @@ module Travis::Api
         end
 
         use Travis::Api::App::Cors # if Travis.env == 'development' ???
-        if Travis::Api::App.use_monitoring?
-          use Rack::Config do |env|
-            if env['HTTP_X_REQUEST_ID']
-              Raven.tags_context(request_id: env['HTTP_X_REQUEST_ID'])
-            end
-          end
-          use Raven::Rack
-        end
+
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
