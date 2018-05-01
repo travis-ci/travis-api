@@ -31,6 +31,7 @@ describe 'visibilty', set_app: true do
 
   describe 'GET /branches?ids=%{public_build.id} needs to be filtered (returns list of builds)' do
     it { expect(body[:branches].size).to eq 1 }
+    it { expect(body[:branches].map { |b| b[:id] }).to eq [public_build.id] }
   end
 
   describe 'GET /branches?ids=%{private_build.id} needs to be filtered (returns list of builds)' do
@@ -39,14 +40,17 @@ describe 'visibilty', set_app: true do
 
   describe 'GET /branches?repository_id=%{repo.id} needs to be filtered (returns list of builds)' do
     it { expect(body[:branches].size).to eq 1 }
+    it { expect(body[:branches].map { |b| b[:id] }).to eq [public_build.id] }
   end
 
   describe 'GET /repos/%{repo.id}/branches needs to be filtered (returns list of builds)' do
     it { expect(body[:branches].size).to eq 1 }
+    it { expect(body[:branches].map { |b| b[:id] }).to eq [public_build.id] }
   end
 
   describe 'GET /repos/%{repo.slug}/branches needs to be filtered (returns list of builds)' do
     it { expect(body[:branches].size).to eq 1 }
+    it { expect(body[:branches].map { |b| b[:id] }).to eq [public_build.id] }
   end
 
   describe 'GET /repos/%{repo.id}/branches/master needs to check visibility' do
@@ -56,6 +60,12 @@ describe 'visibilty', set_app: true do
 
   describe 'GET /builds needs to be filtered' do
     it { expect(body[:builds].size).to eq 1 }
+    it { expect(body[:builds].map { |b| b[:id] }).to eq [public_build.id] }
+  end
+
+  describe 'GET /builds?repository_id=%{repo.id} needs to be filtered' do
+    it { expect(body[:builds].size).to eq 1 }
+    it { expect(body[:builds].map { |b| b[:id] }).to eq [public_build.id] }
   end
 
   describe 'GET /builds?repository_id=%{repo.id}&branches=master' do
@@ -63,12 +73,9 @@ describe 'visibilty', set_app: true do
     it { expect(body[:builds].size).to eq 0 }
   end
 
-  describe 'GET /builds?repository_id=%{repo.id} needs to be filtered' do
-    it { expect(body[:builds].size).to eq 1 }
-  end
-
   describe 'GET /builds?repository_id=%{repo.id}&branches=%{private_build.branch} needs to be filtered' do
     it { expect(body[:builds].size).to eq 1 }
+    it { expect(body[:builds].map { |b| b[:id] }).to eq [public_build.id] }
   end
 
   describe 'GET /repos/%{repo.id}/builds needs to be filtered' do
@@ -77,10 +84,18 @@ describe 'visibilty', set_app: true do
 
   describe 'GET /repos/%{repo.slug}/builds needs to be filtered' do
     it { expect(body[:builds].size).to eq 1 }
+    it { expect(body[:builds].map { |b| b[:id] }).to eq [public_build.id] }
   end
 
   describe 'GET /repos/%{repo.slug}/builds?branches=master needs to be filtered (returns list of builds)' do
     it { expect(body[:builds].size).to eq 1 } # it seems params[:branches] is now unused? the local var `name` is not used on that endpoint any more
+    it { expect(body[:builds].map { |b| b[:id] }).to eq [public_build.id] }
+  end
+
+  describe 'GET /builds?running=true' do
+    before { builds.update_all(state: :started) }
+    it { expect(body[:builds].size).to eq 1 }
+    it { expect(body[:builds].map { |b| b[:id] }).to eq [public_build.id] }
   end
 
   describe 'GET /builds/%{public_build.id} needs to check visibility' do
@@ -107,19 +122,19 @@ describe 'visibilty', set_app: true do
     it { expect(status).to eq 404 }
   end
 
-  describe 'GET /logs/1 needs to check visibility' do
-    it { expect(status).to eq 200 }
-  end
-
-  describe 'GET /logs/2 needs to check visibility' do
-    it { expect(status).to eq 404 }
-  end
-
   describe 'GET /jobs/%{public_job.id}/log needs to check visibility' do
     it { expect(status).to eq 200 }
   end
 
   describe 'GET /jobs/%{private_job.id}/log needs to check visibility' do
+    it { expect(status).to eq 404 }
+  end
+
+  describe 'GET /logs/1 needs to check visibility' do
+    it { expect(status).to eq 200 }
+  end
+
+  describe 'GET /logs/2 needs to check visibility' do
     it { expect(status).to eq 404 }
   end
 
@@ -133,6 +148,84 @@ describe 'visibilty', set_app: true do
 
   describe 'GET /requests?repository_id=%{repo.id} needs to be filtered' do
     it { expect(body[:requests].size).to eq 1 }
+    it { expect(body[:requests].map { |r| r[:id] }).to eq [public_request.id] }
+  end
+
+  describe 'GET /repos' do
+    it { expect(status).to eq 401 }
+  end
+
+  describe 'GET /repos/%{repo.id}' do
+    before { repo.update_attributes(private: true) }
+    it { expect(status).to eq 404 }
+  end
+
+  describe 'GET /repos/%{repo.id}/caches' do
+    before { repo.update_attributes(private: true) }
+    it { expect(status).to eq 404 }
+  end
+
+  describe 'GET /repos/%{repo.slug}' do
+    before { repo.update_attributes(private: true) }
+    it { expect(status).to eq 404 }
+  end
+
+  describe 'GET /repos/svenfuchs' do
+    it { expect(body[:repos].map { |r| r[:slug] }).to eq ['svenfuchs/minimal'] }
+    it { expect(body[:repos].map { |r| r[:slug] }).to_not include 'josevalim/enginex' }
+    it { expect(Repository.where(owner_name: 'josevalim').count).to eq 1 }
+  end
+
+  # <Project
+  #   name="svenfuchs/minimal"
+  #   activity="Building"
+  #   lastBuildStatus="Unknown"
+  #   lastBuildLabel="3"
+  #   lastBuildTime=""
+  #   webUrl="https://www.example.com/svenfuchs/minimal" />
+
+  describe 'GET /repos/%{repo.id}/cc.xml' do
+    before { builds.update_all(state: :started) }
+    it { expect(status).to eq 200 }
+    it { expect(response.body).to include('svenfuchs/minimal') }
+    it { expect(response.body).to_not include(private_build.id.to_s) }
+  end
+
+  describe 'GET /repos/%{user.login}.xml'  do
+  end
+
+  # <?xml version="1.0" encoding="utf-8"?>
+  # <feed xmlns="http://www.w3.org/2005/Atom">
+  #   <title>svenfuchs/minimal Builds</title>
+  #   <link href="http://example.org/repo_status/svenfuchs/minimal/builds" type="application/atom+xml" rel = "self" />
+  #   <id>repo:1</id>
+  #   <rights>Copyright (c) 2018 Travis CI GmbH</rights>
+  #   <updated>2018-05-01T16:19:57+02:00</updated>
+  #   <entry>
+  #     <title>svenfuchs/minimal Build #1</title>
+  #     <link href="https://travis-ci.com/svenfuchs/minimal/builds/72077" />
+  #     <id>repo:1:build:72077</id>
+  #     <updated>2018-05-01T14:20:02+00:00</updated>
+  #     <summary type="html">
+  #     &lt;p&gt;
+  #       add Gemfile (Sven Fuchs)
+  #       &lt;br/&gt;&lt;br/&gt;
+  #       State: failed
+  #       &lt;br/&gt;
+  #       Started at: 2010-11-12 12:00:00 UTC
+  #       &lt;br/&gt;
+  #       Finished at: 2010-11-12 12:00:10 UTC
+  #     &lt;/p&gt;
+  #     </summary>
+  #     <author>
+  #       <name>Sven Fuchs</name>
+  #     </author>
+  #   </entry>
+  # </feed>
+
+  describe 'GET /repos/%{repo.slug}/builds.atom' do
+    it { expect(response.body).to include(public_build.id.to_s) }
+    it { expect(response.body).to_not include(private_build.id.to_s) }
   end
 
   def method
