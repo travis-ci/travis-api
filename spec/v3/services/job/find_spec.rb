@@ -58,6 +58,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "finished_at"           => "2010-11-12T12:00:10Z",
       "created_at"            => json_format_time_with_ms(job.created_at),
       "updated_at"            => json_format_time_with_ms(job.updated_at),
+      "private"               => false,
       "build"                 => {
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",
@@ -70,6 +71,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "previous_state"      => build.previous_state,
         "pull_request_number" => build.pull_request_number,
         "pull_request_title"  => build.pull_request_title,
+        "private"             => false,
         "started_at"          => "2010-11-12T12:00:00Z",
         "finished_at"         => "2010-11-12T12:00:10Z"},
       "stage"                 => {
@@ -166,6 +168,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "finished_at"           => "2010-11-12T12:00:10Z",
       "created_at"            => json_format_time_with_ms(job.created_at),
       "updated_at"            => json_format_time_with_ms(job.updated_at),
+      "private"               => false,
       "build"                 => {
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",
@@ -178,6 +181,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "previous_state"      => build.previous_state,
         "pull_request_number" => build.pull_request_number,
         "pull_request_title"  => build.pull_request_title,
+        "private"             => false,
         "started_at"          => "2010-11-12T12:00:00Z",
         "finished_at"         => "2010-11-12T12:00:10Z"},
       "stage"                 => {
@@ -237,6 +241,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "finished_at"           => "2010-11-12T12:00:10Z",
       "created_at"            => json_format_time_with_ms(job2.created_at),
       "updated_at"            => json_format_time_with_ms(job2.updated_at),
+      "private"               => false,
       "build"                 => {
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",
@@ -249,6 +254,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "previous_state"      => build.previous_state,
         "pull_request_number" => build.pull_request_number,
         "pull_request_title"  => build.pull_request_title,
+        "private"             => false,
         "started_at"          => "2010-11-12T12:00:00Z",
         "finished_at"         => "2010-11-12T12:00:10Z"},
       "stage"                 => {
