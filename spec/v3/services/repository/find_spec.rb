@@ -331,8 +331,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   describe "when owner is missing" do
     before  { repo.update_attribute(:owner, nil)                  }
     before  { get("/v3/repo/#{repo.id}?include=repository.owner") }
-    example { expect(last_response).to be_ok                      }
-    example { expect(parsed_body['owner']).to be_nil              }
+    example { expect(last_response).to be_not_found               }
   end
 
   describe "including non-existing field" do
