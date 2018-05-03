@@ -30,7 +30,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       org.memberships.create(user: user)
       org.save!
       Travis::Features.stubs(:owner_active?).returns(true)
-      Travis::Features.stubs(:owner_active?).with(:education, user).returns(true)
+      Travis::Features.stubs(:owner_active?).with(:educational_org, org).returns(true)
       Travis.config.public_mode = false
     end
     before  { get("/v3/org/#{org.id}", {}, headers) }
