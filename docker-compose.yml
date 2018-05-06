@@ -1,0 +1,20 @@
+version: '3'
+services:
+
+  db:
+    container_name: travis-db
+    image: postgres:9.6
+
+  api:
+    container_name: travis-api    
+    build: .
+    command: ["sh", "-c", "/travis/setup"]
+    volumes:
+      - ./script/setup:/travis/setup
+      - bundle-cache:/bundle-cache
+    depends_on:
+      - db
+
+volumes:
+  bundle-cache:
+  
