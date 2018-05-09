@@ -229,6 +229,11 @@ module Travis::API::V3
         patch  :update
         delete :delete
       end
+
+      resource :user_builds do
+        route '/builds'
+        get   :for_current_user
+      end
     end
 
     resource :user do
