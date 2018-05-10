@@ -24,7 +24,7 @@ module Travis::API::V3::Models
     end
 
     def repository_private?
-      job.repository.private?
+      job.repository.private? unless job.nil?
     end
 
     private
