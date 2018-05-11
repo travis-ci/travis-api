@@ -14,6 +14,9 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
     deploy = build.stages.create(number: 2, name: 'deploy')
     build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
     build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+
+    Timecop.freeze(Time.now)
+    get(url, {}, headers)
   end
 
   describe "builds for current_user, authenticated as user with access" do
