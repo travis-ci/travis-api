@@ -35,8 +35,11 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
   describe "builds for user" do
     before do
       Timecop.freeze(Time.now)
-
       get(url, {}, headers)
+    end
+
+    after do
+      Timecop.return
     end
 
     it "is ok" do
