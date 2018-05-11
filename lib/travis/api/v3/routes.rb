@@ -224,16 +224,16 @@ module Travis::API::V3
         patch  :update
         delete :delete
       end
-
-      resource :builds do
-        route '/builds'
-        get   :for_current_user
-      end
     end
 
     resource :user do
       route '/user'
       get :current
+
+      resource :builds do
+        route '/builds'
+        get   :for_current_user
+      end
     end
 
     if ENV['BILLING_V2_ENABLED']

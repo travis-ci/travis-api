@@ -14,7 +14,6 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
   end
 
-  
   describe "builds for current_user, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
