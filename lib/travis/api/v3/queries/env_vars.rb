@@ -8,7 +8,10 @@ module Travis::API::V3
 
     def create(repository)
       env_var = repository.env_vars.create(env_var_params)
-      handle_errors(env_var) unless env_var.valid?
+      unless env_var.valid?
+        repository.env_vars.destroy(env_var.id)
+        handle_errors(env_var)
+      end
       repository.save!
       env_var
     end
