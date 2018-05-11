@@ -36,7 +36,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
 
     before do
       stub_billing_request(:get, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump([billing_response_body('id' => 1234, 'plan' => plan, 'owner' => { 'type' => 'Organization', 'id' => organization.id })]))
+        .to_return(status: 200, body: JSON.dump([billing_response_body('id' => 1234, 'plan' => plan,'permissions' => { 'read' => true, 'write' => false }, 'owner' => { 'type' => 'Organization', 'id' => organization.id })]))
     end
 
     it 'responds with list of subscriptions' do
@@ -49,6 +49,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
         'subscriptions' => [{
           '@type' => 'subscription',
           '@representation' => 'standard',
+          '@permissions' => { 'read' => true, 'write' => false },
           'id' => 1234,
           'valid_to' => '2017-11-28T00:09:59Z',
           'plan' => plan,

@@ -1,9 +1,10 @@
 module Travis::API::V3
   class Models::Subscription
-    attr_reader :id, :valid_to, :plan, :coupon, :status, :source, :billing_info, :credit_card_info, :owner
+    attr_reader :id, :permissions, :valid_to, :plan, :coupon, :status, :source, :billing_info, :credit_card_info, :owner
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
+      @permissions = Models::SubscriptionPermissions.new(attributes.fetch('permissions'))
       @valid_to = attributes.fetch('valid_to') && DateTime.parse(attributes.fetch('valid_to'))
       plan_data = attributes.fetch('plan')
       @plan = plan_data && Models::Plan.new(plan_data)
@@ -55,6 +56,21 @@ module Travis::API::V3
       @card_owner = attrs.fetch('card_owner')
       @expiration_date = attrs.fetch('expiration_date')
       @last_digits = attrs.fetch('last_digits')
+    end
+  end
+
+  class Models::SubscriptionPermissions
+    def initialize(attrs = {})
+      @read = attrs.fetch('read')
+      @write = attrs.fetch('write')
+    end
+
+    def read?
+      @read
+    end
+
+    def write?
+      @write
     end
   end
 end
