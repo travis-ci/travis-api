@@ -22,7 +22,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     example       { expect(last_response).to be_ok                                    }
     example    { expect(parsed_body).to eql_json({
       "@type"                 => "builds",
-      "@href"                 => "/v3/builds",
+      "@href"                 => "/v3/user/builds",
       "@representation"       => "standard",
       "@pagination"           => {
         "limit"               => 100,
@@ -33,11 +33,11 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "next"                => nil,
         "prev"                => nil,
         "first"               => {
-          "@href"             => "/v3/builds",
+          "@href"             => "/v3/user/builds",
           "offset"            => 0,
           "limit"             => 100 },
         "last"                => {
-          "@href"             => "/v3/builds",
+          "@href"             => "/v3/user/builds",
           "offset"            => 0,
           "limit"             => 100 }},
       "builds"                => [{
