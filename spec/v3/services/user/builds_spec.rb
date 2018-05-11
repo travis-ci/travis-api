@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
       "@href"                 => "/v3/user/builds",
       "@representation"       => "standard",
       "@pagination"           => {
-        "limit"               => 100,
+        "limit"               => 20,
         "offset"              => 0,
         "count"               => 1,
         "is_first"            => true,
@@ -34,11 +34,11 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
         "first"               => {
           "@href"             => "/v3/user/builds",
           "offset"            => 0,
-          "limit"             => 100 },
+          "limit"             => 20 },
         "last"                => {
           "@href"             => "/v3/user/builds",
           "offset"            => 0,
-          "limit"             => 100 }},
+          "limit"             => 20 }},
       "builds"                => [{
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",
