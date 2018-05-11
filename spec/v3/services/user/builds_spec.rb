@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Builds::Find, set_app: true do
+describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
   let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build)  { repo.builds.first }
   let(:stages) { build.stages }
@@ -17,9 +17,9 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
   describe "builds for current_user, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { get("/v3/user/builds", {}, headers)                           }
+    before        { get("/v3/user/builds", {}, headers)                               }
     example       { expect(last_response).to be_ok                                    }
-    example    { expect(parsed_body).to eql_json({
+    example       { expect(parsed_body).to eql_json({
       "@type"                 => "builds",
       "@href"                 => "/v3/user/builds",
       "@representation"       => "standard",
