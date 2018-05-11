@@ -1,11 +1,17 @@
 describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
   include Support::Formats
 
-  let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
-  let(:build)  { repo.builds.first }
-  let(:stages) { build.stages }
-  let(:jobs)   { Travis::API::V3::Models::Build.find(build.id).jobs }
+  let(:user)    { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
+  let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
+  let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+
+  let(:repo)    { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:build)   { repo.builds.first }
+  let(:stages)  { build.stages }
+  let(:jobs)    { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
+
+  let(:url) { "/v3/user/builds" }
 
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
@@ -20,9 +26,6 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
   end
 
   describe "builds for current_user, authenticated as user with access" do
-    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { get("/v3/user/builds", {}, headers)                               }
     example       { expect(last_response).to be_ok                                    }
     example       { expect(parsed_body).to eql_json({
       "@type"                 => "builds",
