@@ -15,7 +15,7 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
   let(:jobs)   { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
 
-  let(:url) { "/v3/user/#{user.id}/builds" }
+  let(:url) { "/v3/user/builds" }
 
   before do
     user.education = true

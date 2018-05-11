@@ -18,7 +18,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
   describe "builds for current_user, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { get("/v3/builds", {}, headers)                           }
+    before        { get("/v3/user/builds", {}, headers)                           }
     example       { expect(last_response).to be_ok                                    }
     example    { expect(parsed_body).to eql_json({
       "@type"                 => "builds",

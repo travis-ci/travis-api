@@ -1,4 +1,4 @@
-describe Travis::API::V3::Queries::UserBuilds do
+describe Travis::API::V3::Queries::Builds do
   let(:user)  { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
 
   let(:subject){ described_class.new({ 'user.id' => user.id }, 'User' ) }
@@ -6,8 +6,6 @@ describe Travis::API::V3::Queries::UserBuilds do
   let(:build_count) { 3 }
 
   describe "#find" do
-
-
     context "with a valid user id who has builds" do
       before do
         FactoryGirl.create_list(:build, build_count, { sender_id: user.id, sender_type: 'User' })
