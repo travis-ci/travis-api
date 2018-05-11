@@ -66,6 +66,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
         'error_type' => 'duplicate_resource'
       )
     end
+    example { expect(repo.reload.env_vars.count).to eq(1) }
   end
 
   describe 'authenticated, existing repo, env var is new' do
