@@ -57,6 +57,7 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
         "pull_request_title"  => nil,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
+        "tag"                 => nil,
         "stages"              => [{
            "@type"            => "stage",
            "@representation"  => "minimal",
@@ -121,7 +122,8 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
           "@href"             => "/v3/user/1",
           "@representation"   => "minimal",
           "id"                => 1,
-          "login"             => "svenfuchs"}
+          "login"             => "svenfuchs"},
+        "updated_at" => json_format_time_with_ms(build.updated_at),
       }]
     })}
   end
