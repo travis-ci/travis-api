@@ -3,7 +3,7 @@ module Travis::API::V3
     params :name, :value, :public, prefix: :env_var
 
     def find(repository)
-      repository.env_vars    
+      repository.env_vars
     end
 
     def create(repository)
