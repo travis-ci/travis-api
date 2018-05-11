@@ -1,4 +1,6 @@
 describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
+  include Support::Formats
+
   let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build)  { repo.builds.first }
   let(:stages) { build.stages }
