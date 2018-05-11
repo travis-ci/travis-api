@@ -49,7 +49,7 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
         "@href"           => url,
         "@representation" => "standard",
         "@pagination"     => {
-          "limit"    => 100,
+          "limit"    => 20,
           "offset"   => 0,
           "count"    => 1,
           "is_first" => true,
@@ -59,12 +59,12 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
           "first" => {
             "@href"  => url,
             "offset" => 0,
-            "limit"  => 100
+            "limit"  => 20
           },
           "last" => {
             "@href"  => url,
             "offset" => 0,
-            "limit"  => 100
+            "limit"  => 20
           }
         },
         "builds" => [{
