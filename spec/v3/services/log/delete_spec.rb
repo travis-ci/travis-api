@@ -100,10 +100,9 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
         }
       ])
     }
-
     before { Timecop.freeze(Time.now) }
-    example do
 
+    example do
       stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api").
         with(  headers: {
        	  'Accept'=>'*/*',
