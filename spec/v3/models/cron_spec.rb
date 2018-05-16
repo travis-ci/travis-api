@@ -10,6 +10,12 @@ describe Travis::API::V3::Models::Cron do
   let(:subject) { Factory(:cron, branch_id: Factory(:branch).id) }
 
   let!(:scheduler_interval) { Travis::API::V3::Models::Cron::SCHEDULER_INTERVAL + 1.minute }
+
+  shared_examples_for "cron is deactivated" do
+    before { subject.enqueue }
+    it { expect(subject.active?).to be_falsey }
+  end
+
   describe "scheduled scope" do
     it "collects all upcoming cron jobs" do
       cron1 = Factory(:cron)
@@ -99,14 +105,14 @@ describe Travis::API::V3::Models::Cron do
       subject.next_run.should be == DateTime.now.utc + 1.day
     end
 
-    it "destroys cron if branch does not exist on github" do
-      subject.branch.exists_on_github = false
-      expect{ subject.enqueue }.to change { Travis::API::V3::Models::Cron.count}.by(-1)
+    context "when branch does not exist on github" do
+      before { subject.branch.exists_on_github = false }
+      include_examples "cron is deactivated"
     end
 
-    it "destroys cron if repo is no longer active" do
-      subject.branch.repository.active = false
-      expect{ subject.enqueue }.to change { Travis::API::V3::Models::Cron.count}.by(-1)
+    context "when repo is no longer active" do
+      before { subject.branch.repository.active = false }
+      include_examples "cron is deactivated"
     end
   end
 

@@ -138,5 +138,6 @@ FactoryGirl.define do
     branch { Factory(:branch) }
     interval "daily"
     dont_run_if_recent_build_exists false
+    active true
   end
 end

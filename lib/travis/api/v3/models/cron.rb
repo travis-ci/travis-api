@@ -5,7 +5,7 @@ module Travis::API::V3
     belongs_to :branch
     after_create :schedule_first_build
 
-    scope :scheduled, -> { where("next_run <= '#{DateTime.now.utc}'") }
+    scope :scheduled, -> { where("next_run <= (?) AND active = (?)", DateTime.now.utc, true) }
 
     TIME_INTERVALS = {
       "daily"   => :day,
@@ -27,7 +27,10 @@ module Travis::API::V3
     end
 
     def needs_new_build?
-      always_run? || !last_non_cron_build_time || last_non_cron_build_time < 24.hour.ago
+      return false unless active?
+      return true if always_run?
+      return true unless last_non_cron_build_time
+      return true if last_non_cron_build_time < 24.hour.ago
     end
 
     def skip_and_schedule_next_build
@@ -41,7 +44,7 @@ module Travis::API::V3
     def enqueue
       if !branch.repository&.active? or !branch.exists_on_github
         Travis.logger.info "Removing cron #{self.id} because either the associated repo is inactive or branch doesn't exist on Github"
-        self.destroy
+        deactivate
         return false
       end
 
@@ -74,6 +77,10 @@ module Travis::API::V3
 
     def last_non_cron_build_time
       Build.find_by_id(branch.last_build_id)&.started_at&.to_datetime&.utc
+    end
+
+    def deactivate
+      update_attributes!(active: false)
     end
   end
 end
