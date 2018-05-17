@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
     let(:plan) do
       {
         '@type' => 'plan',
-        '@representation' => 'minimal',
+        '@representation' => 'standard',
         'id' => 'travis-ci-ten-builds',
         'name' => 'Startup',
         'builds' => 10,
@@ -41,7 +41,6 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
 
     it 'responds with list of subscriptions' do
       get('/v3/subscriptions', {}, headers)
-
       expect(last_response.status).to eq(200)
       expect(parsed_body).to eql_json({
         '@type' => 'subscriptions',
@@ -58,7 +57,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           'source' => 'stripe',
           'billing_info' => {
             '@type' => 'billing_info',
-            '@representation' => 'minimal',
+            '@representation' => 'standard',
             'first_name' => 'ana',
             'last_name' => 'rosas',
             'company' => '',
@@ -73,7 +72,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           },
           'credit_card_info' => {
             '@type' => 'credit_card_info',
-            '@representation' => 'minimal',
+            '@representation' => 'standard',
             'card_owner' => 'ana',
             'last_digits' => '4242',
             'expiration_date' => '9/2021'
