@@ -43,6 +43,31 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
     end
   end
 
+  describe 'authenticated, existing repo, env var name is empty' do
+    let(:params) do
+      {
+        'env_var.name' => '',
+        'env_var.value' => 'bar',
+        'env_var.public' => false
+      }
+    end
+
+    before do
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
+      post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers))
+    end
+
+    example { expect(last_response.status).to eq 422 }
+    example do
+      expect(JSON.load(body)).to eq(
+        '@type' => 'error',
+        'error_message' => 'Variable name is required',
+        'error_type' => 'unprocessable_entity'
+      )
+    end
+    example { expect(repo.reload.env_vars.count).to eq(0) }
+  end
+
   describe 'authenticated, existing repo, env var already exists' do
     let(:params) do
       {

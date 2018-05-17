@@ -20,8 +20,10 @@ module Travis::API::V3
 
       def handle_errors(env_var)
         base = env_var.errors[:base]
+        name = env_var.errors[:name]
         raise WrongParams       if base.include?(:format)
         raise DuplicateResource if base.include?(:duplicate_resource)
+        raise UnprocessableEntity, 'Variable name is required' if name.include?(:blank)
         raise ServerError
       end
   end
