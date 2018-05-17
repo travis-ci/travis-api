@@ -29,9 +29,10 @@ module Travis::API::V3
   end
 
   class Models::BillingInfo
-    attr_reader :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code
+    attr_reader :id, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code
 
     def initialize(attrs = {})
+      @id = attrs.fetch('id')
       @address = attrs.fetch('address')
       @address2 = attrs.fetch('address2')
       @billing_email = attrs.fetch('billing_email')
@@ -47,9 +48,10 @@ module Travis::API::V3
   end
 
   class Models::CreditCardInfo
-    attr_reader :card_owner, :expiration_date, :last_digits
+    attr_reader :id, :card_owner, :expiration_date, :last_digits
 
     def initialize(attrs = {})
+      @id = attrs.fetch('id')
       @card_owner = attrs.fetch('card_owner')
       @expiration_date = attrs.fetch('expiration_date')
       @last_digits = attrs.fetch('last_digits')

@@ -58,6 +58,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           'billing_info' => {
             '@type' => 'billing_info',
             '@representation' => 'standard',
+            'id' => 1,
             'first_name' => 'ana',
             'last_name' => 'rosas',
             'company' => '',
@@ -73,6 +74,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           'credit_card_info' => {
             '@type' => 'credit_card_info',
             '@representation' => 'standard',
+            'id' => 1,
             'card_owner' => 'ana',
             'last_digits' => '4242',
             'expiration_date' => '9/2021'

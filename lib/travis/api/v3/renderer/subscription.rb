@@ -16,10 +16,10 @@ module Travis::API::V3
   end
 
   class Renderer::BillingInfo < ModelRenderer
-    representation(:standard, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code)
+    representation(:standard, :id, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code)
   end
 
   class Renderer::CreditCardInfo < ModelRenderer
-    representation(:standard, :card_owner, :expiration_date, :last_digits)
+    representation(:standard, :id, :card_owner, :expiration_date, :last_digits)
   end
 end
