@@ -3,11 +3,11 @@ module Travis::API::V3
     representation(:standard, :id, :valid_to, :plan, :coupon, :status, :source, :owner, :billing_info, :credit_card_info)
 
     def billing_info
-      Renderer.render_model(model.billing_info, mode: :standard)
+      Renderer.render_model(model.billing_info, mode: :standard) unless model.billing_info.nil?
     end
 
     def credit_card_info
-      Renderer.render_model(model.credit_card_info, mode: :standard)
+      Renderer.render_model(model.credit_card_info, mode: :standard) unless model.credit_card_info.nil?
     end
 
     def plan
