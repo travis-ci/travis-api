@@ -16,7 +16,6 @@ module Support
         "status" => "canceled",
         "source" => "stripe",
         "billing_info" => {
-          "id" => 1,
           "first_name" => "ana",
           "last_name" => "rosas",
           "company" => "",
@@ -30,7 +29,6 @@ module Support
           "vat_id" => "123456"
         },
         "credit_card_info" => {
-          "id" => 1,
           "card_owner" => "ana",
           "last_digits" => "4242",
           "expiration_date" => "9/2021"

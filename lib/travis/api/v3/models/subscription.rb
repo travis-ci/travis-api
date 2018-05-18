@@ -10,8 +10,8 @@ module Travis::API::V3
       @coupon = attributes['coupon']
       @status = attributes.fetch('status')
       @source = attributes.fetch('source')
-      @billing_info = attributes['billing_info'] && Models::BillingInfo.new(attributes['billing_info'])
-      @credit_card_info = attributes['credit_card_info'] && Models::CreditCardInfo.new(attributes['credit_card_info'])
+      @billing_info = attributes['billing_info'] && Models::BillingInfo.new(@id, attributes['billing_info'])
+      @credit_card_info = attributes['credit_card_info'] && Models::CreditCardInfo.new(@id, attributes['credit_card_info'])
       @owner = fetch_owner(attributes.fetch('owner'))
     end
 
@@ -31,8 +31,8 @@ module Travis::API::V3
   class Models::BillingInfo
     attr_reader :id, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code
 
-    def initialize(attrs = {})
-      @id = attrs.fetch('id')
+    def initialize(id, attrs)
+      @id = id
       @address = attrs.fetch('address')
       @address2 = attrs.fetch('address2')
       @billing_email = attrs.fetch('billing_email')
@@ -50,8 +50,8 @@ module Travis::API::V3
   class Models::CreditCardInfo
     attr_reader :id, :card_owner, :expiration_date, :last_digits
 
-    def initialize(attrs = {})
-      @id = attrs.fetch('id')
+    def initialize(id, attrs)
+      @id = id
       @card_owner = attrs.fetch('card_owner')
       @expiration_date = attrs.fetch('expiration_date')
       @last_digits = attrs.fetch('last_digits')

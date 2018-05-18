@@ -114,6 +114,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           'billing_info' => {
             '@type' => 'billing_info',
             '@representation' => 'standard',
+            'id' => 1234,
             'first_name' => 'Travis',
             'last_name' => 'Schmidt',
             'company' => 'Travis',
@@ -127,6 +128,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
             'vat_id' => nil
           },
           'credit_card_info' => {
+            'id' => 1234,
             '@type' => 'credit_card_info',
             '@representation' => 'standard',
             'card_owner' => 'Travis Schmidt',
