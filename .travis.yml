@@ -4,8 +4,6 @@ sudo: false
 
 rvm: 2.5.1
 
-before_install: gem install bundler
-
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
 
