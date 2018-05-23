@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::Requests < Query
     def find(repository)
-      repository.requests.includes(:commit)
+      repository.requests.includes(:commit).order(id: :desc)
     end
 
     def count(repository, time_frame)
