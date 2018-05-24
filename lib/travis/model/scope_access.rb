@@ -88,10 +88,6 @@ module Travis
           end
 
           def viewable_in_private_mode_with_repo(user, repository_id)
-            user.repository_ids.include?(repository_id) ?
-              where('true') :
-              where('false')
-
             if user.nil?
               where('false')
             elsif self == ::Repository
