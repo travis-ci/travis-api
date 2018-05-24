@@ -80,8 +80,16 @@ module Travis::API::V3
 
     private
 
-    def visible_objects(list, factory)
-      list.where("#{factory.table_name}.private = false OR #{factory.table_name}.repository_id IN (?)", private_access_repository_ids)
+    def visible_objects(list, repository_id, factory)
+      if repository_id
+        if private_access_repository_ids.include?(repository_id)
+          list.where("#{factory.table_name}.repository_id = ?", private_access_repository_ids, repository_id)
+        else
+          list.where("#{factory.table_name}.private = false")
+        end
+      else
+        list.where("#{factory.table_name}.private = false OR #{factory.table_name}.repository_id IN (?)", private_access_repository_ids)
+      end
     end
   end
 end
