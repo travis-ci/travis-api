@@ -23,6 +23,12 @@ module Travis::API::V3
       end
     end
 
+    def trials
+      connection.get('/trials').body.map do | trial_data |
+        Travis::API::V3::Models::Trial.new(trial_data)
+      end
+    end
+
     def update_address(subscription_id, address_data)
       response = connection.patch("/subscriptions/#{subscription_id}/address", address_data)
       handle_errors_and_respond(response)
