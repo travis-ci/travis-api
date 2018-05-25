@@ -38,7 +38,7 @@ module Travis::API::V3
       end
 
       if scope = options[?s.freeze]
-        control &&= AccessControl::Scoped.new(scope, control) 
+        control &&= AccessControl::Scoped.new(scope, control)
       end
 
       control if secrets.any? { |secret| signed(challenge, secret) == signature }
