@@ -5,8 +5,9 @@ module Travis::API::V3
     paginate
 
     def run!
-      unfiltered = query.find(find(:repository))
-      result access_control.visible_builds(unfiltered)
+      repository = find(:repository)
+      unfiltered = query.find(repository)
+      result access_control.visible_builds(unfiltered, repository.id)
     end
   end
 end
