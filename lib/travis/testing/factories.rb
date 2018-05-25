@@ -10,6 +10,7 @@ FactoryGirl.define do
     finished_at { Time.now.utc }
     number 1
     state :passed
+    private false
   end
 
   factory :commit do
@@ -33,6 +34,7 @@ FactoryGirl.define do
     number     '2.1'
     tags       ""
     state      :created
+    private    false
   end
 
   factory :request do
@@ -40,6 +42,7 @@ FactoryGirl.define do
     association :commit
     token 'the-token'
     event_type 'push'
+    private false
   end
 
   factory :repository do
@@ -57,6 +60,7 @@ FactoryGirl.define do
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
     sequence(:github_id) {|n| n }
+    private false
   end
 
   factory :minimal, :parent => :repository do

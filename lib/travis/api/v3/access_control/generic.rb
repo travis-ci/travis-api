@@ -55,9 +55,23 @@ module Travis::API::V3
     end
 
     def visible_repositories(list)
-      # naïve implementation, replaced with smart implementation in specific subclasses
-      return list if full_access?
-      list.select { |r| visible?(r) }
+      # naïve implementation, can be replaced with smart implementation in specific subclasses
+      visible_objects(list, Models::Repository)
+    end
+
+    def visible_builds(list)
+      # naïve implementation, can be replaced with smart implementation in specific subclasses
+      visible_objects(list, Models::Build)
+    end
+
+    def visible_jobs(list)
+      # naïve implementation, can be replaced with smart implementation in specific subclasses
+      visible_objects(list, Models::Job)
+    end
+
+    def visible_requests(list)
+      # naïve implementation, can be replaced with smart implementation in specific subclasses
+      visible_objects(list, Models::Request)
     end
 
     def permissions(object)
@@ -72,7 +86,7 @@ module Travis::API::V3
     end
 
     def build_visible?(build)
-      visible? build.repository
+      repository_visible? build.repository, !build.private?
     end
 
     def build_writable?(build)
@@ -84,7 +98,7 @@ module Travis::API::V3
     end
 
     def cron_visible?(cron)
-      visible? cron.branch.repository
+      visible? cron.branch
     end
 
     def cron_writable?(cron)
@@ -100,7 +114,7 @@ module Travis::API::V3
     end
 
     def job_visible?(job)
-      visible? job.repository
+      repository_visible? job.repository, !job.private?
     end
 
     def job_cancelable?(job)
@@ -164,13 +178,14 @@ module Travis::API::V3
       false
     end
 
-    def repository_visible?(repository)
-      return true if unrestricted_api?(repository.owner) and not repository.private?
+    def repository_visible?(repository, show_public = true)
+      return false if repository.invalid?
+      return true  if show_public and unrestricted_api?(repository.owner) and not repository.private?
       private_repository_visible?(repository)
     end
 
     def request_visible?(request)
-      repository_visible?(request.repository)
+      repository_visible? request.repository, !request.private?
     end
 
     def private_repository_visible?(repository)
@@ -220,6 +235,11 @@ module Travis::API::V3
       else
         type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore.to_sym
       end
+    end
+
+    def visible_objects(list, factory)
+      return list if full_access?
+      list.select { |r| visible?(r) }
     end
   end
 end

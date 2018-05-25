@@ -75,6 +75,124 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "previous_state"      => "passed",
         "pull_request_number" => build.pull_request_number,
         "pull_request_title"  => build.pull_request_title,
+        "private"             => false,
+        "started_at"          => "2010-11-12T13:00:00Z",
+        "finished_at"         => nil,
+        "updated_at"          => json_format_time_with_ms(build.updated_at),
+        "repository"          => {
+          "@type"             => "repository",
+          "@href"             => "/v3/repo/#{repo.id}",
+          "@representation"   => "minimal",
+          "id"                => repo.id,
+          "name"              => "minimal",
+          "slug"              => "svenfuchs/minimal"},
+        "branch"              => {
+          "@type"             => "branch",
+          "@href"             => "/v3/repo/#{repo.id}/branch/master",
+          "@representation"   => "minimal",
+          "name"              => "master"},
+        "tag"                 => nil,
+        "commit"              => {
+          "@type"             => "commit",
+          "@representation"   => "minimal",
+          "id"                => 5,
+          "sha"               => "add057e66c3e1d59ef1f",
+          "ref"               => "refs/heads/master",
+          "message"           => "unignore Gemfile.lock",
+          "compare_url"       => "https://github.com/svenfuchs/minimal/compare/master...develop",
+          "committed_at"      => "2010-11-12T12:55:00Z"},
+        "jobs"                => [
+          {
+          "@type"             => "job",
+          "@href"             => "/v3/job/#{jobs[0].id}",
+          "@representation"   => "minimal",
+          "id"                => jobs[0].id},
+          {
+          "@type"             => "job",
+          "@href"             => "/v3/job/#{jobs[1].id}",
+          "@representation"   => "minimal",
+          "id"                => jobs[1].id},
+          {
+          "@type"             => "job",
+          "@href"             => "/v3/job/#{jobs[2].id}",
+          "@representation"   => "minimal",
+          "id"                => jobs[2].id},
+          {
+          "@type"             => "job",
+          "@href"             => "/v3/job/#{jobs[3].id}",
+          "@representation"   => "minimal",
+          "id"                => jobs[3].id}],
+        "stages"              => [{
+           "@type"            => "stage",
+           "@representation"  => "minimal",
+           "id"               => stages[0].id,
+           "number"           => 1,
+           "name"             => "test",
+           "state"            => stages[0].state,
+           "started_at"       => stages[0].started_at,
+           "finished_at"      => stages[0].finished_at},
+          {"@type"            => "stage",
+           "@representation" => "minimal",
+           "id"               => stages[1].id,
+           "number"          => 2,
+           "name"             => "deploy",
+           "state"            => stages[1].state,
+           "started_at"       => stages[1].started_at,
+           "finished_at"      => stages[1].finished_at}],
+        "created_by"          => {
+          "@type"             => "user",
+          "@href"             => "/v3/user/1",
+          "@representation"   => "minimal",
+          "id"                => 1,
+          "login"             => "svenfuchs"}
+      }]
+    })}
+  end
+
+  describe "private builds on public repository" do
+    before     { repo.builds.last.update_attribute(:private, true) }
+    before     { get("/v3/repo/#{repo.id}/builds?limit=1") }
+    example    { expect(last_response).to be_ok }
+    example    { expect(parsed_body).to eql_json({
+      "@type"                 => "builds",
+      "@href"                 => "/v3/repo/#{repo.id}/builds?limit=1",
+      "@representation"       => "standard",
+      "@pagination"           => {
+        "limit"               => 1,
+        "offset"              => 0,
+        "count"               => 2,
+        "is_first"            => true,
+        "is_last"             => false,
+        "next"                => {
+          "@href"             => "/v3/repo/#{repo.id}/builds?limit=1&offset=1",
+          "offset"            => 1,
+          "limit"             => 1},
+        "prev"                => nil,
+        "first"               => {
+          "@href"             => "/v3/repo/#{repo.id}/builds?limit=1",
+          "offset"            => 0,
+          "limit"             => 1 },
+        "last"                => {
+          "@href"             => "/v3/repo/#{repo.id}/builds?limit=1&offset=1",
+          "offset"            => 1,
+          "limit"             => 1 }},
+      "builds"                => [{
+        "@type"               => "build",
+        "@href"               => "/v3/build/#{build.id}",
+        "@representation"     => "standard",
+        "@permissions"        => {
+          "read"              => true,
+          "cancel"            => false,
+          "restart"           => false },
+        "id"                  => build.id,
+        "number"              => "3",
+        "state"               => "configured",
+        "duration"            => nil,
+        "event_type"          => "push",
+        "previous_state"      => "passed",
+        "pull_request_number" => build.pull_request_number,
+        "pull_request_title"  => build.pull_request_title,
+        "private"             => false,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
         "updated_at"          => json_format_time_with_ms(build.updated_at),
@@ -195,6 +313,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "previous_state"      => "passed",
         "pull_request_number" => build.pull_request_number,
         "pull_request_title"  => build.pull_request_title,
+        "private"             => false,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
         "updated_at"          => json_format_time_with_ms(build.updated_at),

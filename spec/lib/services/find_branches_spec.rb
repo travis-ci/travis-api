@@ -22,7 +22,7 @@ describe Travis::Services::FindBranches do
 
     it 'returns an empty build scope when the repository could not be found' do
       @params = { :repository_id => repo.id + 1 }
-      service.run.should == Build.none
+      service.run.empty?.should be_truthy
     end
 
     it 'finds branches by a given list of ids' do

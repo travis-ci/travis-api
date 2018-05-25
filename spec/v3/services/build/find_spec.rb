@@ -51,6 +51,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "previous_state"      => build.previous_state,
       "pull_request_number" => build.pull_request_number,
       "pull_request_title"  => build.pull_request_title,
+      "private"             => false,
       "started_at"          => "2010-11-12T13:00:00Z",
       "finished_at"         => nil,
       "updated_at"          => json_format_time_with_ms(build.updated_at),
@@ -147,6 +148,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "previous_state"      => build.previous_state,
       "pull_request_number" => build.pull_request_number,
       "pull_request_title"  => build.pull_request_title,
+      "private"             => false,
       "started_at"          => "2010-11-12T13:00:00Z",
       "finished_at"         => nil,
       "updated_at"          => json_format_time_with_ms(build.updated_at),
@@ -233,6 +235,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "duration"            => nil,
       "event_type"          => "push",
       "previous_state"      => build.previous_state,
+      "private"             => false,
       "pull_request_number" => build.pull_request_number,
       "pull_request_title"  => build.pull_request_title,
       "started_at"          => "2010-11-12T13:00:00Z",
@@ -337,5 +340,17 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
         'message'
       )
     end
+  end
+
+  describe "private build on public repository, no pull access" do
+    before     { build.update_attribute(:private, true) }
+    before     { get("/v3/build/#{build.id}") }
+    example { expect(last_response).to be_not_found }
+    example { expect(parsed_body).to eql_json({
+      "@type"         => "error",
+      "error_type"    => "not_found",
+      "error_message" => "build not found (or insufficient access)",
+      "resource_type" => "build"
+    })}
   end
 end

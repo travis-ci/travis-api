@@ -11,7 +11,7 @@ module Travis
             attr_reader :builds, :options
 
             def initialize(builds, options = {})
-              builds = builds.last_finished_builds_by_branches if builds.is_a?(Repository) # TODO remove, bc
+              # builds = builds.last_finished_builds_by_branches if builds.is_a?(Repository) # TODO remove, bc
               @builds = builds
             end
 
