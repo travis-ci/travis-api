@@ -30,4 +30,7 @@ end
 
 task :default => :'spec:all'
 
+# needed by parallel-rpsec
+task :environment do
+end
 require "rspec/parallel/rake_task"
