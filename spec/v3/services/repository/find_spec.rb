@@ -328,6 +328,12 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
     example { expect(parsed_body['owner']).to include("github_id", "is_syncing", "synced_at")}
   end
 
+  describe "when owner is missing" do
+    before  { repo.update_attribute(:owner, nil)                  }
+    before  { get("/v3/repo/#{repo.id}?include=repository.owner") }
+    example { expect(last_response).to be_not_found               }
+  end
+
   describe "including non-existing field" do
     before { get("/v3/repo/#{repo.id}?include=repository.owner,repository.last_build_number") }
     include_examples '400 wrong params', 'no field "repository.last_build_number" to include'

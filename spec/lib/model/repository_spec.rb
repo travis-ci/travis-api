@@ -393,10 +393,10 @@ describe Repository do
 
     it 'retrieves last builds on all branches' do
       Build.delete_all
-      old = Factory(:build, repository: repo, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
-      one = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'one'))
-      two = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'two'))
-      three = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'three'))
+      old = Factory(:build, repository: repo, number: 1, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
+      one = Factory(:build, repository: repo, number: 2, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'one'))
+      two = Factory(:build, repository: repo, number: 3, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'two'))
+      three = Factory(:build, repository: repo, number: 4, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'three'))
       three.update_attribute(:event_type, 'pull_request')
 
       builds = repo.last_finished_builds_by_branches

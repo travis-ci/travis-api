@@ -142,6 +142,20 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#trials' do
+    subject { billing.trials }
+    let(:trial_id) { rand(999) }
+
+    it 'returns the trials' do
+      stub_billing_request(:get, '/trials', auth_key: auth_key, user_id: user_id)
+        .to_return(body: JSON.dump([{'id' => trial_id, 'created_at' => Time.now, status: 'started', 'builds_remaining' => 5 }]))
+        
+      expect(subject.size).to eq 1
+      expect(subject.first.id).to eq(trial_id)
+    end
+  end
+
+
   describe '#plans' do
     subject { billing.plans }
 

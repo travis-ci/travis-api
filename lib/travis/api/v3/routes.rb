@@ -253,6 +253,11 @@ module Travis::API::V3
         get :invoices, '/invoices'
       end
 
+      hidden_resource :trials do
+        route '/trials'
+        get :all
+      end
+
       hidden_resource :plans do
         route '/plans'
         get :all

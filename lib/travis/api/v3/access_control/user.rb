@@ -20,10 +20,14 @@ module Travis::API::V3
     end
 
     def visible_repositories(list)
-      list.where('repositories.private = false OR repositories.id IN (?)'.freeze, access_permissions.map(&:repository_id))
+      list.where('repositories.private = false OR repositories.id IN (?)'.freeze, private_access_repository_ids)
     end
 
     protected
+
+    def private_access_repository_ids
+      @private_access_repository_ids ||= access_permissions.map(&:repository_id)
+    end
 
     def build_cancelable?(build)
       permission?(:pull, build.repository)
@@ -72,6 +76,12 @@ module Travis::API::V3
     def permission?(type, id)
       id = id.id if id.is_a? ::Repository
       access_permissions.where(type => true, :repository_id => id).any?
+    end
+
+    private
+
+    def visible_objects(list, factory)
+      list.where("#{factory.table_name}.private = false OR #{factory.table_name}.repository_id IN (?)", private_access_repository_ids)
     end
   end
 end

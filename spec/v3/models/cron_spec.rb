@@ -135,6 +135,22 @@ describe Travis::API::V3::Models::Cron do
     end
   end
 
+  describe 'needs_new_build' do
+    let(:repo)   { FactoryGirl.create(:repository, active: active) }
+    let(:branch) { FactoryGirl.create(:branch, repository_id: repo.id) }
+    let(:cron)   { FactoryGirl.create(:cron, branch_id: branch.id) }
+
+    describe 'given the repository is active' do
+      let(:active) { true }
+      it { expect(cron.needs_new_build?).to eq true }
+    end
+
+    describe 'given the repository is active' do
+      let(:active) { false }
+      it { expect(cron.needs_new_build?).to eq false }
+    end
+  end
+
   context "when repo ownership is transferred" do
     it "enqueues a cron for the repo with the new owner" do
       subject.branch.repository.update_attribute(:owner, Factory(:user, name: "Yoda", login: "yoda", email: "yoda@yoda.com"))

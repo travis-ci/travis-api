@@ -100,7 +100,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           'valid_to' => '2017-11-28T00:09:59Z',
           'plan' => {
             '@type' => 'plan',
-            '@representation' => 'minimal',
+            '@representation' => 'standard',
             'id' => 'travis-ci-ten-builds',
             'name' => 'Startup',
             'builds' => 10,
@@ -113,7 +113,8 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           'source' => 'stripe',
           'billing_info' => {
             '@type' => 'billing_info',
-            '@representation' => 'minimal',
+            '@representation' => 'standard',
+            'id' => 1234,
             'first_name' => 'Travis',
             'last_name' => 'Schmidt',
             'company' => 'Travis',
@@ -127,8 +128,9 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
             'vat_id' => nil
           },
           'credit_card_info' => {
+            'id' => 1234,
             '@type' => 'credit_card_info',
-            '@representation' => 'minimal',
+            '@representation' => 'standard',
             'card_owner' => 'Travis Schmidt',
             'last_digits' => '1111',
             'expiration_date' => '11/21'

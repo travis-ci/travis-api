@@ -27,6 +27,7 @@ module Travis::API::V3
     end
 
     def needs_new_build?
+      return false unless branch.repository.active?
       always_run? || !last_non_cron_build_time || last_non_cron_build_time < 24.hour.ago
     end
 

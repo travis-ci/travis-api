@@ -20,9 +20,9 @@ describe Travis::Services::FindBuilds do
       service.run.should == [running]
     end
 
-    it 'finds recent builds when no repo given' do
+    it 'finds no recent builds when no repo given' do
       @params = nil
-      service.run.should == [push]
+      service.run.should == []
     end
 
     it 'finds builds older than the given number' do
@@ -39,7 +39,7 @@ describe Travis::Services::FindBuilds do
 
     it 'does not find by number if repository_id is missing' do
       @params = { :number => 1 }
-      service.run.should == Build.none
+      service.run.empty?.should be_truthy
     end
 
     it 'scopes to the given repository_id' do
@@ -50,7 +50,7 @@ describe Travis::Services::FindBuilds do
 
     it 'returns an empty build scope when the repository could not be found' do
       @params = { :repository_id => repo.id + 1 }
-      service.run.should == Build.none
+      service.run.empty?.should be_truthy
     end
 
     it 'finds builds by a given list of ids' do
