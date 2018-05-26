@@ -56,7 +56,7 @@ gem 'opencensus'
 gem 'opencensus-stackdriver'
 
 gem 'faraday'
-gem 'faraday_middleware'
+gem 'faraday_middleware'  
 
 gem 'pg',                     '~> 0.21'
 gem 'composite_primary_keys', '~> 8.0'
@@ -79,7 +79,7 @@ gem 'multi_json'
 
 group :test do
   gem 'rspec',         '~> 3.0'
-  gem 'parallel-rspec'
+  gem 'parallel_tests'
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
