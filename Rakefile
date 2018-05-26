@@ -22,10 +22,12 @@ namespace :db do
     sh "psql -q travis_#{env} < #{file}"
   end
 
-  task :prepare_sequential do
-    concurrency.times do |i|
-      sh "createdb travis_#{env}#{concurrency}" rescue nil
-      sh "psql -q travis_#{env}#{concurrency} < #{file}"
+  namespace :prepare do
+    task :parallels do
+      concurrency.times do |i|
+        sh "createdb travis_#{env}#{concurrency}" rescue nil
+        sh "psql -q travis_#{env}#{concurrency} < #{file}"
+      end
     end
   end
 end
