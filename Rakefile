@@ -1,5 +1,3 @@
-require "knapsack"
-
 namespace :db do
   env = ENV["ENV"] || 'test'
   abort "Cannot run rake db:create in production." if env == 'production'

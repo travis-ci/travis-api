@@ -123,3 +123,11 @@ end
 
 require 'timecop'
 Timecop.freeze(Time.now.utc)
+
+RSpec::Parallel.configure do |config|
+  config.after_fork do |worker|
+    # Use separate database.
+    ActiveRecord::Base.configurations["test"]["database"] << worker.number.to_s
+    ActiveRecord::Base.establish_connection(:test)
+  end
+end

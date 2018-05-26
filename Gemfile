@@ -58,8 +58,6 @@ gem 'opencensus-stackdriver'
 gem 'faraday'
 gem 'faraday_middleware'
 
-gem 'knapsack'
-
 gem 'pg',                     '~> 0.21'
 gem 'composite_primary_keys', '~> 8.0'
 gem 'redcarpet',              '>= 3.2.3'
@@ -80,7 +78,8 @@ gem 'pusher',            '~> 0.14.0'
 gem 'multi_json'
 
 group :test do
-  gem 'rspec',         '~> 2.13'
+  gem 'rspec',         '~> 3.0'
+  gem 'parallel-rspec'
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
