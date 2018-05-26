@@ -23,7 +23,7 @@ namespace :db do
   end
 
   namespace :prepare do
-    task :parallels do
+    task :parallel do
       concurrency.times do |i|
         sh "createdb travis_#{env}#{concurrency}" rescue nil
         sh "psql -q travis_#{env}#{concurrency} < #{file}"
