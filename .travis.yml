@@ -11,7 +11,7 @@ before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
   - 'RAILS_ENV=test bundle exec rake db:prepare:parallel'
 
-script: "bundle exec parallel_test -n $CONCURRENCY --type rspec"
+script: "bundle exec parallel_test -- -r spec_helper -n $CONCURRENCY --type rspec spec"
 
 cache: bundler
 
