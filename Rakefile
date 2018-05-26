@@ -29,4 +29,5 @@ namespace :spec do
 end
 
 task :default => :'spec:all'
-Knapsack.load_tasks if defined?(Knapsack)
+
+require "rspec/parallel/rake_task"
