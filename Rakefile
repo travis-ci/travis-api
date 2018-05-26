@@ -1,5 +1,7 @@
 namespace :db do
   env = ENV["ENV"] || 'test'
+  concurrency = ENV["CONCURRENCY"] || 2
+
   abort "Cannot run rake db:create in production." if env == 'production'
 
   if branch = ENV['TRAVIS_MIGRATIONS_BRANCH'] and !branch.empty?
@@ -19,6 +21,13 @@ namespace :db do
     sh "createdb travis_#{env}" rescue nil
     sh "psql -q travis_#{env} < #{file}"
   end
+
+  task :prepare_sequential do
+    concurrency.times do |i|
+      sh "createdb travis_#{env}#{concurrency}" rescue nil
+      sh "psql -q travis_#{env}#{concurrency} < #{file}"
+    end
+  end
 end
 
 namespace :spec do
@@ -29,8 +38,3 @@ namespace :spec do
 end
 
 task :default => :'spec:all'
-
-# needed by parallel-rpsec
-task :environment do
-end
-require "rspec/parallel/rake_task"

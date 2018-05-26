@@ -6,7 +6,7 @@ rvm: 2.5.1
 
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
-  - 'RAILS_ENV=test bundle exec rake db:test:prepare_sequential'
+  - 'RAILS_ENV=test bundle exec rake db:prepare_sequential'
 
 script: "bundle exec parallel-rspec spec"
 
