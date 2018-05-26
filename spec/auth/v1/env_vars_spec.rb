@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe 'v1 settings/env_vars', auth_helpers: true, api_version: :v1, set_app: true do
   let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }

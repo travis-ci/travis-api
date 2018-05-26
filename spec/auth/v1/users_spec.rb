@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe 'v1 users', auth_helpers: true, api_version: :v1, set_app: true do
   let(:user) { User.first }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
