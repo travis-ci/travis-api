@@ -25,8 +25,8 @@ namespace :db do
   namespace :prepare do
     task :parallel do
       concurrency.to_i.times do |i|
-        sh "createdb travis_#{env}#{concurrency}" rescue nil
-        sh "psql -q travis_#{env}#{concurrency} < #{file}"
+        sh "createdb travis_#{env}#{i}" rescue nil
+        sh "psql -q travis_#{env}#{i} < #{file}"
       end
     end
   end
