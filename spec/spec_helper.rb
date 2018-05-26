@@ -91,6 +91,9 @@ RSpec.configure do |c|
     Travis.config.client_domain = "www.example.com"
     Travis.config.endpoints.ssh_key = true
 
+    ActiveRecord::Base.configurations["test"]["database"] << ENV['TEST_ENV_NUMBER']
+    ActiveRecord::Base.establish_connection(:test)
+
     DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
 
@@ -123,11 +126,3 @@ end
 
 require 'timecop'
 Timecop.freeze(Time.now.utc)
-
-RSpec::Parallel.configure do |config|
-  config.after_fork do |worker|
-    # Use separate database.
-    ActiveRecord::Base.configurations["test"]["database"] << worker.number.to_s
-    ActiveRecord::Base.establish_connection(:test)
-  end
-end

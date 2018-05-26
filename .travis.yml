@@ -4,11 +4,14 @@ sudo: false
 
 rvm: 2.5.1
 
+env:
+  - CONCURRENCY=4
+
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
-  - 'RAILS_ENV=test bundle exec rake db:prepare_sequential'
+  - 'RAILS_ENV=test bundle exec rake db:prepare:parallel'
 
-script: "bundle exec rake parallel:spec"
+script: "bundle exec parallel_test spec -n $CONCURRENCY"
 
 cache: bundler
 
