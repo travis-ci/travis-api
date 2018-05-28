@@ -1,11 +1,13 @@
 module Travis::API::V3
   class Models::Cron < Model
     SCHEDULER_INTERVAL = 1.minute
+    LOOKBACK_INTERVAL = 30.minute
 
     belongs_to :branch
     after_create :schedule_first_build
 
-    scope :scheduled, -> { where("next_run <= (?) AND active = (?)", DateTime.now.utc, true) }
+    scope :scheduled, -> { where("next_run <= (?) AND next_run > (?) AND active = (?)", DateTime.now.utc, LOOKBACK_INTERVAL.ago, true) }
+    scope :skipped, -> { where("next_run <= '#{LOOKBACK_INTERVAL.ago}'")}
 
     TIME_INTERVALS = {
       "daily"   => :day,
@@ -16,17 +18,12 @@ module Travis::API::V3
     REPO_IS_INACTIVE = "repo is inactive"
     BRANCH_MISSING_ON_GH = "branch doesn't exist on Github"
 
-    def schedule_next_build(from: nil)
-      # Make sure the next build will always be in the future
-      if (from && (from <= (DateTime.now.utc - 1.send(TIME_INTERVALS[interval]))))
-        from = DateTime.now.utc
-      end
-
-      update_attribute(:next_run, (from || last_run || DateTime.now.utc) + 1.send(TIME_INTERVALS[interval]))
+    def schedule_next_build
+      update_attribute(:next_run, calculate_next_run)
     end
 
     def schedule_first_build
-      update_attribute(:next_run, DateTime.now.utc + SCHEDULER_INTERVAL)
+      update_attribute(:next_run, created_at + SCHEDULER_INTERVAL)
     end
 
     def needs_new_build?
@@ -37,11 +34,10 @@ module Travis::API::V3
     end
 
     def skip_and_schedule_next_build
-      # Update last_run also, because this build wasn't enqueued through Queries::Crons
       last_build_time = last_non_cron_build_time
       update_attribute(:last_run, last_build_time)
 
-      schedule_next_build(from: DateTime.now)
+      schedule_next_build
     end
 
     def enqueue
@@ -88,6 +84,10 @@ module Travis::API::V3
       Travis.logger.info "Removing cron #{self.id} because the associated #{reason}"
       deactivate
       false
+    end
+
+    # make sure it is always int he future
+    def calculate_next_run
     end
   end
 end
