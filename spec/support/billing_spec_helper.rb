@@ -9,6 +9,7 @@ module Support
 
     def billing_response_body(attributes={})
       {
+        "permissions" => { "read" => true, "write" => true },
         "id" => 81,
         "valid_to" => "2017-11-28T00:09:59.502Z",
         "plan" => billing_plan_response_body,
