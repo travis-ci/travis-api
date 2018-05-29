@@ -1,8 +1,6 @@
 module Travis::API::V3
   class Queries::Cron < Query
-    params :id
-    params :interval, :dont_run_if_recent_build_exists
-    params :interval, :dont_run_if_recent_build_exists, prefix: :cron
+    params :id, :interval, :dont_run_if_recent_build_exists, prefix: :cron
     sortable_by :id
 
     def find
