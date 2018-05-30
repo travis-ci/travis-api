@@ -96,6 +96,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
         expect(parsed_body).to eql_json({
           '@type' => 'subscription',
           '@representation' => 'standard',
+          '@permissions' => { 'read' => true, 'write' => true },
           'id' => 1234,
           'valid_to' => '2017-11-28T00:09:59Z',
           'plan' => {
