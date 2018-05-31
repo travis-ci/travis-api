@@ -2,7 +2,7 @@ module Travis::API::V3
   class Renderer::Repository < ModelRenderer
     representation(:minimal,  :id, :name, :slug)
     representation(:standard, :id, :name, :slug, :description, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :managed_by_installation, :active_on_org)
-    representation(:experimental, :id, :name, :slug, :description, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build)
+    representation(:experimental, :id, :name, :slug, :description, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build, :next_build_number)
 
     hidden_representations(:experimental)
 
@@ -20,6 +20,16 @@ module Travis::API::V3
       }
     end
 
+    def current_build
+      build = model.current_build
+      build if access_control.visible? build
+    end
+
+    def last_started_build
+      build = model.last_started_build
+      build if access_control.visible? build
+    end
+
     def starred
       return false unless user = access_control.user
       user.starred_repository_ids.include? id
@@ -32,6 +42,7 @@ module Travis::API::V3
     end
 
     def owner
+      return nil         if model.owner_type.nil?
       return model.owner if include_owner?
       owner_href = Renderer.href(owner_type.to_sym, id: model.owner_id, script_name: script_name)
 
@@ -45,6 +56,7 @@ module Travis::API::V3
     end
 
     def include_owner?
+      return false if model.owner_type.nil?
       return false if included_owner?
       return true  if include? 'repository.owner'.freeze
       return true  if include.any? { |i| i.start_with? owner_type or i.start_with? 'owner'.freeze }

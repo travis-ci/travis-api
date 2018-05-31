@@ -42,7 +42,8 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
         "dont_run_if_recent_build_exists"    => false,
         "last_run"            => current_cron.last_run,
         "next_run"      => current_cron.next_run.strftime('%Y-%m-%dT%H:%M:%SZ'),
-        "created_at"          => current_cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
+        "created_at"          => current_cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        "active"              => true,
     })}
     example { expect(current_cron.next_run).to_not be nil }
   end
@@ -78,7 +79,8 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
         "dont_run_if_recent_build_exists"    => false,
         "last_run"            => current_cron.last_run,
         "next_run"      => current_cron.next_run.strftime('%Y-%m-%dT%H:%M:%SZ'),
-        "created_at"          => current_cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
+        "created_at"          => current_cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        "active"              => true
     })}
     example { expect(current_cron.next_run).to_not be nil }
   end

@@ -26,3 +26,6 @@ services:
 
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
+
+before_install:
+  - 'gem update --system'

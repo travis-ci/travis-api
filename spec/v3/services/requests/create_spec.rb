@@ -229,6 +229,22 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
       }}
     end
 
+    describe "when the repository is inactive" do
+      before { repo.update_attributes!(active: false) }
+      before { post("/v3/repo/#{repo.id}/requests", params, headers) }
+
+      example { expect(last_response.status).to be == 406 }
+      example { expect(body).to include(
+        "@type",
+        "error",
+        "error_type",
+        "error_type",
+        "repository_inactive",
+        "error_message",
+        "cannot create requests on an inactive repository")
+      }
+    end
+
     describe "when request limit is reached" do
       before { 10.times { repo.requests.create(event_type: 'api') } }
       before { post("/v3/repo/#{repo.id}/requests", params, headers) }

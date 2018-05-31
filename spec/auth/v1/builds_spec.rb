@@ -170,7 +170,7 @@ describe 'v1 builds', auth_helpers: true, api_version: :v1, set_app: true do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false } # returns an empty array, see services/find_builds.rb
       it(:without_permission) { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, type: :json, empty: false }
+      it(:unauthenticated)    { should auth status: 200, type: :json, empty: true }
     end
 
     describe 'GET /builds?running=true' do
@@ -178,7 +178,7 @@ describe 'v1 builds', auth_helpers: true, api_version: :v1, set_app: true do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: 200, type: :json, empty: false }
+      it(:unauthenticated)    { should auth status: 200, type: :json, empty: true }
     end
 
     describe 'GET /builds?repository_id=%{repo.id}' do

@@ -90,11 +90,15 @@ class Build < Travis::Model
       limit(per_page).offset(per_page * (page - 1))
     end
 
-    def last_build_on(options)
+    def last_builds_on(options)
       scope = descending
       scope = scope.on_state(options[:state])   if options[:state]
       scope = scope.on_branch(options[:branch]) if options[:branch]
-      scope.first
+      scope
+    end
+
+    def last_build_on(options)
+      last_builds_on(options).first
     end
 
     def last_state_on(options)

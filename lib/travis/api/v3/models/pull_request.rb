@@ -7,7 +7,7 @@ module Travis::API::V3
     serialize  :payload
 
     def branch_name
-      commit.branch if commit
+      commit.branch_name if commit
     end
 
     def payload

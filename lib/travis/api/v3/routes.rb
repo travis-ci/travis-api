@@ -112,10 +112,11 @@ module Travis::API::V3
       route '/repo/({repository.id}|{repository.slug})'
       get :find
 
-      post :activate,  '/activate'
+      post :activate, '/activate'
       post :deactivate, '/deactivate'
-      post :star,    '/star'
-      post :unstar,  '/unstar'
+      post :star, '/star'
+      post :unstar, '/unstar'
+      hide(patch :update)
 
       resource :branch do
         route '/branch/{branch.name}'
@@ -251,6 +252,11 @@ module Travis::API::V3
         patch :resubscribe, '/resubscribe'
         post :cancel, '/cancel'
         get :invoices, '/invoices'
+      end
+
+      hidden_resource :trials do
+        route '/trials'
+        get :all
       end
 
       hidden_resource :plans do

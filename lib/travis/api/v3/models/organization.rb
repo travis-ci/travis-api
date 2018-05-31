@@ -13,7 +13,7 @@ module Travis::API::V3
     end
 
     def education
-      Travis::Features.owner_active?(:education, self)
+      Travis::Features.owner_active?(:educational_org, self)
     end
 
     alias members users

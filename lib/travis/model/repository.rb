@@ -132,6 +132,10 @@ class Repository < Travis::Model
     builds.api_and_pushes_and_crons.last_build_on(state: [:passed, :failed, :errored, :canceled], branch: branch)
   end
 
+  def last_builds_on(branch)
+    builds.api_and_pushes_and_crons.last_builds_on(branch: branch)
+  end
+
   def last_build_on(branch)
     builds.api_and_pushes_and_crons.last_build_on(branch: branch)
   end
@@ -149,6 +153,11 @@ class Repository < Travis::Model
         order  by branch, finished_at desc
       ) as last_builds on builds.id = last_builds.id
     )).limit(limit).order('finished_at DESC')
+    # scope = builds.select('DISTINCT ON (branch) id')
+    # scope = scope.where(event_type: 'push')
+    # scope = scope.group(:branch, :id)
+    # scope = scope.order('branch, finished_at DESC')
+    # Build.where(id: scope).limit(limit).order('finished_at DESC')
   end
 
   def regenerate_key!

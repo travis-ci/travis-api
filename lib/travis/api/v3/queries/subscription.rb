@@ -31,5 +31,10 @@ module Travis::API::V3
       client = BillingClient.new(user_id)
       client.get_invoices_for_subscription(params['subscription.id'])
     end
+
+    def trial(user_id)
+      client = BillingClient.new(user_id)
+      client.get_trial_info_for_subscription(params['subscription.id'])
+    end
   end
 end
