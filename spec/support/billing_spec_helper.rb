@@ -51,5 +51,19 @@ module Support
         "currency" => "USD"
       }.deep_merge(attributes)
     end
+
+    def billing_trial_response_body(attributes = {})
+      {
+        'id' => 456,
+        'permissions' => { 'read' => true, 'write' => true },
+        'owner' => {
+          'type' => 'Organization',
+          'id' => 43
+        },
+        'created_at' => Time.now,
+        'status' => 'started',
+        'builds_remaining' => 5
+      }.deep_merge(attributes)
+    end
   end
 end

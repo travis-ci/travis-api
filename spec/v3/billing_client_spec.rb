@@ -148,8 +148,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns the trials' do
       stub_billing_request(:get, '/trials', auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump([{'id' => trial_id, 'created_at' => Time.now, status: 'started', 'builds_remaining' => 5 }]))
-        
+        .to_return(body: JSON.dump([billing_trial_response_body('id' => trial_id, 'owner' => { 'type' => 'Organization', 'id' => organization.id })]))
       expect(subject.size).to eq 1
       expect(subject.first.id).to eq(trial_id)
     end
