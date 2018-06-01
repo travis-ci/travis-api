@@ -7,7 +7,7 @@ module Support
       stub_request(method, url).with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
     end
 
-    def billing_response_body(attributes={})
+    def billing_subscription_response_body(attributes={})
       {
         "permissions" => { "read" => true, "write" => true },
         "id" => 81,
