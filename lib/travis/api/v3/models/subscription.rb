@@ -6,7 +6,7 @@ module Travis::API::V3
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
-      @permissions = Models::SubscriptionPermissions.new(attributes.fetch('permissions'))
+      @permissions = Models::BillingPermissions.new(attributes.fetch('permissions'))
       @valid_to = attributes.fetch('valid_to') && DateTime.parse(attributes.fetch('valid_to'))
       plan_data = attributes.fetch('plan')
       @plan = plan_data && Models::Plan.new(plan_data)
@@ -46,21 +46,6 @@ module Travis::API::V3
       @card_owner = attrs.fetch('card_owner')
       @expiration_date = attrs.fetch('expiration_date')
       @last_digits = attrs.fetch('last_digits')
-    end
-  end
-
-  class Models::SubscriptionPermissions
-    def initialize(attrs = {})
-      @read = attrs.fetch('read')
-      @write = attrs.fetch('write')
-    end
-
-    def read?
-      @read
-    end
-
-    def write?
-      @write
     end
   end
 end

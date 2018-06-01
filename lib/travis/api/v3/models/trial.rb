@@ -6,7 +6,7 @@ module Travis::API::V3
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
-      @permissions = Models::SubscriptionPermissions.new(attributes.fetch('permissions'))
+      @permissions = Models::BillingPermissions.new(attributes.fetch('permissions'))
       @owner = fetch_owner(attributes.fetch('owner'))
       @created_at = attributes.fetch('created_at') && DateTime.parse(attributes.fetch('created_at'))
       @status = attributes.fetch('status')
