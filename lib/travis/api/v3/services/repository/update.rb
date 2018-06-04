@@ -5,8 +5,15 @@ module Travis::API::V3
     def run!
       repository = check_login_and_find(:repository)
       raise InsufficientAccess unless access_control.full_access?
-      query.update(com_id: params['com_id'])
+      query.update(attrs)
       result repository
+    end
+
+    def attrs
+      {
+        com_id: params['com_id'],
+        active: !!params['active']
+      }
     end
   end
 end
