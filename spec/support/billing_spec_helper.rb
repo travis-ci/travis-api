@@ -7,7 +7,7 @@ module Support
       stub_request(method, url).with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
     end
 
-    def billing_response_body(attributes={})
+    def billing_subscription_response_body(attributes={})
       {
         "permissions" => { "read" => true, "write" => true },
         "id" => 81,
@@ -49,6 +49,20 @@ module Support
         "annual" => false,
         "price" => 12500,
         "currency" => "USD"
+      }.deep_merge(attributes)
+    end
+
+    def billing_trial_response_body(attributes = {})
+      {
+        'id' => 456,
+        'permissions' => { 'read' => true, 'write' => true },
+        'owner' => {
+          'type' => 'Organization',
+          'id' => 43
+        },
+        'created_at' => Time.now,
+        'status' => 'started',
+        'builds_remaining' => 5
       }.deep_merge(attributes)
     end
   end
