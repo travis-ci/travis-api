@@ -19,7 +19,7 @@ module Travis::API::V3
 
     private
 
-    def visible_objects(list, factory)
+    def visible_objects(list, repository_id, factory)
       return factory.none unless unrestricted_api?
       list.where(private: false)
     end

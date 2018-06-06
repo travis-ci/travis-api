@@ -117,10 +117,11 @@ module Travis::API::V3
       route '/repo/({repository.id}|{repository.slug})'
       get :find
 
-      post :activate,  '/activate'
+      post :activate, '/activate'
       post :deactivate, '/deactivate'
-      post :star,    '/star'
-      post :unstar,  '/unstar'
+      post :star, '/star'
+      post :unstar, '/unstar'
+      hide(patch :update)
 
       resource :branch do
         route '/branch/{branch.name}'

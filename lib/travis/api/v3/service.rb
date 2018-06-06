@@ -33,7 +33,7 @@ module Travis::API::V3
     end
 
     def self.paginate(**options)
-      params("limit".freeze, "offset".freeze)
+      params("limit".freeze, "offset".freeze, "skip_count".freeze)
       params("sort_by".freeze) if query_factory.sortable?
       @paginator = Paginator.new(**options)
     end
@@ -148,6 +148,7 @@ module Travis::API::V3
       self.class.paginator.paginate(result,
         limit:          params['limit'.freeze],
         offset:         params['offset'.freeze],
+        skip_count:     params['skip_count'.freeze] == 'true',
         access_control: access_control)
     end
 
