@@ -1,10 +1,12 @@
 module Travis::API::V3
   class Models::Subscription
+    include Models::Owner
+
     attr_reader :id, :permissions, :valid_to, :plan, :coupon, :status, :source, :billing_info, :credit_card_info, :owner
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
-      @permissions = Models::SubscriptionPermissions.new(attributes.fetch('permissions'))
+      @permissions = Models::BillingPermissions.new(attributes.fetch('permissions'))
       @valid_to = attributes.fetch('valid_to') && DateTime.parse(attributes.fetch('valid_to'))
       plan_data = attributes.fetch('plan')
       @plan = plan_data && Models::Plan.new(plan_data)
@@ -14,18 +16,6 @@ module Travis::API::V3
       @billing_info = attributes['billing_info'] && Models::BillingInfo.new(@id, attributes['billing_info'])
       @credit_card_info = attributes['credit_card_info'] && Models::CreditCardInfo.new(@id, attributes['credit_card_info'])
       @owner = fetch_owner(attributes.fetch('owner'))
-    end
-
-    private
-
-    def fetch_owner(attributes)
-      owner_class = case attributes.fetch('type')
-                    when 'User'
-                      Models::User
-                    when 'Organization'
-                      Models::Organization
-                    end
-      owner_class.find(attributes.fetch('id'))
     end
   end
 
@@ -56,21 +46,6 @@ module Travis::API::V3
       @card_owner = attrs.fetch('card_owner')
       @expiration_date = attrs.fetch('expiration_date')
       @last_digits = attrs.fetch('last_digits')
-    end
-  end
-
-  class Models::SubscriptionPermissions
-    def initialize(attrs = {})
-      @read = attrs.fetch('read')
-      @write = attrs.fetch('write')
-    end
-
-    def read?
-      @read
-    end
-
-    def write?
-      @write
     end
   end
 end

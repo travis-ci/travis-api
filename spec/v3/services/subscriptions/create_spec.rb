@@ -58,7 +58,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
             'credit_card_info' => {
               'token' => 'token_from_stripe'
             }})
-          .to_return(status: 201, body: JSON.dump(billing_response_body(
+          .to_return(status: 201, body: JSON.dump(billing_subscription_response_body(
             'id' => 1234,
             'owner' => { 'type' => 'Organization', 'id' => organization.id },
             'plan' => {
