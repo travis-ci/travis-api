@@ -71,7 +71,15 @@ module Travis::API::V3
     end
 
     def s3_connection
-      Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], region: s3_config[:region], provider: 'AWS')
+      opts = {
+        aws_access_key_id: s3_config[:access_key_id],
+        aws_secret_access_key: s3_config[:secret_access_key],
+        provider: 'AWS'
+      }
+      opts[:aws_signature_version] = s3_config[:aws_signature_version] if s3_config[:aws_signature_version]
+      opts[:region] = s3_config[:region] if s3_config[:region]
+      log_s3_options(opts)
+      Fog::Storage.new(opts)
     end
 
     def s3_bucket
@@ -81,6 +89,11 @@ module Travis::API::V3
     def s3_objects
       files = s3_bucket.files
       files.map { |file| S3Wrapper.new(file) }
+    end
+
+    def log_s3_options(opts = {})
+      opts_to_log = Hash[opts.map { |k, v| [k, v.is_a?(String) ? v.to_s[0..8] : v] }]
+      Travis.logger.info "Fog::Storage (S3) options=#{opts_to_log}"
     end
 
     def gcs_connection
