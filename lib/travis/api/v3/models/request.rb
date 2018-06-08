@@ -2,6 +2,9 @@ module Travis::API::V3
   class Models::RequestConfig < Model
   end
 
+  class Models::RequestYamlConfig < Model
+  end
+
   class Models::Request < Model
     def self.columns
       super.reject { |c| c.name == 'payload' }
@@ -12,6 +15,7 @@ module Travis::API::V3
     belongs_to :repository
     belongs_to :owner, polymorphic: true
     belongs_to :config, foreign_key: :config_id, class_name: Models::RequestConfig
+    belongs_to :yaml_config, foreign_key: :yaml_config_id, class_name: Models::RequestYamlConfig
     has_many   :builds
     serialize  :config
     serialize  :payload
@@ -30,6 +34,10 @@ module Travis::API::V3
     def config
       config = super&.config || read_attribute(:config) || {}
       config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
+    end
+
+    def yaml_config
+      super&.yaml
     end
 
     def payload
