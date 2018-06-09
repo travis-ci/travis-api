@@ -81,6 +81,7 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
           },
           "id"                  => build.id,
           "number"              => "3",
+          "private"             => false,
           "state"               => "configured",
           "duration"            => nil,
           "event_type"          => "push",
