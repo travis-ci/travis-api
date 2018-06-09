@@ -140,8 +140,6 @@ GEM
     connection_pool (2.2.1)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
-    customerio (1.0.0)
-      multi_json (~> 1.0)
     dalli (2.7.6)
     database_cleaner (1.7.0)
     descendants_tracker (0.0.4)
@@ -419,7 +417,6 @@ DEPENDENCIES
   bunny (~> 2.9.2)
   coder (~> 0.4.0)
   composite_primary_keys (~> 8.0)
-  customerio
   dalli
   database_cleaner (~> 1.7)
   factory_girl (~> 2.4.0)

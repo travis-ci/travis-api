@@ -11,6 +11,24 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   before        { repo.update_attribute(:current_build, build)                             }
   after         { repo.update_attribute(:private, false)                            }
 
+  describe "sorting by default_branch.last_build" do
+    let!(:repo2) { Travis::API::V3::Models::Repository.create!(owner_name: 'svenfuchs', owner: repo.owner, name: 'second-repo', default_branch_name: 'master') }
+    let!(:branch) { Travis::API::V3::Models::Branch.create(repository: repo2, name: 'master') }
+    let!(:build) { Travis::API::V3::Models::Build.create(repository: repo2, branch_id: branch.id, branch_name: 'master') }
+
+    before do
+      branch.update_attributes!(last_build_id: build.id)
+      Travis::API::V3::Models::Permission.create(repository: repo2, user: repo2.owner, pull: true)
+      get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build:desc&include=repository.default_branch", {}, headers)
+    end
+
+    example { expect(last_response).to be_ok }
+    example 'repos with most recent build on default branch come first' do
+      repos = JSON.load(last_response.body)['repositories']
+      last_build_ids = repos.map { |r| r['default_branch']['last_build']['id'] }
+      expect(last_build_ids).to eq last_build_ids.sort.reverse
+    end
+  end
 
   describe "private repository, private API, authenticated as user with access" do
     before  { get("/v3/owner/svenfuchs/repos", {}, headers) }
