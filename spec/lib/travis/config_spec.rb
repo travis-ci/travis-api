@@ -82,16 +82,6 @@ describe Travis::Config do
         :variables => { :statement_timeout => 10000 }
       }
     end
-
-    it 'logs database' do
-      config.logs_database.should == {
-        :adapter => 'postgresql',
-        :database => 'travis_logs_test',
-        :encoding => 'unicode',
-        :min_messages => 'warning',
-        :variables => { :statement_timeout => 10000 }
-      }
-    end
   end
 
   describe 'resource urls' do
@@ -118,32 +108,6 @@ describe Travis::Config do
       it { config.database.database.should == 'database' }
       it { config.database.encoding.should == 'unicode' }
       it { config.database.variables.application_name.should_not be_empty }
-      it { config.database.variables.statement_timeout.should eq statement_timeout }
-    end
-
-    describe 'with a TRAVIS_LOGS_DATABASE_URL set' do
-      before { ENV['TRAVIS_LOGS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
-
-      it { config.logs_database.username.should == 'username' }
-      it { config.logs_database.password.should == 'password' }
-      it { config.logs_database.host.should == 'host' }
-      it { config.logs_database.port.should == 1234 }
-      it { config.logs_database.database.should == 'database' }
-      it { config.logs_database.encoding.should == 'unicode' }
-      it { config.logs_database.variables.application_name.should_not be_empty }
-      it { config.database.variables.statement_timeout.should eq statement_timeout }
-    end
-
-    describe 'with a LOGS_DATABASE_URL set' do
-      before { ENV['LOGS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
-
-      it { config.logs_database.username.should == 'username' }
-      it { config.logs_database.password.should == 'password' }
-      it { config.logs_database.host.should == 'host' }
-      it { config.logs_database.port.should == 1234 }
-      it { config.logs_database.database.should == 'database' }
-      it { config.logs_database.encoding.should == 'unicode' }
-      it { config.logs_database.variables.application_name.should_not be_empty }
       it { config.database.variables.statement_timeout.should eq statement_timeout }
     end
 

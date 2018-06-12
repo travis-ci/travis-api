@@ -71,6 +71,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
           "pull_request_number" => build.pull_request_number,
           "pull_request_title" => build.pull_request_title,
           "started_at"     => "2010-11-12T13:00:00Z",
+          "private"        => false,
           "finished_at"    => nil }}]})
     }
   end
@@ -130,6 +131,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
           "pull_request_number" => build.pull_request_number,
           "pull_request_title" => build.pull_request_title,
           "started_at"     => "2010-11-12T13:00:00Z",
+          "private"        => false,
           "finished_at"    => nil }}]})
     }
   end

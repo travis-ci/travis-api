@@ -27,6 +27,12 @@ module Travis::API::V3
       repository
     end
 
+    def update(attrs)
+      repository = find
+      repository.update_attributes!(attrs)
+      repository
+    end
+
     private
 
     def find!

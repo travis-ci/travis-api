@@ -37,6 +37,7 @@ module Travis::API::V3
     Stages              = Module.new { extend Services }
     Subscription        = Module.new { extend Services }
     Subscriptions       = Module.new { extend Services }
+    Trials              = Module.new { extend Services }
     User                = Module.new { extend Services }
     UserSetting         = Module.new { extend Services }
     UserSettings        = Module.new { extend Services }

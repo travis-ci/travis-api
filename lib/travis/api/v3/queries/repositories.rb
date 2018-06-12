@@ -4,7 +4,7 @@ module Travis::API::V3
     experimental_params :name_filter, prefix: :repository
     experimental_params :slug_filter, prefix: :repository
     sortable_by :id, :github_id, :owner_name, :name, active: sort_condition(:active),
-                :'default_branch.last_build' => 'builds.started_at',
+                :'default_branch.last_build' => "branches.last_build_id %{order} NULLS LAST",
                 :current_build => "repositories.current_build_id %{order} NULLS LAST",
                 :name_filter   => "name_filter",
                 :slug_filter   => "slug_filter"
@@ -73,7 +73,7 @@ module Travis::API::V3
                               || lower(repositories.name), #{query}) as slug_filter")
       end
       list = list.includes(default_branch: :last_build)
-      list = list.includes(current_build: [:repository, :branch, :commit, :stages, :sender]) if includes? 'repository.current_build'.freeze
+      list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
       list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
       sort list
     end

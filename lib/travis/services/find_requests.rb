@@ -22,7 +22,8 @@ module Travis
             columns = %w/id repository_id commit_id created_at owner_id owner_type
                          event_type base_commit head_commit result message state
                          pull_request_id/
-            requests = repo.requests.select(columns.map { |c| %Q["requests"."#{c}"] })
+            requests = scope(:request, repo.id).where(repository_id: repo.id)
+            requests = requests.select(columns.map { |c| %Q["requests"."#{c}"] })
             if params[:older_than]
               requests.older_than(params[:older_than])
             else

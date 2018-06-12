@@ -99,6 +99,10 @@ module Travis::API::V3
       return false
     end
 
+    def invalid?
+      invalidated_at or owner_type.nil?
+    end
+
     def managed_by_installation?
       !!managed_by_installation_at
     end
