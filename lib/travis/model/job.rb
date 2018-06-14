@@ -117,8 +117,9 @@ class Job < Travis::Model
   end
 
   def config
-    config = super&.config || read_attribute(:config) || {}
+    config = super&.config || has_attribute?(:config) && read_attribute(:config) || {}
     config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
+    config
   end
 
   def obfuscated_config
