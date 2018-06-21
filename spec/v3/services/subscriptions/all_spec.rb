@@ -34,15 +34,12 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
       }
     end
 
-    before do
-      stub_billing_request(:get, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump([billing_subscription_response_body('id' => 1234, 'plan' => plan,'permissions' => { 'read' => true, 'write' => false }, 'owner' => { 'type' => 'Organization', 'id' => organization.id })]))
-    end
+    let(:subscriptions_data) { [billing_subscription_response_body('id' => 1234, 'plan' => plan,'permissions' => { 'read' => true, 'write' => false }, 'owner' => { 'type' => 'Organization', 'id' => organization.id })] }
 
-    it 'responds with list of subscriptions' do
-      get('/v3/subscriptions', {}, headers)
-      expect(last_response.status).to eq(200)
-      expect(parsed_body).to eql_json({
+    let(:v2_response_body) { JSON.dump(subscriptions_data) }
+
+    let(:expected_json) do
+      {
         '@type' => 'subscriptions',
         '@representation' => 'standard',
         '@href' => '/v3/subscriptions',
@@ -88,7 +85,28 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             'login' => 'travis'
           }
         }]
-      })
+      }
+    end
+
+    before do
+      stub_billing_request(:get, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
+        .to_return(status: 200, body: v2_response_body)
+    end
+
+    it 'responds with list of subscriptions' do
+      get('/v3/subscriptions', {}, headers)
+      expect(last_response.status).to eq(200)
+      expect(parsed_body).to eql_json(expected_json)
+    end
+
+    context 'with subscription data nested under a `subscriptions` key' do
+      let(:v2_response_body) { JSON.dump(subscriptions: subscriptions_data)}
+
+      it 'responds with list of subscriptions' do
+        get('/v3/subscriptions', {}, headers)
+        expect(last_response.status).to eq(200)
+        expect(parsed_body).to eql_json(expected_json)
+      end
     end
 
     context 'with a null plan' do
