@@ -7,12 +7,7 @@ module Travis::API::V3
     end
 
     def all
-      # because billing-v2 API is changing from responding with an array, to responding with an
-      # object where this array is under the `subscriptions` key (in order to add permissions
-      # metadata under a separate key), we want to temporarily support both formats
-      response_body = connection.get('/subscriptions').body
-      data = response_body.is_a?(Hash) ? response_body['subscriptions'] : response_body
-      data.map do |subscription_data|
+      connection.get('/subscriptions').body.fetch('subscriptions').map do |subscription_data|
         Travis::API::V3::Models::Subscription.new(subscription_data)
       end
     end
