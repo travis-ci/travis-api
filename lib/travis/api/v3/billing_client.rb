@@ -7,9 +7,13 @@ module Travis::API::V3
     end
 
     def all
-      connection.get('/subscriptions').body.fetch('subscriptions').map do |subscription_data|
+      data = connection.get('/subscriptions').body
+      subscriptions = data.fetch('subscriptions').map do |subscription_data|
         Travis::API::V3::Models::Subscription.new(subscription_data)
       end
+      permissions = data.fetch('permissions')
+
+      Travis::API::V3::Models::SubscriptionsCollection.new(subscriptions, permissions)
     end
 
     def get_subscription(id)

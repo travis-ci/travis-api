@@ -19,6 +19,15 @@ module Travis::API::V3
     end
   end
 
+  class Models::SubscriptionsCollection
+    attr_reader :subscriptions, :permissions
+
+    def initialize(subscriptions, permissions)
+      @subscriptions = subscriptions
+      @permissions = permissions
+    end
+  end
+
   class Models::BillingInfo
     attr_reader :id, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code
 
