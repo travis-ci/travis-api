@@ -35,14 +35,16 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
     end
 
     let(:subscriptions_data) { [billing_subscription_response_body('id' => 1234, 'plan' => plan,'permissions' => { 'read' => true, 'write' => false }, 'owner' => { 'type' => 'Organization', 'id' => organization.id })] }
+    let(:permissions_data) { [{'owner' => {'type' => 'Organization', 'id' => 1}, 'create' => true}] }
 
-    let(:v2_response_body) { JSON.dump(subscriptions_data) }
+    let(:v2_response_body) { JSON.dump(subscriptions: subscriptions_data, permissions: permissions_data) }
 
     let(:expected_json) do
       {
         '@type' => 'subscriptions',
         '@representation' => 'standard',
         '@href' => '/v3/subscriptions',
+        '@permissions' => permissions_data,
         'subscriptions' => [{
           '@type' => 'subscription',
           '@representation' => 'standard',
@@ -97,16 +99,6 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
       get('/v3/subscriptions', {}, headers)
       expect(last_response.status).to eq(200)
       expect(parsed_body).to eql_json(expected_json)
-    end
-
-    context 'with subscription data nested under a `subscriptions` key' do
-      let(:v2_response_body) { JSON.dump(subscriptions: subscriptions_data)}
-
-      it 'responds with list of subscriptions' do
-        get('/v3/subscriptions', {}, headers)
-        expect(last_response.status).to eq(200)
-        expect(parsed_body).to eql_json(expected_json)
-      end
     end
 
     context 'with a null plan' do
