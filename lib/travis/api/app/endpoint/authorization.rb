@@ -5,7 +5,6 @@ require 'securerandom'
 require 'travis/api/app'
 require 'travis/github/education'
 require 'travis/github/oauth'
-require 'travis/customerio'
 
 class Travis::Api::App
   class Endpoint
@@ -168,7 +167,6 @@ class Travis::Api::App
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
             update_first_login(user)
-            Travis::Customerio.update(user)
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state

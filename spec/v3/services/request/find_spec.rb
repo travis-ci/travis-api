@@ -23,6 +23,14 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
     }
   end
 
+  describe "include yaml config" do
+    before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.yaml_config") }
+    example { expect(last_response).to be_ok }
+    example do
+      expect(JSON.load(body).keys).to include 'yaml_config'
+    end
+  end
+
   describe "retrieve request on private repository, private API, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}

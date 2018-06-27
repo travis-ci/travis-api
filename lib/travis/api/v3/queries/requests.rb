@@ -1,7 +1,9 @@
 module Travis::API::V3
   class Queries::Requests < Query
     def find(repository)
-      repository.requests.includes(:commit).order(id: :desc)
+      relation = repository.requests.includes(:commit)
+      relation.includes(:yaml_config) if includes?('request.yaml_config')
+      relation.order(id: :desc)
     end
 
     def count(repository, time_frame)
