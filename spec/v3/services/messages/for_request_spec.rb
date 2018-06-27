@@ -2,7 +2,7 @@ describe Travis::API::V3::Services::Messages::ForRequest, set_app: true do
 
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:request) { repo.requests.first }
-  let!(:message) { Travis::API::V3::Models::Message.create!(level: 'info', subject_id: request.id, subject_type: 'Request')}
+  let!(:message) { Travis::API::V3::Models::Message.create!(level: 'warn', subject_id: request.id, subject_type: 'Request')}
   let!(:message_2) { Travis::API::V3::Models::Message.create!(level: 'error', subject_id: request.id, subject_type: 'Request')}
 
   describe "retrieve request messages on a public repository" do

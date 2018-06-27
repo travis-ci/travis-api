@@ -6,7 +6,7 @@ module Travis::API::V3
       order(%Q{
         CASE
         WHEN level = 'error' THEN '1'
-        WHEN level = 'warning' THEN '2'
+        WHEN level = 'warn' THEN '2'
         WHEN level = 'info' THEN '3'
         WHEN level IS NULL THEN '4'
         END
