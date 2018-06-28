@@ -21,7 +21,6 @@ module Travis
               {
                 'job' => job_data,
                 'commit' => commit_data,
-                'annotations' => annotations_data
               }
             end
 
@@ -43,7 +42,6 @@ module Travis
                   'queue' => job.queue,
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags,
-                  'annotation_ids' => job.annotation_ids,
                 }
                 data['log_id'] = job.log_id if include_log_id?
                 data
@@ -55,6 +53,7 @@ module Travis
                   'sha' => commit.commit,
                   'branch' => commit.branch,
                   'branch_is_default' => branch_is_default(commit, repository),
+                  'tag' => commit.tag_name,
                   'message' => commit.message,
                   'committed_at' => format_date(commit.committed_at),
                   'author_name' => commit.author_name,
@@ -63,10 +62,6 @@ module Travis
                   'committer_email' => commit.committer_email,
                   'compare_url' => commit.compare_url,
                 }
-              end
-
-              def annotations_data
-                Annotations.new(job.annotations, params).data["annotations"]
               end
 
               def branch_is_default(commit, repository)

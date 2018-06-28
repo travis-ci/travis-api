@@ -10,6 +10,7 @@ FactoryGirl.define do
     finished_at { Time.now.utc }
     number 1
     state :passed
+    private false
   end
 
   factory :commit do
@@ -33,6 +34,7 @@ FactoryGirl.define do
     number     '2.1'
     tags       ""
     state      :created
+    private    false
   end
 
   factory :request do
@@ -40,6 +42,7 @@ FactoryGirl.define do
     association :commit
     token 'the-token'
     event_type 'push'
+    private false
   end
 
   factory :repository do
@@ -57,6 +60,7 @@ FactoryGirl.define do
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
     sequence(:github_id) {|n| n }
+    private false
   end
 
   factory :minimal, :parent => :repository do
@@ -65,7 +69,7 @@ FactoryGirl.define do
   factory :enginex, :parent => :repository do
     name 'enginex'
     owner_name 'josevalim'
-    owner_email 'josevalim@email.com'
+    owner_email 'josevalim@email.example.com'
     owner { User.find_by_login('josevalim') || Factory(:user, :login => 'josevalim') }
   end
 
@@ -73,6 +77,9 @@ FactoryGirl.define do
     repository { Repository.first || Factory(:repository) }
     source { Build.first || Factory(:build) }
     event 'build:started'
+  end
+
+  factory :permission do
   end
 
   factory :user do
@@ -115,19 +122,6 @@ FactoryGirl.define do
     finished_at { Time.now.utc }
   end
 
-  factory :annotation do
-    url "https://travis-ci.org/travis-ci/travis-ci/jobs/12345"
-    description "Job passed"
-    job { Factory(:test) }
-    annotation_provider { Factory(:annotation_provider) }
-  end
-
-  factory :annotation_provider do
-    name "Travis CI"
-    api_username "travis-ci"
-    api_key "0123456789abcdef"
-  end
-
   factory :branch, class: Travis::API::V3::Models::Branch do
     name Random.rand(1..1000)
     repository_id { Factory(:repository).id }
@@ -148,6 +142,6 @@ FactoryGirl.define do
     branch { Factory(:branch) }
     interval "daily"
     dont_run_if_recent_build_exists false
+    active true
   end
 end
-

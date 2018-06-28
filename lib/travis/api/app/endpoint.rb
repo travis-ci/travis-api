@@ -17,6 +17,10 @@ class Travis::Api::App
     before { flash.clear }
     after { content_type :json unless content_type }
 
+    before do
+      halt 406 if accept_version == 'v2.1' && ENV['DISABLE_V2_1']
+    end
+
     error(ActiveRecord::RecordNotFound, Sinatra::NotFound) { not_found }
     not_found {
       if content_type =~ /json/
@@ -32,8 +36,41 @@ class Travis::Api::App
 
     private
 
+      def authenticate_by_mode!
+        return if org? || authenticated?
+        halt 401 if private_mode? || pre_v2_1?
+      end
+
+      def allow_public?
+        org? || public_mode?
+      end
+
+      def authenticated?
+        !!env['travis.access_token']
+      end
+
+      def public_mode?
+        Travis.config[:public_mode]
+      end
+
+      def private_mode?
+        !public_mode?
+      end
+
+      def org?
+        Travis.config.org?
+      end
+
+      def com?
+        !org?
+      end
+
+      def pre_v2_1?
+        accept_version.to_s < 'v2.1'
+      end
+
       def redis
-        Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
+        Travis.redis
       end
 
       def endpoint(link, query_values = {})
@@ -64,6 +101,7 @@ require 'travis/api/app/endpoint/hooks'
 require 'travis/api/app/endpoint/jobs'
 require 'travis/api/app/endpoint/lint'
 require 'travis/api/app/endpoint/logs'
+require 'travis/api/app/endpoint/pusher'
 require 'travis/api/app/endpoint/repos'
 require 'travis/api/app/endpoint/requests'
 require 'travis/api/app/endpoint/setting_endpoint'

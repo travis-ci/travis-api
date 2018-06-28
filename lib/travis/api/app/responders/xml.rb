@@ -37,7 +37,6 @@ module Travis::Api::App::Responders
       super && @resource.first.is_a?(Repository)
     end
 
-    instrument_method
     def apply
       super
 
@@ -50,7 +49,7 @@ module Travis::Api::App::Responders
 
     def build(repository)
       if branch.present?
-        repository.last_completed_build(branch)      
+        repository.last_completed_build(branch)
       else
         repository.last_build
       end

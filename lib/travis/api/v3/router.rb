@@ -1,3 +1,6 @@
+require 'metriks'
+require 'marginalia'
+
 module Travis::API::V3
   class Router
     include Travis::API::V3
@@ -7,12 +10,17 @@ module Travis::API::V3
       @routes            = routes
       @metrics_processor = Metrics::Processor.new
 
-      metrics_processor.start
+      metrics_processor.start unless ENV['ENV'] == 'test'
       routes.draw_routes
     end
 
     def call(env)
+      ::Metriks.meter("api.v3.total_requests").mark
+
       return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
+
+      process_txt_extension!(env)
+
       metrics         = @metrics_processor.create
       access_control  = AccessControl.new(env)
       env_params      = params(env)
@@ -26,12 +34,16 @@ module Travis::API::V3
       filtered = factory.filter_params(env_params)
       service  = factory.new(access_control, filtered.merge(params), env['rack.input'.freeze])
 
+      ::Marginalia.set('endpoint', factory.name)
+
       metrics.tick(:prepare)
       result   = service.run
       metrics.tick(:service)
 
       env_params.each_key { |key| result.ignored_param(key, reason: "not safelisted".freeze) unless filtered.include?(key) }
       response = render(result, env_params, env, content_type)
+
+      response[1]['X-Endpoint'] = factory.name
 
       metrics.tick(:renderer)
       metrics.success(status: response[0])
@@ -41,6 +53,8 @@ module Travis::API::V3
 
       result   = Result.new(access_control: access_control, type: :error, resource: error)
       response = V3.response(result.render(env_params, env),  {}, content_type: content_type, status: error.status)
+
+      response[1]['X-Endpoint'] = factory.name if factory
 
       metrics.tick(:rendered)
       metrics.failure(status: error.status)
@@ -61,6 +75,14 @@ module Travis::API::V3
       allowed_content_types = [default_content_type, 'text/plain'.freeze]
       content_type = env.fetch('HTTP_ACCEPT'.freeze, default_content_type)
       allowed_content_types.find{ |d| d == content_type} || default_content_type
+    end
+
+    def process_txt_extension!(env)
+      if env['PATH_INFO'] =~ /.txt$/
+        # if the URL ends with .txt we want to overwrite whatever is in Accept
+        # header as usually it's because the URL is opened in the browser
+        env['HTTP_ACCEPT'] = 'text/plain'.freeze
+      end
     end
 
     def params(env)

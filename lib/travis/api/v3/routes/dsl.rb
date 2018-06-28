@@ -18,10 +18,18 @@ module Travis::API::V3
       @prefix ||= ""
     end
 
+    def enterprise(&block)
+      block.call if Travis.env == 'test' || Travis.config.enterprise
+    end
+
     def resource(identifier, **args, &block)
       resource = Routes::Resource.new(identifier, **args)
       with_resource(resource, &block)
       resources << resource
+    end
+
+    def hidden_resource(identifier, **args, &block)
+      resource(identifier, **args.merge(hidden: true), &block)
     end
 
     def with_resource(resource)
@@ -50,6 +58,10 @@ module Travis::API::V3
         key = "#{current_resource.display_identifier}.#{key}" if current_resource and not key.to_s.include?(?.)
         mustermann_options[:capture][key.to_sym] = value
       end
+    end
+
+    def hide(service)
+      current_resource.hide_service(service)
     end
 
     def get(*args)

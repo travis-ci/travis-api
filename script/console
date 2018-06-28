@@ -1,8 +1,11 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
 
+$: << 'lib'
+
 require 'bundler/setup'
 require 'travis/api/app'
+require 'marginalia'
 
 class Travis::Console
   include Travis::Services::Helpers
@@ -13,6 +16,10 @@ class Travis::Console
     @current_user = user
   end
 end
+
+Marginalia.set('app', 'api')
+Marginalia.set('script', 'console')
+Marginalia.set('dyno', ENV['DYNO'])
 
 V3 = Travis::API::V3
 

@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Services::Repositories::ForCurrentUser < Service
-    params :active, :private, :starred, prefix: :repository
+    params :active, :private, :starred, :name_filter, :slug_filter,
+      :managed_by_installation, :active_on_org, prefix: :repository
     paginate(default_limit: 100)
 
     def run!

@@ -1,16 +1,51 @@
 module Travis::API::V3
   class Renderer::Build < ModelRenderer
-    representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at)
-    representation(:standard, *representations[:minimal], :repository, :branch, :commit, :jobs, :stages)
+    representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at, :private)
+    representation(:standard, *representations[:minimal], :repository, :branch, :tag, :commit, :jobs, :stages, :created_by, :updated_at)
     representation(:active, *representations[:standard])
 
     hidden_representations(:active)
 
+    def self.available_attributes
+      super + ['request']
+    end
+
+    def request
+      # no filtering here, we assume that request.private == request.build.private
+      Renderer.render_model(model.request, mode: :minimal)
+    end
+
     def jobs
+      # no filtering here, we assume that job.private == job.build.private
       return model.active_jobs if include_full_jobs? && representation?(:active)
       return model.jobs if include_full_jobs?
       return model.job_ids.map { |id| job(id) } unless representation?(:active)
       model.active_jobs.map{ |j| job(j.id) }
+    end
+
+    def created_by
+      if creator = model.created_by
+        payload = {
+          '@type' => model.sender_type.downcase,
+          '@href' => created_by_href(creator),
+          '@representation' => 'minimal'.freeze,
+          'id' => creator.id,
+          'login' => creator.login
+        }
+        payload['avatar_url'] = V3::Renderer::AvatarURL.avatar_url(creator) if include?('created_by.avatar_url')
+        payload
+      end
+    end
+
+    def updated_at
+      json_format_time_with_ms(model.updated_at)
+    end
+
+    private def created_by_href(creator)
+      case creator
+      when V3::Models::Organization then Renderer.href(:organization, script_name: script_name, id: creator.id)
+      when V3::Models::User         then Renderer.href(:user, script_name: script_name, id: creator.id)
+      end
     end
 
     private def include_full_jobs?

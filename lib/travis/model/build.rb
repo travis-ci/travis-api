@@ -3,40 +3,9 @@ require 'simple_states'
 require 'travis/model'
 require 'travis/services/next_build_number'
 
-# Build currently models a central but rather abstract domain entity: the thing
-# that is triggered by a Github request (service hook ping).
-#
-# Build groups a matrix of Job::Test instances, and belongs to a Request (and
-# thus Commit as well as a Repository).
-#
-# A Build is created when its Request was configured (by fetching .travis.yml)
-# and approved (e.g. not excluded by the configuration). Once a Build is
-# created it will expand its matrix according to the given configuration and
-# create the according Job::Test instances.  Each Job::Test instance will
-# trigger a test run remotely (on the worker). Once all Job::Test instances
-# have finished the Build will be finished as well.
-#
-# Each of these state changes (build:created, job:started, job:finished, ...)
-# will issue events that are listened for by the event handlers contained in
-# travis/notification. These event handlers then send out various notifications
-# of various types through email, pusher and irc, archive builds and queue
-# jobs for the workers.
-#
-# Build is split up to several modules:
-#
-#  * Build       - ActiveRecord structure, validations and scopes
-#  * States      - state definitions and events
-#  * Denormalize - some state changes denormalize attributes to the build's
-#                  repository (e.g. Build#started_at gets propagated to
-#                  Repository#last_started_at)
-#  * Matrix      - logic related to expanding the build matrix, normalizing
-#                  configuration for Job::Test instances, evaluating the
-#                  final build result etc.
-#  * Messages    - helpers for evaluating human readable result messages
-#                  (e.g. "Still Failing")
-#  * Events      - helpers that are used by notification handlers (and that
-#                  TODO probably should be cleaned up and moved to
-#                  travis/notification)
+class BuildConfig < ActiveRecord::Base
+end
+
 class Build < Travis::Model
   require 'travis/model/build/config'
   require 'travis/model/build/denormalize'
@@ -47,6 +16,7 @@ class Build < Travis::Model
   require 'travis/model/build/states'
   require 'travis/model/env_helpers'
 
+  include Travis::ScopeAccess
   include Matrix, States, SimpleStates
 
   belongs_to :commit
@@ -54,7 +24,8 @@ class Build < Travis::Model
   belongs_to :pull_request
   belongs_to :repository, autosave: true
   belongs_to :owner, polymorphic: true
-  has_many   :matrix, as: :source, order: :id, class_name: 'Job::Test', dependent: :destroy
+  belongs_to :config, foreign_key: :config_id, class_name: BuildConfig
+  has_many   :matrix, -> { order('id') }, as: :source, class_name: 'Job::Test', dependent: :destroy
   has_many   :events, as: :source
 
   validates :repository_id, :commit_id, :request_id, presence: true
@@ -119,11 +90,15 @@ class Build < Travis::Model
       limit(per_page).offset(per_page * (page - 1))
     end
 
-    def last_build_on(options)
+    def last_builds_on(options)
       scope = descending
       scope = scope.on_state(options[:state])   if options[:state]
       scope = scope.on_branch(options[:branch]) if options[:branch]
-      scope.first
+      scope
+    end
+
+    def last_build_on(options)
+      last_builds_on(options).first
     end
 
     def last_state_on(options)
@@ -170,7 +145,7 @@ class Build < Travis::Model
   end
 
   def state
-    super || 'created'
+    (super || :created).to_sym
   end
 
   # AR 3.2 does not handle pg arrays and the plugins supporting them
@@ -192,11 +167,19 @@ class Build < Travis::Model
   alias addons_enabled? secure_env_enabled?
 
   def config=(config)
-    super((config || {}).deep_symbolize_keys)
+    return super if config.nil?
+    raise unless ENV['RACK_ENV'] == 'test'
+    config = config.deep_symbolize_keys
+    config = BuildConfig.new(repository_id: repository_id, key: 'key', config: config)
+    super(config)
   end
 
   def config
-    @config ||= Config.new(super, multi_os: repository.multi_os_enabled?).normalize
+    @config ||= begin
+      config = super&.config || read_attribute(:config) || {}
+      config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
+      Config.new(config, multi_os: repository.try(:multi_os_enabled?)).normalize
+    end
   end
 
   def obfuscated_config

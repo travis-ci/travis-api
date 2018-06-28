@@ -22,7 +22,6 @@ module Travis
                 'build'  => build_data,
                 'commit' => commit_data,
                 'jobs'   => jobs_data,
-                'annotations' => annotations_data
               }
             end
 
@@ -53,6 +52,7 @@ module Travis
                   'sha' => commit.commit,
                   'branch' => commit.branch,
                   'branch_is_default' => branch_is_default,
+                  'tag' => commit.tag_name,
                   'message' => commit.message,
                   'committed_at' => format_date(commit.committed_at),
                   'author_name' => commit.author_name,
@@ -77,7 +77,6 @@ module Travis
                   'queue' => job.queue,
                   'allow_failure' => job.allow_failure,
                   'tags' => job.tags,
-                  'annotation_ids' => job.annotation_ids,
                 }.tap do |ret|
                   ret['log_id'] = job.log_id if include_log_id?
                 end
@@ -87,16 +86,8 @@ module Travis
                 build.matrix.map { |job| job_data(job) }
               end
 
-              def annotations_data
-                Annotations.new(annotations, params).data["annotations"]
-              end
-
               def branch_is_default
                 repository.default_branch == commit.branch
-              end
-
-              def annotations
-                build.matrix.map(&:annotations).flatten
               end
 
               def commit

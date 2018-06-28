@@ -5,8 +5,10 @@ module Travis
     class FindBuild < Base
       register :find_build
 
+      scope_access!
+
       def run
-        preload(result) if result
+        result
       end
 
       def final?
@@ -24,7 +26,7 @@ module Travis
 
         def all_resources
           if result
-            all = [result, result.commit, result.request, result.matrix.to_a, result.matrix.map(&:annotations)]
+            all = [result, result.commit, result.request, result.matrix.to_a]
             all.flatten.find_all { |r| r.updated_at }
           else
             []
@@ -39,14 +41,9 @@ module Travis
           columns = scope(:build).column_names
           columns -= %w(config) if params[:exclude_config]
           columns = columns.map { |c| %Q{"builds"."#{c}"} }
-          scope(:build).select(columns).find_by_id(params[:id]).tap do |res|
-            res.config = {} if params[:exclude_config]
-          end
-        end
-
-        def preload(build)
-          ActiveRecord::Associations::Preloader.new(build, [:matrix, :commit, :request]).run
-          ActiveRecord::Associations::Preloader.new(build.matrix, :annotations).run
+          scope = scope(:build).includes([:matrix, :commit, :request, :config])
+          build = scope.select(columns).find_by_id(params[:id])
+          build.config = nil if params[:exclude_config]
           build
         end
     end

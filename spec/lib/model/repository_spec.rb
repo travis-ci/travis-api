@@ -2,9 +2,9 @@ describe Repository do
   before { DatabaseCleaner.clean_with :truncation }
 
   describe '#last_completed_build' do
-    let(:repo)   { Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
-    let(:build1) { Factory(:build, finished_at: 1.hour.ago, state: :passed) }
-    let(:build2) { Factory(:build, finished_at: Time.now, state: :failed) }
+    let(:repo)   { Factory(:repository, name: 'foobarbaz') }
+    let(:build1) { Factory(:build, repository: repo, finished_at: 1.hour.ago, state: :passed) }
+    let(:build2) { Factory(:build, repository: repo, finished_at: Time.now, state: :failed) }
 
     before do
       build1.update_attributes(branch: 'master')
@@ -46,25 +46,25 @@ describe Repository do
   end
 
   describe 'class methods' do
-    describe 'find_by' do
+    describe 'by_params' do
       let(:minimal) { Factory(:repository) }
 
       it "should find a repository by it's github_id" do
-        Repository.find_by(github_id: minimal.github_id).should == minimal
+        Repository.by_params(github_id: minimal.github_id).to_a.first.should == minimal
       end
 
       it "should find a repository by it's id" do
-        Repository.find_by(id: minimal.id).id.should == minimal.id
+        Repository.by_params(id: minimal.id).to_a.first.id.should == minimal.id
       end
 
       it "should find a repository by it's name and owner_name" do
-        repo = Repository.find_by(name: minimal.name, owner_name: minimal.owner_name)
+        repo = Repository.by_params(name: minimal.name, owner_name: minimal.owner_name).to_a.first
         repo.owner_name.should == minimal.owner_name
         repo.name.should == minimal.name
       end
 
       it "returns nil when a repository couldn't be found using params" do
-        Repository.find_by(name: 'emptiness').should be_nil
+        Repository.by_params(name: 'emptiness').to_a.should == []
       end
     end
 
@@ -164,16 +164,16 @@ describe Repository do
       end
     end
 
-    describe 'counts_by_owner_names' do
+    describe 'counts_by_owner_ids' do
       let!(:repositories) do
-        Factory(:repository, owner_name: 'svenfuchs', name: 'minimal')
-        Factory(:repository, owner_name: 'travis-ci', name: 'travis-ci')
-        Factory(:repository, owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
+        Factory(:repository, owner_id: 1, owner_type: 'Organization', owner_name: 'svenfuchs', name: 'minimal')
+        Factory(:repository, owner_id: 2, owner_type: 'Organization', owner_name: 'travis-ci', name: 'travis-ci')
+        Factory(:repository, owner_id: 2, owner_type: 'Organization', owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
       end
 
-      it 'returns repository counts per owner_name for the given owner_names' do
-        counts = Repository.counts_by_owner_names(%w(svenfuchs travis-ci))
-        counts.should == { 'svenfuchs' => 1, 'travis-ci' => 1 }
+      it 'returns repository counts per owner_id for the given owner_ids' do
+        counts = Repository.counts_by_owner_ids([1, 2], 'Organization')
+        counts.should == { 1 => 1, 2 => 1 }
       end
     end
   end
@@ -393,10 +393,10 @@ describe Repository do
 
     it 'retrieves last builds on all branches' do
       Build.delete_all
-      old = Factory(:build, repository: repo, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
-      one = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'one'))
-      two = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'two'))
-      three = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'three'))
+      old = Factory(:build, repository: repo, number: 1, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
+      one = Factory(:build, repository: repo, number: 2, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'one'))
+      two = Factory(:build, repository: repo, number: 3, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'two'))
+      three = Factory(:build, repository: repo, number: 4, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'three'))
       three.update_attribute(:event_type, 'pull_request')
 
       builds = repo.last_finished_builds_by_branches

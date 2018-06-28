@@ -61,7 +61,7 @@ describe Build do
         Factory(:build, state: 'failed')
         Factory(:build, state: 'created')
 
-        Build.recent.all.map(&:state).should == ['failed', 'passed']
+        Build.recent.all.map(&:state).should == [:failed, :passed]
       end
     end
 
@@ -71,7 +71,7 @@ describe Build do
         Factory(:build, state: 'started')
         Factory(:build, state: 'created')
 
-        Build.was_started.map(&:state).sort.should == ['passed', 'started']
+        Build.was_started.map(&:state).sort.should == [:passed, :started]
       end
     end
 
@@ -224,7 +224,7 @@ describe Build do
 
       it 'deep_symbolizes keys on write' do
         build = Factory(:build, config: { 'foo' => { 'bar' => 'bar' } })
-        build.read_attribute(:config)[:foo].should == { bar: 'bar' }
+        build.config[:foo].should == { bar: 'bar' }
       end
 
       it 'downcases the language on config' do
@@ -285,12 +285,6 @@ describe Build do
 
       build = Factory(:build,  request: Factory(:request, event_type: 'push'))
       build.event_type.should == 'push'
-    end
-
-    it 'saves pull_request_title before create' do
-      payload = { 'pull_request' => { 'title' => 'A pull request' } }
-      build = Factory(:build,  request: Factory(:request, event_type: 'pull_request', payload: payload))
-      build.pull_request_title.should == 'A pull request'
     end
 
     it 'saves branch before create' do

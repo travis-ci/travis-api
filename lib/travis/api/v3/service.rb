@@ -33,7 +33,7 @@ module Travis::API::V3
     end
 
     def self.paginate(**options)
-      params("limit".freeze, "offset".freeze)
+      params("limit".freeze, "offset".freeze, "skip_count".freeze)
       params("sort_by".freeze) if query_factory.sortable?
       @paginator = Paginator.new(**options)
     end
@@ -113,11 +113,23 @@ module Travis::API::V3
       head(status: 204)
     end
 
+    def no_content
+      head(status: 204)
+    end
+
     def run
       not_found unless result = run!
       result = paginate(result) if self.class.paginate?
+      check_deprecated_params(result) if params['include']
       apply_warnings(result)
       result
+    end
+
+    def check_deprecated_params(result)
+      case
+      when params['include'].match(/repository.current_build/)
+       result.deprecated_param('current_build', reason: "repository.last_started_build".freeze)
+      end
     end
 
     def warnings
@@ -136,6 +148,7 @@ module Travis::API::V3
       self.class.paginator.paginate(result,
         limit:          params['limit'.freeze],
         offset:         params['offset'.freeze],
+        skip_count:     params['skip_count'.freeze] == 'true',
         access_control: access_control)
     end
 
@@ -148,6 +161,14 @@ module Travis::API::V3
     def accepted(**payload)
       payload[:resource_type] ||= result_type
       result(payload, status: 202, result_type: :accepted)
+    end
+
+    def rejected(payload)
+      result(payload, status: 403, result_type: :error)
+    end
+
+    def abuse_detected(message = 'Abuse detected. Restart disabled. If you think you have received this message in error, please contact support: support@travis-ci.com')
+      rejected(Error.new(message, status: 403))
     end
 
     def not_implemented

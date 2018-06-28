@@ -1,4 +1,5 @@
 require 'faraday'
+require 'faraday_middleware'
 require 'core_ext/hash/compact'
 require 'core_ext/hash/deep_symbolize_keys'
 require 'active_support/core_ext/string'
@@ -78,12 +79,13 @@ module Travis
       def http
         @http ||= Faraday.new(http_options) do |f|
           f.request :url_encoded
-          f.adapter :net_http
+          f.use :instrumentation
+          f.adapter :net_http_persistent
         end
       end
 
       def http_options
-        { ssl: Travis.config.ssl.compact.to_h }
+        { ssl: Travis.config.ssl.to_h }
       end
 
       def timeout(options = { after: 60 }, &block)

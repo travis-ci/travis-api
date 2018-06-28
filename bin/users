@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+require_relative './user_mgmt'
+
+option = ARGV.first
+users = nil
+
+if option == '--active'
+  users = User.active.alpha
+  counts = "Total: #{users.count}"
+elsif option == '--inactive'
+  users = User.inactive.alpha
+  counts = "Total: #{users.count}"
+elsif option == '--suspended'
+  users = User.suspended.alpha
+  counts = "Total: #{users.count}"
+elsif [nil, '--all'].include?(option)
+  users = User.all.alpha
+  counts = "Total: #{users.count} Active: #{User.active.count} Inactive: #{User.inactive.count} Suspended: #{User.suspended.count}"
+elsif option == '--help'
+  puts "Shows status of users in Travis Enterpise installation"
+  puts "--all or no arguments shows all users and their status"
+  puts "--active shows active users"
+  puts "--inactive shows inactive users"
+  puts "--suspended shows suspennded users (suspended using `travis suspend [username]` command)"
+  exit 1
+else
+  puts "Option #{option} not recognised."
+  exit 1
+end
+
+if users
+  col_width = users.pluck(:login).map(&:length).max
+  users.each do |user|
+    puts [user.login.ljust(col_width), user.enterprise_status.ljust(col_width)].join(' ' * 5)
+  end
+  puts counts
+  exit 0
+end

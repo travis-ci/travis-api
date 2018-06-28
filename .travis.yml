@@ -2,20 +2,30 @@ language: ruby
 
 sudo: false
 
-rvm: 2.3.4
+rvm: 2.5.0
 
+script: "bundle exec rake knapsack:rspec"
 env:
   global:
     - RUBY_GC_MALLOC_LIMIT=90000000
     - RUBY_GC_HEAP_FREE_SLOTS=200000
+    - CI_NODE_TOTAL=3
+
+  matrix:
+    - CI_NODE_INDEX=0
+    - CI_NODE_INDEX=1
+    - CI_NODE_INDEX=2
 
 cache: bundler
 
 addons:
-  postgresql: 9.3
+  postgresql: 9.6
 
 services:
-  - redis
+  - redis-server
 
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
+
+before_install:
+  - 'gem update --system'

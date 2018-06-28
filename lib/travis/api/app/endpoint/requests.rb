@@ -5,6 +5,8 @@ require 'travis/api/enqueue/services/restart_model'
 class Travis::Api::App
   class Endpoint
     class Requests < Endpoint
+      before { authenticate_by_mode! }
+
       get '/' do
         begin
           respond_with(service(:find_requests, params).run)
@@ -21,6 +23,8 @@ class Travis::Api::App
       post '/', scope: :private do
         if params[:request] && params[:request][:repository]
           status 404
+        elsif !current_user
+          status 401
         else
           # DEPRECATED: this will be removed by 1st of December
           #
@@ -30,7 +34,9 @@ class Travis::Api::App
           # I think we need to properly deprecate this by publishing a blog post.
           Metriks.meter("api.v2.request.restart").mark
           service = Travis::Enqueue::Services::RestartModel.new(current_user, params)
-          params[:user_id] = service.target.repository.owner.id
+          params[:user_id] = current_user.id
+
+          Travis.logger.warn "Deprecated endpoint POST /requests: #{params}"
 
           type = params[:build_id] ? 'build' : 'job'
           params[:id] = params[:build_id] || params[:job_id]

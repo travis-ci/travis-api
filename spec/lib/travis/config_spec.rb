@@ -2,6 +2,14 @@ require 'spec_helper'
 require 'active_support/core_ext/hash/slice'
 
 describe Travis::Config do
+  # Run examples with a fresh ENV and restore original afterwards
+  around do |example|
+    old_env = ENV.to_h
+    ENV.replace({})
+    example.run
+    ENV.replace(old_env)
+  end
+
   let(:config) { Travis::Config.load(:files, :env, :heroku, :docker) }
   let(:statement_timeout) { Travis::Config::Heroku::Database::VARIABLES[:statement_timeout] }
 
@@ -74,22 +82,11 @@ describe Travis::Config do
         :variables => { :statement_timeout => 10000 }
       }
     end
-
-    it 'logs database' do
-      config.logs_database.should == {
-        :adapter => 'postgresql',
-        :database => 'travis_logs_test',
-        :encoding => 'unicode',
-        :min_messages => 'warning',
-        :variables => { :statement_timeout => 10000 }
-      }
-    end
   end
 
   describe 'resource urls' do
     describe 'with a TRAVIS_DATABASE_URL set' do
       before { ENV['TRAVIS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
-      after  { ENV.delete('TRAVIS_DATABASE_URL') }
 
       it { config.database.username.should == 'username' }
       it { config.database.password.should == 'password' }
@@ -103,7 +100,6 @@ describe Travis::Config do
 
     describe 'with a DATABASE_URL set' do
       before { ENV['DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
-      after  { ENV.delete('DATABASE_URL') }
 
       it { config.database.username.should == 'username' }
       it { config.database.password.should == 'password' }
@@ -115,37 +111,8 @@ describe Travis::Config do
       it { config.database.variables.statement_timeout.should eq statement_timeout }
     end
 
-    describe 'with a TRAVIS_LOGS_DATABASE_URL set' do
-      before { ENV['TRAVIS_LOGS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
-      after  { ENV.delete('TRAVIS_LOGS_DATABASE_URL') }
-
-      it { config.logs_database.username.should == 'username' }
-      it { config.logs_database.password.should == 'password' }
-      it { config.logs_database.host.should == 'host' }
-      it { config.logs_database.port.should == 1234 }
-      it { config.logs_database.database.should == 'database' }
-      it { config.logs_database.encoding.should == 'unicode' }
-      it { config.logs_database.variables.application_name.should_not be_empty }
-      it { config.database.variables.statement_timeout.should eq statement_timeout }
-    end
-
-    describe 'with a LOGS_DATABASE_URL set' do
-      before { ENV['LOGS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
-      after  { ENV.delete('LOGS_DATABASE_URL') }
-
-      it { config.logs_database.username.should == 'username' }
-      it { config.logs_database.password.should == 'password' }
-      it { config.logs_database.host.should == 'host' }
-      it { config.logs_database.port.should == 1234 }
-      it { config.logs_database.database.should == 'database' }
-      it { config.logs_database.encoding.should == 'unicode' }
-      it { config.logs_database.variables.application_name.should_not be_empty }
-      it { config.database.variables.statement_timeout.should eq statement_timeout }
-    end
-
     describe 'with a TRAVIS_RABBITMQ_URL set' do
       before { ENV['TRAVIS_RABBITMQ_URL'] = 'amqp://username:password@host:1234/vhost' }
-      after  { ENV.delete('TRAVIS_RABBITMQ_URL') }
 
       it { config.amqp.username.should == 'username' }
       it { config.amqp.password.should == 'password' }
@@ -156,7 +123,6 @@ describe Travis::Config do
 
     describe 'with a RABBITMQ_URL set' do
       before { ENV['RABBITMQ_URL'] = 'amqp://username:password@host:1234/vhost' }
-      after  { ENV.delete('RABBITMQ_URL') }
 
       it { config.amqp.username.should == 'username' }
       it { config.amqp.password.should == 'password' }
@@ -167,14 +133,12 @@ describe Travis::Config do
 
     describe 'with a TRAVIS_REDIS_URL set' do
       before { ENV['TRAVIS_REDIS_URL'] = 'redis://username:password@host:1234' }
-      after  { ENV.delete('TRAVIS_REDIS_URL') }
 
       it { config.redis.url.should == 'redis://username:password@host:1234' }
     end
 
     describe 'with a REDIS_URL set' do
       before { ENV['REDIS_URL'] = 'redis://username:password@host:1234' }
-      after  { ENV.delete('REDIS_URL') }
 
       it { config.redis.url.should == 'redis://username:password@host:1234' }
     end

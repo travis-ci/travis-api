@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
         describe 'authenticated user with wrong permissions' do
           before do
             Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-            repo.update_attributes(settings: JSON.generate(ssh_key: key_pair, foo: 'bar'))
+            repo.update_attributes(settings: { ssh_key: key_pair, foo: 'bar' })
             delete("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{token}" })
           end
           include_examples 'insufficient access to repo', 'delete_key_pair'
@@ -49,7 +49,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
 
           describe 'existing repo, deletes key pair' do
             before do
-              repo.update_attributes(settings: JSON.generate(ssh_key: key_pair, foo: 'bar'))
+              repo.update_attributes(settings: { ssh_key: key_pair, foo: 'bar' })
               delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers)
             end
 

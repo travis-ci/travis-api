@@ -1,11 +1,22 @@
 class Account
   class << self
     def from(record, attrs = {})
-      new(record.attributes.merge(:type => record.class.name).merge(attrs))
+      attrs = record.attributes.merge(attrs)
+      attrs = attrs.merge(
+        type: record.class.name,
+        subscribed: record.subscribed?,
+        education: education?(record)
+      )
+      new(attrs)
+    end
+
+    def education?(record)
+      !!Travis::Github::Education.active?(record)
     end
   end
 
-  ATTR_NAMES = [:id, :type, :name, :login, :repos_count, :avatar_url]
+  ATTR_NAMES = [:id, :type, :name, :login, :repos_count, :avatar_url,
+    :subscribed, :education]
 
   attr_accessor *ATTR_NAMES
 

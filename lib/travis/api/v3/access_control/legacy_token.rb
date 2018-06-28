@@ -8,7 +8,7 @@ module Travis::API::V3
     auth_type('token', 'basic')
 
     def self.for_request(type, payload, env)
-      payload = paylad.first if payload.is_a? Array
+      payload = payload.first if payload.is_a? Array
       token   = Travis::Api::App::AccessToken.find_by_token(payload)
       new(token) if token
     end

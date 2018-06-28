@@ -107,7 +107,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     }}
 
     example { expect(Sidekiq::Client.last['queue']).to be == 'build_requests'                }
-    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Sidekiq::BuildRequest' }
+    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Gatekeeper::Worker' }
 
     describe "setting id has no effect" do
       let(:params) {{ id: 42 }}
@@ -227,6 +227,22 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
         branch:     'master',
         config:     {}
       }}
+    end
+
+    describe "when the repository is inactive" do
+      before { repo.update_attributes!(active: false) }
+      before { post("/v3/repo/#{repo.id}/requests", params, headers) }
+
+      example { expect(last_response.status).to be == 406 }
+      example { expect(body).to include(
+        "@type",
+        "error",
+        "error_type",
+        "error_type",
+        "repository_inactive",
+        "error_message",
+        "cannot create requests on an inactive repository")
+      }
     end
 
     describe "when request limit is reached" do

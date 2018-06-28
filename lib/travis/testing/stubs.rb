@@ -17,8 +17,6 @@ module Travis
             let(:build)               { stub_build               }
             let(:test)                { stub_test                }
             let(:log)                 { stub_log                 }
-            let(:annotation)          { stub_annotation          }
-            let(:annotation_provider) { stub_annotation_provider }
             let(:event)               { stub_event               }
             let(:worker)              { stub_worker              }
             let(:user)                { stub_user                }
@@ -122,6 +120,7 @@ module Travis
           range: '0cd9ffaab2c4ffee...62aae5f70ceee39123ef',
           branch: 'master',
           ref: 'refs/master',
+          tag_name: nil,
           message: 'the commit message',
           author_name: 'Sven Fuchs',
           author_email: 'svenfuchs@artweb-design.de',
@@ -169,7 +168,6 @@ module Travis
 
       def stub_test(attributes = {})
         log = self.log
-        annotation = stub_annotation(job_id: 1)
         test = Stubs.stub 'test', attributes.reverse_merge(
           id: 1,
           owner: stub_user,
@@ -182,8 +180,6 @@ module Travis
           commit: commit,
           log: log,
           log_id: log.id,
-          annotations: [annotation],
-          annotation_ids: [annotation.id],
           number: '2.1',
           config: { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
           decrypted_config: { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
@@ -224,29 +220,6 @@ module Travis
           content: 'the test log',
           number: 1,
           final: false
-        )
-      end
-
-      def stub_annotation(attributes = {})
-        Stubs.stub 'annotation', attributes.reverse_merge(
-          class: Stubs.stub('class', name: 'Annotation'),
-          id: 1,
-          job_id: attributes[:job_id] || test.id, # Needed to break the infinite loop in stub_test
-          annotation_provider_id: annotation_provider.id,
-          annotation_provider: annotation_provider,
-          description: "The job passed.",
-          url: "https://travis-ci.org/travis-ci/travis-ci/12345",
-          status: ""
-        )
-      end
-
-      def stub_annotation_provider(attributes = {})
-        Stubs.stub 'annotation_provider', attributes.reverse_merge(
-          class: Stubs.stub('class', name: 'AnnotationProvider'),
-          id: 1,
-          name: "Travis CI",
-          api_username: "travis-ci",
-          api_key: "0123456789abcdef",
         )
       end
 
@@ -292,7 +265,10 @@ module Travis
           synced_at: Time.now.utc - 3600,
           tokens: [stub('token', token: 'token')],
           github_scopes: Travis.config.oauth2.scopes.to_s.split(','),
-          created_at: Time.now.utc - 7200
+          created_at: Time.now.utc - 7200,
+          first_logged_in_at: Time.now.utc - 5400,
+          subscribed?: false,
+          education: false
         )
       end
 
@@ -301,7 +277,9 @@ module Travis
           id: 1,
           login: 'travis-ci',
           name: 'Travis CI',
-          email: 'contact@travis-ci.org'
+          email: 'contact@travis-ci.org',
+          subscribed?: false,
+          education: false
         )
       end
 
@@ -353,4 +331,3 @@ module Travis
     end
   end
 end
-

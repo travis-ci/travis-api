@@ -1,6 +1,7 @@
 require 'travis/api/serialize/formats'
 require 'travis/api/serialize/v0'
 require 'travis/api/serialize/v1'
+require 'travis/honeycomb'
 
 module Travis
   module Api
@@ -14,16 +15,25 @@ module Travis
 
         def builder(resource, options = {})
           target  = (options[:for] || 'http').to_s.camelize
-          version = (options[:version] || default_version(options)).to_s.camelize
-          type    = (options[:type] || type_for(resource)).to_s.camelize.split('::')
-          ([version, target] + type).inject(self) do |const, name|
+          version = (options[:version] || default_version(options)).to_s
+          type    = options[:type] || type_for(resource)
+
+          Travis::Honeycomb.context.add('api_version', version.downcase)
+
+          version = 'v2' if version.start_with?('v2.')
+          parts = [version, target] + type.to_s.split('::')
+          parts = parts.map { |part| part.to_s.camelize }
+
+          parts.inject(self) do |const, name|
             begin
-              if const && const.const_defined?(name.to_s.camelize, false)
+              if const && const.const_defined?(name, false)
                 const.const_get(name, false)
               else
+                # puts "Could not find serialize builder for #{version} #{target} #{type}" unless [['Hash'], ['RemoteLog']].include?(type)
                 nil
               end
             rescue NameError
+              # puts "Could not find serialize builder for #{version} #{target}" unless [['Hash'], ['RemoteLog']].include?(type)
               nil
             end
           end

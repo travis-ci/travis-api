@@ -1,5 +1,4 @@
 require 'multi_json'
-require 'travis/sidekiq/build_request'
 require 'travis/services/base'
 
 class Travis::Api::App
@@ -27,7 +26,7 @@ class Travis::Api::App
 
         def schedule_request
           Metriks.meter('api.v2.request.create').mark
-          Travis::Sidekiq::BuildRequest.perform_async(type: 'api', payload: payload, credentials: {})
+          enqueue_build_request
           messages << { notice: 'Build request scheduled.' }
           :success
         end
@@ -49,6 +48,14 @@ class Travis::Api::App
 
         def active?
           true
+        end
+
+        def enqueue_build_request
+          ::Travis::API::Sidekiq.gatekeeper(
+            type: 'api',
+            payload: payload,
+            credentials: {}
+          )
         end
 
         def payload

@@ -6,11 +6,12 @@ module Travis::API::V3::Models
 
     def_delegators :remote_log, :id, :attributes, :archived?
 
-    attr_accessor :remote_log, :archived_content
+    attr_accessor :remote_log, :archived_content, :job
 
-    def initialize(remote_log: nil, archived_content: nil)
+    def initialize(remote_log: nil, archived_content: nil, job: nil)
       @remote_log = remote_log
       @archived_content = archived_content
+      @job = job
     end
 
     def content
@@ -20,6 +21,10 @@ module Travis::API::V3::Models
     def log_parts
       return remote_log.log_parts if archived_content.nil?
       [archived_log_part]
+    end
+
+    def repository_private?
+      job.repository.private?
     end
 
     private

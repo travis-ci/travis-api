@@ -20,14 +20,40 @@ module Travis::API::V3
         route '/jobs'
         get  :find
       end
+
+      resource :stages do
+        route '/stages'
+        get   :find
+      end
     end
 
+    resource :builds do
+      route '/builds'
+      get :for_current_user
+    end
+
+    resource :jobs do
+      route '/jobs'
+      get :for_current_user
+    end
 
     resource :cron do
       capture id: :digit
       route '/cron/{cron.id}'
       get :find
       delete :delete
+    end
+
+    enterprise do
+      resource :enterprise_license do
+        get :find
+        route '/enterprise_license'
+      end
+    end
+
+    resource :installation do
+      route '/installation/{installation.github_id}'
+      get :find
     end
 
     resource :job do
@@ -42,6 +68,7 @@ module Travis::API::V3
       resource :log do
         route '/log'
         get   :find
+        get   :find, '.txt'
         delete :delete
       end
 
@@ -76,6 +103,8 @@ module Travis::API::V3
         route '/active'
         get :for_owner
       end
+
+      hide(post :import, '/import')
     end
 
     resource :repositories do
@@ -88,10 +117,11 @@ module Travis::API::V3
       route '/repo/({repository.id}|{repository.slug})'
       get :find
 
-      post :activate,  '/activate'
+      post :activate, '/activate'
       post :deactivate, '/deactivate'
-      post :star,    '/star'
-      post :unstar,  '/unstar'
+      post :star, '/star'
+      post :unstar, '/unstar'
+      hide(patch :update)
 
       resource :branch do
         route '/branch/{branch.name}'
@@ -134,6 +164,11 @@ module Travis::API::V3
       resource :request do
         route '/request/{request.id}'
         get  :find
+
+        resource :messages do
+          route '/messages'
+          get :for_request
+        end
       end
 
       resource :user_settings, as: :settings do
@@ -200,6 +235,34 @@ module Travis::API::V3
     resource :user do
       route '/user'
       get :current
+    end
+
+    if ENV['BILLING_V2_ENABLED']
+      hidden_resource :subscriptions do
+        route '/subscriptions'
+        get :all
+        post :create
+      end
+
+      hidden_resource :subscription do
+        route '/subscription/{subscription.id}'
+        patch :update_address, '/address'
+        patch :update_creditcard, '/creditcard'
+        patch :update_plan, '/plan'
+        patch :resubscribe, '/resubscribe'
+        post :cancel, '/cancel'
+        get :invoices, '/invoices'
+      end
+
+      hidden_resource :trials do
+        route '/trials'
+        get :all
+      end
+
+      hidden_resource :plans do
+        route '/plans'
+        get :all
+      end
     end
   end
 end

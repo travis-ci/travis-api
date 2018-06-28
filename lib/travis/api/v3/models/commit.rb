@@ -2,6 +2,7 @@ module Travis::API::V3
   class Models::Commit < Model
     belongs_to :repository
     has_one    :request
+    belongs_to :tag
     has_many   :builds
 
     has_one :branch,

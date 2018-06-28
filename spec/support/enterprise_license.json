@@ -1,0 +1,65 @@
+{
+  "license_id": "12345675ad",
+  "installation_id": "xxx",
+  "release_channel": "2.0",
+  "license_type": "trial",
+  "fields": [
+    {
+      "field": "max_hosts",
+      "title": "Maximum Number of Hosts",
+      "type": "Integer",
+      "value": 1,
+      "hide_from_customer": true
+    },
+    {
+      "field": "min_hosts",
+      "title": "Minimum Number of Hosts",
+      "type": "Integer",
+      "value": 1,
+      "hide_from_customer": true
+    },
+    {
+      "field": "te_customer_email",
+      "title": "Customer email address",
+      "type": "String",
+      "value": "example@example.com",
+      "hide_from_customer": true
+    },
+    {
+      "field": "te_high_availability",
+      "title": "High Availability Support",
+      "type": "Integer",
+      "value": 0,
+      "hide_from_customer": true
+    },
+    {
+      "field": "te_hostname",
+      "title": "Hostname",
+      "type": "String",
+      "value": "foo.example.com",
+      "hide_from_customer": false
+    },
+    {
+      "field": "te_license",
+      "title": "Travis Enterprise License",
+      "type": "Text",
+      "value": "---\nproduction:\n  license:\n    hostname: foo.example.com\n    expires: '2018-08-18'\n    seats: 20\n    queue:\n      limit: 999999\n    signature: !binary |-\n      xxxxxxxxxxxxxxxxx==\n",
+      "hide_from_customer": true
+    },
+    {
+      "field": "te_migrations",
+      "title": "Show Migrations (1 or 0)",
+      "type": "String",
+      "value": "0",
+      "hide_from_customer": true
+    },
+    {
+      "field": "trial",
+      "title": "Trial Customer (1 or 0)",
+      "type": "String",
+      "value": "1",
+      "hide_from_customer": true
+    }
+  ],
+  "expiration_time": "2018-08-18T00:00:00Z"
+}

@@ -20,6 +20,31 @@ GIT
       rack (>= 0.4)
 
 GIT
+  remote: https://github.com/travis-ci/gh
+  revision: 38fb339510ff9ae67cb08c6df7698f4c393f5a44
+  specs:
+    gh (0.15.1)
+      addressable (~> 2.4)
+      backports
+      faraday (~> 0.8)
+      multi_json (~> 1.0)
+      net-http-persistent (~> 2.9)
+      net-http-pipeline
+
+GIT
+  remote: https://github.com/travis-ci/jemalloc-rb
+  revision: e9528e26aff663efa2c124cdeca47700e389097d
+  specs:
+    jemalloc (1.0.2)
+
+GIT
+  remote: https://github.com/travis-ci/marginalia
+  revision: 46bbe301640efb5ea81828cb7deeaf874516de78
+  specs:
+    marginalia (1.5.0)
+      pg (~> 0.21)
+
+GIT
   remote: https://github.com/travis-ci/s3
   revision: 386361c1b0ede19cde0ddaf86e41a16308575f5d
   specs:
@@ -34,7 +59,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-config
-  revision: a64596623f8f8ee70838a4dc4d7803906a049733
+  revision: 6a1e8cf3059dfbc4c05c761f662085297dab8f33
+  branch: fix-docker-redis-url
   specs:
     travis-config (1.0.13)
       hashr (~> 2.0.0)
@@ -46,130 +72,100 @@ GIT
     travis-lock (0.1.1)
 
 GIT
-  remote: https://github.com/travis-ci/travis-migrations
-  revision: 21a258b568f35af5dd3cdabd43e5a6bd9354904b
+  remote: https://github.com/travis-ci/travis-rollout
+  revision: 71cc9102dff01f95c281f99183e54b6695faa7ec
+  branch: sf-refactor
   specs:
-    travis-migrations (0.0.3)
+    travis-rollout (0.0.1)
 
 GIT
   remote: https://github.com/travis-ci/travis-settings
-  revision: d510e63b6c6f059cccae141c265e7a0c7236d1fd
+  revision: debef595a6a54b082176edba630fdb5ee9d705af
   specs:
     travis-settings (0.0.1)
       activemodel
       virtus
 
 GIT
-  remote: https://github.com/travis-ci/travis-sidekiqs
-  revision: c5d4a4abc6c3737f9c43d3333efb94daa18b9fbb
-  specs:
-    travis-sidekiqs (0.0.1)
-      redis-namespace
-      sidekiq
-
-GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 113cff17fe383bb72fcfae3a97a8ce98c228342f
+  revision: 4dda53ffa96b804db22c261551256caa18c4a2cc
   specs:
     travis-support (0.0.1)
 
 GIT
   remote: https://github.com/travis-ci/travis-yaml
-  revision: 032caed23af8ed1ed55e9204bb91316f3ada2f74
+  revision: da2c9860299fa63769ac1ee120abeb9e83615555
   specs:
     travis-yaml (0.2.0)
-
-PATH
-  remote: .
-  specs:
-    travis-api (0.0.1)
-      activerecord (~> 3.2.19)
-      coder (~> 0.4.0)
-      composite_primary_keys (~> 5.0)
-      fog-aws (~> 0.12.0)
-      fog-google (~> 0.4.2)
-      google-api-client (~> 0.9.4)
-      hashr
-      memcachier
-      multi_json
-      mustermann (~> 1.0.0.beta2)
-      pg
-      pusher (~> 0.14.0)
-      rack-contrib (~> 1.1)
-      rack-ssl (~> 1.3, >= 1.3.3)
-      redcarpet (>= 3.2.3)
-      redis (~> 3.0)
-      rollout (~> 1.1.0)
-      simple_states
-      sinatra (~> 1.3)
-      sinatra-contrib (~> 1.3)
-      tool
-      travis-support
-      useragent
-      virtus (~> 1.0.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     active_model_serializers (0.9.5)
       activemodel (>= 3.2)
-    activemodel (3.2.22.5)
-      activesupport (= 3.2.22.5)
-      builder (~> 3.0.0)
-    activerecord (3.2.22.5)
-      activemodel (= 3.2.22.5)
-      activesupport (= 3.2.22.5)
-      arel (~> 3.0.2)
-      tzinfo (~> 0.3.29)
-    activesupport (3.2.22.5)
-      i18n (~> 0.6, >= 0.6.4)
-      multi_json (~> 1.0)
-    addressable (2.5.0)
-      public_suffix (~> 2.0, >= 2.0.2)
+    activemodel (4.2.10)
+      activesupport (= 4.2.10)
+      builder (~> 3.1)
+    activerecord (4.2.10)
+      activemodel (= 4.2.10)
+      activesupport (= 4.2.10)
+      arel (~> 6.0)
+    activesupport (4.2.10)
+      i18n (~> 0.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.3, >= 0.3.4)
+      tzinfo (~> 1.1)
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
     aggregate (0.2.2)
-    arel (3.0.3)
+    allocation_tracer (0.6.3)
+    amq-protocol (2.3.0)
+    arel (6.0.4)
     atomic (1.1.99)
     avl_tree (1.1.3)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    backports (3.6.8)
-    builder (3.0.4)
-    bunny (0.8.0)
+    backports (3.8.0)
+    builder (3.2.3)
+    bunny (2.9.2)
+      amq-protocol (~> 2.3.0)
     coder (0.4.0)
     coderay (1.1.1)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    composite_primary_keys (5.0.14)
-      activerecord (~> 3.2.0, >= 3.2.9)
-    concurrent-ruby (1.0.2)
+    composite_primary_keys (8.1.6)
+      activerecord (~> 4.2.0)
+    concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
-    customerio (1.0.0)
-      multi_json (~> 1.0)
     dalli (2.7.6)
-    database_cleaner (0.8.0)
+    database_cleaner (1.7.0)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
-    diff-lcs (1.2.5)
+    diff-lcs (1.3)
     docile (1.1.5)
+    domain_name (0.5.20170404)
+      unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.11)
-    excon (0.55.0)
+    excon (0.60.0)
     factory_girl (2.4.2)
       activesupport
-    faraday (0.9.2)
+    faraday (0.14.0)
       multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.12.2)
+      faraday (>= 0.7.4, < 1.0)
     ffi (1.9.14)
     fog-aws (0.12.0)
       fog-core (~> 1.38)
       fog-json (~> 1.0)
       fog-xml (~> 0.1)
       ipaddress (~> 0.8)
-    fog-core (1.43.0)
+    fog-core (1.45.0)
       builder
-      excon (~> 0.49)
+      excon (~> 0.58)
       formatador (~> 0.2)
     fog-google (0.4.2)
       fog-core
@@ -178,19 +174,12 @@ GEM
     fog-json (1.0.2)
       fog-core (~> 1.0)
       multi_json (~> 1.10)
-    fog-xml (0.1.2)
+    fog-xml (0.1.3)
       fog-core
-      nokogiri (~> 1.5, >= 1.5.11)
+      nokogiri (>= 1.5.11, < 2.0.0)
     foreman (0.82.0)
       thor (~> 0.19.1)
     formatador (0.2.5)
-    gh (0.14.0)
-      addressable
-      backports
-      faraday (~> 0.8)
-      multi_json (~> 1.0)
-      net-http-persistent (>= 2.7)
-      net-http-pipeline
     git-version-bump (0.15.1)
     google-api-client (0.9.28)
       addressable (~> 2.3)
@@ -201,26 +190,64 @@ GEM
       mime-types (>= 1.6)
       representable (~> 2.3.0)
       retriable (~> 2.0)
-    googleauth (0.5.1)
-      faraday (~> 0.9)
-      jwt (~> 1.4)
+    google-cloud-core (1.2.0)
+      google-cloud-env (~> 1.0)
+    google-cloud-env (1.0.1)
+      faraday (~> 0.11)
+    google-cloud-trace (0.31.0)
+      google-cloud-core (~> 1.2)
+      google-gax (~> 1.0)
+      stackdriver-core (~> 1.3)
+    google-gax (1.2.0)
+      google-protobuf (~> 3.2)
+      googleapis-common-protos (>= 1.3.5, < 2.0)
+      googleauth (~> 0.6.2)
+      grpc (>= 1.7.2, < 2.0)
+      rly (~> 0.2.3)
+    google-protobuf (3.5.1.2)
+    googleapis-common-protos (1.3.7)
+      google-protobuf (~> 3.0)
+      googleapis-common-protos-types (~> 1.0)
+      grpc (~> 1.0)
+    googleapis-common-protos-types (1.0.1)
+      google-protobuf (~> 3.0)
+    googleauth (0.6.2)
+      faraday (~> 0.12)
+      jwt (>= 1.4, < 3.0)
       logging (~> 2.0)
       memoist (~> 0.12)
       multi_json (~> 1.11)
       os (~> 0.9)
       signet (~> 0.7)
-    hashdiff (0.3.1)
+    grpc (1.10.0)
+      google-protobuf (~> 3.1)
+      googleapis-common-protos-types (~> 1.0.0)
+      googleauth (>= 0.5.1, < 0.7)
+    hashdiff (0.3.7)
     hashr (2.0.0)
     hitimes (1.2.4)
+    http (2.2.2)
+      addressable (~> 2.3)
+      http-cookie (~> 1.0)
+      http-form_data (~> 1.0.1)
+      http_parser.rb (~> 0.6.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
+    http-form_data (1.0.3)
+    http_parser.rb (0.6.0)
     httpclient (2.8.3)
     hurley (0.2)
-    i18n (0.7.0)
+    i18n (0.9.5)
+      concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     ipaddress (0.8.3)
-    jemalloc (1.0.1)
-    json (2.0.2)
-    jwt (1.5.6)
+    json (2.1.0)
+    jwt (2.1.0)
     kgio (2.10.0)
+    knapsack (1.14.0)
+      rake
+    libhoney (1.3.2)
+      http (~> 2.0)
     librato-metrics (2.1.2)
       aggregate (~> 0.2.2)
       faraday
@@ -229,11 +256,12 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
     little-plugger (1.1.4)
-    logging (2.1.0)
+    logging (2.2.2)
       little-plugger (~> 1.1)
       multi_json (~> 1.10)
     memcachier (0.0.2)
-    memoist (0.15.0)
+    memoist (0.16.0)
+    memory_profiler (0.9.10)
     metaclass (0.0.4)
     method_source (0.8.2)
     metriks (0.9.9.6)
@@ -243,38 +271,45 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    mini_portile2 (2.1.0)
+    mini_portile2 (2.3.0)
+    minitest (5.11.3)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.12.1)
+    msgpack (1.2.4)
+    multi_json (1.13.1)
     multipart-post (2.0.0)
     mustermann (1.0.0.beta2)
-    net-http-persistent (3.0.0)
-      connection_pool (~> 2.2)
+    nakayoshi_fork (0.0.3)
+    net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
     netaddr (1.5.1)
-    nokogiri (1.7.1)
-      mini_portile2 (~> 2.1.0)
+    nokogiri (1.8.2)
+      mini_portile2 (~> 2.3.0)
+    opencensus (0.3.1)
+    opencensus-stackdriver (0.1.1)
+      concurrent-ruby (~> 1.0)
+      google-cloud-trace (~> 0.31)
+      opencensus (~> 0.3)
     os (0.9.6)
-    pg (0.19.0)
+    pg (0.21.0)
     proxies (0.2.1)
     pry (0.10.4)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    public_suffix (2.0.4)
+    public_suffix (3.0.2)
     pusher (0.14.6)
       httpclient (~> 2.5)
       multi_json (~> 1.0)
       pusher-signature (~> 0.1.8)
     pusher-signature (0.1.8)
-    rack (1.6.5)
+    rack (1.6.9)
     rack-attack (5.0.0.beta1)
       rack
     rack-contrib (1.4.0)
       git-version-bump (~> 0.15)
       rack (~> 1.4)
-    rack-protection (1.5.3)
+    rack-protection (1.5.5)
       rack
     rack-ssl (1.4.1)
       rack
@@ -285,8 +320,12 @@ GEM
     rb-fsevent (0.9.8)
     rb-inotify (0.9.7)
       ffi (>= 0.5.0)
+    rbtrace (0.4.10)
+      ffi (>= 1.0.6)
+      msgpack (>= 0.4.3)
+      trollop (>= 1.16.2)
     redcarpet (3.4.0)
-    redis (3.3.2)
+    redis (3.3.5)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
     redlock (0.1.8)
@@ -296,6 +335,7 @@ GEM
     rerun (0.11.0)
       listen (~> 3.0)
     retriable (2.1.0)
+    rly (0.2.3)
     rollout (1.1.0)
     rspec (2.99.0)
       rspec-core (~> 2.99.0)
@@ -310,26 +350,26 @@ GEM
     rspec-mocks (2.99.4)
     ruby_dep (1.5.0)
     safe_yaml (1.0.4)
-    sentry-raven (2.1.2)
-      faraday (>= 0.7.6, < 0.10.x)
+    sentry-raven (2.5.3)
+      faraday (>= 0.7.6, < 1.0)
     sidekiq (4.2.6)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
       rack-protection (>= 1.5.0)
       redis (~> 3.2, >= 3.2.1)
-    signet (0.7.3)
+    signet (0.8.1)
       addressable (~> 2.3)
       faraday (~> 0.9)
-      jwt (~> 1.5)
+      jwt (>= 1.5, < 3.0)
       multi_json (~> 1.10)
     simple_states (1.0.2)
       activesupport
-    simplecov (0.12.0)
+    simplecov (0.15.1)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
-    simplecov-html (0.10.0)
-    sinatra (1.4.7)
+    simplecov-html (0.10.2)
+    sinatra (1.4.8)
       rack (~> 1.5)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
@@ -340,17 +380,22 @@ GEM
       rack-test
       sinatra (~> 1.4.0)
       tilt (>= 1.3, < 3)
-    skylight (0.6.2.beta.2)
-      activesupport (>= 3.0.0)
     slop (3.6.0)
+    stackdriver-core (1.3.0)
+      google-cloud-core (~> 1.2)
     stackprof (0.2.10)
     thor (0.19.1)
-    thread_safe (0.3.5)
-    tilt (2.0.5)
+    thread_safe (0.3.6)
+    tilt (2.0.8)
     timecop (0.8.1)
     tool (0.2.3)
-    tzinfo (0.3.52)
+    trollop (2.1.2)
+    tzinfo (1.2.5)
+      thread_safe (~> 0.1)
     uber (0.0.15)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.4)
     unicorn (5.2.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
@@ -360,66 +405,94 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    webmock (2.1.0)
+    webmock (3.3.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
-    yard (0.9.5)
+    yard (0.9.12)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   active_model_serializers
-  bunny (~> 0.8.0)
-  customerio
+  activerecord (~> 4.2)
+  allocation_tracer
+  bunny (~> 2.9.2)
+  coder (~> 0.4.0)
+  composite_primary_keys (~> 8.0)
   dalli
-  database_cleaner (~> 0.8.0)
+  database_cleaner (~> 1.7)
   factory_girl (~> 2.4.0)
+  faraday
+  faraday_middleware
+  fog-aws (~> 0.12.0)
+  fog-google (~> 0.4.2)
   foreman
-  gh
-  jemalloc
+  gh!
+  google-api-client (~> 0.9.4)
+  hashdiff
+  hashr
+  jemalloc!
+  knapsack
+  libhoney
   librato-metrics
+  marginalia!
+  memcachier
+  memory_profiler
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
   mime-types
   mocha (~> 0.12)
+  multi_json
   mustermann
+  nakayoshi_fork
   netaddr
+  opencensus
+  opencensus-stackdriver
+  pg (~> 0.21)
   pry
+  pusher (~> 0.14.0)
   rack-attack (= 5.0.0.beta1)
   rack-cache!
   rack-contrib
+  rack-ssl (~> 1.3, >= 1.3.3)
   rake (~> 0.9.2)
   rb-fsevent (~> 0.9.1)
+  rbtrace
+  redcarpet (>= 3.2.3)
+  redis (~> 3.0)
+  redis-namespace
   redlock
   rerun
+  rollout (~> 1.1.0)
   rspec (~> 2.13)
   rspec-its
   s3!
   sentry-raven
+  sidekiq
   simple_states (= 1.0.2)
   simplecov
   sinatra
   sinatra-contrib
-  skylight (~> 0.6.0.beta.1)
   stackprof
   timecop (~> 0.8.0)
+  tool
   travis-amqp!
-  travis-api!
   travis-config!
   travis-lock!
-  travis-migrations!
+  travis-rollout!
   travis-settings!
-  travis-sidekiqs!
   travis-support!
   travis-yaml!
   unicorn
+  useragent
+  virtus (~> 1.0.0)
   webmock
   yard-sinatra!
 
 RUBY VERSION
-   ruby 2.3.4p301
+   ruby 2.5.0p0
 
 BUNDLED WITH
-   1.14.6
+   1.16.1

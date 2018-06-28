@@ -2,8 +2,8 @@ module Travis::API::V3
   class Models::Repository < Model
     has_many :commits,     dependent: :delete_all
     has_many :requests,    dependent: :delete_all
-    has_many :branches,    dependent: :delete_all, order: 'branches.id DESC'.freeze
-    has_many :builds,      dependent: :delete_all, order: 'builds.id DESC'.freeze
+    has_many :branches,    -> { order('branches.id DESC'.freeze) }, dependent: :delete_all
+    has_many :builds,      -> { order('builds.id DESC'.freeze) }, dependent: :delete_all
     has_many :permissions, dependent: :delete_all
     has_many :users,       through:   :permissions
     has_many :stars
@@ -17,6 +17,8 @@ module Travis::API::V3
       foreign_key: [:repository_id, :name],
       primary_key: [:id,  :default_branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
+
+    alias last_started_build current_build
 
     after_initialize do
       update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
@@ -66,7 +68,7 @@ module Travis::API::V3
     end
 
     def settings
-      JSON.load(super || '{}'.freeze)
+      super || {}
     end
 
     def user_settings
@@ -89,6 +91,20 @@ module Travis::API::V3
       Models::KeyPair.load(settings['ssh_key'], repository_id: id).tap do |kp|
         kp.sync(self, :settings)
       end
+    end
+
+    def debug_tools_enabled?
+      return true if private?
+      return true if Travis::Features.active?(:debug_tools, self)
+      return false
+    end
+
+    def invalid?
+      invalidated_at or owner_type.nil?
+    end
+
+    def managed_by_installation?
+      !!managed_by_installation_at
     end
   end
 end

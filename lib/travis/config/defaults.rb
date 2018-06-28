@@ -25,13 +25,14 @@ module Travis
 
     define  host:  'travis-ci.org',
             shorten_host:  'trvs.io',
+            public_mode:   !!ENV['PUBLIC_MODE'],
+            applications:  {},
             tokens:        { internal: 'token' },
             auth:          { target_origin: nil },
             assets:        { host: HOSTS[Travis.env.to_sym] },
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
+            billing:       {},
             database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
-            logs_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
-            logs_readonly_database: { adapter: 'postgresql', database: "travis_logs_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_api:      { url: logs_api_url, token: logs_api_auth_token },
             log_options:   { s3: { access_key_id: '', secret_access_key: ''}},
             s3:            { access_key_id: '', secret_access_key: ''},
@@ -53,6 +54,7 @@ module Travis
             archive:       {},
             ssl:           {},
             redis:         { url: 'redis://localhost:6379' },
+            redis_gatekeeper: { url: ENV['REDIS_GATEKEEPER_URL'] || 'redis://localhost:6379' },
             repository:    { ssl_key: { size: 4096 } },
             encryption:    Travis.env == 'development' || Travis.env == 'test' ? { key: 'secret' * 10 } : {},
             sync:          { organizations: { repositories_limit: 1000 } },
@@ -64,13 +66,22 @@ module Travis
             endpoints:     {},
             oauth2:        {},
             webhook:       { public_key: nil },
-            cache_options: {}
+            cache_options: {},
+            merge:         { auth_token: 'merge-auth-token', api_url: 'https://merge.localhost' }
 
     default :_access => [:key]
 
     def initialize(*)
       super
       load_urls
+    end
+
+    def org?
+      host.ends_with?('travis-ci.org')
+    end
+
+    def com?
+      host.ends_with?('travis-ci.com')
     end
   end
 end

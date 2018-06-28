@@ -5,8 +5,8 @@ module Travis::API::V3
     include Renderer::AvatarURL
 
     representation(:minimal,    :id, :login)
-    representation(:standard,   :id, :login, :name, :github_id, :avatar_url)
-    representation(:additional, :repositories)
+    representation(:standard,   :id, :login, :name, :github_id, :avatar_url, :education)
+    representation(:additional, :repositories, :installation)
 
     def initialize(*)
       super
@@ -18,6 +18,11 @@ module Travis::API::V3
     def repositories
       repositories = query(:repositories).for_owner(@model)
       access_control.visible_repositories(repositories)
+    end
+
+    def installation
+      installation = model.installation
+      installation if installation and access_control.visible? installation
     end
   end
 end

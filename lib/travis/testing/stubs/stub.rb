@@ -34,8 +34,9 @@ module Travis
             Class.new.tap do |const|
               const_set(name, const)
               meta_class = (class << const; self; end)
-              meta_class.send(:define_method, :name) { name }
+              meta_class.send(:define_method, :name) { name.camelize }
               meta_class.send(:define_method, :inspect) { name }
+              meta_class.send(:define_method, :table_name) { name.to_s.pluralize }
             end
           end
         end

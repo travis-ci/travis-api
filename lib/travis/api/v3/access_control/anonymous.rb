@@ -3,7 +3,7 @@ require 'travis/api/v3/access_control/generic'
 module Travis::API::V3
   class AccessControl::Anonymous < AccessControl::Generic
     def self.new
-      @instace ||= super
+      @instance ||= super
     end
 
     # use when Authorization header is not set
@@ -13,13 +13,15 @@ module Travis::API::V3
       new
     end
 
-    def visible_repositories(list)
-      return [] unless unrestricted_api?
-      list.where(private: false)
-    end
-
     def admin_for(repository)
       raise LoginRequired
+    end
+
+    private
+
+    def visible_objects(list, repository_id, factory)
+      return factory.none unless unrestricted_api?
+      list.where(private: false)
     end
   end
 end

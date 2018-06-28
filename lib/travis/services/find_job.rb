@@ -5,8 +5,10 @@ module Travis
     class FindJob < Base
       register :find_job
 
+      scope_access!
+
       def run
-        preload(result) if result
+        result
       end
 
       def final?
@@ -16,7 +18,7 @@ module Travis
       end
 
       def updated_at
-        [result].concat(result.annotations).map(&:updated_at).max if result
+        [result].map(&:updated_at).max if result
       end
 
       private
@@ -29,18 +31,20 @@ module Travis
         end
 
         def load_result
-          columns = scope(:job).column_names
-          columns -= %w(config) if params[:exclude_config]
-          columns = columns.map { |c| %Q{"jobs"."#{c}"} }
-          scope(:job).select(columns).find_by_id(params[:id]).tap do |res|
-            res.config = {} if params[:exclude_config]
-          end
+          job = scope.find_by_id(params[:id])
+          job.config = nil if params[:exclude_config]
+          job
         end
 
-        def preload(job)
-          ActiveRecord::Associations::Preloader.new(job, :commit).run
-          ActiveRecord::Associations::Preloader.new(job, :annotations).run
-          job
+        def scope
+          scope = super(:job)
+          return scope.select(params[:columns]) if params[:columns]
+          columns = scope.column_names
+          columns -= %w(config) if params[:exclude_config]
+          columns -= %w(commit) if params[:exclude_commit]
+          columns.map { |c| %("jobs"."#{c}") }
+          scope = scope.includes(:config) unless params[:exclude_config]
+          scope.select(columns)
         end
     end
   end

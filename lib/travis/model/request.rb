@@ -2,19 +2,25 @@ require 'active_record'
 require 'simple_states'
 require 'travis/model/encrypted_column'
 
+class RequestConfig < ActiveRecord::Base
+end
+
 # Models an incoming request. The only supported source for requests currently is Github.
 #
 # The Request will be configured by fetching `.travis.yml` from the Github API
 # and needs to be approved based on the configuration. Once approved the
 # Request creates a Build.
 class Request < Travis::Model
-  require 'travis/model/request/pr'
-
+  include Travis::ScopeAccess
   include SimpleStates
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 
   class << self
+    def columns
+      super.reject { |c| c.name == 'payload' }
+    end
+
     def last_by_head_commit(head_commit)
       where(head_commit: head_commit).order(:id).last
     end
@@ -38,7 +44,7 @@ class Request < Travis::Model
   belongs_to :pull_request
   belongs_to :repository
   belongs_to :owner, polymorphic: true
-  belongs_to :repository
+  belongs_to :config, foreign_key: :config_id, class_name: RequestConfig
   has_many   :builds
   has_many   :events, as: :source
 
@@ -52,11 +58,11 @@ class Request < Travis::Model
   end
 
   def ref
-    commit.ref
+    commit.try(:ref)
   end
 
   def branch_name
-    commit.branch
+    commit.try(:branch)
   end
 
   def tag_name
@@ -72,15 +78,15 @@ class Request < Travis::Model
   end
 
   def pull_request_title
-    pull_request ? pull_request.title : pr.title if pull_request?
+    pull_request.title if pull_request
   end
 
   def pull_request_number
-    pull_request ? pull_request.number : pr.number if pull_request?
+    pull_request.number if pull_request
   end
 
   def head_repo
-    pull_request ? pull_request.head_repo_slug : pr.head_repo
+    pull_request.head_repo_slug if pull_request
   end
 
   def base_repo
@@ -88,7 +94,7 @@ class Request < Travis::Model
   end
 
   def head_branch
-    pull_request ? pull_request.head_ref : pr.head_branch
+    pull_request.head_ref if pull_request
   end
 
   def base_branch
@@ -112,9 +118,8 @@ class Request < Travis::Model
     ).expand.size > 0
   end
 
-  private
-
-    def pr
-      @pr ||= Pr.new(payload && payload['pull_request'])
-    end
+  def config
+    config = super&.config || read_attribute(:config) || {}
+    config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
+  end
 end

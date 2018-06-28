@@ -5,6 +5,8 @@ module Travis
     class FindRepo < Base
       register :find_repo
 
+      scope_access!
+
       def run(options = {})
         result
       end
@@ -16,7 +18,7 @@ module Travis
       private
 
         def result
-          @result ||= scope(:repository).find_by(params)
+          @result ||= scope(:repository).by_params(params).to_a.first
         end
     end
   end

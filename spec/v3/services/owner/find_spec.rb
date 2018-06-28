@@ -1,7 +1,9 @@
 describe Travis::API::V3::Services::Owner::Find, set_app: true do
+
   describe "organization" do
     let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
-    before    { org.save!                              }
+
+    before    { org.save! }
     after     { org.delete                             }
 
     describe 'existing org, public api, by login' do
@@ -16,7 +18,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "login"            => "example-org",
         "name"             => nil,
         "github_id"        => 1234,
-        "avatar_url"       => nil
+        "avatar_url"       => nil,
+        "education"        => false
       }}
     end
 
@@ -32,7 +35,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "login"            => "example-org",
         "name"             => nil,
         "github_id"        => 1234,
-        "avatar_url"       => nil
+        "avatar_url"       => nil,
+        "education"        => false
       }}
     end
 
@@ -54,6 +58,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"                => nil,
         "github_id"           => 1234,
         "avatar_url"          => nil,
+        "education"           => false,
         "repositories"        => [{
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -75,6 +80,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "name"              => "example-repo",
           "slug"              => "example-org/example-repo",
           "description"       => nil,
+          "github_id"         => repo.github_id,
           "github_language"   => nil,
           "active"            => false,
           "private"           => false,
@@ -84,7 +90,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"           => "/v3/repo/#{repo.id}/branch/master",
             "@representation" => "minimal",
             "name"            => "master"},
-          "starred"           => false
+          "starred"           => false,
+          "managed_by_installation"=>false,
+          "active_on_org"     =>nil
         }]
       }}
     end
@@ -107,6 +115,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"              => nil,
         "github_id"         => 1234,
         "avatar_url"        => nil,
+        "education"         => false,
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
@@ -128,6 +137,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "name"            => "example-repo",
           "slug"            => "example-org/example-repo",
           "description"     => nil,
+          "github_id"       => repo.github_id,
           "github_language" => nil,
           "active"          => false,
           "private"         => false,
@@ -137,7 +147,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"         => "/v3/repo/#{repo.id}/branch/master",
             "@representation"=> "minimal",
             "name"          => "master"},
-          "starred"         => false
+          "starred"         => false,
+          "managed_by_installation"=>false,
+          "active_on_org"   =>nil
         }]
       }}
     end
@@ -154,7 +166,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "login"            => "example-org",
         "name"             => nil,
         "github_id"        => 1234,
-        "avatar_url"       => nil
+        "avatar_url"       => nil,
+        "education"        => false
       }}
     end
 
@@ -175,6 +188,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"           => nil,
         "github_id"      => 1234,
         "avatar_url"     => nil,
+        "education"      => false,
         "@warnings"      => [{
           "@type"        => "warning",
           "message"      => "query parameter organization.id not safelisted, ignored",
@@ -203,7 +217,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"      => 5678,
         "avatar_url"     => nil,
         "is_syncing"     => nil,
-        "synced_at"      => nil
+        "synced_at"      => nil,
+        "education"      => nil
       }}
     end
 
@@ -220,6 +235,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"           => nil,
         "github_id"      => 5678,
         "avatar_url"     => nil,
+        "education"      => nil,
         "is_syncing"     => nil,
         "synced_at"      => nil
       }}
@@ -238,6 +254,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 5678,
         "avatar_url"       => nil,
+        "education"        => nil,
         "is_syncing"       => nil,
         "synced_at"        => nil
       }}
@@ -260,6 +277,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 5678,
         "avatar_url"       => nil,
+        "education"        => nil,
         "is_syncing"       => nil,
         "synced_at"        => nil,
         "@warnings"        => [{

@@ -19,11 +19,23 @@ module Travis::API::V3
       permission?(:admin, repository) ? user : super
     end
 
-    def visible_repositories(list)
-      list.where('repositories.private = false OR repositories.id IN (?)'.freeze, access_permissions.map(&:repository_id))
+    def visible_repositories(list, repository_id = nil)
+      if repository_id
+        if private_access_repository_ids.include?(repository_id)
+          list.where('repositories.id = ?', repository_id)
+        else
+          list.where('repositories.private = false')
+        end
+      else
+        list.where('repositories.private = false OR repositories.id IN (?)'.freeze, private_access_repository_ids)
+      end
     end
 
     protected
+
+    def private_access_repository_ids
+      @private_access_repository_ids ||= access_permissions.map(&:repository_id)
+    end
 
     def build_cancelable?(build)
       permission?(:pull, build.repository)
@@ -43,6 +55,10 @@ module Travis::API::V3
 
     def repository_adminable?(repository)
       permission?(:admin, repository)
+    end
+
+    def repository_starable?(repository)
+      permission?(:pull, repository)
     end
 
     def organization_visible?(organization)
@@ -68,6 +84,20 @@ module Travis::API::V3
     def permission?(type, id)
       id = id.id if id.is_a? ::Repository
       access_permissions.where(type => true, :repository_id => id).any?
+    end
+
+    private
+
+    def visible_objects(list, repository_id, factory)
+      if repository_id
+        if private_access_repository_ids.include?(repository_id)
+          list.where("#{factory.table_name}.repository_id = ?", repository_id)
+        else
+          list.where("#{factory.table_name}.private = false")
+        end
+      else
+        list.where("#{factory.table_name}.private = false OR #{factory.table_name}.repository_id IN (?)", private_access_repository_ids)
+      end
     end
   end
 end

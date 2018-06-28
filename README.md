@@ -36,22 +36,18 @@ $ bundle install
 $ sudo -u postgres psql -c "CREATE USER yourusername WITH SUPERUSER PASSWORD 'yourpassword'"
 ```
 
-Databases are set up with a Rake task that uses the database schemas (`structure.sql`) in `travis-migrations` which is loaded as a Gem. Details can be found in the `Rakefile`.
+Databases are set up with a Rake task that uses the database schemas (`structure.sql`) in `travis-migrations`. Details can be found in the `Rakefile`.
+You can override the `travis-migrations` branch that is being used by setting the environment variable `TRAVIS_MIGRATIONS_BRANCH`.
 
-If there have been new migrations added to `travis-migrations` since you bundle installed, you will need to update `travis-migrations` to ensure you have the latest version with the new migrations.
-
-```sh-session
-bundle update travis-migrations
-```
 
 To create and migrate the Databases:
 
 ```sh-session
-$ RAILS_ENV=development bundle exec rake db:create
-$ RAILS_ENV=test bundle exec rake db:create
+$ ENV=development bundle exec rake db:create
+$ ENV=test bundle exec rake db:create
 ```
 
-Please Note: The database names are configured using the environment variable RAILS_ENV. If you are using a different configuration you will have to make your own adjustments.
+Please Note: The database names are configured using the environment variable ENV. If you are using a different configuration you will have to make your own adjustments. The default environment is `test`.
 
 
 ### Run tests
@@ -63,6 +59,68 @@ $ bundle exec rake
 ```sh-session
 ENV=development bundle exec ruby -Ilib -S rackup
 ```
+
+### To test your branch locally:
+- checkout your branch
+- run the local server:
+```sh-session
+ENV=development bundle exec ruby -Ilib -S rackup
+```
+
+- get the correct token in another window:
+```sh-session
+travis login --api-endpoint=http://localhost:9292
+travis token --api-endpoint=http://localhost:9292
+```
+- run a request:
+```sh-session
+curl -H "Travis-API-Version: 3" \
+     -H "Authorization: token xxxxxxxxxxxx" \
+     http://localhost:9292/repos
+```
+
+(The database connection can be overwritten by setting a DATABASE_URL env var. Please ensure you also set ENV to the corresponding env and add encryption key config to `config/travis.yml`)
+
+### Test billing locally:
+To test billing locally add the following code to the config/travis.yml:
+
+```
+development:
+  billing:
+    url: "http://localhost:9292"
+    auth_key: "auth_keys"
+```
+go to your local api repo and make sure API is running on port 9293:
+
+```
+ENV=development  bundle exec ruby -Ilib -S rackup -p 9293
+```
+
+go to your local billing repo and run which runs on 9292:
+```
+make start
+```
+and then you can run:
+
+```
+curl -H "Travis-API-Version: 3" \
+     -H "content-type: application/json" \
+     -H "Authorization: token <your-token>" \
+     http://localhost:9293/subscriptions
+```
+and get:
+```  
+{
+  "@type": "subscriptions",
+  "@href": "/subscriptions",
+  "@representation": "standard",
+  "subscriptions": [
+
+  ]
+}
+```
+
+
 
 ### Run the server (production)
 ```sh-session
@@ -90,4 +148,4 @@ Start with the find/get spec (for example: spec/v3/services/caches/find_spec.rb)
  - Add a route (v3/routes.rb)
  Re-run the test at this point. Depending on what objects you are returning you may also need to add:
  - Add a model (either pulls from the DB or a wrapper for the class of the objects returned from another source (s3 for example), or that structures the result you will be passing back to the client)
- - Add a renderer (if needed to display your new model/object/collection)
+ - Add a renderer (if needed to display your new model/object/collection).

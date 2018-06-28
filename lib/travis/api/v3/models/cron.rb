@@ -5,13 +5,16 @@ module Travis::API::V3
     belongs_to :branch
     after_create :schedule_first_build
 
-    scope :scheduled, -> { where("next_run <= '#{DateTime.now.utc}'") }
+    scope :scheduled, -> { where("next_run <= (?) AND active = (?)", DateTime.now.utc, true) }
 
     TIME_INTERVALS = {
       "daily"   => :day,
       "weekly"  => :week,
       "monthly" => :month
     }
+
+    REPO_IS_INACTIVE = "repo is inactive"
+    BRANCH_MISSING_ON_GH = "branch doesn't exist on Github"
 
     def schedule_next_build(from: nil)
       # Make sure the next build will always be in the future
@@ -27,7 +30,10 @@ module Travis::API::V3
     end
 
     def needs_new_build?
-      always_run? || !last_non_cron_build_time || last_non_cron_build_time < 24.hour.ago
+      return false unless active?
+      return true if always_run?
+      return true unless last_non_cron_build_time
+      return true if last_non_cron_build_time < 24.hour.ago
     end
 
     def skip_and_schedule_next_build
@@ -39,14 +45,9 @@ module Travis::API::V3
     end
 
     def enqueue
-      if !branch.repository.github_id
-        raise StandardError, "Repository does not have a github_id"
-      end
+      return deactivate_and_log_reason(REPO_IS_INACTIVE) unless branch.repository&.active?
 
-      if !branch.exists_on_github
-        self.destroy
-        return false
-      end
+      return deactivate_and_log_reason(BRANCH_MISSING_ON_GH) unless branch.exists_on_github
 
       user_id = branch.repository.users.detect { |u| u.github_oauth_token }.try(:id)
       user_id ||= branch.repository.owner.id
@@ -60,16 +61,11 @@ module Travis::API::V3
         user:       { id: user_id }
       }
 
-      class_name, queue = Query.sidekiq_queue(:build_request)
-
-      ::Sidekiq::Client.push(
-          'queue'.freeze => queue,
-          'class'.freeze => class_name,
-          'args'.freeze  => [{
-            type:        'cron'.freeze,
-            payload:     JSON.dump(payload),
-            credentials: {}
-            }])
+      ::Travis::API::Sidekiq.gatekeeper(
+        type:        'cron'.freeze,
+        payload:     JSON.dump(payload),
+        credentials: {}
+      )
 
       update_attribute(:last_run, DateTime.now.utc)
       schedule_next_build
@@ -81,8 +77,17 @@ module Travis::API::V3
     end
 
     def last_non_cron_build_time
-      last_build = Build.find_by_id(branch.last_build_id)
-      last_build.finished_at.to_datetime.utc if last_build && last_build.finished_at
+      Build.find_by_id(branch.last_build_id)&.started_at&.to_datetime&.utc
+    end
+
+    def deactivate
+      update_attributes!(active: false)
+    end
+
+    def deactivate_and_log_reason(reason)
+      Travis.logger.info "Removing cron #{self.id} because the associated #{reason}"
+      deactivate
+      false
     end
   end
 end

@@ -1,10 +1,10 @@
 require 'addressable/uri'
 require 'faraday'
+require 'faraday_middleware'
 require 'securerandom'
 require 'travis/api/app'
 require 'travis/github/education'
 require 'travis/github/oauth'
-require 'travis/customerio'
 
 class Travis::Api::App
   class Endpoint
@@ -81,7 +81,6 @@ class Travis::Api::App
       #
       # * **github_token**: GitHub token for checking authorization (required)
       post '/github' do
-        check_agent
         unless params[:github_token]
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
@@ -120,16 +119,6 @@ class Travis::Api::App
       end
 
       private
-
-        def allowed_agents
-          @allowed_agents ||= redis.smembers('auth_agents')
-        end
-
-        def check_agent
-          return if settings.test? or allowed_agents.empty?
-          return if allowed_agents.any? { |a| request.user_agent.to_s.start_with? a }
-          halt 403, "you are currently not allowed to perform this request. please contact support@travis-ci.com."
-        end
 
         # update first login date if not set
         def update_first_login(user)
@@ -178,7 +167,6 @@ class Travis::Api::App
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
             update_first_login(user)
-            Travis::Customerio.update(user)
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
@@ -300,7 +288,18 @@ class Travis::Api::App
         end
 
         def get_token(endpoint, values)
-          response   = Faraday.new(ssl: Travis.config.github.ssl).post(endpoint, values)
+          # Get base URL for when we setup Faraday since otherwise it'll ignore no_proxy
+          url = URI.parse(endpoint)
+          base_url = "#{url.scheme}://#{url.host}"
+          http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact} 
+
+          conn = Faraday.new(http_options) do |conn|
+            conn.request :json
+            conn.use :instrumentation
+            conn.adapter :net_http_persistent
+          end
+          response = conn.post(endpoint, values)
+
           parameters = Addressable::URI.form_unencode(response.body)
           token_info = parameters.assoc("access_token")
 
