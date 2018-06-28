@@ -39,7 +39,7 @@ def main(argv: ARGV)
       next if row['database'] == 'pgbouncer'
       queue = Librato::Metrics::Queue.new
       KEYS.each do |k|
-        queue.add "pgbouncer.#{row['database']}.#{k}": { source: librato_source, value: row[k] }
+        queue.add "pgbouncer.pools.#{row['database']}.#{k}": { source: librato_source, value: row[k] }
       end
       queue.submit
     end
