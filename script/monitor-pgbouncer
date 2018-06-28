@@ -11,6 +11,11 @@ def main(argv: ARGV)
   interval = ENV['PGBOUNCER_MONITOR_INTERVAL']&.to_i || 30
   librato_source = [ENV['HEROKU_APP_NAME'], ENV['DYNO']].compact.join('.')
 
+  unless ENV['LIBRATO_USER'] && ENV['LIBRATO_TOKEN']
+    warn 'skipping pgbouncer-monitor (to enable, set LIBRATO_USER and LIBRATO_TOKEN)'
+    return 1
+  end
+
   Librato::Metrics.authenticate ENV['LIBRATO_USER'], ENV['LIBRATO_TOKEN']
 
   conn = PGconn.open(url)
