@@ -38,5 +38,17 @@ module Travis::API::V3
       return @installation if defined? @installation
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
     end
+
+    def hmac_secret_key
+      Travis.config.intercom && Travis.config.intercom.hmac_secret_key
+    end
+
+    def secure_user_hash
+      OpenSSL::HMAC.hexdigest(
+        'sha256',
+        hmac_secret_key,
+        "#{user.id}"
+      )
+    end
   end
 end
