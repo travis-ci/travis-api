@@ -16,7 +16,7 @@ def main(argv: ARGV)
   conn = PGconn.open(url)
 
   loop do
-    res  = conn.exec('SHOW POOLS')
+    res = conn.exec('SHOW POOLS')
     res.each do |row|
       queue = Librato::Metrics::Queue.new
       KEYS.each do |k|
