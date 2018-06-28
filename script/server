@@ -17,6 +17,10 @@ else
   export tmp_dir=./tmp
 fi
 
+if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
+  $bexec je script/monitor-pgbouncer &
+fi
+
 cmd="unicorn config.ru -E $RACK_ENV -c config/unicorn.rb"
 [[ $RACK_ENV == "development" ]] && cmd="rerun -b -- $cmd"
 
