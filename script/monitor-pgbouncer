@@ -3,20 +3,33 @@
 
 require 'pg'
 require 'librato/metrics'
+require 'yaml'
 
 KEYS = %w(cl_active cl_waiting sv_active sv_idle sv_used sv_tested sv_login maxwait)
 
 def main(argv: ARGV)
   url = ENV['PGBOUNCER_URL'] || 'postgres://pgbouncer:pgbouncer@127.0.0.1:6000/pgbouncer'
   interval = ENV['PGBOUNCER_MONITOR_INTERVAL']&.to_i || 30
-  librato_source = [ENV['HEROKU_APP_NAME'], ENV['DYNO']].compact.join('.')
 
-  unless ENV['LIBRATO_USER'] && ENV['LIBRATO_TOKEN']
-    warn 'skipping pgbouncer-monitor (to enable, set LIBRATO_USER and LIBRATO_TOKEN)'
+  if ENV['travis_config']
+    travis_config = YAML.safe_load(ENV['travis_config'])
+    librato_user = travis_config['librato']['email']
+    librato_token = travis_config['librato']['token']
+    librato_source = travis_config['librato_source']
+  elsif ENV['LIBRATO_USER'] && ENV['LIBRATO_TOKEN']
+    librato_user = ENV['LIBRATO_USER']
+    librato_token = ENV['LIBRATO_TOKEN']
+    librato_source = ENV['HEROKU_APP_NAME']
+  end
+
+  librato_source = [librato_source, ENV['DYNO']].compact.join('.')
+
+  unless librato_user && librato_token
+    warn 'skipping pgbouncer-monitor (to enable, set travis_config or LIBRATO_USER and LIBRATO_TOKEN)'
     return 1
   end
 
-  Librato::Metrics.authenticate ENV['LIBRATO_USER'], ENV['LIBRATO_TOKEN']
+  Librato::Metrics.authenticate librato_user, librato_token
 
   conn = PGconn.open(url)
 
