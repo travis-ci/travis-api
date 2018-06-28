@@ -18,6 +18,7 @@ def main(argv: ARGV)
   loop do
     res = conn.exec('SHOW POOLS')
     res.each do |row|
+      next if row['database'] == 'pgbouncer'
       queue = Librato::Metrics::Queue.new
       KEYS.each do |k|
         queue.add "pgbouncer.#{row['database']}.#{k}": { source: librato_source, value: row[k] }
