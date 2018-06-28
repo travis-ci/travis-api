@@ -46,6 +46,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "avatar_url"=>"https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
         "is_syncing"=>nil,
         "synced_at"=>nil,
+        "first_logged_in_at"=>nil,
         "education"=>nil}
     }}
   end
