@@ -14,8 +14,7 @@ module Travis::API::V3
     }
     private_constant :DEFAULT_OPTIONS
 
-    EVENTS = %i(push pull_request issue_comment public member create delete
-      membership repository)
+    EVENTS = %i(push pull_request issue_comment public member create delete repository)
     private_constant :EVENTS
 
     def self.client_config
