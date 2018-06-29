@@ -164,12 +164,6 @@ module Travis::Api
 
         # make sure this is below ScopeCheck so we have the token
         use Rack::Attack if Endpoint.production? and not Travis.config.enterprise
-        
-        use Rack::Config do |env|
-          if env['HTTP_DEBUG_ERR'] == 'true'
-            raise :debug
-          end
-        end
 
         # if this is a v3 API request, ignore everything after
         use Travis::API::V3::OptIn
