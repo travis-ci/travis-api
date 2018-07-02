@@ -15,8 +15,11 @@ http {
 
 	server_tokens off;
 
+	<% if ENV['NGINX_LOG_REQUEST_TIME'] == 'true' %>
 	log_format l2met 'measure#nginx.service=$request_time request_id=$http_x_request_id';
 	access_log logs/nginx/access.log l2met;
+	<% end %>
+
 	error_log logs/nginx/error.log <%= ENV["NGINX_ERROR_LOG_LEVEL"] %>;
 
 	include mime.types;
