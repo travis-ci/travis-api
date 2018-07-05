@@ -27,8 +27,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
 
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
-    job.update_attributes!(stage: stage)
-    job2.update_attributes!(config: config, stage: stage)
+    job.update_attributes!(stage: stage, name: 'one')
+    job2.update_attributes!(config: config, stage: stage, name: 'two')
     # for some reason update_attributes! doesn't update updated_at
     # and it doesn't play well with out triggers (as triggers will update
     # updated_at and instance variable in tests will have a different value)
@@ -53,6 +53,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "id"                    => job.id,
       "allow_failure"         => job.allow_failure,
       "number"                => job.number,
+      "name"                  => "one",
       "state"                 => job.state,
       "started_at"            => "2010-11-12T12:00:00Z",
       "finished_at"           => "2010-11-12T12:00:10Z",
@@ -163,6 +164,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "id"                    => job.id,
       "allow_failure"         => job.allow_failure,
       "number"                => job.number,
+      "name"                  => "one",
       "state"                 => job.state,
       "started_at"            => "2010-11-12T12:00:00Z",
       "finished_at"           => "2010-11-12T12:00:10Z",
@@ -236,6 +238,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "id"                    => job2.id,
       "allow_failure"         => job2.allow_failure,
       "number"                => job2.number,
+      "name"                  => "two",
       "state"                 => job2.state,
       "started_at"            => "2010-11-12T12:00:00Z",
       "finished_at"           => "2010-11-12T12:00:10Z",
