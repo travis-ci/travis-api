@@ -19,6 +19,7 @@ class Travis::Api::App
 
     before do
       halt 406 if accept_version == 'v2.1' && ENV['DISABLE_V2_1']
+      halt 403 if force_auth? && !authenticated?
     end
 
     error(ActiveRecord::RecordNotFound, Sinatra::NotFound) { not_found }
@@ -63,6 +64,10 @@ class Travis::Api::App
 
       def com?
         !org?
+      end
+
+      def force_auth?
+        Travis.config.force_authentication?
       end
 
       def pre_v2_1?
