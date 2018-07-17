@@ -54,6 +54,10 @@ module Travis::API::V3
       !!Travis.config.enterprise
     end
 
+    def force_auth?
+      !!Travis.config.force_authentication
+    end
+
     def visible_repositories(list)
       # naïve implementation, replaced with smart implementation in specific subclasses
       return list if full_access?
