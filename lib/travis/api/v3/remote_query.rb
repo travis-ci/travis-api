@@ -71,7 +71,11 @@ module Travis::API::V3
     end
 
     def s3_connection
-      Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id], aws_secret_access_key: s3_config[:secret_access_key], provider: 'AWS')
+      Fog::Storage.new(aws_access_key_id: s3_config[:access_key_id],
+                       aws_secret_access_key: s3_config[:secret_access_key],
+                       provider: 'AWS',
+                       endpoint: archive_s3_config[:endpoint],
+                       path_style: archive_s3_config[:force_path_style])
     end
 
     def s3_bucket
