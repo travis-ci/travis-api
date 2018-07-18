@@ -15,7 +15,7 @@ class Travis::Api::App
         ::OpenCensus::Trace::Formatters::CloudTrace.new,
         ::OpenCensus::Trace::Formatters::TraceContext.new
       ].freeze
-      
+
       ##
       # Create the middleware.
       #
@@ -27,24 +27,24 @@ class Travis::Api::App
         @app = app
         @exporter = exporter || ::OpenCensus::Trace.config.exporter
       end
-      
+
       def self.enabled?
         ENV['OPENCENSUS_TRACING_ENABLED'] == 'true'
       end
-      
+
       def self.setup
         return unless enabled?
-        
+
         sampling_rate = ENV['OPENCENSUS_SAMPLING_RATE']&.to_f || 1
         ::OpenCensus.configure do |c|
           c.trace.exporter = ::OpenCensus::Trace::Exporters::Stackdriver.new
           c.trace.default_sampler = ::OpenCensus::Trace::Samplers::Probability.new sampling_rate
           c.trace.default_max_attributes = 16
         end
-        
+
         setup_notifications
       end
-      
+
       def self.setup_notifications
         ActiveSupport::Notifications.subscribe('sql.active_record') do |*args|
           event = ActiveSupport::Notifications::Event.new(*args)
@@ -53,7 +53,7 @@ class Travis::Api::App
           end
         end
       end
-      
+
       def self.handle_notification_event event
         span_context = ::OpenCensus::Trace.span_context
         if span_context
@@ -65,7 +65,7 @@ class Travis::Api::App
           end
         end
       end
-      
+
       ##
       # Run the middleware.
       #
@@ -109,29 +109,29 @@ class Travis::Api::App
           end
         end
       end
-      
+
       private
-      
+
       def get_path env
         path = "#{env['SCRIPT_NAME']}#{env['PATH_INFO']}"
         path = "/#{path}" unless path.start_with? "/"
         path
       end
-      
+
       def get_host env
         env["HTTP_HOST"] || env["SERVER_NAME"]
       end
-      
+
       def get_url env
         path = get_path env
         host = get_host env
-        scheme = env["SERVER_PROTOCOL"]
+        scheme = env["rack.url_scheme"]
         query_string = env["QUERY_STRING"].to_s
         url = "#{scheme}://#{host}#{path}"
         url = "#{url}?#{query_string}" unless query_string.empty?
         url
       end
-      
+
       def start_request span, env
         span.kind = ::OpenCensus::Trace::SpanBuilder::SERVER
         span.put_attribute "app", "api"
@@ -145,7 +145,7 @@ class Travis::Api::App
         span.put_attribute "pid", ::Process.pid.to_s
         span.put_attribute "tid", ::Thread.current.object_id.to_s
       end
-      
+
       def finish_request span, response
         if response.is_a?(::Array) && response.size == 3
           span.set_status response[0]
@@ -154,4 +154,3 @@ class Travis::Api::App
     end
   end
 end
-
