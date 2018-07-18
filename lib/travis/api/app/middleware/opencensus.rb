@@ -82,6 +82,11 @@ class Travis::Api::App
           context = formatter.deserialize env[formatter.rack_header_name]
         end
 
+        # TraceContextData has fields :trace_id, :span_id, :trace_options
+        #
+        # If trace_options is set to 0x01, this indicates that this trace
+        # should always be sampled. This mechanism is also used to propagate
+        # the sampling decision downstream.
         if env['HTTP_TRACE'] == 'true'
           max_trace_id = ::OpenCensus::Trace::SpanContext::MAX_TRACE_ID
           trace_id = rand 1..max_trace_id
