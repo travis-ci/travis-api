@@ -117,6 +117,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    aggregate (0.2.2)
     allocation_tracer (0.6.3)
     amq-protocol (2.3.0)
     arel (6.0.4)
@@ -247,6 +248,9 @@ GEM
       rake
     libhoney (1.3.2)
       http (~> 2.0)
+    librato-metrics (2.1.2)
+      aggregate (~> 0.2.2)
+      faraday
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -279,7 +283,7 @@ GEM
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
     netaddr (1.5.1)
-    nokogiri (1.8.2)
+    nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
     opencensus (0.3.1)
     opencensus-stackdriver (0.1.1)
@@ -432,6 +436,7 @@ DEPENDENCIES
   jemalloc!
   knapsack
   libhoney
+  librato-metrics
   marginalia!
   memcachier
   memory_profiler

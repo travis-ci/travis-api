@@ -108,6 +108,7 @@ module Travis::Api
           ::Marginalia.set('request_id', env['HTTP_X_REQUEST_ID'])
         end
 
+        use Travis::Api::App::Cors
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
         
@@ -137,8 +138,6 @@ module Travis::Api
         if Travis::Api::App::Middleware::OpenCensus.enabled?
           use Travis::Api::App::Middleware::OpenCensus
         end
-
-        use Travis::Api::App::Cors # if Travis.env == 'development' ???
 
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement

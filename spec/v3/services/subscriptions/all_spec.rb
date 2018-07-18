@@ -34,18 +34,17 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
       }
     end
 
-    before do
-      stub_billing_request(:get, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump([billing_subscription_response_body('id' => 1234, 'plan' => plan,'permissions' => { 'read' => true, 'write' => false }, 'owner' => { 'type' => 'Organization', 'id' => organization.id })]))
-    end
+    let(:subscriptions_data) { [billing_subscription_response_body('id' => 1234, 'plan' => plan,'permissions' => { 'read' => true, 'write' => false }, 'owner' => { 'type' => 'Organization', 'id' => organization.id })] }
+    let(:permissions_data) { [{'owner' => {'type' => 'Organization', 'id' => 1}, 'create' => true}] }
 
-    it 'responds with list of subscriptions' do
-      get('/v3/subscriptions', {}, headers)
-      expect(last_response.status).to eq(200)
-      expect(parsed_body).to eql_json({
+    let(:v2_response_body) { JSON.dump(subscriptions: subscriptions_data, permissions: permissions_data) }
+
+    let(:expected_json) do
+      {
         '@type' => 'subscriptions',
         '@representation' => 'standard',
         '@href' => '/v3/subscriptions',
+        '@permissions' => permissions_data,
         'subscriptions' => [{
           '@type' => 'subscription',
           '@representation' => 'standard',
@@ -88,7 +87,18 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             'login' => 'travis'
           }
         }]
-      })
+      }
+    end
+
+    before do
+      stub_billing_request(:get, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
+        .to_return(status: 200, body: v2_response_body)
+    end
+
+    it 'responds with list of subscriptions' do
+      get('/v3/subscriptions', {}, headers)
+      expect(last_response.status).to eq(200)
+      expect(parsed_body).to eql_json(expected_json)
     end
 
     context 'with a null plan' do
