@@ -44,6 +44,7 @@ class Travis::Api::App
     class Authorization < Endpoint
       enable :inline_templates
       set prefix: '/auth'
+      set :check_auth, false
 
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
