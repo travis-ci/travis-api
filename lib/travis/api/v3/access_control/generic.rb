@@ -46,12 +46,20 @@ module Travis::API::V3
       false
     end
 
+    def temp_access?
+      false
+    end
+
     def full_access_or_logged_in?
       full_access? || logged_in?
     end
 
     def enterprise?
       !!Travis.config.enterprise
+    end
+
+    def force_auth?
+      !!Travis.config.force_authentication
     end
 
     def visible_repositories(list)

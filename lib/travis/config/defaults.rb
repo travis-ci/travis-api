@@ -66,7 +66,8 @@ module Travis
             endpoints:     {},
             oauth2:        {},
             webhook:       { public_key: nil },
-            cache_options: {}
+            cache_options: {},
+            force_authentication: false
 
     default :_access => [:key]
 
