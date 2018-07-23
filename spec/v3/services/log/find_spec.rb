@@ -108,6 +108,21 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       end
     end
 
+    describe 'when in enterprise mode' do
+      before { Travis.config.enterprise = true }
+      after { Travis.config.enterprise = false }
+
+      it 'returns the text version of the log with log token supplied' do
+        get("/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_AUTHORIZATION' => "token #{token}", 'HTTP_TRAVIS_API_VERSION' => '3'))
+        raw_log_href = parsed_body['@raw_log_href']
+        expect(raw_log_href).to match(%r{/v3/job/#{s3log.job.id}/log\.txt\?log\.token=})
+
+        get(raw_log_href, {}, headers)
+        expect(last_response.headers).to include('Content-Type' => 'text/plain')
+        expect(body).to eq(archived_content)
+      end
+    end
+
     describe 'when repo is private' do
       before { repo.update_attributes(private: true) }
       before { s3log.job.update_attributes(private: true) }
