@@ -118,12 +118,18 @@ module Travis::API::V3
     end
 
     def run
-      raise LoginRequired if access_control.force_auth? && !access_control.logged_in?
+      check_force_auth
       not_found unless result = run!
       result = paginate(result) if self.class.paginate?
       check_deprecated_params(result) if params['include']
       apply_warnings(result)
       result
+    end
+
+    def check_force_auth
+      if access_control.force_auth?
+        raise LoginRequired unless access_control.logged_in? || access_control.temp_access?
+      end
     end
 
     def check_deprecated_params(result)
