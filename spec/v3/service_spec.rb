@@ -47,5 +47,10 @@ describe Travis::API::V3::Services::Examples::Find, set_app: true do
       get '/v3/examples', {}, auth_headers
       expect(last_response.status).to eq 200
     end
+
+    it 'does allow access with log token' do
+      get '/v3/examples?log.token=abc123'
+      expect(last_response.status).to eq 200
+    end
   end
 end
