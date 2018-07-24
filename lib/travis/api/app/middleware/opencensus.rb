@@ -15,7 +15,7 @@ class Travis::Api::App
         ::OpenCensus::Trace::Formatters::CloudTrace.new,
         ::OpenCensus::Trace::Formatters::TraceContext.new
       ].freeze
-      
+
       ##
       # Create the middleware.
       #
@@ -27,24 +27,24 @@ class Travis::Api::App
         @app = app
         @exporter = exporter || ::OpenCensus::Trace.config.exporter
       end
-      
+
       def self.enabled?
         ENV['OPENCENSUS_TRACING_ENABLED'] == 'true'
       end
-      
+
       def self.setup
         return unless enabled?
-        
+
         sampling_rate = ENV['OPENCENSUS_SAMPLING_RATE']&.to_f || 1
         ::OpenCensus.configure do |c|
           c.trace.exporter = ::OpenCensus::Trace::Exporters::Stackdriver.new
           c.trace.default_sampler = ::OpenCensus::Trace::Samplers::Probability.new sampling_rate
           c.trace.default_max_attributes = 16
         end
-        
+
         setup_notifications
       end
-      
+
       def self.setup_notifications
         ActiveSupport::Notifications.subscribe('sql.active_record') do |*args|
           event = ActiveSupport::Notifications::Event.new(*args)
@@ -53,7 +53,7 @@ class Travis::Api::App
           end
         end
       end
-      
+
       def self.handle_notification_event event
         span_context = ::OpenCensus::Trace.span_context
         if span_context
@@ -65,7 +65,7 @@ class Travis::Api::App
           end
         end
       end
-      
+
       ##
       # Run the middleware.
       #
@@ -82,17 +82,23 @@ class Travis::Api::App
           context = formatter.deserialize env[formatter.rack_header_name]
         end
 
-        if env['HTTP_TRACE'] == 'true' 
-          sampler = ::OpenCensus::Trace::Samplers::AlwaysSample.new
-        else 
-          sampler = ::OpenCensus::Trace.config.default_sampler
+        # TraceContextData has fields :trace_id, :span_id, :trace_options
+        #
+        # If trace_options is set to 0x01, this indicates that this trace
+        # should always be sampled. This mechanism is also used to propagate
+        # the sampling decision downstream.
+        if env['HTTP_TRACE'] == 'true'
+          max_trace_id = ::OpenCensus::Trace::SpanContext::MAX_TRACE_ID
+          trace_id = rand 1..max_trace_id
+          trace_id = trace_id.to_s(16).rjust(32, "0")
+          context = ::OpenCensus::Trace::TraceContextData.new(trace_id, '', 0x01)
         end
 
         ::OpenCensus::Trace.start_request_trace \
         trace_context: context,
         same_process_as_parent: false do |span_context|
           begin
-            span_context.in_span get_path(env), sampler: sampler do |span|
+            span_context.in_span get_path(env) do |span|
               start_request span, env
               @app.call(env).tap do |response|
                 finish_request span, response
@@ -103,29 +109,29 @@ class Travis::Api::App
           end
         end
       end
-      
+
       private
-      
+
       def get_path env
         path = "#{env['SCRIPT_NAME']}#{env['PATH_INFO']}"
         path = "/#{path}" unless path.start_with? "/"
         path
       end
-      
+
       def get_host env
         env["HTTP_HOST"] || env["SERVER_NAME"]
       end
-      
+
       def get_url env
         path = get_path env
         host = get_host env
-        scheme = env["SERVER_PROTOCOL"]
+        scheme = env["rack.url_scheme"]
         query_string = env["QUERY_STRING"].to_s
         url = "#{scheme}://#{host}#{path}"
         url = "#{url}?#{query_string}" unless query_string.empty?
         url
       end
-      
+
       def start_request span, env
         span.kind = ::OpenCensus::Trace::SpanBuilder::SERVER
         span.put_attribute "app", "api"
@@ -139,7 +145,7 @@ class Travis::Api::App
         span.put_attribute "pid", ::Process.pid.to_s
         span.put_attribute "tid", ::Thread.current.object_id.to_s
       end
-      
+
       def finish_request span, response
         if response.is_a?(::Array) && response.size == 3
           span.set_status response[0]
@@ -148,4 +154,3 @@ class Travis::Api::App
     end
   end
 end
-
