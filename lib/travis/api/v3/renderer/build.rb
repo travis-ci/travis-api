@@ -33,6 +33,7 @@ module Travis::API::V3
           'login' => creator.login
         }
         payload['avatar_url'] = V3::Renderer::AvatarURL.avatar_url(creator) if include?('created_by.avatar_url')
+        payload['name'] = creator.name if include?('created_by.name')
         payload
       end
     end
