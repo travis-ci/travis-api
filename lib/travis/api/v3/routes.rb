@@ -268,6 +268,7 @@ module Travis::API::V3
     hidden_resource :gdpr do
       route '/gdpr'
       post :export, '/export'
+      delete :purge, '/purge'
     end
   end
 end

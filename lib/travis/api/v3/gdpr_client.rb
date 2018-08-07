@@ -10,6 +10,10 @@ module Travis::API::V3
       handle_errors_and_respond connection.post("/user/#{@user_id}/export")
     end
 
+    def purge
+      handle_errors_and_respond connection.delete("/user/#{@user_id}")
+    end
+
     private
 
     def handle_errors_and_respond(response)
