@@ -29,6 +29,7 @@ module Travis::API::V3
       @connection ||= Faraday.new(url: gdpr_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
         conn.token_auth gdpr_auth_token
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
+        conn.headers['X-Travis-Source'] = 'travis-api'
         conn.adapter :net_http
       end
     end
