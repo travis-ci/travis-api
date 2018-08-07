@@ -264,5 +264,10 @@ module Travis::API::V3
         get :all
       end
     end
+
+    hidden_resource :gdpr do
+      route '/gdpr'
+      post :export, '/export'
+    end
   end
 end
