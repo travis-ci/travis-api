@@ -342,6 +342,22 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
     end
   end
 
+  describe 'including created_by' do
+    before { get("/v3/build/#{build.id}?include=build.created_by") }
+
+    example { expect(last_response).to be_ok }
+    example do
+      expect(parsed_body['created_by']).to include(
+        '@type',
+        '@href',
+        '@representation',
+        'id',
+        'name',
+        'avatar_url'
+      )
+    end
+  end
+
   describe "private build on public repository, no pull access" do
     before     { build.update_attribute(:private, true) }
     before     { get("/v3/build/#{build.id}") }
