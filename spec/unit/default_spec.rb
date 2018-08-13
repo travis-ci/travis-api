@@ -9,5 +9,9 @@ describe Travis::Api::App::Endpoint::Home, set_app: true do
       status.should == 302
       headers['Location'].should end_with('/docs/')
     end
+
+    it 'does not check auth' do
+      expect(subject.settings.check_auth?).to eq false
+    end
   end
 end
