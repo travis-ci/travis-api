@@ -27,6 +27,10 @@ describe Travis::Api::App::Endpoint::Authorization do
     Travis.config.oauth2 = @original_config
   end
 
+  it 'does not check auth' do
+    expect(subject.settings.check_auth?).to eq false
+  end
+
   describe 'GET /auth/authorize' do
     skip "not yet implemented"
   end

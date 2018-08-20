@@ -24,17 +24,15 @@ module Travis::API::V3
     end
 
     def created_by
-      if creator = model.created_by
-        payload = {
-          '@type' => model.sender_type.downcase,
-          '@href' => created_by_href(creator),
-          '@representation' => 'minimal'.freeze,
-          'id' => creator.id,
-          'login' => creator.login
-        }
-        payload['avatar_url'] = V3::Renderer::AvatarURL.avatar_url(creator) if include?('created_by.avatar_url')
-        payload
-      end
+     return nil unless creator = model.created_by
+     return creator if include?('build.created_by')
+     {
+       '@type' => model.sender_type.downcase,
+       '@href' => created_by_href(creator),
+       '@representation' => 'minimal'.freeze,
+       'id' => creator.id,
+       'login' => creator.login
+     }
     end
 
     def updated_at
