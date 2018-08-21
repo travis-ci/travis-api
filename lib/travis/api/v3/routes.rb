@@ -264,5 +264,13 @@ module Travis::API::V3
         get :all
       end
     end
+
+    if ENV['GDPR_ENABLED']
+      hidden_resource :gdpr do
+        route '/gdpr'
+        post :export, '/export'
+        delete :purge, '/purge'
+      end
+    end
   end
 end
