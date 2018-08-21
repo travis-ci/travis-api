@@ -3,7 +3,7 @@ describe Travis::API::V3::Services::Gdpr::Purge, set_app: true, gdpr_spec_helper
   let(:gdpr_auth_token) { 'secret' }
 
   before do
-    Travis.config.gdpr.url = gdpr_url
+    Travis.config.gdpr.endpoint = gdpr_url
     Travis.config.gdpr.auth_token = gdpr_auth_token
   end
 

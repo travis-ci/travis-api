@@ -35,7 +35,7 @@ module Travis::API::V3
     end
 
     def gdpr_url
-      Travis.config.gdpr.url || raise(ConfigurationError, 'No gdpr url configured')
+      Travis.config.gdpr.endpoint || raise(ConfigurationError, 'No gdpr url configured')
     end
 
     def gdpr_auth_token
