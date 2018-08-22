@@ -7,6 +7,7 @@ module Travis::API::V3
     has_many :permissions, dependent: :delete_all
     has_many :users,       through:   :permissions
     has_many :stars
+    has_many :email_unsubscribes
 
     belongs_to :owner, polymorphic: true
     belongs_to :last_build, class_name: 'Travis::API::V3::Models::Build'.freeze

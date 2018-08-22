@@ -212,6 +212,11 @@ module Travis::API::V3
         patch   :update
         delete :delete
       end
+
+      resource :email_subscription do
+        route '/email_subscription'
+        delete :unsubscribe
+      end
     end
 
     resource :user do

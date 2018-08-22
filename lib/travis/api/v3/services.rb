@@ -15,6 +15,7 @@ module Travis::API::V3
     Caches              = Module.new { extend Services }
     Cron                = Module.new { extend Services }
     Crons               = Module.new { extend Services }
+    EmailSubscription   = Module.new { extend Services }
     EnvVar              = Module.new { extend Services }
     EnvVars             = Module.new { extend Services }
     EnterpriseLicense   = Module.new { extend Services }
