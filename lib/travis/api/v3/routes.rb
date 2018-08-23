@@ -243,6 +243,17 @@ module Travis::API::V3
       get :current
     end
 
+    resource :preferences do
+      route '/preferences'
+      get   :for_user
+    end
+
+    resource :preference do
+      route '/preference/{preference.name}'
+      get   :find
+      patch :update
+    end
+
     if ENV['BILLING_V2_ENABLED']
       hidden_resource :subscriptions do
         route '/subscriptions'
