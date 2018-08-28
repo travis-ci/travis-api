@@ -6,6 +6,7 @@ module Travis::API::V3
     has_many :tokens,        dependent: :destroy
     has_many :organizations, through:   :memberships
     has_many :stars
+    has_many :email_unsubscribes
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
 
@@ -25,6 +26,10 @@ module Travis::API::V3
 
     def starred_repository_ids
       @starred_repository_ids ||= stars.map(&:repository_id)
+    end
+
+    def email_unsubscribed_repository_ids
+      @email_unsubscribed_repository_ids ||= email_unsubscribes.map(&:repository_id)
     end
 
     def permission?(roles, options = {})
