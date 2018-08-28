@@ -216,6 +216,7 @@ module Travis::API::V3
       resource :email_subscription do
         route '/email_subscription'
         delete :unsubscribe
+        post :resubscribe
       end
     end
 
