@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'opencensus'
 require 'opencensus/stackdriver'
+require 'opencensus/trace/integrations/faraday_middleware'
 
 class Travis::Api::App
   class Middleware
