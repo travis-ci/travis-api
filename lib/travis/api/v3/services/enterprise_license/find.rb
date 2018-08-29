@@ -4,7 +4,10 @@ module Travis::API::V3
       if replicated_endpoint
         # We turn off verification because this is an internal IP and a self signed cert so it will always fail
         http_options = {url: replicated_endpoint, ssl: Travis.config.ssl.to_h.merge(verify: false)}.compact
-        response = Faraday.new(http_options).get("license/v1/license")
+        conn = Faraday.new(http_options) do |conn|
+          conn.use OpenCensus::Trace::Integrations::FaradayMiddleware
+        end
+        response = conn.get("license/v1/license")
         replicated_response = JSON.parse(response.body)
         license_id = replicated_response["license_id"]
         license_type = replicated_response["license_type"]

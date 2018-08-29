@@ -228,6 +228,7 @@ module Travis
           c.request :authorization, :token, token
           c.request :retry, max: 5, interval: 0.1, backoff_factor: 2
           c.use :instrumentation
+          c.use OpenCensus::Trace::Integrations::FaradayMiddleware
           c.adapter :net_http_persistent
         end
       end

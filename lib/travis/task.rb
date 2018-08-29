@@ -77,10 +77,11 @@ module Travis
       end
 
       def http
-        @http ||= Faraday.new(http_options) do |f|
-          f.request :url_encoded
-          f.use :instrumentation
-          f.adapter :net_http_persistent
+        @http ||= Faraday.new(http_options) do |conn|
+          conn.request :url_encoded
+          conn.use :instrumentation
+          conn.use OpenCensus::Trace::Integrations::FaradayMiddleware
+          conn.adapter :net_http_persistent
         end
       end
 

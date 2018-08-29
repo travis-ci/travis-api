@@ -95,6 +95,7 @@ module Travis::API::V3
         conn.headers['Content-Type'] = 'application/json'
         conn.request :json
         conn.response :json
+        conn.use OpenCensus::Trace::Integrations::FaradayMiddleware
         conn.adapter :net_http
       end
     end
