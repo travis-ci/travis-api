@@ -6,6 +6,7 @@ module Travis::API::V3
         http_options = {url: replicated_endpoint, ssl: Travis.config.ssl.to_h.merge(verify: false)}.compact
         conn = Faraday.new(http_options) do |conn|
           conn.use OpenCensus::Trace::Integrations::FaradayMiddleware
+          conn.adapter Faraday.default_adapter
         end
         response = conn.get("license/v1/license")
         replicated_response = JSON.parse(response.body)
