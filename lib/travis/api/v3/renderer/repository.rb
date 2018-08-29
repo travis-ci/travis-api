@@ -6,6 +6,10 @@ module Travis::API::V3
 
     hidden_representations(:experimental)
 
+    def self.available_attributes
+      super.add('email_subscribed')
+    end
+
     def active
       !!model.active
     end
@@ -33,6 +37,11 @@ module Travis::API::V3
     def starred
       return false unless user = access_control.user
       user.starred_repository_ids.include? id
+    end
+
+    def email_subscribed
+      return false unless user = access_control.user
+      !user.email_unsubscribed_repository_ids.include?(id)
     end
 
     def include_default_branch?
