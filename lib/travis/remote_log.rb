@@ -228,6 +228,7 @@ module Travis
           c.request :authorization, :token, token
           c.request :retry, max: 5, interval: 0.1, backoff_factor: 2
           c.use :instrumentation
+          c.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
           c.adapter :net_http_persistent
         end
       end
@@ -243,7 +244,9 @@ module Travis
         @s3 = Fog::Storage.new(
           aws_access_key_id: access_key_id,
           aws_secret_access_key: secret_access_key,
-          provider: 'AWS'
+          provider: 'AWS',
+          instrumentor: ActiveSupport::Notifications,
+          connection_options: { instrumentor: ActiveSupport::Notifications }
         )
       end
 

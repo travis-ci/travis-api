@@ -292,11 +292,12 @@ class Travis::Api::App
           # Get base URL for when we setup Faraday since otherwise it'll ignore no_proxy
           url = URI.parse(endpoint)
           base_url = "#{url.scheme}://#{url.host}"
-          http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact} 
+          http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact}
 
           conn = Faraday.new(http_options) do |conn|
             conn.request :json
             conn.use :instrumentation
+            conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
             conn.adapter :net_http_persistent
           end
           response = conn.post(endpoint, values)

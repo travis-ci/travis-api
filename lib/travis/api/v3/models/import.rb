@@ -21,6 +21,7 @@ module Travis::API::V3::Models
       connection = Faraday.new(url: url) do |c|
         c.request :json
         c.use Faraday::Request::Authorization, 'Token', token
+        c.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
         c.adapter Faraday.default_adapter
       end
       response = connection.put("/api/#{type}/#{owner.id}") do |request|

@@ -1,10 +1,19 @@
 # frozen_string_literal: true
 require 'opencensus'
 require 'opencensus/stackdriver'
+require 'opencensus/trace/integrations/faraday_middleware'
 
 class Travis::Api::App
   class Middleware
     class OpenCensus
+      module Redis
+        def logging(commands, &block)
+          ActiveSupport::Notifications.instrument('command.redis', commands: commands) do
+            return super(commands, &block)
+          end
+        end
+      end
+
       ##
       # List of trace context formatters we use to parse the parent span
       # context.
@@ -52,6 +61,21 @@ class Travis::Api::App
             handle_notification_event event
           end
         end
+        ActiveSupport::Notifications.subscribe(/^excon\./) do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
+          event.payload[:headers]&.delete('Authorization')
+          handle_notification_event event
+        end
+        ActiveSupport::Notifications.subscribe('fog.aws.storage.request') do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
+          event.payload[:headers]&.delete('Authorization')
+          handle_notification_event event
+        end
+        ActiveSupport::Notifications.subscribe('command.redis') do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
+          handle_notification_event event
+        end
+        ::Redis::Client.prepend Travis::Api::App::Middleware::OpenCensus::Redis
       end
 
       def self.handle_notification_event event
