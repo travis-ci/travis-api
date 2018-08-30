@@ -75,7 +75,7 @@ class Travis::Api::App
           event = ActiveSupport::Notifications::Event.new(*args)
           handle_notification_event event
         end
-        Redis::Client.prepend Travis::Api::App::Middleware::OpenCensus::Redis
+        ::Redis::Client.prepend Travis::Api::App::Middleware::OpenCensus::Redis
       end
 
       def self.handle_notification_event event
