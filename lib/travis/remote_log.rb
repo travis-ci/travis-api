@@ -244,7 +244,8 @@ module Travis
         @s3 = Fog::Storage.new(
           aws_access_key_id: access_key_id,
           aws_secret_access_key: secret_access_key,
-          provider: 'AWS'
+          provider: 'AWS',
+          connection_options: { instrumentor: ActiveSupport::Notifications }
         )
       end
 

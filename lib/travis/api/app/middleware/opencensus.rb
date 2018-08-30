@@ -53,6 +53,10 @@ class Travis::Api::App
             handle_notification_event event
           end
         end
+        ActiveSupport::Notifications.subscribe('excon.request') do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
+          handle_notification_event event
+        end
       end
 
       def self.handle_notification_event event
