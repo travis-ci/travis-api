@@ -55,6 +55,11 @@ class Travis::Api::App
         end
         ActiveSupport::Notifications.subscribe(/^excon\./) do |*args|
           event = ActiveSupport::Notifications::Event.new(*args)
+          event.payload[:headers]&.delete('Authorization')
+          handle_notification_event event
+        end
+        ActiveSupport::Notifications.subscribe('fog.aws.storage.request') do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
           handle_notification_event event
         end
       end
