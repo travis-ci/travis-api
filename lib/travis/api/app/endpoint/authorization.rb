@@ -297,7 +297,7 @@ class Travis::Api::App
           conn = Faraday.new(http_options) do |conn|
             conn.request :json
             conn.use :instrumentation
-            conn.use OpenCensus::Trace::Integrations::FaradayMiddleware
+            conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
             conn.adapter :net_http_persistent
           end
           response = conn.post(endpoint, values)

@@ -30,7 +30,7 @@ module Travis::API::V3
         conn.token_auth gdpr_auth_token
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
         conn.headers['X-Travis-Source'] = 'travis-api'
-        conn.use OpenCensus::Trace::Integrations::FaradayMiddleware
+        conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
         conn.adapter :net_http
       end
     end

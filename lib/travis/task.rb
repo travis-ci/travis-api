@@ -80,7 +80,7 @@ module Travis
         @http ||= Faraday.new(http_options) do |conn|
           conn.request :url_encoded
           conn.use :instrumentation
-          conn.use OpenCensus::Trace::Integrations::FaradayMiddleware
+          conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
           conn.adapter :net_http_persistent
         end
       end
