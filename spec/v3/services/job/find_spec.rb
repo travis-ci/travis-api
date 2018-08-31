@@ -156,9 +156,87 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "@representation"       => "standard",
       "@permissions"          => {
         "read"                => true,
+        "cancel"              => false,
+        "restart"             => false,
+        "debug"               => false,
+        "delete_log"          => true },
+      "id"                    => job.id,
+      "allow_failure"         => job.allow_failure,
+      "number"                => job.number,
+      "state"                 => job.state,
+      "started_at"            => "2010-11-12T12:00:00Z",
+      "finished_at"           => "2010-11-12T12:00:10Z",
+      "created_at"            => json_format_time_with_ms(job.created_at),
+      "updated_at"            => json_format_time_with_ms(job.updated_at),
+      "private"               => false,
+      "build"                 => {
+        "@type"               => "build",
+        "@href"               => "/v3/build/#{build.id}",
+        "@representation"     => "minimal",
+        "id"                  => build.id,
+        "number"              => build.number,
+        "state"               => build.state,
+        "duration"            => build.duration,
+        "event_type"          => build.event_type,
+        "previous_state"      => build.previous_state,
+        "pull_request_number" => build.pull_request_number,
+        "pull_request_title"  => build.pull_request_title,
+        "private"             => false,
+        "started_at"          => "2010-11-12T12:00:00Z",
+        "finished_at"         => "2010-11-12T12:00:10Z"},
+      "stage"                 => {
+        "@type"               => "stage",
+        "@representation"     => "minimal",
+        "id"                  => stage.id,
+        "number"              => 1,
+        "name"                => "test",
+        "state"               => stage.state,
+        "started_at"          => stage.started_at,
+        "finished_at"         => stage.finished_at},
+      "queue"                 => job.queue,
+      "repository"            => {
+        "@type"               => "repository",
+        "@href"               => "/v3/repo/#{repo.id}",
+        "@representation"     => "minimal",
+        "id"                  => repo.id,
+        "name"                => repo.name,
+        "slug"                => repo.slug},
+      "commit"                => {
+        "@type"               => "commit",
+        "@representation"     => "minimal",
+        "id"                  => commit.id,
+        "sha"                 => commit.commit,
+        "ref"                 => commit.ref,
+        "message"             => commit.message,
+        "compare_url"         => commit.compare_url,
+        "committed_at"        => "2010-11-12T11:50:00Z"},
+      "owner"                 => {
+        "@type"               => owner_type.to_s.downcase,
+        "@href"               => "/v3/#{owner_href}/#{owner.id}",
+        "@representation"     => "minimal",
+        "id"                  => owner.id,
+        "login"               => owner.login}
+    })}
+  end
+
+  describe "fetching job on private repository, private API, authenticated as user with push access" do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true) }
+    before        { repo.update_attribute(:private, true)                             }
+    before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true) }
+    before        { get("/v3/job/#{job.id}", {}, headers)                             }
+    after         { repo.update_attribute(:private, false)                            }
+    example       { expect(last_response).to be_ok                                    }
+    example       { expect(parsed_body).to eql_json({
+      "@type"                 => "job",
+      "@href"                 => "/v3/job/#{job.id}",
+      "@representation"       => "standard",
+      "@permissions"          => {
+        "read"                => true,
         "cancel"              => true,
         "restart"             => true,
-        "debug"               => false,
+        "debug"               => true,
         "delete_log"          => true },
       "id"                    => job.id,
       "allow_failure"         => job.allow_failure,

@@ -65,7 +65,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before do
-      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
       Travis.redis.sadd("abuse:offenders", "#{job.owner.class.name.split("::").last}:#{job.owner_id}")
       post("/v3/job/#{job.id}/restart", {}, headers)
     end
@@ -78,11 +78,11 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     }}
   end
 
-  describe "existing repository, pull access" do
+  describe "existing repository, push access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before do
-      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
       post("/v3/job/#{job.id}/restart", {}, headers)
     end
 
@@ -96,7 +96,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
   end
 
   describe "private repository, no access" do
-    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1, pull: true) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { repo.update_attribute(:private, true)                             }
     before        { post("/v3/job/#{job.id}/restart", {}, headers)                 }

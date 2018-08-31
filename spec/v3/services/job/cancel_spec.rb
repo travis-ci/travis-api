@@ -41,8 +41,8 @@ describe Travis::API::V3::Services::Job::Cancel, set_app: true do
     }}
   end
 
-  describe "existing repository, no pull access" do
-    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+  describe "existing repository, no push access" do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1, pull: true) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { post("/v3/job/#{job.id}/cancel", {}, headers)                 }
 
@@ -60,7 +60,7 @@ describe Travis::API::V3::Services::Job::Cancel, set_app: true do
     }
   end
 
-  describe "existing repository, pull access" do
+  describe "existing repository, push access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before do
@@ -93,12 +93,12 @@ describe Travis::API::V3::Services::Job::Cancel, set_app: true do
     }}
   end
 
-  describe "existing repository, pull access, job cancelable, enqueues message for Hub" do
+  describe "existing repository, push access, job cancelable, enqueues message for Hub" do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
     before  do
-      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true)
       Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(true)
     end
 
@@ -193,11 +193,11 @@ describe Travis::API::V3::Services::Job::Cancel, set_app: true do
     end
   end
 
-  describe "existing repository, pull access, not cancelable" do
+  describe "existing repository, push access, not cancelable" do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
-    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true) }
 
     describe "passed state" do
       before        { job.update_attribute(:state, "passed")                                                   }

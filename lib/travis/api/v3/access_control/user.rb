@@ -38,19 +38,19 @@ module Travis::API::V3
     end
 
     def build_cancelable?(build)
-      permission?(:pull, build.repository)
+      permission?(:push, build.repository)
     end
 
     def build_restartable?(build)
-      permission?(:pull, build.repository)
+      permission?(:push, build.repository)
     end
 
     def job_cancelable?(job)
-      permission?(:pull, job.repository)
+      permission?(:push, job.repository)
     end
 
     def job_restartable?(job)
-      permission?(:pull, job.repository)
+      permission?(:push, job.repository)
     end
 
     def repository_adminable?(repository)
