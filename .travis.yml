@@ -25,9 +25,8 @@ services:
   - redis-server
 
 before_script:
-  #- 'RAILS_ENV=test bundle exec rake db:create --trace'
   - "createdb travis_test || true"
-  - "curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/jc-prefs/db/main/structure.sql | psql travis_test"
+  - "curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test"
 
 before_install:
   - 'gem update --system'
