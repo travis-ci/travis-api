@@ -4,12 +4,16 @@ module Travis::API::V3
   class Models::JsonSlice
     include Virtus.model, Enumerable, Models::JsonSync
 
-    def self.child(klass)
-      @@child_klass = klass
+    class << self
+      attr_accessor :child_klass
+
+      def child(klass)
+        self.child_klass = klass
+      end
     end
 
     def child_klass
-      @@child_klass
+      self.class.child_klass
     end
 
     def each(&block)

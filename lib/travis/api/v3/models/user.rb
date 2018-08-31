@@ -43,5 +43,9 @@ module Travis::API::V3
       return @installation if defined? @installation
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
     end
+
+    def preferences
+      Models::Preferences.new(super).tap { |prefs| prefs.sync(self, :preferences) }
+    end
   end
 end

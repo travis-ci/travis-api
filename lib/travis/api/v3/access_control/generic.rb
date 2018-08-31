@@ -141,6 +141,10 @@ module Travis::API::V3
       visible? key_pair.repository
     end
 
+    def preferences_visible?(preferences)
+      true
+    end
+
     def organization_visible?(organization)
       full_access? or public_mode?(organization)
     end
