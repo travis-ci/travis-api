@@ -4,6 +4,8 @@ module Travis::API::V3
     sortable_by :id
     default_sort "id:desc"
 
+    ACTIVE_STATES = %w(created queued received started).freeze
+
     def find(build)
       relation = build.jobs
       relation = relation.includes(:commit) if includes? 'job.commit'.freeze
@@ -11,7 +13,7 @@ module Travis::API::V3
     end
 
     def filter(relation)
-      relation = relation.where(state: active_states) if bool(active)
+      relation = relation.where(state: ACTIVE_STATES) if bool(active)
       relation = relation.where(state: list(state))   if state
       relation = for_owner(relation)                  if created_by
 
@@ -37,10 +39,5 @@ module Travis::API::V3
       jobs = V3::Models::Job.where(repository_id: repositories)
       sort filter(jobs)
     end
-
-    private
-      def active_states
-        ['created', 'queued', 'received', 'started']
-      end
   end
 end
