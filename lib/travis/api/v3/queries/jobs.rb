@@ -35,11 +35,8 @@ module Travis::API::V3
     def for_user(user)
       repositories = V3::Models::Permission.where(["permissions.user_id = ?", user.id]).select(:repository_id)
       jobs = V3::Models::Job.where(repository_id: repositories)
-      result = sort filter(jobs)
-
-      result
+      sort filter(jobs)
     end
-
 
     private
       def active_states
