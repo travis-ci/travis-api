@@ -34,7 +34,7 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
 
   describe 'authenticated, user has prefs' do
     before do
-      user.preferences.update(:build_emails, false)
+      user.user_preferences.update(:build_emails, false)
       get("/v3/preferences", {}, auth_headers)
     end
 
