@@ -56,8 +56,7 @@ http {
 				return 204;
 			}
 
-			location = builds?event_type%5B%5D=push&event_type%5B%5D=api&event_type%5B%5D=cron&repository_id=11372873 {
-				deny all;
+			if ($request_uri ~ ^/builds\?event_type%5B%5D=push&event_type%5B%5D=api&event_type%5B%5D=cron&repository_id=11372873$) {
 				return 429;
 			}
 
