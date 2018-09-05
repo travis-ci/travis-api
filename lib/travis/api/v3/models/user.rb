@@ -10,7 +10,7 @@ module Travis::API::V3
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
 
-    serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
+    serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new
 
     def repository_ids
       repositories.pluck(:id)
