@@ -56,6 +56,11 @@ http {
 				return 204;
 			}
 
+			location ~ ^/builds?event_type%5B%5D=push&event_type%5B%5D=api&event_type%5B%5D=cron&repository_id=11372873$ {
+				deny all;
+				return 429;
+			}
+
 			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 			proxy_set_header Host $http_host;
 			proxy_redirect off;
