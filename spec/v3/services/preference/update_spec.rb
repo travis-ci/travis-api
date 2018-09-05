@@ -1,5 +1,6 @@
 describe Travis::API::V3::Services::Preference::Update, set_app: true do
-  let(:user) { Travis::API::V3::Models::User.create!(name: 'svenfuchs') }
+  let(:github_oauth_token) { 'bar' }
+  let(:user) { Travis::API::V3::Models::User.create!(name: 'svenfuchs', github_oauth_token: github_oauth_token) }
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}", 'CONTENT_TYPE' => 'application/json' } }
   let(:params) { JSON.dump('preference.value' => false) }
@@ -24,6 +25,9 @@ describe Travis::API::V3::Services::Preference::Update, set_app: true do
         "name" => "build_emails",
         "value" => false
       )
+    end
+    example do
+      expect(user.github_oauth_token).to eq github_oauth_token
     end
   end
 end

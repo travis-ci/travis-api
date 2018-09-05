@@ -10,7 +10,7 @@ module Travis::API::V3
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
 
-    serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
+    serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new
 
     def repository_ids
       repositories.pluck(:id)
@@ -44,8 +44,8 @@ module Travis::API::V3
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
     end
 
-    def preferences
-      Models::Preferences.new(super).tap { |prefs| prefs.sync(self, :preferences) }
+    def user_preferences
+      Models::Preferences.new(preferences).tap { |prefs| prefs.sync(self, :preferences) }
     end
   end
 end
