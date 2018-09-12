@@ -17,6 +17,9 @@ module Travis::API::V3
     EVENTS = %i(push pull_request issue_comment public member create delete repository)
     private_constant :EVENTS
 
+    HOOKS_URL = "repos/%s/hooks"
+    private_constant :HOOKS_URL
+
     def self.client_config
       {
         api_url: DEFAULT_OPTIONS[:api_url],
@@ -37,26 +40,14 @@ module Travis::API::V3
       @gh   = GH.with(token: token, **DEFAULT_OPTIONS)
     end
 
-    def set_hook(repository, flag)
-      hooks_url = "repos/#{repository.slug}/hooks"
-      payload   = {
-        name:   'travis'.freeze,
-        events: EVENTS,
-        active: flag,
-        config: { domain: Travis.config.service_hook_url || '' }
-      }
-
-      if hook = gh[hooks_url].detect { |hook| hook['name'.freeze] == 'travis'.freeze }
-        gh.patch(hook['_links'.freeze]['self'.freeze]['href'.freeze], payload)
-      else
-        gh.post(hooks_url, payload)
-      end
+    def set_hook(repo, active)
+      set_webhook(repo, active)
+      remove_service_hook(repo)
     end
 
     def upload_key(repository)
       keys_path = "repos/#{repository.slug}/keys"
-      key = gh[keys_path].
-        detect { |e| e['key'] == repository.key.encoded_public_key }
+      key = gh[keys_path].detect { |e| e['key'] == repository.key.encoded_public_key }
 
       unless key
         gh.post keys_path, {
@@ -64,6 +55,44 @@ module Travis::API::V3
           key: repository.key.encoded_public_key,
           read_only: !Travis::Features.owner_active?(:read_write_github_keys, repository.owner)
         }
+      end
+    end
+
+    private
+
+    def set_webhook(repo, active)
+      payload = {
+        name: 'web'.freeze,
+        events: EVENTS,
+        active: active,
+        config: { url: Travis.config.service_hook_url || '' }
+      }
+      if url = webhook_url?(repo)
+        gh.patch(url, payload)
+      else
+        hooks_url = HOOKS_URL % [repo.slug]
+        gh.post(hooks_url, payload)
+      end
+    end
+
+    def remove_service_hook(repo)
+      if url = service_hook_url?(repo)
+        gh.delete(url)
+      end
+    end
+
+    def service_hook_url?(repo)
+      hook_url?(repo, 'travis')
+    end
+
+    def webhook_url?(repo)
+      hook_url?(repo, 'web')
+    end
+
+    def hook_url?(repo, type)
+      hooks_url = HOOKS_URL % [repo.slug]
+      if hook = gh[hooks_url].detect { |hook| hook['name'.freeze] == type }
+        hook['_links'.freeze]['self'.freeze]['href'.freeze]
       end
     end
   end

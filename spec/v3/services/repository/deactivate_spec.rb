@@ -64,7 +64,32 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     }}
   end
 
-  describe "existing repository, push access"
-  # as this requires a call to github, and stubbing this request has proven difficult,
-  # this test has been omitted for now
+  describe "existing repository, admin and push access" do
+    let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+
+    before do
+      stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
+        status: 200, body: JSON.dump(
+          [
+            { name: 'travis', _links: { self: { href: "https://api.github.com/repos/#{repo.slug}/hooks/123" } } },
+            { name: 'web', _links: { self: { href: "https://api.github.com/repos/#{repo.slug}/hooks/456" } } }
+          ]
+        )
+      )
+      stub_request(:delete, "https://api.github.com/repos/#{repo.slug}/hooks/123") # Remove service hook
+      stub_request(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456")  # Set webhook
+    end
+
+    before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) }
+    before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
+
+    example { expect(last_response.status).to eq 200 }
+    example do
+      expect(JSON.load(body)).to include(
+        '@type' => 'repository',
+        'active' => false
+      )
+    end
+  end
 end
