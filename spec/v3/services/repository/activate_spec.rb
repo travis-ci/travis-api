@@ -77,32 +77,66 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
-    before        { Travis::API::V3::GitHub.any_instance.stubs(:set_hook) }
     before        { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
+    before        { stub_request(:any, %r(https://api.github.com/repos/#{repo.slug}/hooks(/\d+)?)) }
 
-    before  { post("/v3/repo/#{repo.id}/activate", {}, headers)                 }
-    example { expect(last_response.status).to be == 200 }
-    example { expect(JSON.load(body).to_s).to include(
-      "@type",
-      "@href",
-      "@representation",
-      "@permissions",
-      "id",
-      "name",
-      "slug",
-      "description",
-      "github_language",
-      "active",
-      "private",
-      "owner",
-      "default_branch",
-      "starred")
-    }
+    context 'queues sidekiq job' do
+      before do
+        stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(status: 200, body: '[]')
+        post("/v3/repo/#{repo.id}/activate", {}, headers)
+      end
 
-    example { expect(sidekiq_job).to be == {
-      queue: :sync,
-      class: 'Travis::GithubSync::Worker',
-      args:  [:sync_repo, repo_id: 1, user_id: 1]
-    }}
+      example do
+        expect(sidekiq_job).to eq(
+          queue: :sync,
+          class: 'Travis::GithubSync::Worker',
+          args:  [:sync_repo, repo_id: 1, user_id: 1]
+        )
+      end
+    end
+
+    context 'when webhook exists' do
+      before do
+        stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
+          status: 200, body: JSON.dump(
+            [
+              { name: 'web', _links: { self: { href: "https://api.github.com/repos/#{repo.slug}/hooks/456" } } }
+            ]
+          )
+        )
+        post("/v3/repo/#{repo.id}/activate", {}, headers)
+      end
+
+      example 'updates webhook' do
+        expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").once
+      end
+
+      example 'is success' do
+        expect(last_response.status).to eq 200
+        expect(JSON.load(body)).to include(
+          '@type' => 'repository',
+          'active' => true
+        )
+      end
+    end
+
+    context 'when webhook does not exist' do
+      before do
+        stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(status: 200, body: '[]')
+        post("/v3/repo/#{repo.id}/activate", {}, headers)
+      end
+
+      example 'creates webhook' do
+        expect(WebMock).to have_requested(:post, "https://api.github.com/repos/#{repo.slug}/hooks").once
+      end
+
+      example 'is success' do
+        expect(last_response.status).to eq 200
+        expect(JSON.load(body)).to include(
+          '@type' => 'repository',
+          'active' => true
+        )
+      end
+    end
   end
 end
