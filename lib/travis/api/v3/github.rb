@@ -2,20 +2,23 @@ require 'gh'
 
 module Travis::API::V3
   class GitHub
-    DEFAULT_OPTIONS = {
-      client_id:      Travis.config.oauth2.try(:client_id),
-      client_secret:  Travis.config.oauth2.try(:client_secret),
-      scopes:         Travis.config.oauth2.try(:scope).to_s.split(?,),
-      user_agent:     "Travis-API/3 Travis-CI/0.0.1 GH/#{GH::VERSION}",
-      origin:         Travis.config.host,
-      api_url:        Travis.config.github.api_url,
-      web_url:        Travis.config.github.api_url.gsub(%r{\A(https?://)(?:api\.)?([^/]+)(?:/.*)?\Z}, '\1\2'),
-      ssl:            Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact
-    }
-    private_constant :DEFAULT_OPTIONS
+    def self.config
+      @config ||= Travis::Config.load
+    end
 
     EVENTS = %i(push pull_request issue_comment public member create delete repository)
-    private_constant :EVENTS
+
+    DEFAULT_OPTIONS = {
+      client_id:      config.oauth2.try(:client_id),
+      client_secret:  config.oauth2.try(:client_secret),
+      scopes:         config.oauth2.try(:scope).to_s.split(?,),
+      user_agent:     "Travis-API/3 Travis-CI/0.0.1 GH/#{GH::VERSION}",
+      origin:         config.host,
+      api_url:        config.github.api_url,
+      web_url:        config.github.api_url.gsub(%r{\A(https?://)(?:api\.)?([^/]+)(?:/.*)?\Z}, '\1\2'),
+      ssl:            config.ssl.to_h.merge(config.github.ssl || {}).compact
+    }
+    private_constant :DEFAULT_OPTIONS
 
     HOOKS_URL = "repos/%s/hooks"
     private_constant :HOOKS_URL
