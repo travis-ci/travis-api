@@ -1,9 +1,10 @@
 require 'travis/github'
 require 'travis/services/base'
-require 'travis/api/v3'
-require 'travis/api/v3/github'
 
 module Travis
+  module API; end # Load-order issue
+  require 'travis/api/v3/github'
+
   module Github
     module Services
       class SetHook < Travis::Services::Base
