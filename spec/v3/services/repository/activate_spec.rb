@@ -76,6 +76,8 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
   describe "existing repository, push access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: true, config: { url: Travis.config.service_hook_url || '' }) }
+
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
     before        { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
     before        { stub_request(:any, %r(https://api.github.com/repos/#{repo.slug}/hooks(/\d+)?)) }
@@ -108,7 +110,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       end
 
       example 'updates webhook' do
-        expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").once
+        expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").with(body: webhook_payload).once
       end
 
       example 'is success' do

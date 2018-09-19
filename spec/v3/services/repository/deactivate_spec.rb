@@ -83,6 +83,8 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
   describe "existing repository, admin and push access" do
     let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+    let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: false, config: { url: Travis.config.service_hook_url || '' }) }
+
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) }
     before { stub_request(:any, %r(api.github.com/repos/#{repo.slug}/hooks(/\d+)?)) }
 
@@ -99,12 +101,12 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         post("/v3/repo/#{repo.id}/deactivate", {}, headers)
       end
 
-      example 'deletes service hook' do
-        expect(WebMock).to have_requested(:delete, "https://api.github.com/repos/#{repo.slug}/hooks/123").once
+      example 'deactivates service hook' do
+        expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/123").with(body: JSON.dump(active: false)).once
       end
 
       example 'updates webhook' do
-        expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").once
+        expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").with(body: webhook_payload).once
       end
 
       example 'is success' do
@@ -128,8 +130,8 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         post("/v3/repo/#{repo.id}/deactivate", {}, headers)
       end
 
-      example 'deletes service hook' do
-        expect(WebMock).to have_requested(:delete, "https://api.github.com/repos/#{repo.slug}/hooks/123").once
+      example 'deactivates service hook' do
+        expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/123").with(body: JSON.dump(active: false)).once
       end
 
       example 'creates webhook' do
@@ -158,7 +160,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
       end
 
       example 'does nothing with service hook' do
-        expect(WebMock).not_to have_requested(:delete, %r(https://api.github.com/repos/#{repo.slug}/hooks/\d+))
+        expect(WebMock).not_to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/123")
       end
 
       example 'updates webhook' do
