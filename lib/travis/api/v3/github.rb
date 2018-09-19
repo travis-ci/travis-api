@@ -45,7 +45,7 @@ module Travis::API::V3
 
     def set_hook(repo, active)
       set_webhook(repo, active)
-      remove_service_hook(repo)
+      deactivate_service_hook(repo)
     end
 
     def upload_key(repository)
@@ -78,9 +78,9 @@ module Travis::API::V3
       end
     end
 
-    def remove_service_hook(repo)
+    def deactivate_service_hook(repo)
       if url = service_hook_url?(repo)
-        gh.delete(url)
+        gh.patch(url, { active: false })
       end
     end
 
