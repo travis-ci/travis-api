@@ -80,7 +80,8 @@ module Travis::API::V3
 
     def deactivate_service_hook(repo)
       if url = service_hook_url?(repo)
-        gh.patch(url, { active: false })
+        # Have to update events here too, to avoid old hooks failing validation
+        gh.patch(url, { events: EVENTS, active: false })
       end
     end
 
