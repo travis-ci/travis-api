@@ -77,6 +77,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: true, config: { url: Travis.config.service_hook_url || '' }) }
+    let(:service_hook_payload) { JSON.dump(events: Travis::API::V3::GitHub::EVENTS, active: false) }
 
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
     before        { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
@@ -93,6 +94,36 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
           queue: :sync,
           class: 'Travis::GithubSync::Worker',
           args:  [:sync_repo, repo_id: 1, user_id: 1]
+        )
+      end
+    end
+
+    context 'when both service hook and webhook exist' do
+      before do
+        stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
+          status: 200, body: JSON.dump(
+            [
+              { name: 'travis', url: "https://api.github.com/repos/#{repo.slug}/hooks/123" },
+              { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url } }
+            ]
+          )
+        )
+        post("/v3/repo/#{repo.id}/activate", {}, headers)
+      end
+
+      example 'deactivates service hook' do
+        expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/123").with(body: service_hook_payload).once
+      end
+
+      example 'updates webhook' do
+        expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").with(body: webhook_payload).once
+      end
+
+      example 'is success' do
+        expect(last_response.status).to eq 200
+        expect(JSON.load(body)).to include(
+          '@type' => 'repository',
+          'active' => true
         )
       end
     end
