@@ -71,33 +71,41 @@ module Travis::API::V3
         config: { url: Travis.config.service_hook_url || '' }
       }
       if url = webhook_url?(repo)
+        info("Updating webhook repo=%s active=%s" % [repo.slug, active])
         gh.patch(url, payload)
       else
         hooks_url = HOOKS_URL % [repo.slug]
+        info("Creating webhook repo=%s active=%s" % [repo.slug, active])
         gh.post(hooks_url, payload)
       end
     end
 
     def deactivate_service_hook(repo)
       if url = service_hook_url?(repo)
+        info("Deactivating service hook repo=%s" % [repo.slug])
         # Have to update events here too, to avoid old hooks failing validation
         gh.patch(url, { events: EVENTS, active: false })
       end
     end
 
     def service_hook_url?(repo)
-      hook_url?(repo, 'travis')
+      if hook = hooks(repo).detect { |h| h['name'] == 'travis' }
+        hook.dig('_links', 'self', 'href')
+      end
     end
 
     def webhook_url?(repo)
-      hook_url?(repo, 'web')
+      if hook = hooks(repo).detect { |h| h['name'] == 'web' && h.dig('config', 'url') == Travis.config.service_hook_url }
+        hook.dig('_links', 'self', 'href')
+      end
     end
 
-    def hook_url?(repo, type)
-      hooks_url = HOOKS_URL % [repo.slug]
-      if hook = gh[hooks_url].detect { |hook| hook['name'.freeze] == type }
-        hook['_links'.freeze]['self'.freeze]['href'.freeze]
-      end
+    def hooks(repo)
+      gh[HOOKS_URL % [repo.slug]]
+    end
+
+    def info(msg)
+      Travis.logger.info(msg)
     end
   end
 end
