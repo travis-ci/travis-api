@@ -93,8 +93,8 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
           status: 200, body: JSON.dump(
             [
-              { name: 'travis', _links: { self: { href: "https://api.github.com/repos/#{repo.slug}/hooks/123" } } },
-              { name: 'web', _links: { self: { href: "https://api.github.com/repos/#{repo.slug}/hooks/456" } } }
+              { name: 'travis', url: "https://api.github.com/repos/#{repo.slug}/hooks/123" },
+              { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url } }
             ]
           )
         )
@@ -125,7 +125,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
           status: 200, body: JSON.dump(
             [
-              { name: 'travis', _links: { self: { href: "https://api.github.com/repos/#{repo.slug}/hooks/123" } } }
+              { name: 'travis', url: "https://api.github.com/repos/#{repo.slug}/hooks/123" }
             ]
           )
         )
@@ -156,7 +156,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
           status: 200, body: JSON.dump(
             [
-              { name: 'web', _links: { self: { href: "https://api.github.com/repos/#{repo.slug}/hooks/456" } } }
+              { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url } }
             ]
           )
         )
