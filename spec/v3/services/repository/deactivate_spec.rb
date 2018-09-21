@@ -89,6 +89,12 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) }
     before { stub_request(:any, %r(api.github.com/repos/#{repo.slug}/hooks(/\d+)?)) }
 
+    around do |ex|
+      Travis.config.service_hook_url = 'https://url.of.listener.something'
+      ex.run
+      Travis.config.service_hook_url = nil
+    end
+
     context 'when repo has service hook and webhook' do
       before do
         stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
