@@ -83,6 +83,12 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
     before        { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
     before        { stub_request(:any, %r(https://api.github.com/repos/#{repo.slug}/hooks(/\d+)?)) }
 
+    around do |ex|
+      Travis.config.service_hook_url = 'https://url.of.listener.something'
+      ex.run
+      Travis.config.service_hook_url = nil
+    end
+
     context 'queues sidekiq job' do
       before do
         stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(status: 200, body: '[]')

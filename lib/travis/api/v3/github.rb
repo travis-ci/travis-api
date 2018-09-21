@@ -1,4 +1,5 @@
 require 'gh'
+require 'uri'
 
 module Travis::API::V3
   class GitHub
@@ -68,7 +69,7 @@ module Travis::API::V3
         name: 'web'.freeze,
         events: EVENTS,
         active: active,
-        config: { url: Travis.config.service_hook_url || '' }
+        config: { url: service_hook_url.to_s }
       }
       if url = webhook_url?(repo)
         info("Updating webhook repo=%s active=%s" % [repo.slug, active])
@@ -95,13 +96,19 @@ module Travis::API::V3
     end
 
     def webhook_url?(repo)
-      if hook = hooks(repo).detect { |h| h['name'] == 'web' && h.dig('config', 'url') == Travis.config.service_hook_url }
+      if hook = hooks(repo).detect { |h| h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url }
         hook.dig('_links', 'self', 'href')
       end
     end
 
     def hooks(repo)
       gh[HOOKS_URL % [repo.slug]]
+    end
+
+    def service_hook_url
+      url = Travis.config.service_hook_url || ''
+      url.prepend('https://') unless url.starts_with?('https://', 'http://')
+      URI(url)
     end
 
     def info(msg)
