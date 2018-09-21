@@ -106,12 +106,17 @@ class Travis::Api::App
           context = formatter.deserialize env[formatter.rack_header_name]
         end
 
+        override = (
+          ENV['LOG_TRACING_ENABLED_FOR_LOGIN'] && env['travis.access_token']&.user&.login &&
+          ENV['OPENCENSUS_ENABLED_FOR_LOGIN'].split(',').include?(env['travis.access_token'].user.login)
+        )
+
         # TraceContextData has fields :trace_id, :span_id, :trace_options
         #
         # If trace_options is set to 0x01, this indicates that this trace
         # should always be sampled. This mechanism is also used to propagate
         # the sampling decision downstream.
-        if env['HTTP_TRACE'] == 'true'
+        if env['HTTP_TRACE'] == 'true' || override
           max_trace_id = ::OpenCensus::Trace::SpanContext::MAX_TRACE_ID
           trace_id = rand 1..max_trace_id
           trace_id = trace_id.to_s(16).rjust(32, "0")
