@@ -106,9 +106,14 @@ class Travis::Api::App
           context = formatter.deserialize env[formatter.rack_header_name]
         end
 
-        override = (
+        override = false
+        override ||= (
           ENV['OPENCENSUS_ENABLED_FOR_LOGIN'] && env['travis.access_token']&.user&.login &&
           ENV['OPENCENSUS_ENABLED_FOR_LOGIN'].split(',').include?(env['travis.access_token'].user.login)
+        )
+        override ||= (
+          ENV['OPENCENSUS_ENABLED_FOR_PATH'] &&
+          ENV['OPENCENSUS_ENABLED_FOR_PATH'].split(',').include?(env['REQUEST_PATH'])
         )
 
         # TraceContextData has fields :trace_id, :span_id, :trace_options
