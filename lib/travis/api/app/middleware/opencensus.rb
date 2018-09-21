@@ -107,7 +107,7 @@ class Travis::Api::App
         end
 
         override = (
-          ENV['LOG_TRACING_ENABLED_FOR_LOGIN'] && env['travis.access_token']&.user&.login &&
+          ENV['OPENCENSUS_ENABLED_FOR_LOGIN'] && env['travis.access_token']&.user&.login &&
           ENV['OPENCENSUS_ENABLED_FOR_LOGIN'].split(',').include?(env['travis.access_token'].user.login)
         )
 
