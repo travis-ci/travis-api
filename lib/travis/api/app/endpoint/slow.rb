@@ -5,7 +5,12 @@ class Travis::Api::App
     class Slow < Endpoint
       if ENV['SLOW_ENDPOINT_ENABLED'] == 'true'
         get '/' do
-          sleep 60
+          60.times do
+            if Travis::RequestDeadline.enabled?
+              Travis::RequestDeadline.check!
+            end
+            sleep 1
+          end
         end
       end
     end
