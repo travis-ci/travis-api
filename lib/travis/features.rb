@@ -137,6 +137,7 @@ module Travis
     end
 
     def enabled_for_all_key(feature)
+      # TODO: this should be :enabled, changing it could break things though
       "#{key(feature)}:disabled"
     end
 
