@@ -34,14 +34,18 @@ module Travis
         ENV['REQUEST_DEADLINE_INTERVAL']&.to_f || 20.0
       end
 
+      def check!
+        deadline = Thread.current[:request_deadline]
+        if deadline && Time.now > deadline
+          raise ExceededError.new
+        end
+      end
+
       def setup
         return unless enabled?
 
         ActiveSupport::Notifications.subscribe('sql.active_record') do |*args|
-          deadline = Thread.current[:request_deadline]
-          if deadline && Time.now > deadline
-            raise ExceededError.new
-          end
+          check!
         end
       end
     end
