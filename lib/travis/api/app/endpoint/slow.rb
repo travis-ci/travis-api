@@ -8,5 +8,6 @@ class Travis::Api::App
           sleep 60
         end
       end
+    end
   end
 end
