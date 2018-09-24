@@ -98,6 +98,8 @@ module Travis::Api
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
 
+        use Travis::RequestDeadline::Middleware if Travis::RequestDeadline.enabled?
+
         use Rack::Config do |env|
           env['metriks.request.start'] ||= Time.now.utc
 
