@@ -49,6 +49,7 @@ class Travis::Api::App
           c.trace.exporter = ::OpenCensus::Trace::Exporters::Stackdriver.new
           c.trace.default_sampler = ::OpenCensus::Trace::Samplers::Probability.new sampling_rate
           c.trace.default_max_attributes = 16
+          c.trace.default_max_stack_frames = 8
         end
 
         setup_notifications
