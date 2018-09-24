@@ -3,6 +3,7 @@ require 'travis'
 require 'travis/amqp'
 require 'travis/model'
 require 'travis/states_cache'
+require 'travis/request_deadline'
 require 'travis/honeycomb'
 require 'travis/marginalia'
 require 'rack'
@@ -111,7 +112,7 @@ module Travis::Api
         use Travis::Api::App::Cors
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
-        
+
         if Travis::Api::App.use_monitoring?
           use Rack::Config do |env|
             if env['HTTP_X_REQUEST_ID']
@@ -250,6 +251,8 @@ module Travis::Api
             Fog::Logger[channel] = nil
           end
         end
+
+        Travis::RequestDeadline.setup
       end
 
       def self.setup_database_connections
