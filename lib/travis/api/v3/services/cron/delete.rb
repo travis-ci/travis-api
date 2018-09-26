@@ -4,7 +4,7 @@ module Travis::API::V3
       cron = check_login_and_find
       access_control.permissions(cron).delete!
       cron.destroy
-      deleted
+      no_content
     end
   end
 end
