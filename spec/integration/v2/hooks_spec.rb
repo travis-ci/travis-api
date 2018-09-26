@@ -1,4 +1,5 @@
 require 'travis/testing/payloads'
+require 'travis/api/v3/github'
 
 describe 'Hooks', set_app: true do
   before(:each) do
@@ -21,20 +22,20 @@ describe 'Hooks', set_app: true do
 
     let :payload do
       {
-        :name   => 'travis',
-        :events => Travis::Github::Services::SetHook::EVENTS,
+        :name   => 'web',
+        :events => Travis::API::V3::GitHub::EVENTS,
         :active => true,
-        :config => { :user => user.login, :token => user.tokens.first.token, :domain => 'listener.travis-ci.org' }
+        :config => { url: 'notify.travis-ci.org' }
       }
     end
 
     before(:each) do
-      Travis.config.service_hook_url = 'listener.travis-ci.org'
+      Travis.config.service_hook_url = 'notify.travis-ci.org'
+      stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(status: 200, body: '[]')
+      stub_request(:post, "https://api.github.com/repos/#{repo.slug}/hooks")
     end
 
     it 'sets the hook' do
-      GH.stubs(:[]).returns([])
-      GH.expects(:post).with(target, payload).returns(GH.load(PAYLOADS[:github][:hook_active]))
       response = put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers
       repo.reload.active?.should == true
       response.should be_successful
