@@ -124,10 +124,103 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
     })}
   end
 
-  describe "build private repository, private API, authenticated as user with access" do
+  describe "build private repository, private API, authenticated as user with pull access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+    before        { repo.update_attribute(:private, true) }
+    before        { get("/v3/build/#{build.id}", {}, headers) }
+    after         { repo.update_attribute(:private, false) }
+    example       { expect(last_response).to be_ok  }
+    example    { expect(parsed_body).to eql_json({
+      "@type"               => "build",
+      "@href"               => "/v3/build/#{build.id}",
+      "@representation"     => "standard",
+      "@permissions"        => {
+        "read"              => true,
+        "cancel"            => false,
+        "restart"           => false},
+      "id"                  => build.id,
+      "number"              => build.number,
+      "state"               => build.state,
+      "duration"            => nil,
+      "event_type"          => "push",
+      "previous_state"      => build.previous_state,
+      "pull_request_number" => build.pull_request_number,
+      "pull_request_title"  => build.pull_request_title,
+      "private"             => false,
+      "started_at"          => "2010-11-12T13:00:00Z",
+      "finished_at"         => nil,
+      "updated_at"          => json_format_time_with_ms(build.updated_at),
+      "jobs"                => [{
+        "@type"             => "job",
+        "@href"             => "/v3/job/#{jobs[0].id}",
+        "@representation"   => "minimal",
+        "id"                => jobs[0].id},
+       {"@type"             => "job",
+        "@href"             => "/v3/job/#{jobs[1].id}",
+        "@representation"   => "minimal",
+        "id"                => jobs[1].id},
+       {"@type"             => "job",
+        "@href"             => "/v3/job/#{jobs[2].id}",
+        "@representation"   => "minimal",
+        "id"                => jobs[2].id},
+       {"@type"             => "job",
+        "@href"             => "/v3/job/#{jobs[3].id}",
+        "@representation"   => "minimal",
+        "id"                => jobs[3].id}],
+      "stages"              => [{
+         "@type"            => "stage",
+         "@representation"  => "minimal",
+         "id"               => stages[0].id,
+         "number"           => 1,
+         "name"             => "test",
+         "state"            => stages[0].state,
+         "started_at"       => stages[0].started_at,
+         "finished_at"      => stages[0].finished_at},
+        {"@type"            => "stage",
+         "@representation" => "minimal",
+         "id"               => stages[1].id,
+         "number"          => 2,
+         "name"             => "deploy",
+         "state"            => stages[0].state,
+         "started_at"       => stages[1].started_at,
+         "finished_at"      => stages[1].finished_at}],
+      "repository"          => {
+        "@type"             => "repository",
+        "@href"             => "/v3/repo/#{repo.id}",
+        "@representation"   => "minimal",
+        "id"                => repo.id,
+        "name"              => "minimal",
+        "slug"              => "svenfuchs/minimal"},
+      "branch"              => {
+        "@type"             => "branch",
+        "@href"             => "/v3/repo/#{repo.id}/branch/master",
+        "@representation"   => "minimal",
+        "name"              => "master"},
+      "tag"                 => nil,
+      "commit"              => {
+        "@type"             => "commit",
+        "@representation"   => "minimal",
+        "id"                => 5,
+        "sha"               => "add057e66c3e1d59ef1f",
+        "ref"               => "refs/heads/master",
+        "message"           => "unignore Gemfile.lock",
+        "compare_url"       => "https://github.com/svenfuchs/minimal/compare/master...develop",
+        "committed_at"      => "2010-11-12T12:55:00Z"},
+      "created_by"          => {
+        "@type"             => "user",
+        "@href"             => "/v3/user/1",
+        "@representation"   => "minimal",
+        "id"                => 1,
+        "login"             => "svenfuchs"}
+    })}
+  end
+
+    describe "build private repository, private API, authenticated as user with push access" do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true) }
     before        { repo.update_attribute(:private, true) }
     before        { get("/v3/build/#{build.id}", {}, headers) }
     after         { repo.update_attribute(:private, false) }

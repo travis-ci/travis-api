@@ -335,8 +335,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"       => "standard",
         "@permissions"          => {
           "read"                => true,
-          "cancel"              => true,
-          "restart"             => true,
+          "cancel"              => false,
+          "restart"             => false,
           "debug"               => false,
           "delete_log"          => false },
         "id"                    => jobs[0].id,
@@ -407,8 +407,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"       => "standard",
         "@permissions"          => {
           "read"                => true,
-          "cancel"              => true,
-          "restart"             => true,
+          "cancel"              => false,
+          "restart"             => false,
           "debug"               => false,
           "delete_log"          => false },
         "id"                    => jobs[1].id,
@@ -479,8 +479,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"       => "standard",
         "@permissions"          => {
           "read"                => true,
-          "cancel"              => true,
-          "restart"             => true,
+          "cancel"              => false,
+          "restart"             => false,
           "debug"               => false,
           "delete_log"          => false },
         "id"                    => jobs[2].id,
@@ -551,8 +551,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
         "@representation"       => "standard",
         "@permissions"          => {
           "read"                => true,
-          "cancel"              => true,
-          "restart"             => true,
+          "cancel"              => false,
+          "restart"             => false,
           "debug"               => false,
           "delete_log"          => false },
         "id"                    => jobs[3].id,

@@ -46,6 +46,21 @@ describe Travis::API::V3::Services::Build::Cancel, set_app: true do
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { post("/v3/build/#{build.id}/cancel", {}, headers)                 }
 
+    example { expect(last_response.status).to be == 403 }
+    example { expect(JSON.load(body).to_s).to include(
+      "@type",
+      "build",
+      "event_type",
+      "push")
+    }
+  end
+
+  describe "existing repository, push access" do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+    before        { post("/v3/build/#{build.id}/cancel", {}, headers)                 }
+
     example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",
@@ -71,11 +86,11 @@ describe Travis::API::V3::Services::Build::Cancel, set_app: true do
     }}
   end
 
-  describe "existing repository, puull access, not cancelable" do
+  describe "existing repository, push access, not cancelable" do
     let(:params)  {{}}
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)                          }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
-    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+    before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
     describe "passed state" do
       before        { build.update_attribute(:state, "passed")                                                   }
