@@ -28,6 +28,7 @@ module Travis
       ServerError         = Error              .create(status: 500)
       NotFound            = ClientError        .create(:resource, status: 404, template: '%s not found (or insufficient access)')
 
+      AdminAccessRequired = ClientError        .create('admin access to this repo required',  status: 403)
       AlreadySyncing      = ClientError        .create('sync already in progress', status: 409)
       BuildAlreadyRunning = ClientError        .create('build already running, cannot restart', status: 409)
       BuildNotCancelable  = ClientError        .create('build is not running, cannot cancel', status: 409)

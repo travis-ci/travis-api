@@ -1,21 +1,28 @@
 require 'gh'
+require 'uri'
 
 module Travis::API::V3
   class GitHub
+    def self.config
+      @config ||= Travis::Config.load
+    end
+
+    EVENTS = %i(push pull_request issue_comment public member create delete repository)
+
     DEFAULT_OPTIONS = {
-      client_id:      Travis.config.oauth2.try(:client_id),
-      client_secret:  Travis.config.oauth2.try(:client_secret),
-      scopes:         Travis.config.oauth2.try(:scope).to_s.split(?,),
+      client_id:      config.oauth2.try(:client_id),
+      client_secret:  config.oauth2.try(:client_secret),
+      scopes:         config.oauth2.try(:scope).to_s.split(?,),
       user_agent:     "Travis-API/3 Travis-CI/0.0.1 GH/#{GH::VERSION}",
-      origin:         Travis.config.host,
-      api_url:        Travis.config.github.api_url,
-      web_url:        Travis.config.github.api_url.gsub(%r{\A(https?://)(?:api\.)?([^/]+)(?:/.*)?\Z}, '\1\2'),
-      ssl:            Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact
+      origin:         config.host,
+      api_url:        config.github.api_url,
+      web_url:        config.github.api_url.gsub(%r{\A(https?://)(?:api\.)?([^/]+)(?:/.*)?\Z}, '\1\2'),
+      ssl:            config.ssl.to_h.merge(config.github.ssl || {}).compact
     }
     private_constant :DEFAULT_OPTIONS
 
-    EVENTS = %i(push pull_request issue_comment public member create delete repository)
-    private_constant :EVENTS
+    HOOKS_URL = "repos/%s/hooks"
+    private_constant :HOOKS_URL
 
     def self.client_config
       {
@@ -37,26 +44,14 @@ module Travis::API::V3
       @gh   = GH.with(token: token, **DEFAULT_OPTIONS)
     end
 
-    def set_hook(repository, flag)
-      hooks_url = "repos/#{repository.slug}/hooks"
-      payload   = {
-        name:   'travis'.freeze,
-        events: EVENTS,
-        active: flag,
-        config: { domain: Travis.config.service_hook_url || '' }
-      }
-
-      if hook = gh[hooks_url].detect { |hook| hook['name'.freeze] == 'travis'.freeze }
-        gh.patch(hook['_links'.freeze]['self'.freeze]['href'.freeze], payload)
-      else
-        gh.post(hooks_url, payload)
-      end
+    def set_hook(repo, active)
+      set_webhook(repo, active)
+      deactivate_service_hook(repo)
     end
 
     def upload_key(repository)
       keys_path = "repos/#{repository.slug}/keys"
-      key = gh[keys_path].
-        detect { |e| e['key'] == repository.key.encoded_public_key }
+      key = gh[keys_path].detect { |e| e['key'] == repository.key.encoded_public_key }
 
       unless key
         gh.post keys_path, {
@@ -65,6 +60,59 @@ module Travis::API::V3
           read_only: !Travis::Features.owner_active?(:read_write_github_keys, repository.owner)
         }
       end
+    end
+
+    private
+
+    def set_webhook(repo, active)
+      payload = {
+        name: 'web'.freeze,
+        events: EVENTS,
+        active: active,
+        config: { url: service_hook_url.to_s }
+      }
+      if url = webhook_url?(repo)
+        info("Updating webhook repo=%s active=%s" % [repo.slug, active])
+        gh.patch(url, payload)
+      else
+        hooks_url = HOOKS_URL % [repo.slug]
+        info("Creating webhook repo=%s active=%s" % [repo.slug, active])
+        gh.post(hooks_url, payload)
+      end
+    end
+
+    def deactivate_service_hook(repo)
+      if url = service_hook_url?(repo)
+        info("Deactivating service hook repo=%s" % [repo.slug])
+        # Have to update events here too, to avoid old hooks failing validation
+        gh.patch(url, { events: EVENTS, active: false })
+      end
+    end
+
+    def service_hook_url?(repo)
+      if hook = hooks(repo).detect { |h| h['name'] == 'travis' }
+        hook.dig('_links', 'self', 'href')
+      end
+    end
+
+    def webhook_url?(repo)
+      if hook = hooks(repo).detect { |h| h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url }
+        hook.dig('_links', 'self', 'href')
+      end
+    end
+
+    def hooks(repo)
+      gh[HOOKS_URL % [repo.slug]]
+    end
+
+    def service_hook_url
+      url = Travis.config.service_hook_url || ''
+      url.prepend('https://') unless url.starts_with?('https://', 'http://')
+      URI(url)
+    end
+
+    def info(msg)
+      Travis.logger.info(msg)
     end
   end
 end
