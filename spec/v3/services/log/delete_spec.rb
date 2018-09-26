@@ -104,53 +104,38 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
 
     example do
       stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api").
-        with(  headers: {
-       	  'Accept'=>'*/*',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-       	  'Authorization'=>'token notset',
-       	  'Connection'=>'keep-alive',
-       	  'Keep-Alive'=>'30',
-       	  'User-Agent'=>'Faraday v0.14.0'
-        }).to_return(status: 200, body: remote_log_response, headers: {})
+        with(headers: {
+               'Authorization' => 'token notset'
+             }).to_return(status: 200, body: remote_log_response, headers: {})
 
       stub_request(:put, "#{Travis.config.logs_api.url}/logs/#{job.id}?removed_by=#{user.id}&source=api").
         with(
           body: "Log removed by #{user.name} at #{Time.now.utc.to_s}",
           headers: {
-       	  'Accept'=>'*/*',
-       	  'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-       	  'Authorization'=>'token notset',
-       	  'Connection'=>'keep-alive',
-       	  'Content-Type'=>'application/octet-stream',
-       	  'Keep-Alive'=>'30',
-       	  'User-Agent'=>'Faraday v0.14.0'
-        }).
+            'Authorization' => 'token notset',
+            'Content-Type' => 'application/octet-stream'
+          }).
         to_return(status: 200, body: remote_log_response, headers: {})
 
       stub_request(:get, "#{Travis.config.logs_api.url}/log-parts/#{job.id}").
-        with(  headers: {
-       	  'Accept'=>'*/*',
-       	  'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-       	  'Authorization'=>'token notset',
-       	  'Connection'=>'keep-alive',
-       	  'Keep-Alive'=>'30',
-       	  'User-Agent'=>'Faraday v0.14.0'
-           }).
+        with(headers: {
+               'Authorization' => 'token notset'
+             }).
         to_return(status: 200, body: remote_log_response, headers: {})
 
       delete("/v3/job/#{job.id}/log", {}, headers)
 
       expect(last_response.status).to be == 200
-      expect(JSON.load(body)).to      be ==     {
+      expect(JSON.load(body)).to be == {
         "@type" => "log",
         "@href" => "/v3/job/#{job.id}/log",
         "@representation" => "standard",
         "@permissions" => {
-         "read" => true,
-         "delete_log" => false,
-         "cancel" => false,
-         "restart" => false,
-         "debug" => false
+          "read" => true,
+          "delete_log" => false,
+          "cancel" => false,
+          "restart" => false,
+          "debug" => false
         },
         "id" => nil,
         "content" => nil,
