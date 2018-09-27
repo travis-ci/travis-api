@@ -3,7 +3,7 @@ module Travis::API::V3
     def run!
       repository = check_login_and_find(:repository)
       query.resubscribe(access_control.user, repository)
-      no_content
+      created
     end
   end
 end
