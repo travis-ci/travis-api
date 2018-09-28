@@ -5,7 +5,7 @@ module Travis::API::V3
     #
     KAFKA_TOPIC = "bar"
 
-    def run!(activate = false)
+    def run!
       repository = check_login_and_find(:repository)
       check_access(repository)
 
