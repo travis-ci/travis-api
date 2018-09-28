@@ -11,6 +11,7 @@ module Travis::API::V3
     has_many :beta_features, through: :user_beta_features
 
     serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
+    scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 
     def repository_ids
       repositories.pluck(:id)
