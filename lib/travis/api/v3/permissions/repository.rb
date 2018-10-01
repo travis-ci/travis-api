@@ -10,6 +10,10 @@ module Travis::API::V3
       write?
     end
 
+    def migrate?
+      write?
+    end
+
     def star?
       starable?
     end
