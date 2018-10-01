@@ -43,6 +43,7 @@ module Travis::API::V3
     Subscriptions       = Module.new { extend Services }
     Trials              = Module.new { extend Services }
     User                = Module.new { extend Services }
+    UserBuilds          = Module.new { extend Services }
     UserSetting         = Module.new { extend Services }
     UserSettings        = Module.new { extend Services }
 
