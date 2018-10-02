@@ -6,11 +6,10 @@ module Travis::API::V3
       repository = super(true).resource
 
       if repository.private? || access_control.enterprise?
-        admin = access_control.admin_for(repository)
-        github(admin).upload_key(repository)
+        github(access_control.admin_for(repository)).upload_key(repository)
       end
 
-      query.sync(access_control.user)
+      query.sync(access_control.user || access_control.admin_for(repository))
       result repository
     end
 

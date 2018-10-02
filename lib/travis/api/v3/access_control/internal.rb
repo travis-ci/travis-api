@@ -23,5 +23,9 @@ module Travis::API::V3
     def logged_in?
       token == config[:token]
     end
+
+    def admin_for(repository)
+      (full_access? && repository.admin) || super
+    end
   end
 end
