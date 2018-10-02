@@ -119,6 +119,7 @@ module Travis::API::V3
 
       post :activate, '/activate'
       post :deactivate, '/deactivate'
+      post :migrate, '/migrate'
       post :star, '/star'
       post :unstar, '/unstar'
       hide(patch :update)
