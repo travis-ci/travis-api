@@ -15,20 +15,20 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
   it 'replies with the current user' do
     get('/users', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01').should be_ok
     parsed_body['user'].should == {
-      'id'                   => user.id,
-      'login'                => user.login,
-      'name'                 => user.name,
-      'email'                => user.email,
-      'gravatar_id'          => user.gravatar_id,
-      'avatar_url'           => user.avatar_url,
-      'locale'               => user.locale,
-      'is_syncing'           => user.is_syncing,
-      'created_at'           => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-      'first_logged_in_at'   => user.first_logged_in_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-      'synced_at'            => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-      'correct_scopes'       => true,
-      'channels'             => ["private-user-1"],
-      "display_migration_ui" => false,
+      'id'                 => user.id,
+      'login'              => user.login,
+      'name'               => user.name,
+      'email'              => user.email,
+      'gravatar_id'        => user.gravatar_id,
+      'avatar_url'         => user.avatar_url,
+      'locale'             => user.locale,
+      'is_syncing'         => user.is_syncing,
+      'created_at'         => user.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+      'first_logged_in_at' => user.first_logged_in_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+      'synced_at'          => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+      'correct_scopes'     => true,
+      'channels'           => ["private-user-1"],
+      "allow_migration"    => false,
     }
   end
 

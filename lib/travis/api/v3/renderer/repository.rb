@@ -3,7 +3,7 @@ module Travis::API::V3
     representation(:minimal,  :id, :name, :slug)
     representation(:standard, :id, :name, :slug, :description, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :managed_by_installation, :active_on_org)
     representation(:experimental, :id, :name, :slug, :description, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build, :next_build_number)
-    representation(:additional, :display_migration_ui)
+    representation(:additional, :allow_migration)
 
     hidden_representations(:experimental)
 
@@ -15,8 +15,8 @@ module Travis::API::V3
       !!model.active
     end
 
-    def display_migration_ui
-      return true if Travis::Features.owner_active?(:display_migration_ui, model.owner)
+    def allow_migration
+      return true if Travis::Features.owner_active?(:allow_migration, model.owner)
     end
 
     def default_branch

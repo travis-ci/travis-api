@@ -9,19 +9,19 @@ describe Travis::API::V3::Renderer::Repository do
     end
   end
 
-  describe "#display_migration_ui" do
+  describe "#allow_migration" do
     it "is included in the :additional representation set" do
-      expect(subject.class.representations[:additional]).to include(:display_migration_ui)
+      expect(subject.class.representations[:additional]).to include(:allow_migration)
     end
 
     it "returns false when owner is not active" do
-      expect(subject.display_migration_ui).to be_falsey
+      expect(subject.allow_migration).to be_falsey
     end
 
     it "returns true when owner is active" do
-      Travis::Features.expects(:owner_active?).with(:display_migration_ui, repo.owner).returns(true)
+      Travis::Features.expects(:owner_active?).with(:allow_migration, repo.owner).returns(true)
 
-      expect(subject.display_migration_ui).to be_truthy
+      expect(subject.allow_migration).to be_truthy
     end
   end
 end
