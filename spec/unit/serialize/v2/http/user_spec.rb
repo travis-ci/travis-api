@@ -10,19 +10,19 @@ describe Travis::Api::Serialize::V2::Http::User do
 
   it 'user' do
     data['user'].should == {
-      'id' => 1,
-      'name' => 'Sven Fuchs',
-      'login' => 'svenfuchs',
-      'email' => 'svenfuchs@artweb-design.de',
-      'gravatar_id' => '402602a60e500e85f2f5dc1ff3648ecb',
-      'avatar_url' => 'https://0.gravatar.com/avatar/402602a60e500e85f2f5dc1ff3648ecb',
-      'locale' => 'de',
-      'is_syncing' => false,
-      'synced_at' => json_format_time(Time.now.utc - 1.hour),
-      'correct_scopes' => true,
-      'created_at' => json_format_time(Time.now.utc - 2.hours),
-      'first_logged_in_at' => json_format_time(Time.now.utc - 1.5.hours),
-      'channels' => ["private-user-1"]
+      'id'                   => 1,
+      'name'                 => 'Sven Fuchs',
+      'login'                => 'svenfuchs',
+      'email'                => 'svenfuchs@artweb-design.de',
+      'gravatar_id'          => '402602a60e500e85f2f5dc1ff3648ecb',
+      'avatar_url'           => 'https://0.gravatar.com/avatar/402602a60e500e85f2f5dc1ff3648ecb',
+      'locale'               => 'de',
+      'is_syncing'           => false,
+      'synced_at'            => json_format_time(Time.now.utc - 1.hour),
+      'correct_scopes'       => true,
+      'created_at'           => json_format_time(Time.now.utc - 2.hours),
+      'first_logged_in_at'   => json_format_time(Time.now.utc - 1.5.hours),
+      'channels'             => ["private-user-1"],
     }
   end
 
@@ -41,20 +41,20 @@ describe Travis::Api::Serialize::V2::Http::User do
       )
 
       data['user'].should == {
-        'id' => 1,
-        'name' => 'Sven Fuchs',
-        'login' => 'svenfuchs',
-        'email' => 'svenfuchs@artweb-design.de',
-        'gravatar_id' => '402602a60e500e85f2f5dc1ff3648ecb',
-        'avatar_url' => 'https://0.gravatar.com/avatar/402602a60e500e85f2f5dc1ff3648ecb',
-        'locale' => 'de',
-        'is_syncing' => false,
-        'synced_at' => json_format_time(Time.now.utc - 1.hour),
-        'correct_scopes' => true,
-        'created_at' => json_format_time(Time.now.utc - 2.hours),
-        'first_logged_in_at' => json_format_time(Time.now.utc - 1.5.hours),
-        'secure_user_hash' => secure_user_hash,
-        'channels' => ["private-user-1"]
+        'id'                   => 1,
+        'name'                 => 'Sven Fuchs',
+        'login'                => 'svenfuchs',
+        'email'                => 'svenfuchs@artweb-design.de',
+        'gravatar_id'          => '402602a60e500e85f2f5dc1ff3648ecb',
+        'avatar_url'           => 'https://0.gravatar.com/avatar/402602a60e500e85f2f5dc1ff3648ecb',
+        'locale'               => 'de',
+        'is_syncing'           => false,
+        'synced_at'            => json_format_time(Time.now.utc - 1.hour),
+        'correct_scopes'       => true,
+        'created_at'           => json_format_time(Time.now.utc - 2.hours),
+        'first_logged_in_at'   => json_format_time(Time.now.utc - 1.5.hours),
+        'secure_user_hash'     => secure_user_hash,
+        'channels'             => ["private-user-1"],
       }
     end
 

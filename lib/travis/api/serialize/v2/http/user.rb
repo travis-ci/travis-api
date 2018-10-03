@@ -26,19 +26,19 @@ module Travis
 
               def user_data
                 data = {
-                  'id' => user.id,
-                  'name' => user.name,
-                  'login' => user.login,
-                  'email' => user.email,
-                  'gravatar_id' => user.email ? Digest::MD5.hexdigest(user.email) : "",
-                  'avatar_url' => user.avatar_url,
-                  'locale' => user.locale,
-                  'is_syncing' => user.syncing?,
-                  'synced_at' => format_date(user.synced_at),
-                  'correct_scopes' => Github::Oauth.correct_scopes?(user),
-                  'created_at' => format_date(user.created_at),
-                  'first_logged_in_at' => format_date(user.first_logged_in_at),
-                  'channels' => channels
+                  'id'                   => user.id,
+                  'name'                 => user.name,
+                  'login'                => user.login,
+                  'email'                => user.email,
+                  'gravatar_id'          => user.email ? Digest::MD5.hexdigest(user.email) : "",
+                  'avatar_url'           => user.avatar_url,
+                  'locale'               => user.locale,
+                  'is_syncing'           => user.syncing?,
+                  'synced_at'            => format_date(user.synced_at),
+                  'correct_scopes'       => Github::Oauth.correct_scopes?(user),
+                  'created_at'           => format_date(user.created_at),
+                  'first_logged_in_at'   => format_date(user.first_logged_in_at),
+                  'channels'             => channels,
                 }
 
                 if hmac_secret_key
