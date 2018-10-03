@@ -39,6 +39,7 @@ module Travis
                   'created_at'           => format_date(user.created_at),
                   'first_logged_in_at'   => format_date(user.first_logged_in_at),
                   'channels'             => channels,
+                  'display_migration_ui' => display_migration_ui,
                 }
 
                 if hmac_secret_key
@@ -46,6 +47,10 @@ module Travis
                 end
 
                 data
+              end
+
+              def display_migration_ui
+                Travis::Features.user_active?(:display_migration_ui, user)
               end
 
               def channels

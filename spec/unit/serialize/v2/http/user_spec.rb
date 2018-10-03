@@ -30,6 +30,21 @@ describe Travis::Api::Serialize::V2::Http::User do
     data['user'].should == expected_data
   end
 
+  context "display_migration_ui" do
+    it "should be false when the user is reported as not active" do
+      expect(data['user']['display_migration_ui']).to be_falsey
+    end
+
+    it "should be true when the user is reported as active" do
+      Travis::Features.
+        expects(:user_active?).
+        with(:display_migration_ui, user).
+        returns(true)
+
+      expect(data['user']['display_migration_ui']).to be_truthy
+    end
+  end
+
   context 'when there is an Intercom HMAC secret key' do
     before do
       Travis.config.intercom = {
