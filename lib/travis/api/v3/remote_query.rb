@@ -74,7 +74,10 @@ module Travis::API::V3
       Fog::Storage.new(
         aws_access_key_id: s3_config[:access_key_id],
         aws_secret_access_key: s3_config[:secret_access_key],
+        host: s3_config[:host],
+        endpoint: s3_config[:endpoint],
         provider: 'AWS',
+        path_style: true,
         instrumentor: ActiveSupport::Notifications,
         connection_options: { instrumentor: ActiveSupport::Notifications }
       )
