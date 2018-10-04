@@ -160,7 +160,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   describe "delete all on s3 and gcs" do
     before     do
-        stub_request(:get, "https://travis-cache-staging-org.s3.amazonaws.com/?prefix=1/").
+        stub_request(:get, "https://s3.amazonaws.com/#{s3_bucket_name}/?prefix=1/").
         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
         stub_request(:get, "https://travis-cache-staging-org.s3.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
@@ -172,7 +172,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
         stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=#{repo.id}/").
          to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
 
-        stub_request(:delete, "https://travis-cache-staging-org.s3.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
+        stub_request(:delete, "https://s3.amazonaws.com/#{s3_bucket_name}/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
           to_return(:status => 204, :body => xml_content_single_repo, :headers => {"Content-Type" => "application/json"})
 
         stub_request(:delete, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz").
@@ -190,7 +190,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   describe "delete by branch" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}/").
+      stub_request(:get, "https://s3.amazonaws.com/#{s3_bucket_name}/?prefix=#{repo.id}/#{result[0]["branch"]}/").
         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
       stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
@@ -199,7 +199,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
       stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=#{repo.id}/#{result[0]["branch"]}/").
         to_return(:status => 200, :body => empty_gcs_content, :headers => {"Content-Type" => "application/json"})
 
-      stub_request(:delete, "https://travis-cache-staging-org.s3.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
+      stub_request(:delete, "https://s3.amazonaws.com/#{s3_bucket_name}/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
       to_return(:status => 204, :body => xml_content_single_repo, :headers => {})
 
     end
@@ -216,7 +216,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   describe "delete by match" do
     before do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
+      stub_request(:get, "https://s3.amazonaws.com/#{s3_bucket_name}/?prefix=#{repo.id}/").
         to_return(:status => 200, :body => empty_xml_content, :headers => {})
 
       stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
