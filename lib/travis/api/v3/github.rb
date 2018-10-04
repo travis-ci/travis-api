@@ -95,15 +95,10 @@ module Travis::API::V3
       end
     end
 
-    class WebhookError < StandardError; end
-
     def webhook_url?(repo)
-      hooks_data = hooks(repo)
-      if hook = hooks_data.detect { |h| h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url }
+      if hook = hooks(repo).detect { |h| h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url }
         hook.dig('_links', 'self', 'href')
       end
-    rescue => e
-      raise WebhookError, "Error fetching or parsing Webhook information\nOriginal error: #{e.inspect}\nHooks data: #{hooks_data.inspect}"
     end
 
     def hooks(repo)
