@@ -35,7 +35,7 @@ module Travis
             gdpr:                 {},
             database:             { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             logs_api:             { url: logs_api_url, token: logs_api_auth_token },
-            log_options:          { s3: { access_key_id: '', secret_access_key: ''}},
+            log_options:          { s3: { access_key_id: '', secret_access_key: '', host: 's3.amazonaws.com', endpoint: nil, region: 'us-east-1', bucket_name: '' } },
             s3:                   { access_key_id: '', secret_access_key: ''},
             pusher:               { app_id: 'app-id', key: 'key', secret: 'secret' },
             sidekiq:              { namespace: 'sidekiq', pool_size: 1 },

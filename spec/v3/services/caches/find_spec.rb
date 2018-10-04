@@ -213,7 +213,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
   describe "existing cache on s3 and gcs" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
+      stub_request(:get, "https://s3.amazonaws.com/#{s3_bucket_name}/?prefix=#{repo.id}/").
         to_return(:status => 200, :body => xml_content, :headers => {})
 
         stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
@@ -237,7 +237,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
   describe "filter by branch s3" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}/").
+      stub_request(:get, "https://s3.amazonaws.com/#{s3_bucket_name}/?prefix=#{repo.id}/#{result[0]["branch"]}/").
         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
       stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
@@ -260,7 +260,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
   describe "filter by match on gcs" do
     before do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
+      stub_request(:get, "https://s3.amazonaws.com/#{s3_bucket_name}/?prefix=#{repo.id}/").
         to_return(:status => 200, :body => empty_xml_content, :headers => {})
 
       stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
