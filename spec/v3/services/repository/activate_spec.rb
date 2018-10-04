@@ -43,7 +43,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
 
       before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
       before        { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
-      before        { stub_request(:any, %r(https://api.github.com/repos/#{repo.slug}/hooks(/\d+)?)) }
+      before        { stub_request(:any, %r(https://api.github.com/repositories/#{repo.github_id}/hooks(/\d+)?)) }
 
       around do |ex|
         Travis.config.service_hook_url = 'https://url.of.listener.something'
@@ -53,7 +53,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
 
       context 'queues sidekiq job' do
         before do
-          stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(status: 200, body: '[]')
+          stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(status: 200, body: '[]')
           post("/v3/repo/#{repo.id}/activate", {}, headers)
         end
 
@@ -68,11 +68,11 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
 
       context 'when both service hook and webhook exist' do
         before do
-          stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
+          stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(
             status: 200, body: JSON.dump(
               [
-                { name: 'travis', url: "https://api.github.com/repos/#{repo.slug}/hooks/123" },
-                { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url } }
+                { name: 'travis', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/123" },
+                { name: 'web', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/456", config: { url: Travis.config.service_hook_url } }
               ]
             )
           )
@@ -80,11 +80,11 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
         end
 
         example 'deactivates service hook' do
-          expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/123").with(body: service_hook_payload).once
+          expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload).once
         end
 
         example 'updates webhook' do
-          expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").with(body: webhook_payload).once
+          expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/456").with(body: webhook_payload).once
         end
 
         example 'is success' do
@@ -98,10 +98,10 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
 
       context 'when webhook exists' do
         before do
-          stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
+          stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(
             status: 200, body: JSON.dump(
               [
-                { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url } }
+                { name: 'web', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/456", config: { url: Travis.config.service_hook_url } }
               ]
             )
           )
@@ -109,7 +109,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
         end
 
         example 'updates webhook' do
-          expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").with(body: webhook_payload).once
+          expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/456").with(body: webhook_payload).once
         end
 
         example 'is success' do
@@ -123,12 +123,12 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
 
       context 'when webhook does not exist' do
         before do
-          stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(status: 200, body: '[]')
+          stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(status: 200, body: '[]')
           post("/v3/repo/#{repo.id}/activate", {}, headers)
         end
 
         example 'creates webhook' do
-          expect(WebMock).to have_requested(:post, "https://api.github.com/repos/#{repo.slug}/hooks").once
+          expect(WebMock).to have_requested(:post, "https://api.github.com/repositories/#{repo.github_id}/hooks").once
         end
 
         example 'is success' do

@@ -32,7 +32,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
   shared_examples 'repository deactivation' do
     describe 'existing repository, wrong access' do
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-      before { stub_request(:any, %r(api.github.com/repos/#{repo.slug}/hooks(/\d+)?)) }
+      before { stub_request(:any, %r(api.github.com/repositories/#{repo.github_id}/hooks(/\d+)?)) }
       before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
 
       example 'is success' do
@@ -49,7 +49,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
       let(:service_hook_payload) { JSON.dump(events: Travis::API::V3::GitHub::EVENTS, active: false) }
 
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) }
-      before { stub_request(:any, %r(api.github.com/repos/#{repo.slug}/hooks(/\d+)?)) }
+      before { stub_request(:any, %r(api.github.com/repositories/#{repo.github_id}/hooks(/\d+)?)) }
 
       around do |ex|
         Travis.config.service_hook_url = 'https://url.of.listener.something'
@@ -59,11 +59,11 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
 
       context 'when repo has service hook and webhook' do
         before do
-          stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
+          stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(
             status: 200, body: JSON.dump(
               [
-                { name: 'travis', url: "https://api.github.com/repos/#{repo.slug}/hooks/123" },
-                { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url } }
+                { name: 'travis', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/123" },
+                { name: 'web', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/456", config: { url: Travis.config.service_hook_url } }
               ]
             )
           )
@@ -71,11 +71,11 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         end
 
         example 'deactivates service hook' do
-          expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/123").with(body: service_hook_payload).once
+          expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload).once
         end
 
         example 'updates webhook' do
-          expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").with(body: webhook_payload).once
+          expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/456").with(body: webhook_payload).once
         end
 
         example 'is success' do
@@ -89,10 +89,10 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
 
       context 'when repo has only service hook' do
         before do
-          stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
+          stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(
             status: 200, body: JSON.dump(
               [
-                { name: 'travis', url: "https://api.github.com/repos/#{repo.slug}/hooks/123" }
+                { name: 'travis', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/123" }
               ]
             )
           )
@@ -100,11 +100,11 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         end
 
         example 'deactivates service hook' do
-          expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/123").with(body: service_hook_payload).once
+          expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload).once
         end
 
         example 'creates webhook' do
-          expect(WebMock).to have_requested(:post, "https://api.github.com/repos/#{repo.slug}/hooks").once
+          expect(WebMock).to have_requested(:post, "https://api.github.com/repositories/#{repo.github_id}/hooks").once
         end
 
         example 'is success' do
@@ -118,10 +118,10 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
 
       context 'when repo has only webhook' do
         before do
-          stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
+          stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(
             status: 200, body: JSON.dump(
               [
-                { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url } }
+                { name: 'web', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/456", config: { url: Travis.config.service_hook_url } }
               ]
             )
           )
@@ -129,11 +129,11 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         end
 
         example 'does nothing with service hook' do
-          expect(WebMock).not_to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/123")
+          expect(WebMock).not_to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123")
         end
 
         example 'updates webhook' do
-          expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").once
+          expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/456").once
         end
 
         example 'is success' do
