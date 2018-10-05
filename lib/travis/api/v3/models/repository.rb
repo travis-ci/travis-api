@@ -107,5 +107,9 @@ module Travis::API::V3
     def managed_by_installation?
       !!managed_by_installation_at
     end
+
+    def admin
+      users.where(permissions: { admin: true }).with_github_token.first
+    end
   end
 end

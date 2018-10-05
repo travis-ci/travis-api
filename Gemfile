@@ -41,6 +41,7 @@ gem 'nakayoshi_fork'
 gem 'sidekiq'
 gem 'redis-namespace'
 gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
+gem 'ruby-kafka'
 
 gem 'rbtrace'
 gem 'memory_profiler'
