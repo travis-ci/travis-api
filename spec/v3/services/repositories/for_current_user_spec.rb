@@ -40,6 +40,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "read"             => true,
           "activate"         => true,
           "deactivate"       => true,
+          "migrate"          => true,
           "star"             => true,
           "unstar"           => true,
           "create_request"   => true,

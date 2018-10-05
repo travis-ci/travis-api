@@ -18,7 +18,6 @@ describe 'Hooks', set_app: true do
 
   describe 'PUT /hooks' do # TODO really should be /hooks/1
     let(:hook)     { user.service_hooks.first }
-    let(:target)   { "repos/#{hook.owner_name}/#{hook.name}/hooks" }
 
     let :payload do
       {
@@ -31,8 +30,8 @@ describe 'Hooks', set_app: true do
 
     before(:each) do
       Travis.config.service_hook_url = 'notify.travis-ci.org'
-      stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(status: 200, body: '[]')
-      stub_request(:post, "https://api.github.com/repos/#{repo.slug}/hooks")
+      stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(status: 200, body: '[]')
+      stub_request(:post, "https://api.github.com/repositories/#{repo.github_id}/hooks")
     end
 
     it 'sets the hook' do
