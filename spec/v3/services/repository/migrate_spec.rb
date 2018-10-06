@@ -89,7 +89,16 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
     end
 
     example 'it returns a JSON struct with the repository in question' do
-      Travis::Kafka.expects(:deliver_message).with(msg: "foo", topic: "bar").returns(nil)
+      Travis::Kafka.expects(:deliver_message).with(
+        {
+          :topic => 'essential.repository.migrate',
+          :msg   => {
+            :data     => { :owner_name => 'svenfuchs', :name => 'minimal' },
+            :metadata => { :force_reimport => true },
+          }
+        }
+      ).returns(nil)
+
       Travis.logger.expects(:info).returns(nil)
 
       post("/v3/repo/#{repo.id}/migrate", {}, headers)
