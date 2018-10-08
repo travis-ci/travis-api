@@ -94,7 +94,7 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
           :topic => 'essential.repository.migrate',
           :msg   => {
             :data     => { :owner_name => 'svenfuchs', :name => 'minimal' },
-            :metadata => { :force_reimport => true },
+            :metadata => { :force_reimport => false },
           }
         }
       ).returns(nil)

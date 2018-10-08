@@ -14,7 +14,7 @@ module Travis::API::V3
           topic: KAFKA_TOPIC,
           msg: {
             data:     { owner_name: admin.login, name: repository.name },
-            metadata: { force_reimport: true }
+            metadata: { force_reimport: false }
           },
         )
 
