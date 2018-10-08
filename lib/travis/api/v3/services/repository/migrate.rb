@@ -10,10 +10,6 @@ module Travis::API::V3
       check_access(repository)
 
       if admin = access_control.admin_for(repository)
-
-        # FIXME: The msg isn't going to be "foo" - we need confirmation on the
-        #   precise structure of the data
-        #
         Travis::Kafka.deliver_message(
           topic: KAFKA_TOPIC,
           msg: {
