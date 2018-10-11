@@ -11,7 +11,7 @@ module Travis::API::V3
     end
 
     def migrate?
-      write?
+      admin?
     end
 
     def star?
