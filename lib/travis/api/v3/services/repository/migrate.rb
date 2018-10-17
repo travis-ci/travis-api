@@ -3,7 +3,7 @@ module Travis::API::V3
     # FIXME: This shouldn't be "bar" - we need confirmation on what the topic
     #   should be for beginning the migration
     #
-    KAFKA_TOPIC = "essential.repository.migrate"
+    KAFKA_TOPIC = "events.state_machine"
 
     def run!
       repository = check_login_and_find(:repository)
@@ -18,6 +18,7 @@ module Travis::API::V3
       Travis::Kafka.deliver_message(
         topic: KAFKA_TOPIC,
         msg: {
+          event: "essential.repository.migrate",
           data:     { owner_name: repository.owner_name, name: repository.name },
           metadata: { force_reimport: false }
         },
