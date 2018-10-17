@@ -98,7 +98,7 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
     end
 
     describe "feature enabled" do
-      before    { Travis::Features.activate_owner(:migrate, repo.owner) }
+      before    { Travis::Features.activate_owner(:allow_migration, repo.owner) }
 
       example 'it returns a JSON struct with the repository in question' do
         Travis::Kafka.expects(:deliver_message).with(
