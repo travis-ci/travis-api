@@ -6,7 +6,7 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
   end
 
   describe "not authenticated" do
-    before  { post("/v3/repo/#{repo.id}/migrate")      }
+    before  { post("/v3/repo/#{repo.id}/migrate")       }
     example { expect(last_response.status).to be == 403 }
     example { expect(JSON.load(body)).to      be ==     {
       "@type"         => "error",
@@ -75,7 +75,16 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
       expect(last_response.status).to eq 403
       expect(JSON.load(body)).to include(
         '@type' => 'error',
-        'error_type' => 'admin_access_required'
+        'error_type' => 'insufficient_access',
+        'permission' => 'migrate',
+        'repository' => {
+          '@type' => 'repository',
+          '@href' => "/v3/repo/#{repo.id}",
+          '@representation' => 'minimal',
+          'id' => repo.id,
+          'name' => 'minimal',
+          'slug' => 'svenfuchs/minimal'
+        }
       )
     end
   end
@@ -88,37 +97,54 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true)
     end
 
-    example 'it returns a JSON struct with the repository in question' do
-      Travis::Kafka.expects(:deliver_message).with(
-        {
-          :topic => 'essential.repository.migrate',
-          :msg   => {
-            :data     => { :owner_name => 'svenfuchs', :name => 'minimal' },
-            :metadata => { :force_reimport => false },
+    describe "feature enabled" do
+      before    { Travis::Features.activate_owner(:migrate, repo.owner) }
+
+      example 'it returns a JSON struct with the repository in question' do
+        Travis::Kafka.expects(:deliver_message).with(
+          {
+            :topic => 'essential.repository.migrate',
+            :msg   => {
+              :data     => { :owner_name => 'svenfuchs', :name => 'minimal' },
+              :metadata => { :force_reimport => false },
+            }
           }
-        }
-      ).returns(nil)
+        ).returns(nil)
 
-      Travis.logger.expects(:info).returns(nil)
+        Travis.logger.expects(:info).returns(nil)
 
-      post("/v3/repo/#{repo.id}/migrate", {}, headers)
+        post("/v3/repo/#{repo.id}/migrate", {}, headers)
 
-      expect(last_response.status).to eq 200
-      expect(JSON.load(body)).to include(
-        '@type' => 'repository',
-      )
+        expect(last_response.status).to eq 200
+        expect(JSON.load(body)).to include(
+          '@type' => 'repository',
+        )
+      end
+
+      context "when Kafka errors" do
+        example "it logs the error and raise an error"  do
+          Travis::Kafka.expects(:deliver_message).raises(Kafka::Error)
+          Logger.any_instance.expects(:error).returns(nil)
+
+          expect {
+            post("/v3/repo/#{repo.id}/migrate", {}, headers)
+          }.to raise_error(Kafka::Error)
+
+        end
+      end
     end
 
-    context "when Kafka errors" do
-      example "it logs the error and raise an error"  do
-        Travis::Kafka.expects(:deliver_message).raises(Kafka::Error)
-        Logger.any_instance.expects(:error).returns(nil)
+    describe "feature disabled" do
+      before { Travis::Features.deactivate_owner(:import_owner, repo.owner) }
+      before { post("/v3/repo/#{repo.id}/migrate", {}, headers) }
 
-        expect {
-          post("/v3/repo/#{repo.id}/migrate", {}, headers)
-        }.to raise_error(Kafka::Error)
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to      be ==     {
+        "@type"         => "error",
+        "error_type"    => "error",
+        "error_message" => "Migrating repositories is disabled for svenfuchs. Please contact Travis CI support for more information.",
+      }}
 
-      end
     end
   end
 end
