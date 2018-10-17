@@ -11,7 +11,7 @@ module Travis::API::V3
       current_user = access_control.user
 
       owner = repository.owner
-      if !Travis::Features.owner_active?(:migrate, owner)
+      if !Travis::Features.owner_active?(:allow_migration, owner)
         raise Error.new("Migrating repositories is disabled for #{owner.login}. Please contact Travis CI support for more information.", status: 403)
       end
 
