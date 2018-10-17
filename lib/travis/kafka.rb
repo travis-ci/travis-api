@@ -14,13 +14,9 @@ module Travis
         @_kafka ||= ::Kafka.new(
           seed_brokers: ENV.fetch('KAFKA_URL'),
           client_id:    "travis_api",
-
-          # TODO: I'm not sure right now if we need these settings, or the
-          #   private methods that help generate them.
-          #
-          # ssl_ca_cert_file_path: tmp_ca_file.path,
-          # ssl_client_cert:       ENV.fetch('KAFKA_CLIENT_CERT'),
-          # ssl_client_cert_key:   ENV.fetch('KAFKA_CLIENT_CERT_KEY'),
+          ssl_ca_cert_file_path: tmp_ca_file.path,
+          ssl_client_cert:       ENV.fetch('KAFKA_CLIENT_CERT'),
+          ssl_client_cert_key:   ENV.fetch('KAFKA_CLIENT_CERT_KEY'),
         )
       end
 
