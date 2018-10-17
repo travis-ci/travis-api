@@ -39,7 +39,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "@type"            => "organization",
       "@href"            => "/v3/org/#{org.id}",
       "@representation"  => "standard",
-      "@permissions"     => { "read"=>true, "sync"=>true, "import"=>false },
+      "@permissions"     => { "read"=>true, "sync"=>true },
       "id"               => org.id,
       "login"            => "example-org",
       "name"             => nil,
