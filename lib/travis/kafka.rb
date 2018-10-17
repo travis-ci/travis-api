@@ -5,7 +5,7 @@ module Travis
     class << self
 
       def deliver_message(msg:, topic:, partition_key: nil)
-        kafka.deliver_message(msg, topic: topic, partition_key: partition_key)
+        kafka.deliver_message(msg, topic: "#{ENV['KAFKA_PREFIX']}#{topic}", partition_key: partition_key)
       end
 
       private
