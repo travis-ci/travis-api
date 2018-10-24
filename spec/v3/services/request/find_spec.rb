@@ -19,7 +19,9 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
                   "repository",
                   "owner",
                   "event_type",
-                  "push")
+                  "push",
+                  "base_commit",
+                  "head_commit")
     }
   end
 
@@ -44,7 +46,9 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
                       "repository",
                       "owner",
                       "event_type",
-                      "push")
+                      "push",
+                      "base_commit",
+                      "head_commit")
     }
 
   end

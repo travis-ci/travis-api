@@ -23,7 +23,9 @@ describe Travis::API::V3::Services::Requests::Find, set_app: true do
                   "sha",
                   "svenfuchs/minimal",
                   "event_type",
-                  "push")
+                  "push",
+                  "base_commit",
+                  "head_commit")
     }
   end
 
@@ -53,7 +55,9 @@ describe Travis::API::V3::Services::Requests::Find, set_app: true do
                     "sha",
                     "svenfuchs/minimal",
                     "event_type",
-                    "push")
+                    "push",
+                    "base_commit",
+                    "head_commit")
     }
 
   end
