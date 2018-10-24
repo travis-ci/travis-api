@@ -1,150 +1,43 @@
 describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
-  let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  describe "migrating a repository" do
+    let(:user) { Factory.create(:user, login: 'merge-user') }
+    let(:repo) { Travis::API::V3::Models::Repository.first }
+    before    { Travis::Features.activate_owner(:allow_migration, repo.owner) }
 
-  before do
-    repo.update_attributes!(active: true)
-  end
+    context "logged in" do
+      let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
+      let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 
-  describe "not authenticated" do
-    before  { post("/v3/repo/#{repo.id}/migrate")       }
-    example { expect(last_response.status).to be == 403 }
-    example { expect(JSON.load(body)).to      be ==     {
-      "@type"         => "error",
-      "error_type"    => "login_required",
-      "error_message" => "login required"
-    }}
-  end
+      context "has admin permissions to the repo" do
+        before { Travis::API::V3::Models::Permission.create(repository: repo, user: user, admin: true) }
+        before do
+          stub_request(:post, "https://merge.localhost/api/repository/#{repo.slug}/migrate")
+        end
 
-  describe "missing repo, authenticated" do
-    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { post("/v3/repo/9999999999/migrate", {}, headers)                 }
+        it "makes a request to the merge app" do
+          response = post("/v3/repo/#{repo.id}/migrate", {}, headers)
+          response.status.should == 202
+          JSON.parse(response.body)['@href'].should == "/v3/repo/#{repo.id}"
+        end
 
-    example { expect(last_response.status).to be == 404 }
-    example { expect(JSON.load(body)).to      be ==     {
-      "@type"         => "error",
-      "error_type"    => "not_found",
-      "error_message" => "repository not found (or insufficient access)",
-      "resource_type" => "repository"
-    }}
-  end
-
-  describe "existing repository, no push access" do
-    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { post("/v3/repo/#{repo.id}/migrate", {}, headers)                 }
-
-    example { expect(last_response.status).to be == 403 }
-    example { expect(JSON.load(body).to_s).to include(
-      "@type",
-      "error_type",
-      "insufficient_access",
-      "error_message",
-      "operation requires migrate access to repository",
-      "resource_type",
-      "repository",
-      "permission",
-      "migrate")
-    }
-  end
-
-  describe "private repository, no access" do
-    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    before        { repo.update_attribute(:private, true)                             }
-    before        { post("/v3/repo/#{repo.id}/migrate", {}, headers)                  }
-    after         { repo.update_attribute(:private, false)                            }
-
-    example { expect(last_response.status).to be == 404 }
-    example { expect(JSON.load(body)).to      be ==     {
-      "@type"         => "error",
-      "error_type"    => "not_found",
-      "error_message" => "repository not found (or insufficient access)",
-      "resource_type" => "repository"
-    }}
-  end
-
-  describe 'existing repository, wrong access' do
-    let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
-    before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before { stub_request(:any, %r(api.github.com/repos/#{repo.slug}/hooks(/\d+)?)) }
-    before { post("/v3/repo/#{repo.id}/migrate", {}, headers) }
-
-    example 'is success' do
-      expect(last_response.status).to eq 403
-      expect(JSON.load(body)).to include(
-        '@type' => 'error',
-        'error_type' => 'insufficient_access',
-        'permission' => 'migrate',
-        'repository' => {
-          '@type' => 'repository',
-          '@href' => "/v3/repo/#{repo.id}",
-          '@representation' => 'minimal',
-          'id' => repo.id,
-          'name' => 'minimal',
-          'slug' => 'svenfuchs/minimal'
-        }
-      )
-    end
-  end
-
-  describe "existing repository, admin access" do
-    let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
-
-    before do
-      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true)
-    end
-
-    describe "feature enabled" do
-      before    { Travis::Features.activate_owner(:migrate, repo.owner) }
-
-      example 'it returns a JSON struct with the repository in question' do
-        Travis::Kafka.expects(:deliver_message).with(
-          {
-            :topic => 'essential.repository.migrate',
-            :msg   => {
-              :data     => { :owner_name => 'svenfuchs', :name => 'minimal' },
-              :metadata => { :force_reimport => false },
-            }
-          }
-        ).returns(nil)
-
-        Travis.logger.expects(:info).returns(nil)
-
-        post("/v3/repo/#{repo.id}/migrate", {}, headers)
-
-        expect(last_response.status).to eq 200
-        expect(JSON.load(body)).to include(
-          '@type' => 'repository',
-        )
-      end
-
-      context "when Kafka errors" do
-        example "it logs the error and raise an error"  do
-          Travis::Kafka.expects(:deliver_message).raises(Kafka::Error)
-          Logger.any_instance.expects(:error).returns(nil)
-
-          expect {
-            post("/v3/repo/#{repo.id}/migrate", {}, headers)
-          }.to raise_error(Kafka::Error)
-
+        context "when a :allow_migration feature is disabled" do
+          before { Travis::Features.deactivate_owner(:allow_migration, repo.owner) }
+          it "returns 403" do
+            response = post("/v3/repo/#{repo.id}/migrate", {}, headers)
+            response.status.should == 403
+          end
         end
       end
-    end
 
-    describe "feature disabled" do
-      before { Travis::Features.deactivate_owner(:import_owner, repo.owner) }
-      before { post("/v3/repo/#{repo.id}/migrate", {}, headers) }
+      context "doesn't have admin permissions to the repository" do
+        before { Travis::API::V3::Models::Permission.create(repository: repo, user: user, pull: true) }
 
-      example { expect(last_response.status).to be == 403 }
-      example { expect(JSON.load(body)).to      be ==     {
-        "@type"         => "error",
-        "error_type"    => "error",
-        "error_message" => "Migrating repositories is disabled for svenfuchs. Please contact Travis CI support for more information.",
-      }}
-
+        it "returns a 403 response" do
+          response = post("/v3/repo/#{repo.id}/migrate", {}, headers)
+          response.status.should == 403
+          JSON.parse(response.body)['@type'].should == "error"
+        end
+      end
     end
   end
 end
