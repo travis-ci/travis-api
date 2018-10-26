@@ -33,6 +33,7 @@ before_script:
 
 jobs:
   include:
-    - script:
+    - stage: build docker image
+      script:
       - docker build .
       - docker images
