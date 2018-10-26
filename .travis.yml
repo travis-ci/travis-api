@@ -1,10 +1,13 @@
 language: ruby
 
-sudo: false
+stages:
+  - name: test
+  - name: build docker image
 
 rvm: 2.5.1
 
 script: "bundle exec rake knapsack:rspec"
+
 env:
   global:
     - RUBY_GC_MALLOC_LIMIT=90000000
@@ -28,5 +31,8 @@ before_script:
   - "createdb travis_test || true"
   - "curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test"
 
-before_install:
-  - 'gem update --system'
+jobs:
+  include:
+    - script:
+      - docker build .
+      - docker images
