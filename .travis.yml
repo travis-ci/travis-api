@@ -33,8 +33,9 @@ before_script:
 
 jobs:
   include:
-    - language: bash
-      stage: build docker image
+    - stage: build docker image
+      language: bash
+      before_script: skip
       script:
         - docker build -t quay.io/travisci/travis-api .
         - docker images
