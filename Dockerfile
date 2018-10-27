@@ -1,4 +1,4 @@
-FROM ruby:2.5.1
+FROM ruby:2.5.1-alpine
 
 LABEL maintainer Travis CI GmbH <support+travis-app-docker-images@travis-ci.com>
 
@@ -10,6 +10,7 @@ WORKDIR /usr/src/app
 
 COPY Gemfile      /usr/src/app
 COPY Gemfile.lock /usr/src/app
+
 RUN bundler install --verbose --retry=3
 
 COPY . /usr/src/app
