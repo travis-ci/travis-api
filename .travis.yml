@@ -6,6 +6,8 @@ stages:
 
 rvm: 2.5.1
 
+sudo: required
+
 script: "bundle exec rake knapsack:rspec"
 
 env:
