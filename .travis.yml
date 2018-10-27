@@ -33,7 +33,10 @@ before_script:
 
 jobs:
   include:
-    - stage: build docker image
+    - language: bash
+      stage: build docker image
       script:
-      - docker build .
-      - docker images
+        - docker build -t quay.io/travisci/travis-api .
+        - docker images
+        - docker login -u="travisci+travis_api" -p="${QUAY_DOCKER_PASSWORD}" quay.io
+        - docker push quay.io/travisci/travis-api
