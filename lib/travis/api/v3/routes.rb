@@ -288,5 +288,11 @@ module Travis::API::V3
         delete :purge, '/purge'
       end
     end
+
+    hidden_resource :insights do
+      route '/insights'
+      get :metrics, '/metrics'
+      get :active_repos, '/repos/active'
+    end
   end
 end
