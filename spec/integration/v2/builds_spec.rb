@@ -137,6 +137,18 @@ describe 'Builds', set_app: true do
       end
     end
 
+    context 'when the repo is migrating' do
+      before { repo.update_attributes(migrating: true) }
+      before { post "/builds/#{build.id}/restart", {}, headers }
+      it { last_response.status.should == 406 }
+    end
+
+    context 'when the repo is migrated' do
+      before { repo.update_attributes(migrated_at: Time.now) }
+      before { post "/builds/#{build.id}/restart", {}, headers }
+      it { last_response.status.should == 406 }
+    end
+
     context 'when build passed' do
       before do
         build.matrix.each { |j| j.update_attribute(:state, 'passed') }

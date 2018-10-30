@@ -100,6 +100,20 @@ describe 'ssh keys endpoint', set_app: true do
         ssh_key.repository_id.should == repo.id
         ssh_key.value.decrypt.should == 'the key'
       end
+
+      context 'when the repo is migrating' do
+        let(:env_var) { repo.settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY).tap { repo.settings.save } }
+        before { repo.update_attributes(migrating: true) }
+        before { patch "/settings/ssh_key/#{repo.id}", '{"settings": {}}', headers }
+        it { last_response.status.should == 406 }
+      end
+
+      context 'when the repo is migrated' do
+        let(:env_var) { repo.settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY).tap { repo.settings.save } }
+        before { repo.update_attributes(migrated_at: Time.now) }
+        before { patch "/settings/ssh_key/#{repo.id}", '{}', headers }
+        it { last_response.status.should == 406 }
+      end
     end
 
     describe 'DELETE /ssh_keys/:id' do

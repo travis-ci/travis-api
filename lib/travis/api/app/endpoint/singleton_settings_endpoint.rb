@@ -16,7 +16,10 @@ class Travis::Api::App
     end
 
     def update
+      disallow_migrating!(parent.repository)
+
       record = parent.update(name, JSON.parse(request.body.read)[singular_name])
+
       if record.valid?
         repo_settings.save
         respond_with(record, type: singular_name, version: :v2)

@@ -90,6 +90,7 @@ class Travis::Api::App
 
         settings = service(:find_repo_settings, params).run
         if settings
+          disallow_migrating!(settings.repository)
           settings.merge(payload['settings'])
           # TODO: I would like to have better API here, but leaving this
           # for testing to not waste too much time before I can play with it

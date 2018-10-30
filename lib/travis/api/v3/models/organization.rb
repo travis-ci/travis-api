@@ -3,6 +3,14 @@ module Travis::API::V3
     has_many :memberships
     has_many :users, through: :memberships
 
+    def migrating?
+      self.class.column_names.include?('migrating') && super
+    end
+
+    def migrated_at
+      self.class.column_names.include?('migrated_at') && super
+    end
+
     def repositories
       Models::Repository.where(owner_type: 'Organization', owner_id: id)
     end

@@ -83,6 +83,18 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
 
         repo.reload.settings.env_vars.to_a.length.should == 0
       end
+
+      context 'when the repo is migrating' do
+        before { repo.update_attributes(migrating: true) }
+        before { post "/settings/env_vars?repository_id=#{repo.id}", '{}', headers }
+        it { last_response.status.should == 406 }
+      end
+
+      context 'when the repo is migrated' do
+        before { repo.update_attributes(migrated_at: Time.now) }
+        before { post "/settings/env_vars?repository_id=#{repo.id}", '{}', headers }
+        it { last_response.status.should == 406 }
+      end
     end
 
     describe 'PATCH /settings/env_vars/:id' do
@@ -153,6 +165,20 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
         updated_env_var.id.should == env_var.id
         updated_env_var.name.should == 'FOO'
         updated_env_var.value.decrypt.should == 'bar'
+      end
+
+      context 'when the repo is migrating' do
+        let(:env_var) { repo.settings.env_vars.create(name: 'FOO', value: 'bar').tap { repo.settings.save } }
+        before { repo.update_attributes(migrating: true) }
+        before { patch "/settings/env_vars/#{env_var.id}?repository_id=#{repo.id}", '{}', headers }
+        it { last_response.status.should == 406 }
+      end
+
+      context 'when the repo is migrated' do
+        let(:env_var) { repo.settings.env_vars.create(name: 'FOO', value: 'bar').tap { repo.settings.save } }
+        before { repo.update_attributes(migrated_at: Time.now) }
+        before { patch "/settings/env_vars/#{env_var.id}?repository_id=#{repo.id}", '{}', headers }
+        it { last_response.status.should == 406 }
       end
     end
 

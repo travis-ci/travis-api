@@ -87,4 +87,33 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
 
     include_examples 'paid feature error'
   end
+
+  context do
+    before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true) }
+    before { repo.update_attributes(private: true) }
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migrating: true) }
+      before { delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers) }
+
+      example { expect(last_response.status).to be == 406 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migrated_at: Time.now) }
+      before { delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers) }
+
+      example { expect(last_response.status).to be == 406 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+  end
 end

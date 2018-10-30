@@ -294,6 +294,36 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     end
   end
 
+  context do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}"} }
+    before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migrating: true) }
+      before { post("/v3/job/#{job.id}/restart", {}, headers) }
+
+      example { expect(last_response.status).to be == 406 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migrated_at: Time.now) }
+      before { post("/v3/job/#{job.id}/restart", {}, headers) }
+
+      example { expect(last_response.status).to be == 406 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+  end
+
   #  TODO decided to discuss further with rkh as this use case doesn't really exist at the moment
   #  and 'fixing' the query requires modifying workers that v2 uses, thereby running the risk of breaking v2,
   #  and also because in 6 months or so travis-hub will be able to cancel builds without using travis-core at all.

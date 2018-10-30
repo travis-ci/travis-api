@@ -94,6 +94,14 @@ class Repository < Travis::Model
 
   delegate :builds_only_with_travis_yml?, to: :settings
 
+  def migrating?
+    self.class.column_names.include?('migrating') && super
+  end
+
+  def migrated_at
+    self.class.column_names.include?('migrated_at') && super
+  end
+
   def admin
     @admin ||= Travis.run_service(:find_admin, repository: self) # TODO check who's using this
   end

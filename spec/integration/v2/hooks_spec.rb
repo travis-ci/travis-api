@@ -39,5 +39,17 @@ describe 'Hooks', set_app: true do
       repo.reload.active?.should == true
       response.should be_successful
     end
+
+    context 'when the repo is migrating' do
+      before { repo.update_attributes(migrating: true) }
+      before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
+      it { last_response.status.should == 406 }
+    end
+
+    context 'when the repo is migrated' do
+      before { repo.update_attributes(migrated_at: Time.now) }
+      before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
+      it { last_response.status.should == 406 }
+    end
   end
 end
