@@ -52,12 +52,13 @@ module Travis::API::V3
 
     attr_accessor :access_control, :params, :request_body
 
-    def initialize(access_control, params, request_body)
+    def initialize(access_control, params, env)
       @access_control = access_control
       @params         = params
       @queries        = {}
       @github         = {}
-      @request_body   = request_body
+      @env            = env
+      @request_body   = @env['rack.input'.freeze]
     end
 
     def query(type = result_type)
