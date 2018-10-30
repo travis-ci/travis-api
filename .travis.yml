@@ -1,5 +1,7 @@
 language: ruby
 
+sudo: required
+
 rvm: 2.5.1
 
 script: "bundle exec rake knapsack:rspec"
