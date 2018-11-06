@@ -183,7 +183,6 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         "resource_type" => "repository"
       }}
     end
-
   end
 
   context 'internal auth' do
@@ -198,6 +197,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     end
 
     it_behaves_like 'repository deactivation'
+  end
 
   describe "existing repository, push access"
   # as this requires a call to github, and stubbing this request has proven difficult,
