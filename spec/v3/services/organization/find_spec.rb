@@ -19,7 +19,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "name"             => nil,
       "github_id"        => nil,
       "avatar_url"       => nil,
-      "education"        => false
+      "education"        => false,
+      "allow_migration"  => false,
     }}
   end
 
@@ -45,7 +46,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "name"             => nil,
       "github_id"        => nil,
       "avatar_url"       => nil,
-      "education"        => true
+      "education"        => true,
+      "allow_migration"  => true,
     }}
   end
 
