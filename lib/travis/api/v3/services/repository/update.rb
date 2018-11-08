@@ -10,8 +10,7 @@ module Travis::API::V3
       query.update(attrs)
       result repository
     end
-    # needs a blocker?
-    # is this endpoint used during the migration?
+
     def attrs
       {
         com_id: params['com_id'],
