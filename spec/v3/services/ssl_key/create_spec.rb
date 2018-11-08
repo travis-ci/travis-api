@@ -66,7 +66,7 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migrating: true) }
+      before { repo.update_attributes(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/key_pair/generated", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 406 }
@@ -78,7 +78,7 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migrated_at: Time.now) }
+      before { repo.update_attributes(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/key_pair/generated", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 406 }

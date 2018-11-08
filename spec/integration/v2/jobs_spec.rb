@@ -320,13 +320,13 @@ describe 'Jobs', set_app: true do
     end
 
     context 'when the repo is migrating' do
-      before { job.repository.update_attributes(migrating: true) }
+      before { job.repository.update_attributes(migration_status: "migrating") }
       before { post "/jobs/#{job.id}/restart", {}, headers }
       it { last_response.status.should == 406 }
     end
 
     context 'when the repo is migrated' do
-      before { job.repository.update_attributes(migrated_at: Time.now) }
+      before { job.repository.update_attributes(migration_status: "migrated") }
       before { post "/jobs/#{job.id}/restart", {}, headers }
       it { last_response.status.should == 406 }
     end

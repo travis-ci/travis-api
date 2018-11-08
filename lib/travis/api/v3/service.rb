@@ -175,7 +175,7 @@ module Travis::API::V3
     end
 
     def migrated?(repo)
-      ["migrated", "migrating"].includes? repo.migration_status
+      ["migrated", "migrating"].include? repo.migration_status
     end
 
     # TODO confirm message, link to docs?

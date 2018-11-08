@@ -93,7 +93,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
     before { repo.update_attributes(private: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migrating: true) }
+      before { repo.update_attributes(migration_status: "migrating") }
       before { delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 406 }
@@ -105,7 +105,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migrated_at: Time.now) }
+      before { repo.update_attributes(migration_status: "migrated") }
       before { delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 406 }

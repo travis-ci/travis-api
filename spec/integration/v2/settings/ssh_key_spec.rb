@@ -103,14 +103,14 @@ describe 'ssh keys endpoint', set_app: true do
 
       context 'when the repo is migrating' do
         let(:env_var) { repo.settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY).tap { repo.settings.save } }
-        before { repo.update_attributes(migrating: true) }
+        before { repo.update_attributes(migration_status: "migrating") }
         before { patch "/settings/ssh_key/#{repo.id}", '{"settings": {}}', headers }
         it { last_response.status.should == 406 }
       end
 
       context 'when the repo is migrated' do
         let(:env_var) { repo.settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY).tap { repo.settings.save } }
-        before { repo.update_attributes(migrated_at: Time.now) }
+        before { repo.update_attributes(migration_status: "migrated") }
         before { patch "/settings/ssh_key/#{repo.id}", '{}', headers }
         it { last_response.status.should == 406 }
       end

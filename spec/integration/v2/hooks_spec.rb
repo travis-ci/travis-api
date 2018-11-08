@@ -41,15 +41,15 @@ describe 'Hooks', set_app: true do
     end
 
     context 'when the repo is migrating' do
-      before { repo.update_attributes(migrating: true) }
+      before { repo.update_attributes(migration_status: "migrating") }
       before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
-      it { last_response.status.should == 406 }
+      it { last_response.status.should == 403 }
     end
 
     context 'when the repo is migrated' do
-      before { repo.update_attributes(migrated_at: Time.now) }
+      before { repo.update_attributes(migration_status: "migrated") }
       before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
-      it { last_response.status.should == 406 }
+      it { last_response.status.should == 403 }
     end
   end
 end

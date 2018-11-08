@@ -138,15 +138,15 @@ describe 'Builds', set_app: true do
     end
 
     context 'when the repo is migrating' do
-      before { repo.update_attributes(migrating: true) }
+      before { repo.update_attributes(migration_status: "migrating") }
       before { post "/builds/#{build.id}/restart", {}, headers }
-      it { last_response.status.should == 406 }
+      it { last_response.status.should == 403 }
     end
 
     context 'when the repo is migrated' do
-      before { repo.update_attributes(migrated_at: Time.now) }
+      before { repo.update_attributes(migration_status: "migrated") }
       before { post "/builds/#{build.id}/restart", {}, headers }
-      it { last_response.status.should == 406 }
+      it { last_response.status.should == 403 }
     end
 
     context 'when build passed' do
