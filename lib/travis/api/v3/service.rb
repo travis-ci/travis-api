@@ -175,12 +175,12 @@ module Travis::API::V3
     end
 
     def migrated?(repo)
-      repo.migrating? || repo.migrated_at
+      ["migrated", "migrating"].includes? repo.migration_status
     end
 
     # TODO confirm message, link to docs?
     def repo_migrated(message = 'This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com')
-      result(Error.new(message, type: :repo_migrated), result_type: :error, status: 406)
+      result(Error.new(message, type: :repo_migrated), result_type: :error, status: 403)
     end
 
     def abuse_detected(message = 'Abuse detected. Restart disabled. If you think you have received this message in error, please contact support: support@travis-ci.com')

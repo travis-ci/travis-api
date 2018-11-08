@@ -46,11 +46,11 @@ class Travis::Api::App
       end
 
       MSGS = {
-        migrated: 'This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com'
+        migrated: 'This repository has been migrated to travis-ci.com. Modifications to this repository, it\'s builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com'
       }
 
       def disallow_migrating!(repo)
-        halt 406, MSGS[:migrated] if repo.migrating? || repo.migrated_at
+        halt 403, MSGS[:migrated] if repo.migration_status == "migrating" || repo.migration_status == "migrated"
       end
 
       def allow_public?
