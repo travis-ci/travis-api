@@ -173,7 +173,7 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers) }
 
-      example { expect(last_response.status).to be == 406 }
+      example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
         "@type"         => "error",
         "error_type"    => "repo_migrated",
@@ -186,7 +186,7 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers) }
 
-      example { expect(last_response.status).to be == 406 }
+      example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
         "@type"         => "error",
         "error_type"    => "repo_migrated",

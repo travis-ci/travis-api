@@ -303,7 +303,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       before { repo.update_attributes(migration_status: "migrating") }
       before { post("/v3/job/#{job.id}/restart", {}, headers) }
 
-      example { expect(last_response.status).to be == 406 }
+      example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
         "@type"         => "error",
         "error_type"    => "repo_migrated",
@@ -315,7 +315,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       before { repo.update_attributes(migration_status: "migrated") }
       before { post("/v3/job/#{job.id}/restart", {}, headers) }
 
-      example { expect(last_response.status).to be == 406 }
+      example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
         "@type"         => "error",
         "error_type"    => "repo_migrated",

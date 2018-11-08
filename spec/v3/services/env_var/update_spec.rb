@@ -97,7 +97,7 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
       before { repo.update_attributes(migration_status: "migrating") }
       before { patch("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", JSON.generate(params), auth_headers.merge(json_headers)) }
 
-      example { expect(last_response.status).to be == 406 }
+      example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
         "@type"         => "error",
         "error_type"    => "repo_migrated",
@@ -109,7 +109,7 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
       before { repo.update_attributes(migration_status: "migrated") }
       before { patch("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", JSON.generate(params), auth_headers.merge(json_headers)) }
 
-      example { expect(last_response.status).to be == 406 }
+      example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
         "@type"         => "error",
         "error_type"    => "repo_migrated",

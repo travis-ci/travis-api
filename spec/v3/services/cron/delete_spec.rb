@@ -59,7 +59,7 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { delete("/v3/cron/#{cron.id}", {}, headers) }
 
-      example { expect(last_response.status).to be == 406 }
+      example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
         "@type"         => "error",
         "error_type"    => "repo_migrated",
@@ -72,7 +72,7 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { delete("/v3/cron/#{cron.id}", {}, headers) }
 
-      example { expect(last_response.status).to be == 406 }
+      example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
         "@type"         => "error",
         "error_type"    => "repo_migrated",
