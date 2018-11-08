@@ -322,13 +322,13 @@ describe 'Jobs', set_app: true do
     context 'when the repo is migrating' do
       before { job.repository.update_attributes(migration_status: "migrating") }
       before { post "/jobs/#{job.id}/restart", {}, headers }
-      it { last_response.status.should == 406 }
+      it { last_response.status.should == 403 }
     end
 
     context 'when the repo is migrated' do
       before { job.repository.update_attributes(migration_status: "migrated") }
       before { post "/jobs/#{job.id}/restart", {}, headers }
-      it { last_response.status.should == 406 }
+      it { last_response.status.should == 403 }
     end
 
     context 'when job passed' do
