@@ -54,6 +54,7 @@ class Travis::Api::App
       post '/:id/restart' do
         Metriks.meter("api.v2.request.restart_build").mark
         service = Travis::Enqueue::Services::RestartModel.new(current_user, build_id: params[:id])
+        disallow_migrating!(service.repository)
 
         result = if !service.accept?
           status 400

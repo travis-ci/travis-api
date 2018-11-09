@@ -25,6 +25,14 @@ module Travis::API::V3
       update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
     end
 
+    def migrating?
+      self.class.column_names.include?('migrating') && super
+    end
+
+    def migrated_at
+      self.class.column_names.include?('migrated_at') && super
+    end
+
     def slug
       @slug ||= "#{owner_name}/#{name}"
     end

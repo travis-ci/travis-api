@@ -13,7 +13,6 @@ module Travis
         end
 
         def scope_access?
-          self.name
           !!@scope_access
         end
       end

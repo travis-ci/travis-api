@@ -3,6 +3,7 @@ module Travis::API::V3
     def run!(activate = false)
       repository = check_login_and_find(:repository)
       check_access(repository)
+      return repo_migrated if migrated?(repository)
 
       admin = access_control.admin_for(repository)
 

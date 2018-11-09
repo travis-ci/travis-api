@@ -183,7 +183,6 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         "resource_type" => "repository"
       }}
     end
-
   end
 
   context 'internal auth' do
@@ -198,5 +197,39 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     end
 
     it_behaves_like 'repository deactivation'
+  end
+
+  describe "existing repository, push access"
+  # as this requires a call to github, and stubbing this request has proven difficult,
+  # this test has been omitted for now
+
+  context do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
+    before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true, pull: true) }
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrating") }
+      before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrated") }
+      before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
   end
 end

@@ -45,6 +45,14 @@ class Travis::Api::App
         halt 401 if private_mode? || pre_v2_1?
       end
 
+      MSGS = {
+        migrated: 'This repository has been migrated to travis-ci.com. Modifications to this repository, it\'s builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com'
+      }
+
+      def disallow_migrating!(repo)
+        halt 403, MSGS[:migrated] if repo.migration_status == "migrating" || repo.migration_status == "migrated"
+      end
+
       def allow_public?
         org? || public_mode?
       end
