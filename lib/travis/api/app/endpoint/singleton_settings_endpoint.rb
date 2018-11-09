@@ -30,6 +30,8 @@ class Travis::Api::App
     end
 
     def destroy
+      disallow_migrating!(parent.repository)
+
       record = parent.delete(name)
       repo_settings.save
       respond_with(record, type: singular_name, version: :v2)

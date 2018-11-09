@@ -73,6 +73,8 @@ class Travis::Api::App
     end
 
     def destroy
+      disallow_migrating!(repo)
+
       record = collection.destroy(params[:id]) || record_not_found
       repo_settings.save
       respond_with(record, type: singular_name, version: :v2)
