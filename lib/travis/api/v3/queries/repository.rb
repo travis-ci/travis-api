@@ -43,7 +43,7 @@ module Travis::API::V3
 
     def by_slug
       owner_name, name = slug.split('/')
-      Models::Repository.where(owner_name: owner_name.downcase, name: name.downcase, invalidated_at: nil).first
+      Models::Repository.where(owner_name: owner_name, name: name, invalidated_at: nil).first
     end
   end
 end
