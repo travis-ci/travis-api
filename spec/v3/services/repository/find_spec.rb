@@ -154,6 +154,12 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       example { expect(last_response).to be_ok }
       example { expect(parsed_body['slug']).to be == 'svenfuchs/minimal' }
     end
+
+    describe 'public repo by slug with capitalization' do
+      before  { get("/v3/repo/SvenFuchs%2Fminimal") }
+      example { expect(last_response).to be_ok }
+      example { expect(parsed_body['slug']).to be == 'svenfuchs/minimal' }
+    end
   end
 
   shared_examples 'denies unauthenticated access to a public repo' do
