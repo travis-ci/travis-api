@@ -43,6 +43,7 @@ task :remove_duplicate_branches do
 
   # ActiveRecord::Base.connection.execute "SET statement_timeout = 600000"
 
+  # approx length of ids list ~61K
   ids_of_repositories_with_duplicate_branch_records =
     Travis::API::V3::Models::Branch
       .select(:repository_id, :name)
@@ -50,11 +51,15 @@ task :remove_duplicate_branches do
       .having("count(*) > 1")
       .to_a.map(&:repository_id).uniq
 
-  Travis::API::V3::Models::Branch.select(:repository_id, :name).group(:repository_id, :name).having("count(*) > 1").limit(50) do |branches|
-  # .find_in_batches(batch_size: 50) do |branches|
-    puts branches
-    # most_recent_branch = branches.max_by { |branch| branch.updated_at }
+  ids_of_repositories_with_duplicate_branch_records[0..2].each do |repo_id|
+    branches = Travis::API::V3::Models::Branch
+      .where(repository_id: repo_id)
+      .select(:name)
+      .group(:name)
+      .having("count(*) > 1")
+      .to_a
 
+  most_recent_branch = branches.max_by { |branch| branch.updated_at }
   end
 end
 
