@@ -36,7 +36,7 @@ task :remove_duplicate_branches do
   require "travis/api/v3"
   Travis::Database.connect
 
-# Find all duplicated branch names, in batches
+# Find all branches wth duplicate name/repository_id combinations, in batches
 # Select the last updated branch record for each of those branch names
 # Query 4 tables to find refrences to any of those branch ids
 # Replace those references with the one-true-branch-id
