@@ -59,8 +59,30 @@ task :remove_duplicate_branches do
       .having("count(*) > 1")
       .to_a
 
-  most_recent_branch = branches.max_by { |branch| branch.updated_at }
+# Assumption: only the last updated branch is ever used
+# We have seen inconsistencies with this in practice
+    chosen_branch = branches.max_by { |branch| branch.updated_at }
+    other_branches = branches - [chosen_branch]
+
+# TODO: should be inside a transaction
+    Travis::API::V3::Models::Build
+      .where(branch_id: other_branches)
+      .update_all(branch_id: chosen_branch.id)
+    Travis::API::V3::Models::Commit
+      .where(branch_id: other_branches)
+      .update_all(branch_id: chosen_branch.id)
+    Travis::API::V3::Models::Cron
+      .where(branch_id: other_branches)
+      .update_all(branch_id: chosen_branch.id)
+    Travis::API::V3::Models::Request
+      .where(branch_id: other_branches)
+      .update_all(branch_id: chosen_branch.id)
+
+    Travis::API::V3::Models::Branch.destroy(other_branches)
+    # Model.where(id: array.map(&:id)).delete_all
   end
+
+
 end
 
 task default: :remove_duplicate_branches

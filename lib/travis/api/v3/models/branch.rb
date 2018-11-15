@@ -9,5 +9,11 @@ module Travis::API::V3
     def default_branch
       name == repository.default_branch_name
     end
+
+    # def create
+    #   # dont create this branch if there exists a conflicting one and is valid
+    #   # instead return the chosen one
+    #   super
+    # end
   end
 end
