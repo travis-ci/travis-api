@@ -93,7 +93,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "name"             => "master"},
       "starred"            => false,
       "active_on_org"      => nil,
-      "managed_by_installation" => false
+      "managed_by_installation" => false,
+      "migration_status"   => nil
     })}
   end
 

@@ -53,4 +53,31 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
     })}
   end
 
+  context do
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrating") }
+      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+      before { delete("/v3/cron/#{cron.id}", {}, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+
+    describe "repo migrating" do
+      before  { repo.update_attributes(migration_status: "migrated") }
+      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+      before { delete("/v3/cron/#{cron.id}", {}, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+  end
 end

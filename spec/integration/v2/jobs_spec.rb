@@ -293,8 +293,8 @@ describe 'Jobs', set_app: true do
   end
 
   describe 'POST /jobs/:id/restart' do
-    let(:user)    { User.where(login: 'svenfuchs').first }
-    let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
+    let(:user)  { User.where(login: 'svenfuchs').first }
+    let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
 
     before {
       headers.merge! 'HTTP_AUTHORIZATION' => "token #{token}"
@@ -317,6 +317,18 @@ describe 'Jobs', set_app: true do
           response.status.should == 400
         end
       end
+    end
+
+    context 'when the repo is migrating' do
+      before { job.repository.update_attributes(migration_status: "migrating") }
+      before { post "/jobs/#{job.id}/restart", {}, headers }
+      it { last_response.status.should == 403 }
+    end
+
+    context 'when the repo is migrated' do
+      before { job.repository.update_attributes(migration_status: "migrated") }
+      before { post "/jobs/#{job.id}/restart", {}, headers }
+      it { last_response.status.should == 403 }
     end
 
     context 'when job passed' do
