@@ -17,6 +17,30 @@ describe 'Repos', set_app: true do
   describe 'with authenticated user' do
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
+    context 'when the repo is migrating' do
+      before { repo.update_attributes(migration_status: "migrating") }
+
+      it "responds with 403" do
+        response = post "/repos/#{repo.id}/key", {}, headers
+        response.status.should == 403
+
+        response = post "/repos/#{repo.slug}/key", {}, headers
+        response.status.should == 403
+      end
+    end
+
+    context 'when the repo is migrated' do
+      before { repo.update_attributes(migration_status: "migrated") }
+
+      it "responds with 403" do
+        response = post "/repos/#{repo.id}/key", {}, headers
+        response.status.should == 403
+
+        response = post "/repos/#{repo.slug}/key", {}, headers
+        response.status.should == 403
+      end
+    end
+
     it 'POST /repos/:id/key' do
       repo.regenerate_key!
       expect {

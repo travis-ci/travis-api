@@ -19,7 +19,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "education"        => false
+        "education"        => false,
+        "allow_migration"  => false,
       }}
     end
 
@@ -36,7 +37,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "education"        => false
+        "education"        => false,
+        "allow_migration"  => false,
       }}
     end
 
@@ -59,6 +61,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"           => 1234,
         "avatar_url"          => nil,
         "education"           => false,
+        "allow_migration"     => false,
         "repositories"        => [{
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -118,6 +121,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"         => 1234,
         "avatar_url"        => nil,
         "education"         => false,
+        "allow_migration"   => false,
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
@@ -171,7 +175,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "name"             => nil,
         "github_id"        => 1234,
         "avatar_url"       => nil,
-        "education"        => false
+        "education"        => false,
+        "allow_migration"  => false,
       }}
     end
 
@@ -193,6 +198,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"      => 1234,
         "avatar_url"     => nil,
         "education"      => false,
+        "allow_migration"=> false,
         "@warnings"      => [{
           "@type"        => "warning",
           "message"      => "query parameter organization.id not safelisted, ignored",
@@ -222,7 +228,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"     => nil,
         "is_syncing"     => nil,
         "synced_at"      => nil,
-        "education"      => nil
+        "education"      => nil,
+        "allow_migration"=> false,
       }}
     end
 
@@ -241,7 +248,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"     => nil,
         "education"      => nil,
         "is_syncing"     => nil,
-        "synced_at"      => nil
+        "synced_at"      => nil,
+        "allow_migration"=> false,
       }}
     end
 
@@ -260,7 +268,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"       => nil,
         "education"        => nil,
         "is_syncing"       => nil,
-        "synced_at"        => nil
+        "synced_at"        => nil,
+        "allow_migration"  => false,
       }}
     end
 
@@ -284,6 +293,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "education"        => nil,
         "is_syncing"       => nil,
         "synced_at"        => nil,
+        "allow_migration"  => false,
         "@warnings"        => [{
           "@type"          => "warning",
           "message"        => "query parameter user.id not safelisted, ignored",

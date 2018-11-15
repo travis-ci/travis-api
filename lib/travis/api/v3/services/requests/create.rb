@@ -10,6 +10,7 @@ module Travis::API::V3
     def run
       repository = check_login_and_find(:repository)
       access_control.permissions(repository).create_request!
+      return repo_migrated if migrated?(repository)
 
       raise RepositoryInactive, repository: repository unless repository.active?
 

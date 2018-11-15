@@ -169,6 +169,10 @@ module Travis::API::V3
       self.user == user
     end
 
+    def user_adminable?(user)
+      user_writable?(user)
+    end
+
     def is_current_user?(user)
       self.user == user
     end

@@ -20,6 +20,30 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
           JSON.parse(response.body)['@href'].should == "/v3/repo/#{repo.id}"
         end
 
+        context "when repo is migrating" do
+          before { repo.update_attributes(migration_status: "migrating") }
+          before { post("/v3/repo/#{repo.id}/migrate", {}, headers) }
+
+          example { expect(last_response.status).to be == 403 }
+          example { expect(JSON.load(body)).to be == {
+            "@type"         => "error",
+            "error_type"    => "repo_migrated",
+            "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+          }}
+        end
+
+        context "when repo has been migrated" do
+          before { repo.update_attributes(migration_status: "migrated") }
+          before { post("/v3/repo/#{repo.id}/migrate", {}, headers) }
+
+          example { expect(last_response.status).to be == 403 }
+          example { expect(JSON.load(body)).to be == {
+            "@type"         => "error",
+            "error_type"    => "repo_migrated",
+            "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+          }}
+        end
+
         context "when a :allow_migration feature is disabled" do
           before { Travis::Features.deactivate_owner(:allow_migration, repo.owner) }
           it "returns 403" do

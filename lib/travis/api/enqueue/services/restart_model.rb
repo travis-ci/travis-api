@@ -40,6 +40,10 @@ module Travis
           @type ||= @params[:build_id] ? :build : :job
         end
 
+        def repository
+          target.repository
+        end
+
         def target
           if type == :build
             @target = Build.find(@params[:build_id])
