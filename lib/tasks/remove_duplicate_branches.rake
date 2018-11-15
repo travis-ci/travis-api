@@ -41,6 +41,15 @@ task :remove_duplicate_branches do
 # Query 4 tables to find refrences to any of those branch ids
 # Replace those references with the one-true-branch-id
 
+  # ActiveRecord::Base.connection.execute "SET statement_timeout = 600000"
+
+  ids_of_repositories_with_duplicate_branch_records =
+    Travis::API::V3::Models::Branch
+      .select(:repository_id, :name)
+      .group(:repository_id, :name)
+      .having("count(*) > 1")
+      .to_a.map(&:repository_id).uniq
+
   Travis::API::V3::Models::Branch.select(:repository_id, :name).group(:repository_id, :name).having("count(*) > 1").limit(50) do |branches|
   # .find_in_batches(batch_size: 50) do |branches|
     puts branches
