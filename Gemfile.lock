@@ -297,7 +297,7 @@ GEM
       multi_json (~> 1.0)
       pusher-signature (~> 0.1.8)
     pusher-signature (0.1.8)
-    rack (1.6.9)
+    rack (1.6.11)
     rack-attack (5.0.0.beta1)
       rack
     rack-contrib (1.4.0)
