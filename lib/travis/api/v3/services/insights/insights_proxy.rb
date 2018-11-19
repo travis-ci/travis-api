@@ -1,7 +1,6 @@
 module Travis::API::V3
   class Services::Insights::InsightsProxy < ProxyService
     def run!
-      raise LoginRequired unless access_control.logged_in?
       check_owner_class
       raise InsufficientAccess unless Travis.config.org? || access_control.adminable?(owner)
       proxy!
