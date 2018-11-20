@@ -93,5 +93,3 @@ namespace :moss do
     end
   end
 end
-
-task default: :remove_duplicate_branches
