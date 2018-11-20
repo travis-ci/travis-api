@@ -2,11 +2,16 @@ module Travis::API::V3
   class Services::Insights::InsightsProxy < ProxyService
     def run!
       check_owner_class
-      raise InsufficientAccess unless Travis.config.org? || access_control.adminable?(owner)
-      proxy!
+      proxy! do |request|
+        request.params.merge!(private: private_flag) unless Travis.config.org?
+      end
     end
 
     private
+
+    def private_flag
+      access_control.adminable?(owner)
+    end
 
     def owner
       @_owner ||= owner_class.find(params['owner_id'])
