@@ -68,6 +68,10 @@ namespace :moss do
         chosen_branch = branches.max_by { |branch| branch.updated_at }
         other_branches = branches - [chosen_branch]
 
+        # TODO: We also need to ensure that we update the `last_build_id` to
+        # reference the highest existing build that reference either the chosen
+        # branch or a duplicate.
+
         ActiveRecord::Base.transaction do
           builds = Travis::API::V3::Models::Build.where(branch_id: other_branches.map(&:id), repository_id: repo_id).to_a
           puts "would update branch id to #{chosen_branch.id} for the following build ids: #{builds.map(&:id)}"
