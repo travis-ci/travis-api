@@ -7,9 +7,10 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
   let(:expected_data) { { 'metrics' => ['whatever'] } }
   let(:stubbed_response_status) { 200 }
   let(:stubbed_response_body) { JSON.dump(expected_data) }
+  let(:stubbed_response_headers) {{ content_type: 'application/json' }}
 
   let!(:stubbed_request) do
-    stub_request(:get, "#{Travis.config.insights.endpoint}/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&rest-of-params=value").with(headers: { 'Authorization' => "Token token=\"#{Travis.config.insights.auth_token}\""}).to_return(status: stubbed_response_status, body: stubbed_response_body)
+    stub_request(:get, "#{Travis.config.insights.endpoint}/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&rest-of-params=value").with(headers: { 'Authorization' => "Token token=\"#{Travis.config.insights.auth_token}\""}).to_return(status: stubbed_response_status, body: stubbed_response_body, headers: stubbed_response_headers)
   end
 
   before do
@@ -29,6 +30,7 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
     context 'when something fails' do
       let(:stubbed_response_status) { 400 }
       let(:stubbed_response_body) { 'This is an error message' }
+      let(:stubbed_response_headers) {{ content_type: 'text/plain'}}
 
       it 'returns the same error' do
         expect(response.status).to eq(400)

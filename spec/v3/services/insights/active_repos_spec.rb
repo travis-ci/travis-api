@@ -5,7 +5,7 @@ describe Travis::API::V3::Services::Insights::ActiveRepos, set_app: true do
   let(:expected_data) { ['whatever'] }
 
   let!(:stubbed_request) do
-    stub_request(:get, "#{Travis.config.insights.endpoint}/repos/active?owner_type=Organization&owner_id=1&rest-of-params=value").with(headers: { 'Authorization' => "Token token=\"#{Travis.config.insights.auth_token}\""}).to_return(status: 200, body: JSON.dump(expected_data))
+    stub_request(:get, "#{Travis.config.insights.endpoint}/repos/active?owner_type=Organization&owner_id=1&rest-of-params=value").with(headers: { 'Authorization' => "Token token=\"#{Travis.config.insights.auth_token}\""}).to_return(status: 200, body: JSON.dump(expected_data), headers: { content_type: 'application/json' })
   end
 
   subject(:response) { get("/v3/insights/repos/active?owner_type=Organization&owner_id=1&rest-of-params=value", {}, headers) }
