@@ -56,7 +56,7 @@ FactoryGirl.define do
     updated_at { |r| r.created_at + 5.minutes }
     last_build_state :passed
     last_build_number '2'
-    last_build_id 2
+    last_build_id { |r| r.builds.last || Factory(:build, repository_id: r.id) }
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
     sequence(:github_id) {|n| n }
