@@ -1,5 +1,4 @@
 require 'travis/api/v3/service'
-require 'rack/proxy'
 
 module Travis::API::V3
   class ProxyService < Service
@@ -24,32 +23,30 @@ module Travis::API::V3
     end
 
     def proxy!
-      status, _headers, body = self.class.proxy_client.call(@env)
-      response_body = body.join("\n")
-      data = begin
-        JSON.parse(response_body)
-      rescue JSON::ParserError
-        response_body
-      end
-
-      result data, status: status, result_type: :proxy
+      response = self.class.proxy_client.proxy(@env)
+      result response.body, status: response.status, result_type: :proxy
     end
 
-    class ProxyClient < Rack::Proxy
+    class ProxyClient
       def initialize(endpoint, auth_token)
-        @endpoint = URI(endpoint)
-        @auth_token = auth_token
-        super(streaming: false)
+        @connection = Faraday::Connection.new(URI(endpoint)) do |conn|
+          conn.token_auth auth_token
+          conn.response :json, content_type: 'application/json'
+          conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
+          conn.adapter Faraday.default_adapter
+        end
       end
 
-      def rewrite_env(env)
-        env['HTTPS'] = @endpoint.scheme == 'https' ? 'on' : 'off'
-        env['SERVER_PORT'] = @endpoint.port.to_s
-        env['HTTP_HOST'] = @endpoint.host
-        env['SCRIPT_NAME'] = @endpoint.path
-        env['PATH_INFO'] = nil
-        env['HTTP_AUTHORIZATION'] = "Token token=\"#{@auth_token}\""
-        env
+      def proxy(env)
+        original = Rack::Request.new(env)
+
+        request = @connection.build_request(original.request_method) do |r|
+          r.params = original.params
+        end
+
+        # not really documented, but according to https://github.com/lostisland/faraday/blob/f08a985bd1dc380ed2d9839f1103318e2fad5f8b/lib/faraday/connection.rb#L387,
+        # this is the way to execute a request previously built
+        @connection.builder.build_response(@connection, request)
       end
     end
   end
