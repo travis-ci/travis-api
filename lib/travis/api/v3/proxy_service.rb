@@ -23,7 +23,7 @@ module Travis::API::V3
     end
 
     def proxy!
-      response = self.class.proxy_client.proxy(@env)
+      response = self.class.proxy_client.proxy(@env) { |r| yield r if block_given? }
       result response.body, status: response.status, result_type: :proxy
     end
 
@@ -42,6 +42,7 @@ module Travis::API::V3
 
         request = @connection.build_request(original.request_method) do |r|
           r.params = original.params
+          yield r if block_given?
         end
 
         # not really documented, but according to https://github.com/lostisland/faraday/blob/f08a985bd1dc380ed2d9839f1103318e2fad5f8b/lib/faraday/connection.rb#L387,

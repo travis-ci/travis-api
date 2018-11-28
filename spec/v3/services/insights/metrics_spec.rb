@@ -5,12 +5,13 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
   let(:authenticated_headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
   let(:anonymous_headers) {{}}
   let(:expected_data) { { 'metrics' => ['whatever'] } }
+  let(:insights_url) { "#{Travis.config.insights.endpoint}/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&rest-of-params=value" }
   let(:stubbed_response_status) { 200 }
   let(:stubbed_response_body) { JSON.dump(expected_data) }
   let(:stubbed_response_headers) {{ content_type: 'application/json' }}
 
   let!(:stubbed_request) do
-    stub_request(:get, "#{Travis.config.insights.endpoint}/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&rest-of-params=value").with(headers: { 'Authorization' => "Token token=\"#{Travis.config.insights.auth_token}\""}).to_return(status: stubbed_response_status, body: stubbed_response_body, headers: stubbed_response_headers)
+    stub_request(:get, insights_url).with(headers: { 'Authorization' => "Token token=\"#{Travis.config.insights.auth_token}\""}).to_return(status: stubbed_response_status, body: stubbed_response_body, headers: stubbed_response_headers)
   end
 
   before do
@@ -126,6 +127,7 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
   context 'in .com' do
     let(:site) { :com }
+    let(:insights_url) { super() + "&private=#{expected_private_flag}" }
 
     context 'unauthenticated' do # TL;DR: block everything
       let(:headers) { anonymous_headers }
@@ -134,14 +136,18 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
         let(:owner_type) { 'User' }
         let(:owner_id) { Factory(:user).id }
 
-        it_behaves_like 'blocks the request', 403
+        let(:expected_private_flag) { false }
+
+        it_behaves_like 'proxies the request'
       end
 
       context 'for an organization' do
         let(:owner_type) { 'Organization' }
         let(:owner_id) { Factory(:org).id }
 
-        it_behaves_like 'blocks the request', 403
+        let(:expected_private_flag) { false }
+
+        it_behaves_like 'proxies the request'
       end
     end
 
@@ -154,13 +160,17 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
         context 'themselves' do
           let(:owner_id) { user.id }
 
+          let(:expected_private_flag) { true }
+
           it_behaves_like 'proxies the request'
         end
 
         context 'a different one' do
           let(:owner_id) { Factory(:user).id }
 
-          it_behaves_like 'blocks the request', 403
+          let(:expected_private_flag) { false }
+
+          it_behaves_like 'proxies the request'
         end
       end
 
@@ -176,19 +186,27 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
           context 'as admin' do
             let(:role) { 'admin' }
+
+            let(:expected_private_flag) { true }
+
             it_behaves_like 'proxies the request'
           end
 
           context 'as simple user' do
             let(:role) { 'member' }
-            it_behaves_like 'blocks the request', 403
+
+            let(:expected_private_flag) { false }
+
+            it_behaves_like 'proxies the request'
           end
         end
 
         context 'a different one' do
           let(:owner_id) { Factory(:org).id }
 
-          it_behaves_like 'blocks the request', 403
+          let(:expected_private_flag) { false }
+
+          it_behaves_like 'proxies the request'
         end
       end
     end
