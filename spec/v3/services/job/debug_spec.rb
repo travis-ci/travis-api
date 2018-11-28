@@ -1,12 +1,12 @@
 describe Travis::API::V3::Services::Job::Debug, set_app: true do
-  let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:repo) { Factory(:repository, owner_name: 'svenfuchs', name: 'minimal') }
   let(:owner_type)  { repo.owner_type.constantize }
   let(:owner)       { owner_type.find(repo.owner_id)}
   let(:build)       { repo.builds.last }
   let(:jobs)        { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:job)         { jobs.last }
 
-  before { repo.requests.each(&:delete) }
+  before { ActiveRecord::Base.connection.execute("truncate requests cascade") }
 
   before do
     Travis::Features.stubs(:owner_active?).returns(true)

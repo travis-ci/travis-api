@@ -1,7 +1,7 @@
 describe Build do
   before { DatabaseCleaner.clean_with :truncation }
 
-  let(:repository) { Factory(:repository) }
+  let(:repository) { Factory(:repository_without_last_build) }
 
   it 'caches matrix ids' do
     build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'] })
