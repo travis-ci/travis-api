@@ -46,6 +46,14 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
     before  { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
 
+    describe "repo migrating on .com" do
+      before  { Travis.config.host = "travis-ci.com" }
+      before  { repo.update_attributes(migration_status: "migrating") }
+      before  { post("/v3/build/#{build.id}/restart", {}, headers) }
+
+      example { expect(last_response.status).to be == 202 }
+    end
+
     describe "repo migrating" do
       before  { repo.update_attributes(migration_status: "migrating") }
       before  { post("/v3/build/#{build.id}/restart", {}, headers) }
