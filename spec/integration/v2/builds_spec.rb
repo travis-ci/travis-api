@@ -149,6 +149,13 @@ describe 'Builds', set_app: true do
       it { last_response.status.should == 403 }
     end
 
+    context 'when the repo is migrated on .com' do
+      before { Travis.config.host = 'travis-ci.com' }
+      before { repo.update_attributes(migration_status: "migrated") }
+      before { post "/builds/#{build.id}/restart", {}, headers }
+      it { last_response.status.should == 202 }
+    end
+
     context 'when build passed' do
       before do
         build.matrix.each { |j| j.update_attribute(:state, 'passed') }

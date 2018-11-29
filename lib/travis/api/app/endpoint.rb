@@ -50,7 +50,7 @@ class Travis::Api::App
       }
 
       def disallow_migrating!(repo)
-        halt 403, MSGS[:migrated] if repo.migration_status == "migrating" || repo.migration_status == "migrated"
+        halt 403, MSGS[:migrated] if Travis.config.org? && (repo.migration_status == "migrating" || repo.migration_status == "migrated")
       end
 
       def allow_public?
