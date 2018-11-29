@@ -1,9 +1,12 @@
 describe Travis::API::V3::Services::Requests::Create, set_app: true do
-  let(:repo)    { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:repo)    { Factory(:repository_without_last_build, owner_name: 'svenfuchs', name: 'minimal') }
   let(:request) { Travis::API::V3::Models::Request.last }
   let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last[:payload]).deep_symbolize_keys }
   let(:sidekiq_params) { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
-  before { repo.requests.each(&:delete) }
+  before {
+    ActiveRecord::Base.connection.execute("truncate requests cascade")
+    ActiveRecord::Base.connection.execute("truncate repositories cascade")
+  }
 
   before do
     Travis::Features.stubs(:owner_active?).returns(true)
@@ -98,7 +101,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     }
 
     example { expect(sidekiq_payload).to be == {
-      repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+      repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
       user:       { id: repo.owner.id },
       id:         request.id,
       message:    nil,
@@ -112,7 +115,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "setting id has no effect" do
       let(:params) {{ id: 42 }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -124,7 +127,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "setting repository has no effect" do
       let(:params) {{ repository: { id: 42 } }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -136,7 +139,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "setting user has no effect" do
       let(:params) {{ user: { id: 42 } }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -148,7 +151,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "overriding config" do
       let(:params) {{ config: { script: 'true' } }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -160,7 +163,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "overriding message" do
       let(:params) {{ message: 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    'example',
@@ -172,7 +175,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "overriding branch" do
       let(:params) {{ branch: 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -184,7 +187,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "overriding branch (in request)" do
       let(:params) {{ request: { branch: 'example' } }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -196,7 +199,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "overriding branch (with request prefix)" do
       let(:params) {{ "request.branch" => 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -208,7 +211,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "overriding branch (with request type)" do
       let(:params) {{ "@type" => "request", "branch" => 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -220,7 +223,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe "overriding branch (with wrong type)" do
       let(:params) {{ "@type" => "repository", "branch" => 'example' }}
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -319,7 +322,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
       let(:params) {{ user: { id: repo.owner.id } }}
       example { expect(last_response.status).to be == 202 }
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,
@@ -332,7 +335,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
       let(:params) {{ user: { id: repo.owner.id }, branch: 'example' }}
       example { expect(last_response.status).to be == 202 }
       example { expect(sidekiq_payload).to be == {
-        repository: { id: repo.id, owner_name: 'svenfuchs', name: 'minimal' },
+        repository: { id: repo.github_id, owner_name: 'svenfuchs', name: 'minimal' },
         user:       { id: repo.owner.id },
         id:         request.id,
         message:    nil,

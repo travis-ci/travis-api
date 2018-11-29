@@ -352,7 +352,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   end
 
   describe "sorting by default_branch.last_build" do
-    let(:repo2)  { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, last_build_id: 1788, next_build_number: 3) }
+    let(:repo2)  { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, next_build_number: 3) }
     before  { repo2.save! }
     before  { get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build", {}, headers) }
     example { expect(last_response).to be_ok }

@@ -1,7 +1,7 @@
 describe Travis::Services::FindBranches do
   describe 'on org' do
     let(:user)    { Factory(:user) }
-    let(:repo)    { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
+    let(:repo)    { Factory(:repository_without_last_build, :owner_name => 'travis-ci', :name => 'travis-core') }
     let!(:build)  { Factory(:build, :repository => repo, :state => :finished) }
     let(:service) { described_class.new(user, params) }
 
@@ -16,7 +16,7 @@ describe Travis::Services::FindBranches do
 
     it 'scopes to the given repository' do
       @params = { :repository_id => repo.id }
-      build = Factory(:build, :repository => Factory(:repository), :state => :finished)
+      build = Factory(:build, :repository => Factory(:repository_without_last_build), :state => :finished)
       service.run.should_not include(build)
     end
 

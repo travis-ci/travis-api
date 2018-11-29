@@ -124,7 +124,7 @@ class Build < Travis::Model
 
   # set the build number and expand the matrix; downcase language
   before_create do
-    next_build_number = Travis::Services::NextBuildNumber.new(repository_id: repository.id).run
+    next_build_number = Travis::Services::NextBuildNumber.new(nil, repository_id: repository.id).run
     self.number = next_build_number
     self.previous_state = last_finished_state_on_branch
     self.event_type = request.event_type
