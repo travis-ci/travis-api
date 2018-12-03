@@ -79,6 +79,11 @@ module Travis::API::V3
       post :lint
     end
 
+    resource :migration_requests do
+      route '/migration_requests'
+      post :create
+    end
+
     resource :organization do
       capture id: :digit
       route '/org/{organization.id}'
