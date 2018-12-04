@@ -54,7 +54,7 @@ module Travis::API::V3
     # Will not create a branch object if we don't have any builds for it unless
     # the create_without_build option is set to true.
     def branch(name, create_without_build: false)
-      return nil    unless branch = branches.where(name: name).first_or_initialize
+      return nil    unless branch = find_or_create_branch(name: name)
       return branch unless branch.new_record?
       return nil    unless create_without_build or branch.builds.any?
       branch.last_build = branch.builds.first
@@ -62,6 +62,29 @@ module Travis::API::V3
       branch
     rescue ActiveRecord::RecordNotUnique
       branches.where(name: name).first
+    end
+
+    def find_or_create_branch(name:)
+      c = ActiveRecord::Base.connection
+      if Branch.column_names.include?('unique_name') and
+            c.index_exists?(:branches, [:repository_id, :unique_name], unique: true)
+
+        quoted_id   = connection.quote(id)
+        quoted_name = connection.quote(name)
+        # I don't want to install any plugins for now, so I'm using raw SQL.
+        # `DO UPDATE SET updated_at = now()` is used just to be able to return
+        # the existing record (otherwise `RETURNING *` would not work), so that
+        # we don't have to do two queries
+        sql = "INSERT INTO branches (repository_id, name, exists_on_github, created_at, updated_at)
+                 VALUES (#{quoted_id}, #{quoted_name}, 't', now(), now())
+               ON CONFLICT (repository_id, unique_name) DO UPDATE SET updated_at = now() RETURNING *;"
+
+        Branch.find_by_sql(sql).first
+      else
+        branches.where(name: name).first_or_initialize do |branch|
+          branch.exists_on_github = true
+        end
+      end
     end
 
     def id_default_branch
