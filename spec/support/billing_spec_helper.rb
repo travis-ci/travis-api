@@ -41,6 +41,22 @@ module Support
       }.deep_merge(attributes)
     end
 
+    def billing_free_subscription_response_body(attributes={})
+      {
+        "permissions" => { "read" => true, "write" => true },
+        "id" => 81,
+        "valid_to" => "2017-11-28T00:09:59.502Z",
+        "plan" => billing_free_plan_response_body,
+        "coupon" => "",
+        "status" => "subscribed",
+        "source" => "stripe",
+        "owner" => {
+          "type" => "User",
+          "id" => 4
+        }
+      }.deep_merge(attributes)
+    end
+
     def billing_plan_response_body(attributes={})
       {
         "id" => "travis-ci-ten-builds",
@@ -48,6 +64,17 @@ module Support
         "builds" => 10,
         "annual" => false,
         "price" => 12500,
+        "currency" => "USD"
+      }.deep_merge(attributes)
+    end
+
+    def billing_free_plan_response_body(attributes={})
+      {
+        "id" => "travis-ci-free-build",
+        "name" => "Startup",
+        "builds" => 0,
+        "annual" => false,
+        "price" => 0,
         "currency" => "USD"
       }.deep_merge(attributes)
     end

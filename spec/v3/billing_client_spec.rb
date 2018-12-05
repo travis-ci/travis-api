@@ -4,6 +4,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   let(:billing_url) { 'https://billing.travis-ci.com/' }
   let(:auth_key) { 'supersecret' }
   let(:organization) { Factory(:org, login: 'travis') }
+  let(:user) { Factory(:user, login: 'sven') }
 
   before do
     Travis.config.billing.url = billing_url
@@ -132,18 +133,34 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   end
 
   describe '#create_subscription' do
-    let(:subscription_data) {{ 'address' => 'Rigaer' }}
-    subject { billing.create_subscription(subscription_data) }
+    context 'normal subscription' do
+      let(:subscription_data) {{ 'address' => 'Rigaer' }}
+      subject { billing.create_subscription(subscription_data) }
 
-    it 'requests the creation and returns the representation' do
-      stubbed_request = stub_billing_request(:post, "/subscriptions", auth_key: auth_key, user_id: user_id)
-        .with(body: JSON.dump(subscription_data))
-        .to_return(status: 201, body: JSON.dump(billing_subscription_response_body('id' => 456, 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
+      it 'requests the creation and returns the representation' do
+        stubbed_request = stub_billing_request(:post, "/subscriptions", auth_key: auth_key, user_id: user_id)
+          .with(body: JSON.dump(subscription_data))
+          .to_return(status: 201, body: JSON.dump(billing_subscription_response_body('id' => 456, 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
 
-      expect(subject.id).to eq(456)
-      expect(stubbed_request).to have_been_made
+        expect(subject.id).to eq(456)
+        expect(stubbed_request).to have_been_made
+      end
+    end
+    context 'free subscription' do
+      let(:subscription_data) {{ 'selected_plan' => 'travis-ci-free-build' }}
+      subject { billing.create_subscription(subscription_data) }
+
+      it 'requests the creation and returns the representation' do
+        stubbed_request = stub_billing_request(:post, "/subscriptions", auth_key: auth_key, user_id: user_id)
+          .with(body: JSON.dump(subscription_data))
+          .to_return(status: 201, body: JSON.dump(billing_free_subscription_response_body('id' => 456, 'owner' => { 'type' => 'User', 'id' => user.id })))
+
+        expect(subject.id).to eq(456)
+        expect(stubbed_request).to have_been_made
+      end
     end
   end
+
 
   describe '#trials' do
     subject { billing.trials }
