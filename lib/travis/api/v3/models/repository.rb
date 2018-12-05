@@ -65,10 +65,8 @@ module Travis::API::V3
     end
 
     def find_or_create_branch(name:)
-      c = ActiveRecord::Base.connection
-      if Branch.column_names.include?('unique_name') and
-            c.index_exists?(:branches, [:repository_id, :unique_name], unique: true)
-
+      connection = ActiveRecord::Base.connection
+      if Branch.column_names.include?('unique_name')
         quoted_id   = connection.quote(id)
         quoted_name = connection.quote(name)
         # I don't want to install any plugins for now, so I'm using raw SQL.
@@ -77,7 +75,7 @@ module Travis::API::V3
         # we don't have to do two queries
         sql = "INSERT INTO branches (repository_id, name, exists_on_github, created_at, updated_at)
                  VALUES (#{quoted_id}, #{quoted_name}, 't', now(), now())
-               ON CONFLICT (repository_id, unique_name) DO UPDATE SET updated_at = now() RETURNING *;"
+               ON CONFLICT (repository_id, unique_name) WHERE unique_name DO UPDATE SET updated_at = now() RETURNING *;"
 
         Branch.find_by_sql(sql).first
       else
