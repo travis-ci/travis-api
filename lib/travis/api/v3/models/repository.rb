@@ -54,36 +54,72 @@ module Travis::API::V3
     # Will not create a branch object if we don't have any builds for it unless
     # the create_without_build option is set to true.
     def branch(name, create_without_build: false)
-      return nil    unless branch = find_or_create_branch(name: name)
-      return branch unless branch.new_record?
+      find_or_create_branch(create_without_build: create_without_build, name: name)
+    end
+
+    def find_or_create_branch(create_without_build: false, name:)
+      connection = ActiveRecord::Base.connection
+      quoted_id   = connection.quote(id)
+      quoted_name = connection.quote(name)
+      # I don't want to install any plugins for now, so I'm using raw SQL.
+      # `DO UPDATE SET updated_at = now()` is used just to be able to return
+      # the existing record (otherwise `RETURNING *` would not work), so that
+      # we don't have to do two queries
+      sql = "INSERT INTO branches (repository_id, name, exists_on_github, created_at, updated_at)
+               VALUES (#{quoted_id}, #{quoted_name}, 't', now(), now())
+             ON CONFLICT (repository_id, unique_name) WHERE unique_name DO NOTHING RETURNING id;"
+
+      new_branch = false
+      result = connection.execute(sql)
+      if result.count > 0
+        # postgresql inserted a new branch
+        new_branch = true
+      end
+
+      branch = branches.where(name: name).first
+      return branch unless new_branch
       return nil    unless create_without_build or branch.builds.any?
       branch.last_build = branch.builds.first
       branch.save!
       branch
-    rescue ActiveRecord::RecordNotUnique
-      branches.where(name: name).first
     end
+    # def branch(name, create_without_build: false)
+    #   p [name, create_without_build]
+    #   return nil    unless branch = find_or_create_branch(name: name)
+    #   p branch
+    #   return branch unless branch.new_record?
+    #   p [:new_record]
+    #   return nil    unless create_without_build or branch.builds.any?
+    #   p [:create_build]
+    #   branch.last_build = branch.builds.first
+    #   branch.save!
+    #   branch
+    # rescue ActiveRecord::RecordNotUnique
+    #   branches.where(name: name).first
+    # end
+    #
+    # def find_or_create_branch(name:)
+    #   if false && Branch.column_names.include?('unique_name')
+    #
+    #     quoted_id   = connection.quote(id)
+    #     quoted_name = connection.quote(name)
+    #     # I don't want to install any plugins for now, so I'm using raw SQL.
+    #     # `DO UPDATE SET updated_at = now()` is used just to be able to return
+    #     # the existing record (otherwise `RETURNING *` would not work), so that
+    #     # we don't have to do two queries
+    #     sql = "INSERT INTO branches (repository_id, name, exists_on_github, created_at, updated_at)
+    #              VALUES (#{quoted_id}, #{quoted_name}, 't', now(), now())
+    #            ON CONFLICT (repository_id, unique_name) WHERE unique_name DO UPDATE SET updated_at = now() RETURNING *;"
+    #
+    #     Branch.find_by_sql(sql).first
+    #   else
+    #     branches.where(name: name).first_or_initialize do |branch|
+    #       branch.exists_on_github = true
+    #     end
+    #   end
+    # end
+    #
 
-    def find_or_create_branch(name:)
-      connection = ActiveRecord::Base.connection
-      if Branch.column_names.include?('unique_name')
-        quoted_id   = connection.quote(id)
-        quoted_name = connection.quote(name)
-        # I don't want to install any plugins for now, so I'm using raw SQL.
-        # `DO UPDATE SET updated_at = now()` is used just to be able to return
-        # the existing record (otherwise `RETURNING *` would not work), so that
-        # we don't have to do two queries
-        sql = "INSERT INTO branches (repository_id, name, exists_on_github, created_at, updated_at)
-                 VALUES (#{quoted_id}, #{quoted_name}, 't', now(), now())
-               ON CONFLICT (repository_id, unique_name) WHERE unique_name DO UPDATE SET updated_at = now() RETURNING *;"
-
-        Branch.find_by_sql(sql).first
-      else
-        branches.where(name: name).first_or_initialize do |branch|
-          branch.exists_on_github = true
-        end
-      end
-    end
 
     def id_default_branch
       [id, default_branch_name]

@@ -7,7 +7,6 @@ $: << 'lib'
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 ENV['BILLING_V2_ENABLED'] = 'true'
 ENV['GDPR_ENABLED'] = 'true'
-ENV.delete('DATABASE_URL')
 
 require 'support/coverage' unless ENV['SKIP_COVERAGE']
 
