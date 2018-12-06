@@ -12,9 +12,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   after         { repo.update_attribute(:private, false)                            }
 
   describe "sorting by default_branch.last_build" do
-    let!(:repo2) { Travis::API::V3::Models::Repository.create!(owner_name: 'svenfuchs', owner: repo.owner, name: 'second-repo', default_branch_name: 'other-branch') }
-    let!(:branch) { repo2.default_branch }
-    let!(:build) { Travis::API::V3::Models::Build.create(repository: repo2, branch_id: branch.id, branch_name: 'other-branch') }
+    let!(:repo2) { Travis::API::V3::Models::Repository.create!(owner_name: 'svenfuchs', owner: repo.owner, name: 'second-repo', default_branch_name: 'master') }
+    let!(:branch) { Travis::API::V3::Models::Branch.create(repository: repo2, name: 'master') }
+    let!(:build) { Travis::API::V3::Models::Build.create(repository: repo2, branch_id: branch.id, branch_name: 'master') }
 
     before do
       branch.update_attributes!(last_build_id: build.id)
