@@ -58,6 +58,10 @@ module Travis::API::V3
     end
 
     def find_or_create_branch(create_without_build: false, name:)
+      if branch = branches.where(name: name).first
+        return branch
+      end
+
       connection = ActiveRecord::Base.connection
       quoted_id   = connection.quote(id)
       quoted_name = connection.quote(name)
@@ -76,6 +80,8 @@ module Travis::API::V3
         new_branch = true
       end
 
+      branches.reload
+      branches.where(name: name).to_sql
       branch = branches.where(name: name).first
       return branch unless new_branch
       return nil    unless create_without_build or branch.builds.any?

@@ -1,4 +1,7 @@
 describe Travis::Services::FindBranches do
+  before { ActiveRecord::Base.connection.execute("truncate table repositories cascade") }
+  before { ActiveRecord::Base.connection.execute("truncate table builds cascade") }
+  before { ActiveRecord::Base.connection.execute("truncate table branches cascade") }
   describe 'on org' do
     let(:user)    { Factory(:user) }
     let(:repo)    { Factory(:repository_without_last_build, :owner_name => 'travis-ci', :name => 'travis-core') }
