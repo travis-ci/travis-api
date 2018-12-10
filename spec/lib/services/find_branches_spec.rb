@@ -33,8 +33,8 @@ describe Travis::Services::FindBranches do
 
   let(:user) { Factory.create(:user, login: :rkh) }
   let(:org)  { Factory.create(:org, login: :travis) }
-  let(:private_repo)   { Factory.create(:repository, owner: org, private: true) }
-  let(:public_repo)    { Factory.create(:repository, owner: org, private: false) }
+  let(:private_repo)   { Factory.create(:repository_without_last_build, owner: org, private: true) }
+  let(:public_repo)    { Factory.create(:repository_without_last_build, owner: org, private: false) }
   let!(:private_build) { Factory.create(:build, repository: private_repo, private: true) }
   let!(:public_build)  { Factory.create(:build, repository: public_repo, private: false) }
 
