@@ -54,25 +54,10 @@ module Travis::API::V3
     # Will not create a branch object if we don't have any builds for it unless
     # the create_without_build option is set to true.
     def branch(name, create_without_build: false)
-      connection = ActiveRecord::Base.connection
-
-      if Models::Branch.column_names.include?('unique_name') and
-           connection.indexes(:branches).find {|i| i.name == "index_branches_repository_id_unique_name" }
-        find_or_create_branch_with_unique_index(name: name, create_without_build: create_without_build)
-      else
-        legacy_find_or_create_branch(name, create_without_build: create_without_build)
-      end
+      find_or_create_branch(name: name, create_without_build: create_without_build)
     end
 
-    def find_or_create_branch_with_unique_index(name:, create_without_build: false)
-      # if there are any new branches added with a unique_name we need to fetch
-      # the branch with unique_name. It shouldn't happen in general, so that's
-      # just a defensive code for a case when we missed a bug. If there's no
-      # branch with unique_name set then just fetch whichever
-      branch = branches.where(name: name).where("unique_name IS NOT NULL").first
-      branch = branches.where(name: name).first unless branch
-      return branch if branch
-
+    def find_or_create_branch(name:, create_without_build: false)
       connection = ActiveRecord::Base.connection
       quoted_id   = connection.quote(id)
       quoted_name = connection.quote(name)
@@ -82,7 +67,7 @@ module Travis::API::V3
       # we don't have to do two queries
       sql = "INSERT INTO branches (repository_id, name, exists_on_github, created_at, updated_at)
                VALUES (#{quoted_id}, #{quoted_name}, 't', now(), now())
-             ON CONFLICT (repository_id, unique_name) WHERE unique_name DO NOTHING RETURNING id;"
+             ON CONFLICT (repository_id, name) DO NOTHING RETURNING id;"
 
       new_branch = false
       result = connection.execute(sql)
@@ -91,7 +76,7 @@ module Travis::API::V3
         new_branch = true
       end
 
-      branch = branches.where(name: name).reload.first
+      branch = branches.where(name: name).first
       return branch unless new_branch
       return nil    unless create_without_build or branch.builds.any?
       branch.last_build = branch.builds.first
