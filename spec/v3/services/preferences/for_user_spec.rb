@@ -26,6 +26,12 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "@representation" => "standard",
             "name" => "build_emails",
             "value" => true
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/public_insights",
+            "@representation" => "standard",
+            "name" => "public_insights",
+            "value" => false
           }
         ]
       )
@@ -51,6 +57,12 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "@href" => "/v3/preference/build_emails",
             "@representation" => "standard",
             "name" => "build_emails",
+            "value" => false
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/public_insights",
+            "@representation" => "standard",
+            "name" => "public_insights",
             "value" => false
           }
         ]

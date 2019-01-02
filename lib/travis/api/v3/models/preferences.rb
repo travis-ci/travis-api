@@ -3,5 +3,6 @@ module Travis::API::V3
     child Models::Preference
 
     attribute :build_emails, Boolean, default: true
+    attribute :public_insights, Boolean, default: false
   end
 end
