@@ -131,6 +131,7 @@ GEM
     builder (3.2.3)
     bunny (2.9.2)
       amq-protocol (~> 2.3.0)
+    byebug (10.0.2)
     coder (0.4.0)
     coderay (1.1.1)
     coercible (1.0.0)
@@ -291,6 +292,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.6.0)
+      byebug (~> 10.0)
+      pry (~> 0.10)
     public_suffix (3.0.3)
     pusher (0.14.6)
       httpclient (~> 2.5)
@@ -446,6 +450,7 @@ DEPENDENCIES
   opencensus-stackdriver
   pg (~> 0.21)
   pry
+  pry-byebug
   pusher (~> 0.14.0)
   rack-attack (= 5.0.0.beta1)
   rack-cache!
