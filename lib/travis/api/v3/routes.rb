@@ -83,6 +83,11 @@ module Travis::API::V3
       capture id: :digit
       route '/org/{organization.id}'
       get :find
+
+      resource :preferences do
+        route '/preferences'
+        get :for_organization
+      end
     end
 
     resource :organizations do

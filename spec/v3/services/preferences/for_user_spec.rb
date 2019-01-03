@@ -40,8 +40,8 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
 
   describe 'authenticated, user has prefs' do
     before do
-      user.user_preferences.update(:build_emails, false)
-      user.user_preferences.update(:private_insights_visibility, 'public')
+      user.preferences.update(:build_emails, false)
+      user.preferences.update(:private_insights_visibility, 'public')
       get("/v3/preferences", {}, auth_headers)
     end
 

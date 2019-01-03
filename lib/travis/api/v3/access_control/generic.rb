@@ -142,8 +142,10 @@ module Travis::API::V3
     end
 
     def preferences_visible?(preferences)
-      true
+      adminable? preferences.parent
     end
+    alias_method :user_preferences_visible?, :preferences_visible?
+    alias_method :organization_preferences_visible?, :preferences_visible?
 
     def organization_visible?(organization)
       full_access? or public_mode?(organization)

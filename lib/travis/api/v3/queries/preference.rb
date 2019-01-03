@@ -3,11 +3,11 @@ module Travis::API::V3
     params :name, :value, prefix: :preference
 
     def find(user)
-      user.user_preferences.read(name)
+      user.preferences.read(name)
     end
 
     def update(user)
-      user.user_preferences.update(name, value)
+      user.preferences.update(name, value)
     end
   end
 end
