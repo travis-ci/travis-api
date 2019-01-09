@@ -246,6 +246,11 @@ module Travis::API::V3
         patch  :update
         delete :delete
       end
+
+      resource :beta_migration_request do
+        route '/beta_migration_request'
+        post   :create
+      end
     end
 
     resource :user do
