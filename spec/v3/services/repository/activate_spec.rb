@@ -71,7 +71,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
           stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(
             status: 200, body: JSON.dump(
               [
-                { name: 'travis', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/123" },
+                { name: 'travis', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/123", config: { domain: 'url.of.listener.something' } },
                 { name: 'web', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/456", config: { url: Travis.config.service_hook_url } }
               ]
             )
