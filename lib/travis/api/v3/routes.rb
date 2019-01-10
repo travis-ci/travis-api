@@ -88,6 +88,11 @@ module Travis::API::V3
         route '/preferences'
         get :for_organization
       end
+
+      resource :preference do
+        route '/preference/{preference.name}'
+        get :for_organization
+      end
     end
 
     resource :organizations do

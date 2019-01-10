@@ -146,6 +146,7 @@ module Travis::API::V3
     end
     alias_method :user_preferences_visible?, :preferences_visible?
     alias_method :organization_preferences_visible?, :preferences_visible?
+    alias_method :preference_visible?, :preferences_visible?
 
     def organization_visible?(organization)
       full_access? or public_mode?(organization)

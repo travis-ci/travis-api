@@ -1,10 +1,11 @@
-describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true do
+describe Travis::API::V3::Services::Preference::ForOrganization, set_app: true do
   let(:organization) { Travis::API::V3::Models::Organization.create!(name: 'travis-ci') }
   let(:user) { Travis::API::V3::Models::User.create!(name: 'svenfuchs') }
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
-  let(:path) { "/v3/org/#{organization.id}/preferences" }
+  let(:preference_name) { 'private_insights_visibility' }
+  let(:path) { "/v3/org/#{organization.id}/preference/#{preference_name}" }
 
   describe 'not authenticated' do
     let(:last_response) { get(path) }
@@ -41,18 +42,11 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
         describe 'no preferences have been set yet' do
           it 'returns the defaults' do
             expect(parsed_body).to eql_json(
-              "@type" => "preferences",
+              "@type" => "preference",
               "@href" => path,
               "@representation" => "standard",
-              "preferences" => [
-                {
-                  "@type" => "preference",
-                  "@href" => "/v3/org/#{organization.id}/preference/private_insights_visibility",
-                  "@representation" => "standard",
-                  "name" => "private_insights_visibility",
-                  "value" => "admins"
-                }
-              ]
+              "name" => "private_insights_visibility",
+              "value" => "admins"
             )
           end
         end
@@ -64,18 +58,11 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
 
           it 'returns the set value merged with the defaults' do
             expect(parsed_body).to eql_json(
-              "@type" => "preferences",
+              "@type" => "preference",
               "@href" => path,
               "@representation" => "standard",
-              "preferences" => [
-                {
-                  "@type" => "preference",
-                  "@href" => "/v3/org/#{organization.id}/preference/private_insights_visibility",
-                  "@representation" => "standard",
-                  "name" => "private_insights_visibility",
-                  "value" => "members"
-                }
-              ]
+              "name" => "private_insights_visibility",
+              "value" => "members"
             )
           end
         end
