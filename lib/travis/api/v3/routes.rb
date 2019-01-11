@@ -91,7 +91,8 @@ module Travis::API::V3
 
       resource :preference do
         route '/preference/{preference.name}'
-        get :for_organization
+        get   :for_organization
+        patch :update
       end
     end
 
