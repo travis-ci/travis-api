@@ -23,11 +23,13 @@ module Travis::API::V3
     end
 
     def read(name)
+      raise NotFound unless respond_to?(name)
       value = send(name)
       child_klass.new(name, value, parent) unless value.nil?
     end
 
     def update(name, value)
+      raise NotFound unless respond_to?(:"#{name}=")
       send(:"#{name}=", value)
       sync!
       read(name)

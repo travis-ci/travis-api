@@ -16,7 +16,7 @@ describe Travis::API::V3::Services::Preference::ForOrganization, set_app: true d
     let(:last_response) { get(path, {}, auth_headers) }
 
     describe 'organization does not exist' do
-      let(:path) { '/v3/org/99999999/preferences' }
+      let(:path) { "/v3/org/99999999/preference/#{preference_name}" }
       it { expect(last_response.status).to eq(404) }
     end
 
@@ -65,6 +65,11 @@ describe Travis::API::V3::Services::Preference::ForOrganization, set_app: true d
               "value" => "members"
             )
           end
+        end
+
+        describe 'preference name is mispelled' do
+          let(:preference_name) { 'does-not-exist' }
+          it { expect(last_response.status).to eq(404) }
         end
       end
     end
