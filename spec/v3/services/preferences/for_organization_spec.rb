@@ -47,16 +47,10 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
               "preferences" => [
                 {
                   "@type" => "preference",
-                  "@href" => "/v3/preference/public_insights", # needs to change
+                  "@href" => "/v3/preference/private_insights_visibility", # needs to change
                   "@representation" => "standard",
-                  "name" => "public_insights",
-                  "value" => false
-                }, {
-                  "@type" => "preference",
-                  "@href" => "/v3/preference/members_insights", # needs to change
-                  "@representation" => "standard",
-                  "name" => "members_insights",
-                  "value" => false
+                  "name" => "private_insights_visibility",
+                  "value" => "admins"
                 }
               ]
             )
@@ -65,7 +59,7 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
 
         describe 'some preference has been set' do
           before do
-            organization.preferences.update(:members_insights, true)
+            organization.preferences.update(:private_insights_visibility, 'members')
           end
 
           it 'returns the set value merged with the defaults' do
@@ -76,16 +70,10 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
               "preferences" => [
                 {
                   "@type" => "preference",
-                  "@href" => "/v3/preference/public_insights", # needs to change
+                  "@href" => "/v3/preference/private_insights_visibility", # needs to change
                   "@representation" => "standard",
-                  "name" => "public_insights",
-                  "value" => false
-                }, {
-                  "@type" => "preference",
-                  "@href" => "/v3/preference/members_insights", # needs to change
-                  "@representation" => "standard",
-                  "name" => "members_insights",
-                  "value" => true
+                  "name" => "private_insights_visibility",
+                  "value" => "members"
                 }
               ]
             )
