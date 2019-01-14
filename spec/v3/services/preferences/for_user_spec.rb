@@ -28,10 +28,10 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "value" => true
           }, {
             "@type" => "preference",
-            "@href" => "/v3/preference/public_insights",
+            "@href" => "/v3/preference/private_insights_visibility",
             "@representation" => "standard",
-            "name" => "public_insights",
-            "value" => false
+            "name" => "private_insights_visibility",
+            "value" => "private"
           }
         ]
       )
@@ -41,6 +41,7 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
   describe 'authenticated, user has prefs' do
     before do
       user.user_preferences.update(:build_emails, false)
+      user.user_preferences.update(:private_insights_visibility, 'public')
       get("/v3/preferences", {}, auth_headers)
     end
 
@@ -60,10 +61,10 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "value" => false
           }, {
             "@type" => "preference",
-            "@href" => "/v3/preference/public_insights",
+            "@href" => "/v3/preference/private_insights_visibility",
             "@representation" => "standard",
-            "name" => "public_insights",
-            "value" => false
+            "name" => "private_insights_visibility",
+            "value" => "public"
           }
         ]
       )

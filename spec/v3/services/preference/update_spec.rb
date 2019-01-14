@@ -26,6 +26,7 @@ describe Travis::API::V3::Services::Preference::Update, set_app: true do
         "value" => false
       )
     end
+    example 'PENDING: Return validation error'
     example do
       expect(user.github_oauth_token).to eq github_oauth_token
     end
