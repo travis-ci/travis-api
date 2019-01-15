@@ -31,6 +31,7 @@ module Travis::API::V3
     def update(name, value)
       raise NotFound unless respond_to?(:"#{name}=")
       send(:"#{name}=", value)
+      raise UnprocessableEntity, errors.full_messages.to_sentence unless valid?
       sync!
       read(name)
     end

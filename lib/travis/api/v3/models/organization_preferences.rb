@@ -8,6 +8,6 @@ module Travis::API::V3
     # only admins, all members of the organization, or everybody (public) (note:
     # insights about public repositories are always public)
     attribute :private_insights_visibility, String, default: 'admins'
-    validates :private_insights_visibility, inclusion: %w{admins members public}
+    validates :private_insights_visibility, inclusion: { in: %w{admins members public}, message: "'%{value}' is not allowed" }
   end
 end

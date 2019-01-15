@@ -10,6 +10,6 @@ module Travis::API::V3
     # everybody or keep them only for the user (note: insights about public
     # repositories are always public)
     attribute :private_insights_visibility, String, default: 'private'
-    validates :private_insights_visibility, inclusion: %w{private public}
+    validates :private_insights_visibility, inclusion: { in: %w{private public}, message: "'%{value}' is not allowed" }
   end
 end

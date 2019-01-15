@@ -56,8 +56,6 @@ describe Travis::API::V3::Services::Preference::Update, set_app: true do
       end
     end
 
-    example 'PENDING: Return validation error'
-
     describe 'authenticated' do
       let(:last_response) { patch(path, params, headers) }
 
@@ -104,6 +102,23 @@ describe Travis::API::V3::Services::Preference::Update, set_app: true do
               "name" => "private_insights_visibility",
               "value" => "public"
             )
+          end
+
+          context 'the updated value is not valid' do
+            let(:preference_value) { 'bananas' }
+
+            it 'does not update the value' do
+              expect { last_response }.to_not change { organization.reload.preferences.private_insights_visibility }
+            end
+
+            it 'renders an error' do
+              expect(last_response.status).to eq(422)
+              expect(parsed_body).to eql_json(
+                "@type" => "error",
+                "error_type" => "unprocessable_entity",
+                "error_message" => "Private insights visibility 'bananas' is not allowed"
+              )
+            end
           end
         end
       end
