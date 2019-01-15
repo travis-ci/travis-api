@@ -1,5 +1,4 @@
 describe Travis::API::V3::Services::Branches, set_app: true do
-  before { Repository.destroy_all }
   let(:user)          { FactoryGirl.create(:user) }
   let!(:repo)         { FactoryGirl.create(:repository, owner_name: 'travis-ci', name: 'travis-web') }
 
