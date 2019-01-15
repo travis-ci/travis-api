@@ -6,7 +6,7 @@ describe Travis::Services::NextBuildNumber do
   let(:result) { service.run }
   let(:params) { { repository_id: 1234 } }
   let(:repo) do
-    Factory(:repository, owner_name: 'travis-ci', name: 'travis-core')
+    Factory(:repository_without_last_build, owner_name: 'travis-ci', name: 'travis-core')
   end
 
   subject { result }
@@ -31,7 +31,7 @@ describe Travis::Services::NextBuildNumber do
 
   context 'with an existing repository' do
     let(:repo) do
-      Factory(:repository,
+      Factory(:repository_without_last_build,
         owner_name: 'travis-ci', name: 'travis-core', next_build_number: 4
       )
     end

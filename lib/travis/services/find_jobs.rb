@@ -5,6 +5,8 @@ module Travis
     class FindJobs < Base
       register :find_jobs
 
+      scope_access!
+
       def run
         result
       end
@@ -29,6 +31,11 @@ module Travis
             jobs = jobs.where(queue: params[:queue]) if params[:queue]
             jobs
           end
+
+          if !Travis.config.org? && current_user
+            jobs = jobs.where(repository_id: current_user.repository_ids)
+          end
+
           jobs.includes(:commit).limit(250)
         end
     end

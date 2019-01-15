@@ -1,4 +1,5 @@
 require 'travis/testing/payloads'
+require 'travis/api/v3/github'
 
 describe 'Hooks', set_app: true do
   before(:each) do
@@ -17,27 +18,38 @@ describe 'Hooks', set_app: true do
 
   describe 'PUT /hooks' do # TODO really should be /hooks/1
     let(:hook)     { user.service_hooks.first }
-    let(:target)   { "repos/#{hook.owner_name}/#{hook.name}/hooks" }
 
     let :payload do
       {
-        :name   => 'travis',
-        :events => Travis::Github::Services::SetHook::EVENTS,
+        :name   => 'web',
+        :events => Travis::API::V3::GitHub::EVENTS,
         :active => true,
-        :config => { :user => user.login, :token => user.tokens.first.token, :domain => 'listener.travis-ci.org' }
+        :config => { url: 'notify.travis-ci.org' }
       }
     end
 
     before(:each) do
-      Travis.config.service_hook_url = 'listener.travis-ci.org'
+      Travis.config.service_hook_url = 'notify.travis-ci.org'
+      stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(status: 200, body: '[]')
+      stub_request(:post, "https://api.github.com/repositories/#{repo.github_id}/hooks")
     end
 
     it 'sets the hook' do
-      GH.stubs(:[]).returns([])
-      GH.expects(:post).with(target, payload).returns(GH.load(PAYLOADS[:github][:hook_active]))
       response = put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers
       repo.reload.active?.should == true
       response.should be_successful
+    end
+
+    context 'when the repo is migrating' do
+      before { repo.update_attributes(migration_status: "migrating") }
+      before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
+      it { last_response.status.should == 403 }
+    end
+
+    context 'when the repo is migrated' do
+      before { repo.update_attributes(migration_status: "migrated") }
+      before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
+      it { last_response.status.should == 403 }
     end
   end
 end

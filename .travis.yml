@@ -2,7 +2,7 @@ language: ruby
 
 sudo: false
 
-rvm: 2.3.5
+rvm: 2.5.1
 
 script: "bundle exec rake knapsack:rspec"
 env:
@@ -19,10 +19,14 @@ env:
 cache: bundler
 
 addons:
-  postgresql: 9.3
+  postgresql: 9.6
 
 services:
-  - redis
+  - redis-server
 
 before_script:
-  - 'RAILS_ENV=test bundle exec rake db:create --trace'
+  - "createdb travis_test || true"
+  - "curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test"
+
+before_install:
+  - 'gem update --system'

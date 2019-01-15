@@ -32,6 +32,13 @@ module Travis
                   'repos_count' => account.repos_count
                 }
 
+                if Travis.config.com?
+                  data = data.merge(
+                    'subscribed' => account.subscribed,
+                    'education'  => account.education
+                  )
+                end
+
                 data['avatar_url'] = account.avatar_url if account.respond_to?(:avatar_url)
 
                 data

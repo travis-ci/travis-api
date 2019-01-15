@@ -71,5 +71,9 @@ module Travis::API::V3
       access_control.starable? object
     end
 
+    def adminable?
+      access_control.adminable? object
+    end
+
   end
 end

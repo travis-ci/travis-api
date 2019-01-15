@@ -37,7 +37,7 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
     describe 'GET /settings/env_vars' do
       it 'returns a list of env vars' do
         settings = repo.settings
-        record = settings.env_vars.create(name: 'FOO', value: 'bar')
+        record = settings.env_vars.create(name: 'FOO', value: 'zażółć gęślą jaźń', public: true)
         settings.save
 
         response = get '/settings/env_vars', { repository_id: repo.id }, headers
@@ -49,9 +49,8 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
         key['id'].should == record.id
         key['repository_id'].should == repo.id
 
-        key['public'].should == false
-        # key.should_not have_key('value')
-        key['value'].should be_nil
+        key['public'].should == true
+        key['value'].should == 'zażółć gęślą jaźń'
       end
     end
 
@@ -83,6 +82,18 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
         }]
 
         repo.reload.settings.env_vars.to_a.length.should == 0
+      end
+
+      context 'when the repo is migrating' do
+        before { repo.update_attributes(migration_status: "migrating") }
+        before { post "/settings/env_vars?repository_id=#{repo.id}", '{}', headers }
+        it { last_response.status.should == 403 }
+      end
+
+      context 'when the repo is migrated' do
+        before { repo.update_attributes(migration_status: "migrated") }
+        before { post "/settings/env_vars?repository_id=#{repo.id}", '{}', headers }
+        it { last_response.status.should == 403 }
       end
     end
 
@@ -154,6 +165,20 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
         updated_env_var.id.should == env_var.id
         updated_env_var.name.should == 'FOO'
         updated_env_var.value.decrypt.should == 'bar'
+      end
+
+      context 'when the repo is migrating' do
+        let(:env_var) { repo.settings.env_vars.create(name: 'FOO', value: 'bar').tap { repo.settings.save } }
+        before { repo.update_attributes(migration_status: "migrating") }
+        before { patch "/settings/env_vars/#{env_var.id}?repository_id=#{repo.id}", '{}', headers }
+        it { last_response.status.should == 403 }
+      end
+
+      context 'when the repo is migrated' do
+        let(:env_var) { repo.settings.env_vars.create(name: 'FOO', value: 'bar').tap { repo.settings.save } }
+        before { repo.update_attributes(migration_status: "migrated") }
+        before { patch "/settings/env_vars/#{env_var.id}?repository_id=#{repo.id}", '{}', headers }
+        it { last_response.status.should == 403 }
       end
     end
 

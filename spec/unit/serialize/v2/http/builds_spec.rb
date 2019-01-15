@@ -71,7 +71,7 @@ describe Travis::Api::Serialize::V2::Http::Builds do
 end
 
 describe Travis::Api::Serialize::V2::Http::Builds, 'using Travis::Services::Builds::FindAll' do
-  let!(:repo)  { Factory(:repository) }
+  let!(:repo)  { Factory(:repository_without_last_build) }
   let(:builds) { Travis.run_service(:find_builds, nil, :event_type => 'push', :repository_id => repo.id) }
   let(:data)   { described_class.new(builds).data }
 
@@ -80,6 +80,6 @@ describe Travis::Api::Serialize::V2::Http::Builds, 'using Travis::Services::Buil
   end
 
   it 'queries' do
-    lambda { data }.should issue_queries(5)
+    lambda { data }.should issue_queries(12)
   end
 end

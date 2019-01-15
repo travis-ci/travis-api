@@ -11,6 +11,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => true,
         "deactivate"       => true,
+        "migrate"          => true,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
@@ -24,6 +25,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => true,
         "deactivate"       => true,
+        "migrate"          => false,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
@@ -37,6 +39,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => false,
         "deactivate"       => false,
+        "migrate"          => false,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => false,
@@ -50,6 +53,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => false,
         "deactivate"       => false,
+        "migrate"          => false,
         "star"             => false,
         "unstar"           => false,
         "create_request"   => false,
@@ -73,6 +77,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "name"               => "minimal",
       "slug"               => "svenfuchs/minimal",
       "description"        => nil,
+      "github_id"          => repo.github_id,
       "github_language"    => nil,
       "active"             => true,
       "private"            => opts[:private],
@@ -87,6 +92,9 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "@representation"  => "minimal",
         "name"             => "master"},
       "starred"            => false,
+      "active_on_org"      => nil,
+      "managed_by_installation" => false,
+      "migration_status"   => nil
     })}
   end
 
@@ -325,6 +333,12 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
     example { expect(parsed_body['owner']).to include("github_id", "is_syncing", "synced_at")}
   end
 
+  describe "when owner is missing" do
+    before  { repo.update_attribute(:owner, nil)                  }
+    before  { get("/v3/repo/#{repo.id}?include=repository.owner") }
+    example { expect(last_response).to be_not_found               }
+  end
+
   describe "including non-existing field" do
     before { get("/v3/repo/#{repo.id}?include=repository.owner,repository.last_build_number") }
     include_examples '400 wrong params', 'no field "repository.last_build_number" to include'
@@ -333,5 +347,11 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   describe "wrong include format" do
     before  { get("/v3/repo/#{repo.id}?include=repository.last_build.branch") }
     include_examples '400 wrong params', 'illegal format for include parameter'
+  end
+
+  describe "repo managed by a github installation" do
+    before { repo.update_attribute(:managed_by_installation_at, "2017-11-12T12:00:00Z") }
+    before  { get("/v3/repo/#{repo.id}") }
+    example { expect(parsed_body).to include("managed_by_installation" => true )}
   end
 end

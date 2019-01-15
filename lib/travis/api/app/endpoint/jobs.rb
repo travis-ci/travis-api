@@ -1,11 +1,14 @@
 require 'travis/api/app'
 require 'travis/api/enqueue/services/restart_model'
 require 'travis/api/enqueue/services/cancel_model'
+require 'travis/api/app/responders/base'
 
 class Travis::Api::App
   class Endpoint
     class Jobs < Endpoint
       include Helpers::Accept
+
+      before { authenticate_by_mode! }
 
       get '/' do
         prefer_follower do
@@ -59,6 +62,7 @@ class Travis::Api::App
         Metriks.meter("api.v2.request.restart_job").mark
 
         service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
+        disallow_migrating!(service.repository)
 
         result = if !service.accept?
           status 400
@@ -73,27 +77,29 @@ class Travis::Api::App
         respond_with(result: result, flash: service.messages)
       end
 
-      get '/:job_id/log' do
-        resource = service(:find_log, params).run
-        if (resource && resource.removed_at) && accepts?('application/json')
-          respond_with resource
+      get '/:job_id/log', scope: [:public, :log] do
+        resource = service(:find_log, job_id: params[:job_id]).run
+        job = Job.find(params[:job_id])
+
+        if (job.try(:private?) || !allow_public?) && !has_permission?(job)
+          halt 404
         elsif resource.nil?
           status 200
           body empty_log(Integer(params[:job_id])).to_json
+        elsif resource.removed_at && accepts?('application/json')
+          attach_log_token if job.try(:private?)
+          respond_with resource
         elsif resource.archived?
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')
-            archived_log_path = if resource.respond_to?(:archived_url)
-                                  resource.archived_url
-                                else
-                                  archive_url("/jobs/#{params[:job_id]}/log.txt")
-                                end
+            archived_log_path = resource.archived_url
 
             if params[:cors_hax]
               status 204
               headers['Access-Control-Expose-Headers'] = 'Location'
               headers['Location'] = archived_log_path
+              attach_log_token if job.try(:private?)
             else
               redirect archived_log_path, 307
             end
@@ -101,6 +107,7 @@ class Travis::Api::App
             status 406
           end
         else
+          attach_log_token if job.try(:private?)
           respond_with resource
         end
       end
@@ -118,6 +125,26 @@ class Travis::Api::App
           status 500
           { error: { message: "Unexpected error occurred: #{e.message}" } }
         end
+      end
+
+      def has_permission?(job)
+        current_user && Permission.where(user: current_user, repository_id: job.repository_id).first
+      end
+
+      def attach_log_token
+        headers['X-Log-Access-Token'] = log_token
+        headers['Access-Control-Expose-Headers'] = "Location, Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Log-Access-Token, X-Request-ID"
+      end
+
+      def log_token
+        attrs = {
+          app_id: 1, user: current_user, expires_in: 1.day,
+          extra: {
+            required_params: { job_id: params['job_id'] }
+          }
+        }
+        token = Travis::Api::App::AccessToken.new(attrs).tap(&:save)
+        token.token
       end
 
       def archive_url(path)

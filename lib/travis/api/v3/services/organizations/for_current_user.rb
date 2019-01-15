@@ -1,5 +1,6 @@
 module Travis::API::V3
   class Services::Organizations::ForCurrentUser < Service
+    params :role, prefix: :organization
     paginate(default_limit: 100)
 
     def run!

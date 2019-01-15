@@ -5,6 +5,8 @@ module Travis
     class FindJob < Base
       register :find_job
 
+      scope_access!
+
       def run
         result
       end
@@ -29,12 +31,20 @@ module Travis
         end
 
         def load_result
-          columns = scope(:job).column_names
+          job = scope.find_by_id(params[:id])
+          job.config = nil if params[:exclude_config]
+          job
+        end
+
+        def scope
+          scope = super(:job)
+          return scope.select(params[:columns]) if params[:columns]
+          columns = scope.column_names
           columns -= %w(config) if params[:exclude_config]
-          columns = columns.map { |c| %Q{"jobs"."#{c}"} }
-          scope(:job).includes(:commit).select(columns).find_by_id(params[:id]).tap do |res|
-            res.config = {} if params[:exclude_config]
-          end
+          columns -= %w(commit) if params[:exclude_commit]
+          columns.map { |c| %("jobs"."#{c}") }
+          scope = scope.includes(:config) unless params[:exclude_config]
+          scope.select(columns)
         end
     end
   end

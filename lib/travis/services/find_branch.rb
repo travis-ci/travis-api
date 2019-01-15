@@ -6,6 +6,8 @@ module Travis
     class FindBranch < Base
       register :find_branch
 
+      scope_access!
+
       def run
         result
       end
@@ -25,7 +27,8 @@ module Travis
         end
 
         def by_params
-          repo.last_build_on params[:branch] if repo and params[:branch]
+          return unless repo and params[:branch]
+          scope(:build).merge(repo.last_builds_on(params[:branch])).first
         end
 
         def repo

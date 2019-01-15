@@ -52,6 +52,9 @@ describe 'Exception', set_app: true do
     expect(res.headers).to eq({
       'Content-Type' => 'text/plain',
       'Content-Length' => '32',
+      'Access-Control-Allow-Origin' => '*',
+      'Access-Control-Allow-Credentials' => 'true',
+      'Access-Control-Expose-Headers' => 'Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID',
     })
     sleep 0.1
   end
@@ -62,11 +65,14 @@ describe 'Exception', set_app: true do
     Raven.stubs(:send_event)
     res = get '/repos/1', nil, 'HTTP_X_REQUEST_ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975'
     expect(res.status).to eq(500)
-    expect(res.body).to eq("Sorry, we experienced an error.\n\nrequest_id=235dd08f-10d5-4fcc-9a4d-6b8e6a24f975\n")
+    expect(res.body).to eq("Sorry, we experienced an error.\n\nrequest_id:235dd08f-10d5-4fcc-9a4d-6b8e6a24f975\n")
     expect(res.headers).to eq({
       'Content-Type' => 'text/plain',
       'Content-Length' => '81',
       'X-Request-ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975',
+      'Access-Control-Allow-Origin' => '*',
+      'Access-Control-Allow-Credentials' => 'true',
+      'Access-Control-Expose-Headers' => 'Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID',
     })
     sleep 0.1
   end

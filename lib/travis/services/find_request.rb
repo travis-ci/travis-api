@@ -3,6 +3,8 @@ module Travis
     class FindRequest < Base
       register :find_request
 
+      scope_access!
+
       def run(options = {})
         result
       end

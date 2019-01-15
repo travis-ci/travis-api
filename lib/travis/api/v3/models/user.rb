@@ -6,11 +6,12 @@ module Travis::API::V3
     has_many :tokens,        dependent: :destroy
     has_many :organizations, through:   :memberships
     has_many :stars
-    has_one  :subscription,  as:        :owner
+    has_many :email_unsubscribes
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
 
-    serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
+    serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
+    scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 
     def repository_ids
       repositories.pluck(:id)
@@ -24,12 +25,12 @@ module Travis::API::V3
       tokens.first_or_create.token
     end
 
-    def subscription
-      super if Features.use_subscriptions?
-    end
-
     def starred_repository_ids
       @starred_repository_ids ||= stars.map(&:repository_id)
+    end
+
+    def email_unsubscribed_repository_ids
+      @email_unsubscribed_repository_ids ||= email_unsubscribes.map(&:repository_id)
     end
 
     def permission?(roles, options = {})
@@ -39,5 +40,13 @@ module Travis::API::V3
       scope.any?
     end
 
+    def installation
+      return @installation if defined? @installation
+      @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
+    end
+
+    def user_preferences
+      Models::Preferences.new(preferences).tap { |prefs| prefs.sync(self, :preferences) }
+    end
   end
 end

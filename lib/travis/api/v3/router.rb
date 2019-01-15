@@ -1,4 +1,5 @@
 require 'metriks'
+require 'marginalia'
 
 module Travis::API::V3
   class Router
@@ -9,7 +10,7 @@ module Travis::API::V3
       @routes            = routes
       @metrics_processor = Metrics::Processor.new
 
-      metrics_processor.start
+      metrics_processor.start unless ENV['ENV'] == 'test'
       routes.draw_routes
     end
 
@@ -31,7 +32,9 @@ module Travis::API::V3
       metrics.name_after(factory)
 
       filtered = factory.filter_params(env_params)
-      service  = factory.new(access_control, filtered.merge(params), env['rack.input'.freeze])
+      service  = factory.new(access_control, filtered.merge(params), env)
+
+      ::Marginalia.set('endpoint', factory.name)
 
       metrics.tick(:prepare)
       result   = service.run

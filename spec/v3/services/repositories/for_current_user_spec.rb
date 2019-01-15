@@ -40,6 +40,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "read"             => true,
           "activate"         => true,
           "deactivate"       => true,
+          "migrate"          => true,
           "star"             => true,
           "unstar"           => true,
           "create_request"   => true,
@@ -53,6 +54,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "name"               =>  "minimal",
         "slug"               =>  "svenfuchs/minimal",
         "description"        => nil,
+        "github_id"          => repo.github_id,
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
@@ -67,6 +69,9 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "@representation"  => "minimal",
           "name"             => "master"},
         "starred"            => false,
+        "managed_by_installation"=>false,
+        "active_on_org"=>nil,
+        "migration_status" => nil
         }]
     }}
   end
@@ -113,5 +118,39 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
     example { expect(last_response)                   .to be_ok                              }
     example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=false"    }
     example { expect(JSON.load(body)['repositories']) .to be_empty                           }
+  end
+
+  describe "filter: managed_by_installation=true" do
+    before  { get("/v3/repos", {"managed_by_installation" => "true"}, headers)                               }
+    example { expect(last_response)                   .to be_ok                                              }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?managed_by_installation=true"     }
+    example { expect(JSON.load(body)['repositories']) .to be_empty                                           }
+  end
+
+  describe "filter: managed_by_installation=false" do
+    before  { get("/v3/repos", {"managed_by_installation" => "false"}, headers)                              }
+    example { expect(last_response)                   .to be_ok                                              }
+    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?managed_by_installation=false"    }
+    example { expect(JSON.load(body)['repositories']) .not_to be_empty                                       }
+  end
+
+  describe "include: repository.email_subscribed" do
+    subject(:response)  { get("/v3/repos", {"include" => "repository.email_subscribed"}, headers)                           }
+
+    example do
+      expect(response).to be_ok
+      expect(JSON.load(body)['repositories'].first['email_subscribed']).to eq(true)
+    end
+
+    context 'when the current user is unsubscribed' do
+      before do
+        delete("/v3/repo/#{repo.id}/email_subscription", {}, headers)
+      end
+
+      example do
+        expect(response).to be_ok
+        expect(JSON.load(body)['repositories'].first['email_subscribed']).to eq(false)
+      end
+    end
   end
 end

@@ -11,6 +11,24 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   before        { repo.update_attribute(:current_build, build)                             }
   after         { repo.update_attribute(:private, false)                            }
 
+  describe "sorting by default_branch.last_build" do
+    let!(:repo2) { Travis::API::V3::Models::Repository.create!(owner_name: 'svenfuchs', owner: repo.owner, name: 'second-repo', default_branch_name: 'other-branch') }
+    let!(:branch) { repo2.default_branch }
+    let!(:build) { Travis::API::V3::Models::Build.create(repository: repo2, branch_id: branch.id, branch_name: 'other-branch') }
+
+    before do
+      branch.update_attributes!(last_build_id: build.id)
+      Travis::API::V3::Models::Permission.create(repository: repo2, user: repo2.owner, pull: true)
+      get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build:desc&include=repository.default_branch", {}, headers)
+    end
+
+    example { expect(last_response).to be_ok }
+    example 'repos with most recent build on default branch come first' do
+      repos = JSON.load(last_response.body)['repositories']
+      last_build_ids = repos.map { |r| r['default_branch']['last_build']['id'] }
+      expect(last_build_ids).to eq last_build_ids.sort.reverse
+    end
+  end
 
   describe "private repository, private API, authenticated as user with access" do
     before  { get("/v3/owner/svenfuchs/repos", {}, headers) }
@@ -43,6 +61,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "read"             => true,
           "activate"         => false,
           "deactivate"       => false,
+          "migrate"          => false,
           "star"             => true,
           "unstar"           => true,
           "create_request"   => false,
@@ -56,6 +75,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "name"               => "minimal",
         "slug"               => "svenfuchs/minimal",
         "description"        => nil,
+        "github_id"          => repo.github_id,
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
@@ -70,6 +90,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@representation"  => "minimal",
           "name"             => "master"},
           "starred"          => false,
+          "managed_by_installation"=>false,
+          "active_on_org"    => nil,
+          "migration_status" => nil
         }]}}
   end
 
@@ -86,6 +109,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "admin"            =>false,
           "activate"         =>false,
           "deactivate"       =>false,
+          "migrate"          => false,
           "star"             =>true,
           "unstar"           =>true,
           "create_cron"      =>false,
@@ -97,6 +121,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "name"               =>"minimal",
         "slug"               =>"svenfuchs/minimal",
         "description"        =>nil,
+        "github_id"          =>repo.github_id,
         "github_language"    =>nil,
         "active"             =>true,
         "private"            =>true,
@@ -111,6 +136,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@representation"  =>"minimal",
           "name"             =>"master"},
         "starred"          =>false,
+        "managed_by_installation"=>false,
+        "active_on_org"     => nil,
+        "migration_status"  => nil,
         "last_started_build"=>{
           "@type"          =>"build",
           "@href"          =>"/v3/build/#{build.id}",
@@ -124,11 +152,12 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "state"          =>"configured",
           "duration"       =>nil,
           "event_type"     =>"push",
-          "previous_state" =>"passed", 
+          "previous_state" =>"passed",
           "pull_request_title"=>nil,
           "pull_request_number"=>nil,
           "started_at"     =>"2010-11-12T13:00:00Z",
           "finished_at"    =>nil,
+          "private"        => false,
           "repository"    =>{
             "@href"       =>"/v3/repo/#{repo.id}"},
           "branch"        =>{
@@ -173,98 +202,114 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
     example { expect(last_response)                   .to be_ok                                      }
     example { expect(JSON.load(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?include=repository.current_build"}
     example { expect(JSON.load(body)['@warnings'])    .to be == [{
-        "@type"              =>"warning",
-        "message"            =>"current_build will soon be deprecated. Please use repository.last_started_build instead",
-        "warning_type"       =>"deprecated_parameter",
-        "parameter"          =>"current_build"}]}
+        "@type"              => "warning",
+        "message"            => "current_build will soon be deprecated. Please use repository.last_started_build instead",
+        "warning_type"       => "deprecated_parameter",
+        "parameter"          => "current_build"}]}
     example { expect(JSON.load(body)['repositories']) .to be == [{
-        "@type"              =>"repository",
-        "@href"              =>"/v3/repo/#{repo.id}",
-        "@representation"    =>"standard",
-        "@permissions"       =>{
-          "read"             =>true,
-          "admin"            =>false,
-          "activate"         =>false,
-          "deactivate"       =>false,
-          "star"             =>true,
-          "unstar"           =>true,
-          "create_cron"      =>false,
-          "create_env_var"   =>false,
-          "create_key_pair"  =>false,
-          "delete_key_pair"  =>false,
-          "create_request"   =>false},
-        "id"                 =>repo.id,
-        "name"               =>"minimal",
-        "slug"               =>"svenfuchs/minimal",
-        "description"        =>nil,
-        "github_language"    =>nil,
-        "active"             =>true,
-        "private"            =>true,
-        "owner"              =>{
-          "@type"            =>"user",
-          "id"               =>1,
-          "login"            =>"svenfuchs",
-          "@href"            =>"/v3/user/1"},
-        "default_branch"     =>{
-          "@type"            =>"branch",
-          "@href"            =>"/v3/repo/1/branch/master",
-          "@representation"  =>"minimal",
-          "name"             =>"master"},
-        "starred"          =>false,
-        "current_build"=>{
-          "@type"          =>"build",
-          "@href"          =>"/v3/build/#{build.id}",
-          "@representation"=>"standard",
-          "@permissions"   =>{
-            "read"         =>true,
-            "cancel"       =>true,
-            "restart"      =>true},
-          "id"             =>build.id,
-          "number"         =>"#{build.number}",
-          "state"          =>"configured",
-          "duration"       =>nil,
-          "event_type"     =>"push",
-          "previous_state" =>"passed", 
-          "pull_request_title"=>nil,
-          "pull_request_number"=>nil,
-          "started_at"     =>"2010-11-12T13:00:00Z",
-          "finished_at"    =>nil,
-          "repository"    =>{
-            "@href"       =>"/v3/repo/#{repo.id}"},
-          "branch"        =>{
-            "@type"       =>"branch",
-            "@href"       =>"/v3/repo/1/branch/master",
-            "@representation"=>"minimal",
-            "name"        =>"master"},
-          "tag"           =>nil,
-          "commit"        =>{
-            "@type"       =>"commit",
-            "@representation"=>"minimal",
-            "id"          =>5,
-            "sha"         =>"add057e66c3e1d59ef1f",
-            "ref"         => "refs/heads/master",
-            "message"     =>"unignore Gemfile.lock",
-            "compare_url" =>"https://github.com/svenfuchs/minimal/compare/master...develop",
-            "committed_at"=>"2010-11-12T12:55:00Z"},
-          "jobs"          =>[{
-            "@type"       =>"job",
-            "@href"       =>"/v3/job/#{jobs[0].id}",
-            "@representation"=>"minimal",
-            "id"          =>jobs[0].id}, {
-            "@type"       =>"job",
-            "@href"       =>"/v3/job/#{jobs[1].id}",
-            "@representation"=>"minimal",
-            "id"          =>jobs[1].id}, {
-            "@type"       =>"job",
-            "@href"       =>"/v3/job/#{jobs[2].id}",
-            "@representation"=>"minimal",
-            "id"          =>jobs[2].id}, {
-            "@type"       =>"job",
-            "@href"       =>"/v3/job/#{jobs[3].id}",
-            "@representation"=>"minimal",
-            "id"          =>jobs[3].id}],
-          "stages"        =>[],
-          "created_by"    =>nil,
+        "@type"              => "repository",
+        "@href"              => "/v3/repo/#{repo.id}",
+        "@representation"    => "standard",
+        "@permissions"       => {
+          "read"             => true,
+          "admin"            => false,
+          "activate"         => false,
+          "deactivate"       => false,
+          "migrate"          => false,
+          "star"             => true,
+          "unstar"           => true,
+          "create_cron"      => false,
+          "create_env_var"   => false,
+          "create_key_pair"  => false,
+          "delete_key_pair"  => false,
+          "create_request"   => false},
+        "id"                 => repo.id,
+        "name"               => "minimal",
+        "slug"               => "svenfuchs/minimal",
+        "description"        => nil,
+        "github_id"          => repo.github_id,
+        "github_language"    => nil,
+        "active"             => true,
+        "private"            => true,
+        "owner"              => {
+          "@type"            => "user",
+          "id"               => 1,
+          "login"            => "svenfuchs",
+          "@href"            => "/v3/user/1"},
+        "default_branch"     => {
+          "@type"            => "branch",
+          "@href"            => "/v3/repo/1/branch/master",
+          "@representation"  => "minimal",
+          "name"             => "master"},
+        "starred"          => false,
+        "managed_by_installation"=> false,
+        "active_on_org"    => nil,
+        "migration_status" => nil,
+        "current_build" => {
+          "@type"               => "build",
+          "@href"               => "/v3/build/#{build.id}",
+          "@representation"     => "standard",
+          "@permissions"        => {
+            "read"    => true,
+            "cancel"  => true,
+            "restart" => true
+          },
+          "id"                  => build.id,
+          "number"              => "#{build.number}",
+          "state"               => "configured",
+          "duration"            => nil,
+          "event_type"          => "push",
+          "previous_state"      => "passed",
+          "pull_request_title"  => nil,
+          "pull_request_number" => nil,
+          "started_at"     => "2010-11-12T13:00:00Z",
+          "finished_at"    => nil,
+          "private"        => false,
+          "repository"     => {
+            "@href"       => "/v3/repo/#{repo.id}"
+          },
+          "branch"        => {
+            "@type"           => "branch",
+            "@href"           => "/v3/repo/1/branch/master",
+            "@representation" => "minimal",
+            "name"            => "master"
+          },
+          "tag"           => nil,
+          "commit"        => {
+            "@type"           => "commit",
+            "@representation" => "minimal",
+            "id"              => 5,
+            "sha"             => "add057e66c3e1d59ef1f",
+            "ref"             => "refs/heads/master",
+            "message"         => "unignore Gemfile.lock",
+            "compare_url"     => "https://github.com/svenfuchs/minimal/compare/master...develop",
+            "committed_at"    => "2010-11-12T12:55:00Z"
+          },
+          "jobs"          => [
+            {
+              "@type"           => "job",
+              "@href"           => "/v3/job/#{jobs[0].id}",
+              "@representation" => "minimal",
+              "id"              => jobs[0].id
+            }, {
+              "@type"           => "job",
+              "@href"           => "/v3/job/#{jobs[1].id}",
+              "@representation" => "minimal",
+              "id"              => jobs[1].id
+            }, {
+              "@type"           => "job",
+              "@href"           => "/v3/job/#{jobs[2].id}",
+              "@representation" => "minimal",
+              "id"              => jobs[2].id
+            }, {
+              "@type"           => "job",
+              "@href"           => "/v3/job/#{jobs[3].id}",
+              "@representation" => "minimal",
+              "id"              => jobs[3].id
+            }
+          ],
+          "stages"        => [],
+          "created_by"    => nil,
           "updated_at"    => json_format_time_with_ms(build.updated_at)}}]}
   end
 
@@ -307,7 +352,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   end
 
   describe "sorting by default_branch.last_build" do
-    let(:repo2)  { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, last_build_id: 1788, next_build_number: 3) }
+    let(:repo2)  { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, next_build_number: 3) }
     before  { repo2.save! }
     before  { get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build", {}, headers) }
     example { expect(last_response).to be_ok }
@@ -321,6 +366,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "admin"         => false,
           "activate"      => false,
           "deactivate"    => false,
+          "migrate"       => false,
           "star"          => true,
           "unstar"        => true,
           "create_cron"   => false,
@@ -333,6 +379,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "name"            => "minimal",
         "slug"            => "svenfuchs/minimal",
         "description"     => nil,
+        "github_id"       => repo.github_id,
         "github_language" => nil,
         "active"          => true,
         "private"         => true,
@@ -346,7 +393,10 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@href"         => "/v3/repo/1/branch/master",
           "@representation"=>"minimal",
           "name"          => "master" },
-        "starred"         => false }, {
+        "starred"         => false,
+        "managed_by_installation"=>false,
+        "active_on_org"   => nil,
+        "migration_status" => nil}, {
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo2.id}",
         "@representation" => "standard",
@@ -355,6 +405,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "admin"         => false,
           "activate"      => false,
           "deactivate"    => false,
+          "migrate"       => false,
           "star"          => false,
           "unstar"        => false,
           "create_cron"   => false,
@@ -367,6 +418,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "name"            => "maximal",
         "slug"            => "svenfuchs/maximal",
         "description"     => nil,
+        "github_id"       => repo2.github_id,
         "github_language" => nil,
         "active"          => true,
         "private"         => false,
@@ -380,6 +432,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@href"         => "/v3/repo/#{repo2.id}/branch/master",
           "@representation"=>"minimal",
           "name"           =>"master" },
-          "starred"        => false}]}
+          "starred"        => false,
+          "managed_by_installation"=>false,
+          "active_on_org"  =>nil,
+          "migration_status" => nil}]}
   end
 end

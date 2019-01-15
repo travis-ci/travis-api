@@ -2,8 +2,38 @@ require 'travis/api/app'
 
 class Travis::Api::App
   class Endpoint
+    class RepoStatus < Endpoint
+      before do
+        halt 401 if private_mode? && !org? && !authenticated?
+      end
+
+      set :pattern, capture: { id: /\d+/ }
+
+      get '/:id/cc', scope: [:public, :travis_token] do
+        respond_with service(:find_repo, params.merge(schema: 'cc')), responder: :xml
+      end
+
+      get '/:owner_name', scope: [:public, :travis_token] do
+        respond_with service(:find_repos, params.merge(schema: 'cc')), responder: :xml
+      end
+
+      get '/:owner_name/:name', scope: [:public, :travis_token] do
+        respond_with service(:find_repo, params), type_hint: Repository, responders: [:badge, :image, :xml]
+      end
+
+      get '/:owner_name/:name/builds', scope: [:public, :travis_token] do
+        respond_with service(:find_builds, params), responder: :atom, responders: :atom
+      end
+
+      get '/:owner_name/:name/cc', scope: [:public, :travis_token] do
+        respond_with service(:find_repo, params.merge(schema: 'cc')), responder: :xml
+      end
+    end
+
     class Repos < Endpoint
-       set :pattern, capture: { id: /\d+/ }
+      before { authenticate_by_mode! }
+
+      set :pattern, capture: { id: /\d+/ }
 
       # Endpoint for getting all repositories.
       #
@@ -16,7 +46,7 @@ class Travis::Api::App
       # json(:repositories)
       get '/' do
         prefer_follower do
-          return 403 unless current_user
+          return Travis.config.org? && pre_v2_1? ? 403 : 401 unless current_user
           params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
           respond_with service(:find_repos, params).run
         end
@@ -40,10 +70,6 @@ class Travis::Api::App
         end
       end
 
-      get '/:id/cc' do
-        respond_with service(:find_repo, params.merge(schema: 'cc'))
-      end
-
       # Get settings for a given repository
       #
       get '/:id/settings', scope: :private do
@@ -64,6 +90,7 @@ class Travis::Api::App
 
         settings = service(:find_repo_settings, params).run
         if settings
+          disallow_migrating!(settings.repository)
           settings.merge(payload['settings'])
           # TODO: I would like to have better API here, but leaving this
           # for testing to not waste too much time before I can play with it
@@ -92,7 +119,9 @@ class Travis::Api::App
       end
 
       post '/:id/key' do
-        respond_with service(:regenerate_repo_key, params), version: :v2
+        service = service(:regenerate_repo_key, params)
+        disallow_migrating!(service.repo)
+        respond_with service, version: :v2
       end
 
       # Gets list of branches
@@ -133,7 +162,8 @@ class Travis::Api::App
       #
       # json(:builds)
       get '/:owner_name/:name/builds' do
-        name = params[:branches] ? :find_branches : :find_builds
+        # `name` is unused
+        # name = params[:branches] ? :find_branches : :find_builds
         params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
         respond_with service(:find_builds, params)
       end
@@ -145,10 +175,6 @@ class Travis::Api::App
       # json(:build)
       get '/:owner_name/:name/builds/:id' do
         respond_with service(:find_build, params)
-      end
-
-      get '/:owner_name/:name/cc' do
-        respond_with service(:find_repo, params.merge(schema: 'cc'))
       end
 
       # Get the public key for a given repository.
@@ -165,7 +191,9 @@ class Travis::Api::App
       end
 
       post '/:owner_name/:name/key' do
-        respond_with service(:regenerate_repo_key, params), version: :v2
+        service = service(:regenerate_repo_key, params)
+        disallow_migrating!(service.repo)
+        respond_with service, version: :v2
       end
 
       # Gets list of branches

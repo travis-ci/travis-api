@@ -1,8 +1,5 @@
 require 'gh'
 require 'core_ext/hash/compact'
-require 'travis/github/education'
-require 'travis/github/oauth'
-require 'travis/github/services'
 
 module Travis
   module Github
@@ -23,5 +20,9 @@ module Travis
         GH.with(:token => user.github_oauth_token, &block)
       end
     end
+
+    require 'travis/github/education'
+    require 'travis/github/oauth'
+    require 'travis/github/services'
   end
 end

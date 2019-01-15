@@ -9,6 +9,8 @@ module Travis
     class FindBuilds < Base
       register :find_builds
 
+      scope_access!
+
       def run
         preload(result)
       end
@@ -24,26 +26,39 @@ module Travis
         end
 
         def by_params
-          if repo
-            # TODO :after_number seems like a bizarre api why not just pass an id? pagination style?
-            builds = repo.builds
+          scope = if repo
+            builds = scope(:build, repo.id).where(repository_id: repo.id)
             builds = builds.by_event_type(params[:event_type]) if params[:event_type]
             if params[:number]
               builds.where(:number => params[:number].to_s)
             else
               builds.older_than(params[:after_number])
             end
-          elsif params[:running]
-            scope(:build).running.limit(25)
-          elsif params.nil? || params == {}
-            scope(:build).recent
+          elsif params[:running] && current_user
+            scope_with_current_user(scope(:build).running.limit(25))
+          elsif empty_params? && current_user
+            scope_with_current_user(scope(:build).recent)
           else
             scope(:build).none
+          end
+
+          scope
+        end
+
+        def empty_params?
+          params.nil? || params == {} || params.keys.map(&:to_s) == ['access_token']
+        end
+
+        def scope_with_current_user(scope)
+          if Travis.config.org?
+            scope
+          else
+            scope.where(repository_id: current_user.repository_ids)
           end
         end
 
         def preload(builds)
-          builds.includes(:commit, :matrix)
+          builds.includes(:commit, :config, matrix: :config)
         end
 
         def repo

@@ -44,6 +44,18 @@ module Travis::API::V3
       delete :delete
     end
 
+    enterprise do
+      resource :enterprise_license do
+        get :find
+        route '/enterprise_license'
+      end
+    end
+
+    resource :installation do
+      route '/installation/{installation.github_id}'
+      get :find
+    end
+
     resource :job do
       capture id: :digit
       route '/job/{job.id}'
@@ -103,10 +115,12 @@ module Travis::API::V3
       route '/repo/({repository.id}|{repository.slug})'
       get :find
 
-      post :activate,  '/activate'
+      post :activate, '/activate'
       post :deactivate, '/deactivate'
-      post :star,    '/star'
-      post :unstar,  '/unstar'
+      post :migrate, '/migrate'
+      post :star, '/star'
+      post :unstar, '/unstar'
+      hide(patch :update)
 
       resource :branch do
         route '/branch/{branch.name}'
@@ -149,6 +163,11 @@ module Travis::API::V3
       resource :request do
         route '/request/{request.id}'
         get  :find
+
+        resource :messages do
+          route '/messages'
+          get :for_request
+        end
       end
 
       resource :user_settings, as: :settings do
@@ -192,6 +211,12 @@ module Travis::API::V3
         patch   :update
         delete :delete
       end
+
+      resource :email_subscription do
+        route '/email_subscription'
+        delete :unsubscribe
+        post :resubscribe
+      end
     end
 
     resource :user do
@@ -215,6 +240,59 @@ module Travis::API::V3
     resource :user do
       route '/user'
       get :current
+    end
+
+    resource :preferences do
+      route '/preferences'
+      get   :for_user
+    end
+
+    resource :preference do
+      route '/preference/{preference.name}'
+      get   :find
+      patch :update
+    end
+
+    if ENV['BILLING_V2_ENABLED']
+      hidden_resource :subscriptions do
+        route '/subscriptions'
+        get :all
+        post :create
+      end
+
+      hidden_resource :subscription do
+        route '/subscription/{subscription.id}'
+        patch :update_address, '/address'
+        patch :update_creditcard, '/creditcard'
+        patch :update_plan, '/plan'
+        patch :resubscribe, '/resubscribe'
+        post :cancel, '/cancel'
+        get :invoices, '/invoices'
+      end
+
+      hidden_resource :trials do
+        route '/trials'
+        get :all
+      end
+
+      hidden_resource :plans do
+        route '/plans'
+        get :all
+      end
+    end
+
+    if ENV['GDPR_ENABLED']
+      hidden_resource :gdpr do
+        route '/gdpr'
+        post :export, '/export'
+        delete :purge, '/purge'
+      end
+    end
+
+    hidden_resource :insights do
+      route '/insights'
+      get :metrics, '/metrics'
+      get :active_repos, '/repos/active'
     end
   end
 end

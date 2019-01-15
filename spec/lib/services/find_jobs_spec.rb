@@ -61,4 +61,101 @@ describe Travis::Services::FindJobs do
       service.updated_at.to_s.should == Time.now.to_s
     end
   end
+
+  context do
+    let(:user) { Factory.create(:user, login: :rkh) }
+    let(:org)  { Factory.create(:org, login: :travis) }
+    let(:private_repo) { Factory.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { Factory.create(:repository, owner: org, private: false) }
+    let!(:private_job) { Factory.create(:job, repository: private_repo, private: true) }
+    let!(:public_job)  { Factory.create(:job, repository: public_repo, private: false) }
+
+    before { Travis.config.host = 'example.com' }
+
+    describe 'in public mode' do
+      before { Travis.config.public_mode = true }
+
+      describe 'given the current user has a permission on the repository' do
+        it 'finds a private job' do
+          Factory.create(:permission, user: user, repository: private_repo)
+          service = described_class.new(user, id: private_job.id)
+          service.run.should include(private_job)
+        end
+
+        it 'finds a public job' do
+          Factory.create(:permission, user: user, repository: public_repo)
+          service = described_class.new(user, id: public_job.id)
+          service.run.should include(public_job)
+        end
+      end
+
+      describe 'given the current user does not have a permission on the repository' do
+        it 'does not find a private job' do
+          service = described_class.new(user, id: private_job.id)
+          service.run.should_not include(private_job)
+        end
+
+        it 'does not find a public job' do
+          service = described_class.new(user, id: public_job.id)
+          service.run.should_not include(public_job)
+        end
+      end
+    end
+
+    describe 'in private mode' do
+      before { Travis.config.public_mode = false }
+
+      describe 'given the current user has a permission on the repository' do
+        it 'finds a private job' do
+          Factory.create(:permission, user: user, repository: private_repo)
+          service = described_class.new(user, id: private_job.id)
+          service.run.should include(private_job)
+        end
+
+        it 'finds a public job' do
+          Factory.create(:permission, user: user, repository: public_repo)
+          service = described_class.new(user, id: public_job.id)
+          service.run.should include(public_job)
+        end
+      end
+
+      describe 'given the current user does not have a permission on the repository' do
+        it 'does not find a private job' do
+          service = described_class.new(user, id: private_job.id)
+          service.run.should_not include(private_job)
+        end
+
+        it 'does not find a public job' do
+          service = described_class.new(user, id: public_job.id)
+          service.run.should_not include(public_job)
+        end
+      end
+    end
+  end
+
+  context 'on .com' do
+    before { Travis.config.host = "travis-ci.com" }
+    after { Travis.config.host = "travis-ci.org" }
+
+    it "doesn't return public jobs that don't belong to a user" do
+      public_repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', private: false)
+      public_build = Factory(:build, repository: public_repo)
+      Factory(:test, :state => :started, :source => public_build, repository: public_repo)
+
+      user = Factory(:user)
+      repo = Factory(:repository, :owner_name => 'drogus', :name => 'test-project')
+      repo.users << user
+      build = Factory(:build, repository: repo)
+      job = Factory(:test, :state => :started, :source => build, repository: repo)
+
+      other_user = Factory(:user)
+      other_repo = Factory(:repository, private: true)
+      other_repo.users << other_user
+      other_build = Factory(:build, repository: other_repo)
+      Factory(:test, :state => :started, :source => other_build, repository: other_repo)
+
+      service = described_class.new(user)
+      service.run.should == [job]
+    end
+  end
 end

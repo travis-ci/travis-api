@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require 'appsignal/integrations/sinatra' if ENV['APPSIGNAL_ENABLED_FOR_DYNOS']&.split(' ')&.include?(ENV['DYNO'])
 require 'mustermann'
 require 'travis/api/app'
 require 'travis/api/app/extensions'
@@ -39,17 +38,17 @@ class Travis::Api::App
       # Being token based makes us invulnerable to common
       # CSRF attack.
       #
-      
+
       disable  :protection, :setup
       enable   :raise_errors
-      
+
       # Logging is set up by custom middleware in hosted, but in Enterprise we need to dump them
       if Travis.config.enterprise
         enable   :logging, :dump_errors
       else
         disable  :logging, :dump_errors
-      end 
-      
+      end
+
       register :subclass_tracker, :expose_pattern
       helpers  :respond_with, :mime_types
     end

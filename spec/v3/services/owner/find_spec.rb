@@ -1,7 +1,9 @@
 describe Travis::API::V3::Services::Owner::Find, set_app: true do
+
   describe "organization" do
     let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
-    before    { org.save!                              }
+
+    before    { org.save! }
     after     { org.delete                             }
 
     describe 'existing org, public api, by login' do
@@ -11,12 +13,14 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"            => "organization",
         "@href"            => "/v3/org/#{org.id}",
         "@representation"  => "standard",
-        "@permissions"     => { "read"=>true, "sync"=>false },
+        "@permissions"     => { "read" => true, "sync" => false },
         "id"               => org.id,
         "login"            => "example-org",
         "name"             => nil,
         "github_id"        => 1234,
-        "avatar_url"       => nil
+        "avatar_url"       => nil,
+        "education"        => false,
+        "allow_migration"  => false,
       }}
     end
 
@@ -27,12 +31,14 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"            => "organization",
         "@href"            => "/v3/org/#{org.id}",
         "@representation"  => "standard",
-        "@permissions"     => { "read"=>true, "sync"=>false },
+        "@permissions"     => { "read" => true, "sync" => false },
         "id"               => org.id,
         "login"            => "example-org",
         "name"             => nil,
         "github_id"        => 1234,
-        "avatar_url"       => nil
+        "avatar_url"       => nil,
+        "education"        => false,
+        "allow_migration"  => false,
       }}
     end
 
@@ -48,12 +54,14 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"               => "organization",
         "@href"               => "/v3/org/#{org.id}",
         "@representation"     => "standard",
-        "@permissions"        => { "read"=>true, "sync"=>false },
+        "@permissions"        => { "read" => true, "sync" => false },
         "id"                  => org.id,
         "login"               => "example-org",
         "name"                => nil,
         "github_id"           => 1234,
         "avatar_url"          => nil,
+        "education"           => false,
+        "allow_migration"     => false,
         "repositories"        => [{
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -62,6 +70,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "read"            => true,
             "activate"        => false,
             "deactivate"      => false,
+            "migrate"         => false,
             "star"            => false,
             "unstar"          => false,
             "create_request"  => false,
@@ -75,6 +84,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "name"              => "example-repo",
           "slug"              => "example-org/example-repo",
           "description"       => nil,
+          "github_id"         => repo.github_id,
           "github_language"   => nil,
           "active"            => false,
           "private"           => false,
@@ -84,7 +94,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"           => "/v3/repo/#{repo.id}/branch/master",
             "@representation" => "minimal",
             "name"            => "master"},
-          "starred"           => false
+          "starred"           => false,
+          "managed_by_installation"=>false,
+          "active_on_org"     => nil,
+          "migration_status"  => nil,
         }]
       }}
     end
@@ -101,12 +114,14 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"             => "organization",
         "@href"             => "/v3/org/#{org.id}",
         "@representation"   => "standard",
-        "@permissions"      => { "read"=>true, "sync"=>false },
+        "@permissions"      => { "read" => true, "sync" => false },
         "id"                => org.id,
         "login"             => "example-org",
         "name"              => nil,
         "github_id"         => 1234,
         "avatar_url"        => nil,
+        "education"         => false,
+        "allow_migration"   => false,
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
@@ -115,6 +130,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "read"          => true,
             "activate"      => false,
             "deactivate"    => false,
+            "migrate"       => false,
             "star"          => false,
             "unstar"        => false,
             "create_request"=> false,
@@ -128,6 +144,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "name"            => "example-repo",
           "slug"            => "example-org/example-repo",
           "description"     => nil,
+          "github_id"       => repo.github_id,
           "github_language" => nil,
           "active"          => false,
           "private"         => false,
@@ -137,7 +154,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "@href"         => "/v3/repo/#{repo.id}/branch/master",
             "@representation"=> "minimal",
             "name"          => "master"},
-          "starred"         => false
+          "starred"         => false,
+          "managed_by_installation"=>false,
+          "active_on_org"   => nil,
+          "migration_status" => nil
         }]
       }}
     end
@@ -149,12 +169,14 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"            => "organization",
         "@href"            => "/v3/org/#{org.id}",
         "@representation"  => "standard",
-        "@permissions"     => { "read"=>true, "sync"=>false },
+        "@permissions"     => { "read" => true, "sync" => false },
         "id"               => org.id,
         "login"            => "example-org",
         "name"             => nil,
         "github_id"        => 1234,
-        "avatar_url"       => nil
+        "avatar_url"       => nil,
+        "education"        => false,
+        "allow_migration"  => false,
       }}
     end
 
@@ -169,12 +191,14 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"          => "organization",
         "@href"          => "/v3/org/#{org.id}",
         "@representation"=> "standard",
-        "@permissions"   => { "read"=>true, "sync"=>false },
+        "@permissions"   => { "read" => true, "sync" => false },
         "id"             => org.id,
         "login"          => "example-org",
         "name"           => nil,
         "github_id"      => 1234,
         "avatar_url"     => nil,
+        "education"      => false,
+        "allow_migration"=> false,
         "@warnings"      => [{
           "@type"        => "warning",
           "message"      => "query parameter organization.id not safelisted, ignored",
@@ -196,14 +220,16 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"          => "user",
         "@href"          => "/v3/user/#{user.id}",
         "@representation"=> "standard",
-        "@permissions"   => {"read"=>true, "sync"=>false},
+        "@permissions"   => {"read" => true, "sync" => false},
         "id"             => user.id,
         "login"          => "example-user",
         "name"           => nil,
         "github_id"      => 5678,
         "avatar_url"     => nil,
         "is_syncing"     => nil,
-        "synced_at"      => nil
+        "synced_at"      => nil,
+        "education"      => nil,
+        "allow_migration"=> false,
       }}
     end
 
@@ -214,14 +240,16 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"          => "user",
         "@href"          => "/v3/user/#{user.id}",
         "@representation"=> "standard",
-        "@permissions"   => {"read"=>true, "sync"=>false},
+        "@permissions"   => {"read" => true, "sync" => false},
         "id"             => user.id,
         "login"          => "example-user",
         "name"           => nil,
         "github_id"      => 5678,
         "avatar_url"     => nil,
+        "education"      => nil,
         "is_syncing"     => nil,
-        "synced_at"      => nil
+        "synced_at"      => nil,
+        "allow_migration"=> false,
       }}
     end
 
@@ -232,14 +260,16 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"            => "user",
         "@href"            => "/v3/user/#{user.id}",
         "@representation"  => "standard",
-        "@permissions"     => {"read"=>true, "sync"=>false},
+        "@permissions"     => {"read" => true, "sync" => false},
         "id"               => user.id,
         "login"            => "example-user",
         "name"             => nil,
         "github_id"        => 5678,
         "avatar_url"       => nil,
+        "education"        => nil,
         "is_syncing"       => nil,
-        "synced_at"        => nil
+        "synced_at"        => nil,
+        "allow_migration"  => false,
       }}
     end
 
@@ -254,14 +284,16 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"            => "user",
         "@href"            => "/v3/user/#{user.id}",
         "@representation"  => "standard",
-        "@permissions"     => {"read"=>true, "sync"=>false},
+        "@permissions"     => {"read" => true, "sync" => false},
         "id"               => user.id,
         "login"            => "example-user",
         "name"             => nil,
         "github_id"        => 5678,
         "avatar_url"       => nil,
+        "education"        => nil,
         "is_syncing"       => nil,
         "synced_at"        => nil,
+        "allow_migration"  => false,
         "@warnings"        => [{
           "@type"          => "warning",
           "message"        => "query parameter user.id not safelisted, ignored",

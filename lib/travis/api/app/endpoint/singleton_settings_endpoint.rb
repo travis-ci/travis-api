@@ -7,6 +7,7 @@ class Travis::Api::App
       def create_settings_class(name)
         klass = Class.new(self) do
           define_method(:name) { name }
+          before { authenticate_by_mode! }
           get("/:repository_id", scope: :private) do show end
           patch("/:repository_id", scope: :private) do update end
           delete("/:repository_id", scope: :private) do destroy end
@@ -15,7 +16,10 @@ class Travis::Api::App
     end
 
     def update
+      disallow_migrating!(parent.repository)
+
       record = parent.update(name, JSON.parse(request.body.read)[singular_name])
+
       if record.valid?
         repo_settings.save
         respond_with(record, type: singular_name, version: :v2)
@@ -26,6 +30,8 @@ class Travis::Api::App
     end
 
     def destroy
+      disallow_migrating!(parent.repository)
+
       record = parent.delete(name)
       repo_settings.save
       respond_with(record, type: singular_name, version: :v2)

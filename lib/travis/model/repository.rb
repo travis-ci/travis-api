@@ -11,6 +11,8 @@ require 'travis/model'
 # A repository also has a ServiceHook that can be used to de/activate service
 # hooks on Github.
 class Repository < Travis::Model
+  include Travis::ScopeAccess
+
   require 'travis/model/repository/status_image'
   require 'travis/model/repository/settings'
 
@@ -83,11 +85,11 @@ class Repository < Travis::Model
     Hash[*all.map { |repository| [repository.name, repository] }.flatten]
   end
 
-  def self.counts_by_owner_names(owner_names)
-    query = %(SELECT owner_name, count(*) FROM repositories WHERE owner_name IN (?) AND invalidated_at IS NULL GROUP BY owner_name)
-    query = sanitize_sql([query, owner_names])
-    rows = connection.select_all(query, owner_names)
-    Hash[*rows.map { |row| [row['owner_name'], row['count'].to_i] }.flatten]
+  def self.counts_by_owner_ids(owner_ids, owner_type)
+    query = %(SELECT owner_id, count(*) FROM repositories WHERE owner_id IN (?) and owner_type = ? AND invalidated_at IS NULL GROUP BY owner_id)
+    query = sanitize_sql([query, owner_ids, owner_type])
+    rows = connection.select_all(query, owner_ids)
+    Hash[*rows.map { |row| [row['owner_id'].to_i, row['count'].to_i] }.flatten]
   end
 
   delegate :builds_only_with_travis_yml?, to: :settings
@@ -130,6 +132,10 @@ class Repository < Travis::Model
     builds.api_and_pushes_and_crons.last_build_on(state: [:passed, :failed, :errored, :canceled], branch: branch)
   end
 
+  def last_builds_on(branch)
+    builds.api_and_pushes_and_crons.last_builds_on(branch: branch)
+  end
+
   def last_build_on(branch)
     builds.api_and_pushes_and_crons.last_build_on(branch: branch)
   end
@@ -147,6 +153,11 @@ class Repository < Travis::Model
         order  by branch, finished_at desc
       ) as last_builds on builds.id = last_builds.id
     )).limit(limit).order('finished_at DESC')
+    # scope = builds.select('DISTINCT ON (branch) id')
+    # scope = scope.where(event_type: 'push')
+    # scope = scope.group(:branch, :id)
+    # scope = scope.order('branch, finished_at DESC')
+    # Build.where(id: scope).limit(limit).order('finished_at DESC')
   end
 
   def regenerate_key!
@@ -192,5 +203,4 @@ class Repository < Travis::Model
   def dist_group_expansion_enabled?
     Travis::Features.enabled_for_all?(:dist_group_expansion) || Travis::Features.active?(:dist_group_expansion, self)
   end
-
 end

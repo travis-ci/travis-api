@@ -1,8 +1,12 @@
-require 'knapsack'
+# require 'knapsack'
+#
+# Knapsack::Adapters::RspecAdapter.bind
 
-Knapsack::Adapters::RspecAdapter.bind
+$: << 'lib'
 
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
+ENV['BILLING_V2_ENABLED'] = 'true'
+ENV['GDPR_ENABLED'] = 'true'
 
 require 'support/coverage' unless ENV['SKIP_COVERAGE']
 
@@ -16,20 +20,30 @@ require 'pry'
 require 'stackprof'
 require 'webmock/rspec'
 
+require 'active_record'
+ActiveRecord::Base.raise_in_transactional_callbacks = true
+
 require 'travis/api/app'
 require 'travis/testing'
 require 'travis/testing/scenario'
 require 'travis/testing/factories'
 require 'travis/testing/matchers'
+require 'auth/helpers'
+require 'support/active_record'
+require 'support/billing_spec_helper'
+require 'support/env'
 require 'support/formats'
 require 'support/gcs'
+require 'support/gdpr_spec_helper'
 require 'support/matchers'
 require 'support/payloads'
 require 'support/private_key'
 require 'support/s3'
-require 'support/test_helpers'
 require 'support/shared_examples'
-require 'support/active_record'
+require 'support/ssl_keys'
+require 'support/test_helpers'
+
+FactoryBot = FactoryGirl
 
 module TestHelpers
   include Sinatra::TestHelpers
@@ -63,6 +77,14 @@ RSpec.configure do |c|
   c.mock_framework = :mocha
   c.expect_with :rspec
   c.include TestHelpers
+  c.include Support::Env
+  c.include Support::AuthHelpers, auth_helpers: true
+  c.include Support::BillingSpecHelper, billing_spec_helper: true
+  c.include Support::GdprSpecHelper, gdpr_spec_helper: true
+
+  # for auth tests against staging, how the hell does this work, if at all
+  # c.filter_run mode: :private, repo: :private
+  # c.filter_run_excluding mode: :public, repo: :public
 
   c.before :suite do
     Travis.testing = true
@@ -70,7 +92,6 @@ RSpec.configure do |c|
     Travis::Api::App.setup
     Travis.config.client_domain = "www.example.com"
     Travis.config.endpoints.ssh_key = true
-    Travis.config.public_mode = true
 
     DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
@@ -84,7 +105,9 @@ RSpec.configure do |c|
 
   c.before :each do
     DatabaseCleaner.start
-    Redis.new.flushall
+    Redis.new(Travis.config.redis.to_h).flushall
+    Travis.config.public_mode = true
+    Travis.config.host = 'travis-ci.org'
     Travis.config.oauth2.scope = "user:email,public_repo"
   end
 

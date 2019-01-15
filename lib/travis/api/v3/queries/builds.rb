@@ -12,7 +12,7 @@ module Travis::API::V3
     def active_from(repositories)
       V3::Models::Build.where(
         repository_id: repositories.pluck(:id),
-        state: ['created'.freeze, 'started'.freeze]
+        state: ['created'.freeze, 'queued'.freeze, 'received'.freeze, 'started'.freeze]
       ).includes(:active_jobs)
     end
 
@@ -29,17 +29,17 @@ module Travis::API::V3
     end
 
     def for_owner(relation)
-      users = V3::Models::User.where(login: list(created_by)).pluck(:id)
-      orgs = V3::Models::Organization.where(login: list(created_by)).pluck(:id)
-
-      relation.where(%Q((builds.sender_type = 'User' AND builds.sender_id IN (?))
+      users  = V3::Models::User.where(login: list(created_by)).pluck(:id)
+      orgs   = V3::Models::Organization.where(login: list(created_by)).pluck(:id)
+      builds = relation.where(%Q((builds.sender_type = 'User' AND builds.sender_id IN (?))
                     OR (builds.sender_type = 'Organization' AND builds.sender_id IN (?))), users, orgs)
+
+      builds
     end
 
     def for_user(user)
-      V3::Models::Build.where(
-        sender_id: user.id,
-        sender_type: 'User')
+      builds = V3::Models::Build.where(sender_id: user.id, sender_type: 'User')
+      sort filter(builds)
     end
   end
 end

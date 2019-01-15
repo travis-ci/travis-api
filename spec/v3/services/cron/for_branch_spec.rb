@@ -33,7 +33,8 @@ describe Travis::API::V3::Services::Cron::ForBranch, set_app: true do
       "dont_run_if_recent_build_exists"    => false,
       "last_run"            => cron.last_run,
       "next_run"            => cron.next_run.strftime('%Y-%m-%dT%H:%M:%SZ'),
-      "created_at"          => cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ')
+      "created_at"          => cron.created_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+      "active"              => true,
     })}
   end
 
