@@ -62,8 +62,6 @@ module Travis::API::V3
       end
     end
 
-    private
-
     def set_webhook(repo, active)
       payload = {
         name: 'web'.freeze,
@@ -89,14 +87,24 @@ module Travis::API::V3
       end
     end
 
+    def service_hook(repo)
+      hooks(repo).detect { |h| h['name'] == 'travis' && h.dig('config', 'domain') == service_hook_url.host }
+    end
+
     def service_hook_url?(repo)
-      if hook = hooks(repo).detect { |h| h['name'] == 'travis' }
+      if hook = service_hook(repo)
         hook.dig('_links', 'self', 'href')
       end
     end
 
+    def webhook(repo)
+      hooks(repo).detect do |h|
+        h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url
+      end
+    end
+
     def webhook_url?(repo)
-      if hook = hooks(repo).detect { |h| h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url }
+      if hook = webhook(repo)
         hook.dig('_links', 'self', 'href')
       end
     end
