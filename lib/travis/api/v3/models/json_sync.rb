@@ -5,8 +5,8 @@ module Travis::API::V3
     def sync(parent, attr)
       @parent, @attr = parent, attr
       @sync = -> do
-        previous = @parent.send(@attr) || {}
-        @parent.send("#{@attr}=", previous.merge(to_h).to_json)
+        previous = @parent[@attr] || {}
+        @parent[@attr] = previous.merge(to_h).to_json
         @parent.save!
       end
     end

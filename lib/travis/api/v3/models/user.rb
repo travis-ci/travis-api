@@ -1,3 +1,5 @@
+require 'travis/api/v3/models/user_preferences'
+
 module Travis::API::V3
   class Models::User < Model
     has_many :memberships,   dependent: :destroy
@@ -9,6 +11,8 @@ module Travis::API::V3
     has_many :email_unsubscribes
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
+
+    has_preferences Models::UserPreferences
 
     serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
     scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
@@ -43,10 +47,6 @@ module Travis::API::V3
     def installation
       return @installation if defined? @installation
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
-    end
-
-    def user_preferences
-      Models::Preferences.new(preferences).tap { |prefs| prefs.sync(self, :preferences) }
     end
   end
 end
