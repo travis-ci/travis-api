@@ -23,7 +23,7 @@ module Travis::API::V3::Models
         c.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
         c.adapter Faraday.default_adapter
       end
-      response = connection.post("/api/repository/#{repository.slug}/migrate")
+      response = connection.post("/api/repo/by_github_id/#{repository.github_id}/migrate")
 
       unless response.success?
         raise MigrationRequestFailed
