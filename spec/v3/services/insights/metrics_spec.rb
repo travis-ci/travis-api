@@ -152,25 +152,55 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
       context 'for a user' do
         let(:owner_type) { 'User' }
+        let(:owner_id) { requested_user.id }
+
+        before do
+          # we need to use the v3 model to manipulate the preferences
+          v3 = Travis::API::V3::Models::User.find requested_user.id
+          v3.preferences.update(:private_insights_visibility, preference_value)
+        end
 
         context 'themselves' do
-          let(:owner_id) { user.id }
+          let(:requested_user) { user }
 
-          it_behaves_like 'proxies the request', expected_private_flag: true
+          context 'with private preference' do
+            let(:preference_value) { 'private' }
+            it_behaves_like 'proxies the request', expected_private_flag: true
+          end
+
+          context 'with public preference' do
+            let(:preference_value) { 'public' }
+            it_behaves_like 'proxies the request', expected_private_flag: true
+          end
         end
 
         context 'a different one' do
-          let(:owner_id) { Factory(:user).id }
+          let(:requested_user) { Factory(:user) }
 
-          it_behaves_like 'proxies the request', expected_private_flag: false
+          context 'with private preference' do
+            let(:preference_value) { 'private' }
+            it_behaves_like 'proxies the request', expected_private_flag: false
+          end
+
+          context 'with public preference' do
+            let(:preference_value) { 'public' }
+            it_behaves_like 'proxies the request', expected_private_flag: true
+          end
         end
       end
 
       context 'for an organization' do
         let(:owner_type) { 'Organization' }
+        let(:owner_id) { requested_organization.id }
+
+        before do
+          # we need to use the v3 model to manipulate the preferences
+          v3 = Travis::API::V3::Models::Organization.find requested_organization.id
+          v3.preferences.update(:private_insights_visibility, preference_value)
+        end
 
         context 'they belong to' do
-          let(:owner_id) { organization.id }
+          let(:requested_organization) { organization }
 
           before do
             organization.memberships.create!(user: user, role: role)
@@ -179,20 +209,59 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
           context 'as admin' do
             let(:role) { 'admin' }
 
-            it_behaves_like 'proxies the request', expected_private_flag: true
+            context 'with admins preference' do
+              let(:preference_value) { 'admins' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
+
+            context 'with members preference' do
+              let(:preference_value) { 'members' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
+
+            context 'with public preference' do
+              let(:preference_value) { 'public' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
           end
 
           context 'as simple user' do
             let(:role) { 'member' }
 
-            it_behaves_like 'proxies the request', expected_private_flag: false
+            context 'with admins preference' do
+              let(:preference_value) { 'admins' }
+              it_behaves_like 'proxies the request', expected_private_flag: false
+            end
+
+            context 'with members preference' do
+              let(:preference_value) { 'members' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
+
+            context 'with public preference' do
+              let(:preference_value) { 'public' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
           end
         end
 
         context 'a different one' do
-          let(:owner_id) { Factory(:org).id }
+          let(:requested_organization) { Factory(:org) }
 
-          it_behaves_like 'proxies the request', expected_private_flag: false
+          context 'with admins preference' do
+            let(:preference_value) { 'admins' }
+            it_behaves_like 'proxies the request', expected_private_flag: false
+          end
+
+          context 'with members preference' do
+            let(:preference_value) { 'members' }
+            it_behaves_like 'proxies the request', expected_private_flag: false
+          end
+
+          context 'with public preference' do
+            let(:preference_value) { 'public' }
+            it_behaves_like 'proxies the request', expected_private_flag: true
+          end
         end
       end
     end
