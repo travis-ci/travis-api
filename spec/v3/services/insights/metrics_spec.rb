@@ -20,7 +20,11 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
   subject(:response) { get("/v3/insights/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&rest-of-params=value", {}, headers) }
 
-  shared_examples_for 'proxies the request' do
+  shared_examples_for 'proxies the request' do |variables = {}|
+    variables.each do |variable, value|
+      let(variable) { value }
+    end
+
     it 'requests the metrics from the insights service' do
       expect(response.status).to eq(200)
       response_data = JSON.parse(response.body)
@@ -44,18 +48,14 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
     context 'when the wrong owner_type is passed' do
       let(:owner_type) { 'Repository' }
 
-      it_behaves_like 'blocks the request', 400
+      it "responds with 400 and does not do any request" do
+        expect(response.status).to eq(400)
+        expect(stubbed_request).to_not have_been_made
+      end
     end
   end
 
-  shared_examples_for 'blocks the request' do |status|
-    it "responds with #{status} and does not do any request" do
-      expect(response.status).to eq(status)
-      expect(stubbed_request).to_not have_been_made
-    end
-  end
-
-  context 'in .org' do # TL;DR: proxies always
+  context 'in .org' do
     let(:site) { :org }
 
     context 'unauthenticated' do
@@ -129,25 +129,21 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
     let(:site) { :com }
     let(:insights_url) { super() + "&private=#{expected_private_flag}" }
 
-    context 'unauthenticated' do # TL;DR: block everything
+    context 'unauthenticated' do
       let(:headers) { anonymous_headers }
 
       context 'for a user' do
         let(:owner_type) { 'User' }
         let(:owner_id) { Factory(:user).id }
 
-        let(:expected_private_flag) { false }
-
-        it_behaves_like 'proxies the request'
+        it_behaves_like 'proxies the request', expected_private_flag: false
       end
 
       context 'for an organization' do
         let(:owner_type) { 'Organization' }
         let(:owner_id) { Factory(:org).id }
 
-        let(:expected_private_flag) { false }
-
-        it_behaves_like 'proxies the request'
+        it_behaves_like 'proxies the request', expected_private_flag: false
       end
     end
 
@@ -156,29 +152,55 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
       context 'for a user' do
         let(:owner_type) { 'User' }
+        let(:owner_id) { requested_user.id }
+
+        before do
+          # we need to use the v3 model to manipulate the preferences
+          v3 = Travis::API::V3::Models::User.find requested_user.id
+          v3.preferences.update(:private_insights_visibility, preference_value)
+        end
 
         context 'themselves' do
-          let(:owner_id) { user.id }
+          let(:requested_user) { user }
 
-          let(:expected_private_flag) { true }
+          context 'with private preference' do
+            let(:preference_value) { 'private' }
+            it_behaves_like 'proxies the request', expected_private_flag: true
+          end
 
-          it_behaves_like 'proxies the request'
+          context 'with public preference' do
+            let(:preference_value) { 'public' }
+            it_behaves_like 'proxies the request', expected_private_flag: true
+          end
         end
 
         context 'a different one' do
-          let(:owner_id) { Factory(:user).id }
+          let(:requested_user) { Factory(:user) }
 
-          let(:expected_private_flag) { false }
+          context 'with private preference' do
+            let(:preference_value) { 'private' }
+            it_behaves_like 'proxies the request', expected_private_flag: false
+          end
 
-          it_behaves_like 'proxies the request'
+          context 'with public preference' do
+            let(:preference_value) { 'public' }
+            it_behaves_like 'proxies the request', expected_private_flag: true
+          end
         end
       end
 
       context 'for an organization' do
         let(:owner_type) { 'Organization' }
+        let(:owner_id) { requested_organization.id }
+
+        before do
+          # we need to use the v3 model to manipulate the preferences
+          v3 = Travis::API::V3::Models::Organization.find requested_organization.id
+          v3.preferences.update(:private_insights_visibility, preference_value)
+        end
 
         context 'they belong to' do
-          let(:owner_id) { organization.id }
+          let(:requested_organization) { organization }
 
           before do
             organization.memberships.create!(user: user, role: role)
@@ -187,26 +209,59 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
           context 'as admin' do
             let(:role) { 'admin' }
 
-            let(:expected_private_flag) { true }
+            context 'with admins preference' do
+              let(:preference_value) { 'admins' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
 
-            it_behaves_like 'proxies the request'
+            context 'with members preference' do
+              let(:preference_value) { 'members' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
+
+            context 'with public preference' do
+              let(:preference_value) { 'public' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
           end
 
           context 'as simple user' do
             let(:role) { 'member' }
 
-            let(:expected_private_flag) { false }
+            context 'with admins preference' do
+              let(:preference_value) { 'admins' }
+              it_behaves_like 'proxies the request', expected_private_flag: false
+            end
 
-            it_behaves_like 'proxies the request'
+            context 'with members preference' do
+              let(:preference_value) { 'members' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
+
+            context 'with public preference' do
+              let(:preference_value) { 'public' }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
           end
         end
 
         context 'a different one' do
-          let(:owner_id) { Factory(:org).id }
+          let(:requested_organization) { Factory(:org) }
 
-          let(:expected_private_flag) { false }
+          context 'with admins preference' do
+            let(:preference_value) { 'admins' }
+            it_behaves_like 'proxies the request', expected_private_flag: false
+          end
 
-          it_behaves_like 'proxies the request'
+          context 'with members preference' do
+            let(:preference_value) { 'members' }
+            it_behaves_like 'proxies the request', expected_private_flag: false
+          end
+
+          context 'with public preference' do
+            let(:preference_value) { 'public' }
+            it_behaves_like 'proxies the request', expected_private_flag: true
+          end
         end
       end
     end
