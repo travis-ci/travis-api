@@ -10,7 +10,16 @@ module Travis::API::V3
     private
 
     def private_flag
-      access_control.adminable?(owner)
+      case owner.preferences.private_insights_visibility
+      when 'public'
+        true
+      when 'private', 'admins'
+        access_control.adminable?(owner)
+      when 'members' # only organizations can have this value
+        owner.members.include?(access_control.user)
+      else # no other values are in theory possible but just in case
+        false
+      end
     end
 
     def owner
