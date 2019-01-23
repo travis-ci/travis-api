@@ -271,6 +271,11 @@ module Travis::API::V3
         post :create
       end
 
+      hidden_resource :free_subscriptions do
+        route '/free_subscriptions'
+        post :create
+      end
+
       hidden_resource :subscription do
         route '/subscription/{subscription.id}'
         patch :update_address, '/address'

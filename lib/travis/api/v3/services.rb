@@ -19,6 +19,7 @@ module Travis::API::V3
     EnvVar              = Module.new { extend Services }
     EnvVars             = Module.new { extend Services }
     EnterpriseLicense   = Module.new { extend Services }
+    FreeSubscriptions   = Module.new { extend Services }
     Gdpr                = Module.new { extend Services }
     Insights            = Module.new { extend Services }
     Installation        = Module.new { extend Services }

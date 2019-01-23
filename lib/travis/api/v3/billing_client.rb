@@ -50,6 +50,13 @@ module Travis::API::V3
 
     def create_subscription(subscription_data)
       response = connection.post('/subscriptions', subscription_data)
+
+      handle_errors_and_respond(response)
+    end
+
+    def create_free_subscription(subscription_data)
+      response = connection.post('/free_subscriptions', subscription_data)
+
       handle_errors_and_respond(response)
     end
 
