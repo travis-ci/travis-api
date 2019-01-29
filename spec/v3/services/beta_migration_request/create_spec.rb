@@ -60,31 +60,28 @@ describe Travis::API::V3::Services::BetaMigrationRequest::Create, set_app: true 
       "owner_type"      => "User")
     }
 
-    it "enables beta for the user" do
-      expect(Travis::Features.owner_active?(:beta_migration_opt_in, user)).to be true
-    end
-
     context "when user has admin access to orgs they have selected" do
       let(:params)  {{organizations: valid_org_ids}}
 
-      it "enables beta for orgs selected by the user" do
-        valid_orgs.each do |org|
-          expect(Travis::Features.owner_active?(:beta_migration_opt_in, org)).to be true
-        end
+      it "selects all the orgs selected by the user" do
+        selected_org_ids = Travis::API::V3::Models::BetaMigrationRequest.where(owner_id: user.id).last.organizations.pluck(:id)
+
+        expect(valid_org_ids & selected_org_ids).to eq valid_org_ids
       end
     end
 
     context "when user does not have admin access to some orgs they have selected" do
       let(:params)  { {organizations: valid_org_ids + [invalid_org.id]} }
 
-      it "enables beta for valid orgs selected by the user" do
-        valid_orgs.each do |org|
-          expect(Travis::Features.owner_active?(:beta_migration_opt_in, org)).to be true
-        end
+      it "selects only the valid orgs selected by the user" do
+        selected_org_ids = Travis::API::V3::Models::BetaMigrationRequest.where(owner_id: user.id).last.organizations.pluck(:id)
+
+        expect(valid_org_ids & selected_org_ids).to eq valid_org_ids
       end
 
       it "does not enable beta for invalid orgs selected by the user" do
-        expect(Travis::Features.owner_active?(:beta_migration_opt_in, invalid_org)).to be false
+        selected_org_ids = Travis::API::V3::Models::BetaMigrationRequest.where(owner_id: user.id).last.organizations.pluck(:id)
+        expect(selected_org_ids).to_not include invalid_org
       end
     end
   end
