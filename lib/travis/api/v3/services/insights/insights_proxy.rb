@@ -10,6 +10,10 @@ module Travis::API::V3
     private
 
     def private_flag
+      params['private'] == 'true' && can_get_private?
+    end
+
+    def can_get_private?
       case owner.preferences.private_insights_visibility
       when 'public'
         true
