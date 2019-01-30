@@ -94,7 +94,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "starred"            => false,
       "active_on_org"      => nil,
       "managed_by_installation" => false,
-      "migration_status"   => nil
+      "migration_status"   => nil,
+      "github_service_hook" => false
     })}
   end
 
