@@ -92,7 +92,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "starred"          => false,
           "managed_by_installation"=>false,
           "active_on_org"    => nil,
-          "migration_status" => nil
+          "migration_status" => nil,
+          "github_service_hook" => false
         }]}}
   end
 
@@ -139,6 +140,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "managed_by_installation"=>false,
         "active_on_org"     => nil,
         "migration_status"  => nil,
+        "github_service_hook" => false,
         "last_started_build"=>{
           "@type"          =>"build",
           "@href"          =>"/v3/build/#{build.id}",
@@ -245,6 +247,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "managed_by_installation"=> false,
         "active_on_org"    => nil,
         "migration_status" => nil,
+        "github_service_hook" => false,
         "current_build" => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -396,7 +399,10 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "starred"         => false,
         "managed_by_installation"=>false,
         "active_on_org"   => nil,
-        "migration_status" => nil}, {
+        "migration_status" => nil,
+        "github_service_hook" => false,
+      },
+      {
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo2.id}",
         "@representation" => "standard",
@@ -431,10 +437,13 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@type"         => "branch",
           "@href"         => "/v3/repo/#{repo2.id}/branch/master",
           "@representation"=>"minimal",
-          "name"           =>"master" },
+          "name"           =>"master"
+        },
           "starred"        => false,
           "managed_by_installation"=>false,
-          "active_on_org"  =>nil,
-          "migration_status" => nil}]}
+          "active_on_org"  => nil,
+          "migration_status" => nil,
+          "github_service_hook" => false,
+      }]}
   end
 end

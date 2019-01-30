@@ -5,7 +5,7 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
   let(:authenticated_headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
   let(:anonymous_headers) {{}}
   let(:expected_data) { { 'metrics' => ['whatever'] } }
-  let(:insights_url) { "#{Travis.config.insights.endpoint}/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&rest-of-params=value" }
+  let(:insights_url) { "#{Travis.config.insights.endpoint}/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&private=#{expected_private_flag}&rest-of-params=value" }
   let(:stubbed_response_status) { 200 }
   let(:stubbed_response_body) { JSON.dump(expected_data) }
   let(:stubbed_response_headers) {{ content_type: 'application/json' }}
@@ -18,7 +18,7 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
     Travis.config.host = "travis-ci.#{site}"
   end
 
-  subject(:response) { get("/v3/insights/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&rest-of-params=value", {}, headers) }
+  subject(:response) { get("/v3/insights/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&private=#{passed_private_flag}&rest-of-params=value", {}, headers) }
 
   shared_examples_for 'proxies the request' do |variables = {}|
     variables.each do |variable, value|
@@ -57,6 +57,8 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
   context 'in .org' do
     let(:site) { :org }
+    let(:passed_private_flag) { false }
+    let(:expected_private_flag) { false }
 
     context 'unauthenticated' do
       let(:headers) { anonymous_headers }
@@ -127,7 +129,10 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
   context 'in .com' do
     let(:site) { :com }
-    let(:insights_url) { super() + "&private=#{expected_private_flag}" }
+    let(:passed_private_flag) { true }
+    let(:expected_private_flag) { false } # this combination is the "safest" (don't request private from insights even
+                                          # if it was passed to API). We'll override for the specific cases where this
+                                          # is not the case, i.e. users with permissions
 
     context 'unauthenticated' do
       let(:headers) { anonymous_headers }
@@ -165,12 +170,30 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
           context 'with private preference' do
             let(:preference_value) { 'private' }
-            it_behaves_like 'proxies the request', expected_private_flag: true
+
+            context 'requesting only public data' do
+              let(:passed_private_flag) { false }
+              it_behaves_like 'proxies the request', expected_private_flag: false
+            end
+
+            context 'requesting all data' do
+              let(:passed_private_flag) { true }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
           end
 
           context 'with public preference' do
             let(:preference_value) { 'public' }
-            it_behaves_like 'proxies the request', expected_private_flag: true
+
+            context 'requesting only public data' do
+              let(:passed_private_flag) { false }
+              it_behaves_like 'proxies the request', expected_private_flag: false
+            end
+
+            context 'requesting all data' do
+              let(:passed_private_flag) { true }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
           end
         end
 
@@ -184,7 +207,16 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
           context 'with public preference' do
             let(:preference_value) { 'public' }
-            it_behaves_like 'proxies the request', expected_private_flag: true
+
+            context 'requesting only public data' do
+              let(:passed_private_flag) { false }
+              it_behaves_like 'proxies the request', expected_private_flag: false
+            end
+
+            context 'requesting all data' do
+              let(:passed_private_flag) { true }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
           end
         end
       end
@@ -211,17 +243,44 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
             context 'with admins preference' do
               let(:preference_value) { 'admins' }
-              it_behaves_like 'proxies the request', expected_private_flag: true
+
+              context 'requesting only public data' do
+                let(:passed_private_flag) { false }
+                it_behaves_like 'proxies the request', expected_private_flag: false
+              end
+
+              context 'requesting all data' do
+                let(:passed_private_flag) { true }
+                it_behaves_like 'proxies the request', expected_private_flag: true
+              end
             end
 
             context 'with members preference' do
               let(:preference_value) { 'members' }
-              it_behaves_like 'proxies the request', expected_private_flag: true
+
+              context 'requesting only public data' do
+                let(:passed_private_flag) { false }
+                it_behaves_like 'proxies the request', expected_private_flag: false
+              end
+
+              context 'requesting all data' do
+                let(:passed_private_flag) { true }
+                it_behaves_like 'proxies the request', expected_private_flag: true
+              end
             end
 
             context 'with public preference' do
               let(:preference_value) { 'public' }
-              it_behaves_like 'proxies the request', expected_private_flag: true
+
+              context 'requesting only public data' do
+                let(:passed_private_flag) { false }
+                it_behaves_like 'proxies the request', expected_private_flag: false
+              end
+
+              context 'requesting all data' do
+                let(:passed_private_flag) { true }
+                it_behaves_like 'proxies the request', expected_private_flag: true
+              end
             end
           end
 
@@ -235,12 +294,30 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
             context 'with members preference' do
               let(:preference_value) { 'members' }
-              it_behaves_like 'proxies the request', expected_private_flag: true
+
+              context 'requesting only public data' do
+                let(:passed_private_flag) { false }
+                it_behaves_like 'proxies the request', expected_private_flag: false
+              end
+
+              context 'requesting all data' do
+                let(:passed_private_flag) { true }
+                it_behaves_like 'proxies the request', expected_private_flag: true
+              end
             end
 
             context 'with public preference' do
               let(:preference_value) { 'public' }
-              it_behaves_like 'proxies the request', expected_private_flag: true
+
+              context 'requesting only public data' do
+                let(:passed_private_flag) { false }
+                it_behaves_like 'proxies the request', expected_private_flag: false
+              end
+
+              context 'requesting all data' do
+                let(:passed_private_flag) { true }
+                it_behaves_like 'proxies the request', expected_private_flag: true
+              end
             end
           end
         end
@@ -260,7 +337,16 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
 
           context 'with public preference' do
             let(:preference_value) { 'public' }
-            it_behaves_like 'proxies the request', expected_private_flag: true
+
+            context 'requesting only public data' do
+              let(:passed_private_flag) { false }
+              it_behaves_like 'proxies the request', expected_private_flag: false
+            end
+
+            context 'requesting all data' do
+              let(:passed_private_flag) { true }
+              it_behaves_like 'proxies the request', expected_private_flag: true
+            end
           end
         end
       end
