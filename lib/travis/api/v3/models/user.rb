@@ -11,6 +11,7 @@ module Travis::API::V3
     has_many :email_unsubscribes
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
+    has_one  :beta_migration_request
 
     has_preferences Models::UserPreferences
 
