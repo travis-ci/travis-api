@@ -71,8 +71,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "starred"            => false,
         "managed_by_installation"=>false,
         "active_on_org"=>nil,
-        "migration_status" => nil,
-        "github_service_hook" => false
+        "migration_status" => nil
         }]
     }}
   end
