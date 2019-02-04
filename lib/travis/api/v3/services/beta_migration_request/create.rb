@@ -10,15 +10,8 @@ module Travis::API::V3
       beta_migration_request = query(:beta_migration_request).create(current_user, organizations)
 
       beta_migration_request.save!
-      enable_opt_in(organizations + [current_user])
 
       result beta_migration_request
-    end
-
-    def enable_opt_in(owners)
-      owners.each do |org|
-        Travis::Features.activate_owner(:beta_migration_opt_in, org)
-      end
     end
 
     def validate_organizations(current_user)
