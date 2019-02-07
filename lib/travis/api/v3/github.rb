@@ -46,6 +46,7 @@ module Travis::API::V3
 
     def set_hook(repo, active)
       set_webhook(repo, active)
+      deactivate_service_hook(repo) if Travis.config.enterprise
     end
 
     def upload_key(repository)

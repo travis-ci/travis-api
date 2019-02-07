@@ -79,6 +79,18 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
           post("/v3/repo/#{repo.id}/activate", {}, headers)
         end
 
+        context 'enterprise' do
+          around do |ex|
+            Travis.config.enterprise = true
+            ex.run
+            Travis.config.enterprise = false
+          end
+
+          example 'deactivates service hook' do
+            expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload).once
+          end
+        end
+
         example 'no longer deactivates service hook' do
           expect(WebMock).not_to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload)
         end
