@@ -287,7 +287,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"              => "user",
         "@href"              => "/v3/user/#{user.id}",
         "@representation"    => "standard",
-        "@permissions"       => { "read" => true, "sync" => false, "admin" => false },
+        "@permissions"       => {"read" => true, "sync" => false},
         "id"                 => user.id,
         "login"              => "example-user",
         "name"               => nil,
