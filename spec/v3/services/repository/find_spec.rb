@@ -11,6 +11,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => true,
         "deactivate"       => true,
+        "migrate"          => true,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
@@ -24,6 +25,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => true,
         "deactivate"       => true,
+        "migrate"          => false,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
@@ -37,6 +39,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => false,
         "deactivate"       => false,
+        "migrate"          => false,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => false,
@@ -50,6 +53,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => false,
         "deactivate"       => false,
+        "migrate"          => false,
         "star"             => false,
         "unstar"           => false,
         "create_request"   => false,
@@ -89,7 +93,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "name"             => "master"},
       "starred"            => false,
       "active_on_org"      => nil,
-      "managed_by_installation" => false
+      "managed_by_installation" => false,
+      "migration_status"   => nil
     })}
   end
 

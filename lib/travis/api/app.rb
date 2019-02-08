@@ -3,6 +3,7 @@ require 'travis'
 require 'travis/amqp'
 require 'travis/model'
 require 'travis/states_cache'
+require 'travis/request_deadline'
 require 'travis/honeycomb'
 require 'travis/marginalia'
 require 'rack'
@@ -97,6 +98,8 @@ module Travis::Api
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
 
+        use Travis::RequestDeadline::Middleware if Travis::RequestDeadline.enabled?
+
         use Rack::Config do |env|
           env['metriks.request.start'] ||= Time.now.utc
 
@@ -108,13 +111,17 @@ module Travis::Api
           ::Marginalia.set('request_id', env['HTTP_X_REQUEST_ID'])
         end
 
+        use Travis::Api::App::Cors
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
 
-        use Rack::Config do |env|
-          if env['HTTP_HONEYCOMB_OVERRIDE'] == 'true'
-            Travis::Honeycomb.override!
+        if Travis::Api::App.use_monitoring?
+          use Rack::Config do |env|
+            if env['HTTP_X_REQUEST_ID']
+              Raven.tags_context(request_id: env['HTTP_X_REQUEST_ID'])
+            end
           end
+          use Raven::Rack
         end
 
         if Travis::Honeycomb.api_requests.enabled?
@@ -129,15 +136,6 @@ module Travis::Api
           use Travis::Api::App::Middleware::OpenCensus
         end
 
-        use Travis::Api::App::Cors # if Travis.env == 'development' ???
-        if Travis::Api::App.use_monitoring?
-          use Rack::Config do |env|
-            if env['HTTP_X_REQUEST_ID']
-              Raven.tags_context(request_id: env['HTTP_X_REQUEST_ID'])
-            end
-          end
-          use Raven::Rack
-        end
         use Rack::SSL if Endpoint.production?
         use ActiveRecord::ConnectionAdapters::ConnectionManagement
         use ActiveRecord::QueryCache
@@ -249,6 +247,8 @@ module Travis::Api
             Fog::Logger[channel] = nil
           end
         end
+
+        Travis::RequestDeadline.setup
       end
 
       def self.setup_database_connections

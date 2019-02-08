@@ -142,7 +142,7 @@ describe Travis::API::V3::Models::Cron do
   end
 
   describe 'needs_new_build' do
-    let(:repo)   { FactoryGirl.create(:repository, active: active) }
+    let(:repo)   { FactoryGirl.create(:repository_without_last_build, active: active) }
     let(:branch) { FactoryGirl.create(:branch, repository_id: repo.id) }
     let(:cron)   { FactoryGirl.create(:cron, branch_id: branch.id) }
 

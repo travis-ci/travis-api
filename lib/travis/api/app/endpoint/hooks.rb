@@ -10,7 +10,9 @@ class Travis::Api::App
       end
 
       put '/:id?', scope: :private do
-        respond_with service(:update_hook, id: params[:id] || params[:hook][:id], active: params[:hook][:active])
+        service = service(:update_hook, id: params[:id] || params[:hook][:id], active: params[:hook][:active])
+        disallow_migrating!(service.repo)
+        respond_with service
       end
     end
   end

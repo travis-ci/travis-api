@@ -2,7 +2,7 @@ describe Travis::Services::FindBuilds do
   before { DatabaseCleaner.clean_with :truncation }
 
   let(:user)    { Factory(:user) }
-  let(:repo)    { Factory(:repository, owner_name: 'travis-ci', name: 'travis-core') }
+  let(:repo)    { Factory(:repository_without_last_build, owner_name: 'travis-ci', name: 'travis-core') }
   let!(:push)   { Factory(:build, repository: repo, event_type: 'push', state: :failed, number: 1) }
   let(:service) { described_class.new(user, params) }
 
@@ -32,7 +32,7 @@ describe Travis::Services::FindBuilds do
 
     it 'finds builds with a given number, scoped by repository' do
       @params = { :repository_id => repo.id, :number => 1 }
-      Factory(:build, :repository => Factory(:repository), :state => :finished, :number => 1)
+      Factory(:build, :repository => Factory(:repository_without_last_build), :state => :finished, :number => 1)
       Factory(:build, :repository => repo, :state => :finished, :number => 2)
       service.run.should == [push]
     end
@@ -44,7 +44,7 @@ describe Travis::Services::FindBuilds do
 
     it 'scopes to the given repository_id' do
       @params = { :repository_id => repo.id }
-      Factory(:build, :repository => Factory(:repository), :state => :finished)
+      Factory(:build, :repository => Factory(:repository_without_last_build), :state => :finished)
       service.run.should == [push]
     end
 
@@ -163,18 +163,18 @@ describe Travis::Services::FindBuilds do
     after { Travis.config.host = "travis-ci.org" }
 
     it "doesn't return public builds that don't belong to a user" do
-      public_repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', private: false)
+      public_repo = Factory(:repository_without_last_build, :owner_name => 'foo', :name => 'bar', private: false)
       public_build = Factory(:build, repository: public_repo)
       Factory(:test, :state => :started, :source => public_build, repository: public_repo)
 
       user = Factory(:user)
-      repo = Factory(:repository, :owner_name => 'drogus', :name => 'test-project')
+      repo = Factory(:repository_without_last_build, :owner_name => 'drogus', :name => 'test-project')
       repo.users << user
       build = Factory(:build, repository: repo)
       job = Factory(:test, :state => :started, :source => build, repository: repo)
 
       other_user = Factory(:user)
-      other_repo = Factory(:repository, private: true)
+      other_repo = Factory(:repository_without_last_build, private: true)
       other_repo.users << other_user
       other_build = Factory(:build, repository: other_repo)
       Factory(:test, :state => :started, :source => other_build, repository: other_repo)

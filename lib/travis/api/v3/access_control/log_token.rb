@@ -15,6 +15,10 @@ module Travis::API::V3
       self.token = token
     end
 
+    def temp_access?
+      true
+    end
+
     def logged_in?
       false
     end

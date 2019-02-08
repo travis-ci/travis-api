@@ -23,7 +23,9 @@ describe Travis::API::V3::Services::Requests::Find, set_app: true do
                   "sha",
                   "svenfuchs/minimal",
                   "event_type",
-                  "push")
+                  "push",
+                  "base_commit",
+                  "head_commit")
     }
     example 'reverse ordered' do
       expect(JSON.load(body)['requests'].map { |r| r['id'] }).to eq repo.requests.pluck(:id).sort.reverse
@@ -56,7 +58,9 @@ describe Travis::API::V3::Services::Requests::Find, set_app: true do
                     "sha",
                     "svenfuchs/minimal",
                     "event_type",
-                    "push")
+                    "push",
+                    "base_commit",
+                    "head_commit")
     }
 
   end

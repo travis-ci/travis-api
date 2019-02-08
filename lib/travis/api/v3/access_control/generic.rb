@@ -46,12 +46,20 @@ module Travis::API::V3
       false
     end
 
+    def temp_access?
+      false
+    end
+
     def full_access_or_logged_in?
       full_access? || logged_in?
     end
 
     def enterprise?
       !!Travis.config.enterprise
+    end
+
+    def force_auth?
+      !!Travis.config.force_authentication
     end
 
     def visible_repositories(list, repository_id = nil)
@@ -133,6 +141,13 @@ module Travis::API::V3
       visible? key_pair.repository
     end
 
+    def preferences_visible?(preferences)
+      adminable? preferences.parent
+    end
+    alias_method :user_preferences_visible?, :preferences_visible?
+    alias_method :organization_preferences_visible?, :preferences_visible?
+    alias_method :preference_visible?, :preferences_visible?
+
     def organization_visible?(organization)
       full_access? or public_mode?(organization)
     end
@@ -155,6 +170,10 @@ module Travis::API::V3
 
     def user_writable?(user)
       self.user == user
+    end
+
+    def user_adminable?(user)
+      user_writable?(user)
     end
 
     def is_current_user?(user)

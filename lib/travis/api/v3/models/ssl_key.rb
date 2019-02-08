@@ -6,7 +6,7 @@ module Travis::API::V3
 
     belongs_to :repository
 
-    serialize :private_key, Travis::Settings::EncryptedColumn.new
+    serialize :private_key, Travis::Model::EncryptedColumn.new
 
     def generate_keys!
       self.public_key = self.private_key = nil

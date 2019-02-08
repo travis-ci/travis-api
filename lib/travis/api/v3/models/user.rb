@@ -1,3 +1,5 @@
+require 'travis/api/v3/models/user_preferences'
+
 module Travis::API::V3
   class Models::User < Model
     has_many :memberships,   dependent: :destroy
@@ -6,10 +8,15 @@ module Travis::API::V3
     has_many :tokens,        dependent: :destroy
     has_many :organizations, through:   :memberships
     has_many :stars
+    has_many :email_unsubscribes
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
+    has_many  :beta_migration_requests
 
-    serialize :github_oauth_token, Travis::Settings::EncryptedColumn.new(disable: true)
+    has_preferences Models::UserPreferences
+
+    serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
+    scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 
     def repository_ids
       repositories.pluck(:id)
@@ -25,6 +32,10 @@ module Travis::API::V3
 
     def starred_repository_ids
       @starred_repository_ids ||= stars.map(&:repository_id)
+    end
+
+    def email_unsubscribed_repository_ids
+      @email_unsubscribed_repository_ids ||= email_unsubscribes.map(&:repository_id)
     end
 
     def permission?(roles, options = {})

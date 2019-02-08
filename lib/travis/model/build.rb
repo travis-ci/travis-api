@@ -124,7 +124,7 @@ class Build < Travis::Model
 
   # set the build number and expand the matrix; downcase language
   before_create do
-    next_build_number = Travis::Services::NextBuildNumber.new(repository_id: repository.id).run
+    next_build_number = Travis::Services::NextBuildNumber.new(nil, repository_id: repository.id).run
     self.number = next_build_number
     self.previous_state = last_finished_state_on_branch
     self.event_type = request.event_type
@@ -176,7 +176,7 @@ class Build < Travis::Model
 
   def config
     @config ||= begin
-      config = super&.config || read_attribute(:config) || {}
+      config = super&.config || has_attribute?(:config) && read_attribute(:config) || {}
       config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
       Config.new(config, multi_os: repository.try(:multi_os_enabled?)).normalize
     end

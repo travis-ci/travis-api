@@ -32,6 +32,18 @@ describe 'Requests', set_app: true do
       response = post "/requests", { build_id: build.id }, headers
       response.status.should be(200)
     end
+
+    context 'when the repo is migrating' do
+      before { repo.update_attributes(migration_status: "migrating") }
+      before { post "/requests", { build_id: build.id }, headers }
+      it { last_response.status.should == 403 }
+    end
+
+    context 'when the repo is migrated' do
+      before { repo.update_attributes(migration_status: "migrated") }
+      before { post "/requests", { build_id: build.id }, headers }
+      it { last_response.status.should == 403 }
+    end
   end
 
   it 'triggers a job request' do

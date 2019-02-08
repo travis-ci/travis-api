@@ -3,7 +3,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
-  before { Repository.destroy_all }
+  before { ActiveRecord::Base.connection.execute("truncate repositories cascade") }
 
   describe 'name_filter' do
     let(:web_repo)  { FactoryGirl.create(:repository, name: 'travis-web') }

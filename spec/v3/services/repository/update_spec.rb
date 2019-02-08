@@ -47,4 +47,33 @@ describe Travis::API::V3::Services::Repository::Update, set_app: true do
       "error_message" => "forbidden"
     }}
   end
+
+  context do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) { { 'HTTP_AUTHORIZATION' => "internal app:12345" } }
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrating") }
+      before { patch("/v3/repo/#{repo.id}", { com_id: 1 }, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrated") }
+      before { patch("/v3/repo/#{repo.id}", { com_id: 1 }, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+  end
 end

@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.5.0'
+ruby '2.5.1'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
@@ -88,6 +88,7 @@ group :test do
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'
   gem 'hashdiff'
+  gem 'pry-byebug'
 end
 
 group :development do

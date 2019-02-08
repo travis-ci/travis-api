@@ -2,6 +2,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
   let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo.id).first }
   let(:build)  { branch.last_build }
+
   let(:jobs)   { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
 
@@ -173,7 +174,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
   end
 
   describe "sorting by last_build" do
-    let!(:repo) { FactoryGirl.create(:repository) }
+    let!(:repo) { FactoryGirl.create(:repository_without_last_build) }
     let!(:build1) { FactoryGirl.create(:v3_build) }
     let!(:build2) { FactoryGirl.create(:v3_build) }
     let!(:branch1) { FactoryGirl.create(:branch, name: 'older', last_build: build1, repository: repo) }
