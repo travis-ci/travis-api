@@ -67,7 +67,7 @@ module Travis::API::V3
         name: 'web'.freeze,
         events: EVENTS,
         active: active,
-        config: { url: service_hook_url.to_s }
+        config: { url: service_hook_url.to_s, insecure_ssl: insecure_ssl? }
       }
       if url = webhook_url?(repo)
         info("Updating webhook repo=%s github_id=%i active=%s" % [repo.slug, repo.github_id, active])
@@ -121,6 +121,12 @@ module Travis::API::V3
 
     def info(msg)
       Travis.logger.info(msg)
+    end
+
+    private
+
+    def insecure_ssl?
+      Travis.config.ssl.to_h.key?(:verify) && Travis.config.ssl.to_h[:verify] == false
     end
   end
 end
