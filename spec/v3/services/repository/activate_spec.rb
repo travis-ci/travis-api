@@ -76,7 +76,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
   describe "existing repository, push access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
-    let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: true, config: { url: Travis.config.service_hook_url || '' }) }
+    let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: true, config: { url: Travis.config.service_hook_url || '', insecure_ssl: false }) }
     let(:service_hook_payload) { JSON.dump(events: Travis::API::V3::GitHub::EVENTS, active: false) }
 
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
@@ -110,7 +110,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
           status: 200, body: JSON.dump(
             [
               { name: 'travis', url: "https://api.github.com/repos/#{repo.slug}/hooks/123" },
-              { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url } }
+              { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url, insecure_ssl: false } }
             ]
           )
         )
@@ -139,7 +139,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
         stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100").to_return(
           status: 200, body: JSON.dump(
             [
-              { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url } }
+              { name: 'web', url: "https://api.github.com/repos/#{repo.slug}/hooks/456", config: { url: Travis.config.service_hook_url, insecure_ssl: false } }
             ]
           )
         )
@@ -156,6 +156,28 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
           '@type' => 'repository',
           'active' => true
         )
+      end
+
+      context 'when ssl verification has been disabled' do
+        let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: true, config: { url: Travis.config.service_hook_url || '', insecure_ssl: true }) }
+
+        around do |ex|
+          Travis.config.ssl = { verify: false }
+          ex.run
+          Travis.config.ssl = {}
+        end
+
+        example 'updates webhook with ssl disabled' do
+          expect(WebMock).to have_requested(:patch, "https://api.github.com/repos/#{repo.slug}/hooks/456").with(body: webhook_payload).once
+        end
+
+        example 'is success' do
+          expect(last_response.status).to eq 200
+          expect(JSON.load(body)).to include(
+            '@type' => 'repository',
+            'active' => true
+          )
+        end
       end
     end
 
@@ -175,6 +197,20 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
           '@type' => 'repository',
           'active' => true
         )
+      end
+
+      context 'when ssl verification has been disabled' do
+        let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: true, config: { url: Travis.config.service_hook_url || '', insecure_ssl: true}) }
+
+        around do |ex|
+          Travis.config.ssl = { verify: false }
+          ex.run
+          Travis.config.ssl = {}
+        end
+
+        example 'requests webhooks without ssl verification' do
+          expect(WebMock).to have_requested(:post, "https://api.github.com/repos/#{repo.slug}/hooks").with(body: webhook_payload).once
+        end
       end
     end
   end
