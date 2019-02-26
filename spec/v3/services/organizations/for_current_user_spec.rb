@@ -49,7 +49,7 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
         "@type"           => "organization",
         "@href"           => "/v3/org/#{org.id}",
         "@representation" => "standard",
-        "@permissions"    => { "read"=>true, "sync"=>true },
+        "@permissions"    => { "read" => true, "sync" => true, "admin" => true },
         "id"              => org.id,
         "login"           => "example-org",
         "name"            => nil,

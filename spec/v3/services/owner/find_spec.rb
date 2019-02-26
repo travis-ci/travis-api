@@ -13,7 +13,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"            => "organization",
         "@href"            => "/v3/org/#{org.id}",
         "@representation"  => "standard",
-        "@permissions"     => { "read" => true, "sync" => false },
+        "@permissions"     => { "read" => true, "sync" => false, "admin" => false },
         "id"               => org.id,
         "login"            => "example-org",
         "name"             => nil,
@@ -31,7 +31,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"            => "organization",
         "@href"            => "/v3/org/#{org.id}",
         "@representation"  => "standard",
-        "@permissions"     => { "read" => true, "sync" => false },
+        "@permissions"     => { "read" => true, "sync" => false, "admin" => false },
         "id"               => org.id,
         "login"            => "example-org",
         "name"             => nil,
@@ -54,7 +54,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"               => "organization",
         "@href"               => "/v3/org/#{org.id}",
         "@representation"     => "standard",
-        "@permissions"        => { "read" => true, "sync" => false },
+        "@permissions"        => { "read" => true, "sync" => false, "admin" => false },
         "id"                  => org.id,
         "login"               => "example-org",
         "name"                => nil,
@@ -98,7 +98,6 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "managed_by_installation"=>false,
           "active_on_org"     => nil,
           "migration_status"  => nil,
-          "github_service_hook" => false
         }]
       }}
     end
@@ -115,7 +114,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"             => "organization",
         "@href"             => "/v3/org/#{org.id}",
         "@representation"   => "standard",
-        "@permissions"      => { "read" => true, "sync" => false },
+        "@permissions"      => { "read" => true, "sync" => false, "admin" => false },
         "id"                => org.id,
         "login"             => "example-org",
         "name"              => nil,
@@ -158,8 +157,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "starred"         => false,
           "managed_by_installation"=>false,
           "active_on_org"   => nil,
-          "migration_status" => nil,
-          "github_service_hook" => false
+          "migration_status" => nil
         }]
       }}
     end
@@ -171,7 +169,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"            => "organization",
         "@href"            => "/v3/org/#{org.id}",
         "@representation"  => "standard",
-        "@permissions"     => { "read" => true, "sync" => false },
+        "@permissions"     => { "read" => true, "sync" => false, "admin" => false },
         "id"               => org.id,
         "login"            => "example-org",
         "name"             => nil,
@@ -193,7 +191,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@type"          => "organization",
         "@href"          => "/v3/org/#{org.id}",
         "@representation"=> "standard",
-        "@permissions"   => { "read" => true, "sync" => false },
+        "@permissions"   => { "read" => true, "sync" => false, "admin" => false },
         "id"             => org.id,
         "login"          => "example-org",
         "name"           => nil,
