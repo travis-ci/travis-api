@@ -45,7 +45,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     end
 
     describe "existing repository, admin and push access" do
-      let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: false, config: { url: Travis.config.service_hook_url || '' }) }
+      let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: false, config: { url: Travis.config.service_hook_url || '', insecure_ssl: false }) }
       let(:service_hook_payload) { JSON.dump(events: Travis::API::V3::GitHub::EVENTS, active: false) }
 
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) }
