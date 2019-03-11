@@ -37,7 +37,7 @@ class Migrate
     ActiveRecord::Base.connection.execute "SET statement_timeout = 180000"
   end
 
-  def self.clear_db!
+  def self.clear_active_db_connections!
     ActiveRecord::Base.clear_active_connections!
   end
 
@@ -55,7 +55,7 @@ class Migrate
     ids = query.ids
     ids.sort.reverse.each { |id| queue.push(id) }
     puts "Queued #{ids.size} repos"
-      
+
     sleep 5
 
     # Start num_workers threads and start running off the queue
@@ -69,7 +69,7 @@ class Migrate
             puts "Thread error"
             raise e
           ensure
-            self.class.clear_db!
+            self.class.clear_active_db_connections!
           end
         end
       end
@@ -115,13 +115,13 @@ class Migrate
           puts "No webhook found but service hook found, syncing repo #{repo.slug} active attr"
           puts "Save failed" unless repo.update(active: service_hook['active'])
         end
-        
+
         # Only set webhook for repos with an active service hook
         if (service_hook && service_hook['active'])
           puts "Found active service hook for #{repo.slug}, setting webhook"
           gh.set_hook(repo, true)
         end
-        
+
         migrated = true
         break
       rescue => e
@@ -146,7 +146,7 @@ module Query
 
     def call
       puts "Querying active repos from year #{year}"
-      Repository.where(active: true).where(id: start_repo_id..finish_repo_id).where("managed_by_installation_at IS NULL")
+      Repository.where(active: true).where(id: start_repo_id..finish_repo_id)
     end
 
     def start_repo_id
@@ -169,7 +169,7 @@ module Query
   class All
     def call
       puts "Querying all active repos"
-      Repository.where(active: true).where("managed_by_installation_at IS NULL")
+      Repository.where(active: true)
     end
   end
 end
