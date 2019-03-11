@@ -62,6 +62,16 @@ module Travis::API::V3
       end
     end
 
+    def service_hook(repo)
+      hooks(repo).detect { |h| h['name'] == 'travis' && h.dig('config', 'domain') == service_hook_url.host }
+    end
+
+    def webhook(repo)
+      hooks(repo).detect do |h|
+        h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url
+      end
+    end
+
     private
 
     def set_webhook(repo, active)
@@ -90,13 +100,13 @@ module Travis::API::V3
     end
 
     def service_hook_url?(repo)
-      if hook = hooks(repo).detect { |h| h['name'] == 'travis' }
+      if hook = service_hook(repo)
         hook.dig('_links', 'self', 'href')
       end
     end
 
     def webhook_url?(repo)
-      if hook = hooks(repo).detect { |h| h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url }
+      if hook = webhook(repo)
         hook.dig('_links', 'self', 'href')
       end
     end
@@ -114,8 +124,6 @@ module Travis::API::V3
     def info(msg)
       Travis.logger.info(msg)
     end
-
-    private
 
     def insecure_ssl?
       Travis.config.ssl.to_h.key?(:verify) && Travis.config.ssl.to_h[:verify] == false
