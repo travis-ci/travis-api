@@ -100,7 +100,7 @@ module Travis::API::V3
     end
 
     def service_hook_url?(repo)
-      if hook = service_hook(repo)
+      if hook = hooks(repo).detect { |h| h['name'] == 'travis' }
         hook.dig('_links', 'self', 'href')
       end
     end
