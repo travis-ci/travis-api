@@ -1,5 +1,4 @@
 describe Travis::API::V3::Services::Request::Find, set_app: true do
-
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:request) { repo.requests.first }
 
@@ -25,11 +24,19 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
     }
   end
 
-  describe "include yaml config" do
-    before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.yaml_config") }
-    example { expect(last_response).to be_ok }
-    example do
-      expect(JSON.load(body).keys).to include 'yaml_config'
+  describe "include raw configs" do
+    let(:raw_config) { request.raw_configs.build(key: '123', config: 'rvm: 2.5.1') }
+    subject { JSON.load(body)['raw_configs'] }
+    before { request.raw_configurations.create!(raw_config: raw_config, source: '.travis.yml') }
+    before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.raw_configs") }
+
+    it do
+      should eq([
+        '@type' => 'request_raw_configuration',
+        '@representation' => 'standard',
+        'config' => 'rvm: 2.5.1',
+        'source' => '.travis.yml'
+      ])
     end
   end
 
