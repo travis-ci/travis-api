@@ -47,6 +47,15 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
     before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.yaml_config") }
 
     it { should eq 'rvm: 2.5.1' }
+
+    it 'is deprecated' do
+      expect(JSON.load(body)['@warnings']).to eq([
+        '@type' => 'warning',
+        'message' => 'request.yaml_config will soon be deprecated. Please use request.raw_configs instead',
+        'warning_type' => 'deprecated_parameter',
+        'parameter' => 'request.yaml_config'
+      ])
+    end
   end
 
   describe "retrieve request on private repository, private API, authenticated as user with access" do
