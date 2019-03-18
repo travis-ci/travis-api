@@ -40,6 +40,15 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
     end
   end
 
+  describe "include yaml config" do
+    subject { JSON.load(body)['yaml_config'] }
+    let(:yaml_config) { Travis::API::V3::Models::RequestYamlConfig.new(key: '123', yaml: 'rvm: 2.5.1') }
+    before { request.update_attributes!(yaml_config: yaml_config) }
+    before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.yaml_config") }
+
+    it { should eq 'rvm: 2.5.1' }
+  end
+
   describe "retrieve request on private repository, private API, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
