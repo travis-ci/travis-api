@@ -9,7 +9,7 @@ module Travis::API::V3
 
     def raw_configs
       configs = model.raw_configurations.to_a
-      configs.any? ? configs : { config: model.yaml_config.yaml, source: '.travis.yml' }
+      configs.any? ? configs : [{ config: model.yaml_config.yaml, source: '.travis.yml' }]
     end
   end
 end
