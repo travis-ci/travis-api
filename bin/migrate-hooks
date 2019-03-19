@@ -138,31 +138,15 @@ end
 
 module Query
   class PerYear
-    attr_accessor :year, :start, :finish
+    attr_accessor :year
 
     def initialize(year)
-      @year, @start, @finish = year, Date.new(year, 1, 1), Date.new(year, 12, 31)
+      @year = year
     end
 
     def call
       puts "Querying active repos from year #{year}"
-      Repository.where(active: true).where(id: start_repo_id..finish_repo_id)
-    end
-
-    def start_repo_id
-      # Find lowest repo id from start date range
-      @start_repo_id ||= Repository.where(
-        created_at: start..start.next_day
-      ).ids.sort.first
-    end
-
-    def finish_repo_id
-      # Find highest repo id from finish date range
-      @finish_repo_id ||= (
-        Repository.where(
-          created_at: finish..finish.next_day
-        ).ids.sort.last
-      )
+      Repository.where("active = true AND date_part('year', created_at) = ?", year)
     end
   end
 
