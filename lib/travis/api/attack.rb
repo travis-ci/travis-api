@@ -93,6 +93,15 @@ class Rack::Attack
     end
   end
 
+  ####
+  # Ban based on: blocked urls
+  # Ban time:     indefinite
+  # Ban after:    manually banned
+  blocklist('repo_banned_in_redis') do |request|
+    if request.params["repository_id"] && request.path == "/builds" && Travis.redis.sismember(:api_blocklisted_repos, request.params["repository_id"])
+      Travis.redis.sadd(:api_blocklisted_ips, request.ip)
+    end
+  end
 
   ###
   # Throttle:  unauthenticated requests to /auth/github - 1 per minute
