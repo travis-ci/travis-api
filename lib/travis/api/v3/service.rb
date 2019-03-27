@@ -137,6 +137,8 @@ module Travis::API::V3
       case
       when params['include'].match(/repository.current_build/)
        result.deprecated_param('current_build', reason: "repository.last_started_build".freeze)
+      when params['include'].match(/request.yaml_config/)
+        result.deprecated_param('request.yaml_config', reason: "request.raw_configs".freeze)
       end
     end
 

@@ -4,11 +4,16 @@ module Travis::API::V3
     representation(:standard, *representations[:minimal], :repository, :branch_name, :commit, :builds, :owner, :created_at, :event_type, :base_commit, :head_commit)
 
     def self.available_attributes
-      super + ['yaml_config']
+      super + %w(raw_configs yaml_config)
     end
 
     def yaml_config
-      model.yaml_config || "---\nerror: No YAML found for this request."
+      model.yaml_config&.yaml
+    end
+
+    def raw_configs
+      configs = model.raw_configurations.to_a
+      configs.any? ? configs : [{ config: model.yaml_config.yaml, source: '.travis.yml' }]
     end
   end
 end
