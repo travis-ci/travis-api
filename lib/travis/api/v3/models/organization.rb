@@ -1,7 +1,12 @@
+require 'travis/api/v3/models/organization_preferences'
+
 module Travis::API::V3
   class Models::Organization < Model
     has_many :memberships
     has_many :users, through: :memberships
+    has_one  :beta_migration_request
+
+    has_preferences Models::OrganizationPreferences
 
     def repositories
       Models::Repository.where(owner_type: 'Organization', owner_id: id)

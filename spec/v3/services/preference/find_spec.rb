@@ -25,7 +25,7 @@ describe Travis::API::V3::Services::Preference::Find, set_app: true do
 
   describe 'authenticated, pref found' do
     before do
-      user.user_preferences.update(:build_emails, false)
+      user.preferences.update(:build_emails, false)
       get("/v3/preference/build_emails", {}, auth_headers)
     end
 

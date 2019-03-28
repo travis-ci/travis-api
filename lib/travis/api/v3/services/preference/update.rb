@@ -3,8 +3,9 @@ module Travis::API::V3
     params :value, prefix: :preference
 
     def run!
-      user = access_control.user or raise LoginRequired
-      result query.update(user)
+      owner = access_control.user or raise LoginRequired
+      owner = find(:organization) if params['organization.id']
+      result query.update(owner) if access_control.adminable?(owner)
     end
   end
 end

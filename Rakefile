@@ -1,4 +1,5 @@
 require "knapsack"
+Dir.glob('lib/tasks/*.rake').each { |r| import r }
 
 namespace :db do
   env = ENV["ENV"] || 'test'

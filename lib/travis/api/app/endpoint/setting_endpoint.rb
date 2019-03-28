@@ -45,7 +45,10 @@ class Travis::Api::App
     end
 
     def update
+      disallow_migrating!(repo)
+
       record.update(JSON.parse(request.body.read)[singular_name])
+
       if record.valid?
         repo_settings.save
         respond_with(record, type: singular_name, version: :v2)
@@ -56,7 +59,10 @@ class Travis::Api::App
     end
 
     def create
+      disallow_migrating!(repo)
+
       record = collection.create(JSON.parse(request.body.read)[singular_name])
+
       if record.valid?
         repo_settings.save
         respond_with(record, type: singular_name, version: :v2)
@@ -67,6 +73,8 @@ class Travis::Api::App
     end
 
     def destroy
+      disallow_migrating!(repo)
+
       record = collection.destroy(params[:id]) || record_not_found
       repo_settings.save
       respond_with(record, type: singular_name, version: :v2)
@@ -78,6 +86,10 @@ class Travis::Api::App
 
     def collection
       @collection ||= repo_settings.send(name)
+    end
+
+    def repo
+      Repository.find(params[:repository_id])
     end
 
     # This method can't be called "settings" because it clashes with

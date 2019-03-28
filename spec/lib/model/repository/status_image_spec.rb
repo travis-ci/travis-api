@@ -2,7 +2,7 @@ describe Repository::StatusImage do
   let(:cache)    { stub('states cache', fetch: nil, write: nil, fetch_state: nil) }
   let!(:request) { Factory(:request, event_type: 'push', repository: repo) }
   let!(:build)   { Factory(:build, repository: repo, request: request, state: :passed) }
-  let(:repo)     { Factory(:repository) }
+  let(:repo)     { Factory(:repository_without_last_build) }
 
   before do
     described_class.any_instance.stubs(cache: cache)

@@ -3,7 +3,7 @@ require 'factory_girl'
 FactoryGirl.define do
   factory :build do
     owner { User.first || Factory(:user) }
-    repository { Repository.first || Factory(:repository) }
+    repository { Repository.first || Factory(:repository_without_last_build) }
     association :request
     association :commit
     started_at { Time.now.utc }
@@ -45,7 +45,7 @@ FactoryGirl.define do
     private false
   end
 
-  factory :repository do
+  factory :repository_without_last_build, class: Repository do
     owner { User.find_by_login('svenfuchs') || Factory(:user) }
     name 'minimal'
     owner_name 'svenfuchs'
@@ -56,17 +56,22 @@ FactoryGirl.define do
     updated_at { |r| r.created_at + 5.minutes }
     last_build_state :passed
     last_build_number '2'
-    last_build_id 2
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
     sequence(:github_id) {|n| n }
     private false
   end
 
-  factory :minimal, :parent => :repository do
+  factory :repository, :parent => :repository_without_last_build do
+    after_create do |repo|
+      repo.last_build ||= Factory(:build, repository: repo)
+    end
   end
 
-  factory :enginex, :parent => :repository do
+  factory :minimal, :parent => :repository_without_last_build do
+  end
+
+  factory :enginex, :parent => :repository_without_last_build do
     name 'enginex'
     owner_name 'josevalim'
     owner_email 'josevalim@email.example.com'
@@ -82,6 +87,12 @@ FactoryGirl.define do
   factory :permission do
   end
 
+  factory :membership, class: Travis::API::V3::Models::Membership do
+    organization_id { Factory(:org_v3).id }
+    user_id         { Factory(:user).id }
+    role         "admin"
+  end
+
   factory :user do
     name  'Sven Fuchs'
     login 'svenfuchs'
@@ -91,6 +102,10 @@ FactoryGirl.define do
   end
 
   factory :org, :class => 'Organization' do
+    name 'travis-ci'
+  end
+
+  factory :org_v3, class: Travis::API::V3::Models::Organization do
     name 'travis-ci'
   end
 
@@ -144,4 +159,11 @@ FactoryGirl.define do
     dont_run_if_recent_build_exists false
     active true
   end
+
+  factory :beta_migration_request, class: Travis::API::V3::Models::BetaMigrationRequest do
+    owner_id { Factory(:user, :login => 'dummy_user').id }
+    owner_name 'dummy_user'
+    owner_type 'User'
+  end
+
 end

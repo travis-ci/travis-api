@@ -34,12 +34,13 @@ class Travis::Api::App
           # I think we need to properly deprecate this by publishing a blog post.
           Metriks.meter("api.v2.request.restart").mark
           service = Travis::Enqueue::Services::RestartModel.new(current_user, params)
+          disallow_migrating!(service.repository)
+
           params[:user_id] = current_user.id
-
-          Travis.logger.warn "Deprecated endpoint POST /requests: #{params}"
-
           type = params[:build_id] ? 'build' : 'job'
           params[:id] = params[:build_id] || params[:job_id]
+
+          Travis.logger.warn "Deprecated endpoint POST /requests: #{params}"
 
           service.push("#{type}:restart", params)
           respond_with(result: true, flash: service.messages)

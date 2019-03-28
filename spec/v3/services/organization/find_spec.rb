@@ -13,13 +13,14 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "@type"            => "organization",
       "@href"            => "/v3/org/#{org.id}",
       "@representation"  => "standard",
-      "@permissions"     => { "read"=>true, "sync"=>false },
+      "@permissions"     => { "read" => true, "sync" => false, "admin" => false },
       "id"               => org.id,
       "login"            => "example-org",
       "name"             => nil,
       "github_id"        => nil,
       "avatar_url"       => nil,
-      "education"        => false
+      "education"        => false,
+      "allow_migration"  => false,
     }}
   end
 
@@ -39,13 +40,14 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "@type"            => "organization",
       "@href"            => "/v3/org/#{org.id}",
       "@representation"  => "standard",
-      "@permissions"     => { "read"=>true, "sync"=>true },
+      "@permissions"     => { "read" => true, "sync" => true, "admin" => false },
       "id"               => org.id,
       "login"            => "example-org",
       "name"             => nil,
       "github_id"        => nil,
       "avatar_url"       => nil,
-      "education"        => true
+      "education"        => true,
+      "allow_migration"  => true,
     }}
   end
 
