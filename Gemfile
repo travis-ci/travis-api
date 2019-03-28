@@ -88,6 +88,7 @@ group :test do
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'
   gem 'hashdiff'
+  gem 'pry-byebug'
 end
 
 group :development do

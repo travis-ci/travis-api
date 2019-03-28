@@ -51,4 +51,34 @@ describe Travis::API::V3::Services::EmailSubscription::Resubscribe, set_app: tru
       end
     end
   end
+
+  context do
+    before { delete("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers) }
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrating") }
+      before { post("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrating") }
+      before { post("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+  end
+
+
 end

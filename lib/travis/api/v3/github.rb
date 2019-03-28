@@ -46,7 +46,7 @@ module Travis::API::V3
 
     def set_hook(repo, active)
       set_webhook(repo, active)
-      deactivate_service_hook(repo)
+      deactivate_service_hook(repo) if Travis.config.enterprise
     end
 
     def upload_key(repository)
@@ -62,14 +62,12 @@ module Travis::API::V3
       end
     end
 
-    private
-
     def set_webhook(repo, active)
       payload = {
         name: 'web'.freeze,
         events: EVENTS,
         active: active,
-        config: { url: service_hook_url.to_s }
+        config: { url: service_hook_url.to_s, insecure_ssl: insecure_ssl? }
       }
       if url = webhook_url?(repo)
         info("Updating webhook repo=%s github_id=%i active=%s" % [repo.slug, repo.github_id, active])
@@ -89,14 +87,24 @@ module Travis::API::V3
       end
     end
 
+    def service_hook(repo)
+      hooks(repo).detect { |h| h['name'] == 'travis' && h.dig('config', 'domain') == service_hook_url.host }
+    end
+
     def service_hook_url?(repo)
-      if hook = hooks(repo).detect { |h| h['name'] == 'travis' }
+      if hook = service_hook(repo)
         hook.dig('_links', 'self', 'href')
       end
     end
 
+    def webhook(repo)
+      hooks(repo).detect do |h|
+        h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url
+      end
+    end
+
     def webhook_url?(repo)
-      if hook = hooks(repo).detect { |h| h['name'] == 'web' && URI(h.dig('config', 'url')) == service_hook_url }
+      if hook = webhook(repo)
         hook.dig('_links', 'self', 'href')
       end
     end
@@ -113,6 +121,12 @@ module Travis::API::V3
 
     def info(msg)
       Travis.logger.info(msg)
+    end
+
+    private
+
+    def insecure_ssl?
+      Travis.config.ssl.to_h.key?(:verify) && Travis.config.ssl.to_h[:verify] == false
     end
   end
 end

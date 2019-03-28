@@ -13,6 +13,10 @@ class Repository::Settings < Travis::Settings
     attribute :repository_id, Integer
 
     validates :name, presence: true
+
+    def repository
+      Repository.find(repository_id)
+    end
   end
 
   class SshKey < Travis::Settings::Model
@@ -38,6 +42,10 @@ class Repository::Settings < Travis::Settings
       else
         errors.add(:value, :not_a_private_key)
       end
+    end
+
+    def repository
+      Repository.find(repository_id)
     end
   end
 
@@ -131,9 +139,12 @@ class Repository::Settings < Travis::Settings
     end
   end
 
-
   def repository_id
     additional_attributes[:repository_id]
+  end
+
+  def repository
+    Repository.find(repository_id)
   end
 end
 

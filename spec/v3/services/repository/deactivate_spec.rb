@@ -45,7 +45,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     end
 
     describe "existing repository, admin and push access" do
-      let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: false, config: { url: Travis.config.service_hook_url || '' }) }
+      let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: false, config: { url: Travis.config.service_hook_url || '', insecure_ssl: false }) }
       let(:service_hook_payload) { JSON.dump(events: Travis::API::V3::GitHub::EVENTS, active: false) }
 
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) }
@@ -62,7 +62,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
           stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(
             status: 200, body: JSON.dump(
               [
-                { name: 'travis', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/123" },
+                { name: 'travis', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/123", config: { domain: 'url.of.listener.something' } },
                 { name: 'web', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/456", config: { url: Travis.config.service_hook_url } }
               ]
             )
@@ -70,8 +70,20 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
           post("/v3/repo/#{repo.id}/deactivate", {}, headers)
         end
 
-        example 'deactivates service hook' do
-          expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload).once
+        context 'enterprise' do
+          around do |ex|
+            Travis.config.enterprise = true
+            ex.run
+            Travis.config.enterprise = false
+          end
+
+          example 'deactivates service hook' do
+            expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload).once
+          end
+        end
+
+        example 'no longer deactivates service hook' do
+          expect(WebMock).not_to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload)
         end
 
         example 'updates webhook' do
@@ -92,15 +104,27 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
           stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(
             status: 200, body: JSON.dump(
               [
-                { name: 'travis', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/123" }
+                { name: 'travis', url: "https://api.github.com/repositories/#{repo.github_id}/hooks/123", config: { domain: 'url.of.listener.something' } }
               ]
             )
           )
           post("/v3/repo/#{repo.id}/deactivate", {}, headers)
         end
 
-        example 'deactivates service hook' do
-          expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload).once
+        context 'enterprise' do
+          around do |ex|
+            Travis.config.enterprise = true
+            ex.run
+            Travis.config.enterprise = false
+          end
+
+          example 'deactivates service hook' do
+            expect(WebMock).to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload).once
+          end
+        end
+
+        example 'no longer deactivates service hook' do
+          expect(WebMock).not_to have_requested(:patch, "https://api.github.com/repositories/#{repo.github_id}/hooks/123").with(body: service_hook_payload)
         end
 
         example 'creates webhook' do
@@ -183,7 +207,6 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         "resource_type" => "repository"
       }}
     end
-
   end
 
   context 'internal auth' do
@@ -198,5 +221,39 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     end
 
     it_behaves_like 'repository deactivation'
+  end
+
+  describe "existing repository, push access"
+  # as this requires a call to github, and stubbing this request has proven difficult,
+  # this test has been omitted for now
+
+  context do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
+    before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true, pull: true) }
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrating") }
+      before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrated") }
+      before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
   end
 end

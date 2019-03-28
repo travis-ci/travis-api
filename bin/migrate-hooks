@@ -1,0 +1,171 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path('../../lib', __FILE__)
+$stdout.sync = true
+
+require 'bundler/setup'
+
+require 'active_record'
+# To silence deprecation warning
+ActiveRecord::Base.raise_in_transactional_callbacks = true
+
+require 'date'
+require 'stringio'
+require 'thread'
+require 'travis'
+require 'travis/api/v3/github'
+require 'travis/config/defaults'
+require 'travis/model/repository'
+
+# Temp redirect of output
+def silence(&block)
+  previous_stdout, $stdout = $stdout, StringIO.new
+  previous_stderr, $stderr = $stderr, StringIO.new
+  block.call
+ensure
+  $stdout = previous_stdout
+  $stderr = previous_stderr
+end
+
+class Migrate
+  def self.setup_db!
+    # Setup connection
+    config = Travis::Config.load.database.to_h.merge(pool: 5)
+    ActiveRecord::Base.establish_connection(config)
+
+    # Allow a longer than default timeout to account for heavy queries
+    ActiveRecord::Base.connection.execute "SET statement_timeout = 180000"
+  end
+
+  def self.clear_db!
+    ActiveRecord::Base.clear_active_connections!
+  end
+
+  attr_accessor :query, :num_workers
+
+  def initialize(query, num_workers: 5)
+    @query, @num_workers = query, num_workers
+  end
+
+  def call
+    did_not_migrate = []
+    queue = Queue.new
+
+    # Populate queue with all ids from query
+    ids = query.ids
+    ids.sort.reverse.each { |id| queue.push(id) }
+    puts "Queued #{ids.size} repos"
+      
+    sleep 5
+
+    # Start num_workers threads and start running off the queue
+    workers = (0...num_workers).map do
+      Thread.new do
+        while !queue.empty? do
+          begin
+            repo = Repository.find(queue.pop)
+            did_not_migrate << repo.id unless migrate_hook(repo)
+          rescue ThreadError => e
+            puts "Thread error"
+            raise e
+          ensure
+            self.class.clear_db!
+          end
+        end
+      end
+    end
+
+    workers.map(&:join)
+    puts "#{did_not_migrate.size} repos were inspected but not migrated"
+  end
+
+  def migrate_hook(repo)
+    puts "Attempting to migrate hook for repo #{repo.slug}"
+
+    # Get admin permissions for repo
+    admin_permissions = repo.permissions.where(admin: true).joins(:user).where("users.github_oauth_token IS NOT NULL")
+    migrated = false
+
+    # Loop through admin users until one is able to perform the migration
+    admin_permissions.each do |ap|
+      gh = Travis::API::V3::GitHub.new(ap.user)
+
+      begin
+        service_hook = gh.service_hook(repo)
+        webhook = gh.webhook(repo)
+
+        # If there are no hooks, mark repo as inactive and move on
+        if !service_hook && !webhook
+          puts "No hooks at all for #{repo.slug}"
+          if repo.active?
+            puts "Marking repo as inactive"
+            puts "Save failed" unless repo.update(active: false)
+          end
+          break
+        end
+
+        # Check for webhook and make sure that active attr matches on our side
+        if webhook
+          puts "Webhook found, syncing repo #{repo.slug} active attr"
+          puts "Save failed" unless repo.update(active: webhook['active'])
+        end
+
+        # Check for no webhook and service hook and make sure that active attr matches on our side
+        if !webhook && service_hook
+          puts "No webhook found but service hook found, syncing repo #{repo.slug} active attr"
+          puts "Save failed" unless repo.update(active: service_hook['active'])
+        end
+        
+        # Only set webhook for repos with an active service hook
+        if (service_hook && service_hook['active'])
+          puts "Found active service hook for #{repo.slug}, setting webhook"
+          gh.set_hook(repo, true)
+        end
+        
+        migrated = true
+        break
+      rescue => e
+        puts "Error migrating #{repo.slug} using oauth token from #{ap.user.login}"
+        puts e.message
+        puts "Trying next admin user..."
+        next
+      end
+    end
+
+    return migrated
+  end
+end
+
+module Query
+  class PerYear
+    attr_accessor :year
+
+    def initialize(year)
+      @year = year
+    end
+
+    def call
+      puts "Querying active repos from year #{year}"
+      Repository.where("active = true AND date_part('year', created_at) = ?", year)
+    end
+  end
+
+  class All
+    def call
+      puts "Querying all active repos"
+      Repository.where(active: true)
+    end
+  end
+end
+
+if year = ARGV.first
+  query = Query::PerYear.new(year.to_i)
+else
+  query = Query::All.new
+end
+
+silence do
+  Migrate.setup_db!
+end
+Migrate.new(query.call).call
+

@@ -83,6 +83,17 @@ module Travis::API::V3
       capture id: :digit
       route '/org/{organization.id}'
       get :find
+
+      resource :preferences do
+        route '/preferences'
+        get :for_organization
+      end
+
+      resource :preference do
+        route '/preference/{preference.name}'
+        get   :for_organization
+        patch :update
+      end
     end
 
     resource :organizations do
@@ -235,6 +246,11 @@ module Travis::API::V3
         patch  :update
         delete :delete
       end
+
+      resource :beta_migration_request do
+        route '/beta_migration_request'
+        post   :create
+      end
     end
 
     resource :user do
@@ -287,6 +303,12 @@ module Travis::API::V3
         post :export, '/export'
         delete :purge, '/purge'
       end
+    end
+
+    hidden_resource :insights do
+      route '/insights'
+      get :metrics, '/metrics'
+      get :active_repos, '/repos/active'
     end
   end
 end
