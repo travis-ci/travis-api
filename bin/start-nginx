@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# IMPORTANT NOTE!
+#
+# this file will get overwritten by the buildpack one in:
+#   https://github.com/travis-ci/nginx-buildpack/blob/master/bin/start-nginx
+#
+# changes to this file will not make it to production! if you want
+# to change this script for production, change it in the buildpack
+# instead!
+
 # make sure we kill all child processes once done
 trap '{ pkill -P $$; rm -f config/nginx.conf; exit 255; }' EXIT
 

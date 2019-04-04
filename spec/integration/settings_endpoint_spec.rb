@@ -76,6 +76,26 @@ describe Travis::Api::App::SettingsEndpoint do
     end
 
     describe 'POST /items' do
+      context 'when the repo is migrating' do
+        before { repo.update_attributes(migration_status: "migrating") }
+
+        it "responds with 403" do
+          body = { item: { name: 'foo', secret: 'TEH SECRET' } }.to_json
+          response = post "/settings/items?repository_id=#{repo.id}", body, headers
+          response.status.should == 403
+        end
+      end
+
+      context 'when the repo is migrated' do
+        before { repo.update_attributes(migration_status: "migrated") }
+
+        it "responds with 403" do
+          body = { item: { name: 'foo', secret: 'TEH SECRET' } }.to_json
+          response = post "/settings/items?repository_id=#{repo.id}", body, headers
+          response.status.should == 403
+        end
+      end
+
       it 'creates a new item' do
         body = { item: { name: 'foo', secret: 'TEH SECRET' } }.to_json
         response = post "/settings/items?repository_id=#{repo.id}", body, headers
@@ -109,6 +129,35 @@ describe Travis::Api::App::SettingsEndpoint do
     end
 
     describe 'PATCH /items/:id' do
+      context 'when the repo is migrating' do
+        before { repo.update_attributes(migration_status: "migrating") }
+
+        it "responds with 403" do
+          settings = repo.settings
+          item = settings.items.create(name: 'an item', secret: 'TEH SECRET')
+          settings.save
+
+          body = { item: { name: 'a new name', secret: 'a new secret' } }.to_json
+          response = patch "/settings/items/#{item.id}?repository_id=#{repo.id}", body, headers
+          response.status.should == 403
+
+        end
+      end
+
+      context 'when the repo is migrated' do
+        before { repo.update_attributes(migration_status: "migrated") }
+
+        it "responds with 403" do
+          settings = repo.settings
+          item = settings.items.create(name: 'an item', secret: 'TEH SECRET')
+          settings.save
+
+          body = { item: { name: 'a new name', secret: 'a new secret' } }.to_json
+          response = patch "/settings/items/#{item.id}?repository_id=#{repo.id}", body, headers
+          response.status.should == 403
+        end
+      end
+
       it 'should update an item' do
         settings = repo.settings
         item = settings.items.create(name: 'an item', secret: 'TEH SECRET')
@@ -151,6 +200,38 @@ describe Travis::Api::App::SettingsEndpoint do
     end
 
     describe 'DELETE /items/:id' do
+      context 'when the repo is migrating' do
+        before { repo.update_attributes(migration_status: "migrating") }
+
+        it "responds with 403" do
+          settings = repo.settings
+          item = settings.items.create(name: 'an item', secret: 'TEH SECRET')
+          settings.save
+
+          params = { repository_id: repo.id }
+          response = delete '/settings/items/' + item.id, params, headers
+
+          response.status.should == 403
+
+        end
+      end
+
+      context 'when the repo is migrated' do
+        before { repo.update_attributes(migration_status: "migrated") }
+
+        it "responds with 403" do
+          settings = repo.settings
+          item = settings.items.create(name: 'an item', secret: 'TEH SECRET')
+          settings.save
+
+          params = { repository_id: repo.id }
+          response = delete '/settings/items/' + item.id, params, headers
+
+          response.status.should == 403
+        end
+      end
+
+
       it 'should delete an item' do
         settings = repo.settings
         item = settings.items.create(name: 'an item', secret: 'TEH SECRET')

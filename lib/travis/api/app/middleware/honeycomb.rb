@@ -12,6 +12,10 @@ class Travis::Api::App
       end
 
       def call(env)
+        if env['HTTP_TRACE'] == 'true'
+          Travis::Honeycomb.override!
+        end
+
         request_started_at = Time.now
         begin
           response = @app.call(env)

@@ -3,11 +3,9 @@ $: << 'lib'
 require 'sidekiq'
 require 'travis'
 require 'travis/support/amqp'
-require 'travis/customerio'
 
 pool_size = ENV['SIDEKIQ_DB_POOL_SIZE'] || 5
 Travis.config.database[:pool] = pool_size.to_i
-Travis.config.logs_database[:pool] = pool_size.to_i
 Travis::Database.connect
 
 Travis::Async.enabled = true

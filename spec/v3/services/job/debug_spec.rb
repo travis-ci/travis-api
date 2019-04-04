@@ -1,12 +1,12 @@
 describe Travis::API::V3::Services::Job::Debug, set_app: true do
-  let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:repo) { Factory(:repository, owner_name: 'svenfuchs', name: 'minimal') }
   let(:owner_type)  { repo.owner_type.constantize }
   let(:owner)       { owner_type.find(repo.owner_id)}
   let(:build)       { repo.builds.last }
   let(:jobs)        { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:job)         { jobs.last }
 
-  before { repo.requests.each(&:delete) }
+  before { ActiveRecord::Base.connection.execute("truncate requests cascade") }
 
   before do
     Travis::Features.stubs(:owner_active?).returns(true)
@@ -93,6 +93,36 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
           include_examples "returns 202 but no error"
         end
       end
+    end
+  end
+
+  context do
+    let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}"} }
+    before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrating") }
+      before { post("/v3/job/#{job.id}/debug", {}, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
+    end
+
+    describe "repo migrating" do
+      before { repo.update_attributes(migration_status: "migrated") }
+      before { post("/v3/job/#{job.id}/debug", {}, headers) }
+
+      example { expect(last_response.status).to be == 403 }
+      example { expect(JSON.load(body)).to be == {
+        "@type"         => "error",
+        "error_type"    => "repo_migrated",
+        "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
+      }}
     end
   end
 end

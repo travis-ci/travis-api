@@ -6,7 +6,7 @@ class Travis::Api::App
   #
   # TODO: Be smarter about origin.
   class Cors < Base
-    before do
+    after do
       headers['Access-Control-Allow-Origin']      = "*"
       headers['Access-Control-Allow-Credentials'] = "true"
       headers['Access-Control-Expose-Headers']    = "Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID"

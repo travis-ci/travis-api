@@ -1,7 +1,12 @@
+require 'travis/api/v3/models/organization_preferences'
+
 module Travis::API::V3
   class Models::Organization < Model
     has_many :memberships
     has_many :users, through: :memberships
+    has_one  :beta_migration_request
+
+    has_preferences Models::OrganizationPreferences
 
     def repositories
       Models::Repository.where(owner_type: 'Organization', owner_id: id)
@@ -13,7 +18,7 @@ module Travis::API::V3
     end
 
     def education
-      Travis::Features.owner_active?(:education, self)
+      Travis::Features.owner_active?(:educational_org, self)
     end
 
     alias members users

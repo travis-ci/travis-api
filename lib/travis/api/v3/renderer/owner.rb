@@ -5,7 +5,7 @@ module Travis::API::V3
     include Renderer::AvatarURL
 
     representation(:minimal,    :id, :login)
-    representation(:standard,   :id, :login, :name, :github_id, :avatar_url, :education)
+    representation(:standard,   :id, :login, :name, :github_id, :avatar_url, :education, :allow_migration)
     representation(:additional, :repositories, :installation)
 
     def initialize(*)
@@ -23,6 +23,10 @@ module Travis::API::V3
     def installation
       installation = model.installation
       installation if installation and access_control.visible? installation
+    end
+
+    def allow_migration
+      !!Travis::Features.owner_active?(:allow_migration, @model)
     end
   end
 end

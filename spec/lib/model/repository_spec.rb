@@ -93,8 +93,12 @@ describe Repository do
     describe 'with_builds' do
       it 'gets only projects with existing builds' do
         one   = Factory(:repository, name: 'one',   last_build_started_at: '2011-11-11', last_build_id: nil)
-        two   = Factory(:repository, name: 'two',   last_build_started_at: '2011-11-12', last_build_id: 101)
-        three = Factory(:repository, name: 'three', last_build_started_at: nil, last_build_id: 100)
+        two   = Factory(:repository, name: 'two',   last_build_started_at: '2011-11-12')
+        three = Factory(:repository, name: 'three', last_build_started_at: nil)
+        two.last_build_id = Factory(:build, repository: two).id
+        two.save
+        three.last_build_id = Factory(:build, repository: three).id
+        three.save
 
         repositories = Repository.with_builds.all
         repositories.map(&:id).sort.should == [two, three].map(&:id).sort
@@ -166,9 +170,9 @@ describe Repository do
 
     describe 'counts_by_owner_ids' do
       let!(:repositories) do
-        Factory(:repository, owner_id: 1, owner_type: 'Organization', owner_name: 'svenfuchs', name: 'minimal')
-        Factory(:repository, owner_id: 2, owner_type: 'Organization', owner_name: 'travis-ci', name: 'travis-ci')
-        Factory(:repository, owner_id: 2, owner_type: 'Organization', owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
+        Factory(:repository, owner: Factory(:org), owner_name: 'svenfuchs', name: 'minimal')
+        Factory(:repository, owner: Factory(:org), owner_name: 'travis-ci', name: 'travis-ci')
+        Factory(:repository, owner: Factory(:org), owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
       end
 
       it 'returns repository counts per owner_id for the given owner_ids' do
@@ -319,6 +323,9 @@ describe Repository do
     end
 
     it 'is empty for empty repository' do
+      repo.last_build_id = nil
+      repo.save
+      Build.delete_all
       repo.branches.should eql []
     end
   end
@@ -383,6 +390,7 @@ describe Repository do
     let(:repo) { Factory(:repository) }
 
     it 'properly orders branches by last build' do
+      repo # load the repo
       Build.delete_all
       one = Factory(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', commit: Factory(:commit, branch: '1one'))
       two = Factory(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: Factory(:commit, branch: '2two'))
@@ -392,11 +400,12 @@ describe Repository do
     end
 
     it 'retrieves last builds on all branches' do
+      repo # load the repo
       Build.delete_all
-      old = Factory(:build, repository: repo, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
-      one = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'one'))
-      two = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'two'))
-      three = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'three'))
+      old = Factory(:build, repository: repo, number: 1, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
+      one = Factory(:build, repository: repo, number: 2, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'one'))
+      two = Factory(:build, repository: repo, number: 3, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'two'))
+      three = Factory(:build, repository: repo, number: 4, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'three'))
       three.update_attribute(:event_type, 'pull_request')
 
       builds = repo.last_finished_builds_by_branches

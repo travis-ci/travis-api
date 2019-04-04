@@ -33,7 +33,7 @@ module Travis::API::V3
     end
 
     def self.paginate(**options)
-      params("limit".freeze, "offset".freeze)
+      params("limit".freeze, "offset".freeze, "skip_count".freeze)
       params("sort_by".freeze) if query_factory.sortable?
       @paginator = Paginator.new(**options)
     end
@@ -52,12 +52,13 @@ module Travis::API::V3
 
     attr_accessor :access_control, :params, :request_body
 
-    def initialize(access_control, params, request_body)
+    def initialize(access_control, params, env)
       @access_control = access_control
       @params         = params
       @queries        = {}
       @github         = {}
-      @request_body   = request_body
+      @env            = env
+      @request_body   = @env['rack.input'.freeze]
     end
 
     def query(type = result_type)
@@ -118,6 +119,7 @@ module Travis::API::V3
     end
 
     def run
+      check_force_auth
       not_found unless result = run!
       result = paginate(result) if self.class.paginate?
       check_deprecated_params(result) if params['include']
@@ -125,10 +127,18 @@ module Travis::API::V3
       result
     end
 
+    def check_force_auth
+      if access_control.force_auth?
+        raise LoginRequired unless access_control.logged_in? || access_control.temp_access?
+      end
+    end
+
     def check_deprecated_params(result)
       case
       when params['include'].match(/repository.current_build/)
        result.deprecated_param('current_build', reason: "repository.last_started_build".freeze)
+      when params['include'].match(/request.yaml_config/)
+        result.deprecated_param('request.yaml_config', reason: "request.raw_configs".freeze)
       end
     end
 
@@ -148,6 +158,7 @@ module Travis::API::V3
       self.class.paginator.paginate(result,
         limit:          params['limit'.freeze],
         offset:         params['offset'.freeze],
+        skip_count:     params['skip_count'.freeze] == 'true',
         access_control: access_control)
     end
 
@@ -164,6 +175,15 @@ module Travis::API::V3
 
     def rejected(payload)
       result(payload, status: 403, result_type: :error)
+    end
+
+    def migrated?(repo)
+      Travis.config.org? && ["migrated", "migrating"].include?(repo.migration_status)
+    end
+
+    # TODO confirm message, link to docs?
+    def repo_migrated(message = 'This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com')
+      result(Error.new(message, type: :repo_migrated), result_type: :error, status: 403)
     end
 
     def abuse_detected(message = 'Abuse detected. Restart disabled. If you think you have received this message in error, please contact support: support@travis-ci.com')

@@ -11,6 +11,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => true,
         "deactivate"       => true,
+        "migrate"          => true,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
@@ -24,6 +25,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => true,
         "deactivate"       => true,
+        "migrate"          => false,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
@@ -37,6 +39,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => false,
         "deactivate"       => false,
+        "migrate"          => false,
         "star"             => true,
         "unstar"           => true,
         "create_request"   => false,
@@ -50,6 +53,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => false,
         "deactivate"       => false,
+        "migrate"          => false,
         "star"             => false,
         "unstar"           => false,
         "create_request"   => false,
@@ -89,7 +93,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "name"             => "master"},
       "starred"            => false,
       "active_on_org"      => nil,
-      "managed_by_installation" => false
+      "managed_by_installation" => false,
+      "migration_status"   => nil
     })}
   end
 
@@ -326,6 +331,12 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
     before  { get("/v3/repo/#{repo.id}?include=repository.owner") }
     example { expect(last_response).to be_ok }
     example { expect(parsed_body['owner']).to include("github_id", "is_syncing", "synced_at")}
+  end
+
+  describe "when owner is missing" do
+    before  { repo.update_attribute(:owner, nil)                  }
+    before  { get("/v3/repo/#{repo.id}?include=repository.owner") }
+    example { expect(last_response).to be_not_found               }
   end
 
   describe "including non-existing field" do

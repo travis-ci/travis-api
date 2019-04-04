@@ -6,7 +6,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   let(:repo2)       { Factory.create(:repository, owner_name: user.login, name: 'minimal2', owner: user)}
   let(:build)       { Factory.create(:build, repository: repo) }
   let(:build2)      { Factory.create(:build, repository: repo2) }
-  let(:job)         { Travis::API::V3::Models::Job.create(build: build) }
+  let(:job)         { Travis::API::V3::Models::Job.create(build: build, repository: repo) }
   let(:job2)        { Travis::API::V3::Models::Job.create(build: build2) }
   let(:job3)        { Travis::API::V3::Models::Job.create(build: build2) }
   let(:s3job)       { Travis::API::V3::Models::Job.create(build: build) }
@@ -79,6 +79,79 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
         "@type"         => "error",
         "error_type"    => "not_found",
         "error_message" => "log not found"
+      }
+    end
+  end
+
+  describe "sucessfully delete log" do
+    before { job.update_attributes(finished_at: Time.now, state: "passed")}
+    let(:remote_log_response) {
+      JSON.dump(job_id: job.id,
+      log_parts: [
+        {
+          number: 42,
+          content: 'whoa noww',
+          final: false
+        },
+        {
+          number: 17,
+          content: "is a party\e0m",
+          final: false
+        }
+      ])
+    }
+    before { Timecop.freeze(Time.now) }
+
+    example do
+      stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api").
+        with(headers: {
+               'Authorization' => 'token notset'
+             }).to_return(status: 200, body: remote_log_response, headers: {})
+
+      stub_request(:put, "#{Travis.config.logs_api.url}/logs/#{job.id}?removed_by=#{user.id}&source=api").
+        with(
+          body: "Log removed by #{user.name} at #{Time.now.utc.to_s}",
+          headers: {
+            'Authorization' => 'token notset',
+            'Content-Type' => 'application/octet-stream'
+          }).
+        to_return(status: 200, body: remote_log_response, headers: {})
+
+      stub_request(:get, "#{Travis.config.logs_api.url}/log-parts/#{job.id}").
+        with(headers: {
+               'Authorization' => 'token notset'
+             }).
+        to_return(status: 200, body: remote_log_response, headers: {})
+
+      delete("/v3/job/#{job.id}/log", {}, headers)
+
+      expect(last_response.status).to be == 200
+      expect(JSON.load(body)).to be == {
+        "@type" => "log",
+        "@href" => "/v3/job/#{job.id}/log",
+        "@representation" => "standard",
+        "@permissions" => {
+          "read" => true,
+          "delete_log" => false,
+          "cancel" => false,
+          "restart" => false,
+          "debug" => false
+        },
+        "id" => nil,
+        "content" => nil,
+        "log_parts" => [
+          {
+            "content" => "whoa noww",
+            "final" => false,
+            "number" => 42
+          },
+          {
+            "content" => "is a party\e0m",
+            "final" => false,
+            "number" => 17
+          }
+        ],
+        "@raw_log_href" => "/v3/job/#{job.id}/log.txt"
       }
     end
   end

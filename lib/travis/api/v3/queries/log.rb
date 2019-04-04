@@ -31,7 +31,7 @@ module Travis::API::V3
       end
 
       remote_log.clear!(user)
-      Travis::API::V3::Models::Log.new(remote_log: remote_log)
+      Travis::API::V3::Models::Log.new(remote_log: remote_log, job: @job)
     end
 
     private

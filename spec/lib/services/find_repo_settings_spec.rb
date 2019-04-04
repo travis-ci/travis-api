@@ -1,5 +1,5 @@
 describe Travis::Services::FindRepoSettings do
-  let(:repo)    { Factory(:repository) }
+  let(:repo)    { Factory(:repository_without_last_build) }
   let(:params)  { { id: repo.id } }
   let(:user)    { Factory(:user) }
   let(:service) { described_class.new(user, params) }

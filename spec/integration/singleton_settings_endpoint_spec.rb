@@ -53,6 +53,26 @@ describe Travis::Api::App::SettingsEndpoint do
     end
 
     describe 'PATCH /item' do
+      context 'when the repo is migrating' do
+        before { repo.update_attributes(migration_status: "migrating") }
+
+        it "responds with 403" do
+          body = { item: { name: 'a name', secret: 'a secret' } }.to_json
+          response = patch "/settings/item/#{repo.id}", body, headers
+          response.status.should == 403
+        end
+      end
+
+      context 'when the repo is migrated' do
+        before { repo.update_attributes(migration_status: "migrated") }
+
+        it "responds with 403" do
+          body = { item: { name: 'a name', secret: 'a secret' } }.to_json
+          response = patch "/settings/item/#{repo.id}", body, headers
+          response.status.should == 403
+        end
+      end
+
       it 'should update an item' do
         settings = repo.settings
         item = settings.create(:item, name: 'an item', secret: 'TEH SECRET')
@@ -103,6 +123,24 @@ describe Travis::Api::App::SettingsEndpoint do
     end
 
     describe 'DELETE /item' do
+      context 'when the repo is migrating' do
+        before { repo.update_attributes(migration_status: "migrating") }
+
+        it "responds with 403" do
+          response = delete "/settings/item/#{repo.id}", {}, headers
+          response.status.should == 403
+        end
+      end
+
+      context 'when the repo is migrated' do
+        before { repo.update_attributes(migration_status: "migrated") }
+
+        it "responds with 403" do
+          response = delete "/settings/item/#{repo.id}", {}, headers
+          response.status.should == 403
+        end
+      end
+
       it 'should delete an item' do
         settings = repo.settings
         item = settings.create(:item, name: 'an item')

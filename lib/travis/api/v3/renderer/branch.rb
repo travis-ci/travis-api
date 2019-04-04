@@ -5,7 +5,8 @@ module Travis::API::V3
     representation(:additional, :recent_builds)
 
     def recent_builds
-      return model.builds.first(10) if include_recent_builds?
+      return unless include_recent_builds?
+      access_control.visible_builds(model.builds.limit(10))
     end
 
     def include_recent_builds?

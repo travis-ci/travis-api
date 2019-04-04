@@ -62,7 +62,7 @@ describe "ScheduleCronJobs" do
             repository_id: cron.branch.repository.id,
             finished_at: DateTime.now - 1.hour)
           cron.branch.update_attribute(:last_build_id, last_build.id)
-          Timecop.travel(scheduler_interval.from_now)
+          Timecop.freeze(scheduler_interval.from_now)
         end
 
         after do

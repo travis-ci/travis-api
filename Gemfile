@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.5.0'
+ruby '2.5.1'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
@@ -33,6 +33,7 @@ gem 'dalli'
 gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
+gem 'librato-metrics'
 gem 'simplecov'
 gem 'stackprof'
 gem 'netaddr'
@@ -46,7 +47,6 @@ gem 'memory_profiler'
 gem 'allocation_tracer'
 
 gem 'jemalloc', git: 'https://github.com/travis-ci/jemalloc-rb'
-gem 'customerio'
 
 gem 'redlock'
 gem 'rake', '~> 0.9.2'
@@ -84,10 +84,11 @@ group :test do
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
-  gem 'database_cleaner', '~> 1.2.0'
+  gem 'database_cleaner', '~> 1.7'
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'
   gem 'hashdiff'
+  gem 'pry-byebug'
 end
 
 group :development do

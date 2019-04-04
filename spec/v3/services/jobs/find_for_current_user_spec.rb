@@ -3,8 +3,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     FactoryGirl.create(type, attributes)
   end
 
-  let!(:repo1)   { create(:repository, owner: user) }
-  let!(:repo2)   { create(:repository, owner: user) }
+  let!(:repo1)   { create(:repository_without_last_build, owner: user) }
+  let!(:repo2)   { create(:repository_without_last_build, owner: user) }
   let!(:build1)  { create(:build, repository: repo1) }
   let!(:build2)  { create(:build, repository: repo2, sender_id: other_user.id, sender_type: 'User') }
   let!(:other_repo) { create(:repository) }

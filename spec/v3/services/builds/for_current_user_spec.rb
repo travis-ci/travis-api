@@ -1,4 +1,5 @@
-describe Travis::API::V3::Services::Builds::Find, set_app: true do
+describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
+  include Support::Formats
   let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build)  { repo.builds.first }
   let(:stages) { build.stages }
@@ -14,7 +15,7 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
     build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
   end
 
-  
+
   describe "builds for current_user, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
@@ -58,6 +59,9 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "pull_request_title"  => nil,
         "started_at"          => "2010-11-12T13:00:00Z",
         "finished_at"         => nil,
+        "tag"                 => nil,
+        "private"             => false,
+        "updated_at"          => json_format_time_with_ms(build.reload.updated_at),
         "stages"              => [{
            "@type"            => "stage",
            "@representation"  => "minimal",

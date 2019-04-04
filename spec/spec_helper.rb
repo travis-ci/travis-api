@@ -6,7 +6,7 @@ $: << 'lib'
 
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 ENV['BILLING_V2_ENABLED'] = 'true'
-ENV.delete('DATABASE_URL')
+ENV['GDPR_ENABLED'] = 'true'
 
 require 'support/coverage' unless ENV['SKIP_COVERAGE']
 
@@ -34,6 +34,7 @@ require 'support/billing_spec_helper'
 require 'support/env'
 require 'support/formats'
 require 'support/gcs'
+require 'support/gdpr_spec_helper'
 require 'support/matchers'
 require 'support/payloads'
 require 'support/private_key'
@@ -79,6 +80,7 @@ RSpec.configure do |c|
   c.include Support::Env
   c.include Support::AuthHelpers, auth_helpers: true
   c.include Support::BillingSpecHelper, billing_spec_helper: true
+  c.include Support::GdprSpecHelper, gdpr_spec_helper: true
 
   # for auth tests against staging, how the hell does this work, if at all
   # c.filter_run mode: :private, repo: :private
