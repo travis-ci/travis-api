@@ -27,7 +27,8 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       'first_logged_in_at' => user.first_logged_in_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'synced_at'          => user.synced_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
       'correct_scopes'     => true,
-      'channels'           => ["private-user-1"]
+      'channels'           => ["private-user-1"],
+      "allow_migration"    => false,
     }
   end
 

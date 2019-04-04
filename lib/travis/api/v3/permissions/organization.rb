@@ -6,7 +6,7 @@ module Travis::API::V3
       write?
     end
 
-    def import?
+    def admin?
       adminable?
     end
   end

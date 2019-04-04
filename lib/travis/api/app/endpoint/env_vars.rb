@@ -9,6 +9,8 @@ class Travis::Api::App
 
       def update
         data = JSON.parse(request.body.read)[singular_name]
+        disallow_migrating!(record.repository)
+
         previously_public = record.public?
         record.update(data)
 

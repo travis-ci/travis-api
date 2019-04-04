@@ -90,6 +90,7 @@ class Travis::Api::App
 
         settings = service(:find_repo_settings, params).run
         if settings
+          disallow_migrating!(settings.repository)
           settings.merge(payload['settings'])
           # TODO: I would like to have better API here, but leaving this
           # for testing to not waste too much time before I can play with it
@@ -118,7 +119,9 @@ class Travis::Api::App
       end
 
       post '/:id/key' do
-        respond_with service(:regenerate_repo_key, params), version: :v2
+        service = service(:regenerate_repo_key, params)
+        disallow_migrating!(service.repo)
+        respond_with service, version: :v2
       end
 
       # Gets list of branches
@@ -159,7 +162,8 @@ class Travis::Api::App
       #
       # json(:builds)
       get '/:owner_name/:name/builds' do
-        name = params[:branches] ? :find_branches : :find_builds
+        # `name` is unused
+        # name = params[:branches] ? :find_branches : :find_builds
         params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
         respond_with service(:find_builds, params)
       end
@@ -187,7 +191,9 @@ class Travis::Api::App
       end
 
       post '/:owner_name/:name/key' do
-        respond_with service(:regenerate_repo_key, params), version: :v2
+        service = service(:regenerate_repo_key, params)
+        disallow_migrating!(service.repo)
+        respond_with service, version: :v2
       end
 
       # Gets list of branches

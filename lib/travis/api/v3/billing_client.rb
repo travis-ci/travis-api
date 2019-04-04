@@ -7,9 +7,13 @@ module Travis::API::V3
     end
 
     def all
-      connection.get('/subscriptions').body.map do |subscription_data|
+      data = connection.get('/subscriptions').body
+      subscriptions = data.fetch('subscriptions').map do |subscription_data|
         Travis::API::V3::Models::Subscription.new(subscription_data)
       end
+      permissions = data.fetch('permissions')
+
+      Travis::API::V3::Models::SubscriptionsCollection.new(subscriptions, permissions)
     end
 
     def get_subscription(id)
@@ -20,6 +24,12 @@ module Travis::API::V3
     def get_invoices_for_subscription(id)
       connection.get("/subscriptions/#{id}/invoices").body.map do |invoice_data|
         Travis::API::V3::Models::Invoice.new(invoice_data)
+      end
+    end
+
+    def trials
+      connection.get('/trials').body.map do | trial_data |
+        Travis::API::V3::Models::Trial.new(trial_data)
       end
     end
 
@@ -85,6 +95,7 @@ module Travis::API::V3
         conn.headers['Content-Type'] = 'application/json'
         conn.request :json
         conn.response :json
+        conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
         conn.adapter :net_http
       end
     end

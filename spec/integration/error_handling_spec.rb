@@ -52,6 +52,9 @@ describe 'Exception', set_app: true do
     expect(res.headers).to eq({
       'Content-Type' => 'text/plain',
       'Content-Length' => '32',
+      'Access-Control-Allow-Origin' => '*',
+      'Access-Control-Allow-Credentials' => 'true',
+      'Access-Control-Expose-Headers' => 'Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID',
     })
     sleep 0.1
   end
@@ -67,6 +70,9 @@ describe 'Exception', set_app: true do
       'Content-Type' => 'text/plain',
       'Content-Length' => '81',
       'X-Request-ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975',
+      'Access-Control-Allow-Origin' => '*',
+      'Access-Control-Allow-Credentials' => 'true',
+      'Access-Control-Expose-Headers' => 'Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID',
     })
     sleep 0.1
   end

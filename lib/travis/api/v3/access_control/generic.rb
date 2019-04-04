@@ -46,6 +46,10 @@ module Travis::API::V3
       false
     end
 
+    def temp_access?
+      false
+    end
+
     def full_access_or_logged_in?
       full_access? || logged_in?
     end
@@ -54,10 +58,28 @@ module Travis::API::V3
       !!Travis.config.enterprise
     end
 
-    def visible_repositories(list)
-      # naïve implementation, replaced with smart implementation in specific subclasses
-      return list if full_access?
-      list.select { |r| visible?(r) }
+    def force_auth?
+      !!Travis.config.force_authentication
+    end
+
+    def visible_repositories(list, repository_id = nil)
+      # naïve implementation, can be replaced with smart implementation in specific subclasses
+      visible_objects(list, repository_id, Models::Repository)
+    end
+
+    def visible_builds(list, repository_id = nil)
+      # naïve implementation, can be replaced with smart implementation in specific subclasses
+      visible_objects(list, repository_id, Models::Build)
+    end
+
+    def visible_jobs(list, repository_id = nil)
+      # naïve implementation, can be replaced with smart implementation in specific subclasses
+      visible_objects(list, repository_id, Models::Job)
+    end
+
+    def visible_requests(list, repository_id = nil)
+      # naïve implementation, can be replaced with smart implementation in specific subclasses
+      visible_objects(list, repository_id, Models::Request)
     end
 
     def permissions(object)
@@ -72,7 +94,7 @@ module Travis::API::V3
     end
 
     def build_visible?(build)
-      visible? build.repository
+      repository_visible? build.repository, !build.private?
     end
 
     def build_writable?(build)
@@ -84,7 +106,7 @@ module Travis::API::V3
     end
 
     def cron_visible?(cron)
-      visible? cron.branch.repository
+      visible? cron.branch
     end
 
     def cron_writable?(cron)
@@ -100,7 +122,7 @@ module Travis::API::V3
     end
 
     def job_visible?(job)
-      visible? job.repository
+      repository_visible? job.repository, !job.private?
     end
 
     def job_cancelable?(job)
@@ -118,6 +140,13 @@ module Travis::API::V3
     def key_pair_visible?(key_pair)
       visible? key_pair.repository
     end
+
+    def preferences_visible?(preferences)
+      adminable? preferences.parent
+    end
+    alias_method :user_preferences_visible?, :preferences_visible?
+    alias_method :organization_preferences_visible?, :preferences_visible?
+    alias_method :preference_visible?, :preferences_visible?
 
     def organization_visible?(organization)
       full_access? or public_mode?(organization)
@@ -143,6 +172,10 @@ module Travis::API::V3
       self.user == user
     end
 
+    def user_adminable?(user)
+      user_writable?(user)
+    end
+
     def is_current_user?(user)
       self.user == user
     end
@@ -164,13 +197,14 @@ module Travis::API::V3
       false
     end
 
-    def repository_visible?(repository)
-      return true if unrestricted_api?(repository.owner) and not repository.private?
+    def repository_visible?(repository, show_public = true)
+      return false if repository.invalid?
+      return true  if show_public and unrestricted_api?(repository.owner) and not repository.private?
       private_repository_visible?(repository)
     end
 
     def request_visible?(request)
-      repository_visible?(request.repository)
+      repository_visible? request.repository, !request.private?
     end
 
     def private_repository_visible?(repository)
@@ -220,6 +254,11 @@ module Travis::API::V3
       else
         type.name.sub(/^Travis::API::V3::Models::/, ''.freeze).underscore.to_sym
       end
+    end
+
+    def visible_objects(list, repository_id, factory)
+      return list if full_access?
+      list.select { |r| visible?(r) }
     end
   end
 end

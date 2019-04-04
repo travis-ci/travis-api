@@ -7,6 +7,7 @@ module Travis::API::V3
     has_many :permissions, dependent: :delete_all
     has_many :users,       through:   :permissions
     has_many :stars
+    has_many :email_unsubscribes
 
     belongs_to :owner, polymorphic: true
     belongs_to :last_build, class_name: 'Travis::API::V3::Models::Build'.freeze
@@ -22,6 +23,14 @@ module Travis::API::V3
 
     after_initialize do
       update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
+    end
+
+    def migrating?
+      self.class.column_names.include?('migrating') && super
+    end
+
+    def migrated_at
+      self.class.column_names.include?('migrated_at') && super
     end
 
     def slug
@@ -45,6 +54,37 @@ module Travis::API::V3
     # Will not create a branch object if we don't have any builds for it unless
     # the create_without_build option is set to true.
     def branch(name, create_without_build: false)
+      find_or_create_branch(name: name, create_without_build: create_without_build)
+    end
+
+    def find_or_create_branch(name:, create_without_build: false)
+      connection = ActiveRecord::Base.connection
+      quoted_id   = connection.quote(id)
+      quoted_name = connection.quote(name)
+      # I don't want to install any plugins for now, so I'm using raw SQL.
+      # `DO UPDATE SET updated_at = now()` is used just to be able to return
+      # the existing record (otherwise `RETURNING *` would not work), so that
+      # we don't have to do two queries
+      sql = "INSERT INTO branches (repository_id, name, exists_on_github, created_at, updated_at)
+               VALUES (#{quoted_id}, #{quoted_name}, 't', now(), now())
+             ON CONFLICT (repository_id, name) DO NOTHING RETURNING id;"
+
+      new_branch = false
+      result = connection.execute(sql)
+      if result.count > 0
+        # postgresql inserted a new branch
+        new_branch = true
+      end
+
+      branch = branches.where(name: name).first
+      return branch unless new_branch
+      return nil    unless create_without_build or branch.builds.any?
+      branch.last_build = branch.builds.first
+      branch.save!
+      branch
+    end
+
+    def legacy_find_or_create_branch(name, create_without_build: false)
       return nil    unless branch = branches.where(name: name).first_or_initialize
       return branch unless branch.new_record?
       return nil    unless create_without_build or branch.builds.any?
@@ -99,8 +139,16 @@ module Travis::API::V3
       return false
     end
 
+    def invalid?
+      invalidated_at or owner_type.nil?
+    end
+
     def managed_by_installation?
       !!managed_by_installation_at
+    end
+
+    def admin
+      users.where(permissions: { admin: true }).with_github_token.first
     end
   end
 end

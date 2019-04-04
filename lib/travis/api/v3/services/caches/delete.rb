@@ -3,7 +3,10 @@ module Travis::API::V3
     params :match, :branch
 
     def run!
-      result query.delete(find(:repository))
+      repo = find(:repository)
+      return repo_migrated if migrated?(repo)
+
+      result query.delete(repo)
     end
   end
 end

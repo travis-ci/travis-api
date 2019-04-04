@@ -17,14 +17,14 @@ module Travis
         has_permission?
       end
 
+      def repo
+        @repo ||= service(:find_repo, params).run
+      end
+
       private
 
         def regenerate
           repo.regenerate_key!
-        end
-
-        def repo
-          @repo ||= service(:find_repo, params).run
         end
 
         def has_permission?

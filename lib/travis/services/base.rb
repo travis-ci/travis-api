@@ -13,7 +13,6 @@ module Travis
         end
 
         def scope_access?
-          self.name
           !!@scope_access
         end
       end
@@ -27,9 +26,9 @@ module Travis
         @current_user = args.last
       end
 
-      def scope(key)
+      def scope(key, repository_id = nil)
         scope = key.to_s.camelize.constantize
-        scope = scope.viewable_by(current_user) if self.class.scope_access?
+        scope = scope.viewable_by(current_user, repository_id) if self.class.scope_access?
         scope
       end
 

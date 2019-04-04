@@ -5,7 +5,6 @@ require 'securerandom'
 require 'travis/api/app'
 require 'travis/github/education'
 require 'travis/github/oauth'
-require 'travis/customerio'
 
 class Travis::Api::App
   class Endpoint
@@ -45,6 +44,7 @@ class Travis::Api::App
     class Authorization < Endpoint
       enable :inline_templates
       set prefix: '/auth'
+      set :check_auth, false
 
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
@@ -168,7 +168,6 @@ class Travis::Api::App
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
             update_first_login(user)
-            Travis::Customerio.update(user)
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
@@ -293,11 +292,12 @@ class Travis::Api::App
           # Get base URL for when we setup Faraday since otherwise it'll ignore no_proxy
           url = URI.parse(endpoint)
           base_url = "#{url.scheme}://#{url.host}"
-          http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact} 
+          http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact}
 
           conn = Faraday.new(http_options) do |conn|
             conn.request :json
             conn.use :instrumentation
+            conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
             conn.adapter :net_http_persistent
           end
           response = conn.post(endpoint, values)

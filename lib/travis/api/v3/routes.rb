@@ -83,6 +83,17 @@ module Travis::API::V3
       capture id: :digit
       route '/org/{organization.id}'
       get :find
+
+      resource :preferences do
+        route '/preferences'
+        get :for_organization
+      end
+
+      resource :preference do
+        route '/preference/{preference.name}'
+        get   :for_organization
+        patch :update
+      end
     end
 
     resource :organizations do
@@ -103,8 +114,6 @@ module Travis::API::V3
         route '/active'
         get :for_owner
       end
-
-      hide(post :import, '/import')
     end
 
     resource :repositories do
@@ -117,10 +126,12 @@ module Travis::API::V3
       route '/repo/({repository.id}|{repository.slug})'
       get :find
 
-      post :activate,  '/activate'
+      post :activate, '/activate'
       post :deactivate, '/deactivate'
-      post :star,    '/star'
-      post :unstar,  '/unstar'
+      post :migrate, '/migrate'
+      post :star, '/star'
+      post :unstar, '/unstar'
+      hide(patch :update)
 
       resource :branch do
         route '/branch/{branch.name}'
@@ -211,6 +222,12 @@ module Travis::API::V3
         patch   :update
         delete :delete
       end
+
+      resource :email_subscription do
+        route '/email_subscription'
+        delete :unsubscribe
+        post :resubscribe
+      end
     end
 
     resource :user do
@@ -229,11 +246,27 @@ module Travis::API::V3
         patch  :update
         delete :delete
       end
+
+      resource :beta_migration_request do
+        route '/beta_migration_request'
+        post   :create
+      end
     end
 
     resource :user do
       route '/user'
       get :current
+    end
+
+    resource :preferences do
+      route '/preferences'
+      get   :for_user
+    end
+
+    resource :preference do
+      route '/preference/{preference.name}'
+      get   :find
+      patch :update
     end
 
     if ENV['BILLING_V2_ENABLED']
@@ -253,10 +286,29 @@ module Travis::API::V3
         get :invoices, '/invoices'
       end
 
+      hidden_resource :trials do
+        route '/trials'
+        get :all
+      end
+
       hidden_resource :plans do
         route '/plans'
         get :all
       end
+    end
+
+    if ENV['GDPR_ENABLED']
+      hidden_resource :gdpr do
+        route '/gdpr'
+        post :export, '/export'
+        delete :purge, '/purge'
+      end
+    end
+
+    hidden_resource :insights do
+      route '/insights'
+      get :metrics, '/metrics'
+      get :active_repos, '/repos/active'
     end
   end
 end

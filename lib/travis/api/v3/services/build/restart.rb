@@ -3,11 +3,12 @@ module Travis::API::V3
 
     def run
       build = check_login_and_find(:build)
+      return repo_migrated if migrated?(build.repository)
+
       access_control.permissions(build).restart!
-
       build.clear_debug_options!
-      restart_status = query.restart(access_control.user)
 
+      restart_status = query.restart(access_control.user)
       if restart_status == "abuse_detected"
         abuse_detected
       else

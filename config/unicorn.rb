@@ -19,7 +19,4 @@ before_fork do |server, worker|
   $: << 'lib'
   require 'nakayoshi_fork'
   require 'travis/api/app'
-
-  # signal to nginx we're ready
-  FileUtils.touch("#{tmp_dir}/app-initialized")
 end
