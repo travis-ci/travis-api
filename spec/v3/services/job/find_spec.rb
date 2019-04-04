@@ -320,8 +320,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
 
     example { expect(last_response).to be_ok }
     example do
-      puts parsed_body
-      expect(parsed_body['log_complete']).to include(
+      puts body
+      expect(body['log_complete']).to include(
         'log_complete'
       )
     end

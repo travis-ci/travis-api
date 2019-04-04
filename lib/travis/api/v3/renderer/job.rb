@@ -5,18 +5,15 @@ module Travis::API::V3
     representation(:minimal, :id)
     representation(:standard, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :created_at, :updated_at, :private)
     representation(:active, *representations[:standard])
+    representation(:log_complete, :log_complete)
 
     # TODO: I don't want to config be visible in the regular representation
     # as I want it to be visible only after adding include=job.config
     # we probably need to have a better way of doing this
     representation(:with_config, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :created_at, :updated_at, :config)
 
-    #similarly we only want the :log_complete attribute to be visible is it has been added using include=job.log_complete
-    representation(:log_complete, *representations[:standard], :log_complete)
-
     hidden_representations(:with_config)
     hidden_representations(:active)
-    hidden_representations(:log_complete)
 
     def created_at
       json_format_time_with_ms(model.created_at)
