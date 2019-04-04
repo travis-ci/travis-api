@@ -35,9 +35,6 @@ module Travis::API::V3
     def log_complete
       if include_log_complete?
         return model.log_complete
-        # return "hellp wortl"
-        # @log ||= Travis::Models::Log.new(remote_log: nil, archived_content: nil, job: @job)
-        # @log ||= Travis::RemoteLog.find_by_job_id(id)
       end
     end
 
