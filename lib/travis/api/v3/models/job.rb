@@ -22,7 +22,7 @@ module Travis::API::V3
     end
 
     def log_complete
-      Travis::RemoteLog.find_by_job_id(id)
+      Travis::RemoteLog.find_by_job_id(id).archived?
     end
 
     def state

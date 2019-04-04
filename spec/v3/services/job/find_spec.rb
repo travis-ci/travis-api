@@ -313,14 +313,13 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
           'Keep-Alive'=>'30',
           'User-Agent'=>'Faraday v0.15.3'
            }).
-         to_return(status: 200, body: "", headers: {})
+         to_return(status: 200, body: "{}", headers: {})
     end
 
     before { get("/v3/job/#{job.id}?include=job.log_complete") }
 
     example { expect(last_response).to be_ok }
     example do
-      puts body
       expect(body['log_complete']).to include(
         'log_complete'
       )
