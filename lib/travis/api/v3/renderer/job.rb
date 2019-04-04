@@ -11,8 +11,12 @@ module Travis::API::V3
     # we probably need to have a better way of doing this
     representation(:with_config, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :created_at, :updated_at, :config)
 
+    #similarly we only want the :log_complete attribute to be visible is it has been added using include=job.log_complete
+    representation(:log_complete, *representations[:standard], :log_complete)
+
     hidden_representations(:with_config)
     hidden_representations(:active)
+    hidden_representations(:log_complete)
 
     def created_at
       json_format_time_with_ms(model.created_at)
@@ -28,8 +32,21 @@ module Travis::API::V3
       end
     end
 
+    def log_complete
+      if include_log_complete?
+        return model.log_complete
+        # return "hellp wortl"
+        # @log ||= Travis::Models::Log.new(remote_log: nil, archived_content: nil, job: @job)
+        # @log ||= Travis::RemoteLog.find_by_job_id(id)
+      end
+    end
+
     private def include_config?
       include? 'job.config'.freeze
+    end
+
+    private def include_log_complete?
+      include? 'job.log_complete'.freeze
     end
   end
 end

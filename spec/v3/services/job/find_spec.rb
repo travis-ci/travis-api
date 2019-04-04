@@ -301,4 +301,30 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         }}}
     })}
   end
+
+  describe 'including log_complete' do
+    before do
+      stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{job.id}?by=job_id&source=api").
+         with(  headers: {
+          'Accept'=>'*/*',
+          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'Authorization'=>'token notset',
+          'Connection'=>'keep-alive',
+          'Keep-Alive'=>'30',
+          'User-Agent'=>'Faraday v0.15.3'
+           }).
+         to_return(status: 200, body: "", headers: {})
+    end
+
+    before { get("/v3/job/#{job.id}?include=job.log_complete") }
+
+    example { expect(last_response).to be_ok }
+    example do
+      puts parsed_body
+      expect(parsed_body['log_complete']).to include(
+        'log_complete'
+      )
+    end
+  end
+
 end
