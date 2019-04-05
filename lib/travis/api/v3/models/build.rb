@@ -82,15 +82,7 @@ module Travis::API::V3
     end
 
     def log_complete
-      archived = []
-      jobs.each do |j|
-        archived << Travis::RemoteLog.find_by_job_id(j.id).archived?
-      end
-      if archived.include? false
-        return false
-      else
-        return true
-      end
+      jobs.all?(&:log_complete)
     end
   end
 end
