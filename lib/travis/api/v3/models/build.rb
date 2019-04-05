@@ -80,5 +80,17 @@ module Travis::API::V3
     def clear_debug_options!
       jobs.each { |j| j.update_attribute(:debug_options, nil) }
     end
+
+    def log_complete
+      archived = []
+      jobs.each do |j|
+        archived << Travis::RemoteLog.find_by_job_id(j.id).archived?
+      end
+      if archived.include? false
+        return false
+      else
+        return true
+      end
+    end
   end
 end

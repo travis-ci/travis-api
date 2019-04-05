@@ -372,16 +372,18 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
 
   describe 'including log_complete' do
     before do
-      stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{job.id}?by=job_id&source=api").
-         with(  headers: {
-          'Accept'=>'*/*',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'Authorization'=>'token notset',
-          'Connection'=>'keep-alive',
-          'Keep-Alive'=>'30',
-          'User-Agent'=>'Faraday v0.15.3'
-           }).
-         to_return(status: 200, body: "{}", headers: {})
+      jobs.each do |j|
+        stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{j.id}?by=job_id&source=api").
+           with(  headers: {
+            'Accept'=>'*/*',
+            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Authorization'=>'token notset',
+            'Connection'=>'keep-alive',
+            'Keep-Alive'=>'30',
+            'User-Agent'=>'Faraday v0.15.3'
+             }).
+           to_return(status: 200, body: "{}", headers: {})
+      end
     end
 
     before { get("/v3/build/#{build.id}?include=build.log_complete") }
@@ -389,7 +391,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
     example { expect(last_response).to be_ok }
     example do
       expect(body['log_complete']).to include(
-        'xxxxx'
+        'log_complete'
       )
     end
   end
