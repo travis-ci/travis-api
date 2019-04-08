@@ -3,13 +3,11 @@ module Travis::API::V3
     representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at, :private)
     representation(:standard, *representations[:minimal], :repository, :branch, :tag, :commit, :jobs, :stages, :created_by, :updated_at)
     representation(:active, *representations[:standard])
-    representation(:log_complete, :log_complete)
 
     hidden_representations(:active)
-    hidden_representations(:log_complete)
 
     def self.available_attributes
-      super + ['request']
+      super + ['request', 'log_complete']
     end
 
     def request
