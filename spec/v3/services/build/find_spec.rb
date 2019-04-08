@@ -390,9 +390,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
 
     example { expect(last_response).to be_ok }
     example do
-      expect(body['log_complete']).to include(
-        'log_complete'
-      )
+      expect(parsed_body).to include('log_complete')
     end
   end
 end
