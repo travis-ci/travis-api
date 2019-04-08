@@ -164,6 +164,6 @@ FactoryGirl.define do
     owner_id { Factory(:user, :login => 'dummy_user').id }
     owner_name 'dummy_user'
     owner_type 'User'
+    accepted_at nil
   end
-
 end
