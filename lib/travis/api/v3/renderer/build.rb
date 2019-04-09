@@ -7,7 +7,7 @@ module Travis::API::V3
     hidden_representations(:active)
 
     def self.available_attributes
-      super + ['request']
+      super + ['request', 'log_complete']
     end
 
     def request
@@ -39,6 +39,12 @@ module Travis::API::V3
       json_format_time_with_ms(model.updated_at)
     end
 
+    def log_complete
+      if include_log_complete?
+        return model.log_complete
+      end
+    end
+
     private def created_by_href(creator)
       case creator
       when V3::Models::Organization then Renderer.href(:organization, script_name: script_name, id: creator.id)
@@ -59,6 +65,10 @@ module Travis::API::V3
         "@representation" => "minimal",
         "id"              => id
       }
+    end
+
+    private def include_log_complete?
+      include? 'build.log_complete'.freeze
     end
   end
 end
