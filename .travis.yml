@@ -1,10 +1,8 @@
-sudo: true
-dist: trusty
 language: ruby
 rvm: '2.3.4'
 cache: bundler
 addons:
-  postgresql: 9.3
+  postgresql: 9.6
 services:
   - redis
 before_script:
