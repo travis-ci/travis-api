@@ -1,0 +1,42 @@
+development:
+  admins:
+    - joecorcoran
+  api_endpoint: https://api-staging.travis-ci.com
+  billing_endpoint: https://staging.travis-ci.com
+  build_endpoint: https://972259f095ed2845443f66e3c32be986ea3d155ec96739361e24e193f582e2af783ba0181c13cfef33e83fee719d616722d0abc26d8f98a968c704beaa05a951@build-staging.travis-ci.com/script
+  disable_otp: true
+  encryption:
+    key: f541f18f193ddbf1b5bbc43108e663433499084f86a81ba393f4f3b5a0685067
+  encryption_key: 143c872ac1be7d57b07a095e5ed9af7872ec1430e342efd30a799f7c539e8b55cfd559c5cc195ffadbcd206d22718bc51d1bfa7a8b5d56b8b19e3989e3db0af3
+  host: staging.travis-ci.com
+  log_level: info
+  oauth2:
+    access_token_path: login/oauth/access_token
+    authorization_server: https://github.com
+    authorize_path: login/oauth/authorize
+    client_id: bf4978aff18629f0354d
+    client_secret: 754abd59f76666897e79dd45f605bc54b8755b98
+    insufficient_access_redirect_url: https://staging.travis-ci.com/insufficient_oauth_permissions
+    scope: user:email,repo,read:org
+    user_attribute_uid_key: user/login
+    user_attributes_path: api/v2/json/user/show
+  plans:
+    github-one-build:
+      builds: 1
+      github_id: 1206
+      name: Bootstrap
+      price: 8900
+  service_hook_url: https://notify.staging.travis-ci.com
+  session_secret: Cubb3nvcqbb9BblhNuYnv8NvAvvlrvj2rvSnrlb2LrGub6nvSbuAt2anvKh9vncurbQ9bbabbbAtrv2ravr2nuGutbbE8Krr
+test:
+  admins:
+    - travisbot
+  api_endpoint:
+    'https://api-fake.travis-ci.com'
+  billing_endpoint:
+    'https://billing-fake.travis-ci.com'
+  redis:
+    url: redis://localhost:6379
+  encryption:
+    key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  service_hook_url: https://notify.fake.travis-ci.com
