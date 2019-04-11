@@ -50,7 +50,8 @@ module Travis
               end
 
               def allow_migration
-                Travis::Features.user_active?(:allow_migration, user)
+                Travis::Features.feature_active?(:allow_merge_globally) &&
+                  Travis::Features.user_active?(:allow_migration, user)
               end
 
               def channels
