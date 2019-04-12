@@ -2,7 +2,10 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
   describe "migrating a repository" do
     let(:user) { Factory.create(:user, login: 'merge-user') }
     let(:repo) { Travis::API::V3::Models::Repository.first }
-    before    { Travis::Features.activate_owner(:allow_migration, repo.owner) }
+    before do
+      Travis::Features.activate_owner(:allow_migration, repo.owner)
+      Travis::Features.enable_for_all(:allow_merge_globally)
+    end
 
     context "logged in" do
       let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
