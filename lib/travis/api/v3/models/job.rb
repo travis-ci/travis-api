@@ -21,6 +21,10 @@ module Travis::API::V3
       @log ||= Travis::RemoteLog.find_by_job_id(id)
     end
 
+    def log_complete
+      log.archived?
+    end
+
     def state
       super || 'created'
     end

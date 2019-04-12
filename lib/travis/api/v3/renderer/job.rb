@@ -14,6 +14,10 @@ module Travis::API::V3
     hidden_representations(:with_config)
     hidden_representations(:active)
 
+    def self.available_attributes
+      super + ['log_complete']
+    end
+
     def created_at
       json_format_time_with_ms(model.created_at)
     end
@@ -28,8 +32,18 @@ module Travis::API::V3
       end
     end
 
+    def log_complete
+      if include_log_complete?
+        return model.log_complete
+      end
+    end
+
     private def include_config?
       include? 'job.config'.freeze
+    end
+
+    private def include_log_complete?
+      include? 'job.log_complete'.freeze
     end
   end
 end

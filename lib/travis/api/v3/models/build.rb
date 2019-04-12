@@ -80,5 +80,9 @@ module Travis::API::V3
     def clear_debug_options!
       jobs.each { |j| j.update_attribute(:debug_options, nil) }
     end
+
+    def log_complete
+      jobs.all?(&:log_complete)
+    end
   end
 end
