@@ -11,11 +11,7 @@ module Travis::API::V3::Models
     end
 
     def migrate!
-      if !(Travis::Features.feature_active?(:allow_merge_globally) &&
-           Travis::Features.owner_active?(:allow_migration, repository.owner))
-
-        raise MigrationDisabledError
-      end
+      raise MigrationDisabledError unless repository.allow_migration?
 
       token = Travis.config.merge.auth_token
       url   = Travis.config.merge.api_url

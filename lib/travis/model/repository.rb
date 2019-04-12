@@ -203,4 +203,8 @@ class Repository < Travis::Model
   def dist_group_expansion_enabled?
     Travis::Features.enabled_for_all?(:dist_group_expansion) || Travis::Features.active?(:dist_group_expansion, self)
   end
+
+  def allow_migration?
+    Travis::Features.feature_active?(:allow_merge_globally) && Travis::Features.owner_active?(:allow_migration, self.owner)
+  end
 end

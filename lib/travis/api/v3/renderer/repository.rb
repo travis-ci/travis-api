@@ -16,8 +16,7 @@ module Travis::API::V3
     end
 
     def allow_migration
-      Travis::Features.feature_active?(:allow_merge_globally) &&
-        Travis::Features.owner_active?(:allow_migration, model.owner)
+      model.allow_migration?
     end
 
     def default_branch
