@@ -15,7 +15,7 @@ describe Travis::API::V3::Models::RepositoryMigration do
       before { Travis::Features.expects(:owner_active?).with(:allow_migration, repository.owner).returns(true) }
 
       it 'migrates repository' do
-        request = stub_request(:post, "#{Travis.config.merge.api_url}/api/repo/by_github_id/#{subject.repository.id}/migrate")
+        request = stub_request(:post, %r{/api/repo/by_github_id/\d+/migrate})
         subject.migrate!
         expect(request).to have_been_requested
       end
