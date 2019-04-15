@@ -8,7 +8,7 @@ FactoryGirl.define do
     association :commit
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
-    number 1
+    sequence(:number) {|n| n }
     state :passed
     private false
   end
@@ -149,7 +149,7 @@ FactoryGirl.define do
     association :commit
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
-    number 1
+    sequence(:number) {|n| n }
     state :passed
   end
 
