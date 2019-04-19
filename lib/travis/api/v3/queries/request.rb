@@ -3,7 +3,9 @@ module Travis::API::V3
     params  :id, :message, :branch, :config, :token, prefix: :request
 
     def find
-      return Models::Request.find_by_id(id) if id
+      relation = Models::Request
+      relation = relation.includes(raw_configurations: :raw_config) if includes?('request.raw_configs')
+      return relation.find_by_id(id) if id
       raise WrongParams, 'missing request.id'.freeze
     end
 

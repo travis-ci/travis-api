@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true do
   let!(:user)  { Factory(:user) }
   let(:beta_migration_request) { Factory(:beta_migration_request, owner_id: user.id) }
+  let(:org1) { Factory(:org_v3) }
+  let(:org2) { Factory(:org_v3) }
 
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
@@ -43,6 +45,10 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
   describe 'authenticated, existing user, existing beta migration requests' do
     before do
       beta_migration_request
+      beta_migration_request.organizations << org1
+      beta_migration_request.organizations << org2
+      beta_migration_request.save!
+
       get("/v3/user/#{user.id}/beta_migration_requests", {}, auth_headers)
     end
     example { expect(last_response.status).to eq(200) }
@@ -59,7 +65,8 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
             'owner_id'        => beta_migration_request.owner_id,
             'owner_name'      => beta_migration_request.owner_name,
             'owner_type'      => beta_migration_request.owner_type,
-            'accepted_at'     => beta_migration_request.accepted_at
+            'accepted_at'     => beta_migration_request.accepted_at,
+            'organizations'   => [org1.id, org2.id]
           }
         ]
       )
