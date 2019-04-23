@@ -51,6 +51,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "previous_state"      => build.previous_state,
       "pull_request_number" => build.pull_request_number,
       "pull_request_title"  => build.pull_request_title,
+      "private"             => false,
       "started_at"          => "2010-11-12T13:00:00Z",
       "finished_at"         => nil,
       "updated_at"          => json_format_time_with_ms(build.updated_at),
@@ -147,6 +148,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "previous_state"      => build.previous_state,
       "pull_request_number" => build.pull_request_number,
       "pull_request_title"  => build.pull_request_title,
+      "private"             => false,
       "started_at"          => "2010-11-12T13:00:00Z",
       "finished_at"         => nil,
       "updated_at"          => json_format_time_with_ms(build.updated_at),
@@ -233,6 +235,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "duration"            => nil,
       "event_type"          => "push",
       "previous_state"      => build.previous_state,
+      "private"             => false,
       "pull_request_number" => build.pull_request_number,
       "pull_request_title"  => build.pull_request_title,
       "started_at"          => "2010-11-12T13:00:00Z",
@@ -339,7 +342,35 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
     end
   end
 
-  describe 'including log_complete' do
+  describe 'including created_by' do
+    before { get("/v3/build/#{build.id}?include=build.created_by") }
+
+    example { expect(last_response).to be_ok }
+    example do
+      expect(parsed_body['created_by']).to include(
+        '@type',
+        '@href',
+        '@representation',
+        'id',
+        'name',
+        'avatar_url'
+      )
+    end
+  end
+
+  describe "private build on public repository, no pull access" do
+    before     { build.update_attribute(:private, true) }
+    before     { get("/v3/build/#{build.id}") }
+    example { expect(last_response).to be_not_found }
+    example { expect(parsed_body).to eql_json({
+      "@type"         => "error",
+      "error_type"    => "not_found",
+      "error_message" => "build not found (or insufficient access)",
+      "resource_type" => "build"
+    })}
+  end
+
+  describe 'including log_complete on hosted' do
     before do
       jobs.each do |j|
         stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{j.id}?by=job_id&source=api").
@@ -354,6 +385,33 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
           to_return(status: 200, body: "{}", headers: {})
       end
     end
+
+    before { get("/v3/build/#{build.id}?include=build.log_complete") }
+
+    example { expect(last_response).to be_ok }
+    example do
+      expect(parsed_body).to include('log_complete')
+    end
+  end
+
+  describe 'including log_complete on enterprise' do
+    before do
+      jobs.each do |j|
+        stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{j.id}?by=job_id&source=api").
+           with(  headers: {
+            'Accept'=>'*/*',
+            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Authorization'=>'token notset',
+            'Connection'=>'keep-alive',
+            'Keep-Alive'=>'30',
+            'User-Agent'=>'Faraday v0.14.0'
+             }).
+           to_return(status: 200, body: "{}", headers: {})
+      end
+    end
+
+    before { Travis.config.enterprise = true }
+    after { Travis.config.enterprise = false }
 
     before { get("/v3/build/#{build.id}?include=build.log_complete") }
 
