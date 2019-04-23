@@ -25,18 +25,34 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
   end
 
   describe "include raw configs" do
-    let(:raw_config) { request.raw_configs.build(key: '123', config: 'rvm: 2.5.1') }
-    subject { JSON.load(body)['raw_configs'] }
-    before { request.raw_configurations.create!(raw_config: raw_config, source: '.travis.yml') }
+    let(:one) { request.raw_configs.build(key: '123', config: 'language: ruby') }
+    let(:two) { request.raw_configs.build(key: '234', config: 'rvm: 2.5.1') }
+
+    before { request.raw_configurations.create!(raw_config: one, source: '.travis.yml') }
+    before { request.raw_configurations.create!(raw_config: two, source: 'other.yml') }
+    before { request.raw_configurations.create!(raw_config: one, source: '.travis.yml') } # accidental duplicate
+
     before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.raw_configs") }
 
+    subject { JSON.load(body)['raw_configs'] }
+
     it do
-      should eq([
-        '@type' => 'request_raw_configuration',
-        '@representation' => 'standard',
-        'config' => 'rvm: 2.5.1',
-        'source' => '.travis.yml'
-      ])
+      should eq(
+        [
+          {
+            '@type' => 'request_raw_configuration',
+            '@representation' => 'standard',
+            'config' => 'language: ruby',
+            'source' => '.travis.yml'
+          },
+          {
+            '@type' => 'request_raw_configuration',
+            '@representation' => 'standard',
+            'config' => 'rvm: 2.5.1',
+            'source' => 'other.yml'
+          }
+        ]
+      )
     end
   end
 
