@@ -315,7 +315,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
           'Authorization'=>'token notset',
           'Connection'=>'keep-alive',
           'Keep-Alive'=>'30',
-          'User-Agent'=>'Faraday v0.15.3'
+          'User-Agent'=>'Faraday v0.14.0'
            }).
          to_return(status: 200, body: "{}", headers: {})
 
