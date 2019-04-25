@@ -1,0 +1,34 @@
+#!/bin/bash
+
+PG_USERNAME='postgres'
+PG_PASSWORD='password'
+
+>&2 echo "Installing latest bundler"
+gem install bundler
+
+while ! pg_isready -h travis-db -p 5432 -q -U postgres; do
+  >&2 echo "Postgres is unavailable - sleeping..."
+  sleep 1
+done
+
+>&2 echo "Postgres is up - executing commands..."
+
+>&2 echo "Bundling dependencies"
+bundle check || bundle install
+
+>&2 echo "Setting up database"
+sudo -u postgres psql -c "CREATE USER $PG_USERNAME WITH SUPERUSER PASSWORD '$PG_PASSWORD'"
+
+>&2 echo "Creating and migrating database for default environment"
+ENV=test bundle exec rake db:create
+
+>&2 echo "Creating and migrating database for development environment"
+ENV=development bundle exec rake db:create
+
+>&2 echo "Running tests"
+bundle exec rake
+
+>&2 echo "Running development environment server"
+ENV=development bundle exec ruby -Ilib -S rackup
+
+>&2 echo "We're all setup!!"
