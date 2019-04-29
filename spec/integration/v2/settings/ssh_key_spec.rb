@@ -112,6 +112,7 @@ describe 'ssh keys endpoint', set_app: true do
         let(:env_var) { repo.settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY).tap { repo.settings.save } }
         before { repo.update_attributes(migration_status: "migrated") }
         before { patch "/settings/ssh_key/#{repo.id}", '{}', headers }
+        it { JSON.parse(last_response.body)["error_type"].should == "migrated_repository" }
         it { last_response.status.should == 403 }
       end
     end
