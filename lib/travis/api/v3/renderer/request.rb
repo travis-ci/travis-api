@@ -15,7 +15,7 @@ module Travis::API::V3
       configs = model.raw_configurations.to_a
       configs = configs.sort_by(&:id)
       configs = configs.uniq(&:source)
-      configs.any? ? configs : [{ config: model.yaml_config.yaml, source: '.travis.yml' }]
+      configs.any? ? configs : [{ config: model.yaml_config&.yaml, source: '.travis.yml' }]
     end
   end
 end
