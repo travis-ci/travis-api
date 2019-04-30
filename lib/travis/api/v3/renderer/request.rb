@@ -16,7 +16,7 @@ module Travis::API::V3
       configs = configs.sort_by(&:id)
       configs = configs.uniq(&:source)
       return configs if configs.any?
-      return [] unless mode.yaml_config
+      return [] unless model.yaml_config
       [{ config: model.yaml_config.yaml, source: '.travis.yml' }]
     end
   end
