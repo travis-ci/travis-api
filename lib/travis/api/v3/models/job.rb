@@ -22,7 +22,12 @@ module Travis::API::V3
     end
 
     def log_complete
-      log.archived?
+      if enterprise?
+        log.aggregated?
+      else
+        log.archived?
+      end
+
     end
 
     def state
@@ -43,6 +48,10 @@ module Travis::API::V3
       config = super&.config || has_attribute?(:config) && read_attribute(:config) || {}
       config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
       config
+    end
+
+    private def enterprise?
+      !!Travis.config.enterprise
     end
   end
 end
