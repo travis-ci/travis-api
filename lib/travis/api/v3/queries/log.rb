@@ -45,11 +45,7 @@ module Travis::API::V3
     end
 
     def bucket_name
-      hostname('archive')
-    end
-
-    def hostname(name)
-      "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
+      Travis.config.log_options.s3.bucket_name
     end
   end
 end

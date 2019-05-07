@@ -76,7 +76,11 @@ module Travis::API::V3
         aws_secret_access_key: s3_config[:secret_access_key],
         provider: 'AWS',
         instrumentor: ActiveSupport::Notifications,
-        connection_options: { instrumentor: ActiveSupport::Notifications }
+        connection_options: { instrumentor: ActiveSupport::Notifications },
+        host: s3_config[:host],
+        endpoint: s3_config[:endpoint],
+        region: s3_config[:region],
+        path_style: true
       )
     end
 

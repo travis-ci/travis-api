@@ -83,7 +83,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   after { Fog::Mock.reset }
 
   around(:each) do |example|
-    Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
+    Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret', bucket_name: 'archived-logs' }
     example.run
     Travis.config.log_options = {}
   end
