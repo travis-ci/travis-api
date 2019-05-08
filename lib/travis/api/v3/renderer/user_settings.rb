@@ -15,7 +15,7 @@ module Travis::API::V3
     end
 
     def allow_config_imports?
-      Features.owner_active?(:config_imports, repo.owner)
+      Travis::Features.owner_active?(:config_imports, repo.owner)
     end
 
     def repo
