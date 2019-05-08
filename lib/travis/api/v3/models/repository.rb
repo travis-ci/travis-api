@@ -150,5 +150,9 @@ module Travis::API::V3
     def admin
       users.where(permissions: { admin: true }).with_github_token.first
     end
+
+    def allow_migration?
+      Travis::Features.feature_active?(:allow_merge_globally) && Travis::Features.owner_active?(:allow_migration, self.owner)
+    end
   end
 end
