@@ -68,7 +68,10 @@ class Repository < Travis::Model
     without_invalidated.joins(:users).where(users: { login: login })
   }
   scope :by_slug, ->(slug) {
-    without_invalidated.where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC')
+    owner_name, repo_name = slug.split('/')
+    without_invalidated.where(
+      "LOWER(repositories.owner_name) = ? AND LOWER(repositories.name) = ?", owner_name.downcase, repo_name.downcase
+    ).order('id DESC')
   }
   scope :search, ->(query) {
     query = query.gsub('\\', '/')
