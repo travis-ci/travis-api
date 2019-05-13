@@ -28,6 +28,16 @@ module Travis
           end
         end
       end
+
+      private def platform_for(job)
+        return :org if deployed_on_org?
+        return :org if job.migrated? && !job.restarted_after_migration?
+        :com
+      end
+
+      private def deployed_on_org?
+        ENV["TRAVIS_SITE"] == "org"
+      end
     end
   end
 end
