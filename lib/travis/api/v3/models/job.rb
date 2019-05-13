@@ -59,15 +59,11 @@ module Travis::API::V3
     end
 
     def migrated?
-      deployed_on_com? && !!org_id
+      !!org_id
     end
 
     private def enterprise?
       !!Travis.config.enterprise
-    end
-
-    private def deployed_on_com?
-      ENV["TRAVIS_SITE"] == "com"
     end
   end
 end
