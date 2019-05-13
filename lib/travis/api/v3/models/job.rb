@@ -50,8 +50,24 @@ module Travis::API::V3
       config
     end
 
+    def restarted?
+      !!restarted_at
+    end
+
+    def restarted_post_migration?
+      restarted? && restarted_at > repository.migrated_at
+    end
+
+    def migrated?
+      deployed_on_com? && !!org_id
+    end
+
     private def enterprise?
       !!Travis.config.enterprise
+    end
+
+    private def deployed_on_com?
+      ENV["TRAVIS_SITE"] == "com"
     end
   end
 end
