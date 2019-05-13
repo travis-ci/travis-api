@@ -14,7 +14,7 @@ describe Travis::Services::FindLog do
     it 'finds the log with the given job_id' do
       params[:job_id] = job.id
       found_by_job_id = stub('found-by-job-id', job_id: job.id)
-      Travis::RemoteLog.expects(:find_by_job_id).with(job.id).returns(found_by_job_id)
+      Travis::RemoteLog.expects(:find_by_job_id).with(job.id, {:platform => 'com'}).returns(found_by_job_id)
       service.run.should == found_by_job_id
     end
 
