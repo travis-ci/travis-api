@@ -100,6 +100,18 @@ class Job < Travis::Model
     (super || :created).to_sym
   end
 
+  def migrated?
+    !!org_id
+  end
+
+  def restarted?
+    !!restarted_at
+  end
+
+  def restarted_post_migration?
+    restarted? && restarted_at > repository.migrated_at
+  end
+
   def duration
     started_at && finished_at ? finished_at - started_at : nil
   end
