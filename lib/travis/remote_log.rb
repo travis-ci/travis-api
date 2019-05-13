@@ -10,15 +10,17 @@ module Travis
     class << self
       extend Forwardable
 
-      def_delegators :client, :find_by_job_id, :find_by_id,
+      def_delegators :client, :find_by_id, :find_by_job_id,
         :find_id_by_job_id, :find_parts_by_job_id, :write_content_for_job_id
 
       def_delegators :archive_client, :fetch_archived_url
 
       private def client
         @client ||= Client.new(
-          url: Travis.config.logs_api.url,
-          token: Travis.config.logs_api.token
+          org_url: Travis.config.org_logs_api.url,
+          org_token: Travis.config.org_logs_api.token,
+          com_url: Travis.config.com_logs_api.url,
+          com_token: Travis.config.com_logs_api.token
         )
       end
 
@@ -158,25 +160,29 @@ module Travis
     class Client
       Error = Class.new(StandardError)
 
-      def initialize(url: '', token: '')
-        @url = url
-        @token = token
+      def initialize(org_url: '', org_token: '', com_url: '', com_token: '')
+        @org_url = org_url
+        @org_token = org_token
+        @com_url = com_url
+        @com_token = com_token
       end
 
-      attr_reader :url, :token
-      private :url
-      private :token
+      attr_reader :org_url, :org_token, :com_url, :com_token
+      private :org_url
+      private :org_token
+      private :com_url
+      private :com_token
 
       def find_by_id(log_id)
         find_by('id', log_id)
       end
 
-      def find_by_job_id(job_id)
-        find_by('job_id', job_id)
+      def find_by_job_id(job_id, **keyword_args)
+        find_by('job_id', job_id, platform: keyword_args[:platform])
       end
 
       def find_id_by_job_id(job_id)
-        resp = conn.get do |req|
+        resp = platform_conn(nil).get do |req|
           req.url "logs/#{job_id}/id"
           req.params['source'] = 'api'
         end
@@ -185,7 +191,7 @@ module Travis
       end
 
       def find_parts_by_job_id(job_id, after: nil, part_numbers: [])
-        resp = conn.get do |req|
+        resp = platform_conn(nil).get do |req|
           req.url "log-parts/#{job_id}"
           req.params['after'] = after unless after.nil?
           unless part_numbers.empty?
@@ -201,7 +207,7 @@ module Travis
       end
 
       def write_content_for_job_id(job_id, content: '', removed_by: nil)
-        resp = conn.put do |req|
+        resp = platform_conn(nil).put do |req|
           req.url "logs/#{job_id}"
           req.params['source'] = 'api'
           req.params['removed_by'] = removed_by unless removed_by.nil?
@@ -214,8 +220,8 @@ module Travis
         RemoteLog.new(JSON.parse(resp.body))
       end
 
-      private def find_by(by, id)
-        resp = conn.get do |req|
+      private def find_by(by, id, **keyword_args)
+        resp = platform_conn(keyword_args[:platform]).get do |req|
           req.url "logs/#{id}", by: by
           req.params['source'] = 'api'
         end
@@ -223,8 +229,21 @@ module Travis
         RemoteLog.new(JSON.parse(resp.body))
       end
 
-      private def conn
-        @conn ||= Faraday.new(http_options.merge(url: url)) do |c|
+      private def platform_conn(platform)
+        platform = platform || ENV["TRAVIS_SITE"]
+        return platform == "org" ? org_conn : com_conn
+      end
+
+      private def org_conn
+        @org_conn ||= faraday_instance(org_url, org_token)
+      end
+
+      private def com_conn
+        @com_conn ||= faraday_instance(com_url, com_token)
+      end
+
+      private def faraday_instance(url, token)
+        Faraday.new(http_options.merge(url: url)) do |c|
           c.request :authorization, :token, token
           c.request :retry, max: 5, interval: 0.1, backoff_factor: 2
           c.use :instrumentation

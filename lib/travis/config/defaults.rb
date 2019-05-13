@@ -35,6 +35,8 @@ module Travis
             gdpr:                 {},
             insights:             Travis.env == 'test' ? { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' } : {},
             database:             { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
+            org_logs_api:         { url: logs_api_url, token: logs_api_auth_token },
+            com_logs_api:         { url: logs_api_url, token: logs_api_auth_token },
             logs_api:             { url: logs_api_url, token: logs_api_auth_token },
             log_options:          { s3: { access_key_id: '', secret_access_key: ''}},
             s3:                   { access_key_id: '', secret_access_key: ''},

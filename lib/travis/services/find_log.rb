@@ -24,15 +24,22 @@ module Travis
 
           job = scope(:job).find_by_id(params[:job_id])
           if job
-            Travis::RemoteLog.find_by_job_id(Integer(params[:job_id]))
+            platform = platform_for(job)
+            id = id_for(job)
+            Travis::RemoteLog.find_by_job_id(id, platform: platform)
           end
         end
       end
 
       private def platform_for(job)
-        return :org if deployed_on_org?
-        return :org if job.migrated? && !job.restarted_after_migration?
-        :com
+        return "org" if deployed_on_org?
+        return "org" if job.migrated? && !job.restarted_after_migration?
+        "com"
+      end
+
+      private def id_for(job)
+        return job.org_id if job.migrated? && !job.restarted_after_migration?
+        job.id
       end
 
       private def deployed_on_org?
