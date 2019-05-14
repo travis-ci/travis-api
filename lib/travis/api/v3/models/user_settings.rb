@@ -8,6 +8,7 @@ module Travis::API::V3
     attribute :maximum_number_of_builds, Integer, default: 0
     attribute :auto_cancel_pushes, Boolean, default: lambda { |us, _| us.auto_cancel_default? }
     attribute :auto_cancel_pull_requests, Boolean, default: lambda { |us, _| us.auto_cancel_default? }
+    attribute :allow_config_imports, Boolean, default: false
 
     def repository_id
       parent && parent.id

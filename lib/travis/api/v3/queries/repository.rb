@@ -42,8 +42,12 @@ module Travis::API::V3
     end
 
     def by_slug
-      owner_name, name = slug.split('/')
-      Models::Repository.where(owner_name: owner_name, name: name, invalidated_at: nil).first
+      owner_name, repo_name = slug.split('/')
+      Models::Repository.where(
+        "LOWER(repositories.owner_name) = ? AND LOWER(repositories.name) = ? AND repositories.invalidated_at IS NULL",
+        owner_name.downcase,
+        repo_name.downcase
+      ).first
     end
   end
 end
