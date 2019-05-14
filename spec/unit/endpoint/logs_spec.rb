@@ -37,6 +37,9 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
       # We expect to hit org as well as the migrated job references the public
       # job via its org_id.
       Travis::RemoteLog.stubs(:find_by_job_id).with(public_job_id, {:platform => 'org'}).returns(public_log)
+
+      restarted_public_migrated_log = Travis::RemoteLog.new(content: 'public', job_id: public_migrated_job.id)
+      Travis::RemoteLog.stubs(:find_by_job_id).with(public_migrated_job.id, {:platform => 'com'}).returns(restarted_public_migrated_log)
     end
 
     describe 'private mode, .com' do
@@ -118,6 +121,16 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
         it 'responds with public log from .org when job already migrated not restarted' do
           public_migrated_job.update_attribute(:org_id, public_job.id)
+          Factory.create(:permission, user: user, repository: public_migrated_repo)
+          response = get("/jobs/#{public_migrated_job.id}/log", {}, authenticated_headers)
+          response.should be_ok
+          response.body.should == 'public'
+          response.headers["X-Log-Access-Token"].should be_nil
+        end
+
+        it 'responds with public log from .com when job already migrated but since restarted' do
+          public_migrated_job.update_attribute(:org_id, public_job.id)
+          public_migrated_job.update_attribute(:restarted_at, 1.hour.ago)
           Factory.create(:permission, user: user, repository: public_migrated_repo)
           response = get("/jobs/#{public_migrated_job.id}/log", {}, authenticated_headers)
           response.should be_ok
