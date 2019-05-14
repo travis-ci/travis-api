@@ -33,12 +33,12 @@ module Travis
 
       private def platform_for(job)
         return "org" if deployed_on_org?
-        return "org" if job.migrated? && !job.restarted_after_migration?
+        return "org" if job.migrated? && !job.restarted_post_migration?
         "com"
       end
 
       private def id_for(job)
-        return job.org_id if job.migrated? && !job.restarted_after_migration?
+        return job.org_id if job.migrated? && !job.restarted_post_migration?
         job.id
       end
 
