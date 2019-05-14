@@ -17,10 +17,10 @@ module Travis
 
       private def client
         @client ||= Client.new(
-          org_url: Travis.config.org_logs_api.url,
-          org_token: Travis.config.org_logs_api.token,
-          com_url: Travis.config.com_logs_api.url,
-          com_token: Travis.config.com_logs_api.token
+          default_url: Travis.config.logs_api.url,
+          default_token: Travis.config.logs_api.token,
+          fallback_url: Travis.config.fallback_logs_api.url,
+          fallback_token: Travis.config.fallback_logs_api.token
         )
       end
 
@@ -160,18 +160,18 @@ module Travis
     class Client
       Error = Class.new(StandardError)
 
-      def initialize(org_url: '', org_token: '', com_url: '', com_token: '')
-        @org_url = org_url
-        @org_token = org_token
-        @com_url = com_url
-        @com_token = com_token
+      def initialize(default_url: '', default_token: '', fallback_url: '', fallback_token: '')
+        @default_url = default_url
+        @default_token = default_token
+        @fallback_url = fallback_url
+        @fallback_token = fallback_token
       end
 
-      attr_reader :org_url, :org_token, :com_url, :com_token
-      private :org_url
-      private :org_token
-      private :com_url
-      private :com_token
+      attr_reader :default_url, :default_token, :fallback_url, :fallback_token
+      private :default_url
+      private :default_token
+      private :fallback_url
+      private :fallback_token
 
       def find_by_id(log_id)
         find_by('id', log_id)
@@ -230,16 +230,20 @@ module Travis
       end
 
       private def platform_conn(platform)
-        platform = platform || ENV["TRAVIS_SITE"]
-        return platform == "org" ? org_conn : com_conn
+        # if not passed, platform defaults to current site.
+        current_site = ENV["TRAVIS_SITE"]
+        platform = platform || current_site
+        # if platform is the same as the current site, use default, otherwise,
+        # use fallback
+        return platform == current_site ? default_conn : fallback_conn
       end
 
-      private def org_conn
-        @org_conn ||= faraday_instance(org_url, org_token)
+      private def default_conn
+        @default_conn ||= faraday_instance(default_url, default_token)
       end
 
-      private def com_conn
-        @com_conn ||= faraday_instance(com_url, com_token)
+      private def fallback_conn
+        @fallback_conn ||= faraday_instance(fallback_url, fallback_token)
       end
 
       private def faraday_instance(url, token)
