@@ -38,7 +38,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
       # job via its org_id.
       Travis::RemoteLog.stubs(:find_by_job_id).with(public_job_id, {:platform => 'org'}).returns(public_log)
 
-      restarted_public_migrated_log = Travis::RemoteLog.new(content: 'public', job_id: public_migrated_job.id)
+      restarted_public_migrated_log = Travis::RemoteLog.new(content: 'public restarted', job_id: public_migrated_job.id)
       Travis::RemoteLog.stubs(:find_by_job_id).with(public_migrated_job.id, {:platform => 'com'}).returns(restarted_public_migrated_log)
     end
 
@@ -134,7 +134,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
           Factory.create(:permission, user: user, repository: public_migrated_repo)
           response = get("/jobs/#{public_migrated_job.id}/log", {}, authenticated_headers)
           response.should be_ok
-          response.body.should == 'public'
+          response.body.should == 'public restarted'
           response.headers["X-Log-Access-Token"].should be_nil
         end
       end
