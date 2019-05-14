@@ -8,6 +8,9 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
     let(:public_repo)    { Factory.create(:repository, private: false) }
     let!(:private_build) { Factory.create(:build, repository: private_repo, private: true) }
     let!(:public_build)  { Factory.create(:build, repository: public_repo, private: false) }
+    let(:public_migrated_repo) { Factory.create(:repository, private: false, migrated_at: 1.day.ago) }
+    let(:public_migrated_build) { Factory.create(:build, repository: public_migrated_repo, private: false) }
+    let(:public_migrated_job) { public_migrated_build.matrix.first }
     let(:authenticated_headers) {
       { 'HTTP_ACCEPT' => 'text/vnd.travis-ci.2+plain', 'HTTP_AUTHORIZATION' => "token #{token}" }
     }
@@ -31,6 +34,9 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
       public_job_id = public_job.id
       public_log = Travis::RemoteLog.new(content: 'public', job_id: public_job_id)
       Travis::RemoteLog.stubs(:find_by_job_id).with(public_job_id, {:platform => 'com'}).returns(public_log)
+      # We expect to hit org as well as the migrated job references the public
+      # job via its org_id.
+      Travis::RemoteLog.stubs(:find_by_job_id).with(public_job_id, {:platform => 'org'}).returns(public_log)
     end
 
     describe 'private mode, .com' do
@@ -105,6 +111,15 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
         it 'responds with a public log' do
           Factory.create(:permission, user: user, repository: public_repo)
           response = get("/jobs/#{public_job.id}/log", {}, authenticated_headers)
+          response.should be_ok
+          response.body.should == 'public'
+          response.headers["X-Log-Access-Token"].should be_nil
+        end
+
+        it 'responds with public log from .org when job already migrated not restarted' do
+          public_migrated_job.update_attribute(:org_id, public_job.id)
+          Factory.create(:permission, user: user, repository: public_migrated_repo)
+          response = get("/jobs/#{public_migrated_job.id}/log", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'public'
           response.headers["X-Log-Access-Token"].should be_nil
