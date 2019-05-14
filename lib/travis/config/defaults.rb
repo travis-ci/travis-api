@@ -17,7 +17,7 @@ module Travis
       end
 
       def fallback_logs_api_auth_url
-        ENV['TRAVIS_API_FALLBACK_LOGS_API_URL'] || 'http://travis-logs-fallback-notset.example.com:1234'
+        ENV['TRAVIS_API_FALLBACK_LOGS_API_URL'] || 'http://travis-logs-notset.example.com:1234'
       end
 
       def fallback_logs_api_auth_token

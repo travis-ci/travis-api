@@ -208,10 +208,10 @@ describe Travis::RemoteLog do
 end
 
 describe Travis::RemoteLog::Client do
-  let(:org_url) { 'http://orgloggo.example.com' }
-  let(:org_token) { 'orgtoken' }
-  let(:com_url) { 'http://comloggo.example.com' }
-  let(:com_token) { 'comtoken' }
+  let(:default_url) { 'http://orgloggo.example.com' }
+  let(:default_token) { 'default_token' }
+  let(:fallback_url) { 'http://comloggo.example.com' }
+  let(:fallback_token) { 'fallback_token' }
   let :stubs do
     Faraday::Adapter::Test::Stubs.new do |stub|
       stub.get('/logs/4') { [200, {}, JSON.dump(content: 'huh wow')] }
@@ -253,15 +253,15 @@ describe Travis::RemoteLog::Client do
     end
   end
 
-  subject { described_class.new(org_url: org_url, org_token: org_token, com_url: com_url, com_token: com_token) }
+  subject { described_class.new(default_url: default_url, default_token: default_token, fallback_url: fallback_url, fallback_token: fallback_token) }
 
   before do
     subject.instance_variable_set(
-      :@org_conn,
+      :@default_conn,
       Faraday.new { |c| c.adapter :test, stubs }
     )
     subject.instance_variable_set(
-      :@com_conn,
+      :@fallback_conn,
       Faraday.new { |c| c.adapter :test, stubs }
     )
   end
