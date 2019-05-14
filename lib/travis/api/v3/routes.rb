@@ -258,6 +258,11 @@ module Travis::API::V3
       end
     end
 
+    hidden_resource :beta_migration_requests do
+      route '/beta_migration_requests'
+      post   :create_internal
+    end
+
     resource :user do
       route '/user'
       get :current
