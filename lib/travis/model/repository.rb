@@ -68,7 +68,10 @@ class Repository < Travis::Model
     without_invalidated.joins(:users).where(users: { login: login })
   }
   scope :by_slug, ->(slug) {
-    without_invalidated.where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC')
+    owner_name, repo_name = slug.split('/')
+    without_invalidated.where(
+      "LOWER(repositories.owner_name) = ? AND LOWER(repositories.name) = ?", owner_name.downcase, repo_name.downcase
+    ).order('id DESC')
   }
   scope :search, ->(query) {
     query = query.gsub('\\', '/')
@@ -202,5 +205,9 @@ class Repository < Travis::Model
 
   def dist_group_expansion_enabled?
     Travis::Features.enabled_for_all?(:dist_group_expansion) || Travis::Features.active?(:dist_group_expansion, self)
+  end
+
+  def allow_migration?
+    Travis::Features.feature_active?(:allow_merge_globally) && Travis::Features.owner_active?(:allow_migration, self.owner)
   end
 end
