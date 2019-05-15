@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::BetaMigrationRequest < Query
-    class BetaRequestFailed < StandardError; end
+    class ApiRequestFailed < StandardError; end
 
     def create(current_user, organizations)
       Travis::API::V3::Models::BetaMigrationRequest.create({
@@ -28,10 +28,10 @@ module Travis::API::V3
       })
 
       unless response.success?
-        raise BetaRequestFailed
+        raise ApiRequestFailed.new(status: response.status, response: response.body)
       end
 
-      body = JSON.parse(response&.body)
+      body = JSON.parse(response.body)
 
       Models::BetaMigrationRequest.new(body.slice(*%w(id owner_id owner_name owner_type accepted_at)))
     end

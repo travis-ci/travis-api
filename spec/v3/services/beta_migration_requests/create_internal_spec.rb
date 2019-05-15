@@ -39,7 +39,7 @@ describe Travis::API::V3::Services::BetaMigrationRequests::CreateInternal, set_a
 
     example { expect(JSON.load(body)).to include(
       "@type"           => "beta_migration_request",
-      "@representation" =>"standard",
+      "@representation" => "standard",
       "owner_id"        => user.id,
       "owner_name"      => user.login,
       "owner_type"      => "User")
