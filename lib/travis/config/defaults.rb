@@ -27,7 +27,7 @@ module Travis
             api_com_url:          'https://api.travis-ci.com',
             shorten_host:         'trvs.io',
             public_mode:          !!ENV['PUBLIC_MODE'],
-            applications:         {},
+            applications:         { api_org: { token: 'sometoken', full_access: true } },
             tokens:               { internal: 'token' },
             auth:                 { target_origin: nil },
             assets:               { host: HOSTS[Travis.env.to_sym] },
