@@ -41,7 +41,7 @@ module Travis
       instrument :run
 
       def log
-        @log ||= Travis::RemoteLog.find_by_job_id(job.id)
+        @log ||= Travis::RemoteLog::Remote.new.find_by_job_id(job.id)
       end
 
       def can_remove?
