@@ -19,6 +19,8 @@ describe Travis::API::V3::Services::BetaMigrationRequest::Create, set_app: true 
     valid_org_ids.each do |org_id|
       Factory(:membership, role: "admin", organization_id: org_id, user_id: user.id)
     end
+
+    Travis.config.applications[:api_org] = { token: 'sometoken', full_access: true }
   end
 
   describe 'not authenticated' do

@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Services::BetaMigrationRequests::CreateInternal < Service
+  class Services::BetaMigrationRequests::ProxyCreateOnCom < Service
     params :organizations, :user_login
     result_type :beta_migration_request
 

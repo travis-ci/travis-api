@@ -260,7 +260,7 @@ module Travis::API::V3
 
     hidden_resource :beta_migration_requests do
       route '/beta_migration_requests'
-      post   :create_internal
+      post   :proxy_create_on_com
     end
 
     resource :user do

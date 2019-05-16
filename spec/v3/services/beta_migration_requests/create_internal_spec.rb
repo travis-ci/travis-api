@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::BetaMigrationRequests::CreateInternal, set_app: true do
+describe Travis::API::V3::Services::BetaMigrationRequests::ProxyCreateOnCom, set_app: true do
   let(:user)  { Factory(:user) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => 'internal api_org:sometoken' } }
   let(:params)  { { user_login: user.login, organizations: valid_org_names } }
