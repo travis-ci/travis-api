@@ -30,6 +30,15 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
     }
   end
 
+  let(:empty_response_hash) do
+    {
+      '@type'                   => 'beta_migration_requests',
+      '@href'                   => "/v3/user/#{user.id}/beta_migration_requests",
+      '@representation'         => 'standard',
+      'beta_migration_requests' => []
+    }
+  end
+
   before { Travis.config.host = 'travis-ci.com' }
 
   describe 'not authenticated' do
@@ -44,6 +53,7 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
 
   describe 'authenticated, different user\'s beta migration requests' do
     before do
+      stub_request(:get, "#{Travis.config.api_com_url}/v3/beta_migration_requests?user_login=svenfuchs").to_return(status: 200, body: empty_response_hash.to_json)
       get("/v3/user/#{other_user.id}/beta_migration_requests", {}, auth_headers)
     end
     example { expect(last_response.status).to eq(404) }
@@ -51,16 +61,12 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
 
   describe 'authenticated, existing user, no beta migration requests' do
     before do
+      stub_request(:get, "#{Travis.config.api_com_url}/v3/beta_migration_requests?user_login=svenfuchs").to_return(status: 200, body: empty_response_hash.to_json)
       get("/v3/user/#{user.id}/beta_migration_requests", {}, auth_headers)
     end
     example { expect(last_response.status).to eq(200) }
     example do
-      expect(JSON.load(body)).to eq(
-        '@type'                   => 'beta_migration_requests',
-        '@href'                   => "/v3/user/#{user.id}/beta_migration_requests",
-        '@representation'         => 'standard',
-        'beta_migration_requests' => []
-      )
+      expect(JSON.load(body)).to eq(empty_response_hash)
     end
   end
 
@@ -70,24 +76,12 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
       beta_migration_request.organizations << org1
       beta_migration_request.organizations << org2
       beta_migration_request.save!
-
+      stub_request(:get, "#{Travis.config.api_com_url}/v3/beta_migration_requests?user_login=svenfuchs").to_return(status: 200, body: response_hash.to_json)
       get("/v3/user/#{user.id}/beta_migration_requests", {}, auth_headers)
     end
     example { expect(last_response.status).to eq(200) }
     example do
       expect(JSON.load(body)).to eq(response_hash)
-    end
-
-    context 'when it is .org API' do
-      before do
-        Travis.config.host = 'travis-ci.org'
-        stub_request(:get, "#{Travis.config.api_com_url}/v3/user/#{user.id}/beta_migration_requests").to_return(status: 200, body: response_hash.to_json)
-      end
-
-      it 'fetches beta_migration_requests from .com API' do
-        get("/v3/user/#{user.id}/beta_migration_requests", {}, auth_headers)
-        expect(JSON.load(body)).to eq(response_hash)
-      end
     end
   end
 end

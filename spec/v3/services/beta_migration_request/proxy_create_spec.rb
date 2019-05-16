@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::API::V3::Services::BetaMigrationRequest::Create, set_app: true do
+describe Travis::API::V3::Services::BetaMigrationRequest::ProxyCreate, set_app: true do
   let(:user)  { Travis::API::V3::Models::User.where(login: 'svenfuchs').first_or_create }
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
