@@ -12,28 +12,7 @@ module Travis::API::V3
     end
 
     def send_create_request(current_user, organizations)
-      url   = Travis.config.api_com_url
-      token = Travis.config.applications[:api_org][:token]
-
-      connection = Faraday.new(url: url) do |c|
-        c.request :json
-        c.use Faraday::Request::Authorization, 'internal', "api_org:#{token}"
-        c.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
-        c.adapter Faraday.default_adapter
-      end
-
-      response = connection.post('/v3/beta_migration_requests', {
-        user_login: current_user.login,
-        organizations: organizations.map(&:login)
-      })
-
-      unless response.success?
-        raise ComApiRequestFailed.new(status: response.status, response: response.body)
-      end
-
-      body = JSON.parse(response.body)
-
-      Models::BetaMigrationRequest.new(body.slice(*%w(id owner_id owner_name owner_type accepted_at)))
+      ComApiClient.new.create_beta_migration_request(current_user, organizations)
     end
   end
 end
