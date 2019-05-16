@@ -12,7 +12,7 @@ module Travis::API::V3
     end
 
     def find_beta_migration_requests(user)
-      response = process_response(connection.get("/v3/user/#{user.id}/beta_migration_requests"))
+      response = process_response(connection.get("/v3/beta_migration_requests", user_login: user.login))
 
       beta_requests = response['beta_migration_requests'] || []
 
