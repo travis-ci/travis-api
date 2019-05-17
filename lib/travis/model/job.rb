@@ -100,6 +100,18 @@ class Job < Travis::Model
     (super || :created).to_sym
   end
 
+  def migrated?
+    !!org_id
+  end
+
+  def restarted?
+    !!restarted_at
+  end
+
+  def restarted_post_migration?
+    restarted? && restarted_at > repository.migrated_at
+  end
+
   def duration
     started_at && finished_at ? finished_at - started_at : nil
   end
@@ -166,13 +178,13 @@ class Job < Travis::Model
   end
 
   def log
-    @log ||= Travis::RemoteLog.find_by_job_id(id)
+    @log ||= Travis::RemoteLog::Remote.new.find_by_job_id(id)
   end
 
   attr_writer :log
 
   def log_id
-    @log_id ||= Travis::RemoteLog.find_id_by_job_id(id)
+    @log_id ||= Travis::RemoteLog::Remote.new.find_id_by_job_id(id)
   end
 
   attr_writer :log_id

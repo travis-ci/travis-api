@@ -9,8 +9,10 @@ describe Travis::Services::UpdateJob do
 
   before :each do
     build.matrix.delete_all
-    Travis::RemoteLog.stubs(:find_by_job_id).returns(log)
-    Travis::RemoteLog.stubs(:write_content_for_job_id).returns(log)
+    remote = stub('remote')
+    Travis::RemoteLog::Remote.stubs(:new).returns(remote)
+    remote.stubs(:find_by_job_id).returns(log)
+    remote.stubs(:write_content_for_job_id).returns(log)
   end
 
   describe '#cancel_job_in_worker' do

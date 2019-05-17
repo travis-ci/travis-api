@@ -5,16 +5,16 @@ describe Travis::RemoteLog do
   let(:attrs) { { id: 4, content: 'huh', job_id: 5 } }
 
   before :each do
-    described_class.instance_variable_set(:@client, nil)
-    described_class.instance_variable_set(:@archive_client, nil)
+    described_class::Remote.instance_variable_set(:@clients, nil)
+    described_class::Remote.instance_variable_set(:@archive_clients, nil)
   end
 
   it 'has a default client' do
-    expect(described_class.send(:client)).to_not be_nil
+    expect(described_class::Remote.new.send(:client)).to_not be_nil
   end
 
   it 'has a default archive_client' do
-    expect(described_class.send(:archive_client)).to_not be_nil
+    expect(described_class::Remote.new.send(:archive_client)).to_not be_nil
   end
 
   it 'delegates public methods to client' do
@@ -22,19 +22,21 @@ describe Travis::RemoteLog do
     client.expects(:find_by_job_id)
     client.expects(:find_by_id)
     client.expects(:write_content_for_job_id)
-    described_class.instance_variable_set(:@client, client)
+    remote = described_class::Remote.new
+    remote.expects(:client).times(3).returns(client)
 
-    described_class.find_by_id
-    described_class.find_by_job_id
-    described_class.write_content_for_job_id
+    remote.find_by_id
+    remote.find_by_job_id
+    remote.write_content_for_job_id
   end
 
   it 'delegates public methods to archive_client' do
     archive_client = mock('archive_client')
     archive_client.expects(:fetch_archived_url)
-    described_class.instance_variable_set(:@archive_client, archive_client)
+    remote = described_class::Remote.new
+    remote.expects(:archive_client).returns(archive_client)
 
-    described_class.fetch_archived_url
+    remote.fetch_archived_url
   end
 
   it 'has all the necessary attributes' do
@@ -75,9 +77,11 @@ describe Travis::RemoteLog do
   end
 
   it 'has archived content' do
-    described_class.expects(:fetch_archived_url)
+    remote = stub()
+    remote.expects(:fetch_archived_url)
       .with(5, expires: nil)
       .returns('yep')
+    described_class::Remote.expects(:new).returns(remote)
     subject.archived_url.should eq 'yep'
   end
 
@@ -85,7 +89,9 @@ describe Travis::RemoteLog do
     found_parts = [
       Travis::RemoteLogPart.new(number: 42, content: 'yey', final: false)
     ]
-    described_class.stubs(:find_parts_by_job_id)
+    remote = stub()
+    described_class::Remote.expects(:new).returns(remote)
+    remote.stubs(:find_parts_by_job_id)
       .with(5, after: nil, part_numbers: [])
       .returns(found_parts)
     subject.parts.should eq found_parts
@@ -190,11 +196,11 @@ describe Travis::RemoteLog do
     content = 'Log removed by Floof MaGoof at sometime'
     user_id = 8
 
-    client = mock('client')
-    client.expects(:write_content_for_job_id)
+    remote = mock('remote')
+    described_class::Remote.expects(:new).returns(remote)
+    remote.expects(:write_content_for_job_id)
       .with(attrs.fetch(:job_id), content: content, removed_by: user_id)
       .returns(described_class.new(content: content, removed_by: user_id))
-    described_class.instance_variable_set(:@client, client)
 
     user = mock('user')
     user.expects(:name).returns('Floof MaGoof')

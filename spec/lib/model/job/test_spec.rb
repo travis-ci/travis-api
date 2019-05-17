@@ -4,8 +4,10 @@ describe Job::Test do
 
   before :each do
     Travis::Event.stubs(:dispatch)
-    Travis::RemoteLog.stubs(:find_by_job_id).returns(log)
-    Travis::RemoteLog.stubs(:write_content_for_job_id).returns(log)
+    remote = stub('remote')
+    Travis::RemoteLog::Remote.stubs(:new).returns(remote)
+    remote.stubs(:find_by_job_id).returns(log)
+    remote.stubs(:write_content_for_job_id).returns(log)
   end
 
   it 'is cancelable if the job has not finished yet' do
