@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Travis::API::V3::Services::BetaMigrationRequests::Create, set_app: true do
   let(:user)  { Factory(:user) }
-  let(:auth_headers) { { 'HTTP_AUTHORIZATION' => 'internal api_org:sometoken' } }
+  let(:auth_headers) { { 'HTTP_AUTHORIZATION' => 'internal some_app:sometoken' } }
   let(:params)  { { user_login: user.login, organizations: valid_org_names } }
 
   let!(:org1) { Factory(:org_v3, name: "org_1", login: "org_1")}
@@ -15,11 +15,15 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Create, set_app: true
   let(:invalid_org) { Factory(:org_v3, name: "invalid_org") }
 
   before do
-    Travis.config.applications[:api_org] = { token: 'sometoken', full_access: true }
+    Travis.config.applications[:some_app] = { token: 'sometoken', full_access: true }
 
     valid_orgs.each do |org|
       Factory(:membership, role: "admin", organization_id: org.id, user_id: user.id)
     end
+  end
+
+  after do
+    Travis.config.applications.delete(:some_app)
   end
 
   describe "authenticated" do

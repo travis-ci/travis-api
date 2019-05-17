@@ -39,7 +39,13 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
     }
   end
 
-  before { Travis.config.host = 'travis-ci.com' }
+  before do
+    Travis.config.applications[:api_org] = { token: 'sometoken', full_access: true }
+  end
+
+  after do
+    Travis.config.applications.delete(:api_org)
+  end
 
   describe 'not authenticated' do
     before { get("/v3/user/#{user.id}/beta_migration_requests") }
