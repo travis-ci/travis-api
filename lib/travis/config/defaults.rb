@@ -15,6 +15,14 @@ module Travis
           ENV['LOGS_API_AUTH_TOKEN'] ||
           'notset'
       end
+
+      def fallback_logs_api_auth_url
+        ENV['TRAVIS_API_FALLBACK_LOGS_API_URL'] || 'http://travis-logs-notset.example.com:1234'
+      end
+
+      def fallback_logs_api_auth_token
+        ENV['TRAVIS_API_FALLBACK_LOGS_API_TOKEN'] || 'notset'
+      end
     end
 
     HOSTS = {
@@ -36,6 +44,7 @@ module Travis
             gdpr:                 {},
             insights:             Travis.env == 'test' ? { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' } : {},
             database:             { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
+            fallback_logs_api:    { url: fallback_logs_api_auth_url, token: fallback_logs_api_auth_token },
             logs_api:             { url: logs_api_url, token: logs_api_auth_token },
             log_options:          { s3: { access_key_id: '', secret_access_key: ''}},
             s3:                   { access_key_id: '', secret_access_key: ''},
