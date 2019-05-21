@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -ev
+
+app_name="app"
+tag_branch=$TRAVIS_BRANCH
+tag_sha=${TRAVIS_COMMIT:0:7}
+tag_latest=latest
+
+local_image="travis-api_$app_name"
+quay_image=quay.io/travisci/travis-api
+
+docker-compose build "$app_name"
+
+docker login -u="$QUAY_ROBOT_HANDLE" -p="$QUAY_ROBOT_TOKEN" quay.io
+
+docker images
+
+docker tag $local_image $quay_image:$tag_branch
+docker push $quay_image:$tag_branch
+
+docker tag $local_image $quay_image:$tag_sha
+docker push $quay_image:$tag_sha
+
+if [ ${TRAVIS_BRANCH} = "master" ]; then
+  docker tag $local_image $quay_image:$tag_latest
+  docker push $quay_image:$tag_latest
+fi
+
+exit 0
