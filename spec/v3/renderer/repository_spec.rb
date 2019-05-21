@@ -1,7 +1,8 @@
 describe Travis::API::V3::Renderer::Repository do
-   let(:repo) { Factory(:repository_without_last_build) }
+  let(:repo) { Factory(:repository_without_last_build) }
+  let(:repo_renderer) { Travis::API::V3::Renderer::Repository.new(repo) }
 
-  subject { Travis::API::V3::Renderer::Repository.new(repo) }
+  subject { repo_renderer }
 
   describe "basic check" do
     it "returns a basic representation of the object" do
@@ -9,19 +10,39 @@ describe Travis::API::V3::Renderer::Repository do
     end
   end
 
-  describe "#allow_migration" do
-    it "is included in the :additional representation set" do
-      expect(subject.class.representations[:additional]).to include(:allow_migration)
+  describe '#allow_migration' do
+    subject { repo_renderer.allow_migration }
+
+    it 'is included in the :additional representation set' do
+      expect(repo_renderer.class.representations[:additional]).to include(:allow_migration)
     end
 
-    it "returns false when owner is not active" do
-      expect(subject.allow_migration).to be_falsey
+    context 'when migration is enabled globally' do
+      before { Travis::Features.expects(:feature_active?).with(:allow_merge_globally).returns(true) }
+
+      context 'when feature is not enabled for the user' do
+        it { is_expected.to be_falsey }
+      end
+
+      context 'when feature is enabled for the user' do
+        before { Travis::Features.expects(:owner_active?).with(:allow_migration, repo.owner).returns(true) }
+
+        it { is_expected.to be_truthy }
+      end
     end
 
-    it "returns true when owner is active" do
-      Travis::Features.expects(:owner_active?).with(:allow_migration, repo.owner).returns(true)
+    context 'when migration is disabled globally' do
+      before { Travis::Features.expects(:feature_active?).with(:allow_merge_globally).returns(false) }
 
-      expect(subject.allow_migration).to be_truthy
+      context 'when feature is not enabled for the user' do
+        it { is_expected.to be_falsey }
+      end
+
+      context 'when feature is enabled for the user' do
+        before { Travis::Features.stubs(:owner_active?).with(:allow_migration, repo.owner).returns(true) }
+
+        it { is_expected.to be_falsey }
+      end
     end
   end
 end
