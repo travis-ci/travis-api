@@ -5,8 +5,12 @@ module Travis::Api::App::Responders
     end
 
     def apply
-      set_headers
-      send_file(filename, type: :svg, last_modified: last_modified)
+      if redirect_to_com?
+        redirect_to_com
+      else
+        set_headers
+        send_file(filename, type: :svg, last_modified: last_modified)
+      end
     end
 
     def content_type
