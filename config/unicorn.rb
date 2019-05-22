@@ -10,7 +10,11 @@ tmp_dir = ENV.fetch("tmp_dir", "/tmp")
 if ENV['DYNO']
   listen File.expand_path("nginx.socket", tmp_dir), backlog: 1024
 else
-  listen "127.0.0.1:#{Integer(ENV.fetch('PORT'))}", backlog: 1024
+  if ENV['DOCKER']
+    listen "#{Integer(ENV.fetch('PORT'))}", backlog: 1024
+  else
+    listen "127.0.0.1:#{Integer(ENV.fetch('PORT'))}", backlog: 1024
+  end
 end
 
 require 'fileutils'
