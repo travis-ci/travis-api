@@ -88,6 +88,10 @@ module Travis
       load_urls
     end
 
+    def com_url
+      "https://#{host.sub(/org$/, 'com')}"
+    end
+
     def org?
       host.ends_with?('travis-ci.org')
     end
