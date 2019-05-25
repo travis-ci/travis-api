@@ -1,11 +1,12 @@
-FROM ruby:2.5.1
+FROM ruby:2.5.1-slim
 
 LABEL maintainer Travis CI GmbH <support+travis-app-docker-images@travis-ci.com>
 
 # required for envsubst tool
 RUN ( \
    apt-get update ; \
-   apt-get install -y --no-install-recommends  gettext-base \
+   apt-get install -y --no-install-recommends  gettext-base git make gcc g++ libpq-dev \
+   && rm -rf /var/lib/apt/lists/* \
 )
 
 # throw errors if Gemfile has been modified since Gemfile.lock
