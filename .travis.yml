@@ -1,6 +1,7 @@
 language: ruby
 
-sudo: false
+import:
+  - travis-ci/build-configs/db-setup.yml
 
 rvm: 2.5.1
 
@@ -18,15 +19,8 @@ env:
 
 cache: bundler
 
-addons:
-  postgresql: 9.6
-
 services:
   - redis-server
-
-before_script:
-  - "createdb travis_test || true"
-  - "curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test"
 
 before_install:
   - 'gem update --system'

@@ -18,7 +18,7 @@ module Travis::API::V3
     serialize :debug_options
 
     def log
-      @log ||= Travis::RemoteLog.find_by_job_id(id)
+      @log ||= Travis::RemoteLog::Remote.new.find_by_job_id(id)
     end
 
     def log_complete
@@ -48,6 +48,18 @@ module Travis::API::V3
       config = super&.config || has_attribute?(:config) && read_attribute(:config) || {}
       config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
       config
+    end
+
+    def restarted?
+      !!restarted_at
+    end
+
+    def restarted_post_migration?
+      restarted? && restarted_at > repository.migrated_at
+    end
+
+    def migrated?
+      !!org_id
     end
 
     private def enterprise?

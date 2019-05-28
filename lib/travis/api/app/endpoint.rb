@@ -55,7 +55,7 @@ class Travis::Api::App
           # disallow_migrating! is implemented in a way it is, it's the simplest
           # thing to do and since we're not planning to work on API V2 too much,
           # I'll just leave it at that
-          if acceptable_formats.first.accepts?("application/json")
+          if acceptable_formats.any? { |f| f.accepts?("application/json") }
             halt 403, { error_type: "migrated_repository", error_message: MSGS[:migrated] }
           else
             halt 403, MSGS[:migrated]

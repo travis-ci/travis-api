@@ -30,18 +30,35 @@ describe Travis::Api::Serialize::V2::Http::User do
     data['user'].should == expected_data
   end
 
-  context "allow_migration" do
-    it "should be false when the user is reported as not active" do
-      expect(data['user']['allow_migration']).to be_falsey
+  context 'allow_migration' do
+    subject { data['user']['allow_migration'] }
+
+    context 'when migration is enabled globally' do
+      before { Travis::Features.expects(:feature_active?).with(:allow_merge_globally).returns(true) }
+
+      context 'when feature is not enabled for the user' do
+        it { is_expected.to be_falsey }
+      end
+
+      context 'when feature is enabled for the user' do
+        before { Travis::Features.expects(:user_active?).with(:allow_migration, user).returns(true) }
+
+        it { is_expected.to be_truthy }
+      end
     end
 
-    it "should be true when the user is reported as active" do
-      Travis::Features.
-        expects(:user_active?).
-        with(:allow_migration, user).
-        returns(true)
+    context 'when migration is disabled globally' do
+      before { Travis::Features.expects(:feature_active?).with(:allow_merge_globally).returns(false) }
 
-      expect(data['user']['allow_migration']).to be_truthy
+      context 'when feature is not enabled for the user' do
+        it { is_expected.to be_falsey }
+      end
+
+      context 'when feature is enabled for the user' do
+        before { Travis::Features.stubs(:user_active?).with(:allow_migration, user).returns(true) }
+
+        it { is_expected.to be_falsey }
+      end
     end
   end
 

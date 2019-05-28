@@ -6,7 +6,7 @@ module Travis::API::V3
 
     def find(job)
       @job = job
-      remote_log = Travis::RemoteLog.find_by_job_id(@job.id)
+      remote_log = Travis::RemoteLog::Remote.new(platform: platform).find_by_job_id(platform_job_id)
       raise EntityMissing, 'log not found'.freeze if remote_log.nil?
       log = Travis::API::V3::Models::Log.new(remote_log: remote_log, job: job)
       # if the log has been archived, go to s3
@@ -20,7 +20,7 @@ module Travis::API::V3
 
     def delete(user, job)
       @job = job
-      remote_log = Travis::RemoteLog.find_by_job_id(@job.id)
+      remote_log = Travis::RemoteLog::Remote.new(platform: platform).find_by_job_id(platform_job_id)
       raise EntityMissing, 'log not found'.freeze if remote_log.nil?
       raise LogAlreadyRemoved if remote_log.removed_at || remote_log.removed_by
       raise JobUnfinished unless @job.finished_at?
@@ -37,11 +37,12 @@ module Travis::API::V3
     private
 
     def prefix
-      "jobs/#{@job.id}/log.txt"
+      "jobs/#{platform_job_id}/log.txt"
     end
 
     def s3_config
-      super.merge(bucket_name: bucket_name)
+      platform_prefix = "#{platform}_" unless platform == :default
+      config["#{platform_prefix}#{main_type}_options".to_sym][:s3].merge(bucket_name: bucket_name)
     end
 
     def bucket_name
@@ -49,7 +50,23 @@ module Travis::API::V3
     end
 
     def hostname(name)
-      "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
+      host = platform == :default ? Travis.config.host : Travis.config["#{platform}_host"]
+      "#{name}#{'-staging' if Travis.env == 'staging'}.#{host.split('.')[-2, 2].join('.')}"
+    end
+
+    def platform
+      return :default if deployed_on_org?
+      return :fallback if @job.migrated? && !@job.restarted_post_migration?
+      :default
+    end
+
+    def platform_job_id
+      return @job.org_id if @job.migrated? && !@job.restarted_post_migration?
+      @job.id
+    end
+
+    def deployed_on_org?
+      ENV["TRAVIS_SITE"] == "org"
     end
   end
 end
