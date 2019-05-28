@@ -50,7 +50,17 @@ class Travis::Api::App
       }
 
       def disallow_migrating!(repo)
-        halt 403, MSGS[:migrated] if Travis.config.org? && (repo.migration_status == "migrating" || repo.migration_status == "migrated")
+        if Travis.config.org? && (repo.migration_status == "migrating" || repo.migration_status == "migrated")
+          # this shouldn't be really done like that but since
+          # disallow_migrating! is implemented in a way it is, it's the simplest
+          # thing to do and since we're not planning to work on API V2 too much,
+          # I'll just leave it at that
+          if acceptable_formats.first.accepts?("application/json")
+            halt 403, { error_type: "migrated_repository", error_message: MSGS[:migrated] }
+          else
+            halt 403, MSGS[:migrated]
+          end
+        end
       end
 
       def allow_public?

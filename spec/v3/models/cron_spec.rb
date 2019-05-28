@@ -125,7 +125,7 @@ describe Travis::API::V3::Models::Cron do
     end
 
     context "when last build within last 24h has no started_at" do
-      let(:build) { Factory(:v3_build, started_at: nil) }
+      let(:build) { Factory(:v3_build, started_at: nil, number: 100) }
       let(:cron) { Factory(:cron, branch_id: Factory(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
         cron.needs_new_build?.should be_truthy
@@ -133,7 +133,7 @@ describe Travis::API::V3::Models::Cron do
     end
 
     context "when there was a build in the last 24h" do
-      let(:cron) { Factory(:cron, branch_id: Factory(:branch, last_build: Factory(:v3_build)).id, dont_run_if_recent_build_exists: true) }
+      let(:cron) { Factory(:cron, branch_id: Factory(:branch, last_build: Factory(:v3_build, number: 200)).id, dont_run_if_recent_build_exists: true) }
 
       it "needs_new_build? returns false" do
         cron.needs_new_build?.should be_falsey
