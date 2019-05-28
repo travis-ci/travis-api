@@ -7,20 +7,26 @@ describe Travis::Services::FindLog do
     it 'finds the log with the given id' do
       params[:id] = 1
       found_by_id = stub('found-by-id', job_id: job.id)
-      Travis::RemoteLog.expects(:find_by_id).with(1).returns(found_by_id)
+      remote = stub('remote')
+      remote.expects(:find_by_id).with(1).returns(found_by_id)
+      Travis::RemoteLog::Remote.expects(:new).returns(remote)
       service.run.should == found_by_id
     end
 
     it 'finds the log with the given job_id' do
       params[:job_id] = job.id
       found_by_job_id = stub('found-by-job-id', job_id: job.id)
-      Travis::RemoteLog.expects(:find_by_job_id).with(job.id).returns(found_by_job_id)
+      remote = stub('remote')
+      remote.expects(:find_by_job_id).with(job.id).returns(found_by_job_id)
+      Travis::RemoteLog::Remote.expects(:new).returns(remote)
       service.run.should == found_by_job_id
     end
 
     it 'does not raise if the log could not be found' do
       params[:id] = 17
-      Travis::RemoteLog.expects(:find_by_id).with(17).returns(nil)
+      remote = stub('remote')
+      remote.expects(:find_by_id).with(17).returns(nil)
+      Travis::RemoteLog::Remote.expects(:new).returns(remote)
       lambda { service.run }.should_not raise_error
     end
   end

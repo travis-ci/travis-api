@@ -5,43 +5,9 @@ require 'faraday'
 require 'faraday_middleware'
 require 'virtus'
 
+
 module Travis
   class RemoteLog
-    class << self
-      extend Forwardable
-
-      def_delegators :client, :find_by_job_id, :find_by_id,
-        :find_id_by_job_id, :find_parts_by_job_id, :write_content_for_job_id
-
-      def_delegators :archive_client, :fetch_archived_url
-
-      private def client
-        @client ||= Client.new(
-          url: Travis.config.logs_api.url,
-          token: Travis.config.logs_api.token
-        )
-      end
-
-      private def archive_client
-        @archive_client ||= ArchiveClient.new(
-          access_key_id: archive_s3_config[:access_key_id],
-          secret_access_key: archive_s3_config[:secret_access_key],
-          bucket_name: archive_s3_bucket
-        )
-      end
-
-      private def archive_s3_bucket
-        @archive_s3_bucket ||= [
-          Travis.env == 'staging' ? 'archive-staging' : 'archive',
-          Travis.config.host.split('.')[-2, 2]
-        ].flatten.compact.join('.')
-      end
-
-      private def archive_s3_config
-        @archive_s3_config ||= Travis.config.log_options.s3.to_h
-      end
-    end
-
     include Virtus.model(nullify_blank: true)
 
     attribute :aggregated_at, Time
@@ -56,6 +22,14 @@ module Travis
     attribute :removed_at, Time
     attribute :removed_by_id, Integer
     attribute :updated_at, Time
+
+    def platform=(platform)
+      @platform = platform
+    end
+
+    def platform
+      @platform || :default
+    end
 
     def job
       @job ||= Job.find(job_id)
@@ -72,7 +46,7 @@ module Travis
 
     def parts(after: nil, part_numbers: [])
       return solo_part if removed? || aggregated?
-      self.class.find_parts_by_job_id(
+      remote.find_parts_by_job_id(
         job_id, after: after, part_numbers: part_numbers
       )
     end
@@ -98,7 +72,7 @@ module Travis
     end
 
     def archived_url(expires: nil)
-      @archived_url ||= self.class.fetch_archived_url(job_id, expires: expires)
+      @archived_url ||= remote.fetch_archived_url(job_id, expires: expires)
     end
 
     def to_json(chunked: false, after: nil, part_numbers: [])
@@ -142,7 +116,7 @@ module Travis
         removed_by = user.id
       end
 
-      updated = self.class.write_content_for_job_id(
+      updated = remote.write_content_for_job_id(
         job_id,
         content: message,
         removed_by: removed_by
@@ -155,15 +129,20 @@ module Travis
       message
     end
 
+    def remote
+      @remote ||= Travis::RemoteLog::Remote.new(platform: platform)
+    end
+
     class Client
       Error = Class.new(StandardError)
 
-      def initialize(url: '', token: '')
+      def initialize(url: '', token: '', platform: :default)
         @url = url
         @token = token
+        @platform = platform
       end
 
-      attr_reader :url, :token
+      attr_reader :url, :token, :platform
       private :url
       private :token
 
@@ -220,7 +199,9 @@ module Travis
           req.params['source'] = 'api'
         end
         return nil unless resp.success?
-        RemoteLog.new(JSON.parse(resp.body))
+        remote_log = RemoteLog.new(JSON.parse(resp.body))
+        remote_log.platform = platform
+        remote_log
       end
 
       private def conn
@@ -270,6 +251,76 @@ module Travis
 
         return nil if candidates.empty?
         candidates.first
+      end
+    end
+
+    class Remote
+      private def clients
+        @clients ||= {}
+      end
+
+      private def archive_clients
+        @archive_clients ||= {}
+      end
+
+      extend Forwardable
+
+      def_delegators :client, :find_by_job_id, :find_by_id,
+        :find_id_by_job_id, :find_parts_by_job_id, :write_content_for_job_id
+
+      def_delegators :archive_client, :fetch_archived_url
+
+      attr_accessor :platform
+
+      def initialize(platform: :default)
+        self.platform = platform.to_sym
+        clients[self.platform] = create_client
+        archive_clients[self.platform] = create_archive_client
+      end
+
+      private def platform_config(path)
+        path = "#{platform}_#{path}" unless platform == :default
+        path.split('.').inject(Travis.config) do |config, key|
+          config[key]
+        end
+      end
+
+      private def client
+        clients[platform]
+      end
+
+      private def archive_client
+        archive_clients[platform]
+      end
+
+      private def create_client
+        Travis.logger.info("logs_api.url: #{platform_config("logs_api.url")}")
+        Client.new(
+          url: platform_config("logs_api.url"),
+          token: platform_config("logs_api.token"),
+          platform: platform
+        )
+      end
+
+      private def create_archive_client
+        Travis.logger.info("archive_s3_config.access_key_id: #{archive_s3_config[:access_key_id]}")
+        Travis.logger.info("s3_bucket: #{archive_s3_bucket}")
+        ArchiveClient.new(
+          access_key_id: archive_s3_config[:access_key_id],
+          secret_access_key: archive_s3_config[:secret_access_key],
+          bucket_name: archive_s3_bucket
+        )
+      end
+
+      private def archive_s3_bucket
+        @archive_s3_bucket ||= [
+          Travis.env == 'staging' ? 'archive-staging' : 'archive',
+          platform_config("host").split('.')[-2, 2]
+        ].flatten.compact.join('.')
+      end
+
+      private def archive_s3_config
+        @archive_s3_config ||= platform_config("log_options.s3").to_h
       end
     end
   end

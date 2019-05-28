@@ -78,7 +78,9 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       key: "jobs/#{s3job.id}/log.txt",
       body: archived_content
     )
-    Travis::RemoteLog.stubs(:find_by_job_id).returns(Travis::RemoteLog.new(log_from_api))
+    remote = stubs('remote')
+    Travis::RemoteLog::Remote.stubs(:new).returns(remote)
+    remote.stubs(:find_by_job_id).returns(Travis::RemoteLog.new(log_from_api))
   end
   after { Fog::Mock.reset }
 

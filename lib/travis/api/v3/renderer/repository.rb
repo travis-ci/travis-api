@@ -16,7 +16,7 @@ module Travis::API::V3
     end
 
     def allow_migration
-      return true if Travis::Features.owner_active?(:allow_migration, model.owner)
+      model.allow_migration?
     end
 
     def default_branch
