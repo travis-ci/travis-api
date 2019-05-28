@@ -8,16 +8,16 @@ module Travis::API::V3::Models
         organizations: user.organizations.map(&:name)
       }
 
-      send_email('beta_confirmation', params)
+      send_email('Travis::Addons::Migration::Task', 'beta_confirmation', params)
     end
 
-    def send_email(email_type, params)
+    def send_email(task_class, email_type, params)
       params = params.merge(email_type: email_type)
 
       client.push(
         'queue' => 'email',
         'class' => 'Travis::Async::Sidekiq::Worker',
-        'args'  => [nil, 'Travis::Addons::Migration::Task', 'perform', {}, params]
+        'args'  => [nil, task_class, 'perform', {}, params]
       )
     end
 
