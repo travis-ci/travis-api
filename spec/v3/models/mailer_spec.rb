@@ -8,6 +8,7 @@ describe Travis::API::V3::Models::Mailer do
   describe '#send_beta_confirmation' do
     it 'sends email' do
       subject.expects(:send_email).with(
+        'Travis::Addons::Migration::Task',
         'beta_confirmation',
         user_name: user.login,
         recipients: [user.email],
@@ -30,7 +31,7 @@ describe Travis::API::V3::Models::Mailer do
         'args' => [nil, 'Travis::Addons::Migration::Task', 'perform', {}, { email_type: 'some_email', foo: 'bar' }]
       )
 
-      subject.send_email('some_email', foo: 'bar')
+      subject.send_email('Travis::Addons::Migration::Task', 'some_email', foo: 'bar')
     end
   end
 end
