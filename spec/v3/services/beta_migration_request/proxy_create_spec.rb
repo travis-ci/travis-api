@@ -20,11 +20,11 @@ describe Travis::API::V3::Services::BetaMigrationRequest::ProxyCreate, set_app: 
       Factory(:membership, role: "admin", organization_id: org_id, user_id: user.id)
     end
 
-    Travis.config.applications[:some_app] = { token: 'sometoken', full_access: true }
+    Travis.config.applications[:api_org] = { token: 'sometoken', full_access: true }
   end
 
   after do
-    Travis.config.applications.delete(:some_app)
+    Travis.config.applications.delete(:api_org)
   end
 
   describe 'not authenticated' do
