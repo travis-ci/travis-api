@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::BetaMigrationRequests::Create, set_app: true do
-  let(:user)  { Factory(:user) }
+  let(:user)  { Factory(:user, login: 'some_beta_user') }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => 'internal some_app:sometoken' } }
   let(:params)  { { user_login: user.login, organizations: valid_org_names } }
 
