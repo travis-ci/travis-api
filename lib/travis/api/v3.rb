@@ -43,8 +43,6 @@ module Travis
       MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
       PrivateRepoFeature  = ClientError        .create('this feature is only available on private repositories and for Travis CI Enterprise customers', status: 403)
-      RepositoryInactive  = ClientError        .create('cannot create requests on an inactive repository', status: 406)
-      RepoSshKeyMissing   = ClientError        .create('request cannot be completed because the repo ssh key is still pending to be created. please retry in a bit, or try syncing the repository if this condition does not resolve', status: 409)
       RequestLimitReached = ClientError        .create('request limit reached for resource', status: 429)
       SourceUnknown       = NotFound           .create('source unknown', status: 400)
       UnprocessableEntity = ClientError        .create('request unable to be processed due to semantic errors', status: 422)
