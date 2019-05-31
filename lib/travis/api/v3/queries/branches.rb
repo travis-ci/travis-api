@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Queries::Branches < Query
     params :exists_on_github, prefix: :branch
+    params :name, prefix: :branch
 
     sortable_by :name,
       last_build:       "builds.id".freeze,
@@ -26,7 +27,9 @@ module Travis::API::V3
     end
 
     def filter(list)
-      list = list.where(exists_on_github: bool(exists_on_github)) unless exists_on_github.nil?
+      list = list.where(exists_on_github: bool(exists_on_github)) if exists_on_github.present?
+      list = list.where(['lower(name)  LIKE ?', "%#{name.downcase}%"]) if name.present?
+
       list
     end
   end

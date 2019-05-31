@@ -190,6 +190,39 @@ describe 'Repos', set_app: true do
     response.status.should == 403
   end
 
+  it 'responds with 301 to .com if a repo has been migrated' do
+    Travis.config.host = 'travis-ci.org'
+    Travis.config.public_mode = true
+    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    Factory(:build, repository: repo, state: :passed)
+
+    result = get('/svenfuchs/minimal.svg?branch=master', {}, 'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8')
+    result.status.should == 301
+    result.headers['Location'].should == 'https://travis-ci.com/svenfuchs/minimal.svg?branch=master'
+  end
+
+  it 'responds with 301 and an image if a repo has been migrated and with browser-like accept header' do
+    Travis.config.host = 'travis-ci.org'
+    Travis.config.public_mode = true
+    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    Factory(:build, repository: repo, state: :passed)
+
+    result = get('/svenfuchs/minimal.svg?branch=master', {}, 'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8')
+    result.status.should == 301
+    result.headers['Location'].should == 'https://travis-ci.com/svenfuchs/minimal.svg?branch=master'
+  end
+
+  it 'responds with 301 to .com if a repo has been migrated, slug without format' do
+    Travis.config.host = 'travis-ci.org'
+    Travis.config.public_mode = true
+    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    Factory(:build, repository: repo, state: :passed)
+
+    result = get('/svenfuchs/minimal?branch=master', {}, 'HTTP_ACCEPT' => 'image/svg+xml')
+    result.status.should == 301
+    result.headers['Location'].should == 'https://travis-ci.com/svenfuchs/minimal?branch=master'
+  end
+
   it 'responds with 200 and an image if a repo exists and with browser-like accept header' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
@@ -202,20 +235,16 @@ describe 'Repos', set_app: true do
     result.should deliver_result_image_for('passing.svg')
   end
 
-  it 'responds with 200 and image when repo can\'t be found and format is png' do
+  it 'responds with 301 to .com and image when repo can\'t be found and format is png' do
     result = get('/repos/foo/bar', {}, 'HTTP_ACCEPT' => 'image/png')
-    result.status.should == 200
-    result.headers['Content-Type'].should == 'image/png'
-    result.body.should_not == ''
-    result.should deliver_result_image_for('unknown')
+    result.status.should == 301
+    result.headers['Location'].should == 'https://travis-ci.com/foo/bar'
   end
 
-  it 'responds with 200 and image when repo can\'t be found and format is png' do
+  it 'responds with 301 to .com and image when repo can\'t be found and format is png' do
     result = get('/repos/foo/bar.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
-    result.status.should == 200
-    result.headers['Content-Type'].should == 'image/png'
-    result.body.should_not == ''
-    result.should deliver_result_image_for('unknown')
+    result.status.should == 301
+    result.headers['Location'].should == 'https://travis-ci.com/foo/bar.png'
   end
 
   it '[.org, public_mode] responds with a passing image when the repo is public' do

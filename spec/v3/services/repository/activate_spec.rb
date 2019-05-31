@@ -41,9 +41,9 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       let(:webhook_payload) { JSON.dump(name: 'web', events: Travis::API::V3::GitHub::EVENTS, active: true, config: { url: Travis.config.service_hook_url || '', insecure_ssl: false }) }
       let(:service_hook_payload) { JSON.dump(events: Travis::API::V3::GitHub::EVENTS, active: false) }
 
-      before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
-      before        { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
-      before        { stub_request(:any, %r(https://api.github.com/repositories/#{repo.github_id}/hooks(/\d+)?)) }
+      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
+      before { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
+      before { stub_request(:any, %r(https://api.github.com/repositories/#{repo.github_id}/hooks(/\d+)?)) }
 
       around do |ex|
         Travis.config.service_hook_url = 'https://url.of.listener.something'
@@ -187,6 +187,23 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
           example 'requests webhooks without ssl verification' do
             expect(WebMock).to have_requested(:post, "https://api.github.com/repositories/#{repo.github_id}/hooks").with(body: webhook_payload).once
           end
+        end
+      end
+
+      context 'when the repo ssh key does not exist' do
+        before do
+          repo.key.destroy
+          post("/v3/repo/#{repo.id}/activate", {}, headers)
+        end
+
+        example { expect(last_response.status).to eq 409 }
+
+        example do
+          expect(JSON.load(body)).to eq(
+            '@type' => 'error',
+            'error_type' => 'repo_ssh_key_missing',
+            'error_message' => 'request cannot be completed because the repo ssh key is still pending to be created. please retry in a bit, or try syncing the repository if this condition does not resolve'
+          )
         end
       end
     end
