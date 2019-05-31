@@ -37,9 +37,6 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       "resource_type" => "repository"
     }}
   end
-      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
-      before { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
-      before { stub_request(:any, %r(https://api.github.com/repositories/#{repo.github_id}/hooks(/\d+)?)) }
 
   describe "existing repository, no push access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
