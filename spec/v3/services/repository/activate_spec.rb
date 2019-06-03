@@ -37,6 +37,9 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       "resource_type" => "repository"
     }}
   end
+      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
+      before { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
+      before { stub_request(:any, %r(https://api.github.com/repositories/#{repo.github_id}/hooks(/\d+)?)) }
 
   describe "existing repository, no push access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
@@ -176,6 +179,23 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
           expect(JSON.load(body)).to include(
             '@type' => 'repository',
             'active' => true
+          )
+        end
+      end
+
+      context 'when the repo ssh key does not exist' do
+        before do
+          repo.key.destroy
+          post("/v3/repo/#{repo.id}/activate", {}, headers)
+        end
+
+        example { expect(last_response.status).to eq 409 }
+
+        example do
+          expect(JSON.load(body)).to eq(
+            '@type' => 'error',
+            'error_type' => 'repo_ssh_key_missing',
+            'error_message' => 'request cannot be completed because the repo ssh key is still pending to be created. please retry in a bit, or try syncing the repository if this condition does not resolve'
           )
         end
       end
