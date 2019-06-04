@@ -179,6 +179,23 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
           )
         end
       end
+
+      context 'when the repo ssh key does not exist' do
+        before do
+          repo.key.destroy
+          post("/v3/repo/#{repo.id}/activate", {}, headers)
+        end
+
+        example { expect(last_response.status).to eq 409 }
+
+        example do
+          expect(JSON.load(body)).to eq(
+            '@type' => 'error',
+            'error_type' => 'repo_ssh_key_missing',
+            'error_message' => 'request cannot be completed because the repo ssh key is still pending to be created. please retry in a bit, or try syncing the repository if this condition does not resolve'
+          )
+        end
+      end
     end
 
     context 'when webhook does not exist' do
