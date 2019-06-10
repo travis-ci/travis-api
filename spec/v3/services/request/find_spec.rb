@@ -20,7 +20,8 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
                   "event_type",
                   "push",
                   "base_commit",
-                  "head_commit")
+                  "head_commit",
+                  "pull_request_mergeable_state")
     }
   end
 
