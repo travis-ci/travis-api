@@ -21,7 +21,7 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
                   "push",
                   "base_commit",
                   "head_commit",
-                  "pull_request_mergeable_state")
+                  "pull_request_mergeable")
     }
   end
 
