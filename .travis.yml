@@ -1,16 +1,7 @@
 language: ruby
 
-# import:
-#   - travis-ci/build-configs/db-setup.yml
-
-before_script:
-  - createdb travis_test || true
-  - curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/pd-accept-draft-pr/db/main/structure.sql | psql travis_test
-
-addons:
-  postgresql: 9.6
-
-
+import:
+  - travis-ci/build-configs/db-setup.yml
 
 rvm: 2.5.1
 
