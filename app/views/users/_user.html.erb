@@ -61,10 +61,15 @@
     <dd class="inline">
       <p>
         <% if @user.github_id.present? %>
-          GitHub App installed with
-          <strong>id: <%= @user.id %></strong>
-          and
-          <strong>github_id: <%= @user.github_id %></strong>
+          <% if @user_hooks.any? %>
+            Service Hook
+          <% else %>
+            GitHub App installed with
+            <strong>id: <%= @user.id %></strong>
+            and
+            <strong>github_id: <%= @user.github_id %></strong>
+            <%= link_to '[Manage repos link]', repositories_user_path(@user) %>
+          <% end %>
         <% end %>
       </p>
     </dd>
