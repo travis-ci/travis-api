@@ -57,6 +57,18 @@
       <% end %>
     </dd>
 
+    <dt class="info-label">GitHub Integration</dt>
+    <dd class="inline">
+      <p>
+        <% if @user.github_id.present? %>
+          GitHub App installed with
+          <strong>id: <%= @user.id %></strong>
+          and
+          <strong>github_id: <%= @user.github_id %></strong>
+        <% end %>
+      </p>
+    </dd>
+
     <dt class="info-label">Last sync</dt>
     <dd class="inline">
       <p>
