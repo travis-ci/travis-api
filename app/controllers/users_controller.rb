@@ -128,6 +128,11 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def reset_sync
+    @user.update(is_syncing: false)
+    redirect_to @user
+  end
+
   def sync_all
     back_link = params[:sync_all][:back_link]
     user_ids  = params[:sync_all][:user_ids]

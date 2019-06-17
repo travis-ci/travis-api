@@ -66,7 +66,12 @@
           <%= @user.synced_at ? @user.synced_at : "Never" %>
         <% end %>
       </p>
-      <%= button_to 'Sync', sync_user_path(@user), disabled: @user.is_syncing?, form_class: "sync-button", class: 'button' %>
+      <% if @user.is_syncing? %>
+        <%= button_to 'Reset sync status', reset_sync_user_path(@user), form_class: "sync-button", class: 'button' %>
+      <% else %>
+        <%= button_to 'Sync', sync_user_path(@user), disabled: @user.is_syncing?, form_class: "sync-button", class: 'button' %>
+      <% end %>
+
     </dd>
      <% if travis_config.enterprise? %>
       <dt class="info-label">Enterprise Status</dt>
