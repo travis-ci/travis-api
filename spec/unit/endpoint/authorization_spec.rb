@@ -42,18 +42,18 @@ describe Travis::Api::App::Endpoint::Authorization do
   describe "GET /auth/handshake" do
     describe 'evil hackers messing with the state' do
       it 'does not succeed if state cookie mismatches' do
-        Travis.redis.sadd('github:states', 'github-state')
-        response = get '/auth/handshake?state=github-state&code=oauth-code'
+        Travis.redis.sadd('vcs:states', 'vcs-state')
+        response = get '/auth/handshake/github?state=vcs-state&code=oauth-code'
         response.status.should be == 400
         response.body.should be == "state mismatch"
-        Travis.redis.srem('github:states', 'github-state')
+        Travis.redis.srem('vcs:states', 'vcs-state')
       end
     end
 
     describe 'with insufficient oauth permissions' do
       before do
-        Travis.redis.sadd('github:states', 'github-state')
-        rack_mock_session.cookie_jar['travis.state'] = 'github-state'
+        Travis.redis.sadd('vcs:states', 'vcs-state')
+        rack_mock_session.cookie_jar['travis.state'] = 'vcs-state'
 
         response = mock('response')
         response.expects(:body).returns('access_token=foobarbaz-token')
@@ -62,7 +62,7 @@ describe Travis::Api::App::Endpoint::Authorization do
                                     client_secret: 'client-secret',
                                     scope: 'public_repo,user:email,new_scope',
                                     redirect_uri: 'http://example.org/auth/handshake',
-                                    state: 'github-state',
+                                    state: 'vcs-state',
                                     code: 'oauth-code').returns(response)
 
         data = { 'id' => 111 }
@@ -71,14 +71,14 @@ describe Travis::Api::App::Endpoint::Authorization do
       end
 
       after do
-        Travis.redis.srem('github:states', 'github-state')
+        Travis.redis.srem('vcs:states', 'vcs-state')
       end
 
       # in endpoint/authorization.rb 271, get_token faraday raises the exception:
       # hostname "foobar.com" does not match the server certificate
       # TODO disabling this as per @rkh's advice
       xit 'redirects to insufficient access page' do
-        response = get '/auth/handshake?state=github-state&code=oauth-code'
+        response = get '/auth/handshake?state=vcs-state&code=oauth-code'
         response.should redirect_to('https://travis-ci.org/insufficient_access')
       end
 
@@ -87,7 +87,7 @@ describe Travis::Api::App::Endpoint::Authorization do
         user = mock('user')
         User.expects(:find_by_github_id).with(111).returns(user)
         expect {
-          response = get '/auth/handshake?state=github-state&code=oauth-code'
+          response = get '/auth/handshake?state=vcs-state&code=oauth-code'
           response.should redirect_to('https://travis-ci.org/insufficient_access#existing-user')
         }.to_not change { User.count }
       end

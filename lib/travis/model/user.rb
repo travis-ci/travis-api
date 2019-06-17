@@ -18,8 +18,12 @@ class User < Travis::Model
   before_save :track_previous_changes
 
   serialize :github_scopes
+  serialize :vcs_scopes
 
   serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
+
+  alias_attribute :vcs_id, :github_id
+  alias_attribute :vcs_scopes, :github_scopes
 
   class << self
     def with_permissions(permissions)
