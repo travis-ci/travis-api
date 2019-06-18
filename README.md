@@ -147,7 +147,7 @@ createdb travis_pro_staging
 pg_restore --verbose --clean --no-acl --no-owner -h localhost -U myuser -d travis_pro_staging latest.dump
 ```
 
-Run `psql` and enter the following queries to remove sensitive data:
+Run `psql travis_pro_staging` and enter the following queries to remove sensitive data:
 
 ```
 update users set (github_oauth_token, email) = (null, 'dbdump@test.com');
