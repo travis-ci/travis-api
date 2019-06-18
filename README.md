@@ -132,3 +132,37 @@ You can also use Heroku directly from the command line:
 ```
 git push heroku master
 ```
+
+## Steps to produce a clean staging database dump
+
+```
+heroku -a travis-pro-staging pg:backups:capture
+heroku -a travis-pro-staging pg:backups:download
+```
+
+This produces a **latest.dump** file. To import the dump to a local database:
+
+```
+pg_restore --verbose --clean --no-acl --no-owner -h localhost -U myuser -d travis_pro_staging latest.dump
+```
+
+Run `psql` and enter the following queries to remove sensitive data:
+
+```
+update users set (github_oauth_token, email) = (null, 'dbdump@test.com');
+update repositories set owner_email = 'dbdump@test.com';
+update organizations set email = 'dbdump@test.com';
+update subscriptions set (cc_token, vat_id, cc_owner, cc_last_digits, cc_expiration_date, billing_email, coupon) = (null, null, null, null, null, 'dbdump@test.com', null);
+update emails set email = 'dbdump@test.com';
+delete from stripe_events;
+delete from tokens;
+delete from ssl_keys;
+```
+
+Reexport the dump:
+
+```
+pg_dump -Fc --no-acl --no-owner -h localhost -U myuser travis_pro_staging > travis_pro_staging_<date>.dump
+```
+
+
