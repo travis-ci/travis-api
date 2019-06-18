@@ -143,6 +143,7 @@ heroku -a travis-pro-staging pg:backups:download
 This produces a **latest.dump** file. To import the dump to a local database:
 
 ```
+createdb travis_pro_staging
 pg_restore --verbose --clean --no-acl --no-owner -h localhost -U myuser -d travis_pro_staging latest.dump
 ```
 
