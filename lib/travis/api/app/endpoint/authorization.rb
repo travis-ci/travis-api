@@ -147,49 +147,24 @@ class Travis::Api::App
       end
 
       def handshake
-        log_with_request_id("[handshake] Starting handshake")
-        if params[:code]
-          unless state_ok?(params[:state])
-            log_with_request_id("[handshake] Handshake failed (state mismatch)")
-            halt 400, 'state mismatch'
-          end
-
-          user_data = remote_vcs_user.user_data(
-            provider: params[:provider],
-            fullpath: request.fullpath,
-            url: url,
-            code: params[:code],
-            state: params[:state]
-          )
-          user                   = user_from_vcs_data(user_data, params['provider'])
-          token                  = generate_token(user: user, app_id: 0)
-          payload                = params[:state].split(":::", 2)[1]
-          update_first_login(user)
-
-          yield serialize_user(user), token, payload
+        vcs_data = remote_vcs_user.handshake(
+          provider: params[:provider],
+          payload: params[:origin] || params[:redirect_uri],
+          fullpath: request.fullpath,
+          code: params[:code],
+          state: params[:state],
+          url: url
+        )
+        if (vcs_data['redirect_url'])
+          response.set_cookie('travis.state', vcs_data['state'])
+          redirect to(vcs_data['redirect_url'])
         else
-          endpoint = remote_vcs_user.redirect_url(
-            provider: params[:provider],
-            state: create_state,
-            fullpath: request.fullpath,
-            url: url
-          )
-          redirect to(endpoint.to_s)
+          user = User.find(vcs_data['user']['id'])
+          yield serialize_user(user), vcs_data['token'], vcs_data['payload']
         end
       end
 
-      def create_state
-        state = SecureRandom.urlsafe_base64(16)
-        redis.sadd('vcs:states', state)
-        redis.expire('vcs:states', 1800)
-        payload = params[:origin] || params[:redirect_uri]
-        state << ":::" << payload if payload
-        response.set_cookie('travis.state', state)
-        state
-      end
-
       def state_ok?(state)
-        cookie_state = request.cookies['travis.state']
         state == cookie_state and redis.srem('vcs:states', state.to_s.split(":::", 1))
       end
 
