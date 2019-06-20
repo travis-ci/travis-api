@@ -1,3 +1,5 @@
+require 'digest'
+
 module ConfigMethods
   def config
     const = self.class.const_get(:Config)
