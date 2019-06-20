@@ -1,4 +1,9 @@
 class Job < ApplicationRecord
+  class Config < ApplicationRecord
+    self.table_name = :job_configs
+  end
+
+  include ConfigMethods
   include StateDisplay
   include ConfigDisplay
 
@@ -8,8 +13,6 @@ class Job < ApplicationRecord
   belongs_to :commit
   belongs_to :owner, polymorphic: true
   belongs_to :build, foreign_key: 'source_id'
-
-  serialize  :config
 
   scope :from_repositories, -> (repositories) { where(repository_id: repositories.pluck(:id)).includes(:repository, :build) }
   scope :not_finished,      -> { where(state: %w[started received queued created]).sort_by {|job|

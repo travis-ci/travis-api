@@ -1,4 +1,9 @@
 class Build < ApplicationRecord
+  class Config < ApplicationRecord
+    self.table_name = :build_configs
+  end
+
+  include ConfigMethods
   include StateDisplay
   include ConfigDisplay
 
@@ -7,8 +12,6 @@ class Build < ApplicationRecord
   belongs_to :commit
   belongs_to :request
   has_many   :jobs,     as: :source
-
-  serialize :config
 
   scope :not_finished,    -> { where(state: %w[started received queued created]).sort_by {|build|
     %w[started received queued created].index(build.state.to_s) } }
