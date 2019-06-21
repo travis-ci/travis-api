@@ -87,7 +87,7 @@ class Travis::Api::App
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
 
-        { 'access_token' => github_to_travis(params[:github_token], app_id: 1, drop_token: true) }
+        renev_access_token(token: params[:github_token], app_id: 1)
       end
 
       # Endpoint for making sure user authorized Travis CI to access GitHub.
@@ -127,23 +127,9 @@ class Travis::Api::App
       end
 
       # update first login date if not set
-      def update_first_login(user)
-        user.update_attributes(first_logged_in_at: Time.now) unless user.first_logged_in_at
-      end
-
       def serialize_user(user)
         rendered = Travis::Api::Serialize.data(user, version: :v2)
         rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
-      end
-
-      def oauth_endpoint
-        proxy = Travis.config.oauth2.proxy
-        proxy ? File.join(proxy, request.fullpath) : url
-      end
-
-      def log_with_request_id(line)
-        request_id = request.env["HTTP_X_REQUEST_ID"]
-        Travis.logger.info "#{line} <request_id=#{request_id}>"
       end
 
       def handshake
@@ -155,7 +141,7 @@ class Travis::Api::App
           state: params[:state],
           url: url
         )
-        if (vcs_data['redirect_url'])
+        if vcs_data['redirect_url']
           response.set_cookie('travis.state', vcs_data['state'])
           redirect to(vcs_data['redirect_url'])
         else
@@ -164,9 +150,20 @@ class Travis::Api::App
         end
       end
 
-      def state_ok?(state)
-        state == cookie_state and redis.srem('vcs:states', state.to_s.split(":::", 1))
+      def renev_access_token(token:, app_id:, provider:)
+        vcs_data = remote_vcs_user.get_token(
+          provider: provider,
+          token: token,
+          app_id: app_id
+        )
+
+        if vcs_data['redirect_url']
+          redirect to(vcs_data['redirect_url'])
+        else
+          { access_token: vcs_data['token'] }
+        end
       end
+
 
       class UserManager < Struct.new(:data, :token, :drop_token, :provider)
         include User::Renaming
@@ -228,83 +225,6 @@ class Travis::Api::App
         def ensure_token_is_available
           user.create_a_token unless user.tokens.first
         end
-      end
-
-      # TODO - remove
-      def github_to_travis(token, options = {})
-        drop_token = options.delete(:drop_token)
-        generate_token options.merge(user: user_for_github_token(token, drop_token))
-      end
-      # TODO - remove
-      def user_for_github_token(token, drop_token = false)
-        data    = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
-          scopes  = parse_scopes data.headers['x-oauth-scopes']
-          manager = UserManager.new(data, token, drop_token, nil)
-
-          unless acceptable?(scopes, drop_token)
-            # TODO: we should probably only redirect if this is a web
-            #      oauth request, are there any other possibilities to
-            #      consider?
-            url =  Travis.config.oauth2.insufficient_access_redirect_url
-            url += "#existing-user" if manager.user_exists?
-            redirect to(url)
-          end
-
-          user   = manager.fetch
-          if user.nil?
-            log_with_request_id("[handshake] Fetching user failed")
-            halt 403, 'not a Travis user'
-          end
-
-          Travis.run_service(:sync_user, user)
-
-          user
-        rescue GH::Error
-          # not a valid token actually, but we don't want to expose that info
-          halt 403, 'not a Travis user'
-      end
-      # TODO - remove
-      def acceptable?(scopes, lossy = false)
-        Travis::Github::Oauth.wanted_scopes.all? do |scope|
-          acceptable_scopes_for(scope, lossy).any? { |s| scopes.include? s }
-        end
-      end
-      # TODO -remove
-      def acceptable_scopes_for(scope, lossy = false)
-        scopes = case scope = scope.to_s
-                 when /^(.+):/      then [$1, scope]
-                 when 'public_repo' then [scope, 'repo']
-                 else [scope]
-                 end
-
-        if lossy
-          scopes << 'repo'
-          scopes << 'public_repo' if lossy and scope != 'repo'
-        end
-
-        scopes
-      end
-
-      def user_from_vcs_data(data, provider)
-        manager = UserManager.new(data, data['vcs_token'], nil, provider)
-        if data['redirect_url']
-          url = data['redirect_url']
-          url += '#existing-user' if manager.user_exists?
-          redirect to(url)
-        end
-        user = manager.fetch
-        return user if user.persisted?
-
-        log_with_request_id("[handshake] Fetching user failed")
-        halt 403, 'not a Travis user'
-      end
-
-      def parse_scopes(data)
-        data.gsub(/\s/,'').split(',') if data
-      end
-
-      def generate_token(options)
-        AccessToken.create(options).token
       end
 
       def post_message(payload)
