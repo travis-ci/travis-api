@@ -49,7 +49,8 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
           '@representation' => 'minimal',
           'id' => env_var[:id],
           'name' => env_var[:name],
-          'public' => env_var[:public]
+          'public' => env_var[:public],
+          'branch' => env_var[:branch]
         }
       )
     end

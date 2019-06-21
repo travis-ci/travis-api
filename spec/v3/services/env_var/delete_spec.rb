@@ -31,7 +31,8 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
           '@representation' => 'minimal',
           'id' => env_var[:id],
           'name' => env_var[:name],
-          'public' => true
+          'public' => true,
+          'branch' => env_var[:branch]
         }
       )
     end
