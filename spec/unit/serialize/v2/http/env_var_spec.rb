@@ -25,7 +25,7 @@ describe Travis::Api::Serialize::V2::Http::EnvVar do
   end
   
   describe 'undefined branch' do
-    let(:env_var) { Repository::Settings::EnvVar.new(name: 'FOO', value: 'bar', public: false, branch: 'foo') }
+    let(:env_var) { Repository::Settings::EnvVar.new(name: 'FOO', value: 'bar', public: false) }
 
     it "is set to null" do
       data.as_json['env_var'][:branch].should == nil
