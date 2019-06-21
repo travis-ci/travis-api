@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::API::V3::Services::EnvVar::Find, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first_or_create }
   let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-  let(:env_var) { { id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('zażółć gęślą jaźń'), public: true, repository_id: repo.id } }
+  let(:env_var) { { id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('zażółć gęślą jaźń'), public: true, branch: 'foo', repository_id: repo.id } }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
   describe 'not authenticated' do
@@ -37,7 +37,8 @@ describe Travis::API::V3::Services::EnvVar::Find, set_app: true do
         'id' => env_var[:id],
         'name' => env_var[:name],
         'public' => env_var[:public],
-        'value' => env_var[:value].decrypt
+        'value' => env_var[:value].decrypt,
+        'branch' => env_var[:branch]
       )
     end
   end

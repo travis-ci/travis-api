@@ -79,7 +79,8 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
         'id' => env_var[:id],
         'name' => params['env_var.name'],
         'value' => env_var[:value].decrypt,
-        'public' => env_var[:public]
+        'public' => env_var[:public],
+        'branch' => env_var[:branch]
       )
     end
     example 'persists changes' do
