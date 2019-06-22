@@ -110,3 +110,30 @@
     </dd>
   </dl>
 </section>
+
+<section class="abuse">
+  <h2 class="info-header">Abuse</h2>
+  <dl>
+    <%= form_tag(users_abuse_detections_path(@user), method: :put) do %>
+      <dd>
+        <dt>
+          <%= hidden_field_tag "offender[trusted]", 0 %>
+          <%= check_box_tag "offender[trusted]", 1, checked = abuses[:trusted] %>
+          <%= label_tag 'Trusted account' %>
+        </dt>
+      <dt>
+        <%= hidden_field_tag "offender[offenders]", 0 %>
+        <%= check_box_tag "offender[offenders]", 1, checked = abuses[:offenders] %>
+        <%= label_tag 'Known offender' %>
+      </dt>
+      <dt>
+        <%= hidden_field_tag "offender[not_fishy]", 0 %>
+        <%= check_box_tag "offender[not_fishy]", 1, checked = abuses[:not_fishy] %>
+        <%= label_tag 'Not fishy' %>
+      </dt>
+      <%= submit_tag("Update", class: "button") %>
+      </dd>
+    <% end %>
+  </dl>
+</section>
+

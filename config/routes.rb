@@ -101,8 +101,12 @@ Rails.application.routes.draw do
       get 'jobs'
       get 'requests'
       get 'broadcasts'
-    end
 
+      scope module: :users, as: :users do
+        resource :abuse_detections, only: [:update]
+      end
+
+    end
     post 'sync_all', on: :collection
   end
 

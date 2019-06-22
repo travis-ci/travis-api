@@ -112,7 +112,12 @@ class UsersController < ApplicationController
     @normalized_boost_time = @user.normalized_boost_time
     @builds_remaining = builds_remaining_for(@user)
     @features = Features.for(@user)
-    render_either 'user'
+    @abuses = {
+        trusted: Travis::DataStores.redis.sismember("abuse:trusted", "User:#{@user.id}"),
+        offenders: Travis::DataStores.redis.sismember("abuse:offenders", "User:#{@user.id}"),
+        not_fishy: Travis::DataStores.redis.sismember("abuse:not_fishy", "User:#{@user.id}")
+    }
+    render_either 'user', locals: { abuses: @abuses }
   end
 
   def sync
