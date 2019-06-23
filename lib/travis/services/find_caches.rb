@@ -110,11 +110,7 @@ module Travis
         end
 
         def permission?
-          current_user && repo && current_user.permission?(required_role, repository_id: repo.id)
-        end
-
-        def required_role
-          Travis.config.roles.find_cache || "push"
+          current_user && repo && current_user.permission?(:push, repository_id: repo.id)
         end
 
         def repo
