@@ -1,5 +1,5 @@
 module Offender
-  LISTS = {trusted: "trusted account", offenders: "known offender", not_fishy: "not fishy"}
+  LISTS = { trusted: "trusted account", offenders: "known offender", not_fishy: "not fishy" }
 
   extend self
 

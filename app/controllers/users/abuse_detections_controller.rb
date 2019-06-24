@@ -14,7 +14,7 @@ module Users
     end
 
     def offender_params
-      params.require(:offender).permit(*Offender::LISTS.keys)
+      params.require(:abuse).permit(:trusted, :offenders, :not_fishy, :reason)
     end
   end
 end

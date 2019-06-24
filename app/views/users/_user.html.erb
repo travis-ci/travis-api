@@ -116,24 +116,38 @@
   <dl>
     <%= form_tag(users_abuse_detections_path(@user), method: :put) do %>
       <dd>
-        <dt>
-          <%= hidden_field_tag "offender[trusted]", 0 %>
-          <%= check_box_tag "offender[trusted]", 1, checked = abuses[:trusted] %>
-          <%= label_tag 'Trusted account' %>
-        </dt>
-      <dt>
-        <%= hidden_field_tag "offender[offenders]", 0 %>
-        <%= check_box_tag "offender[offenders]", 1, checked = abuses[:offenders] %>
-        <%= label_tag 'Known offender' %>
-      </dt>
-      <dt>
-        <%= hidden_field_tag "offender[not_fishy]", 0 %>
-        <%= check_box_tag "offender[not_fishy]", 1, checked = abuses[:not_fishy] %>
-        <%= label_tag 'Not fishy' %>
-      </dt>
-      <%= submit_tag("Update", class: "button") %>
+        <%= hidden_field_tag "abuse[trusted]", 0 %>
+        <%= check_box_tag "abuse[trusted]", 1, checked = abuses[:trusted] %>
+        <%= label_tag 'Trusted account' %>
       </dd>
+      <dd>
+        <%= hidden_field_tag "abuse[offenders]", 0 %>
+        <%= check_box_tag "abuse[offenders]", 1, checked = abuses[:offenders] %>
+        <%= label_tag 'Known offender' %>
+        <%= text_field_tag "abuse[reason]", nil, placeholder: 'Optional reason' %>
+      </dd>
+      <dd>
+        <%= hidden_field_tag "abuse[not_fishy]", 0 %>
+        <%= check_box_tag "abuse[not_fishy]", 1, checked = abuses[:not_fishy] %>
+        <%= label_tag 'Not fishy' %>
+      </dd>
+      <dt>
+        <%= submit_tag("Update", class: "button") %>
+      </dt>
     <% end %>
+    <dt class="info-label">Reasons</dt>
+    <dd>
+      <% @user.abuses.each do |abuse| %>
+        <span>
+          Marked <%= abuse_name(abuse) %>
+          <% if abuse.request_id.present? %>
+            <%= link_to 'for this request', request_path(abuse.request_id) %>
+          <% end %>
+          . Explanation: <%= abuse.reason %> <%= abuse.created_at %>
+        </span>
+        <br>
+      <% end %>
+    </dd>
   </dl>
 </section>
 

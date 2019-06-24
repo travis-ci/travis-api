@@ -115,7 +115,8 @@ class UsersController < ApplicationController
     @abuses = {
         trusted: Travis::DataStores.redis.sismember("abuse:trusted", "User:#{@user.id}"),
         offenders: Travis::DataStores.redis.sismember("abuse:offenders", "User:#{@user.id}"),
-        not_fishy: Travis::DataStores.redis.sismember("abuse:not_fishy", "User:#{@user.id}")
+        not_fishy: Travis::DataStores.redis.sismember("abuse:not_fishy", "User:#{@user.id}"),
+        reason: Travis::DataStores.redis.sismember("abuse:reason", "User:#{@user.id}")
     }
     render_either 'user', locals: { abuses: @abuses }
   end

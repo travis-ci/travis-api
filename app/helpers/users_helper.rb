@@ -7,6 +7,10 @@ module UsersHelper
     truncate(user.public_send(field).to_s.gsub(/./, ?*), 30)
   end
 
+  def abuse_name(abuse)
+    abuse.level == Abuse::LEVEL_OFFENDER ? "offensive" : "fishy"
+  end
+
   private
 
   def truncate(string, max)
