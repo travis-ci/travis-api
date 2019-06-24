@@ -73,6 +73,7 @@ class OrganizationsController < ApplicationController
     @normalized_boost_time = @organization.normalized_boost_time
     @builds_remaining = builds_remaining_for(@organization)
     @features = Features.for(@organization)
+    @repo_hooks = @organization.repositories.select { |repo| Services::Repository::CheckHook.new(repo).call }
     render_either 'organization'
   end
 
