@@ -48,9 +48,9 @@ describe Travis::Services::FindCaches do
         its(:size) { should be == 1 }
       end
 
-      it 'returns empty array if user does not have push permission' do
+      it 'returns nil if user does not have push permission' do
         user.permissions.first.update(push: false)
-        service.run.should eq []
+        service.run.should be_nil
       end
 
       describe 'without s3 credentials' do

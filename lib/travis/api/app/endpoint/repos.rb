@@ -137,7 +137,9 @@ class Travis::Api::App
 
       # List caches for a given repo. Can be filtered with `branch` and `match` query parameter.
       get '/:repository_id/caches', scope: :private do
-        respond_with service(:find_caches, params), type: :caches, version: :v2
+        service = service(:find_caches, params).run
+        halt 403 if service.nil?
+        respond_with(service, type: :caches, version: :v2)
       end
 
       # Delete caches for a given repo. Can be filtered with `branch` and `match` query parameter.
