@@ -139,12 +139,14 @@ class Travis::Api::App
       get '/:repository_id/caches', scope: :private do
         service = service(:find_caches, params).run
         halt 403 if service.nil?
-        respond_with(service, type: :caches, version: :v2)
+        respond_with service, type: :caches, version: :v2
       end
 
       # Delete caches for a given repo. Can be filtered with `branch` and `match` query parameter.
       delete '/:repository_id/caches', scope: :private do
-        respond_with service(:delete_caches, params), type: :caches, version: :v2
+        service = service(:delete_caches, params)
+        halt 403 if service.nil?
+        respond_with service, type: :caches, version: :v2
       end
 
       # Gets the repository with the given name.

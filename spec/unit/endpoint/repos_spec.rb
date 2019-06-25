@@ -16,7 +16,7 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
     end
   end
 
-  describe 'GET /:repository_id/caches' do
+  context 'unauthorized users on caches endpoints' do
     let(:user) { Factory.create(:user) }
     let(:repo) { Factory.create(:repository, private: false) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
@@ -24,25 +24,20 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
     let(:cache_options) {{ s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} }}
 
     before { Travis.config.cache_options = cache_options }
+    before { user.permissions.create(repository_id: repo.id, push: false) }
 
-    context 'authorized user' do
-      before { user.permissions.create(repository_id: repo.id, push: true) }
+    subject { @response }
 
-      it 'fetches repo caches' do
-        response = get("/repos/#{repo.id}/caches", cache_options, headers)
-        response.body == []
-        response.status.should == 200
-      end
+    describe 'GET /repos/:id/caches' do
+      before { @response = get("/repos/#{repo.id}/caches", cache_options, headers) }
+
+      its(:status) { 403 }
     end
 
-    context 'unauthorized user' do
-      before { user.permissions.create(repository_id: repo.id, push: false) }
+    describe 'DELETE /repos/:id/caches' do
+      before { @response = delete("/repos/#{repo.id}/caches", cache_options, headers) }
 
-      it 'responds with 403' do
-        response = get("/repos/#{repo.id}/caches", cache_options, headers)
-        response.body == ''
-        response.status.should == 403
-      end
+      its(:status) { 403 }
     end
   end
 end
