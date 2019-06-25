@@ -40,6 +40,7 @@ class Travis::Api::App
 
     error Travis::AuthorizationDenied do
       status 403
+      {}
     end
 
     private
