@@ -156,7 +156,7 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
               "@type"=>"template",
               "request_method"=>"POST",
               "uri_template"=>"#{path}repo/{repository.id}/env_vars",
-              "accepted_params" => ["env_var.name", "env_var.value", "env_var.public"]
+              "accepted_params" => ["env_var.name", "env_var.value", "env_var.public", "env_var.branch"]
             )
           end
         end
@@ -174,7 +174,7 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
               "@type"=>"template",
               "request_method"=>"PATCH",
               "uri_template"=>"#{path}repo/{repository.id}/env_var/{env_var.id}",
-              "accepted_params" => ["env_var.name", "env_var.value", "env_var.public"]
+              "accepted_params" => ["env_var.name", "env_var.value", "env_var.public", "env_var.branch"]
             )
           end
         end
