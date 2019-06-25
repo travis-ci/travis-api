@@ -56,14 +56,24 @@ module Services
         when :not_fishy
           if value
             ::Abuse.where(owner_id: owner.id, owner_type: owner.class.name, level: ::Abuse::LEVEL_FISHY).destroy_all
-            ::Abuse.create!(level: ::Abuse::LEVEL_NOT_FISHY, reason: reason, owner_id: owner.id, owner_type: owner.class.name)
+            abuse = ::Abuse.find_by(level: ::Abuse::LEVEL_NOT_FISHY, owner_id: owner.id, owner_type: owner.class.name)
+            if abuse.present?
+              abuse.update(reason: reason)
+            else
+              ::Abuse.create!(level: ::Abuse::LEVEL_NOT_FISHY, reason: reason, owner_id: owner.id, owner_type: owner.class.name)
+            end
           else
             ::Abuse.where(owner_id: owner.id, owner_type: owner.class.name, level: ::Abuse::LEVEL_NOT_FISHY).destroy_all
           end
         when :offenders
           if value
             if params['trusted'] == '0'
-              ::Abuse.create!(level: ::Abuse::LEVEL_OFFENDER, reason: reason, owner_id: owner.id, owner_type: owner.class.name)
+              abuse = ::Abuse.find_by(level: ::Abuse::LEVEL_OFFENDER, owner_id: owner.id, owner_type: owner.class.name)
+              if abuse.present?
+                abuse.update(reason: reason)
+              else
+                ::Abuse.create!(level: ::Abuse::LEVEL_OFFENDER, reason: reason, owner_id: owner.id, owner_type: owner.class.name)
+              end
 
               Travis::DataStores.redis.srem('abuse:trusted', params[:abuse_id])
             end
