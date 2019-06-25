@@ -85,7 +85,7 @@
 </section>
 
 <% unless travis_config.enterprise? %>
-  <%= render partial: 'shared/account', locals: {owner: @user} %>
+  <%= render partial: 'shared/account', locals: { owner: @user } %>
 <% end %>
 
 <section class="info-block">
@@ -106,44 +106,6 @@
             <%= mail_to entry.email, fa_icon("envelope-o") %>
           </div>
         <% end %>
-      <% end %>
-    </dd>
-  </dl>
-</section>
-
-<section class="abuse">
-  <h2 class="info-header">Abuse</h2>
-  <dl>
-    <%= form_tag(users_abuse_detections_path(@user), method: :put) do %>
-      <%= hidden_field_tag 'abuse_id', @user.id %>
-      <dd>
-        <%= check_box_tag "abuse_trusted", 1, checked = Travis::DataStores.redis.sismember("abuse:trusted", params[:abuse_id]) %>
-        <%= label_tag 'Trusted account' %>
-      </dd>
-      <dd>
-        <%= check_box_tag "abuse_offenders", 1, checked = Travis::DataStores.redis.sismember("abuse:offenders", params[:abuse_id]) %>
-        <%= label_tag 'Known offender' %>
-        <%= text_field_tag "abuse_reason", nil, placeholder: 'Optional reason' %>
-      </dd>
-      <dd>
-        <%= check_box_tag "abuse_not_fishy", 1, checked = Travis::DataStores.redis.sismember("abuse:not_fishy", params[:abuse_id]) %>
-        <%= label_tag 'Not fishy' %>
-      </dd>
-      <dt>
-        <%= submit_tag("Update", class: "button") %>
-      </dt>
-    <% end %>
-    <dt class="info-label">Reasons</dt>
-    <dd>
-      <% @user.abuses.each do |abuse| %>
-        <span>
-          Marked <%= abuse_name(abuse) %>
-          <% if abuse.request_id.present? %>
-            <%= link_to 'for this request', request_path(abuse.request_id) %>
-          <% end %>
-          . Explanation: <%= abuse.reason %> <%= abuse.created_at %>
-        </span>
-        <br>
       <% end %>
     </dd>
   </dl>

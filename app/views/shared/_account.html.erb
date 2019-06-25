@@ -87,11 +87,29 @@
   <h2 class="info-header">Abuse</h2>
   <%= form_for :offender, url: {controller: "offenders", action: "update", login: owner.login}, html: {class: "abuse-form inline"}, method: :put do |f| %>
     <div>
+      <%= f.text_field :reason, placeholder: 'Optional Reason' %>
       <% Offender::LISTS.each do |key, description| %>
         <%= f.check_box key, checked: Travis::DataStores.redis.sismember("abuse:#{key}", "#{owner.class.name}:#{owner.id}") %>
         <%= f.label description %>
       <% end %>
     </div>
     <%= f.submit('Update', class: 'button', id: 'update-abuse-status') %>
+  <% end %>
+  <% if owner.abuses.any? %>
+    <div>
+      <dt class="info-label">Reasons</dt>
+      <dd>
+        <% owner.abuses.each do |abuse| %>
+        <span>
+          Marked <%= abuse_name(abuse) %>
+          <% if abuse.request_id.present? %>
+            <%= link_to 'for this request', request_path(abuse.request_id) %>
+          <% end %>
+          . Explanation: <%= abuse.reason %> <%= abuse.created_at %>
+        </span>
+          <br>
+        <% end %>
+      </dd>
+    </div>
   <% end %>
 </section>

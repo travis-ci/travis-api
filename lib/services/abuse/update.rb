@@ -20,11 +20,9 @@ module Services
 
       def call
         Offender::LISTS.each_key do |key|
-          wanted = !!params["abuse_#{key}"]
-          reason = params['abuse_reason']
-          pp key
-          pp checked?(key)
-          pp has?(key)
+          wanted = params[key] == '1'
+          reason = params['reason']
+
           next if checked?(key) == has?(key)
 
           if wanted
@@ -64,7 +62,7 @@ module Services
           end
         when :offenders
           if value
-            unless params['abuse_trusted']
+            if params['trusted'] == '0'
               ::Abuse.create!(level: ::Abuse::LEVEL_OFFENDER, reason: reason, owner_id: owner.id, owner_type: owner.class.name)
 
               Travis::DataStores.redis.srem('abuse:trusted', params[:abuse_id])
@@ -81,7 +79,7 @@ module Services
       end
 
       def checked?(key)
-        params["abuse_#{key}"] == '1'
+        params[key] == '1'
       end
 
       def has?(key)
