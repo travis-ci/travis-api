@@ -220,7 +220,9 @@ class Travis::Api::App
 
       # Delete caches for a given repo. Can be filtered with `branch` and `match` query parameter.
       delete '/:owner_name/:name/caches', scope: :private do
-        respond_with service(:delete_caches, params), type: :caches, version: :v2
+        service = service(:delete_caches, params).run
+        halt 403 if service.nil?
+        respond_with service, type: :caches, version: :v2
       end
     end
   end

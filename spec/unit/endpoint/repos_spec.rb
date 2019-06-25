@@ -45,5 +45,11 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
 
       its(:status) { should == 403 }
     end
+
+    describe 'DELETE /repos/:owner_name/:name/caches' do
+      before { @response = delete("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers) }
+
+      its(:status) { should == 403 }
+    end
   end
 end
