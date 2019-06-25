@@ -50,7 +50,7 @@ describe Travis::Services::FindCaches do
 
       it 'returns nil if user does not have push permission' do
         user.permissions.first.update(push: false)
-        service.run.should be_nil
+        expect{ service.run }.to raise_error Travis::AuthorizationDenied
       end
 
       describe 'without s3 credentials' do
