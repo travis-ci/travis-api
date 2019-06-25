@@ -18,7 +18,7 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
 
   context 'unauthorized users on caches endpoints' do
     let(:user) { Factory.create(:user) }
-    let(:repo) { Factory.create(:repository, private: false) }
+    let(:repo) { Factory.create(:repository, private: false, owner_name: 'user', name: 'repo') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     let(:cache_options) {{ s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} }}
@@ -31,13 +31,19 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
     describe 'GET /repos/:id/caches' do
       before { @response = get("/repos/#{repo.id}/caches", cache_options, headers) }
 
-      its(:status) { 403 }
+      its(:status) { should == 403 }
     end
 
     describe 'DELETE /repos/:id/caches' do
       before { @response = delete("/repos/#{repo.id}/caches", cache_options, headers) }
 
-      its(:status) { 403 }
+      its(:status) { should == 403 }
+    end
+
+    describe 'GET /repos/:owner_name/:name/caches' do
+      before { @response = get("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers) }
+
+      its(:status) { should == 403 }
     end
   end
 end
