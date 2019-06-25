@@ -115,20 +115,18 @@
   <h2 class="info-header">Abuse</h2>
   <dl>
     <%= form_tag(users_abuse_detections_path(@user), method: :put) do %>
+      <%= hidden_field_tag 'abuse_id', @user.id %>
       <dd>
-        <%= hidden_field_tag "abuse[trusted]", 0 %>
-        <%= check_box_tag "abuse[trusted]", 1, checked = abuses[:trusted] %>
+        <%= check_box_tag "abuse_trusted", 1, checked = Travis::DataStores.redis.sismember("abuse:trusted", params[:abuse_id]) %>
         <%= label_tag 'Trusted account' %>
       </dd>
       <dd>
-        <%= hidden_field_tag "abuse[offenders]", 0 %>
-        <%= check_box_tag "abuse[offenders]", 1, checked = abuses[:offenders] %>
+        <%= check_box_tag "abuse_offenders", 1, checked = Travis::DataStores.redis.sismember("abuse:offenders", params[:abuse_id]) %>
         <%= label_tag 'Known offender' %>
-        <%= text_field_tag "abuse[reason]", nil, placeholder: 'Optional reason' %>
+        <%= text_field_tag "abuse_reason", nil, placeholder: 'Optional reason' %>
       </dd>
       <dd>
-        <%= hidden_field_tag "abuse[not_fishy]", 0 %>
-        <%= check_box_tag "abuse[not_fishy]", 1, checked = abuses[:not_fishy] %>
+        <%= check_box_tag "abuse_not_fishy", 1, checked = Travis::DataStores.redis.sismember("abuse:not_fishy", params[:abuse_id]) %>
         <%= label_tag 'Not fishy' %>
       </dd>
       <dt>

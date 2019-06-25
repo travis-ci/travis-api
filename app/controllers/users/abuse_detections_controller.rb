@@ -4,6 +4,7 @@ module Users
 
     def update
       Services::Abuse::Update.new(@offender, offender_params, current_user).call
+      flash[:notice] = "Abuse settings updated."
       redirect_to @offender
     end
 
@@ -14,7 +15,7 @@ module Users
     end
 
     def offender_params
-      params.require(:abuse).permit(:trusted, :offenders, :not_fishy, :reason)
+      params.permit(:abuse_trusted, :abuse_offenders, :abuse_not_fishy, :abuse_reason)
     end
   end
 end
