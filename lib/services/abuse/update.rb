@@ -19,9 +19,10 @@ module Services
       end
 
       def call
+        reason = params['reason']
+
         Offender::LISTS.each_key do |key|
           wanted = params[key] == '1'
-          reason = params['reason']
 
           next if checked?(key) == has?(key)
 
@@ -54,27 +55,15 @@ module Services
       def update_abuse_and_reason(owner, key, value, reason = DEFAULT_ABUSE_REASON)
         case key
         when :not_fishy
-          if value
+          if params['not_fishy'] == '1'
             ::Abuse.where(owner_id: owner.id, owner_type: owner.class.name, level: ::Abuse::LEVEL_FISHY).destroy_all
-            abuse = ::Abuse.find_by(level: ::Abuse::LEVEL_NOT_FISHY, owner_id: owner.id, owner_type: owner.class.name)
-            if abuse.present?
-              abuse.update(reason: reason)
-            else
-              ::Abuse.create!(level: ::Abuse::LEVEL_NOT_FISHY, reason: reason, owner_id: owner.id, owner_type: owner.class.name)
-            end
           else
-            ::Abuse.where(owner_id: owner.id, owner_type: owner.class.name, level: ::Abuse::LEVEL_NOT_FISHY).destroy_all
+            update_or_create_abuse(::Abuse::LEVEL_FISHY, owner, reason)
           end
         when :offenders
           if value
             if params['trusted'] == '0'
-              abuse = ::Abuse.find_by(level: ::Abuse::LEVEL_OFFENDER, owner_id: owner.id, owner_type: owner.class.name)
-              if abuse.present?
-                abuse.update(reason: reason)
-              else
-                ::Abuse.create!(level: ::Abuse::LEVEL_OFFENDER, reason: reason, owner_id: owner.id, owner_type: owner.class.name)
-              end
-
+              update_or_create_abuse(::Abuse::LEVEL_OFFENDER, owner, reason)
               Travis::DataStores.redis.srem('abuse:trusted', params[:abuse_id])
             end
           else
@@ -94,6 +83,15 @@ module Services
 
       def has?(key)
         Travis::DataStores.redis.sismember("abuse:#{key}", offender_key)
+      end
+
+      def update_or_create_abuse(level, owner, reason)
+        abuse = ::Abuse.find_by(level: level, owner_id: owner.id, owner_type: owner.class.name)
+        if abuse.present? &&
+           abuse.update(reason: reason)
+        else
+          ::Abuse.create!(level: level, reason: reason, owner_id: owner.id, owner_type: owner.class.name)
+        end
       end
     end
   end
