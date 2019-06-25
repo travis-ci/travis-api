@@ -16,7 +16,7 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
     end
   end
 
-  context 'unauthorized users on caches endpoints' do
+  context 'caches endpoints' do
     let(:user) { Factory.create(:user) }
     let(:repo) { Factory.create(:repository, private: false, owner_name: 'user', name: 'repo') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
@@ -24,32 +24,27 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
     let(:cache_options) {{ s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} }}
 
     before { Travis.config.cache_options = cache_options }
-    before { user.permissions.create(repository_id: repo.id, push: false) }
 
-    subject { @response }
+    context 'with authorized users' do
+      before { user.permissions.create(repository_id: repo.id, push: true) }
 
-    describe 'GET /repos/:id/caches' do
-      before { @response = get("/repos/#{repo.id}/caches", cache_options, headers) }
-
-      its(:status) { should == 403 }
+      it 'responds with 200' do
+        get("/repos/#{repo.id}/caches", cache_options, headers).status.should == 200
+        delete("/repos/#{repo.id}/caches", cache_options, headers).status.should == 200
+        get("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status.should == 200
+        delete("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status.should == 200
+      end
     end
 
-    describe 'DELETE /repos/:id/caches' do
-      before { @response = delete("/repos/#{repo.id}/caches", cache_options, headers) }
+    context 'with unauthorized users' do
+      before { user.permissions.create(repository_id: repo.id, push: false) }
 
-      its(:status) { should == 403 }
-    end
-
-    describe 'GET /repos/:owner_name/:name/caches' do
-      before { @response = get("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers) }
-
-      its(:status) { should == 403 }
-    end
-
-    describe 'DELETE /repos/:owner_name/:name/caches' do
-      before { @response = delete("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers) }
-
-      its(:status) { should == 403 }
+      it 'responds with 403' do
+        get("/repos/#{repo.id}/caches", cache_options, headers).status.should == 403
+        delete("/repos/#{repo.id}/caches", cache_options, headers).status.should == 403
+        get("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status.should == 403
+        delete("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status.should == 403
+      end
     end
   end
 end

@@ -95,7 +95,7 @@ module Travis
 
       def run
         return [] unless setup?
-        return unless authorized?
+        raise Travis::AuthorizationDenied unless authorized?
 
         c = caches(prefix: prefix)
         c.select! { |o| o.slug.include?(params[:match]) } if params[:match]

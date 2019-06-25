@@ -6,7 +6,7 @@ module Travis
       register :delete_caches
 
       def run
-        return unless authorized?
+        raise Travis::AuthorizationDenied unless authorized?
 
         caches = run_service(:find_caches, params)
         caches.each { |c| c.destroy }
