@@ -94,7 +94,9 @@ module Travis
       end
 
       def run
-        return [] unless setup? && permission?
+        return [] unless setup?
+        raise Travis::AuthorizationDenied unless authorized?
+
         c = caches(prefix: prefix)
         c.select! { |o| o.slug.include?(params[:match]) } if params[:match]
         c
@@ -109,12 +111,8 @@ module Travis
           false
         end
 
-        def permission?
-          current_user && repo && current_user.permission?(required_role, repository_id: repo.id)
-        end
-
-        def required_role
-          Travis.config.roles.find_cache || "push"
+        def authorized?
+          current_user && repo && current_user.permission?(:push, repository_id: repo.id)
         end
 
         def repo
