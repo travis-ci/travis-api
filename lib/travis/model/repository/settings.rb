@@ -10,6 +10,7 @@ class Repository::Settings < Travis::Settings
     attribute :name, String
     attribute :value, Travis::Settings::EncryptedValue
     attribute :public, Boolean, default: false
+    attribute :branch, String
     attribute :repository_id, Integer
 
     validates :name, presence: true

@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Services::EnvVars::Create < Service
-    params :name, :value, :public, prefix: :env_var
+    params :name, :value, :public, :branch, prefix: :env_var
     result_type :env_var
 
     def run!
