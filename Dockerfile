@@ -24,4 +24,4 @@ RUN bundler install --verbose --retry=3
 
 COPY . /usr/src/app
 
-CMD ./script/server
+CMD /bin/bash
