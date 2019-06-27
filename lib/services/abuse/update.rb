@@ -14,7 +14,7 @@ module Services
       end
 
       def call
-        reason = params['reason']
+        reason = params[:reason]
 
         if trusted?
           mark_as_not_fishy
@@ -50,7 +50,9 @@ module Services
         when :not_fishy
           if value
             ::Abuse.where(owner_id: owner.id, owner_type: owner.class.name, level: ::Abuse::LEVEL_FISHY).destroy_all
+            update_or_create_abuse(::Abuse::LEVEL_NOT_FISHY, owner, reason)
           else
+            ::Abuse.where(owner_id: owner.id, owner_type: owner.class.name, level: ::Abuse::LEVEL_NOT_FISHY).destroy_all
             update_or_create_abuse(::Abuse::LEVEL_FISHY, owner, reason)
           end
         when :offenders
@@ -71,15 +73,15 @@ module Services
       end
 
       def trusted?
-        params['trusted'] == '1'
+        params[:trusted] == '1'
       end
 
       def mark_as_not_fishy
-        params['not_fishy'] = '1'
+        params[:not_fishy] = '1'
       end
 
       def mark_as_not_offender
-        params['offenders'] = '0'
+        params[:offenders] = '0'
       end
 
       def has?(key)
@@ -88,8 +90,8 @@ module Services
 
       def update_or_create_abuse(level, owner, reason)
         ::Abuse.find_or_initialize_by(level: level,
-                                    owner_id: owner.id,
-                                    owner_type: owner.class.name).update(reason: reason)
+                                      owner_id: owner.id,
+                                      owner_type: owner.class.name).update(reason: reason)
       end
     end
   end

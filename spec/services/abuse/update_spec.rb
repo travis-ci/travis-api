@@ -2,11 +2,88 @@ require 'rails_helper'
 
 RSpec.describe Services::Abuse::Update do
   describe '#call' do
-    context 'when trusted' do
-      let!(:user) { create(:user) }
-      context 'when marked as offender' do
-        it 'create abuse object for user' do
+    subject { described_class.new(offender, params, admin) }
+    let!(:admin) { create(:user) }
 
+    context 'when previously trusted' do
+      let!(:offender) { create(:user) }
+
+      context 'when marked as offender' do
+        let(:params) do
+          {
+            trusted: '0',
+            offenders: '1',
+            not_fishy: '0',
+            reason: 'ABC'
+          }
+        end
+
+        it 'creates offender level abuse object for user' do
+          expect { subject.call }
+            .to change { ::Abuse.level_offender.where(reason: 'Updated manually, through admin: ABC').count }
+            .by(1)
+        end
+      end
+
+      context 'when marked as not_fishy' do
+        let(:params) do
+          {
+            trusted: '0',
+            offenders: '0',
+            not_fishy: '1',
+            reason: ''
+          }
+        end
+
+        it 'creates not fishy level abuse object for user' do
+          expect { subject.call }.to change { ::Abuse.level_not_fishy.count }.by(1)
+        end
+      end
+
+      context 'when marked as fishy' do
+        before { Travis::DataStores.redis.sadd('abuse:not_fishy', "#{offender.class.name}:#{offender.id}") }
+
+        let!(:offender) { create(:user_with_abuse, level: ::Abuse::LEVEL_NOT_FISHY) }
+        let(:params) do
+          {
+            trusted: '0',
+            offenders: '0',
+            not_fishy: '0',
+            reason: ''
+          }
+        end
+
+        it 'creates not fishy level abuse object for user' do
+          expect { subject.call }.to change { ::Abuse.level_fishy.count }.by(1)
+        end
+
+        it 'removes not fishy level abuse' do
+          expect { subject.call }.to change { ::Abuse.level_not_fishy.count }.by(-1)
+        end
+      end
+    end
+
+    context 'when previously offender' do
+      before { Travis::DataStores.redis.sadd('abuse:offenders', "#{offender.class.name}:#{offender.id}") }
+
+      let!(:offender) { create(:user_with_abuse, level: ::Abuse::LEVEL_OFFENDER) }
+
+      context 'when marked as trusted, offender and fishy' do
+        let(:params) do
+          {
+            trusted: '1',
+            offenders: '1',
+            not_fishy: '1',
+            reason: 'ABC'
+          }
+        end
+
+        it 'removes offender level abuse object for user' do
+          expect { subject.call }.to change { ::Abuse.level_offender.count }.by(-1)
+        end
+
+        it 'does not create fishy abuse' do
+          expect { subject.call }.not_to(change { ::Abuse.level_fishy.count })
         end
       end
     end
