@@ -4,7 +4,7 @@ module Travis::API::V3
 
     def run!
       repo = check_login_and_find(:repository)
-      raise Travis::AuthorizationDenied unless access_control.user.permission?(:push, repository_id: repo.id)
+      raise InsufficientAccess unless access_control.user.permission?(:push, repository_id: repo.id)
       result query.find(repo)
     end
   end

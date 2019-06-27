@@ -288,9 +288,15 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   context "without push permission" do
     it "raises Travis::AuthorizationDenied" do
       repo.owner.permissions.last.update(push: false)
-      expect{
-        get("/v3/repo/#{repo.id}/caches?match=osx", {}, headers)
-      }.to raise_error Travis::AuthorizationDenied
+
+      get("/v3/repo/#{repo.id}/caches?match=osx", {}, headers)
+
+      expect(JSON.load(body)).to eq({
+        "@type" => "error",
+        "error_type" => "insufficient_access",
+        "error_message" => "forbidden",
+      })
+      expect(last_response.status).to eq 403
     end
   end
 end
