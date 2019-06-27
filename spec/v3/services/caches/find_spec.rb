@@ -1,9 +1,12 @@
 require 'spec_helper'
+
 describe Travis::API::V3::Services::Caches::Find, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:s3_bucket_name)  { "travis-cache-staging-org" }
+  let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+  let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
   let(:result) { [
     {
       "@type"=>"cache",
@@ -188,6 +191,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
   before do
     repo.default_branch.save!
+    repo.owner.permissions.create(repository_id: repo.id, push: true)
   end
 
   around(:each) do |example|
@@ -223,7 +227,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
          to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
 
     end
-    before     { get("/v3/repo/#{repo.id}/caches") }
+    before     { get("/v3/repo/#{repo.id}/caches", {}, headers) }
     example    { expect(last_response).to be_ok }
     example    do
       expect(JSON.load(body)).to be == {
@@ -248,7 +252,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     end
 
     example do
-      get("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"] } )
+      get("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"] }, headers)
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
         "@href"=>"/v3/repo/1/caches?branch=#{result[0]["branch"]}",
@@ -271,13 +275,22 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     end
 
     example do
-      get("/v3/repo/#{repo.id}/caches?match=osx")
+      get("/v3/repo/#{repo.id}/caches?match=osx", {}, headers)
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
         "@href"=>"/v3/repo/1/caches?match=osx",
         "@representation"=>"standard",
         "caches"=> [result[2]]
       }
+    end
+  end
+
+  context "without push permission" do
+    it "raises Travis::AuthorizationDenied" do
+      repo.owner.permissions.last.update(push: false)
+      expect{
+        get("/v3/repo/#{repo.id}/caches?match=osx", {}, headers)
+      }.to raise_error Travis::AuthorizationDenied
     end
   end
 end
