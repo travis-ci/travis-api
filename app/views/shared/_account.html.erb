@@ -85,20 +85,20 @@
 
 <section class="info-block">
   <h2 class="info-header">Abuse</h2>
-  <%= form_for :offender, url: {controller: "offenders", action: "update", login: owner.login}, html: {class: "abuse-form inline"}, method: :put do |f| %>
+  <%= form_for :offender, url: { controller: "offenders", action: "update", login: owner.login}, html: {class: "abuse-form inline" }, method: :put do |f| %>
     <div>
       <dl>
         <dd>
-          <%= f.check_box :trusted, checked: Travis::DataStores.redis.sismember("abuse:trusted", "#{owner.class.name}:#{owner.id}") %>
+          <%= f.check_box :trusted, checked: trusted?(owner) %>
           <%= f.label 'Trusted account' %>
         </dd>
         <dd>
-          <%= f.check_box :offenders, checked: Travis::DataStores.redis.sismember("abuse:offenders", "#{owner.class.name}:#{owner.id}") %>
+          <%= f.check_box :offenders, checked: offender?(owner) %>
           <%= f.label 'Known offender' %>
           <%= f.text_field :reason, placeholder: 'Optional Reason' %>
         </dd>
         <dd>
-          <%= f.check_box :not_fishy, checked: Travis::DataStores.redis.sismember("abuse:not_fishy", "#{owner.class.name}:#{owner.id}") %>
+          <%= f.check_box :not_fishy, checked: not_fishy?(owner) %>
           <%= f.label 'Not fishy' %>
         </dd>
       </dl>
