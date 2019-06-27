@@ -87,8 +87,8 @@ module Services
 
       def update_or_create_abuse(level, owner, reason)
         abuse = ::Abuse.find_by(level: level, owner_id: owner.id, owner_type: owner.class.name)
-        if abuse.present? &&
-           abuse.update(reason: reason)
+        if abuse.present?
+          abuse.update(reason: reason)
         else
           ::Abuse.create!(level: level, reason: reason, owner_id: owner.id, owner_type: owner.class.name)
         end

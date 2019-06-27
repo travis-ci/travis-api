@@ -8,13 +8,13 @@ module UsersHelper
   end
 
   def abuse_name(abuse)
-    abuse.level == Abuse::LEVEL_OFFENDER ? "offensive" : "fishy"
+    abuse.level == Abuse::LEVEL_OFFENDER ? 'offensive' : 'fishy'
   end
 
   private
 
   def truncate(string, max)
-    string.length > max ? "#{string[0...max]}" : string
+    string.length > max ? (string[0...max]).to_s : string
   end
 
   def travis_config
