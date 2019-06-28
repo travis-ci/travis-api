@@ -102,7 +102,6 @@ Rails.application.routes.draw do
       get 'requests'
       get 'broadcasts'
     end
-
     post 'sync_all', on: :collection
   end
 

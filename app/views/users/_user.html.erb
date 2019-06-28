@@ -85,7 +85,7 @@
 </section>
 
 <% unless travis_config.enterprise? %>
-  <%= render partial: 'shared/account', locals: {owner: @user} %>
+  <%= render partial: 'shared/account', locals: { owner: @user } %>
 <% end %>
 
 <section class="info-block">
@@ -110,3 +110,4 @@
     </dd>
   </dl>
 </section>
+

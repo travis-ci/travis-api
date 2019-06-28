@@ -2,6 +2,7 @@ class Organization < ApplicationRecord
   include JobBoost
 
   has_many :memberships
+  has_many :abuses, foreign_key: :owner_id, class_name: 'Abuse'
   has_many :users,    through: :memberships
   has_many :repositories,  as: :owner
   has_many :broadcasts,    as: :recipient

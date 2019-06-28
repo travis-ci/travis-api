@@ -4,6 +4,16 @@ FactoryGirl.define do
     name 'Travis'
     email 'travis@example.com'
 
+    factory :user_with_abuse do
+      transient do
+        level 0
+      end
+
+      after(:create) do |user, evaluator|
+        create(:abuse, owner_id: user.id, level: evaluator.level)
+      end
+    end
+
     factory :user_with_organizations do
       transient do
         organization_count 2

@@ -10,7 +10,7 @@ module UsersHelper
   private
 
   def truncate(string, max)
-    string.length > max ? "#{string[0...max]}" : string
+    string.length > max ? (string[0...max]).to_s : string
   end
 
   def travis_config
