@@ -15,5 +15,8 @@
 # Travis.yml
 config/travis.yml
 
+# Database Config
+config/database.yml
+
 # Ignore Redis dumps
 dump.rdb

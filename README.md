@@ -37,6 +37,9 @@ To generate the config please run the command below. This file is already ignore
 trvs generate-config --pro admin staging  > config/travis.yml
 ```
 
+### Add config/database.yml
+`cp config/database.default.yml config/database.yml`
+
 #### Edit config/travis.yml
 Manually add `development:` as the top parent attribute, nest the updated config data under it, and remove the config for redis (so that we use our local redis instance). Also make sure to remove `travis_config=---` if it appears at the top of the file.
 

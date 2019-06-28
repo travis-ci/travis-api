@@ -1,0 +1,18 @@
+defaults: &defaults
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: localhost
+  username: <%= ENV['USER'] %>
+  min_messages: warning
+  variables:
+    statement_timeout: 5000
+
+development:
+  <<: *defaults
+  database: travis_development
+  url: <%= ENV['STAGING_DATABASE_URL'] %>
+
+test:
+  <<: *defaults
+  database: travis_test
