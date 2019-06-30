@@ -37,7 +37,9 @@ class OrganizationsController < ApplicationController
   end
 
   def members
-    @members = @organization.users.select('users.*, memberships.role as role').order(:name).paginate(page: params[:page], per_page: 25)
+    @members = @organization.users.select('users.*, memberships.role as role')
+                   .order(:name)
+                   .paginate(page: params[:page], per_page: 25)
     render_either 'members'
   end
 
@@ -74,6 +76,18 @@ class OrganizationsController < ApplicationController
     @builds_remaining = builds_remaining_for(@organization)
     @features = Features.for(@organization)
     render_either 'organization'
+  end
+
+  def sync
+    response = Services::Organization::Sync.new(@organization).call
+
+    if response.success?
+      flash[:notice] = "Triggered sync with GitHub."
+    else
+      flash[:error] = "Error: #{response.env.body}"
+    end
+
+    redirect_back(fallback_location: root_path)
   end
 
   def update_trial_builds
