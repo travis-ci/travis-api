@@ -42,6 +42,7 @@ Rails.application.routes.draw do
       post 'boost'
       post 'features'
       post 'update_trial_builds'
+      patch 'update_keep_netrc'
 
       get 'subscription'
       get 'invoices'

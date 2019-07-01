@@ -1,5 +1,6 @@
 class Organization < ApplicationRecord
   include JobBoost
+  include PreferencesHelper
 
   has_many :memberships
   has_many :users,    through: :memberships
