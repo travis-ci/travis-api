@@ -40,6 +40,7 @@ class OrganizationsController < ApplicationController
     @members = @organization.users.select('users.*, memberships.role as role')
                    .order(:name)
                    .paginate(page: params[:page], per_page: 25)
+    binding.pry
     render_either 'members'
   end
 
@@ -80,12 +81,12 @@ class OrganizationsController < ApplicationController
 
   def sync
     response = Services::Organization::Sync.new(@organization).call
-
-    if response.success?
-      flash[:notice] = "Triggered sync with GitHub."
-    else
-      flash[:error] = "Error: #{response.env.body}"
-    end
+    binding.pry
+    # if response.success?
+    #   flash[:notice] = "Triggered sync with GitHub."
+    # else
+    #   flash[:error] = "Error: #{response.env.body}"
+    # end
 
     redirect_back(fallback_location: root_path)
   end
