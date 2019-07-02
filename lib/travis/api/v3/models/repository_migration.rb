@@ -15,7 +15,7 @@ module Travis::API::V3::Models
 
       token = Travis.config.merge.auth_token
       url   = Travis.config.merge.api_url
-      connection = Faraday.new(url: url) do |c|
+      connection = Faraday.new(url: url, ssl: Travis.config.ssl.to_h.merge({})) do |c|
         c.request :json
         c.use Faraday::Request::Authorization, 'Token', token
         c.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
