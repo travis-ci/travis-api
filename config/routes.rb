@@ -103,6 +103,13 @@ Rails.application.routes.draw do
       get 'jobs'
       get 'requests'
       get 'broadcasts'
+      get 'gdpr'
+
+      resource :gdprs, only: [] do
+        get 'confirmation'
+        post 'export'
+        post 'purge'
+      end
     end
     post 'sync_all', on: :collection
   end
