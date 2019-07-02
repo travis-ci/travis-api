@@ -169,6 +169,13 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def update_keep_netrc
+    keep_netrc = keep_netrc_params[:keep_netrc] == '1'
+    @user.set_keep_netrc(keep_netrc)
+    flash[:notice] = "Set keep_netrc to #{keep_netrc} for #{@user.login}."
+    redirect_to @user
+  end
+
   private
 
   def get_user
@@ -178,5 +185,9 @@ class UsersController < ApplicationController
 
   def feature_params
     params.require(:features).permit(Features.for(@user).keys)
+  end
+
+  def keep_netrc_params
+    params.require(:user).permit(:keep_netrc).delete_if { |key, val| key == 'keep_netrc' && !val.in?(%w[0 1]) }
   end
 end

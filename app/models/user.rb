@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  include JobBoost
+  include JobBoost, PreferencesHelper
 
   has_many :emails
   has_many :memberships

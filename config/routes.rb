@@ -95,6 +95,7 @@ Rails.application.routes.draw do
       post 'update_trial_builds'
       post 'suspend'
       post 'unsuspend'
+      patch 'update_keep_netrc'
 
       get 'subscription'
       get 'invoices'
