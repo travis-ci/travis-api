@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.feature 'Update Offender', js: true, type: :feature do
-  let!(:user) { create(:user) }
-
-  before { visit "/users/#{user.id}" }
+  before do
+    user = create(:user, login: 'user123')
+    visit "/users/#{user.id}"
+  end
 
   scenario 'Update abuse status of a user' do
     find('#offender_offenders').trigger('click')
