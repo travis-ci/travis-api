@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Update Offender', js: true, type: :feature do
   before do
-    user = create(:user, login: 'user123')
+    user = create(:user)
     visit "/users/#{user.id}"
   end
 
