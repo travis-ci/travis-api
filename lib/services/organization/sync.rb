@@ -9,10 +9,11 @@ module Services
       end
 
       def call
-        organization.users.each do |user|
-          response = Services::User::Sync.new(user).call
-          response.status
-        end
+        ::Sidekiq::Client.push(
+          'queue' => 'sync',
+          'class' => 'Travis::GithubSync::Worker',
+          'args' => [:sync_org, { org_id: organization.id }, full: true]
+        )
       end
     end
   end
