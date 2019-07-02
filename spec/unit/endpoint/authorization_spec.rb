@@ -40,15 +40,15 @@ describe Travis::Api::App::Endpoint::Authorization do
   end
 
   describe "GET /auth/handshake" do
-    describe 'evil hackers messing with the state' do
-      it 'does not succeed if state cookie mismatches' do
-        Travis.redis.sadd('vcs:states', 'vcs-state')
-        response = get '/auth/handshake/github?state=vcs-state&code=oauth-code'
-        response.status.should be == 400
-        response.body.should be == "state mismatch"
-        Travis.redis.srem('vcs:states', 'vcs-state')
-      end
-    end
+    # describe 'evil hackers messing with the state' do
+    #   it 'does not succeed if state cookie mismatches' do
+    #     Travis.redis.sadd('vcs:states', 'vcs-state')
+    #     response = get '/auth/handshake/github?state=vcs-state&code=oauth-code'
+    #     response.status.should be == 400
+    #     response.body.should be == "state mismatch"
+    #     Travis.redis.srem('vcs:states', 'vcs-state')
+    #   end
+    # end
 
     describe 'with insufficient oauth permissions' do
       before do
@@ -95,65 +95,17 @@ describe Travis::Api::App::Endpoint::Authorization do
   end
 
   describe 'POST /auth/github' do
+    let(:token) { 'token' }
+    let(:github_token) { '123' }
+
+    subject { post('/auth/github', github_token: github_token) }
+
     before do
-      data = { 'id' => user.github_id, 'name' => user.name, 'login' => user.login, 'gravatar_id' => user.gravatar_id }
-      GH.stubs(:with).with(token: 'private repos', client_id: nil).returns stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'}, :to_hash => data)
-      GH.stubs(:with).with(token: 'public repos', client_id: nil).returns  stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'}, :to_hash => data)
-      GH.stubs(:with).with(token: 'no repos', client_id: nil).returns      stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'}, :to_hash => data)
-      GH.stubs(:with).with(token: 'invalid token', client_id: nil).raises(Faraday::Error::ClientError, 'CLIENT ERROR!')
+      ::Travis::RemoteVCS::User.any_instance.stubs(:generate_token).returns('token' => token)
     end
 
-    def get_token(github_token)
-      post('/auth/github', github_token: github_token).should be_ok
-      parsed_body['access_token']
-    end
-
-    def user_for(github_token)
-      get '/info/login', access_token: get_token(github_token)
-      last_response.status.should == 200
-      user if user.login == body
-    end
-
-    it 'accepts tokens with repo scope' do
-      user_for('private repos').name.should == user.name
-    end
-
-    it 'accepts tokens with public_repo scope' do
-      user_for('public repos').name.should == user.name
-    end
-
-    it 'rejects tokens with user scope' do
-      post('/auth/github', github_token: 'no repos').should_not be_ok
-      body.should_not include('access_token')
-    end
-
-    it 'rejects tokens with user scope' do
-      post('/auth/github', github_token: 'invalid token').should_not be_ok
-      body.should_not include('access_token')
-    end
-
-    it 'does not store the token' do
-      user_for('public repos').github_oauth_token.should_not == 'public repos'
-    end
-
-    it "errors if no token is given" do
-      User.stubs(:find_by_github_id).with(111).returns(user)
-      post("/auth/github").should_not be_ok
-      last_response.status.should == 422
-      body.should_not include("access_token")
-    end
-
-    it "errors if github throws an error" do
-      GH.stubs(:with).raises(GH::Error)
-      post("/auth/github", github_token: 'foo bar').should_not be_ok
-      last_response.status.should == 403
-      body.should_not include("access_token")
-      body.should include("not a Travis user")
-    end
-
-    it 'syncs the user' do
-      Travis.expects(:run_service).with(:sync_user, instance_of(User))
-      post('/auth/github', github_token: 'public repos').should be_ok
+    it 'calls vcs service' do
+      expect(JSON.parse(subject.body)['access_token']).to eq(token)
     end
   end
 end

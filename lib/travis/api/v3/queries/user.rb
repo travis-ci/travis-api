@@ -21,7 +21,8 @@ module Travis::API::V3
 
     def sync(user)
       raise AlreadySyncing if user.is_syncing?
-      perform_async(:user_sync, :sync_user, user_id: user.id)
+      # perform_async(:user_sync, :sync_user, user_id: user.id)
+      user.sync
       user.update_column(:is_syncing, true)
       user
     end

@@ -87,7 +87,7 @@ class Travis::Api::App
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
 
-        renev_access_token(token: params[:github_token], app_id: 1)
+        renev_access_token(token: params[:github_token], app_id: 1, provider: :github)
       end
 
       # Endpoint for making sure user authorized Travis CI to access GitHub.
@@ -126,7 +126,6 @@ class Travis::Api::App
         @remote_vcs_user ||= Travis::RemoteVCS::User.new
       end
 
-      # update first login date if not set
       def serialize_user(user)
         rendered = Travis::Api::Serialize.data(user, version: :v2)
         rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
@@ -151,7 +150,7 @@ class Travis::Api::App
       end
 
       def renev_access_token(token:, app_id:, provider:)
-        vcs_data = remote_vcs_user.get_token(
+        vcs_data = remote_vcs_user.generate_token(
           provider: provider,
           token: token,
           app_id: app_id
@@ -161,69 +160,6 @@ class Travis::Api::App
           redirect to(vcs_data['redirect_url'])
         else
           { access_token: vcs_data['token'] }
-        end
-      end
-
-
-      class UserManager < Struct.new(:data, :token, :drop_token, :provider)
-        include User::Renaming
-
-        attr_accessor :user
-
-        def initialize(*)
-          super
-          @user = ::User.find_by(vcs_id: data['id'])
-        end
-
-        def info(attributes = {})
-          info = data.to_hash.slice('name', 'login', 'gravatar_id', 'vcs_scopes')
-          info.merge! attributes.stringify_keys
-          if Travis::Features.feature_active?(:education_data_sync) ||
-             (user && Travis::Features.owner_active?(:education_data_sync, user))
-            info['education'] = education
-          end
-
-          info['github_id'] ||= data['id']
-          info
-        end
-
-        def user_exists?
-          user.persisted?
-        end
-
-        def education
-          ::Travis::RemoteVCS::User.new.education_data(
-            provider: provider,
-            token: token
-          )['student']
-        end
-
-        def fetch
-          retried ||= false
-          info = drop_token ? self.info : self.info(github_oauth_token: token)
-
-          ActiveRecord::Base.transaction do
-            if user
-              ensure_token_is_available
-              rename_repos_owner(user.login, info['login'])
-              user.update_attributes info
-            else
-              self.user = ::User.create!(info)
-            end
-
-            nullify_logins(user.vcs_id, user.login)
-          end
-
-          user
-        rescue ActiveRecord::RecordNotUnique
-          unless retried
-            retried = true
-            retry
-          end
-        end
-
-        def ensure_token_is_available
-          user.create_a_token unless user.tokens.first
         end
       end
 

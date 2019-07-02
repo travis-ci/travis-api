@@ -26,6 +26,11 @@ module Travis
         end
         return JSON.parse(resp.body)['data'] if resp.success?
       end
+
+      def sync(user_id:)
+        resp = connection.post { |req| req.url "users/#{user_id}/sync_data" }
+        resp.success?
+      end
     end
   end
 end
