@@ -112,7 +112,7 @@ module Support
       end
 
       def client(token)
-        ::Faraday.new(url: @host, ssl: Travis.config.ssl.to_h.merge({})) do |c|
+        ::Faraday.new(url: @host, headers: { accept: accept_header }, ssl: Travis.config.ssl.to_h.merge({})) do |c|
           # c.response :logger
           c.request  :authorization, :token, token if token
           c.adapter  :net_http
