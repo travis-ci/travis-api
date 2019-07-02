@@ -1,7 +1,6 @@
 module Services
   module Organization
     class Sync
-      include Travis::API
       attr_reader :organization
 
       def initialize(organization)
