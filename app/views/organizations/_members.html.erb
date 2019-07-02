@@ -1,5 +1,5 @@
 <section class="info-block">
-  <h2 class="info-header">Members</h2>
+  <h2 class="info-header"><%= @members.present? ? "Members (#{@members.count})" : 'Members' %></h2>
   <% if @members.empty? %>
     <p>No members.</p>
   <% else %>
