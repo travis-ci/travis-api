@@ -5,42 +5,46 @@
     <%= link_to 'procedure', 'https://builders.travis-ci.com/teams/jade/wiki/gdpr-data-deletion-data-request-guide/' %>
     when using these options
   </p>
-  <%= form_tag(export_gdprs_path(@user), method: :post) do %>
-    <%= render partial: "shared/otp" %>
-    <h3>Export Data</h3>
-    <ul>
-      <li>Pressing this button will export the customer’s data</li>
-      <li>You must export the data before any purging.</li>
-      <li>
-        The results will appear in the
-        <code>#log-gdpr</code>
-        channel
-      </li>
-      <li>
-        Take note of the
-        <code>user_id</code>,
-        email address, and S3 links
-      </li>
-      <br>
-      <%= submit_tag("Export #{@user.login}'s data in #{platform}", class: "button otp") %>
-    </ul>
-  <% end %>
-  <%= form_tag(purge_gdprs_path(@user), method: :post) do %>
-    <%= render partial: "shared/otp" %>
-    <h3>Purge Data</h3>
-    <ul>
-      <li>Pressing this button will purge the customer’s data</li>
-      <li>Please make sure to export data before purging.</li>
-      <li>
-        Use the
-        <code>GDRP-Actual-Data-Deletion</code>
-        saved reply in communicating with the customer.
-      </li>
-      <li>
-        <strong>THERE IS NO UNDO</strong>
-      </li>
-      <%= submit_tag("Purg #{@user.login}'s data in #{platform}", class: "button otp") %>
-    </ul>
-  <% end %>
+  <div class="export">
+    <%= form_tag(export_gdprs_path(@user), method: :post) do %>
+      <%= render partial: "shared/otp" %>
+      <h3>Export Data</h3>
+      <ul>
+        <li>Pressing this button will export the customer’s data</li>
+        <li>You must export the data before any purging.</li>
+        <li>
+          The results will appear in the
+          <code>#log-gdpr</code>
+          channel
+        </li>
+        <li>
+          Take note of the
+          <code>user_id</code>,
+          email address, and S3 links
+        </li>
+        <br>
+        <%= submit_tag("Export #{@user.login}'s data in #{platform}", class: "button otp") %>
+      </ul>
+    <% end %>
+  </div>
+  <div class="purge">
+    <%= form_tag(purge_gdprs_path(@user), method: :post) do %>
+      <%= render partial: "shared/otp" %>
+      <h3>Purge Data</h3>
+      <ul>
+        <li>Pressing this button will purge the customer’s data</li>
+        <li>Please make sure to export data before purging.</li>
+        <li>
+          Use the
+          <code>GDRP-Actual-Data-Deletion</code>
+          saved reply in communicating with the customer.
+        </li>
+        <li>
+          <strong>THERE IS NO UNDO</strong>
+        </li>
+        <%= submit_tag("Purge #{@user.login}'s data in #{platform}", class: "button otp") %>
+      </ul>
+    <% end %>
+  </div>
   <%= link_to "Back to #{@user.login}'s users page", user_path(@user) %>
 </section>
