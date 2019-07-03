@@ -15,14 +15,10 @@ class GdprsController < ApplicationController
     redirect_back(fallback_location: root_path)
   end
 
-  def confirmation
-
-  end
-
   private
 
   def get_user
     @user = User.find_by(id: params[:id])
-    redirect_to not_found_path, flash: { error: "There is no user associated with ID #{params[:id]}." } if @user.nil?
+    redirect_to not_found_path, flash: { error: "There is no user associated with ID #{params[:id]}." } unless @user
   end
 end

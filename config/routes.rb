@@ -106,7 +106,6 @@ Rails.application.routes.draw do
       get 'gdpr'
 
       resource :gdprs, only: [] do
-        get 'confirmation'
         post 'export'
         post 'purge'
       end

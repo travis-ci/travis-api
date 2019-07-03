@@ -3,6 +3,7 @@ module Services
     class Client
       include ApplicationHelper
       class Error < StandardError; end
+
       attr_reader :sender
 
       def initialize(sender)
