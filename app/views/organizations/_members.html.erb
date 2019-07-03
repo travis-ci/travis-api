@@ -1,5 +1,5 @@
 <section class="info-block">
-  <h2 class="info-header"><%= "Members #{@members_parenthesis if @members_parenthesis.present?}" %></h2>
+  <h2 class="info-header" id="organization-members-header"><%= "Members #{@members_amount}" %></h2>
   <% if @members.empty? %>
     <p>No members.</p>
   <% else %>

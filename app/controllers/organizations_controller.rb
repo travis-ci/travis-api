@@ -39,7 +39,7 @@ class OrganizationsController < ApplicationController
   def members
     all_members = @organization.users.select('users.*, memberships.role as role')
     @members = all_members.order(:name).paginate(page: params[:page], per_page: 25)
-    @members_parenthesis = "(#{all_members.length})" if all_members.present?
+    @members_amount = "(#{all_members.length})" if all_members.present?
     render_either 'members'
   end
 
