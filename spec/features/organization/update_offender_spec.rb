@@ -22,18 +22,4 @@ RSpec.feature 'Update Offender', js: true, type: :feature do
       expect(page).to have_text('Explanation: Updated manually, through admin: Test Reason')
     end
   end
-
-  scenario 'Mark organization as trusted' do
-    find('#offender_trusted').trigger('click')
-    find_button('update-abuse-status').trigger('click')
-
-    expect(page.has_checked_field?('offender[trusted]')).to be true
-  end
-
-  scenario 'Mark organization as trusted' do
-    find('#offender_trusted').trigger('click')
-    find_button('update-abuse-status').trigger('click')
-
-    expect(page.has_checked_field?('offender[trusted]')).to be true
-  end
 end
