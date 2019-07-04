@@ -8,6 +8,10 @@ class TravisConfig < Travis::Config
 	 api_endpoint: '',
 	 become_endpoint: '',
 	 log_level: 'info',
+	 gdpr: {
+			 endpoint: 'https://gdpr.travis-ci.com',
+			 auth_token: 'token'
+	 },
 	 slack: {
 	   url: '',
 	   username: "Travis Admin v2 (OSS)",

@@ -25,12 +25,16 @@ module Services
       end
 
       def connection
-        @_connection ||= Faraday.new(url: 'https://gdpr.travis-ci.com') do |c|
+        @_connection ||= Faraday.new(url: travis_config.gdpr.endpoint) do |c|
           c.headers['X-Travis-Source'] = 'admin'
           c.headers['X-Travis-Sender'] = sender.login
-          c.token_auth 'token'
+          c.token_auth travis_config.gdpr.auth_token
           c.adapter Faraday.default_adapter
         end
+      end
+
+      def travis_config
+        TravisConfig.load
       end
     end
   end
