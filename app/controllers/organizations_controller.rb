@@ -78,6 +78,12 @@ class OrganizationsController < ApplicationController
     render_either 'organization'
   end
 
+  def sync
+    Services::Organization::Sync.new(@organization).call
+    flash[:notice] = "Triggered sync for Organization #{@organization.login}"
+    redirect_back(fallback_location: root_path)
+  end
+
   def update_trial_builds
     Services::TrialBuilds::Update.new(@organization, current_user).call(params[:builds_allowed])
     flash[:notice] = "Added #{params[:builds_allowed]} trial builds for #{@organization.login}."
