@@ -32,39 +32,41 @@
         <%= fa_icon("exclamation-triangle", title: "Warning") %> no admin
       <% end %>
     </dd>
-    <dt class="info-label">GH Integration</dt>
-    <dd class="inline">
-      <% if @repository.managed_by_installation_at.present? %>
-        <p>This repo uses a GitHub App Installation</p>
-      <% else %>
-        <p>This repo uses a Service Hook</p>
-        <div class="inline">
-          <%= button_to "Check hook", check_hook_repository_path(@repository),
-                        form_class: "check-hook",
-                        disabled: !@repository.find_admin,
-                        title: "Action requires active admin.",
-                        class: "button" %>
-        </div>
-      <% end %>
-    </dd>
-    <% if @repository.managed_by_installation_at.present? %>
-      <dt class="info-label">Active on .com</dt>
-      <dd>
-        <p>This repo is active on .com</p>
-      </dd>
-    <% else %>
-      <dt class="info-label">Activation</dt>
+    <div class="gh-integration-container">
+      <dt class="info-label">GH Integration</dt>
       <dd class="inline">
-        <p><%= @repository.active? ? 'enabled' : 'disable' %></p>
-        <div class="inline">
-          <% if @repository.active? %>
-            <%= button_to "Disable", disable_repository_path(@repository), form_class: "disable-button", class: "button" %>
-          <% else %>
-            <%= button_to "Enable", enable_repository_path(@repository), form_class: "enable-button", class: "button" %>
-          <% end %>
-        </div>
+        <% if @repository.managed_by_installation_at.present? %>
+          <p>This repo uses a GitHub App Installation</p>
+        <% else %>
+          <p>This repo uses a Service Hook</p>
+          <div class="inline">
+            <%= button_to "Check hook", check_hook_repository_path(@repository),
+                          form_class: "check-hook",
+                          disabled: !@repository.find_admin,
+                          title: "Action requires active admin.",
+                          class: "button" %>
+          </div>
+        <% end %>
       </dd>
-    <% end %>
+    </div>
+    <div class="activation-container">
+      <% if @repository.managed_by_installation_at.present? %>
+        <dt class="info-label">Active on .com</dt>
+        <dd>This repo is active on .com</dd>
+      <% else %>
+        <dt class="info-label">Activation</dt>
+        <dd class="inline">
+          <p><%= @repository.active? ? 'enabled' : 'disable' %></p>
+          <div class="inline">
+            <% if @repository.active? %>
+              <%= button_to "Disable", disable_repository_path(@repository), form_class: "disable-button", class: "button" %>
+            <% else %>
+              <%= button_to "Enable", enable_repository_path(@repository), form_class: "enable-button", class: "button" %>
+            <% end %>
+          </div>
+        </dd>
+      <% end %>
+    </div>
   </dl>
 </section>
 
@@ -87,20 +89,21 @@
         None.
       <% end %>
     </dd>
-
-    <dt class="info-label">Active?</dt>
-    <dd class="inline">
-      <p><%= @repository.active? %></p>
-      <div class="inline">
-        <%= button_to "Check hook", check_hook_repository_path(@repository), form_class: "check-hook", disabled: !@repository.find_admin, title: "Action requires active admin.", class: "button" %>
-        <% if @repository.active? %>
-          <%= button_to "Test hook", test_hook_repository_path(@repository), form_class: "test-hook", disabled: !@repository.find_admin, title: "Action requires active admin.", class: "button" %>
-          <%= button_to "Disable", disable_repository_path(@repository), form_class: "disable-button", class: "button" %>
-        <% else %>
-          <%= button_to "Enable", enable_repository_path(@repository), form_class: "enable-button", class: "button" %>
-        <% end %>
-      </div>
-    </dd>
+    <div class="active-container">
+      <dt class="info-label">Active?</dt>
+      <dd class="inline">
+        <p><%= @repository.active? %></p>
+        <div class="inline">
+          <%= button_to "Check hook", check_hook_repository_path(@repository), form_class: "check-hook", disabled: !@repository.find_admin, title: "Action requires active admin.", class: "button" %>
+          <% if @repository.active? %>
+            <%= button_to "Test hook", test_hook_repository_path(@repository), form_class: "test-hook", disabled: !@repository.find_admin, title: "Action requires active admin.", class: "button" %>
+            <%= button_to "Disable", disable_repository_path(@repository), form_class: "disable-button", class: "button" %>
+          <% else %>
+            <%= button_to "Enable", enable_repository_path(@repository), form_class: "enable-button", class: "button" %>
+          <% end %>
+        </div>
+      </dd>
+    </div>
   </dl>
 </section>
 

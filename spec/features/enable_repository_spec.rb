@@ -15,7 +15,9 @@ RSpec.feature 'Enable a Repository', js: true, type: :feature do
       with(headers: {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
       to_return(status: 200, body: '', headers: {})
 
-    find_button('Enable').trigger('click')
+    within(:css, '.active-container') do
+      find_button('Enable').trigger('click')
+    end
 
     expect(page).to have_text("Enabled #{repository.slug}")
   end

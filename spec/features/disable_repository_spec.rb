@@ -15,7 +15,9 @@ RSpec.feature "Disable a Repository", js: true, type: :feature do
       with(headers: {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
       to_return(status: 200, body: '', headers: {})
 
-    find_button('Disable').trigger('click')
+    within(:css, '.active-container') do
+      find_button('Disable').trigger('click')
+    end
 
     expect(page).to have_text("Disabled #{repository.slug}")
   end

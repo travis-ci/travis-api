@@ -63,7 +63,9 @@ RSpec.feature 'Check hook', js: true, type: :feature do
     WebMock.stub_request(:get, "https://api.github.com/repos/#{repository.slug}/hooks?per_page=100").
       to_return(status: 200, body: gh, headers: {})
 
-    find_button('Check hook').trigger('click')
+    within(:css, '.active-container') do
+      find_button('Check hook').trigger('click')
+    end
 
     expect(page).to have_text('That hook seems legit.')
   end
@@ -74,7 +76,9 @@ RSpec.feature 'Check hook', js: true, type: :feature do
     WebMock.stub_request(:get, "https://api.github.com/repos/#{repository.slug}/hooks?per_page=100").
       to_return(status: 200, body: gh_not_active, headers: {})
 
-    find_button('Check hook').trigger('click')
+    within(:css, '.active-container') do
+      find_button('Check hook').trigger('click')
+    end
 
     expect(page).to have_text("#{repository.slug} is marked active in our database but the GitHub hook is disabled. What should we do about it?")
     expect(page).to have_button('Enable')
@@ -87,7 +91,9 @@ RSpec.feature 'Check hook', js: true, type: :feature do
     WebMock.stub_request(:get, "https://api.github.com/repos/#{repository.slug}/hooks?per_page=100").
       to_return(status: 200, body: gh_pr_missing, headers: {})
 
-    find_button('Check hook').trigger('click')
+    within(:css, '.active-container') do
+      find_button('Check hook').trigger('click')
+    end
 
     expect(page).to have_text("The GitHub hook for #{repository.slug} is not listening to pull request events. What should we do about it?")
 
@@ -105,7 +111,9 @@ RSpec.feature 'Check hook', js: true, type: :feature do
     WebMock.stub_request(:get, "https://api.github.com/repos/#{repository.slug}/hooks?per_page=100").
       to_return(status: 200, body: gh_push_missing, headers: {})
 
-    find_button('Check hook').trigger('click')
+    within(:css, '.active-container') do
+      find_button('Check hook').trigger('click')
+    end
 
     expect(page).to have_text("The GitHub hook for #{repository.slug} is not listening to push events. What should we do about it?")
 
@@ -123,7 +131,9 @@ RSpec.feature 'Check hook', js: true, type: :feature do
     WebMock.stub_request(:get, "https://api.github.com/repos/#{repository.slug}/hooks?per_page=100").
       to_return(status: 200, body: gh_different_domain, headers: {})
 
-    find_button('Check hook').trigger('click')
+    within(:css, '.active-container') do
+      find_button('Check hook').trigger('click')
+    end
 
     expect(page).to have_text("The GitHub hook for #{repository.slug} is sending notifications to https://notify.fake2.travis-ci.com, but should be sending them to https://notify.fake.travis-ci.com. What should we do about it?")
 
@@ -141,7 +151,9 @@ RSpec.feature 'Check hook', js: true, type: :feature do
     WebMock.stub_request(:get, "https://api.github.com/repos/#{repository.slug}/hooks?per_page=100").
       to_return(status: 200, body: [], headers: {})
 
-    find_button('Check hook').trigger('click')
+    within(:css, '.active-container') do
+      find_button('Check hook').trigger('click')
+    end
 
     expect(page).to have_text('No hook found on GitHub.')
   end
