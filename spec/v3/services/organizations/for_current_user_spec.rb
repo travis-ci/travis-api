@@ -54,6 +54,8 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
         "login"           => "example-org",
         "name"            => nil,
         "github_id"       => nil,
+        "vcs_id"          => nil,
+        "type_vcs"        => "GithubOrganization",
         "avatar_url"      => nil,
         "education"       => false,
         "allow_migration" => false,
