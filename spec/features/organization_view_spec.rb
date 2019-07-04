@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.feature 'Organization page gives the information about organizaton account on GitHub', js: true, type: :feature do
-  let!(:katrin)              { create(:user, login: 'lisbethmarianne') }
-  let!(:aly)                 { create(:user, login: 'sinthetix') }
+  let!(:katrin)                  { create(:user, login: 'lisbethmarianne') }
+  let!(:aly)                     { create(:user, login: 'sinthetix') }
   let!(:organization_w_members)  { create(:organization, users: [katrin, aly]) }
   let!(:organization_memberless) { create(:organization, users: []) }
 
