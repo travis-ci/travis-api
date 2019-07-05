@@ -25,6 +25,7 @@ RSpec.feature 'Organization page gives the information about organizaton account
         to receive(:call).and_return(organization_w_repo.repositories.first)
     visit "/organizations/#{organization_w_repo.id}"
     expect(page).to have_text('Service Hook')
+  end
 
   scenario 'Display number of members in organization' do
     visit "/organizations/#{organization_w_members.id}/members"
