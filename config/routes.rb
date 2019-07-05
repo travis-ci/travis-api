@@ -113,4 +113,7 @@ Rails.application.routes.draw do
       post 'unsuspend'
     end
   end
+
+  get '/account', to: 'home#not_found'
+  get '/*other', to: 'unknown#canonical_route'
 end
