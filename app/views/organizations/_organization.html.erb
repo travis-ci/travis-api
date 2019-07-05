@@ -14,6 +14,27 @@
 
     <dt class="info-label">GitHub ID</dt>
     <dd><%= @organization.github_id %></dd>
+
+    <dt class="info-label">GitHub Integration</dt>
+    <dd><%= @organization.github_id %></dd>
+
+    <dt class="info-label">GitHub Integration</dt>
+    <dd class="inline">
+      <p>
+        <% if @organization.github_id.present? %>
+          <% if @repo_hooks.any? %>
+            Service Hook
+          <% else %>
+            GitHub App installed with
+            <strong>id: <%= @organization.id %></strong>
+            and
+            <strong>github_id: <%= @organization.github_id %></strong>
+            <%= link_to '[Manage repos link]', repositories_organization_path(@organization) %>
+          <% end %>
+        <% end %>
+      </p>
+    </dd>
+
   </dl>
 </section>
 

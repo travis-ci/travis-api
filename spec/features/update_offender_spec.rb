@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.feature 'Update Offender', js: true, type: :feature do
-  let!(:user) { create(:user) }
-
-  before { visit "/users/#{user.id}" }
+  before do
+    user = create(:user)
+    visit "/users/#{user.id}"
+  end
 
   scenario 'Update abuse status of a user' do
     find('#offender_offenders').trigger('click')
@@ -21,19 +22,5 @@ RSpec.feature 'Update Offender', js: true, type: :feature do
     within('.abuse-reasons') do
       expect(page).to have_text('Explanation: Updated manually, through admin: Test Reason')
     end
-  end
-
-  scenario 'Mark user as trusted' do
-    find('#offender_trusted').trigger('click')
-    find_button('update-abuse-status').trigger('click')
-
-    expect(page.has_checked_field?('offender[trusted]')).to be true
-  end
-
-  scenario 'Mark user as trusted' do
-    find('#offender_trusted').trigger('click')
-    find_button('update-abuse-status').trigger('click')
-
-    expect(page.has_checked_field?('offender[trusted]')).to be true
   end
 end

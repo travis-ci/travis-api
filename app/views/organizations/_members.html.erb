@@ -3,11 +3,16 @@
   <% if @members.empty? %>
     <p>No members.</p>
   <% else %>
-    <%= form_for :sync_all, url: {action: 'sync_all', controller: 'users'} do |f| %>
-      <%= f.hidden_field :back_link, value: request.fullpath %>
-      <%= f.hidden_field :user_ids, value: @members.map(&:id).join(',') %>
-      <%= f.submit 'Sync all', class: 'button' %>
-    <% end %>
+    <div class="sync-buttons">
+      <%= form_for :sync_org, url: { action: 'sync', controller: 'organizations' } do |f| %>
+        <%= f.submit 'Sync org', class: 'button' %>
+      <% end %>
+      <%= form_for :sync_all, url: { action: 'sync_all', controller: 'users' } do |f| %>
+        <%= f.hidden_field :back_link, value: request.fullpath %>
+        <%= f.hidden_field :user_ids, value: @members.map(&:id).join(',') %>
+        <%= f.submit 'Sync users', class: 'button' %>
+      <% end %>
+    </div>
     <ul>
       <li class="inline-list member-item">
         <p class="info-label">Name</p>

@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     member do
       post 'boost'
       post 'features'
+      post 'sync'
       post 'update_trial_builds'
       patch 'update_keep_netrc'
 

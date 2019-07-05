@@ -14,7 +14,7 @@ RSpec.feature 'Sync with GitHub for all users in an organization', js: true, typ
     WebMock.stub_request(:post, "https://api-fake.travis-ci.com/user/#{aly.id}/sync").
       to_return(status: 200, body: '', headers: {})
 
-    find_button('Sync all').trigger('click')
+    find_button('Sync users').trigger('click')
 
     expect(page).to have_text('Triggered sync with GitHub for lisbethmarianne, sinthetix.')
   end
