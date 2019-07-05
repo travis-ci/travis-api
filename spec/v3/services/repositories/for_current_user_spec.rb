@@ -55,6 +55,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "slug"               =>  "svenfuchs/minimal",
         "description"        => nil,
         "github_id"          => repo.github_id,
+        "vcs_id"             => repo.vcs_id,
+        "type_vcs"           => "GithubRepository",
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
