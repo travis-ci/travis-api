@@ -13,8 +13,9 @@ module Travis::API::V3
       options          = Hash[args.map { |a| a.split(?=.freeze, 2) }]
       challenge        = ""
 
-      if github_id = options[?u.freeze]
-        return unless user = ::User.find_by_github_id(github_id)
+      if vcs_id = options[?u.freeze]
+        type_vcs = options[?t.freeze] || 'GithubUser'
+        return unless user = ::User.find_by(vcs_id: vcs_id, type_vcs: type_vcs)
       end
 
       if application = options[?a.freeze]
