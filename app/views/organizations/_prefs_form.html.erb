@@ -1,6 +1,6 @@
 <%= form_for @organization, url: { controller: 'organizations', action: 'update_keep_netrc' },
              html: { class: 'organization-form' } do |f| %>
-  <%= f.check_box :keep_netrc %>
+  <%= f.check_box(:keep_netrc, id: 'keep-netrc-chckbox') %>
   <%= f.label(:id, 'Keep .netrc file at start of build') %>
-  <%= f.submit 'Update', class: 'button', id: 'update-org-netrc' %>
+  <%= f.submit('Update', class: 'button', id: 'update-org-netrc') %>
 <% end %>
