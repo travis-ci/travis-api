@@ -6,6 +6,9 @@ class HomeController < ApplicationController
     reset_session
   end
 
-  def not_found
+  def not_found; end
+
+  def back
+    redirect_back(fallback_location: '/')
   end
 end
