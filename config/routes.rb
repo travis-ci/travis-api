@@ -115,5 +115,9 @@ Rails.application.routes.draw do
   end
 
   get '/account', to: 'home#not_found'
+  get '/*user/*repo/builds/:id', to: 'builds#show'
+  get '/*user/*repo/jobs/:id', to: 'jobs#show'
+  get '/*user/*repo/jobs/:id/config', to: 'jobs#show'
   get '/*other', to: 'unknown#canonical_route'
+
 end
