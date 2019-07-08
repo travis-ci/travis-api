@@ -169,4 +169,10 @@ Reexport the dump:
 pg_dump -Fc --no-acl --no-owner -h localhost -U myuser travis_pro_staging > travis_pro_staging_<date>.dump
 ```
 
+In case of .dump file requires `joe` role do the fallowing:
+```
+sudo psql -U $(whoami) postgres
+CREATE ROLE joe WITH LOGIN SUPERUSER;
 
+pg_restore --verbose --clean --no-acl --no-owner -h localhost -U joe -d travis_development dump_name.dump
+```
