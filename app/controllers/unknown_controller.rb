@@ -4,7 +4,7 @@ class UnknownController < ApplicationController
   end
 
   def repository
-    repository_id = Repository.by_slug("#{params['owner']}/#{params['repo']}").first&.id
-    redirect_to repository_id ? "/repositories/#{repository_id}" : :not_found
+    repository_id = Repository.by_slug("#{params['owner']}/#{params['repo']}").first
+    redirect_to repository_id&.id ? "/repositories/#{repository_id}" : :not_found
   end
 end
