@@ -95,6 +95,10 @@ module ApplicationHelper
     "#{input} #{format}"
   end
 
+  def platform
+    request.host.sub(/admin[\.-]/, '')
+  end
+
   def stringify_hash_keys(config)
     case config
       when Hash

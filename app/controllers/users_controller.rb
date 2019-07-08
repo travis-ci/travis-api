@@ -48,6 +48,10 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def gdpr
+    render_either 'gdpr'
+  end
+
   def reset_2fa
     if otp_valid?
       Travis::DataStores.redis.del("admin-v2:otp:#{@user.login}")

@@ -3,6 +3,8 @@
 <div id="tabs">
   <%= link_to 'User', user_path(@user),
   class: "#{active_tab(user_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'GDPR', gdpr_user_path(@user),
+              class: "#{active_tab(user_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <%= link_to 'Organizations', organizations_user_path(@user),
   class: "#{active_tab(organizations_user_path)}  remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <%= link_to 'Repositories', repositories_user_path(@user),

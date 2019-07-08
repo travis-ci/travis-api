@@ -80,12 +80,12 @@
 
 <section class="info-block">
   <h2 class="info-header">Feature flags</h2>
-  <%= render partial: 'shared/features_for', locals: {owner: owner} %>
+  <%= render partial: 'shared/features_for', locals: { owner: owner } %>
 </section>
 
 <section class="info-block">
   <h2 class="info-header">Abuse</h2>
-  <%= form_for :offender, url: { controller: "offenders", action: "update", login: owner.login}, html: {class: "abuse-form inline" }, method: :put do |f| %>
+  <%= form_for :offender, url: { controller: "offenders", action: "update", login: owner.login }, html: { class: "abuse-form inline" }, method: :put do |f| %>
     <div>
       <dl>
         <dd>
