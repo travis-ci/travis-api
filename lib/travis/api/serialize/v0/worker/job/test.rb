@@ -55,7 +55,7 @@ module Travis
                   'slug' => repository.slug,
                   'github_id' => repository.github_id,
                   'vcs_id' => repository.vcs_id,
-                  'type_vcs' => repository.type_vcs,
+                  'vcs_type' => repository.vcs_type,
                   'source_url' => repository.source_url,
                   'api_url' => repository.api_url,
                   'last_build_id' => repository.last_build_id,
