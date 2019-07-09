@@ -97,7 +97,7 @@ class Travis::Api::App
       # Parameters:
       #
       # * **redirect_uri**: URI to redirect to after handshake.
-      get '/handshake/:provider' do
+      get '/handshake' do
         params[:provider] ||= 'github'
         handshake do |user, token, redirect_uri|
           if target_ok? redirect_uri
