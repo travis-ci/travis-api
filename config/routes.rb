@@ -119,4 +119,15 @@ Rails.application.routes.draw do
       post 'unsuspend'
     end
   end
+
+  get '/account', to: 'home#back'
+
+  get '/*owner/*repo/builds/:id', to: 'builds#show'
+  get '/*owner/*repo/jobs/:id', to: 'jobs#show'
+  get '/*owner/*repo/jobs/:id/config', to: 'jobs#show'
+
+  get '/*owner/*repo/*other', to: 'unknown#repository'
+  get '/*owner/*repo', to: 'unknown#repository'
+
+  get '/*other', to: 'unknown#canonical_route'
 end
