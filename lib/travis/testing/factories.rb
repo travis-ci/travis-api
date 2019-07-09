@@ -59,6 +59,7 @@ FactoryGirl.define do
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
     sequence(:github_id) {|n| n }
+    vcs_type 'GithubRepository'
     private false
   end
 
@@ -97,15 +98,18 @@ FactoryGirl.define do
     name  'Sven Fuchs'
     login 'svenfuchs'
     email 'sven@fuchs.com'
+    vcs_type 'GithubUser'
     tokens { [Token.new] }
     github_oauth_token 'github_oauth_token'
   end
 
-  factory :org, :class => 'Organization' do
+  factory :org, class: 'Organization' do
+    vcs_type 'GithubOrganization'
     name 'travis-ci'
   end
 
   factory :org_v3, class: Travis::API::V3::Models::Organization do
+    vcs_type 'GithubOrganization'
     name 'travis-ci'
   end
 
