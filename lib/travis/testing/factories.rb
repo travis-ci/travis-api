@@ -1,6 +1,8 @@
 require 'factory_girl'
 
 FactoryGirl.define do
+  sequence(:github_id) { |n| n }
+
   factory :build do
     owner { User.first || Factory(:user) }
     repository { Repository.first || Factory(:repository_without_last_build) }
@@ -58,7 +60,7 @@ FactoryGirl.define do
     last_build_number '2'
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
-    sequence(:github_id) {|n| n }
+    github_id
     vcs_type 'GithubRepository'
     private false
   end
@@ -77,6 +79,25 @@ FactoryGirl.define do
     owner_name 'josevalim'
     owner_email 'josevalim@email.example.com'
     owner { User.find_by_login('josevalim') || Factory(:user, :login => 'josevalim') }
+  end
+
+
+  factory :repo_v3, class: Travis::API::V3::Models::Repository do
+    owner { User.find_by_login('svenfuchs') || Factory(:user) }
+    name 'minimal'
+    owner_name 'svenfuchs'
+    owner_email 'svenfuchs@artweb-design.de'
+    active true
+    url { |r| "http://github.com/#{r.owner_name}/#{r.name}" }
+    created_at { |r| Time.utc(2011, 01, 30, 5, 25) }
+    updated_at { |r| r.created_at + 5.minutes }
+    last_build_state :passed
+    last_build_number '2'
+    last_build_started_at { Time.now.utc }
+    last_build_finished_at { Time.now.utc }
+    github_id
+    vcs_type 'GithubRepository'
+    private false
   end
 
   factory :event do
