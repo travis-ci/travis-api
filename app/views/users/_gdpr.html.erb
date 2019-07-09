@@ -1,5 +1,5 @@
 <section class="info-block">
-  <h2 class="info-header">GDPA Data Export and Data Purge</h2>
+  <h2 class="info-header">GDPR Data Export and Data Purge</h2>
   <p>
     Here are the options for GDPR compliance requests. Please follow the
     <%= link_to 'procedure', 'https://builders.travis-ci.com/teams/jade/wiki/gdpr-data-deletion-data-request-guide/' %>
@@ -20,10 +20,10 @@
         <li>
           Take note of the
           <code>user_id</code>,
-          email address, and S3 links
+          email address, and S3 links§
         </li>
         <br>
-        <%= submit_tag("Export #{@user.login}'s data in #{platform}", class: "button otp") %>
+        <%= submit_tag("Export #{@user.login}'s data in #{platform}", id: 'export-submit', class: "button otp") %>
       </ul>
     <% end %>
   </div>
@@ -42,7 +42,7 @@
         <li>
           <strong>THERE IS NO UNDO</strong>
         </li>
-        <%= submit_tag("Purge #{@user.login}'s data in #{platform}", class: "button otp") %>
+        <%= submit_tag("Purge #{@user.login}'s data in #{platform}", id: 'purge-submit', class: "button otp") %>
       </ul>
     <% end %>
   </div>
