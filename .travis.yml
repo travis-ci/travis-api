@@ -8,7 +8,7 @@ addons:
 
 before_script:
   - createdb travis_test || true
-  - curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test
+  - curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/multi-vcs/db/main/structure.sql | psql travis_test
 # END TODO
 
 rvm: 2.5.1
