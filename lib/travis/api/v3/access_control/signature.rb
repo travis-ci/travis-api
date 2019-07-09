@@ -14,8 +14,8 @@ module Travis::API::V3
       challenge        = ""
 
       if vcs_id = options[?u.freeze]
-        type_vcs = options[?t.freeze] || 'GithubUser'
-        return unless user = ::User.find_by(vcs_id: vcs_id, type_vcs: type_vcs)
+        vcs_type = options[?t.freeze] || 'GithubUser'
+        return unless user = ::User.find_by(vcs_id: vcs_id, vcs_type: vcs_type)
       end
 
       if application = options[?a.freeze]

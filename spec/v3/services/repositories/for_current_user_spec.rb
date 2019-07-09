@@ -56,7 +56,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "description"        => nil,
         "github_id"          => repo.github_id,
         "vcs_id"             => repo.vcs_id,
-        "type_vcs"           => "GithubRepository",
+        "vcs_type"           => "GithubRepository",
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
