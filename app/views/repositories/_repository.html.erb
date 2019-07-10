@@ -36,9 +36,9 @@
       <dt class="info-label">GH Integration</dt>
       <dd class="inline">
         <% if @repository.managed_by_installation_at.present? %>
-          <p>This repo uses a GitHub App Installation</p>
+          This repo uses a GitHub App Installation
         <% else %>
-          <p>This repo uses a Service Hook</p>
+          This repo uses a Service Hook
           <div class="inline">
             <%= button_to "Check hook", check_hook_repository_path(@repository),
                           form_class: "check-hook",
@@ -56,7 +56,7 @@
       <% else %>
         <dt class="info-label">Activation</dt>
         <dd class="inline">
-          <p><%= @repository.active? ? 'enabled' : 'disable' %></p>
+          <%= @repository.active? ? 'enabled' : 'disable' %>
           <div class="inline">
             <% if @repository.active? %>
               <%= button_to "Disable", disable_repository_path(@repository), form_class: "disable-button", class: "button" %>
@@ -92,7 +92,7 @@
     <div class="active-container">
       <dt class="info-label">Active?</dt>
       <dd class="inline">
-        <p><%= @repository.active? %></p>
+        <%= @repository.active? %>
         <div class="inline">
           <%= button_to "Check hook", check_hook_repository_path(@repository), form_class: "check-hook", disabled: !@repository.find_admin, title: "Action requires active admin.", class: "button" %>
           <% if @repository.active? %>
