@@ -27,7 +27,7 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
 
   describe "include raw configs" do
     let(:one) { request.raw_configs.build(key: '123', config: 'language: ruby') }
-    let(:two) { request.raw_configs.build(key: '234', config: 'rvm: 2.5.1') }
+    let(:two) { request.raw_configs.build(key: '234', config: 'rvm: 2.6.3') }
 
     before { request.raw_configurations.create!(raw_config: one, source: '.travis.yml') }
     before { request.raw_configurations.create!(raw_config: two, source: 'other.yml') }
@@ -49,7 +49,7 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
           {
             '@type' => 'request_raw_configuration',
             '@representation' => 'standard',
-            'config' => 'rvm: 2.5.1',
+            'config' => 'rvm: 2.6.3',
             'source' => 'other.yml'
           }
         ]
@@ -59,11 +59,11 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
 
   describe "include yaml config" do
     subject { JSON.load(body)['yaml_config'] }
-    let(:yaml_config) { Travis::API::V3::Models::RequestYamlConfig.new(key: '123', yaml: 'rvm: 2.5.1') }
+    let(:yaml_config) { Travis::API::V3::Models::RequestYamlConfig.new(key: '123', yaml: 'rvm: 2.6.3') }
     before { request.update_attributes!(yaml_config: yaml_config) }
     before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.yaml_config") }
 
-    it { should eq 'rvm: 2.5.1' }
+    it { should eq 'rvm: 2.6.3' }
 
     it 'is deprecated' do
       expect(JSON.load(body)['@warnings']).to eq([
