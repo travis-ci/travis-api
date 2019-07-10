@@ -28,7 +28,7 @@ gem 'travis-support',    github: 'travis-ci/travis-support'
 gem 'travis',            github: 'travis-ci/travis.rb'
 
 # Sidekiq
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 3.12'
 gem 'sidekiq'
 gem 'foreman'
 

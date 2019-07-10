@@ -198,7 +198,7 @@ GEM
       slop (~> 3.4)
     pry-rails (0.3.4)
       pry (>= 0.9.10)
-    puma (3.6.0)
+    puma (3.12.1)
     pusher-client (0.6.2)
       json
       websocket (~> 1.0)
@@ -328,7 +328,7 @@ DEPENDENCIES
   poltergeist
   pry
   pry-rails
-  puma (~> 3.0)
+  puma (~> 3.12)
   rails (~> 5.0.0, >= 5.0.0.1)
   rake
   redis (~> 3.0)
@@ -350,4 +350,4 @@ DEPENDENCIES
   will_paginate (~> 3.1.0)
 
 BUNDLED WITH
-   1.16.1
+   1.17.3
