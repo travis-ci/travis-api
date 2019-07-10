@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Magic Makers
-gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+gem 'rails', '~> 5.2.3'
 
 # CSS/JS Stuff
 gem 'uglifier', '>= 1.3.0'
@@ -28,7 +28,7 @@ gem 'travis-support',    github: 'travis-ci/travis-support'
 gem 'travis',            github: 'travis-ci/travis.rb'
 
 # Sidekiq
-gem 'puma', '~> 3.12'
+gem 'puma', '~> 3.0'
 gem 'sidekiq'
 gem 'foreman'
 
