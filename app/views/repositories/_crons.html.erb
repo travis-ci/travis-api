@@ -1,0 +1,18 @@
+<ul>
+  <li class="inline-list cron-item">
+    <p class="info-label">Branch</p>
+    <p class="info-label">Interval</p>
+    <p class="info-label">Last Run</p>
+    <p class="info-label">Next Run</p>
+    <p class="info-label">Don't run if recent</p>
+  </li>
+<% @crons.each do |cron| %>
+    <li class="inline-list cron-item">
+    <p><%= cron['branch'] %></p>
+    <p><%= cron['interval'] %></p>
+    <p><%= cron['last_run'] %></p>
+    <p><%= cron['next_run'] %></p>
+    <p><%= cron['dont_run_if_recent_build_exists'] %></p>
+  </li>
+<% end %>
+</ul>

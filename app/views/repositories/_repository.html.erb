@@ -142,3 +142,12 @@
   <%= f.submit('Update', class: 'button', id: 'update-settings') %>
 <% end %>
 </section>
+
+<section class="info-block">
+  <h2 class="info-header">Cron Jobs</h2>
+  <% if @crons.present? %>
+    <%= render 'crons' %>
+  <% else %>
+    <p>There are no Cron Jobs set</p>
+  <% end %>
+</section>
