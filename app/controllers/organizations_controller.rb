@@ -1,5 +1,5 @@
 class OrganizationsController < ApplicationController
-  include BuildCounters, RenderEither
+  include BuildCounters, RenderEither, PermittedParams
 
   before_action :get_organization
 
@@ -91,6 +91,13 @@ class OrganizationsController < ApplicationController
     redirect_to @organization
   end
 
+  def update_keep_netrc
+    keep_netrc = keep_netrc_params[:keep_netrc] == '1'
+    @organization.set_keep_netrc(keep_netrc)
+    flash[:notice] = "Set keep_netrc to #{keep_netrc} for #{@organization.login}."
+    redirect_to @organization
+  end
+
   private
 
   def get_organization
@@ -100,5 +107,9 @@ class OrganizationsController < ApplicationController
 
   def feature_params
     params.require(:features).permit(Features.for(@organization).keys)
+  end
+
+  def keep_netrc_params
+    permitted_keep_netrc(params.require(:organization))
   end
 end
