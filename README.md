@@ -169,7 +169,7 @@ Reexport the dump:
 pg_dump -Fc --no-acl --no-owner -h localhost -U myuser travis_pro_staging > travis_pro_staging_<date>.dump
 ```
 
-In case of .dump file requires `joe` role do the fallowing:
+In case of .dump file requires `joe` role do the following:
 ```
 sudo psql -U $(whoami) postgres
 CREATE ROLE joe WITH LOGIN SUPERUSER;

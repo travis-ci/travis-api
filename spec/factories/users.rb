@@ -10,7 +10,7 @@ FactoryGirl.define do
       end
 
       after(:create) do |user, evaluator|
-        create(:abuse, owner_id: user.id, level: evaluator.level)
+        create(:abuse, owner_id: user.id, level: evaluator.level, owner_type: 'User')
       end
     end
 

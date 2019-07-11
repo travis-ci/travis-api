@@ -1,0 +1,6 @@
+<%= form_for @user, url: { controller: 'users', action: 'update_keep_netrc' },
+             html: { class: 'user-form' } do |f| %>
+  <%= f.check_box(:keep_netrc, id: 'keep-netrc-chckbox') %>
+  <%= f.label(:id, 'Keep .netrc file at start of build') %>
+  <%= f.submit('Update', class: 'button', id: 'update-usr-netrc') %>
+<% end %>

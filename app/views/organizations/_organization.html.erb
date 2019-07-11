@@ -38,6 +38,16 @@
   </dl>
 </section>
 
+<section class="info-block">
+  <h2 class="info-header">Preferences</h2>
+
+  <dl class="simple-info">
+    <dd>
+      <%= render 'organizations/prefs_form' %>
+    </dd>
+  </dl>
+</section>
+
 <% unless travis_config.enterprise? %>
   <%= render partial: 'shared/account', locals: {owner: @organization} %>
 <% end %>

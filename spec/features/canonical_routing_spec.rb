@@ -41,19 +41,19 @@ RSpec.feature 'Canonical routing', type: :routing do
 
   describe 'Build URLs' do
     scenario 'User-facing ../builds/:id route redirects to /build/:id' do
-      expect(get("/some_user/some_repo/builds/#{build.id}")).to route_to('builds#show', id: "#{build.id}",
+      expect(get("/some_user/some_repo/builds/#{build.id}")).to route_to('unknown#build', id: "#{build.id}",
                                                                          owner: 'some_user', repo: 'some_repo')
     end
   end
 
   describe 'Job URLs' do
     scenario 'User-facing ../jobs/:id route redirects to /job/:id' do
-      expect(get("/some_user/some_repo/jobs/#{job.id}")).to route_to('jobs#show', id: "#{job.id}",
+      expect(get("/some_user/some_repo/jobs/#{job.id}")).to route_to('unknown#job', id: "#{job.id}",
                                                                      owner: 'some_user', repo: 'some_repo')
     end
 
     scenario 'User-facing ../jobs/:id/config route redirects to /job/:id' do
-      expect(get("/some_user/some_repo/jobs/#{job.id}")).to route_to('jobs#show', id: "#{job.id}",
+      expect(get("/some_user/some_repo/jobs/#{job.id}")).to route_to('unknown#job', id: "#{job.id}",
                                                                      owner: 'some_user', repo: 'some_repo')
     end
   end

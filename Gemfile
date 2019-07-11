@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Magic Makers
-gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+gem 'rails', '~> 5.0'
 
 # CSS/JS Stuff
 gem 'uglifier', '>= 1.3.0'
@@ -21,14 +21,14 @@ gem 'redis-namespace'
 gem 'faraday', '~> 0.9.0'
 
 # Travis Gems
-gem 'travis-migrations', github: 'travis-ci/travis-migrations'
+gem 'travis-migrations', github: 'travis-ci/travis-migrations', ref: '09dad753c986c344ae93c77b8f0110583020d'
 gem 'travis-sso',        github: 'travis-ci/travis-sso'
 gem 'travis-config',     github: 'travis-ci/travis-config'
 gem 'travis-support',    github: 'travis-ci/travis-support'
 gem 'travis',            github: 'travis-ci/travis.rb'
 
 # Sidekiq
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 3.12'
 gem 'sidekiq'
 gem 'foreman'
 

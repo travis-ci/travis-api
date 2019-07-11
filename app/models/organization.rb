@@ -1,5 +1,6 @@
 class Organization < ApplicationRecord
   include JobBoost
+  include PreferencesHelper
 
   has_many :memberships
   has_many :abuses, foreign_key: :owner_id, class_name: 'Abuse'
