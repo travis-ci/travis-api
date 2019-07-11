@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  include BuildCounters, RenderEither
+  include BuildCounters, RenderEither, PermittedParams
 
   before_action :get_user, except: [:admins, :sync_all]
 
@@ -188,6 +188,6 @@ class UsersController < ApplicationController
   end
 
   def keep_netrc_params
-    params.require(:user).permit(:keep_netrc).delete_if { |key, val| key == 'keep_netrc' && !val.in?(%w[0 1]) }
+    permitted_keep_netrc(params.require(:user))
   end
 end

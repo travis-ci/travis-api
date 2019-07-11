@@ -1,5 +1,5 @@
 class OrganizationsController < ApplicationController
-  include BuildCounters, RenderEither
+  include BuildCounters, RenderEither, PermittedParams
 
   before_action :get_organization
 
@@ -110,6 +110,6 @@ class OrganizationsController < ApplicationController
   end
 
   def keep_netrc_params
-    params.require(:organization).permit(:keep_netrc).delete_if { |key, val| key == 'keep_netrc' && !val.in?(%w[0 1]) }
+    permitted_keep_netrc(params.require(:organization))
   end
 end
