@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Services::Repository::Crons do
-  let!(:repo)    { create(:repository) }
+  let!(:repo)          { create(:repository) }
   let!(:crons_service) { Services::Repository::Crons.new(repo) }
 
   fake_crons = [{'branch' => 'master'}, {'branch' => 'latest'}]
