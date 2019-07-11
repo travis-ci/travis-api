@@ -105,11 +105,11 @@
     </div>
     <%= f.submit('Update', class: 'button', id: 'update-abuse-status') %>
   <% end %>
-  <% if owner.abuses.not_level_not_fishy.any? %>
+  <% if owner.abuses.except_not_fishy.any? %>
     <div class="abuse-reasons">
       <dt class="info-label">Reasons</dt>
       <dd>
-        <% owner.abuses.not_level_not_fishy.each do |abuse| %>
+        <% owner.abuses.except_not_fishy.each do |abuse| %>
         <span>
           Marked <%= abuse_name(abuse) %>
           <% if abuse.request_id.present? %>
