@@ -122,9 +122,9 @@ Rails.application.routes.draw do
 
   get '/account', to: 'home#back'
 
-  get '/*owner/*repo/builds/:id', to: 'builds#show'
-  get '/*owner/*repo/jobs/:id', to: 'jobs#show'
-  get '/*owner/*repo/jobs/:id/config', to: 'jobs#show'
+  get '/*owner/*repo/builds/:id', to: 'unknown#build'
+  get '/*owner/*repo/jobs/:id', to: 'unknown#job'
+  get '/*owner/*repo/jobs/:id/config', to: 'unknown#job'
 
   get '/*owner/*repo/*other', to: 'unknown#repository'
   get '/*owner/*repo', to: 'unknown#repository'
