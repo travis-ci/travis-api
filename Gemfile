@@ -20,6 +20,8 @@ gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-co
 
 gem 'simple_states',   '1.0.2'
 
+gem 'grpc', '~> 1.22.0'
+
 gem 'active_model_serializers'
 gem 'unicorn'
 gem 'sentry-raven'
