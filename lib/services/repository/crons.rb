@@ -14,7 +14,13 @@ module Services
       end
 
       def call
-        get("/repo/#{repository.slug}/crons", access_token)
+        extract_body(get("/repo/#{repository.slug}/crons", access_token))
+      end
+
+      private
+
+      def extract_body(response)
+        response.respond_to?(:body) ? response.body : []
       end
     end
   end

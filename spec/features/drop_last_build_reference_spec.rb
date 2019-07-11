@@ -23,6 +23,7 @@ RSpec.feature 'Drop last build reference', js: true, type: :feature do
 
   before do
     allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
+    allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([])
   end
 
   scenario 'Drop last build reference for a repository' do

@@ -9,7 +9,8 @@ RSpec.feature "Update Features", js: true, type: :feature do
   before { redis.sadd('feature:annotations:repositories', "#{repository.id}")
            redis.sadd('feature:cron:users', "#{user.id}")
            redis.sadd('feature:cron:organizations', "#{organization.id}")
-           allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([]) }
+           allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
+           allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([]) }
 
   before(:each) { ::Features.reload }
 

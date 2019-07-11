@@ -12,6 +12,10 @@ RSpec.feature 'Integrate Github Repository', js: true, type: :feature do
     }]
   end
 
+  before {
+    allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([])
+  }
+
   scenario 'repo uses a GitHub App Installation' do
     visit "/repositories/#{integrated_repo.id}"
 

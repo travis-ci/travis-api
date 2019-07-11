@@ -115,7 +115,7 @@ class RepositoriesController < ApplicationController
     @active_admin = @repository.find_admin
     @settings = Settings.new(@repository.settings)
     @features = Features.for(@repository)
-    @crons = Services::Repository::Crons.new(@repository).call&.body
+    @crons = Services::Repository::Crons.new(@repository).call
     render_either 'repository'
   end
 
