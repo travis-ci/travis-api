@@ -3,6 +3,13 @@ module Repositories
     prepend_before_action :check_build_trace, only: %I[list enable disable]
     before_action :fetch_repository, only: %I[list enable disable]
 
+    class NoProjectSetError < StandardError; end
+
+    rescue_from NoProjectSetError do
+      flash[:error] = 'Error: No build trace project set'
+      redirect_back(fallback_location: root_path)
+    end
+
     def list
       redirect_to build_list_url
     end
@@ -39,7 +46,7 @@ module Repositories
     end
 
     def check_build_trace
-      raise 'no build trace project set' unless ENV['BUILD_TRACE_GOOGLE_PROJECT']
+      raise NoProjectSetError unless ENV['BUILD_TRACE_GOOGLE_PROJECT']
     end
   end
 end
