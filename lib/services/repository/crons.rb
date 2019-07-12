@@ -21,11 +21,9 @@ module Services
       end
 
       def extract_body(response)
-        body = []
-        if response.status < 303
-          body = response.body
-        end
-        body
+        JSON.parse(response.body)
+      rescue
+        []
       end
     end
   end
