@@ -149,7 +149,7 @@ class UsersController < ApplicationController
       logins << user.login
       SyncWorker.perform_async(user.id)
     end
-    flash[:notice] = "Triggered sync with GitHub for #{logins.join(', ')}."
+    flash[:notice] = "Triggered sync with GitHub for all users in the organization."
     Services::AuditTrail::Sync.new(current_user, logins).call
     redirect_to back_link
   end
