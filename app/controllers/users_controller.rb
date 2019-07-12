@@ -111,7 +111,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user_hooks = @user.permitted_repositories.select { |repo| Services::Repository::CheckHook.new(repo).call }
+    # @user_hooks = @user.permitted_repositories.select { |repo| Services::Repository::CheckHook.new(repo).call }
     @display_gh_token = true if cookies["display_token_#{@user.login}"]
     @existing_boost_limit = @user.existing_boost_limit
     @normalized_boost_time = @user.normalized_boost_time

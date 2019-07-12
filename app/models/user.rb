@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :broadcasts,             as:      :recipient
   has_one  :subscription,           as:      :owner
   has_many :trials,                 as:      :owner
+  has_one  :installation,           as:      :owner
 
   serialize :github_oauth_token, Travis::EncryptedColumn.new
 

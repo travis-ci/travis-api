@@ -132,4 +132,8 @@ Rails.application.routes.draw do
   get '/*owner/*repo', to: 'unknown#repository'
 
   get '/*other', to: 'unknown#canonical_route'
+
+  direct :github_config do |installation_id|
+    "https://github.com/settings/installations/#{installation_id}"
+  end
 end
