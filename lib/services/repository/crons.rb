@@ -21,7 +21,10 @@ module Services
       end
 
       def extract_body(response)
-        response.respond_to?(:body) ? response.body : []
+        body = JSON.parse(response.body)
+        body['crons']
+      rescue
+        []
       end
     end
   end
