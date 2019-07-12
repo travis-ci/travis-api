@@ -67,6 +67,22 @@
         </dd>
       <% end %>
     </div>
+    <% if !ENV['BUILD_TRACE_GOOGLE_PROJECT'] %>
+      <div class="build-tracing-container">
+        <dt class="info-label">Build Tracing</dt>
+        <dd class="inline">
+          <%= has_trace_rollout_repos?(@repository) ? 'enabled' : 'disabled' %>
+          <div class="inline">
+            <%= button_to "View Traces", list_repository_trace_path(@repository), method: :post, class: "button" %>
+            <% if has_trace_rollout_repos?(@repository) %>
+              <%= button_to "Disable", disable_repository_trace_path(@repository), method: :post, class: "button" %>
+            <% else %>
+              <%= button_to "Enable", enable_repository_trace_path(@repository), method: :post, class: "button" %>
+            <% end %>
+          </div>
+        </dd>
+      </div>
+    <% end %>
   </dl>
 </section>
 
