@@ -6,11 +6,13 @@ RSpec.feature "Update Features", js: true, type: :feature do
   let!(:organization) { create(:organization) }
   let(:redis)         { Travis::DataStores.redis }
 
-  before { redis.sadd('feature:annotations:repositories', "#{repository.id}")
-           redis.sadd('feature:cron:users', "#{user.id}")
-           redis.sadd('feature:cron:organizations', "#{organization.id}")
-           allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
-           allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([]) }
+  before do
+    redis.sadd('feature:annotations:repositories', "#{repository.id}")
+    redis.sadd('feature:cron:users', "#{user.id}")
+    redis.sadd('feature:cron:organizations', "#{organization.id}")
+    allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
+    allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([])
+  end
 
   before(:each) { ::Features.reload }
 

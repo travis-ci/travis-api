@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.feature "Update Settings", js: true, type: :feature do
   let!(:repository) { create(:repository) }
 
-  before {
+  before do
     allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
     allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([])
-  }
+  end
 
   scenario "Update one setting for a repository" do
     WebMock.stub_request(:patch, "https://api-fake.travis-ci.com/repo/#{repository.id}/setting/build_pushes").

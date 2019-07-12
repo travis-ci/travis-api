@@ -4,10 +4,10 @@ RSpec.feature 'Enable a Repository', js: true, type: :feature do
   let!(:user)       { create(:user) }
   let!(:repository) { create(:inactive_repository, owner: user) }
 
-  before {
+  before do
     allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
     allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([])
-  }
+  end
 
   scenario 'User enables a repository' do
     visit "/repositories/#{repository.id}"

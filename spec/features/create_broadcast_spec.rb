@@ -5,10 +5,10 @@ RSpec.feature 'Create a Broadcast', js: true, type: :feature do
   let!(:organization) { create(:organization) }
   let!(:repository)   { create(:repository) }
 
-  before {
+  before do
     allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
     allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([])
-  }
+  end
 
   scenario 'Create a broadcast for everybody' do
     visit '/broadcasts'
