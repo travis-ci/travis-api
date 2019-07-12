@@ -67,8 +67,8 @@
         </dd>
       <% end %>
     </div>
-    <% if ENV['BUILD_TRACE_GOOGLE_PROJECT'] %>
-      <div class="build-tracing-container">
+    <div class="build-tracing-container">
+      <% if ENV['BUILD_TRACE_GOOGLE_PROJECT'] %>
         <dt class="info-label">Build Tracing</dt>
         <dd class="inline">
           <%= has_trace_rollout_repos?(@repository) ? 'enabled' : 'disabled' %>
@@ -81,8 +81,8 @@
             <% end %>
           </div>
         </dd>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </dl>
 </section>
 
