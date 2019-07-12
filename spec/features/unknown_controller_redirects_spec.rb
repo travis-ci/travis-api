@@ -7,6 +7,8 @@ RSpec.feature 'Unknown controller redirects spec', js: true, type: :feature do
   let!(:organization) { create(:organization) }
   let!(:repository)   { create(:repository) }
 
+  before { allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([]) }
+
   describe 'build' do
     scenario 'display proper build using long build path link' do
       visit "/some_owner/some_repo/builds/#{build.id}"

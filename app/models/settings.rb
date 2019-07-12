@@ -2,7 +2,7 @@ class Settings
   include ActiveModel::Model
 
   BINARY = %w[auto_cancel_pushes auto_cancel_pull_requests builds_only_with_travis_yml build_pushes build_pull_requests]
-  INTEGER = %w[maximum_number_of_builds]
+  INTEGER = %w[maximum_number_of_builds timeout_hard_limit timeout_log_silence api_build_rate_limit]
 
   attr_reader :attributes
 
@@ -24,7 +24,10 @@ class Settings
       "build_pull_requests" => true,
       "maximum_number_of_builds" => 0,
       "auto_cancel_pushes" => false,
-      "auto_cancel_pull_requests" => false
+      "auto_cancel_pull_requests" => false,
+      "timeout_hard_limit" => 0,
+      "timeout_log_silence" => 0,
+      "api_build_rate_limit" => 0
     }
   end
 

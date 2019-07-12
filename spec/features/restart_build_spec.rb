@@ -4,9 +4,7 @@ RSpec.feature 'Restart a Build', js: true, type: :feature do
   let!(:repository) { create(:repository) }
   let!(:build)      { create(:failed_build, repository: repository, config: {}) }
 
-  before {
-    allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
-  }
+  before { allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([]) }
 
   scenario 'User restarts a build' do
     visit "/builds/#{build.id}"

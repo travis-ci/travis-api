@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.feature 'Delete repository caches', js: true, type: :feature do
   let!(:repository) { create(:repository, id: 1) }
 
+  before { allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([]) }
+
   scenario 'User deletes a branch cache' do
     # get caches
     WebMock.stub_request(:get, "https://api-fake.travis-ci.com/repo/#{repository.id}/caches").
