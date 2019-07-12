@@ -16,6 +16,6 @@ RSpec.feature 'Sync with GitHub for all users in an organization', js: true, typ
 
     find_button('Sync users').trigger('click')
 
-    expect(page).to have_text('Triggered sync with GitHub for lisbethmarianne, sinthetix.')
+    expect(page).to have_text('Triggered sync with GitHub all users in the organization.')
   end
 end
