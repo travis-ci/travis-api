@@ -21,7 +21,11 @@ module Services
       end
 
       def extract_body(response)
-        response.respond_to?(:body) ? response.body : []
+        body = []
+        if response.status < 303
+          body = response.body
+        end
+        body
       end
     end
   end

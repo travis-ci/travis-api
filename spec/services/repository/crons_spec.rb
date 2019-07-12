@@ -15,12 +15,12 @@ RSpec.describe Services::Repository::Crons do
   end
 
   describe '#extract_body' do
-    it 'returns body for object that has one' do
-      expect(crons_service.send(:extract_body, OpenStruct.new({ body: 'present' }))).to eq('present')
+    it 'returns body for object with response lower than 303' do
+      expect(crons_service.send(:extract_body, OpenStruct.new({ body: 'present', status: 200 }))).to eq('present')
     end
 
-    it 'returns [] for object that has no body' do
-      expect(crons_service.send(:extract_body, {})).to eq([])
+    it 'returns [] for object with response greater than 303' do
+      expect(crons_service.send(:extract_body, OpenStruct.new({ body: 'present', status: 404 }))).to eq([])
     end
   end
 end
