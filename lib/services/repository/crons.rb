@@ -21,7 +21,8 @@ module Services
       end
 
       def extract_body(response)
-        JSON.parse(response.body)
+        body = JSON.parse(response.body)
+        body['crons']
       rescue
         []
       end
