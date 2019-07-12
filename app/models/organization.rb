@@ -15,6 +15,6 @@ class Organization < ApplicationRecord
   end
 
   def installation
-    @installation = ::Installation.where(owner_type: "Organization", owner_id: id).first
+    @installation = Installation.where(owner_type: "Organization", owner_id: id).first
   end
 end
