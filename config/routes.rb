@@ -134,6 +134,6 @@ Rails.application.routes.draw do
   get '/*other', to: 'unknown#canonical_route'
 
   direct :github_config do |installation_id|
-    "https://github.com/settings/installations/#{installation_id}"
+    "https://github.com/apps/travis-ci/installations/new/permissions?suggested_target_id=#{installation_id}"
   end
 end
