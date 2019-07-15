@@ -2,13 +2,13 @@ require 'rails_helper'
 
 RSpec.feature 'Display Repository Crons', js: true, type: :feature do
   let!(:repo) { create(:repository) }
-  fake_crons = [{'branch' => 'master',
+  fake_crons = [{'branch' => {'name' => 'master'},
                  'interval' => 'monthly',
                  'last_run' => '2019-05-21T15:27:14Z',
                  'next_run' => '2019-06-21T15:27:14Z',
                  'dont_run_if_recent_build_exists' => 'false',
                 },
-                {'branch' => 'latest',
+                {'branch' => {'name' => 'latest'},
                  'interval' => 'daily',
                  'last_run' => '2019-05-21T15:27:14Z',
                  'next_run' => '2019-05-22T15:27:14Z',
