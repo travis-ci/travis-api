@@ -4,7 +4,7 @@ module Travis
       module V2
         module Http
           class EnvVar < Travis::Api::Serialize::ObjectSerializer
-            attributes :id, :name, :value, :public, :repository_id
+            attributes :id, :name, :value, :public, :branch, :repository_id
 
             def value
               if object.public?

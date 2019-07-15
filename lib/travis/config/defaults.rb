@@ -32,6 +32,7 @@ module Travis
     }
 
     define  host:                 'travis-ci.org',
+            api_com_url:          'https://api.travis-ci.com',
             shorten_host:         'trvs.io',
             public_mode:          !!ENV['PUBLIC_MODE'],
             applications:         {},

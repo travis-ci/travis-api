@@ -38,6 +38,11 @@ class Travis::Api::App
       end
     }
 
+    error Travis::AuthorizationDenied do
+      status 403
+      {}
+    end
+
     private
 
       def authenticate_by_mode!
