@@ -13,4 +13,8 @@ class Organization < ApplicationRecord
   def latest_trial
     trials.underway.order(created_at: :desc).first
   end
+
+  def installation
+    @installation = Installation.where(owner_type: "Organization", owner_id: id).first
+  end
 end

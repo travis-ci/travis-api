@@ -43,9 +43,6 @@ RSpec.feature "Update Settings", js: true, type: :feature do
 
   shared_examples "test single integer type setting" do |scenario, setting|
     it "Update setting for a repository" do
-      WebMock.stub_request(:patch, "https://api-fake.travis-ci.com/repo/#{repository.id}/setting/#{setting}").
-          to_return(status: 200, body: '', headers: {})
-
       visit "/repositories/#{repository.id}"
 
       setting_id = "settings_#{setting}"
@@ -62,5 +59,16 @@ RSpec.feature "Update Settings", js: true, type: :feature do
    include_examples "test single integer type setting", 1, "timeout_hard_limit"
    include_examples "test single integer type setting", 2, "timeout_log_silence"
    include_examples "test single integer type setting", 3, "api_build_rate_limit"
+  end
+
+  scenario "setting API builds rate limit over 200 displays error" do
+    visit "/repositories/#{repository.id}"
+
+    expect(page).to have_field("settings_api_build_rate_limit", with: '0')
+    find("#settings_api_build_rate_limit").trigger('click')
+    fill_in("settings_api_build_rate_limit", with: '201')
+    find_button("update-settings").trigger('click')
+
+    expect(page).to have_text( "API builds rate limit can't execeed 200")
   end
 end

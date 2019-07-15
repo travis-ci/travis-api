@@ -60,17 +60,15 @@
     <dt class="info-label">GitHub Integration</dt>
     <dd class="inline">
       <p>
-        <% if @user.github_id.present? %>
-          <% if @user_hooks.any? %>
-            Service Hook
-          <% else %>
+          <% if @user.installation.present? %>
             GitHub App installed with
-            <strong>id: <%= @user.id %></strong>
+            <strong>id: <%= @user.installation.id %></strong>
             and
-            <strong>github_id: <%= @user.github_id %></strong>
-            <%= link_to '[Manage repos link]', repositories_user_path(@user) %>
+            <strong>github_id: <%= @user.installation.github_id %></strong>
+            <%= link_to '[Manage repos link]', github_config_url(@user.installation.github_id) %>
+          <% else %>
+            Service Hook
           <% end %>
-        <% end %>
       </p>
     </dd>
 

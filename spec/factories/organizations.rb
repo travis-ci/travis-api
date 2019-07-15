@@ -23,21 +23,5 @@ FactoryGirl.define do
         create_list(:repository, evaluator.repo_count, owner: organization)
       end
     end
-
-    factory :organization_with_github_id do
-      github_id 123
-    end
-
-    factory :organization_with_ghid_repo do
-      github_id 124
-
-      transient do
-        repo_count 1
-      end
-
-      after(:create) do |organization, evaluator|
-        create_list(:repository, evaluator.repo_count, owner: organization)
-      end
-    end
   end
 end
