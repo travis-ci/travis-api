@@ -8,7 +8,7 @@ module Services
       end
 
       def call
-        extract_body(get("/repo/#{repository.slug}/crons", access_token))
+        extract_body(get("/repo/#{repository.url_slug}/crons", access_token))
       end
 
       private

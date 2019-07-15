@@ -40,4 +40,8 @@ class Repository < ApplicationRecord
   def slug
     @slug ||= "#{owner_name}/#{name}"
   end
+
+  def url_slug
+    @url_slug ||= CGI.escape(slug)
+  end
 end

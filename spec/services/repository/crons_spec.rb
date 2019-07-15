@@ -9,7 +9,7 @@ RSpec.describe Services::Repository::Crons do
 
   describe '#call' do
     it 'calls travis api /crons endpoint and returns array of available crons' do
-      WebMock.stub_request(:get, "https://api-fake.travis-ci.com/repo/#{repo.slug}/crons").
+      WebMock.stub_request(:get, "https://api-fake.travis-ci.com/repo/#{repo.url_slug}/crons").
           to_return(status: 200, body: fake_crons)
       expect(crons_service.call).to eq(fake_crons_after)
     end
