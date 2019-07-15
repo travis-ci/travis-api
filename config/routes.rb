@@ -73,6 +73,12 @@ Rails.application.routes.draw do
       get  'requests'
       get  'users'
     end
+
+    resource :trace, only: [], module: :repositories do
+      post 'list'
+      post 'enable'
+      post 'disable'
+    end
   end
 
   post 'repositories/:id/caches/delete' => 'caches#delete_all', as: :delete_all_caches
