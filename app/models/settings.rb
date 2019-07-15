@@ -1,5 +1,8 @@
 class Settings
   include ActiveModel::Model
+  include ActiveModel::Validations
+
+  validates_inclusion_of :api_build_rate_limit, in: 0..200, message: "API builds rate limit can't execeed 200"
 
   BINARY = %w[auto_cancel_pushes auto_cancel_pull_requests builds_only_with_travis_yml build_pushes build_pull_requests]
   INTEGER = %w[maximum_number_of_builds timeout_hard_limit timeout_log_silence api_build_rate_limit]
