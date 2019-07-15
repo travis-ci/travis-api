@@ -8,7 +8,7 @@
   </li>
 <% @crons.each do |cron| %>
     <li class="inline-list cron-item">
-    <p><%= cron['branch'] %></p>
+    <p><%= cron['branch']['name'] %></p>
     <p><%= cron['interval'] %></p>
     <p><%= cron['last_run'] %></p>
     <p><%= cron['next_run'] %></p>
