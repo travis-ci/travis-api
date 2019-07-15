@@ -26,6 +26,7 @@ RSpec.feature 'Unknown controller redirects spec', js: true, type: :feature do
     scenario 'displays /?q=owner for valid owner' do
       visit "/#{user.login}"
       expect(page.current_url).to have_text("/?q=#{user.login}")
+      expect(page).to have_text("#{user.login}")
     end
 
     scenario 'redirects to :not_found for invalid user or organization' do
