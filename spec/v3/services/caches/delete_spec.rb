@@ -4,6 +4,8 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:s3_bucket_name)  { "travis-cache-staging-org" }
+  let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+  let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
   let(:result) { [
     {
       "@type"=>"cache",
@@ -135,6 +137,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   before do
     repo.default_branch.save!
+    repo.owner.permissions.create(repository_id: repo.id, push: true)
   end
 
   around(:each) do |example|
@@ -178,7 +181,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
         stub_request(:delete, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz").
           to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
     end
-    before     { delete("/v3/repo/#{repo.id}/caches") }
+    before     { delete("/v3/repo/#{repo.id}/caches", {}, headers) }
     example    do
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
@@ -205,7 +208,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     end
 
     example do
-      delete("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"] } )
+      delete("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"] }, headers)
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
         "@representation"=>"standard",
@@ -231,7 +234,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     end
 
     example do
-      delete("/v3/repo/#{repo.id}/caches?match=osx")
+      delete("/v3/repo/#{repo.id}/caches?match=osx", {}, headers)
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
         "@representation"=>"standard",
@@ -243,7 +246,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
   context do
     describe "repo migrating" do
       before  { repo.update_attributes(migration_status: "migrating") }
-      before  { delete("/v3/repo/#{repo.id}/caches") }
+      before  { delete("/v3/repo/#{repo.id}/caches", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
@@ -255,7 +258,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
     describe "repo migrating" do
       before  { repo.update_attributes(migration_status: "migrated") }
-      before  { delete("/v3/repo/#{repo.id}/caches") }
+      before  { delete("/v3/repo/#{repo.id}/caches", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
@@ -263,6 +266,21 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
         "error_type"    => "repo_migrated",
         "error_message" => "This repository has been migrated to travis-ci.com. Modifications to repositories, builds, and jobs are disabled on travis-ci.org. If you have any questions please contact us at support@travis-ci.com"
       }}
+    end
+  end
+
+  context "without push permission" do
+    it "raises Travis::AuthorizationDenied" do
+      repo.owner.permissions.last.update(push: false)
+
+      delete("/v3/repo/#{repo.id}/caches", {}, headers)
+
+      expect(JSON.load(body)).to eq({
+        "@type" => "error",
+        "error_type" => "insufficient_access",
+        "error_message" => "forbidden",
+      })
+      expect(last_response.status).to eq 403
     end
   end
 end

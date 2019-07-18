@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::EnvVar < Query
-    params :id, :name, :value, :public, prefix: :env_var
+    params :id, :name, :value, :public, :branch, prefix: :env_var
 
     def find(repository)
       repository.env_vars.find(id)

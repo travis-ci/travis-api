@@ -1,15 +1,12 @@
 module Travis::API::V3
-  class Services::BetaMigrationRequest::Create < Service
+  class Services::BetaMigrationRequest::ProxyCreate < Service
     params :organizations
     result_type :beta_migration_request
 
     def run!
       current_user = check_login_and_find(:user)
       organizations = validate_organizations(current_user)
-
-      beta_migration_request = query(:beta_migration_request).create(current_user, organizations)
-
-      beta_migration_request.save!
+      beta_migration_request = query(:beta_migration_request).send_create_request(current_user, organizations)
 
       result beta_migration_request
     end

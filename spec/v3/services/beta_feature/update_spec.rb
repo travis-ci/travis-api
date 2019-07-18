@@ -72,13 +72,13 @@ describe Travis::API::V3::Services::BetaFeature::Update, set_app: true do
       expect(user.reload.beta_features.first.name).to eq 'FOO2'
     end
     example 'updates last activated at' do
-      expect(user.user_beta_features.last.last_activated_at.to_s).to eq Time.now.utc.to_s
+      expect(user.user_beta_features.last.last_activated_at).to be_within(1.second).of Time.now.utc
     end
     example 'sets last deactivated at' do
       Timecop.travel(10) do
         params['beta_feature.enabled'] = false
         patch("/v3/user/#{user.id}/beta_feature/#{beta_feature.id}", JSON.generate(params), auth_headers.merge(json_headers))
-        expect(user.user_beta_features.last.last_deactivated_at.utc.to_s).to eq Time.now.utc.to_s
+        expect(user.user_beta_features.last.last_deactivated_at.utc).to be_within(1.second).of Time.now.utc
       end
     end
   end

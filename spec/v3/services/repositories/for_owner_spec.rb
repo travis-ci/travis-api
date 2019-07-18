@@ -94,7 +94,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "starred"          => false,
           "managed_by_installation"=>false,
           "active_on_org"    => nil,
-          "migration_status" => nil
+          "migration_status" => nil,
+          "history_migration_status"  => nil
         }]}}
   end
 
@@ -143,6 +144,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "managed_by_installation"=>false,
         "active_on_org"     => nil,
         "migration_status"  => nil,
+        "history_migration_status"  => nil,
         "last_started_build"=>{
           "@type"          =>"build",
           "@href"          =>"/v3/build/#{build.id}",
@@ -251,6 +253,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "managed_by_installation"=> false,
         "active_on_org"    => nil,
         "migration_status" => nil,
+        "history_migration_status"  => nil,
         "current_build" => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -404,7 +407,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "starred"         => false,
         "managed_by_installation"=>false,
         "active_on_org"   => nil,
-        "migration_status" => nil}, {
+        "migration_status" => nil,
+        "history_migration_status"  => nil}, {
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo2.id}",
         "@representation" => "standard",
@@ -445,6 +449,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "starred"        => false,
           "managed_by_installation"=>false,
           "active_on_org"  =>nil,
-          "migration_status" => nil}]}
+          "migration_status" => nil,
+          "history_migration_status" => nil}]}
   end
 end

@@ -4,6 +4,7 @@ module Travis::API::V3
     attribute :name, String
     attribute :value, Travis::Settings::EncryptedValue
     attribute :public, Boolean
+    attribute :branch, String
     attribute :repository_id, Integer
 
     validates :name, presence: true
