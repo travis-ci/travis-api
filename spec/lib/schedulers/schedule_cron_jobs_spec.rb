@@ -79,7 +79,7 @@ describe "ScheduleCronJobs" do
           subject
 
           cron.reload
-          expect(cron.next_run.to_i).to eql (Time.now.utc + 1.day).to_i
+          expect(cron.next_run).to be_within(1.second).of (Time.now.utc + 1.day)
         end
       end
     end

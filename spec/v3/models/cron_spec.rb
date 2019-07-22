@@ -1,11 +1,5 @@
 require 'spec_helper'
 
-RSpec::Matchers.define :eq_datetime do |*expected|
-  match do |actual|
-    actual.to_i == DateTime.new(*expected).to_i
-  end
-end
-
 describe Travis::API::V3::Models::Cron do
   let(:subject) { Factory(:cron, branch_id: Factory(:branch).id) }
 
@@ -43,19 +37,19 @@ describe Travis::API::V3::Models::Cron do
 
     it "for daily builds" do
       subject.schedule_next_build(from: DateTime.now)
-      expect(subject.next_run).to eq_datetime(2016, 1, 1, 16)
+      expect(subject.next_run).to be_within(1.second).of DateTime.new(2016, 1, 1, 16)
     end
 
     it "for weekly builds" do
       subject.interval = "weekly"
       subject.schedule_next_build(from: DateTime.now)
-      expect(subject.next_run).to eq_datetime(2016, 1, 7, 16)
+      expect(subject.next_run).to be_within(1.second).of DateTime.new(2016, 1, 7, 16)
     end
 
     it "for monthly builds" do
       subject.interval = "monthly"
       subject.schedule_next_build(from: DateTime.now)
-      expect(subject.next_run).to eq_datetime(2016, 1, 31, 16)
+      expect(subject.next_run).to be_within(1.second).of DateTime.new(2016, 1, 31, 16)
     end
   end
 
@@ -63,7 +57,7 @@ describe Travis::API::V3::Models::Cron do
     it "sets the next_run correctly" do
       subject.last_run = 1.day.ago.utc + 5.minutes
       subject.schedule_next_build
-      subject.next_run.to_i.should eql 5.minutes.from_now.utc.to_i
+      expect(subject.next_run).to be_within(1.second).of 5.minutes.from_now.utc
     end
   end
 
@@ -71,13 +65,13 @@ describe Travis::API::V3::Models::Cron do
     context "and from: is not passed" do
       it "sets the next_run from now" do
         subject.schedule_next_build
-        subject.next_run.should be == DateTime.now + 1.day
+        expect(subject.next_run).to be_within(1.second).of DateTime.now + 1.day
       end
     end
     context "and from: is passed" do
       it "sets the next_run from from:" do
         subject.schedule_next_build(from: DateTime.now + 3.day)
-        subject.next_run.should be == DateTime.now + 4.day
+        expect(subject.next_run).to be_within(1.second).of DateTime.now + 4.day
       end
     end
 
@@ -97,12 +91,12 @@ describe Travis::API::V3::Models::Cron do
 
     it "set the last_run time to now" do
       subject.enqueue
-      subject.last_run.should be == DateTime.now.utc
+      expect(subject.last_run).to be_within(1.second).of DateTime.now.utc
     end
 
     it "schedules the next run" do
       subject.enqueue
-      subject.next_run.should be == DateTime.now.utc + 1.day
+      expect(subject.next_run).to be_within(1.second).of DateTime.now.utc + 1.day
     end
 
     context "when branch does not exist on github" do
