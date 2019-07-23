@@ -87,7 +87,7 @@ class Travis::Api::App
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
 
-        renev_access_token(token: params[:github_token], app_id: 1, provider: :github)
+        renew_access_token(token: params[:github_token], app_id: 1, provider: :github)
       end
 
       # Endpoint for making sure user authorized Travis CI to access GitHub.
@@ -132,35 +132,71 @@ class Travis::Api::App
       end
 
       def handshake
-        vcs_data = remote_vcs_user.handshake(
-          provider: params[:provider],
-          payload: params[:origin] || params[:redirect_uri],
-          fullpath: request.fullpath,
-          code: params[:code],
-          state: params[:state],
-          url: url
-        )
-        if vcs_data['redirect_url']
-          response.set_cookie('travis.state', vcs_data['state'])
-          redirect to(vcs_data['redirect_url'])
+        # TODO: Add error handling
+
+        if params[:code]
+          unless state_ok?(params[:state])
+            halt 400, 'state mismatch'
+          end
+
+          vcs_data = remote_vcs_user.authenticate(
+            provider: params[:provider],
+            code: params[:code],
+            redirect_uri: oauth_endpoint
+          )
+
+          if vcs_data['redirect_uri'].present?
+            redirect to(vcs_data['redirect_uri'])
+            return
+          end
+
+          yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload
         else
-          user = User.find(vcs_data['user']['id'])
-          yield serialize_user(user), vcs_data['token'], vcs_data['payload']
+          state = create_state(params[:origin] || params[:redirect_uri])
+
+          vcs_data = remote_vcs_user.auth_request(
+            provider: params[:provider],
+            state: state,
+            redirect_uri: oauth_endpoint
+          )
+
+          response.set_cookie('travis.state', value: state, httponly: true)
+          redirect to(vcs_data['redirect_uri'])
         end
       end
 
-      def renev_access_token(token:, app_id:, provider:)
+      def state_ok?(state)
+        response.set_cookie('travis.state', '')
+        state == request.cookies['travis.state']
+      end
+
+      def create_state(payload)
+        state = SecureRandom.urlsafe_base64(16)
+        state << ":::" << payload if payload
+        state
+      end
+
+      def payload
+        request.cookies['travis.state'].split(':::').last
+      end
+
+      def renew_access_token(token:, app_id:, provider:)
         vcs_data = remote_vcs_user.generate_token(
           provider: provider,
           token: token,
           app_id: app_id
         )
 
-        if vcs_data['redirect_url']
-          redirect to(vcs_data['redirect_url'])
+        if vcs_data['redirect_uri']
+          redirect to(vcs_data['redirect_uri'])
         else
           { access_token: vcs_data['token'] }
         end
+      end
+
+      def oauth_endpoint
+        proxy = Travis.config.oauth2.proxy
+        proxy ? File.join(proxy, request.fullpath) : url
       end
 
       def post_message(payload)

@@ -4,22 +4,29 @@ require 'travis/remote_vcs/client'
 module Travis
   class RemoteVCS
     class User < Client
-      def handshake(provider: :github, fullpath:, url:, code:, state:, payload:)
+      def auth_request(provider: :github, redirect_uri:, state:)
         resp = connection.get do |req|
-          req.url 'users/handshake'
+          req.url 'users/session/new'
           req.params['provider'] = provider
-          req.params['fullpath'] = fullpath
-          req.params['url'] = url
-          req.params['code'] = code
+          req.params['redirect_uri'] = redirect_uri
           req.params['state'] = state
-          req.params['payload'] = payload
+        end
+        return JSON.parse(resp.body)['data'] if resp.success?
+      end
+
+      def authenticate(provider: :github, code:, redirect_uri:)
+        resp = connection.post do |req|
+          req.url 'users/session'
+          req.params['provider'] = provider
+          req.params['code'] = code
+          req.params['redirect_uri'] = redirect_uri
         end
         return JSON.parse(resp.body)['data'] if resp.success?
       end
 
       def generate_token(provider: :github, token:, app_id: 1)
-        resp = connection.get do |req|
-          req.url 'users/generate_token'
+        resp = connection.post do |req|
+          req.url 'users/session/generate_token'
           req.params['provider'] = provider
           req.params['token'] = token
           req.params['app_id'] = app_id
