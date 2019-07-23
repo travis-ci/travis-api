@@ -161,7 +161,7 @@ class Travis::Api::App
           )
 
           response.set_cookie('travis.state', value: state, httponly: true)
-          redirect to(vcs_data['redirect_uri'])
+          redirect to(vcs_data['authorize_url'])
         end
       end
 
