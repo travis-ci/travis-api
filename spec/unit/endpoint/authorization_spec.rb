@@ -40,15 +40,13 @@ describe Travis::Api::App::Endpoint::Authorization do
   end
 
   describe "GET /auth/handshake" do
-    # describe 'evil hackers messing with the state' do
-    #   it 'does not succeed if state cookie mismatches' do
-    #     Travis.redis.sadd('vcs:states', 'vcs-state')
-    #     response = get '/auth/handshake/github?state=vcs-state&code=oauth-code'
-    #     response.status.should be == 400
-    #     response.body.should be == "state mismatch"
-    #     Travis.redis.srem('vcs:states', 'vcs-state')
-    #   end
-    # end
+    describe 'evil hackers messing with the state' do
+      it 'does not succeed if state cookie mismatches' do
+        response = get '/auth/handshake?state=vcs-state&code=oauth-code'
+        response.status.should be == 400
+        response.body.should be == "state mismatch"
+      end
+    end
 
     describe 'with insufficient oauth permissions' do
       before do

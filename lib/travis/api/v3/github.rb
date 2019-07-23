@@ -69,6 +69,7 @@ module Travis::API::V3
         active: active,
         config: { url: service_hook_url.to_s, insecure_ssl: insecure_ssl? }
       }
+
       if url = webhook_url?(repo)
         info("Updating webhook repo=%s github_id=%i active=%s" % [repo.slug, repo.github_id, active])
         gh.patch(url, payload)
