@@ -11,7 +11,7 @@ module Travis::API::V3
     end
 
     def migrate?
-      admin?
+      admin? && object.allow_migration?
     end
 
     def star?
