@@ -25,6 +25,14 @@ module Travis::API::V3
       update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
     end
 
+    after_save do
+      clear_env_vars_at_transfer if owner_name_changed?
+    end
+
+    after_update do
+      clear_env_vars_at_transfer if owner_name_changed?
+    end
+
     def migrating?
       self.class.column_names.include?('migrating') && super
     end
@@ -154,5 +162,14 @@ module Travis::API::V3
     def allow_migration?
       Travis::Features.feature_active?(:allow_merge_globally) && Travis::Features.owner_active?(:allow_migration, self.owner)
     end
+
+    private
+
+    def clear_env_vars_at_transfer
+      env_vars.each do |env_var|
+        env_var.value = Travis::Settings::EncryptedValue.new('')
+        env_vars.add(env_var)
+      end
+    end 
   end
 end
