@@ -8,6 +8,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true, admin: true) }
   before        { repo.update_attribute(:private, true)                                         }
   after         { repo.update_attribute(:private, false)                                        }
+  before        { Travis::Features.activate_owner(:allow_migration, repo.owner) }
 
   describe "private repository, private API, authenticated as user with access" do
     before  { get("/v3/repos", {}, headers)    }
@@ -71,7 +72,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "starred"            => false,
         "managed_by_installation"=>false,
         "active_on_org"=>nil,
-        "migration_status" => nil
+        "migration_status" => nil,
+        "history_migration_status" => nil
         }]
     }}
   end

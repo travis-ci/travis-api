@@ -3,7 +3,9 @@ module Travis::API::V3
     params :match, :branch
 
     def run!
-      result query.find(find(:repository))
+      repo = check_login_and_find(:repository)
+      raise InsufficientAccess unless access_control.user.permission?(:push, repository_id: repo.id)
+      result query.find(repo)
     end
   end
 end

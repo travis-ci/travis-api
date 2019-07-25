@@ -17,6 +17,7 @@ module Travis::API::V3::Models
       url   = Travis.config.merge.api_url
       connection = Faraday.new(url: url) do |c|
         c.request :json
+        c.headers['Content-Type'] = 'application/json'
         c.use Faraday::Request::Authorization, 'Token', token
         c.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
         c.adapter Faraday.default_adapter

@@ -249,13 +249,20 @@ module Travis::API::V3
 
       resource :beta_migration_requests do
         route '/beta_migration_requests'
-        get    :find
+        get    :proxy_find
       end
 
       resource :beta_migration_request do
         route '/beta_migration_request'
-        post   :create
+        post   :proxy_create
       end
+    end
+
+    hidden_resource :beta_migration_requests do
+      route '/beta_migration_requests'
+
+      get    :find
+      post   :create
     end
 
     resource :user do
