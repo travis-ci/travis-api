@@ -5,14 +5,13 @@ describe Travis::Services::FindCaches do
   let(:service) { described_class.new(user, params) }
   let(:repo) { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
   let(:cache_options) {{ s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} }}
-  let(:has_access) { true }
   let(:result) { service.run }
   subject { result }
 
   before :each do
     Travis.config.roles = {}
     Travis.config.cache_options = cache_options
-    user.stubs(:permission?).returns(has_access)
+    user.permissions.create(repository_id: repo.id, push: true)
   end
 
   describe 'given a repository_id' do
@@ -49,9 +48,9 @@ describe Travis::Services::FindCaches do
         its(:size) { should be == 1 }
       end
 
-      describe 'without access' do
-        let(:has_access) { false }
-        its(:size) { should be == 0 }
+      it 'returns nil if user does not have push permission' do
+        user.permissions.first.update(push: false)
+        expect{ service.run }.to raise_error Travis::AuthorizationDenied
       end
 
       describe 'without s3 credentials' do

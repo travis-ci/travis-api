@@ -137,6 +137,20 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
     }
   end
 
+  describe "filtering by name" do
+    describe "mast" do
+      before     { get("/v3/repo/#{repo.id}/branches?branch.name=mast") }
+      example    { expect(last_response).to be_ok }
+      example    { expect(parsed_body["branches"]).not_to be_empty }
+    end
+
+    describe "some_fake_name" do
+      before     { get("/v3/repo/#{repo.id}/branches?branch.name=some_fake_name") }
+      example    { expect(last_response).to be_ok }
+      example    { expect(parsed_body["branches"]).to be_empty }
+    end
+  end
+
   describe "filtering by exists_on_github" do
     describe "false" do
       before     { get("/v3/repo/#{repo.id}/branches?branch.exists_on_github=false") }

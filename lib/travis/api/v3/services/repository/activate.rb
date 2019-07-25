@@ -5,6 +5,7 @@ module Travis::API::V3
     def run!
       repository = check_login_and_find(:repository)
       check_access(repository)
+      check_repo_key(repository)
       return repo_migrated if migrated?(repository)
 
       admin = access_control.admin_for(repository)
@@ -21,6 +22,10 @@ module Travis::API::V3
 
     def check_access(repository)
       access_control.permissions(repository).activate!
+    end
+
+    def check_repo_key(repository)
+      raise RepoSshKeyMissing if repository.key.nil?
     end
   end
 end
