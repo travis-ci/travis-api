@@ -17,32 +17,14 @@ describe Travis::API::V3::Renderer::Repository do
       expect(repo_renderer.class.representations[:additional]).to include(:allow_migration)
     end
 
-    context 'when migration is enabled globally' do
-      before { Travis::Features.expects(:feature_active?).with(:allow_merge_globally).returns(true) }
-
-      context 'when feature is not enabled for the user' do
-        it { is_expected.to be_falsey }
-      end
-
-      context 'when feature is enabled for the user' do
-        before { Travis::Features.expects(:owner_active?).with(:allow_migration, repo.owner).returns(true) }
-
-        it { is_expected.to be_truthy }
-      end
+    context 'when feature is not enabled for the user' do
+      it { is_expected.to be_falsey }
     end
 
-    context 'when migration is disabled globally' do
-      before { Travis::Features.expects(:feature_active?).with(:allow_merge_globally).returns(false) }
+    context 'when feature is enabled for the user' do
+      before { Travis::Features.expects(:owner_active?).with(:allow_migration, repo.owner).returns(true) }
 
-      context 'when feature is not enabled for the user' do
-        it { is_expected.to be_falsey }
-      end
-
-      context 'when feature is enabled for the user' do
-        before { Travis::Features.stubs(:owner_active?).with(:allow_migration, repo.owner).returns(true) }
-
-        it { is_expected.to be_falsey }
-      end
+      it { is_expected.to be_truthy }
     end
   end
 end
