@@ -131,7 +131,7 @@ describe Travis::API::V3::Services::Repository::Update, set_app: true do
               '@permissions' => { 'read' => true, 'write' => false },
               'id' => env_var[:id],
               'name' => env_var[:name],
-              'value' => env_var[:value].decrypt,
+              'value' => '',
               'public' => env_var[:public],
               'branch' => env_var[:branch]
             }

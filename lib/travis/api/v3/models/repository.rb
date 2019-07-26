@@ -25,11 +25,7 @@ module Travis::API::V3
       update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
     end
 
-    after_save do
-      clear_env_vars_at_transfer if owner_name_changed?
-    end
-
-    after_update do
+    before_update do
       clear_env_vars_at_transfer if owner_name_changed?
     end
 
