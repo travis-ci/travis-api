@@ -11,7 +11,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => true,
         "deactivate"       => true,
-        "migrate"          => true,
+        "migrate"          => false, # allow_migration is disabled
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
