@@ -38,6 +38,11 @@ module Travis
         resp = connection.post { |req| req.url "users/#{user_id}/sync_data" }
         resp.success?
       end
+
+      def check_scopes(user_id:)
+        resp = connection.post { |req| req.url "users/#{user_id}/check_scopes" }
+        resp.success?
+      end
     end
   end
 end
