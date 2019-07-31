@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby '2.5.5'
+
 # Magic Makers
 gem 'rails', '~> 5.0'
 
