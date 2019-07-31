@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.5.5'
+ruby '2.5.5' if ENV['DYNO']
 
 # Magic Makers
 gem 'rails', '~> 5.0'
