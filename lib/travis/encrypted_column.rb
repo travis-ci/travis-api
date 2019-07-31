@@ -28,7 +28,9 @@ module Travis
     end
 
     def key
-      @key || config.key
+      # On latest Ruby, OpenSSL raises an error if key length is longer than 32 bytes
+      # https://github.com/ruby/ruby/commit/ce635262f53b760284d56bb1027baebaaec175d1
+      (@key || config.key).to_s[0..31]
     end
 
     def iv
