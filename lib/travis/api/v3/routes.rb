@@ -281,13 +281,13 @@ module Travis::API::V3
       patch :update
     end
 
-    hidden_resource :subscriptions do
+    resource :subscriptions do
       route '/subscriptions'
       get :all
       post :create
     end
 
-    hidden_resource :subscription do
+    resource :subscription do
       route '/subscription/{subscription.id}'
       patch :update_address, '/address'
       patch :update_creditcard, '/creditcard'
@@ -297,12 +297,12 @@ module Travis::API::V3
       get :invoices, '/invoices'
     end
 
-    hidden_resource :trials do
+    resource :trials do
       route '/trials'
       get :all
     end
 
-    hidden_resource :plans do
+    resource :plans do
       route '/plans'
       get :all
     end
