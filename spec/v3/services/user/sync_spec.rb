@@ -10,6 +10,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
+    ::Travis::RemoteVCS::User.any_instance.stubs(:sync) { true }
   end
 
   after do
@@ -59,11 +60,6 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
       "id",
       "true")
     }
-
-    example { expect(sidekiq_payload).to be == ['sync_user', 'user_id' => 1] }
-
-    example { expect(Sidekiq::Client.last['queue']).to be == :sync                        }
-    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::GithubSync::Worker' }
   end
 
   describe "existing user, current user does not have sync access " do

@@ -1,5 +1,5 @@
 describe Travis::API::V3::Services::Organization::Find, set_app: true do
-  let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org') }
+  let(:org) { Factory(:org_v3, login: 'example-org') }
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
 
   before    { org.save!                              }
@@ -16,8 +16,10 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "@permissions"     => { "read" => true, "sync" => false, "admin" => false },
       "id"               => org.id,
       "login"            => "example-org",
-      "name"             => nil,
+      "name"             => "travis-ci",
       "github_id"        => nil,
+      "vcs_id"           => nil,
+      "vcs_type"         => "GithubOrganization",
       "avatar_url"       => nil,
       "education"        => false,
       "allow_migration"  => false,
@@ -43,8 +45,10 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "@permissions"     => { "read" => true, "sync" => true, "admin" => false },
       "id"               => org.id,
       "login"            => "example-org",
-      "name"             => nil,
+      "name"             => "travis-ci",
       "github_id"        => nil,
+      "vcs_id"           => nil,
+      "vcs_type"         => "GithubOrganization",
       "avatar_url"       => nil,
       "education"        => true,
       "allow_migration"  => true,

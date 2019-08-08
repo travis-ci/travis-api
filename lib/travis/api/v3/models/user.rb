@@ -18,6 +18,9 @@ module Travis::API::V3
     serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
     scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 
+    alias_attribute :vcs_id, :github_id
+    alias_attribute :vcs_scopes, :github_scopes
+
     def repository_ids
       repositories.pluck(:id)
     end
@@ -48,6 +51,10 @@ module Travis::API::V3
     def installation
       return @installation if defined? @installation
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
+    end
+
+    def sync
+      ::Travis::RemoteVCS::User.new.sync(user_id: id)
     end
   end
 end

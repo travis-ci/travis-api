@@ -1,7 +1,7 @@
 describe Travis::API::V3::Services::Owner::Find, set_app: true do
 
   describe "organization" do
-    let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
+    let(:org) { Factory(:org_v3, login: 'example-org', github_id: 1234) }
 
     before    { org.save! }
     after     { org.delete                             }
@@ -16,8 +16,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"     => { "read" => true, "sync" => false, "admin" => false },
         "id"               => org.id,
         "login"            => "example-org",
-        "name"             => nil,
+        "name"             => "travis-ci",
         "github_id"        => 1234,
+        "vcs_id"           => 1234,
+        "vcs_type"         => 'GithubOrganization',
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
@@ -34,8 +36,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"     => { "read" => true, "sync" => false, "admin" => false },
         "id"               => org.id,
         "login"            => "example-org",
-        "name"             => nil,
+        "name"             => "travis-ci",
         "github_id"        => 1234,
+        "vcs_id"           => 1234,
+        "vcs_type"         => 'GithubOrganization',
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
@@ -43,7 +47,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
     end
 
     describe 'eager loading repositories via organization.repositories' do
-      let(:repo) { Travis::API::V3::Models::Repository.new(name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
+      let(:repo) { Factory(:repo_v3, name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
 
       before { repo.save!   }
       after  { repo.destroy }
@@ -57,8 +61,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"        => { "read" => true, "sync" => false, "admin" => false },
         "id"                  => org.id,
         "login"               => "example-org",
-        "name"                => nil,
+        "name"                => "travis-ci",
         "github_id"           => 1234,
+        "vcs_id"              => 1234,
+        "vcs_type"            => 'GithubOrganization',
         "avatar_url"          => nil,
         "education"           => false,
         "allow_migration"     => false,
@@ -85,8 +91,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "slug"              => "example-org/example-repo",
           "description"       => nil,
           "github_id"         => repo.github_id,
+          "vcs_id"            => repo.vcs_id,
+          "vcs_type"          => "GithubRepository",
           "github_language"   => nil,
-          "active"            => false,
+          "active"            => true,
           "private"           => false,
           "owner"             => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"    => {
@@ -104,7 +112,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
     end
 
     describe 'eager loading repositories via owner.repositories' do
-      let(:repo) { Travis::API::V3::Models::Repository.new(name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
+      let(:repo) { Factory(:repo_v3, name: 'example-repo', owner_name: 'example-org', owner_id: org.id, owner_type: 'Organization')}
 
       before { repo.save!   }
       after  { repo.destroy }
@@ -118,8 +126,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"      => { "read" => true, "sync" => false, "admin" => false },
         "id"                => org.id,
         "login"             => "example-org",
-        "name"              => nil,
+        "name"              => "travis-ci",
         "github_id"         => 1234,
+        "vcs_id"            => 1234,
+        "vcs_type"          => 'GithubOrganization',
         "avatar_url"        => nil,
         "education"         => false,
         "allow_migration"   => false,
@@ -146,8 +156,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "slug"            => "example-org/example-repo",
           "description"     => nil,
           "github_id"       => repo.github_id,
+          "vcs_id"          => repo.vcs_id,
+          "vcs_type"        => "GithubRepository",
           "github_language" => nil,
-          "active"          => false,
+          "active"          => true,
           "private"         => false,
           "owner"           => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"  => {
@@ -174,8 +186,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"     => { "read" => true, "sync" => false, "admin" => false },
         "id"               => org.id,
         "login"            => "example-org",
-        "name"             => nil,
+        "name"             => "travis-ci",
         "github_id"        => 1234,
+        "vcs_id"           => 1234,
+        "vcs_type"         => 'GithubOrganization',
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
@@ -183,7 +197,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
     end
 
     describe "does not allow overriding org id" do
-      let(:other) { Travis::API::V3::Models::Organization.new(login: 'other-org') }
+      let(:other) { Factory(:org_v3, login: 'other-org') }
       before      { other.save!                          }
       after       { other.delete                         }
 
@@ -196,8 +210,10 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"   => { "read" => true, "sync" => false, "admin" => false },
         "id"             => org.id,
         "login"          => "example-org",
-        "name"           => nil,
+        "name"           => "travis-ci",
         "github_id"      => 1234,
+        "vcs_id"         => 1234,
+        "vcs_type"       => 'GithubOrganization',
         "avatar_url"     => nil,
         "education"      => false,
         "allow_migration"=> false,
@@ -211,7 +227,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
   end
 
   describe "user" do
-    let(:user) { Travis::API::V3::Models::User.new(login: 'example-user', github_id: 5678) }
+    let(:user) { Factory(:user, login: 'example-user', github_id: 5678) }
     before     { user.save!                      }
     after      { user.delete                     }
 
@@ -225,9 +241,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"   => {"read" => true, "sync" => false},
         "id"             => user.id,
         "login"          => "example-user",
-        "name"           => nil,
+        "name"           => user.name,
         "github_id"      => 5678,
-        "avatar_url"     => nil,
+        "vcs_id"         => 5678,
+        "vcs_type"       => 'GithubUser',
+        "avatar_url"     => user.avatar_url,
         "is_syncing"     => nil,
         "synced_at"      => nil,
         "education"      => nil,
@@ -245,9 +263,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"   => {"read" => true, "sync" => false},
         "id"             => user.id,
         "login"          => "example-user",
-        "name"           => nil,
+        "name"           => user.name,
         "github_id"      => 5678,
-        "avatar_url"     => nil,
+        "vcs_id"         => 5678,
+        "vcs_type"       => 'GithubUser',
+        "avatar_url"     => user.avatar_url,
         "education"      => nil,
         "is_syncing"     => nil,
         "synced_at"      => nil,
@@ -265,9 +285,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"     => {"read" => true, "sync" => false},
         "id"               => user.id,
         "login"            => "example-user",
-        "name"             => nil,
+        "name"             => user.name,
         "github_id"        => 5678,
-        "avatar_url"       => nil,
+        "vcs_id"           => 5678,
+        "vcs_type"         => 'GithubUser',
+        "avatar_url"       => user.avatar_url,
         "education"        => nil,
         "is_syncing"       => nil,
         "synced_at"        => nil,
@@ -276,7 +298,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
     end
 
     describe "does not allow overriding user id" do
-      let(:other) { Travis::API::V3::Models::User.new(login: 'other-user') }
+      let(:other) { Factory(:user, login: 'other-user') }
       before      { other.save!                   }
       after       { other.delete                  }
 
@@ -289,9 +311,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "@permissions"     => {"read" => true, "sync" => false},
         "id"               => user.id,
         "login"            => "example-user",
-        "name"             => nil,
+        "name"             => user.name,
         "github_id"        => 5678,
-        "avatar_url"       => nil,
+        "vcs_id"           => 5678,
+        "vcs_type"         => 'GithubUser',
+        "avatar_url"       => user.avatar_url,
         "education"        => nil,
         "is_syncing"       => nil,
         "synced_at"        => nil,

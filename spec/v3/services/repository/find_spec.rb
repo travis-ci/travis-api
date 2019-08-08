@@ -78,6 +78,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "slug"               => "svenfuchs/minimal",
       "description"        => nil,
       "github_id"          => repo.github_id,
+      "vcs_id"             => repo.github_id,
+      "vcs_type"           => "GithubRepository",
       "github_language"    => nil,
       "active"             => true,
       "private"            => opts[:private],

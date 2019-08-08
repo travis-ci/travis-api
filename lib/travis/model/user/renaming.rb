@@ -1,6 +1,7 @@
+# TODO Rename github_id to vcs_id after migration
 module User::Renaming
-  def nullify_logins(github_id, login)
-    users = User.where(["github_id <> ? AND login = ?", github_id, login])
+  def nullify_logins(vcs_id, login)
+    users = User.where(["github_id <> ? AND login = ?", vcs_id, login])
     if users.exists?
       Travis.logger.info("About to nullify login (#{login}) for users: #{users.map(&:id).join(', ')}")
       users.update_all(login: nil)

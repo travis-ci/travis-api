@@ -43,6 +43,8 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "login"=>user.login,
         "name"=>user.name,
         "github_id"=>nil,
+        "vcs_id"=>nil,
+        "vcs_type" => "GithubUser",
         "avatar_url"=>"https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
         "is_syncing"=>nil,
         "synced_at"=>nil,
