@@ -132,8 +132,6 @@ class Travis::Api::App
       end
 
       def handshake
-        # TODO: Add error handling
-
         if params[:code]
           unless state_ok?(params[:state])
             halt 400, 'state mismatch'
