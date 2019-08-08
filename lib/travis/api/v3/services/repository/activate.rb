@@ -2,6 +2,7 @@ require 'travis/api/v3/services/repository/deactivate'
 
 module Travis::API::V3
   class Services::Repository::Activate < Service
+
     def run!
       repository = check_login_and_find(:repository)
       check_access(repository)
@@ -9,7 +10,14 @@ module Travis::API::V3
       return repo_migrated if migrated?(repository)
 
       admin = access_control.admin_for(repository)
-      github(admin).set_hook(repository, true)
+      if Travis::Features.user_active?(:use_vcs.user)
+        remote_vcs_repository.set_hook(
+          repository_id: repository.id,
+          user_id: admin.id
+       )
+      else
+        github(admin).set_hook(repository, true)
+      end
       repository.update_attributes(active: true)
 
       if repository.private? || access_control.enterprise?
