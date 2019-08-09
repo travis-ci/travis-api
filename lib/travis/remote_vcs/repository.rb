@@ -13,10 +13,11 @@ module Travis
         resp.success?
       end
 
-      def upload_key(repository_id:, user_id:)
+      def upload_key(repository_id:, user_id:, read_only:)
         resp = connection.post do |req|
           req.url "repos/#{repository_id}/key"
           req.params['user_id'] = user_id
+          req.params['read_only'] = read_only
         end
         resp.success?
       end

@@ -24,10 +24,11 @@ module Travis::API::V3
         if Travis::Features.user_active?(:use_vcs.user)
           remote_vcs_repository.upload_key(
             repository_id: repository.id,
-            user_id: admin.id
+            user_id: admin.id,
+            read_only: !Travis::Features.owner_active?(:read_write_github_keys, repository.owner)
           )
         else
-          github(access_control.admin_for(repository)).upload_key(repository)
+          github(admin).upload_key(repository)
         end
       end
 
