@@ -43,17 +43,11 @@ module Travis::API::V3
 
     def by_slug
       owner_name, repo_name = slug.split('/')
-      repo =  Models::Repository.where(
-        "repositories.owner_name = ? AND repositories.name = ? AND repositories.invalidated_at IS NULL",
-        owner_name,
-        repo_name
-      ).first
-      return repo if repo != nil
       Models::Repository.where(
         "LOWER(repositories.owner_name) = ? AND LOWER(repositories.name) = ? AND repositories.invalidated_at IS NULL",
         owner_name.downcase,
         repo_name.downcase
-      ).first
+      ).order("updated_at DESC").first
     end
   end
 end

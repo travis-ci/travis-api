@@ -129,7 +129,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
     example { expect(parsed_body['slug']).to be == 'svenfuchs/minimal' }
   end
 
-  describe "fetching a case sensitive repository by slug Minimal when minimal and Minimal are defined" do
+  describe "fetching a case sensitive repository by slug Minimal when minimal and Minimal (newer) are defined" do
     before {
       Travis::API::V3::Models::Repository.create!(
         id: 12345,
