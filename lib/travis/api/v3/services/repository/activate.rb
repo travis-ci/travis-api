@@ -14,14 +14,21 @@ module Travis::API::V3
         remote_vcs_repository.set_hook(
           repository_id: repository.id,
           user_id: admin.id
-       )
+        )
       else
         github(admin).set_hook(repository, true)
       end
       repository.update_attributes(active: true)
 
       if repository.private? || access_control.enterprise?
-        github(access_control.admin_for(repository)).upload_key(repository)
+        if Travis::Features.user_active?(:use_vcs.user)
+          remote_vcs_repository.upload_key(
+            repository_id: repository.id,
+            user_id: admin.id
+          )
+        else
+          github(access_control.admin_for(repository)).upload_key(repository)
+        end
       end
 
       query.sync(access_control.user || access_control.admin_for(repository))

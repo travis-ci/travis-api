@@ -12,6 +12,14 @@ module Travis
         end
         resp.success?
       end
+
+      def upload_key(repository_id:, user_id:)
+        resp = connection.post do |req|
+          req.url "repos/#{repository_id}/key"
+          req.params['user_id'] = user_id
+        end
+        resp.success?
+      end
     end
   end
 end
