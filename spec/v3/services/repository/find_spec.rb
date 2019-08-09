@@ -137,6 +137,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         url: "http://github.com/svenfuchs/Minimal",
         owner_name: "svenfuchs",
         owner_email: "svenfuchs@artweb-design.de",
+        updated_at: '2119-08-09 00:00:00',
         active: true,
         private: false,
         owner_id: 1,
@@ -145,6 +146,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         github_id: 12345
       )
       get("/v3/repo/svenfuchs%2FMinimal")
+      require 'pry'; binding.pry
     }
     example { expect(last_response).to be_ok }
     example { expect(parsed_body['slug']).to be == 'svenfuchs/Minimal' }
