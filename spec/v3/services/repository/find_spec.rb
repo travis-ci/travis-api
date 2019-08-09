@@ -123,12 +123,6 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
     include_examples '404 not found'
   end
 
-  describe "fetching a case sensitive repository by slug Minimal when only minimal is defined" do
-    before { get("/v3/repo/svenfuchs%2FMinimal") }
-    example { expect(last_response).to be_ok }
-    example { expect(parsed_body['slug']).to be == 'svenfuchs/minimal' }
-  end
-
   describe "fetching a case sensitive repository by slug Minimal when minimal and Minimal (newer) are defined" do
     before {
       Travis::API::V3::Models::Repository.create!(
