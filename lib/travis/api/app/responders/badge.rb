@@ -5,10 +5,12 @@ module Travis::Api::App::Responders
     end
 
     def apply
-      if redirect_to_com?
-        redirect_to_com
+      set_headers
+      if proxy_to_org?
+        proxy_to_org
+      elsif proxy_to_com?
+        proxy_to_com
       else
-        set_headers
         send_file(filename, type: :svg, last_modified: last_modified)
       end
     end

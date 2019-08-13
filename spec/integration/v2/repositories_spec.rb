@@ -190,37 +190,97 @@ describe 'Repos', set_app: true do
     response.status.should == 403
   end
 
-  it 'responds with 301 to .com if a repo has been migrated' do
+  it 'does not proxy to .com if a user agent is set to PROXY_USER_AGENT' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
     repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
     Factory(:build, repository: repo, state: :passed)
 
-    result = get('/svenfuchs/minimal.svg?branch=master', {}, 'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8')
-    result.status.should == 301
-    result.headers['Location'].should == 'https://travis-ci.com/svenfuchs/minimal.svg?branch=master'
+    headers = {
+      'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8',
+      'HTTP_USER_AGENT' => Travis::Api::App::Responders::Image::PROXY_USER_AGENT
+    }
+
+    result = get('/svenfuchs/minimal.svg?branch=master', {}, headers)
+    result.status.should == 200
+    result.body.should_not == 'an image'
   end
 
-  it 'responds with 301 and an image if a repo has been migrated and with browser-like accept header' do
+  it 'proxies to .com if a repo has been migrated' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
     repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
     Factory(:build, repository: repo, state: :passed)
+
+    stub_request(:get, "https://api.travis-ci.com/svenfuchs/minimal.svg?branch=master").
+      with(headers: { 'Accept' => 'image/svg+xml' }).
+      to_return(status: 200, body: 'an image')
 
     result = get('/svenfuchs/minimal.svg?branch=master', {}, 'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8')
-    result.status.should == 301
-    result.headers['Location'].should == 'https://travis-ci.com/svenfuchs/minimal.svg?branch=master'
+    result.status.should == 200
+    result.body.should == 'an image'
   end
 
-  it 'responds with 301 to .com if a repo has been migrated, slug without format' do
+  it 'proxies to .com and an image if a repo has been migrated and with browser-like accept header' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
     repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
     Factory(:build, repository: repo, state: :passed)
+
+    stub_request(:get, "https://api.travis-ci.com/svenfuchs/minimal.svg?branch=master").
+      with(headers: { 'Accept' => 'image/svg+xml' }).
+      to_return(status: 200, body: 'an image')
+
+    result = get('/svenfuchs/minimal.svg?branch=master', {}, 'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8')
+    result.status.should == 200
+    result.body.should == 'an image'
+  end
+
+  it 'proxies to .com to .com if a repo has been migrated, slug without format' do
+    Travis.config.host = 'travis-ci.org'
+    Travis.config.public_mode = true
+    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    Factory(:build, repository: repo, state: :passed)
+
+    stub_request(:get, "https://api.travis-ci.com/svenfuchs/minimal?branch=master").
+      with(headers: { 'Accept' => 'image/svg+xml' }).
+      to_return(status: 200, body: 'an image')
 
     result = get('/svenfuchs/minimal?branch=master', {}, 'HTTP_ACCEPT' => 'image/svg+xml')
-    result.status.should == 301
-    result.headers['Location'].should == 'https://travis-ci.com/svenfuchs/minimal?branch=master'
+    result.status.should == 200
+    result.body.should == 'an image'
+  end
+
+  it 'does not proxy to .org if a user agent is set to PROXY_USER_AGENT' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = true
+    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    Factory(:build, repository: repo, state: :passed)
+
+    headers = {
+      'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8',
+      'HTTP_USER_AGENT' => Travis::Api::App::Responders::Image::PROXY_USER_AGENT
+    }
+
+    result = get('/svenfuchs/minimal.svg?branch=master', {}, headers)
+    result.status.should == 200
+    result.body.should_not == 'an image'
+  end
+
+  it 'proxies to .org if a repo has not been migrated and is not active' do
+    Travis.config.host = 'travis-ci.com'
+    Travis.config.public_mode = true
+    repo.update_attributes(migration_status: nil, migrated_at: Time.now, active: false)
+    Factory(:build, repository: repo, state: :passed)
+
+    stub_request(:get, "https://api.travis-ci.org/svenfuchs/minimal.svg?branch=master").
+      with(headers: { 'Accept' => 'image/svg+xml' }).
+      to_return(status: 200, body: 'an image')
+
+    result = get('/svenfuchs/minimal.svg?branch=master', {}, 'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8')
+    result.status.should == 200
+    result.body.should == 'an image'
+    result.headers['X-Badge-Location'].should == "https://api.travis-ci.org/svenfuchs/minimal.svg?branch=master"
   end
 
   it 'responds with 200 and an image if a repo exists and with browser-like accept header' do
@@ -235,16 +295,24 @@ describe 'Repos', set_app: true do
     result.should deliver_result_image_for('passing.svg')
   end
 
-  it 'responds with 301 to .com and image when repo can\'t be found and format is png' do
+  it 'proxies to .com and image when repo can\'t be found and format is png' do
+    stub_request(:get, "https://api.travis-ci.com/foo/bar").
+      with(headers: { 'Accept' => 'image/png' }).
+      to_return(status: 200, body: 'an image')
+
     result = get('/repos/foo/bar', {}, 'HTTP_ACCEPT' => 'image/png')
-    result.status.should == 301
-    result.headers['Location'].should == 'https://travis-ci.com/foo/bar'
+    result.status.should == 200
+    result.body.should == 'an image'
   end
 
-  it 'responds with 301 to .com and image when repo can\'t be found and format is png' do
+  it 'proxies to .com and image when repo can\'t be found and format is png' do
+    stub_request(:get, "https://api.travis-ci.com/foo/bar.png").
+      with(headers: { 'Accept' => 'image/png' }).
+      to_return(status: 200, body: 'an image')
+
     result = get('/repos/foo/bar.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
-    result.status.should == 301
-    result.headers['Location'].should == 'https://travis-ci.com/foo/bar.png'
+    result.status.should == 200
+    result.body.should == 'an image'
   end
 
   it '[.org, public_mode] responds with a passing image when the repo is public' do
