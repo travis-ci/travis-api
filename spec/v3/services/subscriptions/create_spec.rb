@@ -25,6 +25,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
     let(:subscription_data) do
       {
         'plan' => 'travis-ci-ten-builds',
+        'client_secret' => 'client_secret',
         'organization_id' => organization.id,
         'billing_info.first_name' => 'Travis',
         'billing_info.last_name' => 'Schmidt',
@@ -44,6 +45,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           .with(body: {
             'organization_id' => organization.id,
             'plan' => 'travis-ci-ten-builds',
+            'client_secret' => 'client_secret',
             'coupon' => nil,
             'billing_info' => {
               'first_name' => 'Travis',
@@ -69,6 +71,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
               'currency' => 'USD',
               'annual' => false
             },
+            'client_secret' => 'client_secret',
             'billing_info' => {
               'first_name' => 'Travis',
               'last_name' => 'Schmidt',
@@ -109,6 +112,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
             'currency' => 'USD',
             'annual' => false
           },
+          'client_secret' => 'client_secret',
           'coupon' => '',
           'status' => 'canceled',
           'source' => 'stripe',
