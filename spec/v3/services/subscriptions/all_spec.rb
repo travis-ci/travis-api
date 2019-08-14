@@ -55,6 +55,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           'coupon' => '',
           'status' => 'canceled',
           'source' => 'stripe',
+          'client_secret' => 'client_secret',
           'billing_info' => {
             '@type' => 'billing_info',
             '@representation' => 'standard',
