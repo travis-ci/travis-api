@@ -8,7 +8,7 @@ module Travis::API::V3
         organizations: organizations.map(&:login)
       }))
 
-      Models::BetaMigrationRequest.new(response.slice(*%w(id owner_id owner_name owner_type accepted_at)))
+      Models::BetaMigrationRequest.new(response.slice(*%w(id login owner_id owner_name owner_type accepted_at)))
     end
 
     def find_beta_migration_requests(user)
@@ -17,7 +17,7 @@ module Travis::API::V3
       beta_requests = response['beta_migration_requests'] || []
 
       beta_requests.map do |data|
-        Models::BetaMigrationRequest.new(data.slice(*%w(id owner_id owner_name owner_type accepted_at)))
+        Models::BetaMigrationRequest.new(data.slice(*%w(id login owner_id owner_name owner_type accepted_at)))
       end
     end
 
