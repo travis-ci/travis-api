@@ -24,6 +24,7 @@ describe Travis::Api::Serialize::V2::Http::User do
 
   before do
     user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
+    ::Travis::RemoteVCS::User.any_instance.stubs(:check_scopes).returns(true)
   end
 
   it 'user' do

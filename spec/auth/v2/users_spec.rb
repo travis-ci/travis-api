@@ -7,7 +7,7 @@ describe 'v2 users', auth_helpers: true, api_version: :v2, set_app: true do
   # TODO post /users/sync
 
   before do
-    stub_request(:post, "#{Travis.config.vcs.url}/users/#{user.id}/check_scopes").to_return(status: 200)
+    ::Travis::RemoteVCS::User.any_instance.stubs(:check_scopes).returns(true)
   end
 
   describe 'in public, with a private repo', mode: :public, repo: :private do
