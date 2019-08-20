@@ -22,8 +22,11 @@ class User < Travis::Model
 
   serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
 
-  alias_attribute :vcs_id, :github_id
   alias_attribute :vcs_scopes, :github_scopes
+
+  def vcs_id
+    read_attribute(:vcs_id) || github_id
+  end
 
   class << self
     def with_permissions(permissions)

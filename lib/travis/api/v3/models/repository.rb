@@ -20,7 +20,10 @@ module Travis::API::V3
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
     alias last_started_build current_build
-    alias_attribute :vcs_id, :github_id
+    
+    def vcs_id
+      read_attribute(:vcs_id) || github_id
+    end
 
     after_initialize do
       update_attributes! default_branch_name: 'master'.freeze unless default_branch_name

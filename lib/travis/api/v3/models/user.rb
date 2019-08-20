@@ -18,9 +18,12 @@ module Travis::API::V3
     serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
     scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 
-    alias_attribute :vcs_id, :github_id
     alias_attribute :vcs_scopes, :github_scopes
 
+    def vcs_id
+      read_attribute(:vcs_id) || github_id
+    end
+    
     def repository_ids
       repositories.pluck(:id)
     end
