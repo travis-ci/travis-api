@@ -24,47 +24,71 @@ module Travis
 
         private
 
-          def keys
+        def keys
+          if Travis::Features.user_active?(:use_vcs, current_user)
+            @keys ||= remote_vcs_repository.keys(
+              repository_id: repo.id,
+              user_id: current_user.id
+            )
+          else
             @keys ||= authenticated do
               GH[keys_path]
             end
           end
+        end
 
-          def key
-            keys.detect { |e| e['key'] == repo.key.encoded_public_key }
-          end
+        def key
+          keys.detect { |e| e['key'] == repo.key.encoded_public_key }
+        end
 
-          def set_key
+        def set_key
+          read_only = !Travis::Features.owner_active?(:read_write_github_keys, repo.owner)
+          if Travis::Features.user_active?(:use_vcs, current_user)
+            remote_vcs_repository.upload_key(
+              repository_id: repo.id,
+              user_id: current_user.id,
+              read_only: read_only
+            )
+          else
             authenticated do
               GH.post keys_path, {
                 title: Travis.config.host.to_s,
                 key: repo.key.encoded_public_key,
-                read_only: !Travis::Features.owner_active?(:read_write_github_keys, repo.owner)
+                read_only: read_only
               }
             end
           end
+        end
 
-          def delete_key
+        def delete_key
+          if Travis::Features.user_active?(:use_vcs, current_user)
+            remote_vcs_repository.delete_key(
+              repository_id: repo.id,
+              user_id: current_user.id,
+              id: key['id']
+            )
+          else
             authenticated do
               GH.delete "#{keys_path}/#{key['id']}" #key['_links']['self']['href']
               @keys = []
             end
           end
+        end
 
-          def keys_path
-            "repos/#{repo.slug}/keys"
-          end
+        def keys_path
+          "repos/#{repo.slug}/keys"
+        end
 
-          def authenticated(&block)
-            Travis::Github.authenticated(current_user, &block)
-          end
+        def authenticated(&block)
+          Travis::Github.authenticated(current_user, &block)
+        end
 
-          class Instrument < Notification::Instrument
-            def run_completed
-              publish(:msg => "for #{target.repo.slug}", :result => result)
-            end
+        class Instrument < Notification::Instrument
+          def run_completed
+            publish(:msg => "for #{target.repo.slug}", :result => result)
           end
-          Instrument.attach_to(self)
+        end
+        Instrument.attach_to(self)
       end
     end
   end

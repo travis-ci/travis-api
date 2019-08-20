@@ -21,7 +21,7 @@ module Travis::API::V3
       repository.update_attributes(active: true)
 
       if repository.private? || access_control.enterprise?
-        if Travis::Features.user_active?(:use_vcs.user)
+        if Travis::Features.user_active?(:use_vcs, access_control.user)
           remote_vcs_repository.upload_key(
             repository_id: repository.id,
             user_id: admin.id,
