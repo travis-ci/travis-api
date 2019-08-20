@@ -3,7 +3,7 @@ module Travis::API::V3
     representation(:standard, :id, :owner_id, :owner_name, :owner_type, :accepted_at, :organizations)
 
     def organizations
-      model.organizations.pluck(:login)
+      model.organizations.map(:login)
     end
   end
 end
