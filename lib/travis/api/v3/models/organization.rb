@@ -8,7 +8,9 @@ module Travis::API::V3
 
     has_preferences Models::OrganizationPreferences
 
-    alias_attribute :vcs_id, :github_id
+    def vcs_id
+      read_attribute(:vcs_id) || github_id
+    end
 
     def repositories
       Models::Repository.where(owner_type: 'Organization', owner_id: id)
