@@ -33,7 +33,7 @@ module Travis::API::V3
       fields = response.slice(*%w(id owner_id owner_name owner_type accepted_at))
 
       beta_req = Models::BetaMigrationRequest.new(fields)
-      beta_req.organizations = Models::Organization.where(login: response['organizations'])
+      beta_req.organizations = Models::Organization.where(login: response['organizations_logins'])
 
       beta_req
     end

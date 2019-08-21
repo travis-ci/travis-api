@@ -24,7 +24,8 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
           'owner_name'      => beta_migration_request.owner_name,
           'owner_type'      => beta_migration_request.owner_type,
           'accepted_at'     => beta_migration_request.accepted_at,
-          'organizations'   => [org1.login, org2.login]
+          'organizations'   => [org1.id, org2.id],
+          'organizations_logins'  => [org1.login, org2.login]
         }
       ]
     }
