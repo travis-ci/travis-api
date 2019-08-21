@@ -17,6 +17,7 @@ module Travis::API::V3
 
     serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
     scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
+    scope :by_vcs_id, ->(vcs_id) { where("vcs_id = ':id' OR github_id = ':id", id: vcs_id.to_s) }
 
     alias_attribute :vcs_scopes, :github_scopes
 

@@ -17,6 +17,8 @@ class User < Travis::Model
   after_create :create_a_token
   before_save :track_previous_changes
 
+  scope :by_vcs_id, ->(vcs_id) { where("vcs_id = :id OR github_id = :id", id: vcs_id.to_s) }
+
   serialize :github_scopes
   serialize :vcs_scopes
 

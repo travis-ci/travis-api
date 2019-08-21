@@ -15,7 +15,7 @@ module Travis::API::V3
 
       if vcs_id = options[?u.freeze]
         vcs_type = options[?t.freeze] || 'GithubUser'
-        return unless user = ::User.find_by(vcs_id: vcs_id, vcs_type: vcs_type)
+        return unless user = ::User.where(vcs_type: vcs_type).by_vcs_id(vcs_id).first
       end
 
       if application = options[?a.freeze]
