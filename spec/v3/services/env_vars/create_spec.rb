@@ -69,29 +69,55 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
   end
 
   describe 'authenticated, existing repo, env var already exists' do
-    let(:params) do
-      {
-        'env_var.name' => 'FOO',
-        'env_var.value' => 'bar',
-        'env_var.public' => false
-      }
-    end
-
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
-      repo.update_attributes(settings: { env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }] })
+      repo.update_attributes(settings: { env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false, branch: 'master' }] })
       post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers))
     end
 
-    example { expect(last_response.status).to eq 409 }
-    example do
-      expect(JSON.load(body)).to eq(
-        '@type' => 'error',
-        'error_message' => 'resource already exists',
-        'error_type' => 'duplicate_resource'
-      )
+    describe 'same branch' do
+      let(:params) do
+        {
+          'env_var.name' => 'FOO',
+          'env_var.value' => 'bar',
+          'env_var.public' => false,
+          'env_var.branch' => 'master'
+        }
+      end
+
+      example { expect(last_response.status).to eq 409 }
+      example do
+        expect(JSON.load(body)).to eq(
+          '@type' => 'error',
+          'error_message' => 'resource already exists',
+          'error_type' => 'duplicate_resource'
+        )
+      end
+      example { expect(repo.reload.env_vars.count).to eq(1) }
     end
-    example { expect(repo.reload.env_vars.count).to eq(1) }
+
+    describe 'different branch' do
+      let(:params) do
+        {
+          'env_var.name' => 'FOO',
+          'env_var.value' => 'baz',
+          'env_var.public' => false,
+          'env_var.branch' => 'a-feature'
+        }
+      end
+
+      example { expect(last_response.status).to eq 201 }
+      example do
+        expect(JSON.load(body)).to include(
+          '@type' => 'env_var',
+          '@representation' => 'standard',
+          'name' => 'FOO',
+          'public' => false,
+          'branch' => 'a-feature'
+        )
+      end
+      example { expect(repo.reload.env_vars.count).to eq(2) }
+    end
   end
 
   describe 'authenticated, existing repo, env var is new' do
