@@ -64,7 +64,7 @@ module Travis
             logs:                 { shards: 1, intervals: { vacuum: 10, regular: 180, force: 3 * 60 * 60 } },
             roles:                {},
             archive:              {},
-            ssl:                  {},
+            ssl:                  { ca_file: '/etc/ssl/certs/cacert.pem' },
             redis:                { url: 'redis://localhost:6379' },
             redis_gatekeeper:     { url: ENV['REDIS_GATEKEEPER_URL'] || 'redis://localhost:6379' },
             repository:           { ssl_key: { size: 4096 } },

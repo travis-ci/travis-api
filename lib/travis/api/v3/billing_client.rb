@@ -89,7 +89,7 @@ module Travis::API::V3
     end
 
     def connection
-      @connection ||= Faraday.new(url: billing_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
+      @connection ||= Faraday.new(url: billing_url, ssl: Travis.config.ssl.to_h.merge({})) do |conn|
         conn.basic_auth '_', billing_auth_key
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
         conn.headers['Content-Type'] = 'application/json'
