@@ -7,3 +7,5 @@
 .travis.yml
 Dockerfile
 spec
+#IDEs folders
+.idea

@@ -29,7 +29,6 @@ jobs:
   include:
     - stage: "Testing time"
     - stage: ":ship: it to Quay.io"
-      sudo: required
       install: echo skip
       before_script: echo skip
-      script: ./script/docker-build-and-push
+      script: make ship
