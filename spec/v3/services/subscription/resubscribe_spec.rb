@@ -24,14 +24,20 @@ describe Travis::API::V3::Services::Subscription::Resubscribe, set_app: true, bi
 
     let!(:stubbed_request) do
       stub_billing_request(:patch, "/subscriptions/#{subscription_id}/resubscribe", auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 204)
+        .to_return(status: 201, body: JSON.dump(billing_subscription_response_body(
+          owner: { type: 'User', id: user.id },
+          status: 'incomplete',
+          client_secret: 'ABC'
+        )))
     end
 
     it 'resubscribes the subscription' do
       patch("/v3/subscription/#{subscription_id}/resubscribe", nil, headers)
 
-      expect(last_response.status).to eq(204)
+      expect(last_response.status).to eq(201)
       expect(stubbed_request).to have_been_made.once
+      expect(parsed_body['status']).to eq('incomplete')
+      expect(parsed_body['client_secret']).to eq('ABC')
     end
   end
 end

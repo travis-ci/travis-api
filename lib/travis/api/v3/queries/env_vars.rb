@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::EnvVars < Query
-    params :name, :value, :public, prefix: :env_var
+    params :name, :value, :public, :branch, prefix: :env_var
 
     def find(repository)
       repository.env_vars

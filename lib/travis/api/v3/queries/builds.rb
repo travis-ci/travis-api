@@ -3,7 +3,9 @@ module Travis::API::V3
     params :state, :event_type, :previous_state, :created_by, prefix: :build
     params :name, prefix: :branch, method_name: :branch_name
 
-    sortable_by :id, :started_at, :finished_at
+    sortable_by :id, :created_at, :started_at, :finished_at,
+      number: "number::int %{order}"
+    default_sort "number:desc,id:desc"
 
     def find(repository)
       sort filter(repository.builds)

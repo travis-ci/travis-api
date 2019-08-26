@@ -11,7 +11,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "read"             => true,
         "activate"         => true,
         "deactivate"       => true,
-        "migrate"          => true,
+        "migrate"          => false, # allow_migration is disabled
         "star"             => true,
         "unstar"           => true,
         "create_request"   => true,
@@ -94,7 +94,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "starred"            => false,
       "active_on_org"      => nil,
       "managed_by_installation" => false,
-      "migration_status"   => nil
+      "migration_status"   => nil,
+      "history_migration_status" => nil
     })}
   end
 
@@ -120,6 +121,29 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   describe "fetching a non-existing repository by slug" do
     before { get("/v3/repo/svenfuchs%2Fminimal1") }
     include_examples '404 not found'
+  end
+
+  describe "fetching a case sensitive repository by slug Minimal when minimal and Minimal (newer) are defined" do
+    before {
+      Travis::API::V3::Models::Repository.create!(
+        id: 12345,
+        name: 'Minimal', 
+        url: "http://github.com/svenfuchs/Minimal",
+        owner_name: "svenfuchs",
+        owner_email: "svenfuchs@artweb-design.de",
+        updated_at: '2119-08-09 00:00:00',
+        active: true,
+        private: false,
+        owner_id: 1,
+        owner_type: "User",
+        last_build_state: "passed",
+        github_id: 12345
+      )
+      get("/v3/repo/svenfuchs%2FMinimal")
+    }
+    example { expect(last_response).to be_ok }
+    example { expect(parsed_body['slug']).to be == 'svenfuchs/Minimal' }
+    example { expect(parsed_body['id']).to be == 12345 }
   end
 
   describe "missing repository" do

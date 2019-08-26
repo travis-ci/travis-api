@@ -18,7 +18,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns the subscription' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}", auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump(billing_subscription_response_body('id' => subscription_id, 'owner' => { 'type' => 'Organization', 'id' => organization.id } )))
+        .to_return(body: JSON.dump(billing_subscription_response_body('id' => subscription_id, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id } )))
       expect(subject).to be_a(Travis::API::V3::Models::Subscription)
       expect(subject.id).to eq(subscription_id)
       expect(subject.plan).to be_a(Travis::API::V3::Models::Plan)
@@ -37,9 +37,10 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns a list of invoices' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}/invoices", auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump([{'id' => invoice_id, 'created_at' => Time.now, 'url' => 'https://billing-test.travis-ci.com/invoices/111.pdf' }]))
+        .to_return(body: JSON.dump([{'id' => invoice_id, 'created_at' => Time.now, 'url' => 'https://billing-test.travis-ci.com/invoices/111.pdf', amount_due: 999 }]))
       expect(subject.first).to be_a(Travis::API::V3::Models::Invoice)
       expect(subject.first.id).to eq(invoice_id)
+      expect(subject.first.amount_due).to eq(999)
     end
 
     it 'returns an empty list if there are no invoices' do
@@ -57,7 +58,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns the list of subscriptions' do
       stub_billing_request(:get, '/subscriptions', auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump(subscriptions: [billing_subscription_response_body('id' => subscription_id, 'owner' => { 'type' => 'Organization', 'id' => organization.id })], permissions: permissions))
+        .to_return(body: JSON.dump(subscriptions: [billing_subscription_response_body('id' => subscription_id, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })], permissions: permissions))
 
       expect(subject.subscriptions.size).to eq 1
       expect(subject.subscriptions.first.id).to eq(subscription_id)
@@ -138,7 +139,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     it 'requests the creation and returns the representation' do
       stubbed_request = stub_billing_request(:post, "/subscriptions", auth_key: auth_key, user_id: user_id)
         .with(body: JSON.dump(subscription_data))
-        .to_return(status: 201, body: JSON.dump(billing_subscription_response_body('id' => 456, 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
+        .to_return(status: 201, body: JSON.dump(billing_subscription_response_body('id' => 456, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
 
       expect(subject.id).to eq(456)
       expect(stubbed_request).to have_been_made

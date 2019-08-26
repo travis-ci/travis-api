@@ -4,7 +4,6 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
     let(:repo) { Travis::API::V3::Models::Repository.first }
     before do
       Travis::Features.activate_owner(:allow_migration, repo.owner)
-      Travis::Features.enable_for_all(:allow_merge_globally)
     end
 
     context "logged in" do

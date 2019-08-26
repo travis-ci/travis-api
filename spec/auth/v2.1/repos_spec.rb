@@ -65,7 +65,7 @@ describe 'v2.1 repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
     describe 'GET /repos/%{repo.id}/caches' do
       include_context 'cache setup'
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
-      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:without_permission) { should auth status: 403, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 404 }
     end
@@ -180,7 +180,7 @@ describe 'v2.1 repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
     describe 'GET /repos/%{repo.id}/caches' do
       include_context 'cache setup'
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
-      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:without_permission) { should auth status: 403, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 404 }
     end
@@ -295,7 +295,7 @@ describe 'v2.1 repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
     describe 'GET /repos/%{repo.id}/caches' do
       include_context 'cache setup'
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
-      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:without_permission) { should auth status: 403, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -416,7 +416,7 @@ describe 'v2.1 repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
     describe 'GET /repos/%{repo.id}/caches' do
       include_context 'cache setup'
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
-      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:without_permission) { should auth status: 403, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -531,7 +531,7 @@ describe 'v2.1 repos', auth_helpers: true, api_version: :'v2.1', set_app: true d
     describe 'GET /repos/%{repo.id}/caches' do
       include_context 'cache setup'
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
-      it(:without_permission) { should auth status: 200, type: :json, empty: true }
+      it(:without_permission) { should auth status: 403, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 404 }
     end

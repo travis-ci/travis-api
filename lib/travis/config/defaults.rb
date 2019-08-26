@@ -32,6 +32,8 @@ module Travis
     }
 
     define  host:                 'travis-ci.org',
+            api_com_url:          'https://api.travis-ci.com',
+            api_org_url:          'https://api.travis-ci.org',
             shorten_host:         'trvs.io',
             public_mode:          !!ENV['PUBLIC_MODE'],
             applications:         {},
@@ -86,6 +88,10 @@ module Travis
     def initialize(*)
       super
       load_urls
+    end
+
+    def com_url
+      "https://#{host.sub(/org$/, 'com')}"
     end
 
     def org?

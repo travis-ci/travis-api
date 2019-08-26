@@ -249,13 +249,20 @@ module Travis::API::V3
 
       resource :beta_migration_requests do
         route '/beta_migration_requests'
-        get    :find
+        get    :proxy_find
       end
 
       resource :beta_migration_request do
         route '/beta_migration_request'
-        post   :create
+        post   :proxy_create
       end
+    end
+
+    hidden_resource :beta_migration_requests do
+      route '/beta_migration_requests'
+
+      get    :find
+      post   :create
     end
 
     resource :user do
@@ -274,32 +281,30 @@ module Travis::API::V3
       patch :update
     end
 
-    if ENV['BILLING_V2_ENABLED']
-      hidden_resource :subscriptions do
-        route '/subscriptions'
-        get :all
-        post :create
-      end
+    hidden_resource :subscriptions do
+      route '/subscriptions'
+      get :all
+      post :create
+    end
 
-      hidden_resource :subscription do
-        route '/subscription/{subscription.id}'
-        patch :update_address, '/address'
-        patch :update_creditcard, '/creditcard'
-        patch :update_plan, '/plan'
-        patch :resubscribe, '/resubscribe'
-        post :cancel, '/cancel'
-        get :invoices, '/invoices'
-      end
+    hidden_resource :subscription do
+      route '/subscription/{subscription.id}'
+      patch :update_address, '/address'
+      patch :update_creditcard, '/creditcard'
+      patch :update_plan, '/plan'
+      patch :resubscribe, '/resubscribe'
+      post :cancel, '/cancel'
+      get :invoices, '/invoices'
+    end
 
-      hidden_resource :trials do
-        route '/trials'
-        get :all
-      end
+    hidden_resource :trials do
+      route '/trials'
+      get :all
+    end
 
-      hidden_resource :plans do
-        route '/plans'
-        get :all
-      end
+    hidden_resource :plans do
+      route '/plans'
+      get :all
     end
 
     if ENV['GDPR_ENABLED']

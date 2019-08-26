@@ -22,9 +22,17 @@ namespace :merge do
         (request.organizations + [request.owner]).each do |owner|
           Travis::Features.activate_owner(:allow_migration, owner)
         end
+
+        send_email_confirmation(request.owner)
+
         request.update(accepted_at: DateTime.now)
         puts "[Request ID: #{request.id}] Feature activated for Owner: #{request.owner_id} and orgs: #{request.organizations.pluck(:id)}" if args[:debug]
       end
     end
   end
+end
+
+def send_email_confirmation(user)
+  @mailer ||= Travis::API::V3::Models::Mailer.new
+  @mailer.send_beta_confirmation(user)
 end
