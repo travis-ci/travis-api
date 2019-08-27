@@ -5,7 +5,6 @@ import:
 
 rvm: 2.5.1
 
-script: "bundle exec rake knapsack:rspec"
 env:
   global:
     - RUBY_GC_MALLOC_LIMIT=90000000
@@ -27,7 +26,8 @@ before_install:
 
 jobs:
   include:
-    - stage: "Testing time"
+    - stage: "Test"
+      script: "bundle exec rake knapsack:rspec"
     - stage: ":ship: it to Quay.io"
       install: echo skip
       before_script: echo skip
