@@ -1,7 +1,6 @@
 SHELL := bash
 
 VERSION_VALUE ?= $(shell git describe --always --dirty --tags 2>/dev/null)
-VERSION_VALUE_LATEST ?= latest
 DOCKER_IMAGE_REPO ?= travisci/travis-api
 DOCKER_DEST ?= $(DOCKER_IMAGE_REPO):$(VERSION_VALUE)
 QUAY ?= quay.io
@@ -29,8 +28,8 @@ docker-push:
 	$(DOCKER) tag $(DOCKER_DEST) $(QUAY_IMAGE):$(VERSION_VALUE)
 	$(DOCKER) push $(QUAY_IMAGE):$(VERSION_VALUE)
 ifeq ($(TRAVIS_BRANCH), master)
-    $(DOCKER) tag $(DOCKER_DEST) $(QUAY_IMAGE):$(VERSION_VALUE_LATEST)
-    $(DOCKER) push $(QUAY_IMAGE):$(VERSION_VALUE_LATEST)
+	$(DOCKER) tag $(DOCKER_DEST) $(QUAY_IMAGE):latest
+	$(DOCKER) push $(QUAY_IMAGE):latest
 endif
 
 .PHONY: ship
