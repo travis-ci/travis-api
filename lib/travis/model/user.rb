@@ -17,9 +17,18 @@ class User < Travis::Model
   after_create :create_a_token
   before_save :track_previous_changes
 
+  scope :by_vcs_id, ->(vcs_id) { where("vcs_id = :id OR github_id = :id", id: vcs_id.to_s) }
+
   serialize :github_scopes
+  serialize :vcs_scopes
 
   serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
+
+  alias_attribute :vcs_scopes, :github_scopes
+
+  def vcs_id
+    read_attribute(:vcs_id) || github_id
+  end
 
   class << self
     def with_permissions(permissions)
@@ -44,7 +53,7 @@ class User < Travis::Model
   end
 
   def to_json
-    keys = %w/id login email name locale github_id gravatar_id is_syncing synced_at updated_at created_at/
+    keys = %w/id login email name locale github_id vcs_id vcs_type gravatar_id is_syncing synced_at updated_at created_at/
     { 'user' => attributes.slice(*keys) }.to_json
   end
 

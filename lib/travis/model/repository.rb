@@ -84,6 +84,10 @@ class Repository < Travis::Model
     where(invalidated_at: nil)
   }
 
+  def vcs_id
+    read_attribute(:vcs_id) || github_id
+  end
+
   def self.by_name
     Hash[*all.map { |repository| [repository.name, repository] }.flatten]
   end

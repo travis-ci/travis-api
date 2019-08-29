@@ -6,6 +6,10 @@ class Organization < Travis::Model
   has_many :users, :through => :memberships
   has_many :repositories, :as => :owner
 
+  def vcs_id
+    read_attribute(:vcs_id) || github_id
+  end
+  
   def education?
     Travis::Features.owner_active?(:educational_org, self)
   end

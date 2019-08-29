@@ -81,7 +81,8 @@ module Travis
             webhook:              { public_key: nil },
             cache_options:        {},
             merge:                { auth_token: 'merge-auth-token', api_url: 'https://merge.localhost' },
-            force_authentication: false
+            force_authentication: false,
+            vcs:                  {}
 
     default :_access => [:key]
 

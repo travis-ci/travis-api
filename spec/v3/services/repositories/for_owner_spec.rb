@@ -76,6 +76,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "slug"               => "svenfuchs/minimal",
         "description"        => nil,
         "github_id"          => repo.github_id,
+        "vcs_id"             => repo.vcs_id,
+        "vcs_type"           => "GithubRepository",
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
@@ -123,6 +125,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "slug"               =>"svenfuchs/minimal",
         "description"        =>nil,
         "github_id"          =>repo.github_id,
+        "vcs_id"             => repo.vcs_id,
+        "vcs_type"           => "GithubRepository",
         "github_language"    =>nil,
         "active"             =>true,
         "private"            =>true,
@@ -230,6 +234,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "slug"               => "svenfuchs/minimal",
         "description"        => nil,
         "github_id"          => repo.github_id,
+        "vcs_id"             => repo.vcs_id,
+        "vcs_type"           => "GithubRepository",
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
@@ -355,7 +361,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   end
 
   describe "sorting by default_branch.last_build" do
-    let(:repo2)  { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, next_build_number: 3) }
+    let(:repo2)  { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, next_build_number: 3, vcs_type: 'GithubRepository') }
     before  { repo2.save! }
     before  { get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build", {}, headers) }
     example { expect(last_response).to be_ok }
@@ -383,6 +389,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "slug"            => "svenfuchs/minimal",
         "description"     => nil,
         "github_id"       => repo.github_id,
+        "vcs_id"          => repo.vcs_id,
+        "vcs_type"        => "GithubRepository",
         "github_language" => nil,
         "active"          => true,
         "private"         => true,
@@ -423,6 +431,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "slug"            => "svenfuchs/maximal",
         "description"     => nil,
         "github_id"       => repo2.github_id,
+        "vcs_id"          => repo2.vcs_id,
+        "vcs_type"        => "GithubRepository",
         "github_language" => nil,
         "active"          => true,
         "private"         => false,

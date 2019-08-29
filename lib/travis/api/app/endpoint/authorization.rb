@@ -5,6 +5,7 @@ require 'securerandom'
 require 'travis/api/app'
 require 'travis/github/education'
 require 'travis/github/oauth'
+require 'travis/remote_vcs/user'
 
 class Travis::Api::App
   class Endpoint
@@ -86,7 +87,7 @@ class Travis::Api::App
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
 
-        { 'access_token' => github_to_travis(params[:github_token], app_id: 1, drop_token: true) }
+        renew_access_token(token: params[:github_token], app_id: 1, provider: :github)
       end
 
       # Endpoint for making sure user authorized Travis CI to access GitHub.
@@ -97,8 +98,8 @@ class Travis::Api::App
       #
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake' do
+        params[:provider] ||= 'github'
         handshake do |user, token, redirect_uri|
-
           if target_ok? redirect_uri
             content_type :html
             data = { user: user, token: token, uri: redirect_uri }
@@ -121,251 +122,106 @@ class Travis::Api::App
 
       private
 
-        # update first login date if not set
-        def update_first_login(user)
-          unless user.first_logged_in_at
-            user.update_attributes(first_logged_in_at: Time.now)
+      def remote_vcs_user
+        @remote_vcs_user ||= Travis::RemoteVCS::User.new
+      end
+
+      def serialize_user(user)
+        rendered = Travis::Api::Serialize.data(user, version: :v2)
+        rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
+      end
+
+      def handshake
+        if params[:code]
+          unless state_ok?(params[:state])
+            halt 400, 'state mismatch'
           end
-        end
 
-        def serialize_user(user)
-          rendered = Travis::Api::Serialize.data(user, version: :v2)
-          rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
-        end
-
-        def oauth_endpoint
-          proxy = Travis.config.oauth2.proxy
-          proxy ? File.join(proxy, request.fullpath) : url
-        end
-
-        def log_with_request_id(line)
-          request_id = request.env["HTTP_X_REQUEST_ID"]
-          Travis.logger.info "#{line} <request_id=#{request_id}>"
-        end
-
-        def handshake
-          config   = Travis.config.oauth2.to_h
-          endpoint = Addressable::URI.parse(config[:authorization_server])
-          values   = {
-            client_id:    config[:client_id],
-            scope:        config[:scope],
+          vcs_data = remote_vcs_user.authenticate(
+            provider: params[:provider],
+            code: params[:code],
             redirect_uri: oauth_endpoint
-          }
+          )
 
-          log_with_request_id("[handshake] Starting handshake")
-
-          if params[:code]
-            unless state_ok?(params[:state])
-              log_with_request_id("[handshake] Handshake failed (state mismatch)")
-              halt 400, 'state mismatch'
-            end
-            endpoint.path          = config[:access_token_path]
-            values[:state]         = params[:state]
-            values[:code]          = params[:code]
-            values[:client_secret] = config[:client_secret]
-            github_token           = get_token(endpoint.to_s, values)
-            user                   = user_for_github_token(github_token)
-            token                  = generate_token(user: user, app_id: 0)
-            payload                = params[:state].split(":::", 2)[1]
-            update_first_login(user)
-            yield serialize_user(user), token, payload
-          else
-            values[:state]         = create_state
-            endpoint.path          = config[:authorize_path]
-            endpoint.query_values  = values
-            redirect to(endpoint.to_s)
-          end
-        end
-
-        def create_state
-          state = SecureRandom.urlsafe_base64(16)
-          redis.sadd('github:states', state)
-          redis.expire('github:states', 1800)
-          payload = params[:origin] || params[:redirect_uri]
-          state << ":::" << payload if payload
-          response.set_cookie('travis.state', state)
-          state
-        end
-
-        def state_ok?(state)
-          cookie_state = request.cookies['travis.state']
-          state == cookie_state and redis.srem('github:states', state.to_s.split(":::", 1))
-        end
-
-        def github_to_travis(token, options = {})
-          drop_token = options.delete(:drop_token)
-          generate_token options.merge(user: user_for_github_token(token, drop_token))
-        end
-
-        class UserManager < Struct.new(:data, :token, :drop_token)
-          include User::Renaming
-
-          attr_accessor :user
-
-          def initialize(*)
-            super
-
-            @user = ::User.find_by_github_id(data['id'])
+          if vcs_data['redirect_uri'].present?
+            redirect to(vcs_data['redirect_uri'])
+            return
           end
 
-          def info(attributes = {})
-            info = data.to_hash.slice('name', 'login', 'gravatar_id')
-            info.merge! attributes.stringify_keys
-            if Travis::Features.feature_active?(:education_data_sync) ||
-              (user && Travis::Features.owner_active?(:education_data_sync, user))
-              info['education'] = education
-            end
-            info['github_id'] ||= data['id']
-            info
-          end
+          yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload
+        else
+          state = create_state(params[:origin] || params[:redirect_uri])
 
-          def user_exists?
-            user
-          end
+          vcs_data = remote_vcs_user.auth_request(
+            provider: params[:provider],
+            state: state,
+            redirect_uri: oauth_endpoint
+          )
 
-          def education
-            Travis::Github::Education.new(token.to_s).student?
-          end
-
-          def fetch
-            retried ||= false
-            info   = drop_token ? self.info : self.info(github_oauth_token: token)
-
-            ActiveRecord::Base.transaction do
-              if user
-                ensure_token_is_available
-                rename_repos_owner(user.login, info['login'])
-                user.update_attributes info
-              else
-                self.user = ::User.create! info
-              end
-
-              Travis::Github::Oauth.update_scopes(user) # unless Travis.env == 'test'
-
-              nullify_logins(user.github_id, user.login)
-            end
-
-            user
-          rescue ActiveRecord::RecordNotUnique
-            unless retried
-              retried = true
-              retry
-            end
-          end
-
-          def ensure_token_is_available
-            unless user.tokens.first
-              user.create_a_token
-            end
-          end
+          response.set_cookie('travis.state', value: state, httponly: true)
+          redirect to(vcs_data['authorize_url'])
         end
+      end
 
-        def user_for_github_token(token, drop_token = false)
-          data    = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
-          scopes  = parse_scopes data.headers['x-oauth-scopes']
-          manager = UserManager.new(data, token, drop_token)
+      def state_ok?(state)
+        response.set_cookie('travis.state', '')
+        state == request.cookies['travis.state']
+      end
 
-          unless acceptable?(scopes, drop_token)
-            # TODO: we should probably only redirect if this is a web
-            #      oauth request, are there any other possibilities to
-            #      consider?
-            url =  Travis.config.oauth2.insufficient_access_redirect_url
-            url += "#existing-user" if manager.user_exists?
-            redirect to(url)
-          end
+      def create_state(payload)
+        state = SecureRandom.urlsafe_base64(16)
+        state << ":::" << payload if payload
+        state
+      end
 
-          user   = manager.fetch
-          if user.nil?
-            log_with_request_id("[handshake] Fetching user failed")
-            halt 403, 'not a Travis user'
-          end
+      def payload
+        request.cookies['travis.state'].split(':::').last
+      end
 
-          Travis.run_service(:sync_user, user)
+      def renew_access_token(token:, app_id:, provider:)
+        vcs_data = remote_vcs_user.generate_token(
+          provider: provider,
+          token: token,
+          app_id: app_id
+        )
 
-          user
-        rescue GH::Error
-          # not a valid token actually, but we don't want to expose that info
-          halt 403, 'not a Travis user'
+        if vcs_data['redirect_uri']
+          redirect to(vcs_data['redirect_uri'])
+        else
+          { access_token: vcs_data['token'] }
         end
+      end
 
-        def get_token(endpoint, values)
-          # Get base URL for when we setup Faraday since otherwise it'll ignore no_proxy
-          url = URI.parse(endpoint)
-          base_url = "#{url.scheme}://#{url.host}"
-          http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact}
+      def oauth_endpoint
+        proxy = Travis.config.oauth2.proxy
+        proxy ? File.join(proxy, request.fullpath) : url
+      end
 
-          conn = Faraday.new(http_options) do |conn|
-            conn.request :json
-            conn.use :instrumentation
-            conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
-            conn.adapter :net_http_persistent
-          end
-          response = conn.post(endpoint, values)
+      def post_message(payload)
+        content_type :html
+        erb(:post_message, locals: payload)
+      end
 
-          parameters = Addressable::URI.form_unencode(response.body)
-          token_info = parameters.assoc("access_token")
+      def invalid_target(target_origin)
+        content_type :html
+        erb(:invalid_target, {}, target_origin: target_origin)
+      end
 
-          unless token_info
-            log_with_request_id("[handshake] Could not fetch token, github's response: status=#{response.status}, body=#{parameters.inspect} headers=#{response.headers.inspect}")
-            halt 401, 'could not resolve github token'
-          end
-          token_info.last
+      def target_ok?(target_origin)
+        return unless uri = Addressable::URI.parse(target_origin)
+
+        if allowed_https_targets.include?(uri.host)
+          uri.scheme == 'https'
+        elsif uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
+          uri.scheme == 'https'
+        elsif uri.host == 'localhost' or uri.host == '127.0.0.1'
+          uri.port > 1023
         end
+      end
 
-        def parse_scopes(data)
-          data.gsub(/\s/,'').split(',') if data
-        end
-
-        def generate_token(options)
-          AccessToken.create(options).token
-        end
-
-        def acceptable?(scopes, lossy = false)
-          Travis::Github::Oauth.wanted_scopes.all? do |scope|
-            acceptable_scopes_for(scope, lossy).any? { |s| scopes.include? s }
-          end
-        end
-
-        def acceptable_scopes_for(scope, lossy = false)
-          scopes = case scope = scope.to_s
-                   when /^(.+):/      then [$1, scope]
-                   when 'public_repo' then [scope, 'repo']
-                   else [scope]
-                   end
-
-          if lossy
-            scopes << 'repo'
-            scopes << 'public_repo' if lossy and scope != 'repo'
-          end
-
-          scopes
-        end
-
-        def post_message(payload)
-          content_type :html
-          erb(:post_message, locals: payload)
-        end
-
-        def invalid_target(target_origin)
-          content_type :html
-          erb(:invalid_target, {}, target_origin: target_origin)
-        end
-
-        def target_ok?(target_origin)
-          return unless uri = Addressable::URI.parse(target_origin)
-          if allowed_https_targets.include?(uri.host)
-            uri.scheme == 'https'
-          elsif uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
-            uri.scheme == 'https'
-          elsif uri.host == 'localhost' or uri.host == '127.0.0.1'
-            uri.port > 1023
-          end
-        end
-
-        def allowed_https_targets
-          @allowed_https_targets ||= Travis.config.auth.target_origin.to_s.split(',')
-        end
-
+      def allowed_https_targets
+        @allowed_https_targets ||= Travis.config.auth.target_origin.to_s.split(',')
+      end
     end
   end
 end
