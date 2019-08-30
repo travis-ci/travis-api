@@ -18,12 +18,12 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
         stub_billing_request(:post, "/trials/user/" + user.id.to_s, auth_key: billing_auth_key, user_id: user.id)
           .to_return(status: 202, body: JSON.dump(id: user.id, login: user.login))
         stub_billing_request(:post, "/trials/organization/" + organization.id.to_s, auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 202, body: JSON.dump(id: organization.id, login: organization.login))
+          .to_return(status: 202, body: JSON.dump(id: organization.id, login: organization.login))
         stub_billing_request(:get, '/trials', auth_key: billing_auth_key, user_id: user.id)
           .to_return(status: 200, body: JSON.dump([
             billing_trial_response_body('id' => 123, 'created_at' => created_at, 'builds_remaining' => 6, 'owner' => { 'type' => 'User', 'id' => user.id }),
             billing_trial_response_body('id' => 456, 'created_at' => created_at, 'builds_remaining' => 6, 'owner' => { 'type' => 'Organization', 'id' => organization.id })
-            ]))
+          ]))
       end
   
       it 'subscribe user to trial' do
