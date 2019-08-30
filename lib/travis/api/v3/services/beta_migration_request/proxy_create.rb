@@ -12,7 +12,7 @@ module Travis::API::V3
     end
 
     def validate_organizations(current_user)
-      Models::Organization.where(id: params['organizations'], memberships: {user_id: current_user.id, role: "admin"}).joins(:memberships)
+      Models::Organization.where(login: params['organizations'], memberships: {user_id: current_user.id, role: "admin"}).joins(:memberships)
     end
   end
 end
