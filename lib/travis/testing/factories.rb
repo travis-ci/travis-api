@@ -107,6 +107,7 @@ FactoryGirl.define do
 
   factory :org_v3, class: Travis::API::V3::Models::Organization do
     name 'travis-ci'
+    login 'travis-ci'
   end
 
   factory :running_build, :parent => :build do
