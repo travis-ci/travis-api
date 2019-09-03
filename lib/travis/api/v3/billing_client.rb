@@ -81,7 +81,7 @@ module Travis::API::V3
       when 200, 201
         Travis::API::V3::Models::Subscription.new(response.body)
       when 202
-        response.body['login']
+        response.body.is_a?(::Hash) && response.body['login']
       when 204
         true
       when 404
