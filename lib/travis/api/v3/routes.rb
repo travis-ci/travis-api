@@ -300,6 +300,7 @@ module Travis::API::V3
     hidden_resource :trials do
       route '/trials'
       get :all
+      post :create
     end
 
     hidden_resource :plans do
