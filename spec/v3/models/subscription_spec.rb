@@ -17,7 +17,7 @@ describe Travis::API::V3::Models::Subscription do
       'source' => 'stripe',
       'owner' => { 'id' => user.id, 'type' => 'User'},
       'client_secret' => 'secret',
-      'payment_intent' => { 'status' => 'requires_action', 'client_secret' => 'abc' }
+      'payment_intent' => { 'status' => 'requires_action', 'client_secret' => 'abc', 'last_payment_error' => {} }
     }
   end
 
@@ -28,7 +28,7 @@ describe Travis::API::V3::Models::Subscription do
       expect(subject.id).to eq(attributes['id'])
       expect(subject.permissions).to be_a(Travis::API::V3::Models::BillingPermissions)
       expect(subject.owner).to be_a(Travis::API::V3::Models::User)
-      expect(subject.payment_intent).to eq(attributes['payment_intent'])
+      expect(subject.payment_intent).to be_a(Travis::API::V3::Models::PaymentIntent)
     end
   end
 end
