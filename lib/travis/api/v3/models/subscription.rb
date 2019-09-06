@@ -2,7 +2,7 @@ module Travis::API::V3
   class Models::Subscription
     include Models::Owner
 
-    attr_reader :id, :permissions, :valid_to, :plan, :coupon, :status, :source, :billing_info, :credit_card_info, :owner, :client_secret
+    attr_reader :id, :permissions, :valid_to, :plan, :coupon, :status, :source, :billing_info, :credit_card_info, :owner, :client_secret, :payment_intent
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
@@ -15,6 +15,7 @@ module Travis::API::V3
       @source = attributes.fetch('source')
       @billing_info = attributes['billing_info'] && Models::BillingInfo.new(@id, attributes['billing_info'])
       @credit_card_info = attributes['credit_card_info'] && Models::CreditCardInfo.new(@id, attributes['credit_card_info'])
+      @payment_intent = attributes['payment_intent']
       @owner = fetch_owner(attributes.fetch('owner'))
       @client_secret = attributes.fetch('client_secret')
     end
