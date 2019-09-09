@@ -58,8 +58,8 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
-    def cancel_subscription(id)
-      response = connection.post("/subscriptions/#{id}/cancel")
+    def cancel_subscription(id, reason_data)
+      response = connection.post("/subscriptions/#{id}/cancel", reason_data)
       handle_errors_and_respond(response)
     end
 
