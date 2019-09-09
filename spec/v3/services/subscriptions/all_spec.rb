@@ -86,7 +86,8 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,
             'login' => 'travis'
-          }
+          },
+          'payment_intent' => nil
         }]
       }
     end
