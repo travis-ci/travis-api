@@ -121,7 +121,8 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   end
 
   describe '#cancel_subscription' do
-    subject { billing.cancel_subscription(subscription_id) }
+    let(:reason_data) { { 'reason' => 'Other', 'reason_details' => 'Cancellation details go here' } }
+    subject { billing.cancel_subscription(subscription_id, reason_data) }
 
     it 'requests the cancelation of a subscription' do
       stubbed_request = stub_billing_request(:post, "/subscriptions/#{subscription_id}/cancel", auth_key: auth_key, user_id: user_id)

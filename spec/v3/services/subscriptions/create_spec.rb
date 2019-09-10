@@ -146,7 +146,8 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,
             'login' => 'travis'
-          }
+          },
+          'payment_intent' => nil
         })
         expect(stubbed_request).to have_been_made.once
       end
