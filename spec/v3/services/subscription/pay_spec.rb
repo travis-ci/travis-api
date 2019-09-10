@@ -10,7 +10,7 @@ describe Travis::API::V3::Services::Subscription::Pay, set_app: true, billing_sp
 
   context 'unauthenticated' do
     it 'responds 403' do
-      post('/v3/subscription/123/cancel', { })
+      post('/v3/subscription/123/pay', nil)
 
       expect(last_response.status).to eq(403)
     end
