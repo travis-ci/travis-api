@@ -74,6 +74,11 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
+    def pay(id)
+      response = connection.post("/subscriptions/#{id}/pay")
+      handle_errors_and_respond(response)
+    end
+
     private
 
     def handle_errors_and_respond(response)
