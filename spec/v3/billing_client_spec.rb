@@ -160,10 +160,10 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
 
   describe '#plans' do
-    subject { billing.plans(organization.id, subscription_id) }
+    subject { billing.plans_for(organization.id) }
 
     it 'returns the list of plans' do
-      stub_request(:get, "#{billing_url}plans?organization_id=#{organization.id}&subscription_id=#{subscription_id}").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
+      stub_request(:get, "#{billing_url}plans_for/#{organization.id}").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
         .to_return(body: JSON.dump([billing_plan_response_body('id' => 'plan-id')]))
 
       expect(subject.size).to eq 1
