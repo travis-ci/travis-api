@@ -2,6 +2,7 @@ describe Travis::API::V3::Services::Plans::All, set_app: true, billing_spec_help
   let(:parsed_body) { JSON.load(last_response.body) }
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
+  let(:organization_id) { rand(999) }
 
   before do
     Travis.config.billing.url = billing_url
@@ -10,7 +11,7 @@ describe Travis::API::V3::Services::Plans::All, set_app: true, billing_spec_help
 
   context 'unauthenticated' do
     it 'responds 403' do
-      get('/v3/plans')
+      get("/v3/plans_for/#{organization_id}")
 
       expect(last_response.status).to eq(403)
     end
@@ -18,12 +19,11 @@ describe Travis::API::V3::Services::Plans::All, set_app: true, billing_spec_help
 
   context 'authenticated' do
     let(:user) { Factory(:user) }
-    let(:organization) { Factory(:org, login: 'travis') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 
     before do
-      stub_request(:get, "#{billing_url}/plans?organization_id=#{organization.id}&subscription_id=").with(basic_auth: ['_', billing_auth_key], headers: { 'X-Travis-User-Id' => user.id })
+      stub_request(:get, "#{billing_url}/plans_for/#{organization_id}").with(basic_auth: ['_', billing_auth_key], headers: { 'X-Travis-User-Id' => user.id })
         .to_return(status: 200, body: JSON.dump([
           billing_plan_response_body(
             'id' => 'travis-ci-one-build',
@@ -45,13 +45,13 @@ describe Travis::API::V3::Services::Plans::All, set_app: true, billing_spec_help
     end
 
     it 'responds with list of plans' do
-      get('/v3/plans?organization_id=&subscription_id=', {}, headers)
+      get("/v3/plans_for/#{organization_id}", {}, headers)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body).to eql_json({
         '@type' => 'plans',
         '@representation' => 'standard',
-        '@href' => '/v3/plans',
+        '@href' => "/v3/plans_for/#{organization_id}",
         'plans' => [
           {
             '@type' => 'plan',

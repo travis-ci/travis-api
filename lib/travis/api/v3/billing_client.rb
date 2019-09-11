@@ -58,8 +58,8 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
-    def plans(organization_id, subscription_id)
-      connection.get("/plans?organization_id=#{organization_id}&subscription_id=#{subscription_id}").body.map do |plan_data|
+    def plans_for(owner_id)
+      connection.get("/plans_for/#{owner_id}").body.map do |plan_data|
         Travis::API::V3::Models::Plan.new(plan_data)
       end
     end

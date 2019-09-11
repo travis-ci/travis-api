@@ -303,7 +303,7 @@ module Travis::API::V3
     end
 
     hidden_resource :plans do
-      route '/plans'
+      route '/plans_for/{owner.id}'
       get :all
     end
 
