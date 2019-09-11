@@ -23,7 +23,7 @@ describe Travis::API::V3::Services::Plans::All, set_app: true, billing_spec_help
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 
     before do
-      stub_billing_request(:get, '/plans', auth_key: billing_auth_key, user_id: user.id)
+      stub_request(:get, "#{billing_url}/plans?organization_id=#{organization.id}&subscription_id=").with(basic_auth: ['_', billing_auth_key], headers: { 'X-Travis-User-Id' => user.id })
         .to_return(status: 200, body: JSON.dump([
           billing_plan_response_body(
             'id' => 'travis-ci-one-build',
@@ -45,7 +45,7 @@ describe Travis::API::V3::Services::Plans::All, set_app: true, billing_spec_help
     end
 
     it 'responds with list of plans' do
-      get('/v3/plans', {}, headers)
+      get('/v3/plans?organization_id=&subscription_id=', {}, headers)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body).to eql_json({
