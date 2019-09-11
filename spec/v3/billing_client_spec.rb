@@ -160,15 +160,29 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   end
 
 
-  describe '#plans' do
-    subject { billing.plans_for(organization.id) }
+  describe '#plans_for' do
+    describe '#organization' do
+      subject { billing.plans_for_organization(organization.id) }
 
-    it 'returns the list of plans' do
-      stub_request(:get, "#{billing_url}plans_for/#{organization.id}").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
-        .to_return(body: JSON.dump([billing_plan_response_body('id' => 'plan-id')]))
+      it 'returns the list of plans for an organization' do
+        stub_request(:get, "#{billing_url}plans_for/organization/#{organization.id}").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
+          .to_return(body: JSON.dump([billing_plan_response_body('id' => 'plan-id')]))
 
-      expect(subject.size).to eq 1
-      expect(subject.first.id).to eq('plan-id')
+        expect(subject.size).to eq 1
+        expect(subject.first.id).to eq('plan-id')
+      end
+    end
+
+    describe '#user' do
+      subject { billing.plans_for_user }
+
+      it 'returns the list of plans for an user' do
+        stub_request(:get, "#{billing_url}plans_for/user").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
+          .to_return(body: JSON.dump([billing_plan_response_body('id' => 'plan-id')]))
+
+        expect(subject.size).to eq 1
+        expect(subject.first.id).to eq('plan-id')
+      end
     end
   end
 end
