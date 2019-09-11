@@ -24,7 +24,8 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
           'owner_name'      => beta_migration_request.owner_name,
           'owner_type'      => beta_migration_request.owner_type,
           'accepted_at'     => beta_migration_request.accepted_at,
-          'organizations'   => [org1.id, org2.id]
+          'organizations'   => [org1.id, org2.id],
+          'organizations_logins'  => [org1.login, org2.login]
         }
       ]
     }
@@ -85,9 +86,17 @@ describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true d
       stub_request(:get, "#{Travis.config.api_com_url}/v3/beta_migration_requests?user_login=svenfuchs").to_return(status: 200, body: response_hash.to_json)
       get("/v3/user/#{user.id}/beta_migration_requests", {}, auth_headers)
     end
+
+    let(:parsed_body) { JSON.load(body) }
+    let(:beta_request) { parsed_body['beta_migration_requests'].first }
+
     example { expect(last_response.status).to eq(200) }
     example do
-      expect(JSON.load(body)).to eq(response_hash)
+      expect(beta_request['owner_id']).to eq(beta_migration_request.owner_id)
+      expect(beta_request['owner_type']).to eq(beta_migration_request.owner_type)
+      expect(beta_request['owner_name']).to eq(beta_migration_request.owner_name)
+      expect(beta_request['organizations']).to match_array([org1.id, org2.id])
+      expect(beta_request['organizations_logins']).to match_array([org1.login, org2.login])
     end
   end
 end

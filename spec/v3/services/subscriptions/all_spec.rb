@@ -34,7 +34,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
       }
     end
 
-    let(:subscriptions_data) { [billing_subscription_response_body('id' => 1234, 'plan' => plan,'permissions' => { 'read' => true, 'write' => false }, 'owner' => { 'type' => 'Organization', 'id' => organization.id })] }
+    let(:subscriptions_data) { [billing_subscription_response_body('id' => 1234, 'client_secret' => 'client_secret', 'plan' => plan,'permissions' => { 'read' => true, 'write' => false }, 'owner' => { 'type' => 'Organization', 'id' => organization.id })] }
     let(:permissions_data) { [{'owner' => {'type' => 'Organization', 'id' => 1}, 'create' => true}] }
 
     let(:v2_response_body) { JSON.dump(subscriptions: subscriptions_data, permissions: permissions_data) }
@@ -55,6 +55,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           'coupon' => '',
           'status' => 'canceled',
           'source' => 'stripe',
+          'client_secret' => 'client_secret',
           'billing_info' => {
             '@type' => 'billing_info',
             '@representation' => 'standard',
@@ -85,7 +86,8 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,
             'login' => 'travis'
-          }
+          },
+          'payment_intent' => nil
         }]
       }
     end

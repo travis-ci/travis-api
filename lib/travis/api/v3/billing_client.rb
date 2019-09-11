@@ -33,6 +33,11 @@ module Travis::API::V3
       end
     end
 
+    def create_trial(type, id)
+      response = connection.post("/trials/#{type}/#{id}")
+      handle_errors_and_respond(response)
+    end
+
     def update_address(subscription_id, address_data)
       response = connection.patch("/subscriptions/#{subscription_id}/address", address_data)
       handle_errors_and_respond(response)
@@ -53,8 +58,8 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
-    def cancel_subscription(id)
-      response = connection.post("/subscriptions/#{id}/cancel")
+    def cancel_subscription(id, reason_data)
+      response = connection.post("/subscriptions/#{id}/cancel", reason_data)
       handle_errors_and_respond(response)
     end
 
@@ -75,6 +80,8 @@ module Travis::API::V3
       case response.status
       when 200, 201
         Travis::API::V3::Models::Subscription.new(response.body)
+      when 202
+        response.body.is_a?(::Hash) && response.body['login']
       when 204
         true
       when 404
