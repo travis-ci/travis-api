@@ -147,6 +147,18 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#pay' do
+    subject { billing.pay(subscription_id) }
+
+    it 'requests to retry payment' do
+      stubbed_request = stub_billing_request(:post, "/subscriptions/#{subscription_id}/pay", auth_key: auth_key, user_id: user_id)
+        .to_return(status: 200, body: JSON.dump(billing_subscription_response_body('id' => subscription_id, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
   describe '#trials' do
     subject { billing.trials }
     let(:trial_id) { rand(999) }
@@ -160,15 +172,29 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   end
 
 
-  describe '#plans' do
-    subject { billing.plans }
+  describe '#plans_for' do
+    describe '#organization' do
+      subject { billing.plans_for_organization(organization.id) }
 
-    it 'returns the list of plans' do
-      stub_billing_request(:get, '/plans', auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump([billing_plan_response_body('id' => 'plan-id')]))
+      it 'returns the list of plans for an organization' do
+        stub_request(:get, "#{billing_url}plans_for/organization/#{organization.id}").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
+          .to_return(body: JSON.dump([billing_plan_response_body('id' => 'plan-id')]))
 
-      expect(subject.size).to eq 1
-      expect(subject.first.id).to eq('plan-id')
+        expect(subject.size).to eq 1
+        expect(subject.first.id).to eq('plan-id')
+      end
+    end
+
+    describe '#user' do
+      subject { billing.plans_for_user }
+
+      it 'returns the list of plans for an user' do
+        stub_request(:get, "#{billing_url}plans_for/user").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
+          .to_return(body: JSON.dump([billing_plan_response_body('id' => 'plan-id')]))
+
+        expect(subject.size).to eq 1
+        expect(subject.first.id).to eq('plan-id')
+      end
     end
   end
 end
