@@ -31,11 +31,8 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
       end
   
       it 'subscribe user to trial' do
-        get("/v3/trials", {owner: user.id, type: 'user'}, headers)
+        get("/v3/trials/user/" + user.id.to_s, {}, headers)
         expect(last_response.status).to eq(200)
-        print "\n=========\n"
-        print parsed_body
-        print "\n=========\n"
         expect(parsed_body).to eql_json({
           '@type' => 'trials',
           '@representation' => 'standard',
@@ -62,11 +59,8 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
       end
 
       it 'subscribe organization to trial' do
-        get("/v3/trials", {owner: organization.id, type: 'organization'}, headers)
+        get("/v3/trials/organization/" + organization.id.to_s, {}, headers)
         expect(last_response.status).to eq(200)
-        print "\n=========\n"
-        print parsed_body
-        print "\n=========\n"
         expect(parsed_body).to eql_json({
           '@type' => 'trials',
           '@representation' => 'standard',
