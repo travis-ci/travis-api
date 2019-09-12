@@ -305,8 +305,10 @@ module Travis::API::V3
     end
 
     hidden_resource :plans do
-      route '/plans'
-      get :all
+      route '/plans_for'
+      get :all, '/user'
+      get :all, '/organization/{organization.id}'
+
     end
 
     if ENV['GDPR_ENABLED']
