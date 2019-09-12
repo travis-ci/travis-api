@@ -35,7 +35,7 @@ module Travis::API::V3
 
     def create_trial(type, id)
       response = connection.post("/trials/#{type}/#{id}")
-      raise Travis::API::V3::ServerError, 'Billing system failed' + response.status + response.body if response.status != 200
+      raise Travis::API::V3::ServerError, 'Billing system failed' + response.status.to_s + response.body.to_s if response.status != 200
     end
 
     def update_address(subscription_id, address_data)
