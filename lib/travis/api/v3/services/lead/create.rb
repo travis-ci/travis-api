@@ -13,24 +13,25 @@ module Travis::API::V3
       raise WrongParams, 'missing message' unless params['message'] && params['message'].length > 0
 
       # Prep data for request
-      lead_data = {}
-      lead_data['status'] = 'Potential'
-      lead_data['name'] = params['name']
-      lead_data['custom.team_size'] = params['team_size']
-      lead_data['custom.utm_source'] = params['utm_source'] || 'Travis API'
+      name, email, team_size, phone, message, utm_source = params.values_at('name', 'email', 'team_size', 'phone', 'message', 'utm_source')
+      phones = []
+      phones.push({ type: "office", phone: phone }) unless phone.nil?
 
-      contact = {}
-      contact['name'] = params['name']
-      contact['emails'] = [{ type: "office", email: params['email'] }]
-      contact['phones'] = []
-      contact['phones'].push({ type: "office", phone: params['phone'] }) unless params['phone'].nil?
-
-      lead_data['contacts'] = [contact]
+      lead_data = {
+        name: name,
+        'custom.team_size': team_size,
+        'custom.utm_source': utm_source || 'Travis API',
+        contacts: [{
+          name: name,
+          emails: [{ type: "office", email: email }],
+          phones: phones
+        }]
+      }
 
       # Send request
       api_client = Closeio::Client.new(Travis.config.closeio.key)
       lead = api_client.create_lead(lead_data)
-      note = api_client.create_note({ lead_id: lead['id'], note: params['message'] })
+      note = api_client.create_note({ lead_id: lead['id'], note: message })
 
       # Return result
       model = Travis::API::V3::Models::Lead.new(lead)
