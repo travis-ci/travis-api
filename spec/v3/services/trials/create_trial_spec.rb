@@ -33,9 +33,6 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
       it 'subscribe user to trial' do
         post("/v3/trials", {owner: user.id.to_s, type: 'user'}, headers)
         expect(last_response.status).to eq(202)
-        print "\n========\n"
-        print parsed_body
-        print "\n========\n"
         expect(parsed_body).to eql_json({
           '@type' => 'trials',
           '@representation' => 'standard',
@@ -83,9 +80,6 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
       it 'subscribe organization to trial' do
         post("/v3/trials", {owner: organization.id.to_s, type: 'organization'}, headers)
         expect(last_response.status).to eq(202)
-        print "\n========\n"
-        print parsed_body
-        print "\n========\n"
         expect(parsed_body).to eql_json({
           '@type' => 'trials',
           '@representation' => 'standard',
