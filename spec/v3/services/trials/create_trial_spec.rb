@@ -15,10 +15,14 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
       let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
       let(:created_at) { '2018-04-17T18:30:32Z' }
       before do
-        stub_billing_request(:post, "/trials/user/" + user.id.to_s, auth_key: billing_auth_key, user_id: user.id)
-          .to_return(status: 202, body: JSON.dump(id: user.id, login: user.login))
-        stub_billing_request(:post, "/trials/organization/" + organization.id.to_s, auth_key: billing_auth_key, user_id: user.id)
-          .to_return(status: 202, body: JSON.dump(id: organization.id, login: organization.login))
+        stub_billing_request(:get, "/trials/user/" + user.id.to_s, auth_key: billing_auth_key, user_id: user.id)
+        .to_return(status: 200, body: JSON.dump([
+          billing_trial_response_body('id' => 123, 'created_at' => created_at, 'builds_remaining' => 6, 'owner' => { 'type' => 'User', 'id' => user.id })
+        ]))
+        stub_billing_request(:get, "/trials/organization/" + organization.id.to_s, auth_key: billing_auth_key, user_id: user.id)
+        .to_return(status: 200, body: JSON.dump([
+          billing_trial_response_body('id' => 456, 'created_at' => created_at, 'builds_remaining' => 6, 'owner' => { 'type' => 'Organization', 'id' => organization.id })
+        ]))
         stub_billing_request(:get, '/trials', auth_key: billing_auth_key, user_id: user.id)
           .to_return(status: 200, body: JSON.dump([
             billing_trial_response_body('id' => 123, 'created_at' => created_at, 'builds_remaining' => 6, 'owner' => { 'type' => 'User', 'id' => user.id }),
@@ -27,8 +31,11 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
       end
   
       it 'subscribe user to trial' do
-        post("/v3/trials", {owner: user.id, type: 'user'}, headers)
-        expect(last_response.status).to eq(202)
+        get("/v3/trials", {owner: user.id, type: 'user'}, headers)
+        expect(last_response.status).to eq(200)
+        print "\n=========\n"
+        print parsed_body
+        print "\n=========\n"
         expect(parsed_body).to eql_json({
           '@type' => 'trials',
           '@representation' => 'standard',
@@ -55,8 +62,11 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
       end
 
       it 'subscribe organization to trial' do
-        post("/v3/trials", {owner: organization.id, type: 'organization'}, headers)
-        expect(last_response.status).to eq(202)
+        get("/v3/trials", {owner: organization.id, type: 'organization'}, headers)
+        expect(last_response.status).to eq(200)
+        print "\n=========\n"
+        print parsed_body
+        print "\n=========\n"
         expect(parsed_body).to eql_json({
           '@type' => 'trials',
           '@representation' => 'standard',

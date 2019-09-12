@@ -34,8 +34,9 @@ module Travis::API::V3
     end
 
     def create_trial(type, id)
-      response = connection.post("/trials/#{type}/#{id}")
-      handle_errors_and_respond(response)
+      connection.get("/trials/#{type}/#{id}").body.map do | trial_data |
+        Travis::API::V3::Models::Trial.new(trial_data)
+      end
     end
 
     def update_address(subscription_id, address_data)
