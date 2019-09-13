@@ -42,6 +42,7 @@ module Travis
             assets:               { host: HOSTS[Travis.env.to_sym] },
             amqp:                 { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             billing:              {},
+            closeio:              { key: 'key' },
             gdpr:                 {},
             insights:             Travis.env == 'test' ? { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' } : {},
             database:             { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },

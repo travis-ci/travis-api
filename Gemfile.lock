@@ -132,6 +132,10 @@ GEM
     bunny (2.9.2)
       amq-protocol (~> 2.3.0)
     byebug (10.0.2)
+    closeio (3.5.1)
+      faraday
+      faraday_middleware
+      json
     coder (0.4.0)
     coderay (1.1.1)
     coercible (1.0.0)
@@ -417,6 +421,7 @@ DEPENDENCIES
   activerecord (~> 4.2)
   allocation_tracer
   bunny (~> 2.9.2)
+  closeio (~> 3.5)
   coder (~> 0.4.0)
   composite_primary_keys (~> 8.0)
   dalli
@@ -494,4 +499,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   1.16.6
+   1.17.3
