@@ -49,7 +49,19 @@ describe Travis::API::V3::Services::Lead::Create, set_app: true do
   let!(:stubbed_note_request) do
     stub_request(:post, close_note_url).to_return(
       status: stubbed_response_status,
-      body: JSON.dump({ "note" => options['message'] }),
+      body: JSON.dump([{ "note" => options['message'] }]),
+      headers: stubbed_response_headers
+    )
+  end
+
+  let(:close_list_custom_url) { "#{close_url}custom_fields/lead/" }
+  let!(:stubbed_list_custom_request) do
+    stub_request(:get, close_list_custom_url).to_return(
+      status: stubbed_response_status,
+      body: JSON.dump({ "data" => [
+        { "name" => "team_size", "id" => "23456" },
+        { "name" => "utm_source", "id" => "34567" },
+      ]}),
       headers: stubbed_response_headers
     )
   end
@@ -144,6 +156,54 @@ describe Travis::API::V3::Services::Lead::Create, set_app: true do
       "@type"         => "error",
       "error_type"    => "wrong_params",
       "error_message" => "invalid email",
+    }}
+
+    it 'rejects the request' do
+      expect(response.status).to eq(400)
+      response_data = JSON.parse(response.body)
+      expect(response_data).to eq(expected_lead_data)
+      expect(stubbed_request).to_not have_been_made
+      expect(stubbed_note_request).to_not have_been_made
+    end
+  end
+
+  context 'when team_size is string' do
+    let(:options) {{
+      "name" => full_options['name'],
+      "email" => full_options['email'],
+      "team_size" => 'invalid team size',
+      "phone" => full_options['phone'],
+      "message" => full_options['message'],
+      "utm_source" => full_options['utm_source']
+    }}
+    let(:expected_lead_data) {{
+      "@type"         => "error",
+      "error_type"    => "wrong_params",
+      "error_message" => "invalid team size",
+    }}
+
+    it 'rejects the request' do
+      expect(response.status).to eq(400)
+      response_data = JSON.parse(response.body)
+      expect(response_data).to eq(expected_lead_data)
+      expect(stubbed_request).to_not have_been_made
+      expect(stubbed_note_request).to_not have_been_made
+    end
+  end
+
+  context 'when team_size is invalid' do
+    let(:options) {{
+      "name" => full_options['name'],
+      "email" => full_options['email'],
+      "team_size" => -5,
+      "phone" => full_options['phone'],
+      "message" => full_options['message'],
+      "utm_source" => full_options['utm_source']
+    }}
+    let(:expected_lead_data) {{
+      "@type"         => "error",
+      "error_type"    => "wrong_params",
+      "error_message" => "invalid team size",
     }}
 
     it 'rejects the request' do
