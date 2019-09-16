@@ -216,6 +216,7 @@ class Travis::Api::App
               info['education'] = education
             end
             info['github_id'] ||= data['id']
+            info['vcs_id'] ||= data['id']
             info
           end
 
