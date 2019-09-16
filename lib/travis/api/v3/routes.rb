@@ -324,5 +324,10 @@ module Travis::API::V3
       get :metrics, '/metrics'
       get :active_repos, '/repos/active'
     end
+
+    hidden_resource :lead do
+      route '/lead'
+      post :create
+    end
   end
 end
