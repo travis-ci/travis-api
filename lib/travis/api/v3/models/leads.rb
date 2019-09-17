@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Models::Lead
+  class Models::Leads
     attr_reader :id, :name, :status_label, :contacts, :custom
 
     def initialize(attributes = {})

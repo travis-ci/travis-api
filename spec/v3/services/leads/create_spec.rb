@@ -1,8 +1,8 @@
-describe Travis::API::V3::Services::Lead::Create, set_app: true do
+describe Travis::API::V3::Services::Leads::Create, set_app: true do
   let(:user) { Factory(:user) }
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
-  let(:endpoint) { "/v3/lead" }
+  let(:endpoint) { "/v3/leads" }
   let(:parsed_body) { JSON.load(body) }
   let(:full_options) {{
     "name" => "Test Name",
@@ -14,7 +14,7 @@ describe Travis::API::V3::Services::Lead::Create, set_app: true do
   }}
   let(:options) { full_options }
   let(:expected_lead_data) {{
-    "@type"           => "lead",
+    "@type"           => "leads",
     "@representation" => "standard",
     "id"              => "lead_12345",
     "name"            => options['name'],
