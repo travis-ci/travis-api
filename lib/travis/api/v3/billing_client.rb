@@ -63,14 +63,25 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
-    def plans
-      connection.get('/plans').body.map do |plan_data|
+    def plans_for_organization(organization_id)
+      connection.get("/plans_for/organization/#{organization_id}").body.map do |plan_data|
+        Travis::API::V3::Models::Plan.new(plan_data)
+      end
+    end
+
+    def plans_for_user
+      connection.get("/plans_for/user").body.map do |plan_data|
         Travis::API::V3::Models::Plan.new(plan_data)
       end
     end
 
     def resubscribe(id)
       response = connection.patch("/subscriptions/#{id}/resubscribe")
+      handle_errors_and_respond(response)
+    end
+
+    def pay(id)
+      response = connection.post("/subscriptions/#{id}/pay")
       handle_errors_and_respond(response)
     end
 
@@ -81,7 +92,7 @@ module Travis::API::V3
       when 200, 201
         Travis::API::V3::Models::Subscription.new(response.body)
       when 202
-        response.body.is_a?(::Hash) && response.body['login']
+        true
       when 204
         true
       when 404
