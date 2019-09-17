@@ -294,17 +294,21 @@ module Travis::API::V3
       patch :update_plan, '/plan'
       patch :resubscribe, '/resubscribe'
       post :cancel, '/cancel'
+      post :pay, '/pay'
       get :invoices, '/invoices'
     end
 
     hidden_resource :trials do
       route '/trials'
       get :all
+      post :create
     end
 
     hidden_resource :plans do
-      route '/plans'
-      get :all
+      route '/plans_for'
+      get :all, '/user'
+      get :all, '/organization/{organization.id}'
+
     end
 
     if ENV['GDPR_ENABLED']
@@ -319,6 +323,11 @@ module Travis::API::V3
       route '/insights'
       get :metrics, '/metrics'
       get :active_repos, '/repos/active'
+    end
+
+    hidden_resource :lead do
+      route '/lead'
+      post :create
     end
   end
 end
