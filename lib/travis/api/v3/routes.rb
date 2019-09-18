@@ -325,8 +325,8 @@ module Travis::API::V3
       get :active_repos, '/repos/active'
     end
 
-    hidden_resource :lead do
-      route '/lead'
+    hidden_resource :leads do
+      route '/leads'
       post :create
     end
   end

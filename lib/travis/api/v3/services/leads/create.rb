@@ -2,8 +2,8 @@ require 'uri'
 require 'closeio'
 
 module Travis::API::V3
-  class Services::Lead::Create < Service
-    result_type :lead
+  class Services::Leads::Create < Service
+    result_type :leads
     params :name, :email, :team_size, :phone, :message, :utm_source
 
     def run!
@@ -45,7 +45,7 @@ module Travis::API::V3
       note = api_client.create_note({ lead_id: lead['id'], note: message })
 
       # Return result
-      model = Travis::API::V3::Models::Lead.new(lead)
+      model = Travis::API::V3::Models::Leads.new(lead)
       result model
     end
   end
