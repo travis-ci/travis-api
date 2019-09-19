@@ -24,3 +24,10 @@ services:
 
 before_install:
   - 'gem update --system'
+
+jobs:
+  include:
+    - stage: ":ship: it to Quay.io"
+      install: echo skip
+      before_script: echo skip
+      script: make ship
