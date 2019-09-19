@@ -17,14 +17,14 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
     it 'gets data from github payload' do
       manager.info.should == {
-        name: 'Piotr Sarnacki', login: 'drogus', gravatar_id: '123', github_id: 456, education: false
+        name: 'Piotr Sarnacki', login: 'drogus', gravatar_id: '123', github_id: 456, education: false, vcs_id: 456
       }.stringify_keys
     end
 
     it 'allows to overwrite existing keys' do
       manager.info({login: 'piotr.sarnacki', bar: 'baz'}.stringify_keys).should == {
         name: 'Piotr Sarnacki', login: 'piotr.sarnacki', gravatar_id: '123',
-        github_id: 456, bar: 'baz', education: false
+        github_id: 456, bar: 'baz', education: false, vcs_id: 456
       }.stringify_keys
     end
   end
@@ -41,7 +41,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
       manager = described_class.new(data, 'abc123', true)
       manager.stubs(:education).returns(false)
 
-      attributes = { login: 'drogus', github_id: 456, education: false }.stringify_keys
+      attributes = { login: 'drogus', github_id: 456, education: false, vcs_id: 456 }.stringify_keys
 
       user.expects(:update_attributes).with(attributes)
 
@@ -69,15 +69,15 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
       end
 
       it 'updates user data' do
-        attributes = { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false }.stringify_keys
+        attributes = { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false, vcs_id: 456 }.stringify_keys
         User.any_instance.expects(:update_attributes).with(attributes)
         manager.fetch.should == user
       end
     end
 
     context 'without existing user' do
-      let(:user)  { User.create(login: 'drogus', github_id: 456) }
-      let(:attrs) { { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false }.stringify_keys }
+      let(:user)  { User.create(login: 'drogus', github_id: 456, vcs_id: 456) }
+      let(:attrs) { { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false, vcs_id: 456 }.stringify_keys }
 
       before do
         manager.stubs(:education).returns(false)
