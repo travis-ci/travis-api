@@ -1,5 +1,7 @@
 module Travis::API::V3
   class Models::Message < Model
+    self.inheritance_column = :none
+
     belongs_to :subject, polymorphic: true
 
     scope :ordered, -> do
