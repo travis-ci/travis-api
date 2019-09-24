@@ -1,6 +1,6 @@
 FROM ruby:2.5.1
 
-LABEL maintainer Travis CI GmbH <support+travis-app-docker-images@travis-ci.com>
+LABEL maintainer Travis CI GmbH <support+travis-api-docker-images@travis-ci.com>
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
