@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::User < Query
     setup_sidekiq(:user_sync, queue: :sync, class_name: "Travis::GithubSync::Worker")
-    params :id, :login, :email, :github_id, :is_syncing
+    params :id, :login, :email, :github_id, :vcs_id, :is_syncing
 
     def find
       return Models::User.find_by_id(id) if id
