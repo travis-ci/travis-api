@@ -7,7 +7,7 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
   before        { repo.update_attribute(:private, true)                             }
   after         { repo.update_attribute(:private, false)                            }
 
-  let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org')   }
+  let(:org) { Factory(:org_v3, login: 'example-org')   }
   before    { org.save!                                }
   before    { org.memberships.create(user: repo.owner, role: 'admin') }
   after     { org.delete                               }
@@ -52,8 +52,10 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
         "@permissions"    => { "read" => true, "sync" => true, "admin" => true },
         "id"              => org.id,
         "login"           => "example-org",
-        "name"            => nil,
+        "name"            => "travis-ci",
         "github_id"       => nil,
+        "vcs_id"          => nil,
+        "vcs_type"        => "GithubOrganization",
         "avatar_url"      => nil,
         "education"       => false,
         "allow_migration" => false,

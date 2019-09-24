@@ -5,6 +5,9 @@ describe 'v2.1 users', auth_helpers: true, api_version: :'v2.1', set_app: true d
   # TODO put /users/
   # TODO put /users/:id ?
   # TODO post /users/sync
+  before do
+    ::Travis::RemoteVCS::User.any_instance.stubs(:check_scopes).returns(true)
+  end
 
   describe 'in public, with a private repo', mode: :public, repo: :private do
     describe 'GET /users' do

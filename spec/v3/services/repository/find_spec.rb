@@ -78,6 +78,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "slug"               => "svenfuchs/minimal",
       "description"        => nil,
       "github_id"          => repo.github_id,
+      "vcs_id"             => repo.vcs_id,
+      "vcs_type"           => "GithubRepository",
       "github_language"    => nil,
       "active"             => true,
       "private"            => opts[:private],
@@ -127,7 +129,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
     before {
       Travis::API::V3::Models::Repository.create!(
         id: 12345,
-        name: 'Minimal', 
+        name: 'Minimal',
         url: "http://github.com/svenfuchs/Minimal",
         owner_name: "svenfuchs",
         owner_email: "svenfuchs@artweb-design.de",

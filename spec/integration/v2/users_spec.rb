@@ -11,6 +11,7 @@ describe 'Users', set_app: true do
     before do
       user.permissions.create!(repository: repo1)
       user.permissions.create!(repository: repo2)
+      ::Travis::RemoteVCS::User.any_instance.stubs(:check_scopes).returns(true)
     end
 
     it 'fetches a list of channels for a user' do

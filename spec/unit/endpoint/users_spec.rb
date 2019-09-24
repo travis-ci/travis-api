@@ -6,6 +6,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
     User.stubs(:find_by_github_id).returns(user)
     User.stubs(:find).returns(user)
     user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
+    ::Travis::RemoteVCS::User.any_instance.stubs(:check_scopes).returns(true)
   end
 
   it 'needs to be authenticated' do

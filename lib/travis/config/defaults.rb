@@ -83,6 +83,7 @@ module Travis
             cache_options:        {},
             merge:                { auth_token: 'merge-auth-token', api_url: 'https://merge.localhost' },
             force_authentication: false,
+            vcs:                  {},
             yml:                  { url: 'https://yml.travis-ci.org', auth_key: 'abc123' }
 
     default :_access => [:key]
