@@ -12,7 +12,7 @@ module Travis
           c.request :retry, max: 5, interval: 0.1, backoff_factor: 2
           c.use :instrumentation
           c.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
-          c.adapter :net_http_persistent
+          c.adapter :net_http
         end
       end
 
