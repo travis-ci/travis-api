@@ -6,6 +6,7 @@ require 'travis/api/app'
 require 'travis/github/education'
 require 'travis/github/oauth'
 require 'travis/remote_vcs/user'
+require 'travis/remote_vcs/connection_error'
 
 class Travis::Api::App
   class Endpoint
@@ -98,6 +99,7 @@ class Travis::Api::App
       #
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake/?:provider?' do
+        params[:provider] ||= :github
         handshake do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
@@ -160,6 +162,8 @@ class Travis::Api::App
           response.set_cookie('travis.state', value: state, httponly: true)
           redirect to(vcs_data['authorize_url'])
         end
+      rescue ::Travis::RemoteVCS::ConnectionError
+        halt 401, "Can't login"
       end
 
       def state_ok?(state)
@@ -189,6 +193,8 @@ class Travis::Api::App
         else
           { access_token: vcs_data['token'] }
         end
+      rescue ::Travis::RemoteVCS::ConnectionError
+        halt 401, "Can't renew token"
       end
 
       def oauth_endpoint

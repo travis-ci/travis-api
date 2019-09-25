@@ -11,9 +11,10 @@ module Travis
           req.params['redirect_uri'] = redirect_uri
           req.params['state'] = state
         end
+        Travis.logger.info "REMOTE VCS USER auth_request #{resp.success?}"
         return JSON.parse(resp.body)['data'] if resp.success?
 
-        halt 401, 'unauthorized'
+        raise ConnectionError
       end
 
       def authenticate(provider: :github, code:, redirect_uri:)
@@ -23,9 +24,10 @@ module Travis
           req.params['code'] = code
           req.params['redirect_uri'] = redirect_uri
         end
+        Travis.logger.info "REMOTE VCS USER authenticate #{resp.success?}"
         return JSON.parse(resp.body)['data'] if resp.success?
 
-        halt 401, 'unauthorized'
+        raise ConnectionError
       end
 
       def generate_token(provider: :github, token:, app_id: 1)
@@ -35,19 +37,24 @@ module Travis
           req.params['token'] = token
           req.params['app_id'] = app_id
         end
+        Travis.logger.info "REMOTE VCS USER generate_token #{resp.success?}"
         return JSON.parse(resp.body)['data'] if resp.success?
 
-        halt 401, 'unauthorized'
+        raise ConnectionError
       end
 
       def sync(user_id:)
         resp = connection.post { |req| req.url "users/#{user_id}/sync_data" }
-        resp.success?
+        raise raise ConnectionError unless resp.success?
+
+        true
       end
 
       def check_scopes(user_id:)
         resp = connection.post { |req| req.url "users/#{user_id}/check_scopes" }
-        resp.success?
+        raise raise ConnectionError unless resp.success?
+
+        true
       end
     end
   end
