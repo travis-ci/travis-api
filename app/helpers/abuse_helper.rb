@@ -7,6 +7,10 @@ module AbuseHelper
     end
   end
 
+  def abuse_checks_enabled?(owner)
+    !trusted?(owner) && !offender?(owner)
+  end
+
   def trusted?(owner)
     Travis::DataStores.redis.sismember('abuse:trusted', "#{owner.class.name}:#{owner.id}")
   end

@@ -89,12 +89,16 @@
     <div>
       <dl>
         <dd>
-          <%= f.check_box :trusted, checked: trusted?(owner) %>
-          <%= f.label 'Trusted account' %>
+          <%= f.radio_button :abuse, :abuse_checks_enabled, checked: abuse_checks_enabled?(owner) %>
+          <%= f.label :abuse, 'Abuse checks enabled' %>
         </dd>
         <dd>
-          <%= f.check_box :offenders, checked: offender?(owner) %>
-          <%= f.label 'Known offender' %>
+          <%= f.radio_button :abuse, :trusted, checked: trusted?(owner) %>
+          <%= f.label :abuse, 'Trusted account' %>
+        </dd>
+        <dd>
+          <%= f.radio_button :abuse, :offenders, checked: offender?(owner) %>
+          <%= f.label :abuse, 'Known offender' %>
           <%= f.text_field :reason, placeholder: 'Optional Reason' %>
         </dd>
         <dd>

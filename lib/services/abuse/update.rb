@@ -16,13 +16,13 @@ module Services
       def call
         reason = params[:reason]
 
-        if trusted?
-          mark_as_not_fishy
-          mark_as_not_offender
-        end
-
         Offender::LISTS.each_key do |key|
-          checked_key = checked?(key)
+          checked_key = if key == :not_fishy
+            not_fishy?
+          else
+            checked?(key)
+          end
+
           next if checked_key == has?(key)
 
           if reason.present?
@@ -31,7 +31,7 @@ module Services
             update_abuse_and_reason(@offender, key, checked_key)
           end
 
-          if checked?(key)
+          if checked_key
             Travis::DataStores.redis.sadd("abuse:#{key}", offender_key)
             Services::AuditTrail::AddAbuseStatus.new(@current_user, offender_key, Offender::LISTS[key]).call
           else
@@ -47,6 +47,10 @@ module Services
 
       def update_abuse_and_reason(owner, key, value, reason = DEFAULT_ABUSE_REASON)
         case key
+        when :abuse_checks_enabled
+          if value
+            ::Abuse.where(owner_id: owner.id, owner_type: owner.class.name, level: ::Abuse::LEVEL_OFFENDER).destroy_all
+          end
         when :not_fishy
           if value
             ::Abuse.where(owner_id: owner.id, owner_type: owner.class.name, level: ::Abuse::LEVEL_FISHY).destroy_all
@@ -69,19 +73,15 @@ module Services
       end
 
       def checked?(key)
-        params[key] == '1'
+        params[:abuse] == key.to_s
+      end
+
+      def not_fishy?
+        params[:not_fishy] == '1'
       end
 
       def trusted?
-        params[:trusted] == '1'
-      end
-
-      def mark_as_not_fishy
-        params[:not_fishy] = '1'
-      end
-
-      def mark_as_not_offender
-        params[:offenders] = '0'
+        abuse_param == 'trusted'
       end
 
       def has?(key)
@@ -92,6 +92,10 @@ module Services
         ::Abuse.find_or_initialize_by(level: level,
                                       owner_id: owner.id,
                                       owner_type: owner.class.name).update(reason: reason)
+      end
+
+      def abuse_param
+        params[:abuse]
       end
     end
   end
