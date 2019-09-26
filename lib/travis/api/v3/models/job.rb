@@ -18,7 +18,11 @@ module Travis::API::V3
     end
 
     def log_complete
-      log.archived?
+      if enterprise?
+        log.aggregated?
+      else
+        log.archived?
+      end
     end
 
     def state
@@ -27,6 +31,10 @@ module Travis::API::V3
 
     def public?
       !private?
+    end
+
+    private def enterprise?
+      !!Travis.config.enterprise
     end
   end
 end

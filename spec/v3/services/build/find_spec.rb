@@ -339,7 +339,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
     end
   end
 
-  describe 'including log_complete' do
+  describe 'including log_complete on hosted' do
     before do
       jobs.each do |j|
         stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{j.id}?by=job_id&source=api").
@@ -354,6 +354,33 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
           to_return(status: 200, body: "{}", headers: {})
       end
     end
+
+    before { get("/v3/build/#{build.id}?include=build.log_complete") }
+
+    example { expect(last_response).to be_ok }
+    example do
+      expect(parsed_body).to include('log_complete')
+    end
+  end
+
+  describe 'including log_complete on enterprise' do
+    before do
+      jobs.each do |j|
+        stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{j.id}?by=job_id&source=api").
+           with(  headers: {
+            'Accept'=>'*/*',
+            'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Authorization'=>'token notset',
+            'Connection'=>'keep-alive',
+            'Keep-Alive'=>'30',
+            'User-Agent'=>'Faraday v0.14.0'
+             }).
+           to_return(status: 200, body: "{}", headers: {})
+      end
+    end
+
+    before { Travis.config.enterprise = true }
+    after { Travis.config.enterprise = false }
 
     before { get("/v3/build/#{build.id}?include=build.log_complete") }
 
