@@ -37,7 +37,7 @@ module Travis
                   'locale'             => user.locale,
                   'is_syncing'         => user.syncing?,
                   'synced_at'          => format_date(user.synced_at),
-                  'correct_scopes'     => Github::Oauth.correct_scopes?(user),
+                  'correct_scopes'     => ::Travis::RemoteVCS::User.new.check_scopes(user_id: user.id),
                   'created_at'         => format_date(user.created_at),
                   'first_logged_in_at' => format_date(user.first_logged_in_at),
                   'channels'           => channels,
