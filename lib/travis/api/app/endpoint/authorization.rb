@@ -134,7 +134,7 @@ class Travis::Api::App
 
       def handshake
         if params[:code]
-          unless state_ok?(params[:state])
+          unless state_ok?(params[:state], params[:provider])
             halt 400, 'state mismatch'
           end
 
@@ -149,7 +149,7 @@ class Travis::Api::App
             return
           end
 
-          yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload
+          yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload(params[:provider])
         else
           state = create_state(params[:origin] || params[:redirect_uri])
 
@@ -159,16 +159,16 @@ class Travis::Api::App
             redirect_uri: oauth_endpoint
           )
 
-          response.set_cookie('travis.state', value: state, httponly: true)
+          response.set_cookie(cookie_name(params[:provider]), value: state, httponly: true)
           redirect to(vcs_data['authorize_url'])
         end
       rescue ::Travis::RemoteVCS::ConnectionError
         halt 401, "Can't login"
       end
 
-      def state_ok?(state)
-        response.set_cookie('travis.state', '')
-        state == request.cookies['travis.state']
+      def state_ok?(state, provider)
+        response.set_cookie(cookie_name(provider), '')
+        state == request.cookies[cookie_name(provider)]
       end
 
       def create_state(payload)
@@ -177,8 +177,12 @@ class Travis::Api::App
         state
       end
 
-      def payload
-        request.cookies['travis.state'].split(':::').last
+      def payload(provider)
+        request.cookies[cookie_name(provider)].split(':::').last
+      end
+
+      def cookie_name(provider = :github)
+        "travis.state-#{provider}"
       end
 
       def renew_access_token(token:, app_id:, provider:)

@@ -51,7 +51,7 @@ describe Travis::Api::App::Endpoint::Authorization do
     describe 'with insufficient oauth permissions' do
       before do
         Travis.redis.sadd('vcs:states', 'vcs-state')
-        rack_mock_session.cookie_jar['travis.state'] = 'vcs-state'
+        rack_mock_session.cookie_jar['travis.state-github'] = 'vcs-state'
 
         response = mock('response')
         response.expects(:body).returns('access_token=foobarbaz-token')
