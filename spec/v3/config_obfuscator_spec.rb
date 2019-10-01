@@ -24,7 +24,7 @@ describe Travis::API::V3::ConfigObfuscator do
     }
   end
 
-  it 'obfuscates env vars, including accidents' do
+  it 'obfuscates env vars given as strings, including accidents' do
     secure = Travis::SecureConfig.new(repo.key)
     config = { rvm: '1.8.7',
                env: [secure.encrypt('BAR=barbaz'), secure.encrypt('PROBLEM'), 'FOO=foo']
@@ -34,6 +34,19 @@ describe Travis::API::V3::ConfigObfuscator do
     result.should == {
       rvm: '1.8.7',
       env: 'BAR=[secure] [secure] FOO=foo'
+    }
+  end
+
+  it 'obfuscates env vars given as hashes' do
+    secure = Travis::SecureConfig.new(repo.key)
+    config = { rvm: '1.8.7',
+               env: { BAR: secure.encrypt('bar'), FOO: 'foo' }
+             }
+    result = obfuscator = described_class.new(config, repo.key).obfuscate
+
+    result.should == {
+      rvm: '1.8.7',
+      env: 'BAR=[secure] FOO=foo'
     }
   end
 
