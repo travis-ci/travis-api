@@ -67,16 +67,13 @@ module Travis::API::V3
         env.compact.presence
       end
 
-      def remove_encrypted_env_vars(env)
-        env.reject do |var|
-          var.is_a?(Hash) && var.has_key?(:secure)
-        end
-      end
-
       def normalize_env(env)
         env.map do |line|
           if line.is_a?(Hash) && !line.has_key?(:secure)
-            line.map { |k, v| "#{k}=#{v}" }.join(' ')
+            line.map do |key, value|
+              value = '[secure]' if value.is_a?(Hash) && value.key?(:secure)
+              "#{key}=#{value}"
+            end.join(' ')
           else
             line
           end
@@ -86,7 +83,7 @@ module Travis::API::V3
       def obfuscate_env(vars)
         vars = [vars] unless vars.is_a?(Array)
         vars.compact.map do |var|
-         secure.decrypt(var) do |decrypted|
+          secure.decrypt(var) do |decrypted|
             next unless decrypted
             if decrypted.include?('=')
               "#{decrypted.to_s.split('=').first}=[secure]"
