@@ -15,7 +15,7 @@ module Travis::API::V3
       beta_migration_request.save!
 
       enable_migration_feature_flags(current_user, organizations)
-      send_acceptance_notification(user)
+      send_acceptance_notification(current_user)
 
       result beta_migration_request
     end
