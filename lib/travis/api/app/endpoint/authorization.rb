@@ -6,7 +6,7 @@ require 'travis/api/app'
 require 'travis/github/education'
 require 'travis/github/oauth'
 require 'travis/remote_vcs/user'
-require 'travis/remote_vcs/connection_error'
+require 'travis/remote_vcs/response_error'
 
 class Travis::Api::App
   class Endpoint
@@ -162,7 +162,7 @@ class Travis::Api::App
           response.set_cookie(cookie_name(params[:provider]), value: state, httponly: true)
           redirect to(vcs_data['authorize_url'])
         end
-      rescue ::Travis::RemoteVCS::ConnectionError
+      rescue ::Travis::RemoteVCS::ResponseError
         halt 401, "Can't login"
       end
 
@@ -197,7 +197,7 @@ class Travis::Api::App
         else
           { access_token: vcs_data['token'] }
         end
-      rescue ::Travis::RemoteVCS::ConnectionError
+      rescue ::Travis::RemoteVCS::ResponseError
         halt 401, "Can't renew token"
       end
 

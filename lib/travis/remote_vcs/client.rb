@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faraday'
 require 'singleton'
 
@@ -18,6 +20,16 @@ module Travis
 
       def http_options
         { ssl: Travis.config.ssl.to_h }
+      end
+
+      def request(method, name)
+        resp = connection.send(method) { |req| yield(req) }
+        Travis.logger.info "#{self.class.name} #{name} response status: #{resp.status}"
+        if resp.success?
+          resp.body.present? ? JSON.parse(resp.body)['data'] : true
+        else
+          raise ResponseError, "#{self.class.name} #{name} request unexpected response: #{resp.body} #{resp.status}"
+        end
       end
     end
   end

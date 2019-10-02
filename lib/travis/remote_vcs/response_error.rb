@@ -2,9 +2,9 @@
 
 module Travis
   class RemoteVCS
-    class ConnectionError < StandardError
+    class ResponseError < StandardError
       def initialize
-        super 'VCS connection error'
+        super 'VCS response error'
       end
     end
   end
