@@ -16,12 +16,8 @@ module Services
       def call
         reason = params[:reason]
 
-        Offender::LISTS.each_key do |key|
-          checked_key = if key == :not_fishy
-            not_fishy?
-          else
-            checked?(key)
-          end
+        Offender::LISTS.each_key do |key|abuse_param
+          checked_key = key == :not_fishy ? not_fishy? : checked?(key)
 
           next if checked_key == has?(key)
 
@@ -73,7 +69,7 @@ module Services
       end
 
       def checked?(key)
-        params[:abuse] == key.to_s
+        abuse_param == key.to_s
       end
 
       def not_fishy?
