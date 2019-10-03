@@ -17,17 +17,17 @@ module Services
         reason = params[:reason]
 
         Offender::LISTS.each_key do |key|abuse_param
-          checked_key = key == :not_fishy ? not_fishy? : checked?(key)
+          selected_abuse = key == :not_fishy ? not_fishy? : checked?(key)
 
-          next if checked_key == has?(key)
+          next if selected_abuse == has?(key)
 
           if reason.present?
-            update_abuse_and_reason(@offender, key, checked_key, "#{DEFAULT_ABUSE_REASON}: #{reason}")
+            update_abuse_and_reason(@offender, key, selected_abuse, "#{DEFAULT_ABUSE_REASON}: #{reason}")
           else
-            update_abuse_and_reason(@offender, key, checked_key)
+            update_abuse_and_reason(@offender, key, selected_abuse)
           end
 
-          if checked_key
+          if selected_abuse
             Travis::DataStores.redis.sadd("abuse:#{key}", offender_key)
             Services::AuditTrail::AddAbuseStatus.new(@current_user, offender_key, Offender::LISTS[key]).call
           else
