@@ -11,7 +11,11 @@ module Travis::API::V3
 
       beta_migration_request = query(:beta_migration_request).create(current_user, organizations)
 
+      # This now automatically accepts the request
       beta_migration_request.save!
+
+      enable_migration_feature_flags(current_user, organizations)
+      send_acceptance_notification(current_user)
 
       result beta_migration_request
     end
@@ -21,6 +25,19 @@ module Travis::API::V3
         login: organizations,
         memberships: { user_id: current_user.id, role: 'admin' }
       ).joins(:memberships)
+    end
+
+    private
+
+    def enable_migration_feature_flags(current_user, organizations)
+      (organizations + [current_user]).each do |owner|
+        Travis::Features.activate_owner(:allow_migration, owner)
+      end
+    end
+
+    def send_acceptance_notification(user)
+      @mailer ||= Travis::API::V3::Models::Mailer.new
+      @mailer.send_beta_confirmation(user)
     end
   end
 end
