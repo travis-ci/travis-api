@@ -1,4 +1,5 @@
 require 'travis/services/helpers'
+require 'travis/remote_vcs/repository'
 
 module Travis
   module Services
@@ -34,6 +35,10 @@ module Travis
 
       def logger
         Travis.logger
+      end
+
+      def remote_vcs_repository
+        @remote_vcs_repository ||= Travis::RemoteVCS::Repository.new
       end
     end
   end

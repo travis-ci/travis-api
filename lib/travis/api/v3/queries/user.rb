@@ -21,9 +21,14 @@ module Travis::API::V3
 
     def sync(user)
       raise AlreadySyncing if user.is_syncing?
-      perform_async(:user_sync, :sync_user, user_id: user.id)
-      user.update_column(:is_syncing, true)
-      user
+      if Travis::Features.user_active?(:use_vcs, user)
+        Travis::RemoteVCS::User.new.sync(user_id: user.id)
+        user.reload
+      else
+        perform_async(:user_sync, :sync_user, user_id: user.id)
+        user.update_column(:is_syncing, true)
+        user
+      end
     end
   end
 end
