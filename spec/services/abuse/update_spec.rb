@@ -13,8 +13,7 @@ RSpec.describe Services::Abuse::Update do
         context 'when marked as offender' do
           let(:params) do
             {
-              trusted: '0',
-              offenders: '1',
+              abuse: 'offenders',
               not_fishy: '0',
               reason: 'ABC'
             }
@@ -30,8 +29,7 @@ RSpec.describe Services::Abuse::Update do
         context 'when marked as not_fishy' do
           let(:params) do
             {
-              trusted: '0',
-              offenders: '0',
+              abuse: 'abuse_checks_enabled',
               not_fishy: '1',
               reason: ''
             }
@@ -48,8 +46,7 @@ RSpec.describe Services::Abuse::Update do
           let(:offender) { create("#{klass}_with_abuse", level: ::Abuse::LEVEL_NOT_FISHY) }
           let(:params) do
             {
-              trusted: '0',
-              offenders: '0',
+              abuse: 'abuse_checks_enabled',
               not_fishy: '0',
               reason: ''
             }
@@ -70,13 +67,12 @@ RSpec.describe Services::Abuse::Update do
 
         let(:offender) { create("#{klass}_with_abuse", level: ::Abuse::LEVEL_OFFENDER) }
 
-        context 'when marked as trusted, offender and fishy' do
+        context 'when marked as trusted and fishy' do
           let(:params) do
             {
-              trusted: '1',
-              offenders: '1',
-              not_fishy: '1',
-              reason: 'ABC'
+              abuse: 'trusted',
+              not_fishy: '0',
+              reason: ''
             }
           end
 

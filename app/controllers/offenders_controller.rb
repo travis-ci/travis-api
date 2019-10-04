@@ -17,6 +17,6 @@ class OffendersController < ApplicationController
   private
 
   def offender_params
-    params.require(:offender).permit(*Offender::LISTS.keys << :reason)
+    params.require(:offender).permit(:abuse, :reason, :not_fishy)
   end
 end
