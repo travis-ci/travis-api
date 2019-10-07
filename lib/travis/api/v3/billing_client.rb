@@ -86,7 +86,7 @@ module Travis::API::V3
     end
 
     def get_coupon(code)
-      response = connection.get("/coupons/#{code}").body
+      response = connection.get("/coupons/#{code}")
       handle_coupon_response(response)
     end
 
