@@ -304,6 +304,11 @@ module Travis::API::V3
       post :create
     end
 
+    hidden_resource :coupons do
+      route '/coupons/{coupon.id}'
+      get :find
+    end
+
     hidden_resource :plans do
       route '/plans_for'
       get :all, '/user'
