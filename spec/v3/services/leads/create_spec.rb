@@ -10,7 +10,14 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
     "team_size" => "123",
     "phone" => "+1 123-456-7890",
     "message" => "Interested in CI",
-    "utm_source" => "Custom Source"
+    "lead_source" => "Custom Source",
+    "utm_fields" => {
+      "utm_source" => "Custom UTM source",
+      "utm_campaign" => "Custom UTM campaign",
+      "utm_medium" => "Custom UTM medium",
+      "utm_term" => "Custom UTM term",
+      "utm_content" => "Custom UTM content"
+    }
   }}
   let(:options) { full_options }
   let(:expected_lead_data) {{
@@ -27,8 +34,13 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
     }],
 
     "custom"          => {
-      "utm_source" => options['utm_source'],
+      "lead_source" => options['lead_source'],
       "team_size"  => options['team_size'],
+      "utm_source" => options['utm_fields']['utm_source'],
+      "utm_campaign" => options['utm_fields']['utm_campaign'],
+      "utm_medium" => options['utm_fields']['utm_medium'],
+      "utm_term" => options['utm_fields']['utm_term'],
+      "utm_content" => options['utm_fields']['utm_content']
     }
   }}
 
@@ -60,7 +72,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       status: stubbed_response_status,
       body: JSON.dump({ "data" => [
         { "name" => "team_size", "id" => "23456" },
-        { "name" => "utm_source", "id" => "34567" },
+        { "name" => "lead_source", "id" => "34567" },
       ]}),
       headers: stubbed_response_headers
     )
@@ -80,7 +92,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => full_options['team_size'],
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "utm_source" => full_options['utm_source']
+      "lead_source" => full_options['lead_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -103,7 +115,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "email" => full_options['email'],
       "team_size" => full_options['team_size'],
       "phone" => full_options['phone'],
-      "utm_source" => full_options['utm_source']
+      "lead_source" => full_options['lead_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -126,7 +138,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => full_options['team_size'],
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "utm_source" => full_options['utm_source']
+      "lead_source" => full_options['lead_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -150,7 +162,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => full_options['team_size'],
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "utm_source" => full_options['utm_source']
+      "lead_source" => full_options['lead_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -174,7 +186,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => 'invalid team size',
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "utm_source" => full_options['utm_source']
+      "lead_source" => full_options['lead_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -198,7 +210,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => -5,
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "utm_source" => full_options['utm_source']
+      "lead_source" => full_options['lead_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
