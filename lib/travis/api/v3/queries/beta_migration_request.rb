@@ -7,7 +7,8 @@ module Travis::API::V3
         owner_type:    current_user.class.name.demodulize,
         owner_id:      current_user.id,
         owner_name:    current_user.login,
-        organizations: organizations
+        organizations: organizations,
+        accepted_at: DateTime.now
       })
     end
 
