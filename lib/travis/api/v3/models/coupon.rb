@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Models::Coupon
-    ATTRS = %i[id name percent_off amount_off value]
+    ATTRS = %w[id name percent_off amount_off valid]
 
     attr_accessor *ATTRS
 
