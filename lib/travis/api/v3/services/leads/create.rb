@@ -44,7 +44,7 @@ module Travis::API::V3
       supported_utm_fields = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_term', 'utm_content']
       supported_utm_fields.each do |field_name|
         field = fetch_custom_field(custom_fields, field_name)
-        field_data = utm_fields[field_name]
+        field_data = utm_fields[field_name] if utm_fields
         lead_data["custom.#{field['id']}"] = field_data if field && field_data
       end
 
