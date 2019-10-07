@@ -3,7 +3,8 @@ module Travis::API::V3
     result_type :coupon
 
     def run!
-      result query(:coupons).find(params['coupon.id'])
+      raise LoginRequired unless access_control.full_access_or_logged_in?
+      result query(:coupons).find(access_control.user.id, params['coupon.id'])
     end
   end
 end
