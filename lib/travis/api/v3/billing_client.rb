@@ -93,11 +93,11 @@ module Travis::API::V3
     private
 
     def handle_subscription_response(response)
-      handle_errors_and_respond(response) { |r| Travis::API::V3::Models::Subscription.new(r.body) }
+      handle_errors_and_respond(response) { |r| Travis::API::V3::Models::Subscription.new(r) }
     end
 
     def handle_coupon_response(response)
-      handle_errors_and_respond(response) { |r| Travis::API::V3::Models::Coupon.new(r.body) }
+      handle_errors_and_respond(response) { |r| Travis::API::V3::Models::Coupon.new(r) }
     end
 
     def handle_errors_and_respond(response)
