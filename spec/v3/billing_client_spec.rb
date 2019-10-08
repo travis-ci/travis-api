@@ -171,6 +171,30 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#get_coupon' do
+    subject { billing.get_coupon(coupon_code) }
+    let(:coupon_code) { '10_BUCKS_OFF' }
+    let(:billing_response) { { body: JSON.dump(billing_coupon_response_body) } }
+
+    before do
+      stub_billing_request(:get, "/coupons/#{coupon_code}", auth_key: auth_key, user_id: user_id)
+        .to_return(billing_response)
+    end
+
+    it 'returns the coupon model' do
+      expect(subject.name).to eq '10 bucks off!'
+    end
+
+    context 'when coupon not found' do
+      let(:billing_response) { { status: 404, body: JSON.dump({'error' => "No such coupon: #{coupon_code}"}) } }
+      let(:coupon_code) { 'InVaLiDcOuPoN' }
+
+      it 'returns error' do
+        expect { subject }.to raise_error(Travis::API::V3::NotFound)
+      end
+    end
+  end
+
 
   describe '#plans_for' do
     describe '#organization' do
