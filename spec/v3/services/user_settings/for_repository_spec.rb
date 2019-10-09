@@ -4,6 +4,8 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
+  before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, admin: false) }
+
   describe 'not authenticated' do
     before { get("/v3/repo/#{repo.id}/settings") }
     include_examples 'not authenticated'
@@ -29,11 +31,11 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
   after  { Travis::Features.deactivate_owner(:auto_cancel, repo.owner) }
 
   describe 'authenticated, existing repo, repo has no settings, return defaults' do
-    before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
-
-    example { expect(last_response.status).to eq(200) }
-
     describe 'a public repo' do
+      before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
+
+      example { expect(last_response.status).to eq(200) }
+
       example do
         expect(JSON.load(body)).to eq(
           '@type' => 'settings',
@@ -51,8 +53,9 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
       end
     end
 
-    describe 'a private repo, feature flag off' do
+    describe 'a private repo, feature flag :config_imports off' do
       before { repo.update_attributes!(private: true) }
+      before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
 
       example do
         expect(JSON.load(body)['settings']).to_not include(
@@ -61,13 +64,25 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
       end
     end
 
-    describe 'a private repo, feature flag on' do
+    describe 'a private repo, feature flag :config_imports on' do
       before { repo.update_attributes!(private: true) }
       before { Travis::Features.activate_owner(:config_imports, repo.owner) }
+      before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
 
       example do
-        expect(JSON.load(body)['settings']).to_not include(
+        expect(JSON.load(body)['settings']).to include(
           { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/allow_config_imports", '@representation' => 'standard', 'name' => 'allow_config_imports', 'value' => false },
+        )
+      end
+    end
+
+    describe 'feature flag :config_validation on' do
+      before { Travis::Rollout.stubs(:matches?).returns(true) }
+      before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
+
+      example do
+        expect(JSON.load(body)['settings']).to include(
+          { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/config_validation", '@representation' => 'standard', 'name' => 'config_validation', 'value' => false },
         )
       end
     end
