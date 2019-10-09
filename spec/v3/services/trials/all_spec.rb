@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Subscription::Invoices, set_app: true, billing_spec_helper: true do
+describe Travis::API::V3::Services::Trials::All, set_app: true, billing_spec_helper: true do
   let(:parsed_body) { JSON.load(last_response.body) }
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
