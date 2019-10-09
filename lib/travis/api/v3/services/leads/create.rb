@@ -35,11 +35,10 @@ module Travis::API::V3
           emails: [{ type: "office", email: email }],
           phones: phones
         }],
-        # lead_source does not exist yet on production CloseIO account
-        # "custom.#{lead_source_field['id']}": lead_source || 'Travis API',
       }
 
-      lead_data["custom.#{team_size_field['id']}"] = team_size if team_size
+      lead_data["custom.#{team_size_field['id']}"] = team_size if team_size_field && team_size
+      lead_data["custom.#{lead_source_field['id']}"] = lead_source || 'Travis API' if lead_source_field
 
       # Handle UTM fields
       supported_utm_fields = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_term', 'utm_content']
