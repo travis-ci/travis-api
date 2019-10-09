@@ -18,7 +18,7 @@ module Travis::API::V3
 
     def get_subscription(id)
       response = connection.get("/subscriptions/#{id}")
-      handle_errors_and_respond(response)
+      handle_subscription_response(response)
     end
 
     def get_invoices_for_subscription(id)
@@ -40,27 +40,27 @@ module Travis::API::V3
 
     def update_address(subscription_id, address_data)
       response = connection.patch("/subscriptions/#{subscription_id}/address", address_data)
-      handle_errors_and_respond(response)
+      handle_subscription_response(response)
     end
 
     def update_creditcard(subscription_id, creditcard_token)
       response = connection.patch("/subscriptions/#{subscription_id}/creditcard", token: creditcard_token)
-      handle_errors_and_respond(response)
+      handle_subscription_response(response)
     end
 
     def update_plan(subscription_id, plan_data)
       response = connection.patch("/subscriptions/#{subscription_id}/plan", plan_data)
-      handle_errors_and_respond(response)
+      handle_subscription_response(response)
     end
 
     def create_subscription(subscription_data)
       response = connection.post('/subscriptions', subscription_data)
-      handle_errors_and_respond(response)
+      handle_subscription_response(response)
     end
 
     def cancel_subscription(id, reason_data)
       response = connection.post("/subscriptions/#{id}/cancel", reason_data)
-      handle_errors_and_respond(response)
+      handle_subscription_response(response)
     end
 
     def plans_for_organization(organization_id)
@@ -77,20 +77,33 @@ module Travis::API::V3
 
     def resubscribe(id)
       response = connection.patch("/subscriptions/#{id}/resubscribe")
-      handle_errors_and_respond(response)
+      handle_subscription_response(response)
     end
 
     def pay(id)
       response = connection.post("/subscriptions/#{id}/pay")
-      handle_errors_and_respond(response)
+      handle_subscription_response(response)
+    end
+
+    def get_coupon(code)
+      response = connection.get("/coupons/#{code}")
+      handle_coupon_response(response)
     end
 
     private
 
+    def handle_subscription_response(response)
+      handle_errors_and_respond(response) { |r| Travis::API::V3::Models::Subscription.new(r) }
+    end
+
+    def handle_coupon_response(response)
+      handle_errors_and_respond(response) { |r| Travis::API::V3::Models::Coupon.new(r) }
+    end
+
     def handle_errors_and_respond(response)
       case response.status
       when 200, 201
-        Travis::API::V3::Models::Subscription.new(response.body)
+        yield(response.body) if block_given?
       when 202
         true
       when 204

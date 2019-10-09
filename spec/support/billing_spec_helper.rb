@@ -52,6 +52,16 @@ module Support
       }.deep_merge(attributes)
     end
 
+    def billing_coupon_response_body(attributes = {})
+      {
+        "id" => "10_BUCKS_OFF",
+        "name" => "10 bucks off!",
+        "percent_off" => nil,
+        "amount_off" => 1000,
+        "valid" => true
+      }.deep_merge(attributes)
+    end
+
     def billing_trial_response_body(attributes = {})
       {
         'id' => 456,
