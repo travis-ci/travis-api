@@ -35,7 +35,8 @@ module Travis::API::V3
           emails: [{ type: "office", email: email }],
           phones: phones
         }],
-        "custom.#{lead_source_field['id']}": lead_source || 'Travis API',
+        # lead_source does not exist yet on production CloseIO account
+        # "custom.#{lead_source_field['id']}": lead_source || 'Travis API',
       }
 
       lead_data["custom.#{team_size_field['id']}"] = team_size if team_size
