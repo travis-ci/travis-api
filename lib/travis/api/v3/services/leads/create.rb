@@ -4,11 +4,11 @@ require 'closeio'
 module Travis::API::V3
   class Services::Leads::Create < Service
     result_type :leads
-    params :name, :email, :team_size, :phone, :message, :lead_source, :utm_fields
+    params :name, :email, :team_size, :phone, :message, :referral_source, :utm_fields
 
     def run!
       # Get params
-      name, email, team_size, phone, message, lead_source, utm_fields = params.values_at('name', 'email', 'team_size', 'phone', 'message', 'lead_source', 'utm_fields')
+      name, email, team_size, phone, message, referral_source, utm_fields = params.values_at('name', 'email', 'team_size', 'phone', 'message', 'referral_source', 'utm_fields')
       team_size = team_size.to_i unless team_size.nil?
       name = name.strip unless name.nil?
       message = message.strip unless message.nil?
@@ -23,7 +23,7 @@ module Travis::API::V3
       api_client = Closeio::Client.new(Travis.config.closeio.key)
       custom_fields = api_client.list_custom_fields
       team_size_field = fetch_custom_field(custom_fields, 'team_size')
-      lead_source_field = fetch_custom_field(custom_fields, 'lead_source')
+      referral_source_field = fetch_custom_field(custom_fields, 'referral_source')
 
       phones = []
       phones.push({ type: "office", phone: phone }) unless phone.nil?
@@ -38,7 +38,7 @@ module Travis::API::V3
       }
 
       lead_data["custom.#{team_size_field['id']}"] = team_size if team_size_field && team_size
-      lead_data["custom.#{lead_source_field['id']}"] = lead_source || 'Travis API' if lead_source_field
+      lead_data["custom.#{referral_source_field['id']}"] = referral_source || 'Travis API' if referral_source_field
 
       # Handle UTM fields
       supported_utm_fields = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_term', 'utm_content']
