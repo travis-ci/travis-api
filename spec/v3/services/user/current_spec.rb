@@ -8,19 +8,20 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
     before  { get("/v3/user", {}, headers)     }
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
-      "@type"            => "user",
-      "@href"            => "/v3/user/#{user.id}",
-      "@representation"  => "standard",
-      "@permissions"     => {"read"=>true, "sync"=>true},
-      "id"               => user.id,
-      "login"            => "svenfuchs",
-      "name"             =>"Sven Fuchs",
-      "github_id"        => user.github_id,
-      "avatar_url"       => "https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
-      "is_syncing"       => user.is_syncing,
-      "synced_at"        => user.synced_at,
-      "education"        => nil,
-      "allow_migration"  => false,
+      "@type"              => "user",
+      "@href"              => "/v3/user/#{user.id}",
+      "@representation"    => "standard",
+      "@permissions"       => {"read"=>true, "sync"=>true},
+      "id"                 => user.id,
+      "login"              => "svenfuchs",
+      "name"               =>"Sven Fuchs",
+      "github_id"          => user.github_id,
+      "avatar_url"         => "https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
+      "is_syncing"         => user.is_syncing,
+      "synced_at"          => user.synced_at,
+      "education"          => nil,
+      "allow_migration"    => false,
+      "first_logged_in_at" => user.first_logged_in_at,
     }}
   end
 end

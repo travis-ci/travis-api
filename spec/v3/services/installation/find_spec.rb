@@ -47,7 +47,8 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "is_syncing"=>nil,
         "synced_at"=>nil,
         "education"=>nil,
-        "allow_migration"=>false}
+        "allow_migration"=>false,
+        "first_logged_in_at" => nil}
     }}
   end
 end

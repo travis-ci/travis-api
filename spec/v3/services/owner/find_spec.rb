@@ -219,19 +219,20 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
       before  { get("/v3/owner/example-user")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"          => "user",
-        "@href"          => "/v3/user/#{user.id}",
-        "@representation"=> "standard",
-        "@permissions"   => {"read" => true, "sync" => false},
-        "id"             => user.id,
-        "login"          => "example-user",
-        "name"           => nil,
-        "github_id"      => 5678,
-        "avatar_url"     => nil,
-        "is_syncing"     => nil,
-        "synced_at"      => nil,
-        "education"      => nil,
-        "allow_migration"=> false,
+        "@type"              => "user",
+        "@href"              => "/v3/user/#{user.id}",
+        "@representation"    => "standard",
+        "@permissions"       => {"read" => true, "sync" => false},
+        "id"                 => user.id,
+        "login"              => "example-user",
+        "name"               => nil,
+        "github_id"          => 5678,
+        "avatar_url"         => nil,
+        "is_syncing"         => nil,
+        "synced_at"          => nil,
+        "education"          => nil,
+        "allow_migration"    => false,
+        "first_logged_in_at" => nil,
       }}
     end
 
@@ -239,19 +240,20 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
       before  { get("/v3/owner/github_id/5678")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"          => "user",
-        "@href"          => "/v3/user/#{user.id}",
-        "@representation"=> "standard",
-        "@permissions"   => {"read" => true, "sync" => false},
-        "id"             => user.id,
-        "login"          => "example-user",
-        "name"           => nil,
-        "github_id"      => 5678,
-        "avatar_url"     => nil,
-        "education"      => nil,
-        "is_syncing"     => nil,
-        "synced_at"      => nil,
-        "allow_migration"=> false,
+        "@type"              => "user",
+        "@href"              => "/v3/user/#{user.id}",
+        "@representation"    => "standard",
+        "@permissions"       => {"read" => true, "sync" => false},
+        "id"                 => user.id,
+        "login"              => "example-user",
+        "name"               => nil,
+        "github_id"          => 5678,
+        "avatar_url"         => nil,
+        "education"          => nil,
+        "is_syncing"         => nil,
+        "synced_at"          => nil,
+        "allow_migration"    => false,
+        "first_logged_in_at" => nil,
       }}
     end
 
@@ -259,19 +261,20 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
       before  { get("/v3/owner/example-USER")   }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"            => "user",
-        "@href"            => "/v3/user/#{user.id}",
-        "@representation"  => "standard",
-        "@permissions"     => {"read" => true, "sync" => false},
-        "id"               => user.id,
-        "login"            => "example-user",
-        "name"             => nil,
-        "github_id"        => 5678,
-        "avatar_url"       => nil,
-        "education"        => nil,
-        "is_syncing"       => nil,
-        "synced_at"        => nil,
-        "allow_migration"  => false,
+        "@type"              => "user",
+        "@href"              => "/v3/user/#{user.id}",
+        "@representation"    => "standard",
+        "@permissions"       => {"read" => true, "sync" => false},
+        "id"                 => user.id,
+        "login"              => "example-user",
+        "name"               => nil,
+        "github_id"          => 5678,
+        "avatar_url"         => nil,
+        "education"          => nil,
+        "is_syncing"         => nil,
+        "synced_at"          => nil,
+        "allow_migration"    => false,
+        "first_logged_in_at" => nil,
       }}
     end
 
@@ -283,24 +286,25 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
       before  { get("/v3/owner/example-user?user.id=#{other.id}") }
       example { expect(last_response).to be_ok   }
       example { expect(JSON.load(body)).to be == {
-        "@type"            => "user",
-        "@href"            => "/v3/user/#{user.id}",
-        "@representation"  => "standard",
-        "@permissions"     => {"read" => true, "sync" => false},
-        "id"               => user.id,
-        "login"            => "example-user",
-        "name"             => nil,
-        "github_id"        => 5678,
-        "avatar_url"       => nil,
-        "education"        => nil,
-        "is_syncing"       => nil,
-        "synced_at"        => nil,
-        "allow_migration"  => false,
-        "@warnings"        => [{
-          "@type"          => "warning",
-          "message"        => "query parameter user.id not safelisted, ignored",
-          "warning_type"   => "ignored_parameter",
-          "parameter"      => "user.id"}]
+        "@type"              => "user",
+        "@href"              => "/v3/user/#{user.id}",
+        "@representation"    => "standard",
+        "@permissions"       => {"read" => true, "sync" => false},
+        "id"                 => user.id,
+        "login"              => "example-user",
+        "name"               => nil,
+        "github_id"          => 5678,
+        "avatar_url"         => nil,
+        "education"          => nil,
+        "is_syncing"         => nil,
+        "synced_at"          => nil,
+        "allow_migration"    => false,
+        "first_logged_in_at" => nil,
+        "@warnings"          => [{
+          "@type"            => "warning",
+          "message"          => "query parameter user.id not safelisted, ignored",
+          "warning_type"     => "ignored_parameter",
+          "parameter"        => "user.id"}]
       }}
     end
   end
