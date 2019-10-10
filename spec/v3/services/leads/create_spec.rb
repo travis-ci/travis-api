@@ -10,7 +10,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
     "team_size" => "123",
     "phone" => "+1 123-456-7890",
     "message" => "Interested in CI",
-    "lead_source" => "Custom Source",
+    "referral_source" => "Custom Source",
     "utm_fields" => {
       "utm_source" => "Custom UTM source",
       "utm_campaign" => "Custom UTM campaign",
@@ -34,7 +34,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
     }],
 
     "custom"          => {
-      "lead_source" => options['lead_source'],
+      "referral_source" => options['referral_source'],
       "team_size"  => options['team_size'],
       "utm_source" => options['utm_fields']['utm_source'],
       "utm_campaign" => options['utm_fields']['utm_campaign'],
@@ -72,7 +72,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       status: stubbed_response_status,
       body: JSON.dump({ "data" => [
         { "name" => "team_size", "id" => "23456" },
-        { "name" => "lead_source", "id" => "34567" },
+        { "name" => "referral_source", "id" => "34567" },
       ]}),
       headers: stubbed_response_headers
     )
@@ -92,7 +92,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => full_options['team_size'],
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "lead_source" => full_options['lead_source']
+      "referral_source" => full_options['referral_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -115,7 +115,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "email" => full_options['email'],
       "team_size" => full_options['team_size'],
       "phone" => full_options['phone'],
-      "lead_source" => full_options['lead_source']
+      "referral_source" => full_options['referral_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -138,7 +138,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => full_options['team_size'],
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "lead_source" => full_options['lead_source']
+      "referral_source" => full_options['referral_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -162,7 +162,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => full_options['team_size'],
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "lead_source" => full_options['lead_source']
+      "referral_source" => full_options['referral_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -186,7 +186,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => 'invalid team size',
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "lead_source" => full_options['lead_source']
+      "referral_source" => full_options['referral_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
@@ -210,7 +210,7 @@ describe Travis::API::V3::Services::Leads::Create, set_app: true do
       "team_size" => -5,
       "phone" => full_options['phone'],
       "message" => full_options['message'],
-      "lead_source" => full_options['lead_source']
+      "referral_source" => full_options['referral_source']
     }}
     let(:expected_lead_data) {{
       "@type"         => "error",
