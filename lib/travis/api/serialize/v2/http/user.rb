@@ -1,5 +1,6 @@
 require 'travis/api/serialize/formats'
 require 'travis/github/oauth'
+require 'travis/remote_vcs/response_error'
 
 module Travis
   module Api
@@ -37,7 +38,7 @@ module Travis
                   'locale'             => user.locale,
                   'is_syncing'         => user.syncing?,
                   'synced_at'          => format_date(user.synced_at),
-                  'correct_scopes'     => ::Travis::RemoteVCS::User.new.check_scopes(user_id: user.id),
+                  'correct_scopes'     => check_scopes,
                   'created_at'         => format_date(user.created_at),
                   'first_logged_in_at' => format_date(user.first_logged_in_at),
                   'channels'           => channels,
@@ -50,6 +51,12 @@ module Travis
 
                 data
               end
+
+            def check_scopes
+              ::Travis::RemoteVCS::User.new.check_scopes(user_id: user.id)
+            rescue ::Travis::RemoteVCS::ResponseError
+              false
+            end
 
               def allow_migration
                 Travis::Features.user_active?(:allow_migration, user)
