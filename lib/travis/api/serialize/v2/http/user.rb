@@ -20,6 +20,8 @@ module Travis
               {
                 'user' => user_data,
               }
+              rescue Exception => e
+                raise Travis::API::V3::LoginRequired
             end
 
             private
