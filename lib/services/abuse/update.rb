@@ -16,7 +16,7 @@ module Services
       def call
         reason = params[:reason]
 
-        Offender::LISTS.each_key do |key|abuse_param
+        Offender::LISTS.each_key do |key|
           selected_abuse = key == :not_fishy ? not_fishy? : checked?(key)
 
           next if selected_abuse == has?(key)
