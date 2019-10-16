@@ -13,7 +13,6 @@ gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 gem 'travis-rollout',  '~> 0.0.2'
 
-gem 'travis-yaml',     git: 'https://github.com/travis-ci/travis-yaml'
 gem 'mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
