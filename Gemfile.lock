@@ -85,12 +85,6 @@ GIT
   specs:
     travis-support (0.0.1)
 
-GIT
-  remote: https://github.com/travis-ci/travis-yaml
-  revision: da2c9860299fa63769ac1ee120abeb9e83615555
-  specs:
-    travis-yaml (0.2.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -482,7 +476,6 @@ DEPENDENCIES
   travis-rollout (~> 0.0.2)
   travis-settings!
   travis-support!
-  travis-yaml!
   unicorn
   useragent
   virtus (~> 1.0.0)
