@@ -6,6 +6,7 @@ class SubscriptionsController < ApplicationController
     @subscription.cc_token      = "void"
     @subscription.valid_to      = 1.year.from_now
     @subscription.billing_email = "support@travis-ci.com"
+    @subscription.status        = 'subscribed'
 
     if @subscription.save
       flash[:notice] = "Created a new subscription for #{describe(@subscription.owner)}"
