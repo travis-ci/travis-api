@@ -1,5 +1,5 @@
 require 'rack/attack'
-require 'netaddr'
+require 'ipaddress'
 require 'metriks'
 
 ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, req|
@@ -44,8 +44,8 @@ class Rack::Attack
   ]
 
   GITHUB_CIDRS = [
-    NetAddr::CIDR.create('192.30.252.0/22'),
-    NetAddr::CIDR.create('185.199.108.0/22'),
+    IPAddress.parse('192.30.252.0/22'),
+    IPAddress.parse('185.199.108.0/22'),
   ]
 
   safelist('build_status_image') do |request|
@@ -54,7 +54,9 @@ class Rack::Attack
 
   # https://help.github.com/articles/github-s-ip-addresses/
   safelist('github_request_ip') do |request|
-    request.ip && NetAddr::CIDR.create(request.ip).version == 4 && GITHUB_CIDRS.any? { |block| block.contains?(request.ip) }
+    request.ip && IPAddress(request.ip).ipv4? && GITHUB_CIDRS.any? { |block|
+      block.include?(IPAddress(request.ip))
+    }
   end
 
   ####

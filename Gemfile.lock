@@ -268,7 +268,6 @@ GEM
     nakayoshi_fork (0.0.3)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
-    netaddr (1.5.1)
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     opencensus (0.3.1)
@@ -424,6 +423,7 @@ DEPENDENCIES
   google-api-client (~> 0.9.4)
   hashdiff
   hashr
+  ipaddress (~> 0.8.3)
   jemalloc!
   knapsack
   libhoney
@@ -438,7 +438,6 @@ DEPENDENCIES
   multi_json
   mustermann
   nakayoshi_fork
-  netaddr
   opencensus
   opencensus-stackdriver
   pg (~> 0.21)

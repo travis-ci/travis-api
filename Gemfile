@@ -35,7 +35,7 @@ gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_met
 gem 'librato-metrics'
 gem 'simplecov'
 gem 'stackprof'
-gem 'netaddr'
+gem "ipaddress", "~> 0.8.3"
 gem 'nakayoshi_fork'
 gem 'sidekiq'
 gem 'redis-namespace'
@@ -96,3 +96,4 @@ group :development do
   gem 'rerun'
   gem 'rb-fsevent', '~> 0.9.1'
 end
+
