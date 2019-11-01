@@ -4,7 +4,11 @@ module Travis::API::V3
     representation(:standard, *representations[:minimal], :repository, :branch_name, :commit, :builds, :owner, :created_at, :event_type, :base_commit, :head_commit)
 
     def self.available_attributes
-      super + %w(raw_configs yaml_config)
+      super + %w(config raw_configs yaml_config)
+    end
+
+    def config
+      model.config.reject { |key, _| key == :'.result' }
     end
 
     def yaml_config
