@@ -1,7 +1,18 @@
 language: ruby
 
-import:
-  - travis-ci/build-configs/db-setup.yml
+# Disable shared config to test pg 10 as CI isn't set up within the
+# build-configs repo itself.
+# import:
+#   - travis-ci/build-configs/db-setup.yml
+addons:
+  postgresql: 10
+  apt:
+    packages:
+    - postgresql-10
+    - postgresql-client-10
+
+services:
+  - postgresql
 
 rvm: 2.5.1
 
@@ -24,6 +35,11 @@ services:
 
 before_install:
   - 'gem update --system'
+
+before_script:
+  - createdb travis_test || true
+  - curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test
+
 
 jobs:
   include:
