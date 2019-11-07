@@ -19,7 +19,7 @@ module Travis::API::V3
 
       def license_seat_exceed?
         return true unless endpoint
-        query.active_users > seats
+        query.active_users >= seats
       end
 
       def seats
@@ -40,7 +40,7 @@ module Travis::API::V3
       def client
         logger.warn MSGS[:api_endpoint_error] and return false unless endpoint
         # We turn off verification because this is an internal IP and a self signed cert so it will always fail
-        @client ||= Faraday.new(endpoint, ssl: Travis::Gatekeeper.config.ssl.to_h.merge(verify: false)) do |client|
+        @client ||= Faraday.new(endpoint, ssl: Travis.config.ssl.to_h.merge(verify: false)) do |client|
             client.adapter :net_http
         end
       end
