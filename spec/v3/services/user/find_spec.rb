@@ -26,6 +26,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true do
       "synced_at"        => user.synced_at,
       "education"        => true,
       "allow_migration"  => false,
+      "recently_signed_up"=>false,
     }}
   end
 end
