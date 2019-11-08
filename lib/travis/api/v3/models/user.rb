@@ -25,7 +25,9 @@ module Travis::API::V3
       # is_syncing == true && synced_at == nil is not good indicator, because travis-github-sync
       # picks user's repos immediatelly.
       # If first_logged_in_at is not older than 5sec we are sure this is first call after first handshake.
-      Time.now - read_attribute(:first_logged_in_at) < NEW_USER_INDICATOR_LENGTH
+      first_logged_in_at = read_attribute(:first_logged_in_at)
+      false unless !!first_logged_in_at
+      Time.now - first_logged_in_at < NEW_USER_INDICATOR_LENGTH
     end
 
     def repository_ids
