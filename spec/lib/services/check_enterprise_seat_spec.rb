@@ -1,6 +1,8 @@
-describe Travis::API::V3::Services::EnterpriseLicense::Seat, set_app: true do
+describe Travis::Services::CheckEnterpriseSeat do
   let(:license_url) { "https://fake.fakeserver.com:9880/license/v1/license" }
-  let(:log)         { stdout.string }
+  let(:user) { User.first || Factory(:user) }
+  let(:service) { described_class.new(user) }
+  let(:result) { service.run }
 
   before do
     Travis.config.enterprise = true
@@ -22,7 +24,7 @@ describe Travis::API::V3::Services::EnterpriseLicense::Seat, set_app: true do
     end
 
     it 'accepts the request' do
-      expect(body).to be_truthy
+      expect(result).to be_truthy
     end
   end
 
@@ -39,36 +41,26 @@ describe Travis::API::V3::Services::EnterpriseLicense::Seat, set_app: true do
     end
 
     it 'rejects the request' do
-      expect(body).to be_falsy
-    end
-
-    it 'logs rejected' do
-        body
-        expect(log).to match /Enterprise account travis-ci has exceeded seats./
+      expect(result).to be_falsy
     end
   end
 
   describe 'no REPLICATED_INTEGRATIONAPI' do
     before do
-        ENV.delete('REPLICATED_INTEGRATIONAPI')
-        Travis.config.replicated.endpoint = nil
-        stub_request(:get, license_url)
-          .to_return(body: MultiJson.dump({
-            'fields' => [{
-              "field" => "te_license",
-              "value" => "---\nproduction:\n  license:\n    hostname: foo.example.com\n    expires: '2020-08-18'\n    seats: 20\n    queue:\n      limit: 999999\n    signature: !binary |-\n      xxxxxxxxxxxxxxxxx==\n"
-            }],
-            'expiration_time' => 1.month.from_now.iso8601
-          }), headers: { 'Content-Type' => 'application/json' })
+      ENV.delete('REPLICATED_INTEGRATIONAPI')
+      Travis.config.replicated.endpoint = nil
+      stub_request(:get, license_url)
+        .to_return(body: MultiJson.dump({
+          'fields' => [{
+            "field" => "te_license",
+            "value" => "---\nproduction:\n  license:\n    hostname: foo.example.com\n    expires: '2020-08-18'\n    seats: 20\n    queue:\n      limit: 999999\n    signature: !binary |-\n      xxxxxxxxxxxxxxxxx==\n"
+          }],
+          'expiration_time' => 1.month.from_now.iso8601
+        }), headers: { 'Content-Type' => 'application/json' })
     end
 
     it 'rejects the request' do
-        expect(body).to be_falsy
-    end
-
-    it 'logs rejected' do
-        body
-        expect(log).to match /Replicated License API endpoint not found./
+      expect(result).to be_falsy
     end
   end
 end

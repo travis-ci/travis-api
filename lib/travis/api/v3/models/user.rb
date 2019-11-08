@@ -15,11 +15,6 @@ module Travis::API::V3
 
     has_preferences Models::UserPreferences
 
-    before_create do
-      reached_max_seat = Travis::API::V3::Services::EnterpriseLicense::Seat.run!
-      return false unless reached_max_seat
-    end
-
     serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
     scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 

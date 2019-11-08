@@ -173,6 +173,8 @@ class User < Travis::Model
     end
 
     def set_as_recent
+      @reached_max_seat ||= Travis.run_service(:check_enterprise_seat)
+      return false unless @reached_max_seat
       @recently_signed_up = true
     end
 end

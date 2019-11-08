@@ -37,6 +37,7 @@ module Travis
 end
 
 require 'travis/services/base'
+require 'travis/services/check_enterprise_seat'
 require 'travis/services/delete_caches'
 require 'travis/services/find_admin'
 require 'travis/services/find_branch'
