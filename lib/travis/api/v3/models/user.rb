@@ -18,6 +18,18 @@ module Travis::API::V3
     serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
     scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 
+    NEW_USER_INDICATOR_LENGTH = 5
+    
+    def recently_signed_up
+      # We need indicator, which tells if user is signed up for the very first time
+      # is_syncing == true && synced_at == nil is not good indicator, because travis-github-sync
+      # picks user's repos immediatelly.
+      # If first_logged_in_at is not older than 5sec we are sure this is first call after first handshake.
+      first_logged_in_at = read_attribute(:first_logged_in_at)
+      return false if first_logged_in_at.nil?
+      Time.now - first_logged_in_at < NEW_USER_INDICATOR_LENGTH
+    end
+
     def repository_ids
       repositories.pluck(:id)
     end
@@ -49,5 +61,6 @@ module Travis::API::V3
       return @installation if defined? @installation
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
     end
+
   end
 end

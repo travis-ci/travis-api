@@ -232,6 +232,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "synced_at"      => nil,
         "education"      => nil,
         "allow_migration"=> false,
+        "recently_signed_up"=>false,
       }}
     end
 
@@ -252,6 +253,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "is_syncing"     => nil,
         "synced_at"      => nil,
         "allow_migration"=> false,
+        "recently_signed_up"=>false,
       }}
     end
 
@@ -272,6 +274,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "is_syncing"       => nil,
         "synced_at"        => nil,
         "allow_migration"  => false,
+        "recently_signed_up"=>false,
       }}
     end
 
@@ -296,6 +299,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "is_syncing"       => nil,
         "synced_at"        => nil,
         "allow_migration"  => false,
+        "recently_signed_up"=>false,
         "@warnings"        => [{
           "@type"          => "warning",
           "message"        => "query parameter user.id not safelisted, ignored",
