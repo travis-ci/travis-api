@@ -26,7 +26,7 @@ module Travis::API::V3
       # picks user's repos immediatelly.
       # If first_logged_in_at is not older than 5sec we are sure this is first call after first handshake.
       first_logged_in_at = read_attribute(:first_logged_in_at)
-      return false if first_logged_in_at == nil
+      return false if first_logged_in_at.nil?
       Time.now - first_logged_in_at < NEW_USER_INDICATOR_LENGTH
     end
 
