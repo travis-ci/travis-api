@@ -13,7 +13,6 @@ class User < Travis::Model
   has_many :repositories, through: :permissions
   has_many :emails, dependent: :destroy
 
-  before_create :enterprise_reached_max_seat
   before_create :set_as_recent
   after_create :create_a_token
   before_save :track_previous_changes
