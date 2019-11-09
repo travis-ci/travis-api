@@ -13,7 +13,6 @@ class User < Travis::Model
   has_many :repositories, through: :permissions
   has_many :emails, dependent: :destroy
 
-  before_create :enterprise_reached_max_seat
   before_create :set_as_recent
   after_create :create_a_token
   before_save :track_previous_changes
@@ -175,9 +174,5 @@ class User < Travis::Model
 
     def set_as_recent
       @recently_signed_up = true
-    end
-
-    def enterprise_reached_max_seat
-      return true
     end
 end

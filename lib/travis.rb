@@ -22,6 +22,7 @@ module Travis
   require 'travis/api/serialize'
   require 'travis/config/defaults'
   require 'travis/features'
+  require 'travis/enterprise'
   require 'travis/github'
   require 'travis/notification'
   require 'travis/services'
