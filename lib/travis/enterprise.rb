@@ -10,7 +10,7 @@ module Travis
     }
 
     def check_license_seat?
-      logger.warn MSGS[:exceeded] and return false if enterprise? and replicated.license_seat_exceed?
+      Travis.logger.warn MSGS[:exceeded] and return false if enterprise? and replicated.license_seat_exceed?
       return true
     end
 
@@ -46,7 +46,7 @@ module Travis
       end
 
       def client
-        logger.warn MSGS[:api_endpoint_error] and return false unless endpoint
+        Travis.logger.warn MSGS[:api_endpoint_error] and return false unless endpoint
         # We turn off verification because this is an internal IP and a self signed cert so it will always fail
         @client ||= Faraday.new(endpoint, ssl: Travis.config.ssl.to_h.merge(verify: false)) do |client|
             client.adapter :net_http
@@ -61,8 +61,8 @@ module Travis
     private
 
       def replicated
-        @replicated ||= Replicated.new(Travis.config)
-        logger.warn MSGS[:api_endpoint_error] unless @replicated.endpoint
+        @replicated = Replicated.new(Travis.config)
+        Travis.logger.warn MSGS[:api_endpoint_error] unless @replicated.endpoint
         @replicated
       end
 
