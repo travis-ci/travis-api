@@ -20,7 +20,7 @@ module Travis::API::V3
     end
 
     def allow_config_imports?
-      repo.private? && Travis::Features.owner_active?(:config_imports, repo.owner)
+      repo.private?
     end
 
     def allow_config_validation?
