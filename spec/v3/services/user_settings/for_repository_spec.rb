@@ -53,18 +53,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
       end
     end
 
-    describe 'a private repo, feature flag :config_imports off' do
-      before { repo.update_attributes!(private: true) }
-      before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
-
-      example do
-        expect(JSON.load(body)['settings']).to_not include(
-          { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/allow_config_imports", '@representation' => 'standard', 'name' => 'allow_config_imports', 'value' => false },
-        )
-      end
-    end
-
-    describe 'a private repo, feature flag :config_imports on' do
+    describe 'a private repo' do
       before { repo.update_attributes!(private: true) }
       before { Travis::Features.activate_owner(:config_imports, repo.owner) }
       before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
