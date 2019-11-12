@@ -7,6 +7,7 @@ describe Travis::API::V3::Models::RepositoryMigration do
     Travis::Features.stubs(:feature_active?).with(:multi_os).returns(true)
     Travis::Features.stubs(:feature_active?).with(:dist_group_expansion).returns(true)
     Travis::Features.stubs(:feature_active?).with(:education).returns(true)
+    Travis::Features.stubs(:feature_active?).with(:docker_default_queue).returns(true)
   end
 
   context 'when migration is enabled globally' do
