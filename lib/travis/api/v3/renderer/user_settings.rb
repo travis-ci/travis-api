@@ -14,17 +14,12 @@ module Travis::API::V3
     def allow?(setting)
       case setting[:name]
       when :allow_config_imports then allow_config_imports?
-      when :config_validation    then allow_config_validation?
       else true
       end
     end
 
     def allow_config_imports?
-      repo.private?
-    end
-
-    def allow_config_validation?
-      Travis::Rollout.matches?(:config_validation, uid: repo.owner_id, owner: repo.owner_name)
+      repo.private? && Travis::Features.owner_active?(:config_imports, repo.owner)
     end
 
     def repo
