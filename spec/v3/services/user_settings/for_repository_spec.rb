@@ -42,12 +42,13 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
           '@href' => "/v3/repo/#{repo.id}/settings",
           '@representation' => 'standard',
           'settings' => [
-            { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/builds_only_with_travis_yml", '@representation' => 'standard', 'name' => 'builds_only_with_travis_yml', 'value' => false },
-            { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/build_pushes", '@representation' => 'standard', 'name' => 'build_pushes', 'value' => true },
-            { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/build_pull_requests", '@representation' => 'standard', 'name' => 'build_pull_requests', 'value' => true },
-            { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds", '@representation' => 'standard', 'name' => 'maximum_number_of_builds', 'value' => 0 },
-            { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes", '@representation' => 'standard', 'name' => 'auto_cancel_pushes', 'value' => false },
-            { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests", '@representation' => 'standard', 'name' => 'auto_cancel_pull_requests', 'value' => false },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/builds_only_with_travis_yml", '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'builds_only_with_travis_yml', 'value' => false },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",                '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'build_pushes',                'value' => true },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/build_pull_requests",         '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'build_pull_requests',         'value' => true },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds",    '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'maximum_number_of_builds',    'value' => 0 },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes",          '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'auto_cancel_pushes',          'value' => false },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests",   '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'auto_cancel_pull_requests',   'value' => false },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/config_validation",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'config_validation',           'value' => false },
           ]
         )
       end
@@ -90,12 +91,13 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
         '@href' => "/v3/repo/#{repo.id}/settings",
         '@representation' => 'standard',
         'settings' => [
-          { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/builds_only_with_travis_yml", '@representation' => 'standard', 'name' => 'builds_only_with_travis_yml', 'value' => false },
-          { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/build_pushes", '@representation' => 'standard', 'name' => 'build_pushes', 'value' => false },
-          { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/build_pull_requests", '@representation' => 'standard', 'name' => 'build_pull_requests', 'value' => true },
-          { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds", '@representation' => 'standard', 'name' => 'maximum_number_of_builds', 'value' => 0 },
-          { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes", '@representation' => 'standard', 'name' => 'auto_cancel_pushes', 'value' => false },
-          { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests", '@representation' => 'standard', 'name' => 'auto_cancel_pull_requests', 'value' => false },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/builds_only_with_travis_yml", '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'builds_only_with_travis_yml', 'value' => false },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",                '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'build_pushes',                'value' => false },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/build_pull_requests",         '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'build_pull_requests',         'value' => true },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds",    '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'maximum_number_of_builds',    'value' => 0 },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes",          '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'auto_cancel_pushes',          'value' => false },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests",   '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'auto_cancel_pull_requests',   'value' => false },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/config_validation",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'config_validation',           'value' => false },
         ]
       )
     end
