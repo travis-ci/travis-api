@@ -17,6 +17,8 @@ class User < Travis::Model
   after_create :create_a_token
   before_save :track_previous_changes
 
+  validate :enterprise_seats_limit, if: -> { Travis.config.enterprise? }
+
   serialize :github_scopes
 
   serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
@@ -174,5 +176,11 @@ class User < Travis::Model
 
     def set_as_recent
       @recently_signed_up = true
+    end
+
+    def enterprise_seats_limit
+      if Travis::Enterprise.check_license_seat?
+        errors.add(:base, "You exceeded the user limits of your enterprise license. Please contact Travis CI support to upgrade.")
+      end
     end
 end
