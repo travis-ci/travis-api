@@ -238,7 +238,7 @@ class Travis::Api::App
                 rename_repos_owner(user.login, info['login'])
                 user.update_attributes info
               else
-                self.user = ::User.create! info if Travis::Enterprise.check_license_seat?
+                self.user = ::User.create! info
               end
 
               Travis::Github::Oauth.update_scopes(user) # unless Travis.env == 'test'

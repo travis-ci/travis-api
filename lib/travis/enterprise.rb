@@ -10,8 +10,12 @@ module Travis
     }
 
     def check_license_seat?
-      Travis.logger.warn MSGS[:exceeded] and return false if enterprise? and replicated.license_seat_exceed?
-      return true
+      Travis.logger.warn MSGS[:exceeded] and return true if enterprise? and replicated.license_seat_exceed?
+      return false
+    end
+
+    def allocated_license_seats
+      replicated.seats if enterprise?
     end
 
     class Replicated < Struct.new(:config)
@@ -31,6 +35,7 @@ module Travis
       end
 
       def seats
+        return true unless endpoint
         data = YAML.load(te_license['value'])
         data['production']['license']['seats']
       end

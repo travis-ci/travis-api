@@ -22,7 +22,7 @@ describe Travis::Enterprise, set_app: true do
       end
 
       it 'accepts the request' do
-        expect(body).to be_truthy
+        expect(body).to be_falsy
       end
     end
 
@@ -39,7 +39,7 @@ describe Travis::Enterprise, set_app: true do
       end
 
       it 'rejects the request' do
-        expect(body).to be_falsy
+        expect(body).to be_truthy
       end
     end
 
@@ -58,7 +58,7 @@ describe Travis::Enterprise, set_app: true do
       end
 
       it 'rejects the request' do
-        expect(body).to be_falsy
+        expect(body).to be_truthy
       end
     end
   end
