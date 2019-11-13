@@ -61,4 +61,8 @@ describe Travis::Enterprise, set_app: true do
         expect(body).to be_truthy
       end
     end
+
+    after do
+      Travis.config.enterprise = false
+    end
   end

@@ -180,7 +180,7 @@ class User < Travis::Model
 
     def enterprise_seats_limit
       if Travis::Enterprise.check_license_seat?
-        errors.add(:base, "You exceeded the user limits of your enterprise license of  users. Please contact to upgrade.")
+        errors.add(:base, "You exceeded the user limits of your enterprise license. Please contact to upgrade.")
       end
     end
 end
