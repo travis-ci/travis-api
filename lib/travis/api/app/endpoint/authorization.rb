@@ -104,7 +104,7 @@ class Travis::Api::App
             data = { user: user, token: token, uri: redirect_uri }
             erb(:post_payload, locals: data)
           else
-            safe_redirect redirect_uri
+            halt 401, 'target URI not allowed'
           end
         end
       end
