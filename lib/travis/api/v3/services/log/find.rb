@@ -5,7 +5,11 @@ module Travis::API::V3
     def run!
       log = query.find_by_job_id(params['job.id'])
       raise(NotFound, :log) unless access_control.visible? log
-      result log
+      
+      meta_data = {
+        "X-Robots-Tag": "noindex, noarchive, nosnippet"
+      }
+      result(log, meta_data)
     end
   end
 end
