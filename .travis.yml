@@ -2,10 +2,11 @@ language: ruby
 
 import:
   - travis-ci/build-configs:db-setup.yml
+  - source: travis-ci/build-configs:ship-docker.yml
+    if: branch = master
 
 rvm: 2.5.1
 
-script: "bundle exec rake knapsack:rspec"
 env:
   global:
     - RUBY_GC_MALLOC_LIMIT=90000000
@@ -25,9 +26,4 @@ services:
 before_install:
   - 'gem update --system'
 
-jobs:
-  include:
-    - stage: ":ship: it to Quay.io"
-      install: echo skip
-      before_script: echo skip
-      script: make ship
+script: "bundle exec rake knapsack:rspec"
