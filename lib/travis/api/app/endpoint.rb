@@ -112,9 +112,6 @@ class Travis::Api::App
         uri.to_s
       end
 
-      def safe_redirect(url)
-        redirect(endpoint('/redirect', to: url), 301)
-      end
   end
 end
 

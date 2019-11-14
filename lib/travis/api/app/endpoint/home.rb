@@ -23,17 +23,6 @@ class Travis::Api::App
         { 'hello' => 'world' }
       end
 
-      # Simple endpoints that redirects somewhere else, to make sure we don't
-      # send a referrer.
-      #
-      # Parameters:
-      #
-      # * **to**: URI to redirect to after handshake.
-      get '/redirect' do
-        halt 400 unless params[:to] =~ %r{^https?://}
-        redirect params[:to]
-      end
-
       # Provides you with system info:
       #
       #     {
