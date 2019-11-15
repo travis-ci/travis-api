@@ -38,7 +38,6 @@ before_script:
   - psql --version
   - psql -c 'CREATE DATABASE travis_test;' -U postgres
   - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
-  - cp config/database.yml.travis config/database.yml
   - createdb travis_test || true
   - curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test
 
