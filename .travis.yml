@@ -1,18 +1,24 @@
 language: ruby
 
-# Disable shared config to test pg 10 as CI isn't set up within the
-# build-configs repo itself.
-# import:
-#   - travis-ci/build-configs/db-setup.yml
-addons:
-  postgresql: 10
-  apt:
-    packages:
-    - postgresql-10
-    - postgresql-client-10
+before_install:
+  - sudo apt-get update
+  - sudo apt-get --yes remove postgresql\*
+  - sudo apt-get install -y postgresql-11 postgresql-client-11
+  - sudo cp /etc/postgresql/{9.6,11}/main/pg_hba.conf
+  - sudo service postgresql restart 11
+  - 'gem update --system'
+
+before_script:
+  - psql --version
+  - psql -c 'CREATE DATABASE {{your database name here}};' -U postgres
+  - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
+  - cp config/database.yml.travis config/database.yml
 
 services:
   - postgresql
+
+addons:
+  postgresql: "11.2"
 
 rvm: 2.5.1
 
@@ -32,11 +38,13 @@ cache: bundler
 
 services:
   - redis-server
-
-before_install:
-  - 'gem update --system'
+  - postgresql
 
 before_script:
+  - psql --version
+  - psql -c 'CREATE DATABASE {{your database name here}};' -U postgres
+  - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
+  - cp config/database.yml.travis config/database.yml
   - createdb travis_test || true
   - curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test
 
