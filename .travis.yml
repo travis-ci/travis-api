@@ -8,12 +8,6 @@ before_install:
   - sudo service postgresql restart 11
   - 'gem update --system'
 
-before_script:
-  - psql --version
-  - psql -c 'CREATE DATABASE {{your database name here}};' -U postgres
-  - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
-  - cp config/database.yml.travis config/database.yml
-
 services:
   - postgresql
 
@@ -42,7 +36,7 @@ services:
 
 before_script:
   - psql --version
-  - psql -c 'CREATE DATABASE {{your database name here}};' -U postgres
+  - psql -c 'CREATE DATABASE travis_test;' -U postgres
   - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
   - cp config/database.yml.travis config/database.yml
   - createdb travis_test || true
