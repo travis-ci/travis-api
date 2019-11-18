@@ -56,7 +56,7 @@ http {
 				return 204;
 			}
 
-			if ($request_filename ~* log\.txt$) {
+			if ($request_filename ~* log\.txt.*$) {
 				add_header 'X-Robots-Tag' 'noindex, noarchive, nosnippet';
 			}
 
