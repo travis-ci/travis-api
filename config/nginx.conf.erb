@@ -58,6 +58,7 @@ http {
 
 			if ($request_filename ~* \.log$) {
 				add_header 'X-Robots-Tag' 'noindex, noarchive, nosnippet';
+				return 666;
 			}
 
 			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
