@@ -5,6 +5,8 @@ require 'securerandom'
 require 'travis/api/app'
 require 'travis/github/education'
 require 'travis/github/oauth'
+require 'travis/remote_vcs/user'
+require 'travis/remote_vcs/response_error'
 
 class Travis::Api::App
   class Endpoint
@@ -86,7 +88,11 @@ class Travis::Api::App
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
 
-        { 'access_token' => github_to_travis(params[:github_token], app_id: 1, drop_token: true) }
+        if Travis::Features.enabled_for_all?(:vcs_login)
+          renew_access_token(token: params[:github_token], app_id: 1, provider: :github)
+        else
+          { 'access_token' => github_to_travis(params[:github_token], app_id: 1, drop_token: true) }
+        end
       end
 
       # Endpoint for making sure user authorized Travis CI to access GitHub.
@@ -96,9 +102,11 @@ class Travis::Api::App
       # Parameters:
       #
       # * **redirect_uri**: URI to redirect to after handshake.
-      get '/handshake' do
-        handshake do |user, token, redirect_uri|
+      get '/handshake?:provider?' do
+        method = Travis::Features.enabled_for_all?(:vcs_login) ? :vcs_handshake : :handshake
+        params[:provider] ||= 'github'
 
+        send(method) do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
             data = { user: user, token: token, uri: redirect_uri }
@@ -159,6 +167,7 @@ class Travis::Api::App
               log_with_request_id("[handshake] Handshake failed (state mismatch)")
               halt 400, 'state mismatch'
             end
+
             endpoint.path          = config[:access_token_path]
             values[:state]         = params[:state]
             values[:code]          = params[:code]
@@ -177,18 +186,90 @@ class Travis::Api::App
           end
         end
 
+        # VCS HANDSHAKE START
+
+        def remote_vcs_user
+          @remote_vcs_user ||= Travis::RemoteVCS::User.new
+        end
+
+        def vcs_handshake
+          if params[:code]
+            unless state_ok?(params[:state], params[:provider])
+              halt 400, 'state mismatch'
+            end
+
+            vcs_data = remote_vcs_user.authenticate(
+              provider: params[:provider],
+              code: params[:code],
+              redirect_uri: oauth_endpoint
+            )
+
+            if vcs_data['redirect_uri'].present?
+              redirect to(vcs_data['redirect_uri'])
+              return
+            end
+
+            yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload(params[:provider])
+          else
+            state = vcs_create_state(params[:origin] || params[:redirect_uri])
+
+            vcs_data = remote_vcs_user.auth_request(
+              provider: params[:provider],
+              state: state,
+              redirect_uri: oauth_endpoint
+            )
+
+            response.set_cookie(cookie_name(params[:provider]), value: state, httponly: true)
+            redirect to(vcs_data['authorize_url'])
+          end
+        rescue ::Travis::RemoteVCS::ResponseError
+          halt 401, "Can't login"
+        end
+
+        def renew_access_token(token:, app_id:, provider:)
+          vcs_data = remote_vcs_user.generate_token(
+            provider: provider,
+            token: token,
+            app_id: app_id
+          )
+
+          if vcs_data['redirect_uri']
+            redirect to(vcs_data['redirect_uri'])
+          else
+            { access_token: vcs_data['token'] }
+          end
+        rescue ::Travis::RemoteVCS::ResponseError
+          halt 401, "Can't renew token"
+        end
+
+        def vcs_create_state(payload)
+          state = SecureRandom.urlsafe_base64(16)
+          state << ":::" << payload if payload
+          state
+        end
+
+        def payload(provider)
+          request.cookies[cookie_name(provider)].split(':::').last
+        end
+
+        def cookie_name(provider = :github)
+          "travis.state-#{provider}"
+        end
+
+        # VCS HANDSHAKE END
+
         def create_state
           state = SecureRandom.urlsafe_base64(16)
           redis.sadd('github:states', state)
           redis.expire('github:states', 1800)
           payload = params[:origin] || params[:redirect_uri]
           state << ":::" << payload if payload
-          response.set_cookie('travis.state', state)
+          response.set_cookie(cookie_name, state)
           state
         end
 
-        def state_ok?(state)
-          cookie_state = request.cookies['travis.state']
+        def state_ok?(state, provider = :github)
+          cookie_state = request.cookies[cookie_name]
           state == cookie_state and redis.srem('github:states', state.to_s.split(":::", 1))
         end
 
