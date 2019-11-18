@@ -3,7 +3,7 @@ language: ruby
 import:
   - travis-ci/build-configs:db-setup.yml
   - source: travis-ci/build-configs:ship-docker.yml
-    if: branch = master
+    if: type != pull_request
 
 rvm: 2.5.1
 
