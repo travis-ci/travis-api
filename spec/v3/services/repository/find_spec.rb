@@ -79,7 +79,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "description"        => nil,
       "github_id"          => repo.github_id,
       "vcs_id"             => repo.vcs_id,
-      "vcs_type"           => 'GithubRepository',
+      "vcs_type"           => repo.vcs_type ,
       "github_language"    => nil,
       "active"             => true,
       "private"            => opts[:private],
@@ -97,7 +97,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "active_on_org"      => nil,
       "managed_by_installation" => false,
       "migration_status"   => nil,
-      "history_migration_status" => nil,
+      "history_migration_status" => nil
     })}
   end
 
