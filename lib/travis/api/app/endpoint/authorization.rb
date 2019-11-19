@@ -269,7 +269,7 @@ class Travis::Api::App
         end
 
         def state_ok?(state, provider = :github)
-          cookie_state = request.cookies[cookie_name]
+          cookie_state = request.cookies[cookie_name(provider)]
           state == cookie_state and redis.srem('github:states', state.to_s.split(":::", 1))
         end
 
