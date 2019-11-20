@@ -1,3 +1,5 @@
+require 'travis/remote_vcs/repository'
+
 module Travis::API::V3
   class Service
     DEFAULT_PARAMS = [ "include".freeze, "@type".freeze ]
@@ -196,6 +198,10 @@ module Travis::API::V3
 
     def private_repo_feature!(repository)
       raise PrivateRepoFeature unless access_control.enterprise? || repository.private?
+    end
+
+    def remote_vcs_repository
+      @remote_vcs_repository ||= Travis::RemoteVCS::Repository.new
     end
   end
 end
