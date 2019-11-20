@@ -7,7 +7,7 @@ module Travis::API::V3
 
       admin = access_control.admin_for(repository)
 
-      if Travis::Features.user_active?(:use_vcs, access_control.user)
+      if Travis::Features.user_active?(:use_vcs, admin)
         remote_vcs_repository.set_hook(
           repository_id: repository.id,
           user_id: admin.id,
