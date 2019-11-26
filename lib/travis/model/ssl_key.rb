@@ -23,10 +23,12 @@ class SslKey < Travis::Model
   end
 
   def encrypt(string)
-    build_key.public_encrypt(string)
+    build_key.public_encrypt(string, OpenSSL::PKey::RSA::PKCS1_OAEP_PADDING)
   end
 
   def decrypt(string)
+    build_key.private_decrypt(string, OpenSSL::PKey::RSA::PKCS1_OAEP_PADDING)
+  rescue OpenSSL::PKey::RSAError
     build_key.private_decrypt(string)
   end
 
