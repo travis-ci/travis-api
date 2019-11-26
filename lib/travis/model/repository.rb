@@ -39,8 +39,8 @@ class Repository < Travis::Model
   scope :by_params, ->(params) {
     if id = params[:repository_id] || params[:id]
       where(id: id)
-    elsif params[:github_id]
-      where(github_id: params[:github_id])
+    elsif params[:github_id] || params[:vcs_id]
+      where(vcs_id: params[:github_id] || params[:vcs_id])
     elsif params.key?(:slug)
       by_slug(params[:slug])
     elsif params.key?(:name) && params.key?(:owner_name)
