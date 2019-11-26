@@ -59,6 +59,7 @@ FactoryGirl.define do
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
     sequence(:github_id) {|n| n }
+    sequence(:vcs_id) {|n| n }
     private false
   end
 
