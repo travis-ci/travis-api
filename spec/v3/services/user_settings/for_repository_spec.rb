@@ -56,23 +56,11 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
 
     describe 'a private repo' do
       before { repo.update_attributes!(private: true) }
-      before { Travis::Features.activate_owner(:config_imports, repo.owner) }
       before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
 
       example do
         expect(JSON.load(body)['settings']).to include(
           { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/allow_config_imports", '@representation' => 'standard', 'name' => 'allow_config_imports', 'value' => false },
-        )
-      end
-    end
-
-    describe 'feature flag :config_validation on' do
-      before { Travis::Rollout.stubs(:matches?).returns(true) }
-      before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
-
-      example do
-        expect(JSON.load(body)['settings']).to include(
-          { '@type' => 'setting', '@permissions' => { 'read' => true, 'write' => false }, '@href' => "/v3/repo/#{repo.id}/setting/config_validation", '@representation' => 'standard', 'name' => 'config_validation', 'value' => false },
         )
       end
     end
