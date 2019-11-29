@@ -8,8 +8,6 @@ module Travis::API::V3
     end
 
     def visible?(object, type = nil)
-      Travis.logger.info("object: " + object.to_s)
-      Travis.logger.info("type: " + type.to_s)
       full_access? or dispatch(object, :visible?, type)
     end
 
@@ -224,6 +222,8 @@ module Travis::API::V3
     end
 
     def public_mode?(owner = nil)
+      Travis.logger.info("Travis.config.public_mode: #{Travis.config.public_mode}")
+      Travis.logger.info("Travis::Features.owner_active?(:public_mode, owner): #{Travis::Features.owner_active?(:public_mode, owner).to_s}")
       Travis.config.public_mode || owner && Travis::Features.owner_active?(:public_mode, owner)
     end
 
