@@ -10,8 +10,6 @@ module Travis::API::V3
     def visible?(object, type = nil)
       Travis.logger.info("object: " + object.to_s)
       Travis.logger.info("type: " + type.to_s)
-      out = dispatch(object, :visible?, type)
-      Travis.logger.info("dispatch(object, :visible?, type): " + out)
       full_access? or dispatch(object, :visible?, type)
     end
 
@@ -234,6 +232,8 @@ module Travis::API::V3
 
     def dispatch(object, method, type = nil)
       method = method_for(type || object.class, method)
+      Travis.logger.info("method: " + method.to_s)
+      Travis.logger.info("respond_to?(method, true): " + respond_to?(method, true))
       send(method, object) if respond_to?(method, true)
     end
 
