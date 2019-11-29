@@ -73,7 +73,6 @@ module Travis::API::V3
 
     def find(type = result_type, *args)
       not_found(true,  type) unless object = query(type).find(*args)
-      Travis.logger.info("access_control.visible?: " + access_control.visible?(object).to_s)
       not_found(false, type) unless access_control.visible? object
       object
     end

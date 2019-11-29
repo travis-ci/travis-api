@@ -31,6 +31,10 @@ module Travis::API::V3
       end
     end
 
+    def me?(user)
+      @user.id == user.id
+    end
+
     protected
 
     def private_access_repository_ids

@@ -14,7 +14,6 @@ module Travis::API::V3
 
       modes = REGISTER.fetch(type, [])
       access_control = modes.inject(nil) { |current, mode| current || mode.for_request(type, payload, env) }
-      Travis.logger.info("access_control: #{access_control.to_s}")
       raise WrongCredentials unless access_control
       access_control
     end
