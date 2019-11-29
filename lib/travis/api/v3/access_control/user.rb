@@ -32,6 +32,8 @@ module Travis::API::V3
     end
 
     def me?(user)
+      Travis.logger.info("@user: #{@user.to_s}")
+      Travis.logger.info("user: #{@user.to_s}")
       @user.id == user.id
     end
 
