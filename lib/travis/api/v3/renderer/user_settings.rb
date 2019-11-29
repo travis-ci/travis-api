@@ -13,13 +13,9 @@ module Travis::API::V3
 
     def allow?(setting)
       case setting[:name]
-      when :allow_config_imports then allow_config_imports?
+      when :allow_config_imports then repo.private?
       else true
       end
-    end
-
-    def allow_config_imports?
-      repo.private? && Travis::Features.owner_active?(:config_imports, repo.owner)
     end
 
     def repo
