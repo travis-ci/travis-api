@@ -55,7 +55,6 @@ module Travis::API::V3
     attr_accessor :access_control, :params, :request_body
 
     def initialize(access_control, params, env)
-      require 'pry'; binding.pry
       @access_control = access_control
       @params         = params
       @queries        = {}
