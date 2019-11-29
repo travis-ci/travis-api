@@ -8,6 +8,8 @@ module Travis::API::V3
     end
 
     def visible?(object, type = nil)
+      Travis.logger.info("full_access?: " + full_access?.to_s)
+      Travis.logger.info("access_control.visible?: " + access_control.visible?(object).to_s)
       full_access? or dispatch(object, :visible?, type)
     end
 
