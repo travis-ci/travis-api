@@ -167,6 +167,7 @@ module Travis::API::V3
     end
 
     def user_visible?(user)
+      Travis.logger.info("user: #{user.to_s}")
       unrestricted_api?(user) || logged_in?
     end
 
@@ -232,8 +233,6 @@ module Travis::API::V3
 
     def dispatch(object, method, type = nil)
       method = method_for(type || object.class, method)
-      Travis.logger.info("method: " + method.to_s)
-      Travis.logger.info("respond_to?(method, true): " + respond_to?(method, true))
       send(method, object) if respond_to?(method, true)
     end
 
