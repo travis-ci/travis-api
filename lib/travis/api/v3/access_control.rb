@@ -6,10 +6,12 @@ module Travis::API::V3
       if token = env['rack.request.query_hash']['log.token']
         type = 'log.token'
         payload = token
+        Travis.logger.info("token rack")
       else
         type, payload = env['HTTP_AUTHORIZATION'.freeze].to_s.split(" ", 2)
         payload &&= payload.unpack(?m.freeze).first if type == 'basic'.freeze
         payload &&= type == 'token'.freeze ? payload.gsub(/^"(.+)"$/, '\1'.freeze) : payload.split(?:.freeze)
+        Travis.logger.info("token else")
       end
 
       modes = REGISTER.fetch(type, [])

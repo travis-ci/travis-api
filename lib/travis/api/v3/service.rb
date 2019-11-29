@@ -55,6 +55,7 @@ module Travis::API::V3
     attr_accessor :access_control, :params, :request_body
 
     def initialize(access_control, params, env)
+      require 'pry'; binding.pry
       @access_control = access_control
       @params         = params
       @queries        = {}
@@ -73,6 +74,7 @@ module Travis::API::V3
 
     def find(type = result_type, *args)
       not_found(true,  type) unless object = query(type).find(*args)
+      Travis.logger.info("access_control.visible?:" + access_control.visible?(object).to_s)
       not_found(false, type) unless access_control.visible? object
       object
     end
