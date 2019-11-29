@@ -168,6 +168,8 @@ module Travis::API::V3
 
     def user_visible?(user)
       Travis.logger.info("user: #{user.to_s}")
+      Travis.logger.info("logged_in?: #{logged_in?.to_s}")
+      Travis.logger.info("logged_in?: #{lunrestricted_api?(user).to_s}")
       unrestricted_api?(user) || logged_in?
     end
 
