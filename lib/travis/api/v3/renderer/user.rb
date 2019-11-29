@@ -6,7 +6,8 @@ module Travis::API::V3
     representation(:additional, :emails)
 
     def emails
-      @model.emails.map(&:email) if access_control.class == Travis::API::V3::AccessControl::User && access_control.me?(@model)
+      require 'pry'; binding.pry
+      @model.emails.map(&:email) if access_control.class == Travis::API::V3::AccessControl::LegacyToken && access_control.user.id == @model.id
       []
     end
   end

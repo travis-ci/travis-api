@@ -31,12 +31,6 @@ module Travis::API::V3
       end
     end
 
-    def me?(user)
-      Travis.logger.info("@user: #{@user.to_s}")
-      Travis.logger.info("user: #{@user.to_s}")
-      @user.id == user.id
-    end
-
     protected
 
     def private_access_repository_ids
