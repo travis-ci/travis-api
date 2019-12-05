@@ -45,7 +45,7 @@ module Travis::API::V3
       stats = Travis::API::V3::Models::Job.where(state: %w(queued started), queue: queue)
                                           .group(:state)
                                           .count
-      Models::JobsStats.new(stats)
+      Models::JobsStats.new(stats, queue)
     end
   end
 end

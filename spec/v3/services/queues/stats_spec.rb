@@ -17,6 +17,7 @@ describe Travis::API::V3::Services::Queues::Stats, set_app: true do
 
       expect(parsed_body['started']).to eql(1)
       expect(parsed_body['queued']).to eql(2)
+      expect(parsed_body['queue_name']).to eql('builds.linux')
     end
   end
 end
