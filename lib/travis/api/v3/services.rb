@@ -38,6 +38,7 @@ module Travis::API::V3
     Plans                 = Module.new { extend Services }
     Preferences           = Module.new { extend Services }
     Preference            = Module.new { extend Services }
+    Queues                = Module.new { extend Services }
     Repositories          = Module.new { extend Services }
     Repository            = Module.new { extend Services }
     Request               = Module.new { extend Services }

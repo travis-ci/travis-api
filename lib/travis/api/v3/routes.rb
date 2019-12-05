@@ -330,6 +330,11 @@ module Travis::API::V3
       get :active_repos, '/repos/active'
     end
 
+    hidden_resource :queues do
+      route '/queues/{queue.name}'
+      get :stats, '/stats'
+    end
+
     hidden_resource :leads do
       route '/leads'
       post :create

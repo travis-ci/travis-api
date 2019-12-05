@@ -40,5 +40,12 @@ module Travis::API::V3
       jobs = V3::Models::Job.where(["jobs.repository_id IN (?)", repositories])
       sort filter(jobs)
     end
+
+    def stats_by_queue(queue)
+      stats = Travis::API::V3::Models::Job.where(state: %w(queued started), queue: queue)
+                                          .group(:state)
+                                          .count
+      Models::JobsStats.new(stats)
+    end
   end
 end
