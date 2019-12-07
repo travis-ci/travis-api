@@ -1,4 +1,4 @@
-# Travis API
+# Travis API on new db
 
 [![Build Status](https://travis-ci.com/travis-ci/travis-api.svg?branch=master)](https://travis-ci.com/travis-ci/travis-api)
 
@@ -109,7 +109,7 @@ curl -H "Travis-API-Version: 3" \
      http://localhost:9293/subscriptions
 ```
 and get:
-```  
+```
 {
   "@type": "subscriptions",
   "@href": "/subscriptions",
