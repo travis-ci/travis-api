@@ -6,8 +6,6 @@ $stdout.sync = true
 require 'bundler/setup'
 
 require 'active_record'
-# To silence deprecation warning
-ActiveRecord::Base.raise_in_transactional_callbacks = true
 
 require 'date'
 require 'stringio'
@@ -55,7 +53,7 @@ class Migrate
     ids = query.ids
     ids.sort.reverse.each { |id| queue.push(id) }
     puts "Queued #{ids.size} repos"
-      
+
     sleep 5
 
     # Start num_workers threads and start running off the queue
@@ -115,13 +113,13 @@ class Migrate
           puts "No webhook found but service hook found, syncing repo #{repo.slug} active attr"
           puts "Save failed" unless repo.update(active: service_hook['active'])
         end
-        
+
         # Only set webhook for repos with an active service hook
         if (service_hook && service_hook['active'])
           puts "Found active service hook for #{repo.slug}, setting webhook"
           gh.set_hook(repo, true)
         end
-        
+
         migrated = true
         break
       rescue => e
