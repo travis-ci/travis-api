@@ -24,7 +24,7 @@ class Build < Travis::Model
   belongs_to :pull_request
   belongs_to :repository, autosave: true
   belongs_to :owner, polymorphic: true
-  belongs_to :config, foreign_key: :config_id, class_name: BuildConfig
+  belongs_to :config, foreign_key: :config_id, class_name: 'BuildConfig'
   has_many   :matrix, -> { order('id') }, as: :source, class_name: 'Job::Test', dependent: :destroy
   has_many   :events, as: :source
 

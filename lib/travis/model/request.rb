@@ -44,7 +44,7 @@ class Request < Travis::Model
   belongs_to :pull_request
   belongs_to :repository
   belongs_to :owner, polymorphic: true
-  belongs_to :config, foreign_key: :config_id, class_name: RequestConfig
+  belongs_to :config, foreign_key: :config_id, class_name: 'RequestConfig'
   has_many   :builds
   has_many   :events, as: :source
 
