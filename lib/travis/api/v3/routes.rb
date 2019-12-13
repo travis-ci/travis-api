@@ -270,6 +270,11 @@ module Travis::API::V3
       get :current
     end
 
+    resource :user do
+      route '/logout'
+      get :logout
+    end
+
     resource :preferences do
       route '/preferences'
       get   :for_user
