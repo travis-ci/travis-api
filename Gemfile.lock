@@ -142,7 +142,7 @@ GEM
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.11)
-    excon (0.60.0)
+    excon (0.71.0)
     factory_girl (2.4.2)
       activesupport
     faraday (0.15.3)
@@ -157,7 +157,7 @@ GEM
       ipaddress (~> 0.8)
     fog-core (1.45.0)
       builder
-      excon (~> 0.58)
+      excon (~> 0.71)
       formatador (~> 0.2)
     fog-google (0.4.2)
       fog-core
