@@ -9,7 +9,7 @@ module Travis::API::V3
       return repo_migrated if migrated?(repository)
 
       admin = access_control.admin_for(repository)
-      if Travis::Features.user_active?(:use_vcs, admin)
+      if Travis::Features.user_active?(:use_vcs, admin) || !admin.github?
         remote_vcs_repository.set_hook(
           repository_id: repository.id,
           user_id: admin.id
@@ -20,7 +20,7 @@ module Travis::API::V3
       repository.update_attributes(active: true)
 
       if repository.private? || access_control.enterprise?
-        if Travis::Features.user_active?(:use_vcs, admin)
+        if Travis::Features.user_active?(:use_vcs, admin) || !admin.github?
           remote_vcs_repository.upload_key(
             repository_id: repository.id,
             user_id: admin.id,

@@ -166,6 +166,10 @@ class User < Travis::Model
     self.tokens.create!
   end
 
+  def github?
+    vcs_type == 'GithubUser'
+  end
+
   protected
 
     def track_previous_changes

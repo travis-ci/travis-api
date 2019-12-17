@@ -21,7 +21,7 @@ module Travis::API::V3
 
     def sync(user)
       raise AlreadySyncing if user.is_syncing?
-      if Travis::Features.user_active?(:use_vcs, user)
+      if Travis::Features.user_active?(:use_vcs, user) || !user.github?
         Travis::RemoteVCS::User.new.sync(user_id: user.id)
         user.reload
       else
