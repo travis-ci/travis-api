@@ -50,7 +50,7 @@ module Travis::API::V3
     end
 
     def upload_key(repository)
-      keys_path = "repositories/#{repository.github_id}/keys"
+      keys_path = "repositories/#{repository.vcs_id || repository.github_id}/keys"
       key = gh[keys_path].detect { |e| e['key'] == repository.key.encoded_public_key }
 
       unless key
@@ -70,18 +70,18 @@ module Travis::API::V3
         config: { url: service_hook_url.to_s, insecure_ssl: insecure_ssl? }
       }
       if url = webhook_url?(repo)
-        info("Updating webhook repo=%s github_id=%i active=%s" % [repo.slug, repo.github_id, active])
+        info("Updating webhook repo=%s github_id=%i active=%s" % [repo.slug, repo.vcs_id || repo.github_id, active])
         gh.patch(url, payload)
       else
-        hooks_url = HOOKS_URL % [repo.github_id]
-        info("Creating webhook repo=%s github_id=%i active=%s" % [repo.slug, repo.github_id, active])
+        hooks_url = HOOKS_URL % [repo.vcs_id || repo.github_id]
+        info("Creating webhook repo=%s github_id=%i active=%s" % [repo.slug, repo.vcs_id || repo.github_id, active])
         gh.post(hooks_url, payload)
       end
     end
 
     def deactivate_service_hook(repo)
       if url = service_hook_url?(repo)
-        info("Deactivating service hook repo=%s github_id=%i" % [repo.slug, repo.github_id])
+        info("Deactivating service hook repo=%s github_id=%i" % [repo.slug, repo.vcs_id || repo.github_id])
         # Have to update events here too, to avoid old hooks failing validation
         gh.patch(url, { events: EVENTS, active: false })
       end
@@ -110,7 +110,7 @@ module Travis::API::V3
     end
 
     def hooks(repo)
-      gh[HOOKS_URL % [repo.github_id]]
+      gh[HOOKS_URL % [repo.vcs_id || repo.github_id]]
     end
 
     def service_hook_url

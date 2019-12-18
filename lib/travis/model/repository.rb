@@ -40,7 +40,11 @@ class Repository < Travis::Model
     if id = params[:repository_id] || params[:id]
       where(id: id)
     elsif params[:github_id]
-      where(github_id: params[:github_id])
+      where('vcs_id = :id OR github_id = :id_i', id: params[:github_id], id_i: params[:github_id].to_i)
+    elsif params[:vcs_id] && params['vcs_type']
+      where(vcs_id: params[:vcs_id], vcs_type: params['vcs_type'])
+    elsif params[:vcs_id]
+      where(vcs_id: params[:vcs_id])
     elsif params.key?(:slug)
       by_slug(params[:slug])
     elsif params.key?(:name) && params.key?(:owner_name)
@@ -213,5 +217,9 @@ class Repository < Travis::Model
 
   def migrated?
     migration_status == 'migrated'
+  end
+
+  def github?
+    vcs_type == 'GithubRepository'
   end
 end
