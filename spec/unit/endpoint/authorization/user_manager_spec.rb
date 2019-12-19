@@ -30,6 +30,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
   end
 
   describe '#fetch' do
+    #TEST
     let(:data) {
        { login: 'drogus', id: 456 }.stringify_keys
      }
