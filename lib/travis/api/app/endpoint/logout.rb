@@ -9,7 +9,7 @@ class Travis::Api::App
       before { authenticate_by_mode! }
 
       get '/' do
-        respond_with current_user if Travis.redis.del("t:#{access_control.token}") == 1
+        respond_with current_user if Travis.redis.del("t:#{current_user.access_token}") == 1
       end
     end
   end
