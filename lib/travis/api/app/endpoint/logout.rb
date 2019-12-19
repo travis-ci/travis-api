@@ -6,8 +6,6 @@ require 'travis/api/app/responders/base'
 class Travis::Api::App
   class Endpoint
     class Logout < Endpoint
-      include Helpers::Accept
-
       before { authenticate_by_mode! }
 
       get '/' do
