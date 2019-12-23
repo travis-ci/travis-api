@@ -29,6 +29,10 @@ module Travis::API::V3
       self.class.column_names.include?('migrating') && super
     end
 
+    def github?
+      vcs_type == 'GithubRepository'
+    end
+
     def migrated_at
       self.class.column_names.include?('migrated_at') && super
     end

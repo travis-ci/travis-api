@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Organizations < Query
-    sortable_by :id, :login, :name, :github_id
+    sortable_by :id, :login, :name, :github_id, :vcs_id
     params :role, prefix: :organization
 
     def for_member(user)
