@@ -17,7 +17,12 @@ module Travis::API::V3
       record = create_request(repository)
 
       payload = {
-        repository: { id: repository.vcs_id || repository.github_id, owner_name: repository.owner_name, name: repository.name },
+        repository: {
+          id: repository.vcs_id || repository.github_id,
+          vcs_type: repository.vcs_type,
+          owner_name: repository.owner_name,
+          name: repository.name ,
+        },
         user:       { id: user.id },
         id:         record.id,
         message:    message,
