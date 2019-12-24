@@ -7,6 +7,8 @@ module Travis::API::V3
     def run!
       raise LoginRequired unless access_control.logged_in?
       raise InstallationMissing unless access_control.user.installation
+      puts '===================== installation ========================='
+      puts access_control.user.installation.to_h
       result query.for_member(access_control.user)
     end
   end
