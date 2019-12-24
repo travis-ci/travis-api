@@ -4,6 +4,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
   before { ActiveRecord::Base.connection.execute("truncate repositories cascade") }
+  before { Travis::API::V3::Models::Installation.create(owner_type: 'User', owner_id: user.id, github_id: 789) }
 
   describe 'name_filter' do
     let(:web_repo)  { FactoryGirl.create(:repository, name: 'travis-web') }
