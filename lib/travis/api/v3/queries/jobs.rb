@@ -5,6 +5,7 @@ module Travis::API::V3
     default_sort "id:desc"
 
     ACTIVE_STATES = %w(created queued received started).freeze
+    REPOSITORIES_CHUNK_SIZE = 100.freeze
 
     def find(build)
       relation = build.jobs
@@ -35,9 +36,15 @@ module Travis::API::V3
     end
 
     def for_user(user)
+      repositories_in_chunks = []
+      jobs = []
+
       ActiveRecord::Base.connection.execute "SET statement_timeout = '300s';"
       repositories = V3::Models::Permission.where(["permissions.user_id = ?", user.id]).pluck(:repository_id)
-      jobs = V3::Models::Job.where(["jobs.repository_id IN (?)", repositories])
+      repositories.each_slice(REPOSITORIES_CHUNK_SIZE){|chunk| repositories_in_chunks << chunk}
+      repositories_in_chunks.each do |repos|
+        jobs.concat(V3::Models::Job.where(["jobs.repository_id IN (?)", repos]))
+      end
       sort filter(jobs)
     end
 
