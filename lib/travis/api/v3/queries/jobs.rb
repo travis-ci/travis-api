@@ -43,9 +43,9 @@ module Travis::API::V3
       repositories = V3::Models::Permission.where(["permissions.user_id = ?", user.id]).pluck(:repository_id)
       repositories.each_slice(REPOSITORIES_CHUNK_SIZE){|chunk| repositories_in_chunks << chunk}
       repositories_in_chunks.each do |repos|
-        jobs <<  V3::Models::Job.where(["jobs.repository_id IN (?)", repos])
+        jobs <<  sort filter(V3::Models::Job.where(["jobs.repository_id IN (?)", repos]))
       end
-      sort filter(jobs)
+      jobs
     end
 
     def stats_by_queue(queue)
