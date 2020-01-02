@@ -36,16 +36,11 @@ module Travis::API::V3
     end
 
     def for_user(user)
-      repositories_in_chunks = []
-      jobs = []
-
       ActiveRecord::Base.connection.execute "SET statement_timeout = '300s';"
-      repositories = V3::Models::Permission.where(["permissions.user_id = ?", user.id]).pluck(:repository_id)
-      repositories.each_slice(REPOSITORIES_CHUNK_SIZE){|chunk| repositories_in_chunks << chunk}
-      repositories_in_chunks.each do |repos|
-        jobs <<  sort(filter(V3::Models::Job.where(["jobs.repository_id IN (?)", repos])))
-      end
-      jobs
+      jobs = V3::Models::Job.joins("INNER JOIN permissions ON permissions.user_id = #{user.id}")
+                            .where('jobs.repository_id = permissions.repository_id')
+                            .where(owner: user)
+      sort filter(jobs)
     end
 
     def stats_by_queue(queue)
