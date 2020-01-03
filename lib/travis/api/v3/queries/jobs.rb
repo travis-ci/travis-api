@@ -5,7 +5,6 @@ module Travis::API::V3
     default_sort "id:desc"
 
     ACTIVE_STATES = %w(created queued received started).freeze
-    REPOSITORIES_CHUNK_SIZE = 100.freeze
 
     def find(build)
       relation = build.jobs
@@ -37,9 +36,8 @@ module Travis::API::V3
 
     def for_user(user)
       ActiveRecord::Base.connection.execute "SET statement_timeout = '300s';"
-      jobs = V3::Models::Job.joins("INNER JOIN permissions ON permissions.user_id = #{user.id}")
-                            .where('jobs.repository_id = permissions.repository_id')
-                            .where(owner: user)
+      jobs = V3::Models::Job.joins("INNER JOIN permissions ON permissions.repository_id=jobs.repository_id")
+                            .where("permissions.user_id = #{user.id}")
       sort filter(jobs)
     end
 
