@@ -5,13 +5,13 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
 
 
   before do
-    replicated_endpoint = 'https://fake.fakeserver.com:9880'
-    ENV['REPLICATED_INTEGRATIONAPI'] = replicated_endpoint
-    stub_request(:get, "#{replicated_endpoint}/license/v1/license")
-      .to_return(body: File.read('spec/support/enterprise_license.json'), headers: { 'Content-Type' => 'application/json' })
+    ENV['REPLICATED_LICENSELICENSEID'] = "12345675ad"
+    ENV['REPLICATED_LICENSECHANNELNAME'] = "trial"
+    ENV['REPLICATED_LICENSEEXPIRATIONDATE'] = "2018-08-18T00:00:00Z"
+    ENV['REPLICATED_CUSTOMLICENSE'] = "---\nproduction:\n  license:\n    hostname: foo.example.com\n    expires: '2018-08-18'\n    seats: 20\n    queue:\n      limit: 999999\n    signature: !binary |-\n      xxxxxxxxxxxxxxxxx==\n"
   end
 
-  describe "with REPLICATED_INTEGRATIONAPI" do
+  describe "with REPLICATED_LICENSELICENSEID" do
     before { user.update_attribute(:github_oauth_token, nil) }
     before { user2.update_attribute(:suspended, false) }
 
@@ -30,8 +30,8 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
     end
   end
 
-  describe "no REPLICATED_INTEGRATIONAPI" do
-    before { ENV.delete('REPLICATED_INTEGRATIONAPI') }
+  describe "no REPLICATED_LICENSELICENSEID" do
+    before { ENV.delete('REPLICATED_LICENSELICENSEID') }
 
     describe "fetching enterprise license" do
       before     { get("/v3/enterprise_license") }
