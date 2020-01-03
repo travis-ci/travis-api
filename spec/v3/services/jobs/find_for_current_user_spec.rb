@@ -14,10 +14,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
   let(:parsed_body) { JSON.load(body) }
 
   before do
-#    Travis::API::V3::Models::Permission.create!(user: user, repository: repo1)
-#    Travis::API::V3::Models::Permission.create!(user: user, repository: repo2)
-    Factory.create(:permission, user: user, repository: repo1)
-    Factory.create(:permission, user: user, repository: repo2)
+    Travis::API::V3::Models::Permission.create!(user: user, repository: repo1)
+    Travis::API::V3::Models::Permission.create!(user: user, repository: repo2)
   end
 
   describe 'for current user' do
