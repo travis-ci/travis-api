@@ -1,11 +1,11 @@
 module Travis::API::V3
   class Services::EnterpriseLicense::Find < Service
     def run!
-      if replicated_endpoint
-        license_id = ENV['REPLICATED_LICENSELICENSEID']
-        license_type = ENV['REPLICATED_LICENSECHANNELNAME']
+      if replicated_license
+        license_id = Travis.config.replicated.license_id
+        license_type = Travis.config.replicated.license_type
         seats = get_seats()
-        expiration_time = ENV['REPLICATED_LICENSEEXPIRATIONDATE']
+        expiration_time = Travis.config.replicated.expiration_time
         active_users = query.active_users
 
         result({
@@ -22,12 +22,12 @@ module Travis::API::V3
 
     private
 
-    def replicated_endpoint
-      ENV['REPLICATED_LICENSELICENSEID']
+    def replicated_license
+      Travis.config.replicated.license_id
     end
 
     def get_seats()
-      yaml = YAML.load(ENV['REPLICATED_CUSTOMLICENSE'])
+      yaml = YAML.load(Travis.config.replicated.license_custom)
       yaml["production"]["license"]["seats"]
     end
   end

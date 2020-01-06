@@ -84,7 +84,8 @@ module Travis
             merge:                { auth_token: 'merge-auth-token', api_url: 'https://merge.localhost' },
             force_authentication: false,
             yml:                  { url: 'https://yml.travis-ci.org', auth_key: 'abc123' },
-            vcs: {}
+            vcs: {},
+            replicated:           { license_id: ENV['REPLICATED_LICENSE_ID'], license_type: ENV['REPLICATED_LICENSE_CHANNEL_NAME'], expiration_time: ENV['REPLICATED_LICENSE_EXPIRATION_DATE'], license_custom: ENV['REPLICATED_CUSTOM_LICENSE']  }
 
     default :_access => [:key]
 
