@@ -28,7 +28,7 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
           "license_type" => "trial",
           "seats" => 20,
           "active_users" => 1,
-          "expiration_time" => 1.month.from_now.iso8601
+          "expiration_time" => "2018-08-18T00:00:00Z"
         }
       }
     end
