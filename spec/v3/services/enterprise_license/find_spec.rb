@@ -35,7 +35,10 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
   end
 
   describe "no REPLICATED_LICENSE_ID" do
-    before { ENV.delete('REPLICATED_LICENSE_ID') }
+    before do
+      ENV.delete('REPLICATED_LICENSE_ID')
+      Travis.config.replicated.license_id = nil
+    end
 
     describe "fetching enterprise license" do
       before     { get("/v3/enterprise_license") }
