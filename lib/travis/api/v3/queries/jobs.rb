@@ -36,8 +36,8 @@ module Travis::API::V3
 
     def for_user(user)
       ActiveRecord::Base.connection.execute "SET statement_timeout = '300s';"
-      repositories = V3::Models::Permission.where(["permissions.user_id = ?", user.id]).pluck(:repository_id)
-      jobs = V3::Models::Job.where(["jobs.repository_id IN (?)", repositories])
+      jobs = V3::Models::Job.joins("INNER JOIN permissions ON permissions.repository_id=jobs.repository_id")
+                            .where("permissions.user_id = #{user.id}")
       sort filter(jobs)
     end
 
