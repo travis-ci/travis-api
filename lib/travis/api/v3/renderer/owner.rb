@@ -4,7 +4,7 @@ module Travis::API::V3
   class Renderer::Owner < ModelRenderer
     include Renderer::AvatarURL
 
-    representation(:minimal,    :id, :login)
+    representation(:minimal,    :id, :login, :vcs_type)
     representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education, :allow_migration)
     representation(:additional, :repositories, :installation)
 
