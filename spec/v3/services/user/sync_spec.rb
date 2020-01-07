@@ -85,6 +85,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
         "@href"       => "/v3/user/#{user2.id}",
         "@representation"=> "minimal",
         "id"          => user2.id,
+        'vcs_type'    => user2.vcs_type,
         "login"       => "carlad"
       }
     }}

@@ -2,12 +2,12 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
     let(:parsed_body) { JSON.load(last_response.body) }
     let(:billing_url) { 'http://billingfake.travis-ci.com' }
     let(:billing_auth_key) { 'secret' }
-  
+
     before do
       Travis.config.billing.url = billing_url
       Travis.config.billing.auth_key = billing_auth_key
     end
-  
+
     context 'authenticated user' do
       let(:user) { Factory(:user) }
       let(:organization) { Factory(:org, login: 'travis') }
@@ -29,7 +29,7 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
             billing_trial_response_body('id' => 456, 'created_at' => created_at, 'builds_remaining' => 6, 'owner' => { 'type' => 'Organization', 'id' => organization.id })
           ]))
       end
-  
+
       it 'subscribe user to trial' do
         post("/v3/trials", {owner: user.id.to_s, type: 'user'}, headers)
         expect(last_response.status).to eq(202)
@@ -49,6 +49,7 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
               '@href' => "/v3/user/#{user.id}",
               '@representation' => 'minimal',
               'id' => user.id,
+              'vcs_type' => user.vcs_type,
               'login' => user.login
             },
             'created_at' => created_at,
@@ -68,6 +69,7 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
               '@href' => "/v3/org/#{organization.id}",
               '@representation' => 'minimal',
               'id' => organization.id,
+              'vcs_type' => organization.vcs_type,
               'login' => organization.login
             },
             'created_at' => created_at,
@@ -96,6 +98,7 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
               '@href' => "/v3/user/#{user.id}",
               '@representation' => 'minimal',
               'id' => user.id,
+              'vcs_type' => user.vcs_type,
               'login' => user.login
             },
             'created_at' => created_at,
@@ -115,6 +118,7 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
               '@href' => "/v3/org/#{organization.id}",
               '@representation' => 'minimal',
               'id' => organization.id,
+              'vcs_type' => organization.vcs_type,
               'login' => organization.login
             },
             'created_at' => created_at,
@@ -125,4 +129,3 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
       end
     end
   end
-  

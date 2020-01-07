@@ -95,6 +95,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
+          "vcs_type"            => 'GithubUser',
           "login"               => "svenfuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[1].id}",
@@ -167,6 +168,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
+          "vcs_type"            => 'GithubUser',
           "login"               => "svenfuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[2].id}",
@@ -239,6 +241,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
+          "vcs_type"            => 'GithubUser',
           "login"               => "svenfuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[3].id}",
@@ -311,6 +314,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
+          "vcs_type"            => 'GithubUser',
           "login"               => "svenfuchs"}}
         ]
       })
@@ -401,6 +405,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
+          "vcs_type"            => 'GithubUser',
           "login"               => "svenfuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[1].id}",
@@ -473,6 +478,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
+          "vcs_type"            => 'GithubUser',
           "login"               => "svenfuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[2].id}",
@@ -545,6 +551,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
+          "vcs_type"            => 'GithubUser',
           "login"               => "svenfuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[3].id}",
@@ -617,6 +624,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
+          "vcs_type"            => 'GithubUser',
           "login"               => "svenfuchs"}}
         ]
       })
@@ -709,6 +717,7 @@ describe "jobs private repository, private API, authenticated as user with push 
           "@href"          => "/v3/user/1",
           "@representation"=> "minimal",
           "id"             =>  1,
+          "vcs_type"       => 'GithubUser',
           "login"          => "svenfuchs"}},
         {"@type"            => "job",
         "@href"            => "/v3/job/#{jobs[1].id}",
@@ -781,6 +790,7 @@ describe "jobs private repository, private API, authenticated as user with push 
           "@href"          => "/v3/user/1",
           "@representation"=> "minimal",
           "id"             =>  1,
+          "vcs_type"       => 'GithubUser',
           "login"          => "svenfuchs"}},
         {"@type"            => "job",
         "@href"            => "/v3/job/#{jobs[2].id}",
@@ -853,6 +863,7 @@ describe "jobs private repository, private API, authenticated as user with push 
           "@href"          => "/v3/user/1",
           "@representation"=> "minimal",
           "id"             =>  1,
+          "vcs_type"       => 'GithubUser',
           "login"          => "svenfuchs"}},
         {"@type"            => "job",
         "@href"            => "/v3/job/#{jobs[3].id}",
@@ -925,6 +936,7 @@ describe "jobs private repository, private API, authenticated as user with push 
           "@href"          => "/v3/user/1",
           "@representation"=> "minimal",
           "id"             =>  1,
+          "vcs_type"       => 'GithubUser',
           "login"          => "svenfuchs"}}
         ]
       })
