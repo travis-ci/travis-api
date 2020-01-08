@@ -25,7 +25,7 @@ module Travis::API::V3
     private
 
     def prefix
-      prefix = "#{@repo.github_id}/#{branch}"
+      prefix = "#{@repo.vcs_id || @repo.github_id}/#{branch}"
       prefix << '/' unless prefix.last == '/'
       prefix
     end

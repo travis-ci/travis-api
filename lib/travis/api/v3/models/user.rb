@@ -19,7 +19,7 @@ module Travis::API::V3
     scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 
     NEW_USER_INDICATOR_LENGTH = 5
-    
+
     def recently_signed_up
       # We need indicator, which tells if user is signed up for the very first time
       # is_syncing == true && synced_at == nil is not good indicator, because travis-github-sync
@@ -62,5 +62,8 @@ module Travis::API::V3
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
     end
 
+    def github?
+      vcs_type == 'GithubUser'
+    end
   end
 end

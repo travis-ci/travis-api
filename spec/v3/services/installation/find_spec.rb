@@ -16,12 +16,14 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
       "@representation"  => "standard",
       "id"               => installation.id,
       "github_id"        => installation.github_id,
-      "owner"            =>{
+      "owner"            => {
         "@type"=>"user",
         "@href"=>"/v3/user/#{user.id}",
         "@representation"=>"minimal",
         "id"=>user.id,
-        "login"=>user.login}
+        "login"=>user.login,
+        "vcs_type" => user.vcs_type
+      }
     }}
   end
 

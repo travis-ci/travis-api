@@ -85,6 +85,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             '@representation' => 'minimal',
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,
+            'vcs_type' => organization.vcs_type,
             'login' => 'travis'
           },
           'payment_intent' => nil

@@ -4,7 +4,7 @@ module Travis::API::V3
 
     def find
       return Models::Organization.find_by_id(id) if id
-      return Models::Organization.find_by_github_id(github_id) if github_id
+      return Models::Organization.find_by(vcs_id: github_id) || Models::Organization.find_by(github_id: github_id) if github_id
       return Models::Organization.where('lower(login) = ?'.freeze, login.downcase).order("id DESC").first if login
       raise WrongParams, 'missing organization.id or organization.login'.freeze
     end

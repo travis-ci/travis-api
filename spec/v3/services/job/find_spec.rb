@@ -105,7 +105,9 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,
-        "login"               => owner.login}
+        "login"               => owner.login,
+        "vcs_type"            => owner.vcs_type
+      }
     })}
   end
 
@@ -215,7 +217,9 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,
-        "login"               => owner.login}
+        "login"               => owner.login,
+        "vcs_type"            => owner.vcs_type
+      }
     })}
   end
 
@@ -288,7 +292,9 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,
-        "login"               => owner.login},
+        "login"               => owner.login,
+        "vcs_type"            => owner.vcs_type
+      },
       "config"                => {
         "language" => "shell",
         "addons" => { "mariadb" => "10.0" },

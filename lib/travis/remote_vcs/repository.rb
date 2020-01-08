@@ -25,7 +25,7 @@ module Travis
 
       def upload_key(repository_id:, user_id:, read_only:)
         request(:post, __method__) do |req|
-          req.url "repos/#{repository_id}/key"
+          req.url "repos/#{repository_id}/keys"
           req.params['user_id'] = user_id
           req.params['read_only'] = read_only
         end
@@ -35,7 +35,7 @@ module Travis
 
       def delete_key(repository_id:, user_id:, id:)
         request(:delete, __method__) do |req|
-          req.url "repos/#{repository_id}/key/#{id}"
+          req.url "repos/#{repository_id}/keys/#{id}"
           req.params['user_id'] = user_id
         end
       rescue ResponseError

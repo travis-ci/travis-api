@@ -145,6 +145,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
             '@representation' => 'minimal',
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,
+            'vcs_type' => organization.vcs_type,
             'login' => 'travis'
           },
           'payment_intent' => nil
