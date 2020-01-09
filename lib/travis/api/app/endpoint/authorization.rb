@@ -148,7 +148,7 @@ class Travis::Api::App
 
         def oauth_endpoint
           proxy = Travis.config.oauth2.proxy
-          proxy ? File.join(proxy, request.fullpath) : url
+          proxy ? File.join(proxy, request.fullpath) : (ENV['AUTH_HANDSHAKE_HOST'] || url)
         end
 
         def log_with_request_id(line)
@@ -162,7 +162,7 @@ class Travis::Api::App
           values   = {
             client_id:    config[:client_id],
             scope:        config[:scope],
-            redirect_uri: ENV['AUTH_HANDSHAKE_HOST'] || oauth_endpoint
+            redirect_uri: oauth_endpoint
           }
 
           log_with_request_id("[handshake] Starting handshake")
