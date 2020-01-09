@@ -162,7 +162,7 @@ class Travis::Api::App
           values   = {
             client_id:    config[:client_id],
             scope:        config[:scope],
-            redirect_uri: oauth_endpoint
+            redirect_uri: ENV['AUTH_HANDSHAKE_HOST'] || oauth_endpoint
           }
 
           log_with_request_id("[handshake] Starting handshake")
@@ -378,8 +378,7 @@ class Travis::Api::App
         def get_token(endpoint, values)
           # Get base URL for when we setup Faraday since otherwise it'll ignore no_proxy
           url = URI.parse(endpoint)
-          # Allow us to override via an ENV var
-          base_url = "#{url.scheme}://#{ENV['AUTH_HANDSHAKE_HOST'] || url.host}"
+          base_url = "#{url.scheme}://#{url.host}"
           http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact}
 
           conn = Faraday.new(http_options) do |conn|
