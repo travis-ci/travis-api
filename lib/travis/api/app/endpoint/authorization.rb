@@ -378,7 +378,8 @@ class Travis::Api::App
         def get_token(endpoint, values)
           # Get base URL for when we setup Faraday since otherwise it'll ignore no_proxy
           url = URI.parse(endpoint)
-          base_url = "#{url.scheme}://#{url.host}"
+          # Allow us to override via an ENV var
+          base_url = "#{url.scheme}://#{ENV['AUTH_HANDSHAKE_HOST'] || url.host}"
           http_options = {url: base_url, ssl: Travis.config.ssl.to_h.merge(Travis.config.github.ssl || {}).compact}
 
           conn = Faraday.new(http_options) do |conn|
