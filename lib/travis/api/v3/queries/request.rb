@@ -18,7 +18,7 @@ module Travis::API::V3
 
       payload = {
         repository: {
-          id: repository.vcs_id || repository.github_id,
+          id: repository.github_id || repository.vcs_id,
           vcs_type: repository.vcs_type,
           owner_name: repository.owner_name,
           name: repository.name ,
