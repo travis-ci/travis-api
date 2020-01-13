@@ -7,6 +7,7 @@ require 'travis/github/education'
 require 'travis/github/oauth'
 require 'travis/remote_vcs/user'
 require 'travis/remote_vcs/response_error'
+require 'uri'
 
 class Travis::Api::App
   class Endpoint
@@ -434,6 +435,7 @@ class Travis::Api::App
         end
 
         def target_ok?(target_origin)
+          return if URI.decode(target_origin).include?('<script')
           return unless uri = Addressable::URI.parse(target_origin)
           if allowed_https_targets.include?(uri.host)
             uri.scheme == 'https'
