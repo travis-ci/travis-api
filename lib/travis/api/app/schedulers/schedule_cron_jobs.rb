@@ -16,6 +16,9 @@ class Travis::Api::App
           rescue Travis::Lock::Redis::LockError => e
             Travis.logger.error e.message
           end
+          Travis::Lock.exclusive("enqueue_cron_jobs", postgresql_options) do
+            Metriks.timer("api.v3.cron_scheduler.enqueue").time { enqueue }
+          end
           sleep(Travis::API::V3::Models::Cron::SCHEDULER_INTERVAL)
         end
       end
@@ -25,6 +28,14 @@ class Travis::Api::App
           strategy: :redis,
           url:      Travis.config.redis.url,
           retries:  0
+        }
+      end
+
+      def self.postgresql_options
+        @postgresql_options ||= {
+          strategy: :postgresql,
+          try: true,
+          transactional: false
         }
       end
 

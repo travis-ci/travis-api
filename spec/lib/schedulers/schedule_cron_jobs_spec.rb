@@ -9,7 +9,12 @@ describe "ScheduleCronJobs" do
       strategy:      :redis,
       url: 'redis://localhost:6379',
       retries: 2
-      })
+    })
+    Travis::Api::App::Schedulers::ScheduleCronJobs.stubs(:postgresql_options).returns({
+      strategy:      :postgresql,
+      try: true,
+      transactional: false
+    })
   end
 
   let(:error) { StandardError.new("Konstantin broke all the thingz!") }
