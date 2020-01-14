@@ -162,7 +162,7 @@ class Travis::Api::App
           }
 
           log_with_request_id("[handshake] Starting handshake")
-
+          
           if params[:code]
             unless state_ok?(params[:state])
               log_with_request_id("[handshake] Handshake failed (state mismatch)")
@@ -435,7 +435,7 @@ class Travis::Api::App
         end
 
         def target_ok?(target_origin)
-          return if URI.decode(target_origin).include?('<script')
+          return if URI.decode(target_origin).downcase.include?('<script')
           return unless uri = Addressable::URI.parse(target_origin)
           if allowed_https_targets.include?(uri.host)
             uri.scheme == 'https'
