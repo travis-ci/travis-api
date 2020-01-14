@@ -53,13 +53,6 @@ describe Travis::Api::App::Endpoint::Authorization do
     describe 'evil hackers messing with redirection' do
       before do
         WebMock.stub_request(:post, "https://foobar.com/access_token_path")
-          .with(body: JSON.dump({
-            'client_id' => 'client-id',
-            'scope' => 'public_repo,user:email,new_scope',
-            'redirect_uri' => 'http://example.org/auth/handshake',
-            'state' => state,
-            'code' => '1234',
-            'client_secret' => 'client-secret'}))
           .to_return(status: 200, body: 'access_token=token&token_type=bearer')
 
         WebMock.stub_request(:get, "https://api.github.com/user?per_page=100")
