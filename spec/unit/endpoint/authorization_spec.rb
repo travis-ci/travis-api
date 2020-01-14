@@ -50,6 +50,42 @@ describe Travis::Api::App::Endpoint::Authorization do
       end
     end
 
+    describe 'evil hackers messing with redirection' do
+      before do
+        WebMock.stub_request(:post, "https://foobar.com/access_token_path")
+          .to_return(status: 200, body: 'access_token=token&token_type=bearer')
+
+        WebMock.stub_request(:get, "https://api.github.com/user?per_page=100")
+          .to_return(
+            status: 200,
+            body: JSON.dump(name: 'Piotr Sarnacki', login: 'drogus', gravatar_id: '123', id: 456, foo: 'bar'), headers: {'X-OAuth-Scopes' => 'repo, user, new_scope'}
+          )
+
+        cookie_jar['travis.state-github'] = state
+        Travis.redis.sadd('github:states', state)
+      end
+
+      context 'when redirect uri is not allowed' do
+        let(:state) { 'github-state:::https://dark-corner-of-web.com/' }
+
+        it 'does not allow redirect' do
+          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response.status.should be == 401
+          response.body.should be == "target URI not allowed"
+        end
+      end
+
+      context 'when script tag is injected into redirect uri' do
+        let(:state) { 'github-state:::https://travis-ci.com/<sCrIpt' }
+
+        it 'does not allow redirect' do
+          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response.status.should be == 401
+          response.body.should be == "target URI not allowed"
+        end
+      end
+    end
+
     describe 'with insufficient oauth permissions' do
       before do
         Travis.redis.sadd('github:states', 'github-state')

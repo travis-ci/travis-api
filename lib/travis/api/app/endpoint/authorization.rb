@@ -7,6 +7,7 @@ require 'travis/github/education'
 require 'travis/github/oauth'
 require 'travis/remote_vcs/user'
 require 'travis/remote_vcs/response_error'
+require 'uri'
 
 class Travis::Api::App
   class Endpoint
@@ -161,7 +162,7 @@ class Travis::Api::App
           }
 
           log_with_request_id("[handshake] Starting handshake")
-
+          
           if params[:code]
             unless state_ok?(params[:state])
               log_with_request_id("[handshake] Handshake failed (state mismatch)")
@@ -434,6 +435,7 @@ class Travis::Api::App
         end
 
         def target_ok?(target_origin)
+          return if URI.decode(target_origin).downcase.include?('<script')
           return unless uri = Addressable::URI.parse(target_origin)
           if allowed_https_targets.include?(uri.host)
             uri.scheme == 'https'
