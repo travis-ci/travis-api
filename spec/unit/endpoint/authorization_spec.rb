@@ -65,6 +65,10 @@ describe Travis::Api::App::Endpoint::Authorization do
         Travis.redis.sadd('github:states', state)
       end
 
+      after do
+        Travis.redis.srem('github:states', state)
+      end
+
       context 'when redirect uri is not allowed' do
         let(:state) { 'github-state:::https://dark-corner-of-web.com/' }
 
