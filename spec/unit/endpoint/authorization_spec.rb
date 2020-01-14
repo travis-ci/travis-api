@@ -51,19 +51,44 @@ describe Travis::Api::App::Endpoint::Authorization do
     end
 
     describe 'evil hackers messing with redirection' do
-      it 'using wrong redirect_uri' do
-        cookie_jar['travis.state-github'] = 'github-state'
-        Travis.redis.sadd('github:states', 'github-state')
-        response = get '/auth/handshake?redirect_uri=https://dark-corner-of-web.com/'
-        response.status.should be == 401
-        response.body.should be == "target URI not allowed"
+      before do
+        WebMock.stub_request(:post, "https://foobar.com/access_token_path")
+          .with(body: JSON.dump({
+            'client_id' => 'client-id',
+            'scope' => 'public_repo,user:email,new_scope',
+            'redirect_uri' => 'http://example.org/auth/handshake',
+            'state' => state,
+            'code' => '1234',
+            'client_secret' => 'client-secret'}))
+          .to_return(status: 200, body: 'access_token=token&token_type=bearer')
+
+        WebMock.stub_request(:get, "https://api.github.com/user?per_page=100").
+          to_return(status: 200, body: JSON.dump(name: 'Piotr Sarnacki', login: 'drogus', gravatar_id: '123', id: 456, foo: 'bar'), headers: {'X-OAuth-Scopes' => 'repo, user, new_scope'})
       end
-      it 'using script hack' do
-        cookie_jar['travis.state-github'] = 'github-state'
-        Travis.redis.sadd('github:states', 'github-state')
-        response = get '/auth/handshake?redirect_uri=https://travis-ci.com/%2522%253e%253c%252f%2566%256f%2572%256d%253e%253c%2573%2563%2572%2569%2570%2574%253e%2577%2569%256e%2564%256f%2577%252e%256c%256f%2563%2561%2574%2569%256f%256e%252e%2572%2565%2570%256c%2561%2563%2565%2528%2527%2568%2574%2574%2570%2573%253a%252f%252f%2567%256f%256f%2567%256c%2565%252e%2563%256f%256d%2527%2529%253c%252f%2573%2563%2572%2569%2570%2574%253e%252f%252f'
-        response.status.should be == 401
-        response.body.should be == "target URI not allowed"
+
+      context 'when redirect uri is not allowed' do
+        let(:state) { 'github-state:::https://dark-corner-of-web.com/' }
+
+        it 'using wrong redirect_uri' do
+          cookie_jar['travis.state-github'] = state
+          Travis.redis.sadd('github:states', state)
+          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response.status.should be == 401
+          response.body.should be == "target URI not allowed"
+        end
+      end
+
+      context 'when script tag is injected into redirect uri' do
+        let(:state) { 'github-state:::https://travis-ci.com/<sCrIpt' }
+
+        it 'does not allow redirect' do
+          cookie_jar['travis.state-github'] = state
+          Travis.redis.sadd('github:states', state)
+
+          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response.status.should be == 401
+          response.body.should be == "target URI not allowed"
+        end
       end
     end
 
