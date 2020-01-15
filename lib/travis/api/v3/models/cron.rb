@@ -59,7 +59,8 @@ module Travis::API::V3
         branch:     branch.name,
         user:       { id: user_id }
       }
-
+      
+      Travis.logger.info "Starting enqueue cron for repo-id: #{branch.repository.github_id}, branch: #{branch.name}"
       ::Travis::API::Sidekiq.gatekeeper(
         type:        'cron'.freeze,
         payload:     JSON.dump(payload),

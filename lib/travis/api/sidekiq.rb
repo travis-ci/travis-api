@@ -18,9 +18,10 @@ module Travis::API
 
       def gatekeeper_client
         if ENV['REDIS_GATEKEEPER_ENABLED'] != 'true'
+          Travis.logger.info "Use Sidekiq with Redis Gatekeeper connection"
           return client
         end
-
+        Travis.logger.info "Use Sidekiq with Redis Gatekeeper connection"
         @gatekeeper_client ||= ::Sidekiq::Client.new(gatekeeper_pool)
       end
 

@@ -41,6 +41,7 @@ class Travis::Api::App
           rescue => e
             Metriks.meter("api.v3.cron_scheduler.enqueue.error").mark
             Raven.capture_exception(e, tags: { 'cron_id' => cron.try(:id) })
+            Travis.logger.error e.message
             next
           end
         end
