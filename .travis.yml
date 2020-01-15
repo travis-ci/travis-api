@@ -23,5 +23,5 @@ install:
   - 'gem install bundler -v 1.16.1'
   - 'bundle update fog-core'
 
-  before_script:
+before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
