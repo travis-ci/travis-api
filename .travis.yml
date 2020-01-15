@@ -22,8 +22,10 @@ addons:
 services:
   - redis-server
 
-install:
+before_install:
   - travis_retry gem install bundler -v '<2' # Ruby 2.2 depend on bundler 1.x.
+
+install:
   - bundler -v
   - travis_retry bundle install
 
