@@ -1,10 +1,12 @@
 language: ruby
 
-sudo: false
+import:
+  - travis-ci/build-configs:db-setup.yml
 
 rvm: 2.3.6
 
 script: "bundle exec rake knapsack:rspec"
+
 env:
   global:
     - RUBY_GC_MALLOC_LIMIT=90000000
@@ -16,18 +18,20 @@ env:
     - CI_NODE_INDEX=1
     - CI_NODE_INDEX=2
 
-addons:
-  postgresql: 9.3
+cache: bundler
 
 services:
   - redis-server
 
 before_install:
-  - travis_retry gem install bundler -v '<2' # Ruby 2.2 depend on bundler 1.x.
+  - 'gem update --system'
+  - 'gem install bundler -v 1.17.3'
+  - 'bundle update fog-core'
 
-install:
-  - bundler -v
-  - travis_retry bundle install
-
-before_script:
-  - 'RAILS_ENV=test bundle exec rake db:create --trace'
+jobs:
+  include:
+    - stage: ":ship: it to Quay.io"
+      install: echo skip
+      before_script: echo skip
+      script: make ship
+      if: type = cron OR commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true
