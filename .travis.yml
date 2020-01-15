@@ -16,8 +16,6 @@ env:
     - CI_NODE_INDEX=1
     - CI_NODE_INDEX=2
 
-cache: bundler
-
 addons:
   postgresql: 9.3
 
