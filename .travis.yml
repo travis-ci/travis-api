@@ -24,5 +24,10 @@ addons:
 services:
   - redis-server
 
+install:
+  - travis_retry gem install bundler -v '<2' # Ruby 2.2 depend on bundler 1.x.
+  - bundler -v
+  - travis_retry bundle install
+
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
