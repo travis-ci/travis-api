@@ -23,6 +23,7 @@ services:
 
 before_install:
   - 'gem update --system'
+  - gem uninstall bundler
   - 'gem install bundler -v 1.16.1'
   - bundler -v
   - travis_retry bundle install
