@@ -126,6 +126,15 @@ class Rack::Attack
     request.identifier
   end
 
+  ###
+  # Throttle:  GET requests to /job/[job id]/log - 20 per minute
+  # Scoped by: IP address
+  throttle('job_logs_ip_20min', limit: 20, period: 1.minute) do |request|
+    if request.get? && request.path =~ /\/job\/\d{9,}\/log/
+      request.ip
+    end
+  end
+
   if ENV["MEMCACHIER_SERVERS"]
     cache.store = Dalli::Client.new(
       ENV["MEMCACHIER_SERVERS"].split(","),
