@@ -21,18 +21,7 @@ env:
 services:
   - redis-server
 
-before_install:
+install:
   - 'gem update --system'
-  - gem uninstall bundler
   - 'gem install bundler -v 1.16.1'
-  - bundler -v
-  - travis_retry bundle install
   - 'bundle update fog-core'
-
-jobs:
-  include:
-    - stage: ":ship: it to Quay.io"
-      install: echo skip
-      before_script: echo skip
-      script: make ship
-      if: type = cron OR commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true
