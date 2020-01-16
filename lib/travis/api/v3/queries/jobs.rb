@@ -36,8 +36,9 @@ module Travis::API::V3
 
     def for_user(user)
       ActiveRecord::Base.connection.execute "SET statement_timeout = '#{Travis.config.db.max_statement_timeout_in_seconds}s';"
-      jobs = V3::Models::Job.joins("INNER JOIN permissions ON permissions.repository_id=jobs.repository_id")
-                            .where("permissions.user_id = #{user.id}")
+      fragment = "SELECT repository_id FROM permissions where user_id = #{user.id}"
+      jobs = V3::Models::Job.where("EXISTS (#{fragment}) AND jobs.repository_id IN (#{fragment})")
+
       sort filter(jobs)
     end
 
