@@ -35,7 +35,7 @@ module Travis::API::V3
     end
 
     def for_user(user)
-      ActiveRecord::Base.connection.execute "SET statement_timeout = '300s';"
+      ActiveRecord::Base.connection.execute "SET statement_timeout = '#{Travis.config.db.max_statement_timeout_in_seconds}s';"
       jobs = V3::Models::Job.joins("INNER JOIN permissions ON permissions.repository_id=jobs.repository_id")
                             .where("permissions.user_id = #{user.id}")
       sort filter(jobs)
