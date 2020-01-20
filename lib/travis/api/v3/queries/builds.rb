@@ -8,7 +8,7 @@ module Travis::API::V3
     default_sort "number:desc,id:desc"
 
     def find(repository)
-      ActiveRecord::Base.connection.execute "SET statement_timeout = '300s';"
+      ActiveRecord::Base.connection.execute "SET statement_timeout = '#{Travis.config.db.max_statement_timeout_in_seconds}s';"
       sort filter(repository.builds)
     end
 
