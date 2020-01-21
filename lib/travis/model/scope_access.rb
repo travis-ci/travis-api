@@ -32,8 +32,7 @@ module Travis
                 where('requests.private <> ? OR requests.repository_id IN (?)', true, user.repository_ids)
             elsif self == ::Build
               user.nil? ?
-                where('builds.private <> ?', true) :
-                where('builds.private <> ? OR builds.repository_id IN (?)', true, user.repository_ids)
+                where('builds.private <> ?', true) : unscoped
             elsif self == ::Job
               user.nil? ?
                 where('jobs.private <> ?', true) :
