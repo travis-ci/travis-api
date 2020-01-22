@@ -35,7 +35,7 @@ module Travis::API::V3
     end
 
     def for_user(user)
-      ActiveRecord::Base.connection.execute "SET statement_timeout = '#{host_timeout}s';"
+      set_custom_timeout(host_timeout)
       fragment = "SELECT repository_id FROM permissions where user_id = #{user.id}"
       jobs = V3::Models::Job.where("EXISTS (#{fragment}) AND jobs.repository_id IN (#{fragment})")
 
@@ -47,27 +47,6 @@ module Travis::API::V3
                                           .group(:state)
                                           .count
       Models::JobsStats.new(stats, queue)
-    end
-
-    def host_timeout
-      return extended_timeout if slow_hosts.include?(host)
-      default_timeout
-    end
-
-    def host
-      @service.instance_variable_get(:@env)["HTTP_HOST"]
-    end
-
-    def slow_hosts
-      (ENV['SLOW_HOSTS'] || "").split(',')
-    end
-
-    def default_timeout
-      Travis.config.db.max_statement_timeout_in_seconds
-    end
-
-    def extended_timeout
-      Travis.config.db.slow_host_max_statement_timeout_in_seconds
     end
   end
 end
