@@ -3,7 +3,7 @@ language: ruby
 import:
   - travis-ci/build-configs:db-setup.yml
 
-rvm: 2.5.7
+rvm: 2.6.5
 
 script: "bundle exec rake knapsack:rspec"
 
