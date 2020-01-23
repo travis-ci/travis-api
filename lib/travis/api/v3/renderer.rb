@@ -37,7 +37,7 @@ module Travis::API::V3
         generate_expander(route, key_mapping)
       end
 
-      expander.call(args)
+      expander.call(args).gsub('//', '/')
     end
 
     def render_model(model, type: model.class.name[/[^:]+$/].to_sym, mode: nil, **options)
