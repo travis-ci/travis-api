@@ -88,6 +88,16 @@ describe Travis::Api::App::Endpoint::Authorization do
           response.body.should be == "target URI not allowed"
         end
       end
+
+      context 'when onerror tag is injected into redirect uri' do
+        let(:state) { 'github-state:::https://travis-ci.com/<img% src="" onerror="badcode()"' }
+
+        it 'does not allow redirect' do
+          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response.status.should be == 401
+          response.body.should be == "target URI not allowed"
+        end
+      end
     end
 
     describe 'with insufficient oauth permissions' do
