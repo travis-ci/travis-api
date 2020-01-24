@@ -49,6 +49,10 @@ class Travis::Api::App
       set prefix: '/auth'
       set :check_auth, false
 
+      SUSPICIOUS_CODES = ['<script', 'javascript', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseover', 'onmouseout', 'onmouseup', 'onkeydown',
+                   'onkeypress', 'onkeyup', 'onabort', 'onerror', 'onload', 'onresize', 'onscroll', 'onunload', 'onsubmit', 'onblur',
+                   'onchange', 'onfocus', 'onreset', 'onselect', 'onmoveon']
+
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
       #
@@ -435,7 +439,8 @@ class Travis::Api::App
         end
 
         def target_ok?(target_origin)
-          return if URI.decode(target_origin).downcase.include?('<script')
+          test_target_origin = URI.decode(target_origin).downcase
+          return if SUSPICIOUS_CODES.any? { |word| test_target_origin.include?(word) }
           return unless uri = Addressable::URI.parse(target_origin)
           if allowed_https_targets.include?(uri.host)
             uri.scheme == 'https'
