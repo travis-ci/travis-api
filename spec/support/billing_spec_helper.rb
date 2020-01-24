@@ -34,6 +34,7 @@ module Support
           "last_digits" => "4242",
           "expiration_date" => "9/2021"
         },
+        "discount" => nil,
         "owner" => {
           "type" => "Organization",
           "id" => 43

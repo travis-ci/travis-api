@@ -80,6 +80,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             'last_digits' => '4242',
             'expiration_date' => '9/2021'
           },
+          'discount' => nil,
           'owner'=> {
             '@type' => 'organization',
             '@representation' => 'minimal',
