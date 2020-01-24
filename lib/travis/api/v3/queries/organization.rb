@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Organization < Query
-    params :id, :login, :github_id
+    params :id, :login, :github_id, :provider
 
     def find
       return Models::Organization.find_by_id(id) if id
