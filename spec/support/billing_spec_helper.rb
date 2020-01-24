@@ -34,7 +34,7 @@ module Support
           "last_digits" => "4242",
           "expiration_date" => "9/2021"
         },
-        "discount" => nil,
+        "discount" => billing_coupon_response_body,
         "owner" => {
           "type" => "Organization",
           "id" => 43
