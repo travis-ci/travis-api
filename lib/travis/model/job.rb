@@ -129,7 +129,11 @@ class Job < Travis::Model
   end
 
   def config
-    config = super&.config || has_attribute?(:config) && read_attribute(:config) || {}
+    record = super
+    config = record&.config_json if record.respond_to?(:config_json)
+    config ||= record&.config
+    config ||= read_attribute(:config) if has_attribute?(:config)
+    config ||= {}
     config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
     config
   end
