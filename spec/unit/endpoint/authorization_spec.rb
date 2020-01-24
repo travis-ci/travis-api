@@ -69,6 +69,15 @@ describe Travis::Api::App::Endpoint::Authorization do
         Travis.redis.srem('github:states', state)
       end
 
+      context 'when redirect uri is correct' do
+        let(:state) { 'github-state:::https://travis-ci.com/?any=params' }
+
+        it 'it does allow redirect' do
+          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response.status.should be == 200
+        end
+      end
+
       context 'when redirect uri is not allowed' do
         let(:state) { 'github-state:::https://dark-corner-of-web.com/' }
 
@@ -81,6 +90,16 @@ describe Travis::Api::App::Endpoint::Authorization do
 
       context 'when script tag is injected into redirect uri' do
         let(:state) { 'github-state:::https://travis-ci.com/<sCrIpt' }
+
+        it 'does not allow redirect' do
+          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response.status.should be == 401
+          response.body.should be == "target URI not allowed"
+        end
+      end
+
+      context 'when onerror tag is injected into redirect uri' do
+        let(:state) { 'github-state:::https://travis-ci.com/<img% src="" onerror="badcode()"' }
 
         it 'does not allow redirect' do
           response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
