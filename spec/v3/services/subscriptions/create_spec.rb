@@ -71,6 +71,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
               'currency' => 'USD',
               'annual' => false
             },
+            'discount' => nil,
             'client_secret' => 'client_secret',
             'billing_info' => {
               'first_name' => 'Travis',
@@ -148,7 +149,8 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
             'vcs_type' => organization.vcs_type,
             'login' => 'travis'
           },
-          'payment_intent' => nil
+          'payment_intent' => nil,
+          'discount' => nil
         })
         expect(stubbed_request).to have_been_made.once
       end

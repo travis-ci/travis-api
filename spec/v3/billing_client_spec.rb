@@ -24,6 +24,15 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
       expect(subject.plan).to be_a(Travis::API::V3::Models::Plan)
     end
 
+    it 'returns the subscription with discount' do
+      stub_billing_request(:get, "/subscriptions/#{subscription_id}", auth_key: auth_key, user_id: user_id)
+        .to_return(body: JSON.dump(billing_subscription_response_body('id' => subscription_id, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id } )))
+      expect(subject).to be_a(Travis::API::V3::Models::Subscription)
+      expect(subject.id).to eq(subscription_id)
+      expect(subject.plan).to be_a(Travis::API::V3::Models::Plan)
+      expect(subject.discount).to be_a(Travis::API::V3::Models::Discount)
+    end
+
     it 'raises error if subscription is not found' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}", auth_key: auth_key, user_id: user_id)
         .to_return(status: 404, body: JSON.dump(error: 'Not Found'))

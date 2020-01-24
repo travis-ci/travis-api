@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Renderer::Subscription < ModelRenderer
-    representation(:standard, :id, :valid_to, :plan, :coupon, :status, :source, :owner, :client_secret, :billing_info, :credit_card_info, :payment_intent)
+    representation(:standard, :id, :valid_to, :plan, :coupon, :discount, :status, :source, :owner, :client_secret, :billing_info, :credit_card_info, :payment_intent)
 
     def billing_info
       Renderer.render_model(model.billing_info, mode: :standard) unless model.billing_info.nil?
@@ -17,6 +17,10 @@ module Travis::API::V3
     def payment_intent
       Renderer.render_model(model.payment_intent, mode: :standard) unless model.payment_intent.nil?
     end
+
+    def discount
+      Renderer.render_model(model.discount, mode: :minimal) unless model.discount.nil?
+    end
   end
 
   class Renderer::BillingInfo < ModelRenderer
@@ -29,5 +33,9 @@ module Travis::API::V3
 
   class Renderer::PaymentIntent < ModelRenderer
     representation(:standard, :status, :client_secret, :last_payment_error)
+  end
+
+  class Renderer::Discount < ModelRenderer
+    representation(:minimal, :id, :name, :percent_off, :amount_off, :valid)
   end
 end
