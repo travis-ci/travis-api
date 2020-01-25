@@ -138,7 +138,7 @@ If you have problems with Nginx because the websocket is already in use, try res
 
 ### API documentation
 
-v3 documentation can be found at https://developer.travis-ci.org which is a repository that can be found at https://github.com/travis-pro/developer
+v3 documentation can be found at https://developer.travis-ci.org
 
 ### Adding V3 Endpoints Developer Documentation
 Start with the find/get spec (for example: spec/v3/services/caches/find_spec.rb) for your new endpoint. If you don't have a find route start with whatever route you want to add first. Run the test and add the files you need to clear the errors. They should be:
