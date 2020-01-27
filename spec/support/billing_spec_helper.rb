@@ -60,8 +60,8 @@ module Support
         "percent_off" => nil,
         "amount_off" => 1000,
         "valid" => true,
-        "discount" => 'repeating',
-        "discount_in_months" => 3
+        "duration" => 'repeating',
+        "duration_in_months" => 3
       }.deep_merge(attributes)
     end
 

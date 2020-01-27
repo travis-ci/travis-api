@@ -36,6 +36,6 @@ module Travis::API::V3
   end
 
   class Renderer::Discount < ModelRenderer
-    representation(:standard, :id, :name, :percent_off, :amount_off, :valid)
+    representation(:standard, :id, :name, :percent_off, :amount_off, :valid, :duration, :duration_in_months)
   end
 end

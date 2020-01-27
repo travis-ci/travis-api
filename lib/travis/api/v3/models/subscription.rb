@@ -72,7 +72,7 @@ module Travis::API::V3
   end
 
   class Models::Discount
-    attr_reader :id, :name, :percent_off, :amount_off, :valid, :discount, :discount_in_months
+    attr_reader :id, :name, :percent_off, :amount_off, :valid, :duration, :duration_in_months
 
     def initialize(attrs)
       @id = attrs.fetch('id')
@@ -80,8 +80,8 @@ module Travis::API::V3
       @percent_off = attrs.fetch('percent_off')
       @amount_off = attrs.fetch('amount_off')
       @valid = attrs.fetch('valid')
-      @discount = attrs.fetch('discount')
-      @discount_in_months = attrs.fetch('discount_in_months')
+      @duration = attrs.fetch('duration')
+      @duration_in_months = attrs.fetch('duration_in_months')
     end
   end
 end

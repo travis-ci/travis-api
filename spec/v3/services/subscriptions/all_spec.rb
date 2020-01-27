@@ -88,8 +88,8 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             "percent_off" => nil,
             "amount_off" => 1000,
             "valid" => true,
-            "discount" => 'repeating',
-            "discount_in_months" => 3
+            "duration" => 'repeating',
+            "duration_in_months" => 3
           },
           'owner'=> {
             '@type' => 'organization',
