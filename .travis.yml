@@ -5,6 +5,8 @@ addons:
   postgresql: 9.6
 services:
   - redis
+before_install:
+  - 'gem install bundler -v 1.17.3'
 before_script:
   - cp config/travis.example.yml config/travis.yml
   - "createdb travis_test || true"
