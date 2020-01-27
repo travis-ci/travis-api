@@ -82,12 +82,14 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           },
           'discount' => {
             '@type' => 'discount',
-            '@representation' => 'minimal',
+            '@representation' => 'standard',
             "id" => "10_BUCKS_OFF",
             "name" => "10 bucks off!",
             "percent_off" => nil,
             "amount_off" => 1000,
-            "valid" => true
+            "valid" => true,
+            "duration" => 'repeating',
+            "duration_in_months" => 3
           },
           'owner'=> {
             '@type' => 'organization',
