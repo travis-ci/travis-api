@@ -149,7 +149,7 @@ GEM
       net-http-pipeline
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    hashdiff (0.3.0)
+    hashdiff (1.0.0)
     hashr (2.0.0)
     highline (1.7.8)
     hitimes (1.2.4)
@@ -255,7 +255,7 @@ GEM
       rspec-mocks (~> 3.5.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
-    safe_yaml (1.0.4)
+    safe_yaml (1.0.5)
     sass (3.4.22)
     sass-rails (5.0.6)
       railties (>= 4.0.0, < 6)
@@ -292,10 +292,10 @@ GEM
       activemodel (>= 5.0)
       debug_inspector
       railties (>= 5.0)
-    webmock (2.1.0)
+    webmock (3.8.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
-      hashdiff
+      hashdiff (>= 0.4.0, < 2.0.0)
     websocket (1.2.3)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
@@ -348,7 +348,7 @@ DEPENDENCIES
   travis-support!
   uglifier (>= 1.3.0)
   web-console (~> 3.3)
-  webmock (~> 2.1.0)
+  webmock (~> 3.8.0)
   will_paginate (~> 3.1.0)
 
 BUNDLED WITH

@@ -24,6 +24,12 @@ Rails.application.routes.draw do
 
   get 'help', to: 'search#help'
 
+  resources :reports, only: [:index]  do
+    collection do
+      post 'download_csv'
+    end
+  end
+
   resources :jobs, only: [:show] do
     member do
       post 'cancel'

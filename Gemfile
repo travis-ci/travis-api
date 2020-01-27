@@ -59,7 +59,7 @@ end
 group :test do
   gem 'rake'
   gem 'database_cleaner'
-  gem 'webmock', '~> 2.1.0'
+  gem 'webmock', '~> 3.8.0'
   gem 'capybara', '~> 2.7.0'
   gem 'poltergeist'
   gem 'launchy'
