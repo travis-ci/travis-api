@@ -19,7 +19,7 @@ module Travis::API::V3
     end
 
     def discount
-      Renderer.render_model(model.discount, mode: :minimal) unless model.discount.nil?
+      Renderer.render_model(model.discount, mode: :standard) unless model.discount.nil?
     end
   end
 
@@ -36,6 +36,6 @@ module Travis::API::V3
   end
 
   class Renderer::Discount < ModelRenderer
-    representation(:minimal, :id, :name, :percent_off, :amount_off, :valid)
+    representation(:standard, :id, :name, :percent_off, :amount_off, :valid)
   end
 end

@@ -59,7 +59,9 @@ module Support
         "name" => "10 bucks off!",
         "percent_off" => nil,
         "amount_off" => 1000,
-        "valid" => true
+        "valid" => true,
+        "discount" => 'repeating',
+        "discount_in_months" => 3
       }.deep_merge(attributes)
     end
 
