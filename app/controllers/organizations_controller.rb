@@ -26,13 +26,17 @@ class OrganizationsController < ApplicationController
 
   def subscription
     subscription = Subscription.find_by(owner_id: params[:id])
-    @subscription = SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
+    if subscription 
+      @subscription = SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
+    end
     render_either 'shared/subscription'
   end
 
   def invoices
     subscription = Subscription.find_by(owner_id: params[:id])
-    @invoices = subscription.invoices.order('id DESC')
+    if subscription
+      @invoices = subscription.invoices.order('id DESC')
+    end
     render_either 'shared/invoices'
   end
 
