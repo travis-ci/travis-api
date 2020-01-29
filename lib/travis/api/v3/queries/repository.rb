@@ -47,7 +47,7 @@ module Travis::API::V3
         "lower(repositories.owner_name) = ? "\
         "and lower(repositories.name) = ? "\
         "and lower(repositories.vcs_type) = ? "\
-        "and Repositories.invalidated_at is null",
+        "and repositories.invalidated_at is null",
         owner_name.downcase,
         repo_name.downcase,
         provider.downcase + 'repository'
