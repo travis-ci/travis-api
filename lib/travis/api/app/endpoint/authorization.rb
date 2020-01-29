@@ -148,7 +148,7 @@ class Travis::Api::App
 
         def oauth_endpoint
           proxy = Travis.config.oauth2.proxy
-          proxy ? File.join(proxy, request.fullpath) : url
+          proxy ? File.join(proxy, request.fullpath) : (ENV['AUTH_HANDSHAKE_HOST'] || url)
         end
 
         def log_with_request_id(line)
