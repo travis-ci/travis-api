@@ -238,5 +238,30 @@ module Travis::API::V3
         "#{field} #{order}"
       end
     end
+
+    def set_custom_timeout(timeout_in_seconds)
+      ActiveRecord::Base.connection.execute "SET statement_timeout = '#{timeout_in_seconds}s';"
+    end
+
+    def host_timeout
+      return extended_timeout if slow_hosts.any? { |sh| host.match?(sh) }
+      default_timeout
+    end
+
+    def host
+      @service.instance_variable_get(:@env)["HTTP_ORIGIN"]
+    end
+
+    def slow_hosts
+      (ENV['SLOW_HOSTS'] || "").split(',')
+    end
+
+    def default_timeout
+      Travis.config.db.max_statement_timeout_in_seconds
+    end
+
+    def extended_timeout
+      Travis.config.db.slow_host_max_statement_timeout_in_seconds
+    end
   end
 end
