@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.5.1'
+ruby '2.5.7'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
