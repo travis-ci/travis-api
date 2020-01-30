@@ -35,7 +35,7 @@ module Travis::API::V3
     end
 
     def for_user(user)
-      ActiveRecord::Base.connection.execute "SET statement_timeout = '#{Travis.config.db.max_statement_timeout_in_seconds}s';"
+      set_custom_timeout(host_timeout)
       fragment = "SELECT repository_id FROM permissions where user_id = #{user.id}"
       jobs = V3::Models::Job.where("EXISTS (#{fragment}) AND jobs.repository_id IN (#{fragment})")
 
