@@ -65,7 +65,7 @@
             <strong>id: <%= @user.installation.id %></strong>
             and
             <strong>github_id: <%= @user.installation.github_id %></strong>
-            <%= link_to '[Manage repos link]', github_config_url(@user.installation.github_id) %>
+            <%= link_to '[Manage repos link]', github_config_url(@user.github_id) %>
           <% else %>
             Service Hook
           <% end %>

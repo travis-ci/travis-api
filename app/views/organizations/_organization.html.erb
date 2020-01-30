@@ -23,7 +23,7 @@
           <strong>id: <%= @installation.id %></strong>
           and
           <strong>github_id: <%= @installation.github_id %></strong>
-          <%= link_to '[Manage repos link]', github_config_url(@installation.github_id) %>
+          <%= link_to '[Manage repos link]', github_config_url(@organization.github_id) %>
         <% else %>
           Service Hook
         <% end %>
