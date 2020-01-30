@@ -244,7 +244,7 @@ module Travis::API::V3
     end
 
     def host_timeout
-      return extended_timeout if slow_hosts.any? { |sh| host.match?(sh) }
+      return extended_timeout if slow_hosts.any? { |sh| host && host.match?(sh) }
       default_timeout
     end
 
