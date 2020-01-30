@@ -52,20 +52,32 @@ describe Travis::Services::FindRequests do
       service.run.should == [newer_request]
     end
 
-    it 'limits requests to Travis.config.services.find_requests.max_limit if limit is higher' do
-      previous_limit = Travis.config.services.find_requests.max_limit
-      Travis.config.services.find_requests.max_limit = 1
-      @params = { :repository_id => repo.id, :limit => 2 }
-      service.run.should == [newer_request]
-      Travis.config.services.find_requests.max_limit = previous_limit
+    context "max limit" do
+      before do
+        @previous_limit = Travis.config.services.find_requests.max_limit
+        Travis.config.services.find_requests.max_limit = 1
+      end
+
+      it 'limits requests to Travis.config.services.find_requests.max_limit if limit is higher' do
+        @params = { :repository_id => repo.id, :limit => 2 }
+        service.run.should == [newer_request]
+      end
+
+      after { Travis.config.services.find_requests.max_limit = @previous_limit }
     end
 
-    it 'limits requests to Travis.config.services.find_requests.default_limit if limit is not given' do
-      previous_limit = Travis.config.services.find_requests.default_limit
-      Travis.config.services.find_requests.default_limit = 1
-      @params = { :repository_id => repo.id }
-      service.run.should == [newer_request]
-      Travis.config.services.find_requests.default_limit = previous_limit
+    context "default limit" do
+      before do
+        @previous_limit = Travis.config.services.find_requests.max_limit
+        Travis.config.services.find_requests.default_limit = 1
+      end
+
+      it 'limits requests to Travis.config.services.find_requests.default_limit if limit is not given' do
+        @params = { :repository_id => repo.id }
+        service.run.should == [newer_request]
+      end
+
+      after { Travis.config.services.find_requests.default_limit = @previous_limit }
     end
   end
 
