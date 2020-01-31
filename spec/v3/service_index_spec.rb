@@ -1,3 +1,44 @@
+require 'spec_helper'
+
+require 'travis/api/v3/routes'
+require 'travis/api/v3/service'
+require 'travis/api/v3/services'
+
+      # Travis::API::V3::Routes.module_eval do
+      # end
+module Travis::API::V3
+  module Services
+    Foo = Module.new { extend Travis::API::V3::Services }
+    Foo::Find = Class.new(Travis::API::V3::Service)
+    Foo::DoSomething = Class.new(Travis::API::V3::Service)
+    Foo::DoSomethingSecret = Class.new(Travis::API::V3::Service)
+
+    Bar = Module.new { extend Travis::API::V3::Services }
+    Bar::Find = Class.new(Travis::API::V3::Service)
+  end
+
+  class Services::Foo::Find < Service
+    def run!
+      head
+    end
+  end
+
+  module Routes
+    resource :foo do
+      route '/foo'
+      get :find
+
+      hide(post :do_something_secret, '/do_something_secret')
+      post :do_something, '/do_something'
+    end
+
+    hidden_resource :bar do
+      route '/bar'
+      get :find
+    end
+  end
+end
+
 describe Travis::API::V3::ServiceIndex, set_app: true do
   let(:headers)   {{                        }}
   let(:path)      { '/'                      }
@@ -9,26 +50,6 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.3+json' } }
 
     it 'hides a resource from the service index' do
-      Travis::API::V3::Services.const_set('Foo', Module.new { extend Travis::API::V3::Services })
-      Travis::API::V3::Services::Foo.const_set('Find', Class.new(Travis::API::V3::Service))
-      Travis::API::V3::Services::Foo.const_set('DoSomething', Class.new(Travis::API::V3::Service))
-      Travis::API::V3::Services::Foo.const_set('DoSomethingSecret', Class.new(Travis::API::V3::Service))
-      Travis::API::V3::Services.const_set('Bar', Module.new { extend Travis::API::V3::Services })
-      Travis::API::V3::Services::Bar.const_set('Find', Class.new(Travis::API::V3::Service))
-      Travis::API::V3::Routes.module_eval do
-        resource :foo do
-          route '/foo'
-          get :find
-
-          hide(post :do_something_secret, '/do_something_secret')
-          post :do_something, '/do_something'
-        end
-
-        hidden_resource :bar do
-          route '/bar'
-          get :find
-        end
-      end
 
       expect(json['resources']).to have_key('foo')
       expect(json['resources']).to_not have_key('bar')
