@@ -51,6 +51,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           '@permissions' => { 'read' => true, 'write' => false },
           'id' => 1234,
           'valid_to' => '2017-11-28T00:09:59Z',
+          "created_at" => "2017-11-28T00:09:59.502Z",
           'plan' => plan,
           'coupon' => '',
           'status' => 'canceled',
