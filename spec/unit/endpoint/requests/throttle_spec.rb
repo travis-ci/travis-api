@@ -15,4 +15,10 @@ describe Travis::Api::App::Services::ScheduleRequest::Throttle do
     10.times { Request.create!(repository: Factory(:repository), event_type: 'api', result: 'accepted') }
     expect(subject.throttled?).to eq false
   end
+
+  it 'throttles with more then 20 requests for the /coupons endpoint in the last day' do
+    21.times { get('/coupons/ABC') }
+    expect(subject.throttled?).to eq true
+  end
+
 end
