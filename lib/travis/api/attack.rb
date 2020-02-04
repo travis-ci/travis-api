@@ -133,9 +133,12 @@ class Rack::Attack
     request.path.start_with?('/coupons/')
   end
 
-  throttle('req_coupons_1day', limit: 20, period: 1.day) do |request|
-    request.identifier if request.path.start_with?('/coupons/')
+  blocklist('req_coupons_1day') do |request|
+    Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 20, findtime: 1.day, bantime: bantime(1.day)) do
+      request.identifier if request.path.start_with?('/coupons/')
+    end
   end
+
 
   if ENV["MEMCACHIER_SERVERS"]
     cache.store = Dalli::Client.new(
