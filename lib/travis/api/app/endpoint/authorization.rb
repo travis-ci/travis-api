@@ -50,8 +50,11 @@ class Travis::Api::App
       set :check_auth, false
 
       SUSPICIOUS_CODES = ['<script', 'javascript', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseover', 'onmouseout', 'onmouseup', 'onkeydown',
-                   'onkeypress', 'onkeyup', 'onabort', 'onerror', 'onload', 'onresize', 'onscroll', 'onunload', 'onsubmit', 'onblur',
-                   'onchange', 'onfocus', 'onreset', 'onselect', 'onmoveon']
+                          'onkeypress', 'onkeyup', 'onabort', 'onerror', 'onload', 'onresize', 'onscroll', 'onunload', 'onsubmit', 'onblur',
+                          'onchange', 'onfocus', 'onreset', 'onselect', 'onmoveon', 'onbegin', 'onpropertychange', 'onmouseenter', 'onreadystatechange',
+                          'onpagehide', 'onmouseleave', 'onmousewheel', 'onpageshow', 'onstart', 'onbeforeunload', 'onpopstate', 'onbeforeload',
+                          'expression', 'oninput', 'formaction', 'onforminput', 'poster', 'onformchange', 'background', '<object', '<embed', 'onfilterchange',
+                          '<vmlframe', '<frame', '<iframe', '<input']
 
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
