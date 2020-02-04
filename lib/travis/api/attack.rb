@@ -127,10 +127,20 @@ class Rack::Attack
   end
 
   ###
-  # Throttle:  authenticated requests - 2000 per minute
+  # Throttle:  authenticated requests for /coupons/ - 20 per day
   # Scoped by: access token
   throttle('req_coupons_1day', limit: 20, period: 1.day) do |request|
     request.path.start_with?('/coupons/')
+  end
+
+  ####
+  # Ban based on: IP address or access token
+  # Ban time:     1 day
+  # Ban after:    20 GET requests within 1 day to /coupons
+  blocklist('hammering_coupons') do |request|
+    Rack::Attack::Allow2Ban.filter(request.ip, maxretry: 20, findtime: 1.day, bantime: bantime(1.day)) do
+      request.get? and request.path.start_with?('/coupons/')
+    end
   end
 
   if ENV["MEMCACHIER_SERVERS"]
