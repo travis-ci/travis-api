@@ -33,7 +33,6 @@ gem 'pry'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
 gem 'librato-metrics'
-gem 'simplecov'
 gem 'stackprof'
 gem "ipaddress", "~> 0.8.3"
 gem 'nakayoshi_fork'
@@ -80,6 +79,7 @@ gem 'multi_json'
 gem 'closeio',           '~> 3.5'
 
 group :test do
+  gem 'simplecov'
   gem 'rspec',         '~> 2.13'
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
