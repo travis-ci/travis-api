@@ -15,5 +15,4 @@ describe Travis::Api::App::Services::ScheduleRequest::Throttle do
     10.times { Request.create!(repository: Factory(:repository), event_type: 'api', result: 'accepted') }
     expect(subject.throttled?).to eq false
   end
-
 end
