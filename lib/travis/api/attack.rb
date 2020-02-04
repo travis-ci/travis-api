@@ -126,6 +126,13 @@ class Rack::Attack
     request.identifier
   end
 
+  ###
+  # Throttle:  authenticated requests for /coupons/ - 20 per day
+  # Scoped by: access token
+  throttle('req_coupons_1day', limit: 20, period: 1.day) do |request|
+    request.identifier if request.path.start_with?('/coupons/')
+  end
+
   if ENV["MEMCACHIER_SERVERS"]
     cache.store = Dalli::Client.new(
       ENV["MEMCACHIER_SERVERS"].split(","),
