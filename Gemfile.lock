@@ -14,9 +14,9 @@ GIT
 
 GIT
   remote: https://github.com/rtomayko/rack-cache
-  revision: 2d6618172c39c53dceab2e2946d87496154f3e52
+  revision: d87001ed884060068d18251cbd84209243b99635
   specs:
-    rack-cache (1.6.1)
+    rack-cache (1.11.0)
       rack (>= 0.4)
 
 GIT
