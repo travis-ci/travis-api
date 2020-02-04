@@ -54,7 +54,7 @@ class Travis::Api::App
                           'onchange', 'onfocus', 'onreset', 'onselect', 'onmoveon', 'onbegin', 'onpropertychange', 'onmouseenter', 'onreadystatechange',
                           'onpagehide', 'onmouseleave', 'onmousewheel', 'onpageshow', 'onstart', 'onbeforeunload', 'onpopstate', 'onbeforeload',
                           'expression', 'oninput', 'formaction', 'onforminput', 'poster', 'onformchange', 'background', '<object', '<embed', 'onfilterchange',
-                          '<vmlframe', '<frame', '<iframe', '<input']
+                          '<vmlframe', '<frame', '<iframe', '<input', '<form']
 
       # Endpoint for retrieving an authorization code, which in turn can be used
       # to generate an access token.
