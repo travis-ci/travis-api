@@ -130,7 +130,6 @@ class Rack::Attack
   # Throttle:  authenticated requests - 2000 per minute
   # Scoped by: access token
   throttle('req_coupons_1day', limit: 20, period: 1.day) do |request|
-    require 'pry'; binding.pry
     request.path.start_with?('/coupons/')
   end
 
