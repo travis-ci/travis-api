@@ -139,6 +139,7 @@ class Rack::Attack
   # Ban after:    20 GET requests within 1 day to /coupons
   blocklist('hammering_coupons') do |request|
     Rack::Attack::Allow2Ban.filter(request.ip, maxretry: 20, findtime: 1.day, bantime: bantime(1.day)) do
+      puts "Oto request: #{request.to_s}"
       request.get? and request.path.start_with?('/coupons/')
     end
   end
