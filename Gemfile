@@ -97,3 +97,5 @@ group :development do
   gem 'rb-fsevent', '~> 0.9.1'
 end
 
+
+gem "executable-hooks", "~> 1.6"
