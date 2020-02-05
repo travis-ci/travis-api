@@ -338,7 +338,7 @@ GEM
     rspec-mocks (2.99.4)
     ruby_dep (1.5.0)
     safe_yaml (1.0.4)
-    sentry-raven (2.13.0)
+    sentry-raven (2.11.3)
       faraday (>= 0.7.6, < 1.0)
     sidekiq (4.2.6)
       concurrent-ruby (~> 1.0)
