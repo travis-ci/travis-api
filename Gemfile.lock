@@ -248,7 +248,6 @@ GEM
     memcachier (0.0.2)
     memoist (0.16.0)
     memory_profiler (0.9.10)
-    metaclass (0.0.4)
     method_source (0.8.2)
     metriks (0.9.9.6)
       atomic (~> 1.0)
@@ -259,8 +258,7 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.4.0)
     minitest (5.14.0)
-    mocha (0.14.0)
-      metaclass (~> 0.0.1)
+    mocha (1.11.2)
     msgpack (1.2.4)
     multi_json (1.13.1)
     multipart-post (2.1.1)
@@ -434,7 +432,7 @@ DEPENDENCIES
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
   mime-types
-  mocha (~> 0.12)
+  mocha
   multi_json
   mustermann
   nakayoshi_fork

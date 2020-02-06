@@ -83,7 +83,7 @@ group :test do
   gem 'rspec',         '~> 2.13'
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
-  gem 'mocha',         '~> 0.12'
+  gem 'mocha'
   gem 'database_cleaner', '~> 1.8'
   gem 'timecop',       '~> 0.9.0'
   gem 'webmock'
