@@ -15,7 +15,7 @@ describe Build do
   end
 
   it 'is cancelable if at least one job is cancelable' do
-    jobs = [FactoryGirl.build(:test), FactoryGirl.create.build(:test)]
+    jobs = [FactoryGirl.build(:test), FactoryGirl.build(:test)]
     jobs.first.stubs(:cancelable?).returns(true)
     jobs.second.stubs(:cancelable?).returns(false)
 
@@ -24,7 +24,7 @@ describe Build do
   end
 
   it 'is not cancelable if none of the jobs are cancelable' do
-    jobs = [FactoryGirl.build(:test), FactoryGirl.create.build(:test)]
+    jobs = [FactoryGirl.build(:test), FactoryGirl.build(:test)]
     jobs.first.stubs(:cancelable?).returns(false)
     jobs.second.stubs(:cancelable?).returns(false)
 
