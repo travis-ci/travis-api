@@ -63,7 +63,7 @@ FactoryGirl.define do
   end
 
   factory :repository, :parent => :repository_without_last_build do
-    after_create do |repo|
+    after(:create) do |repo|
       repo.last_build ||= FactoryGirl.create(:build, repository: repo)
     end
   end
