@@ -1,9 +1,9 @@
 describe Travis::API::V3::Models::Mailer do
   subject { Travis::API::V3::Models::Mailer.new }
 
-  let(:user) { Factory :user }
-  let(:organization) { Factory :org_v3 }
-  let!(:membership)  { Factory :membership, user: user, organization: organization }
+  let(:user) { FactoryGirl.create(:user) }
+  let(:organization) { FactoryGirl.create(:org_v3) }
+  let!(:membership)  { FactoryGirl.create(:membership, user: user, organization: organization) }
 
   describe '#send_beta_confirmation' do
     it 'sends email' do
