@@ -31,10 +31,10 @@ describe Travis::Services::FindRepo do
   end
 
   context do
-    let(:user) { FactoryGirl.create.create(:user, login: :rkh) }
-    let(:org)  { FactoryGirl.create.create(:org, login: :travis) }
-    let(:private_repo) { FactoryGirl.create.create(:repository, owner: org, private: true) }
-    let(:public_repo)  { FactoryGirl.create.create(:repository, owner: org, private: false) }
+    let(:user) { FactoryGirl.create(:user, login: :rkh) }
+    let(:org)  { FactoryGirl.create(:org, login: :travis) }
+    let(:private_repo) { FactoryGirl.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { FactoryGirl.create(:repository, owner: org, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -43,13 +43,13 @@ describe Travis::Services::FindRepo do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private repository' do
-          FactoryGirl.create.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_repo.id)
           service.run.should == private_repo
         end
 
         it 'finds a public repository' do
-          FactoryGirl.create.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_repo.id)
           service.run.should == public_repo
         end
@@ -74,13 +74,13 @@ describe Travis::Services::FindRepo do
       describe 'given the current user has a permission on the repository' do
 
         it 'finds a private repository' do
-          FactoryGirl.create.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_repo.id)
           service.run.should == private_repo
         end
 
         it 'finds a public repository' do
-          FactoryGirl.create.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_repo.id)
           service.run.should == public_repo
         end

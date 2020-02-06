@@ -63,12 +63,12 @@ describe Travis::Services::FindJobs do
   end
 
   context do
-    let(:user) { FactoryGirl.create.create(:user, login: :rkh) }
-    let(:org)  { FactoryGirl.create.create(:org, login: :travis) }
-    let(:private_repo) { FactoryGirl.create.create(:repository, owner: org, private: true) }
-    let(:public_repo)  { FactoryGirl.create.create(:repository, owner: org, private: false) }
-    let!(:private_job) { FactoryGirl.create.create(:job, repository: private_repo, private: true) }
-    let!(:public_job)  { FactoryGirl.create.create(:job, repository: public_repo, private: false) }
+    let(:user) { FactoryGirl.create(:user, login: :rkh) }
+    let(:org)  { FactoryGirl.create(:org, login: :travis) }
+    let(:private_repo) { FactoryGirl.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { FactoryGirl.create(:repository, owner: org, private: false) }
+    let!(:private_job) { FactoryGirl.create(:job, repository: private_repo, private: true) }
+    let!(:public_job)  { FactoryGirl.create(:job, repository: public_repo, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -77,13 +77,13 @@ describe Travis::Services::FindJobs do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private job' do
-          FactoryGirl.create.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
           service.run.should include(private_job)
         end
 
         it 'finds a public job' do
-          FactoryGirl.create.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
           service.run.should include(public_job)
         end
@@ -107,13 +107,13 @@ describe Travis::Services::FindJobs do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private job' do
-          FactoryGirl.create.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
           service.run.should include(private_job)
         end
 
         it 'finds a public job' do
-          FactoryGirl.create.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
           service.run.should include(public_job)
         end

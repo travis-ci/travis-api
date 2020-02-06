@@ -331,7 +331,7 @@ describe Repository do
   end
 
   describe 'settings' do
-    let(:repo) { FactoryGirl.create.build(:repository) }
+    let(:repo) { FactoryGirl.build(:repository) }
 
     it 'adds repository_id to collection records' do
       repo.save

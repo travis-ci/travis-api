@@ -391,7 +391,7 @@ describe Build, 'matrix' do
 
     describe :expand_matrix do
       it 'does not expand on :os' do
-        build = FactoryGirl.create.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
+        build = FactoryGirl.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3' },
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0' }

@@ -58,7 +58,7 @@ describe "ScheduleCronJobs" do
 
       context "no new build in the last 24h" do
         before do
-          last_build = FactoryGirl.create.create(:build,
+          last_build = FactoryGirl.create(:build,
             repository_id: cron.branch.repository.id,
             finished_at: DateTime.now - 1.hour)
           cron.branch.update_attribute(:last_build_id, last_build.id)

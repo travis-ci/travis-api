@@ -22,12 +22,12 @@ describe Travis::Services::FindRequest do
   end
 
   context do
-    let(:user) { FactoryGirl.create.create(:user, login: :rkh) }
-    let(:org)  { FactoryGirl.create.create(:org, login: :travis) }
-    let(:private_repo) { FactoryGirl.create.create(:repository, owner: org, private: true) }
-    let(:public_repo)  { FactoryGirl.create.create(:repository, owner: org, private: false) }
-    let(:private_request) { FactoryGirl.create.create(:request, repository: private_repo, private: true) }
-    let(:public_request)  { FactoryGirl.create.create(:request, repository: public_repo, private: false) }
+    let(:user) { FactoryGirl.create(:user, login: :rkh) }
+    let(:org)  { FactoryGirl.create(:org, login: :travis) }
+    let(:private_repo) { FactoryGirl.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { FactoryGirl.create(:repository, owner: org, private: false) }
+    let(:private_request) { FactoryGirl.create(:request, repository: private_repo, private: true) }
+    let(:public_request)  { FactoryGirl.create(:request, repository: public_repo, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -36,13 +36,13 @@ describe Travis::Services::FindRequest do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private request' do
-          FactoryGirl.create.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_request.id)
           service.run.should == private_request
         end
 
         it 'finds a public request' do
-          FactoryGirl.create.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_request.id)
           service.run.should == public_request
         end
@@ -66,13 +66,13 @@ describe Travis::Services::FindRequest do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private request' do
-          FactoryGirl.create.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_request.id)
           service.run.should == private_request
         end
 
         it 'finds a public request' do
-          FactoryGirl.create.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_request.id)
           service.run.should == public_request
         end

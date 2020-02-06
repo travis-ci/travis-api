@@ -31,12 +31,12 @@ describe Travis::Services::FindBranches do
     end
   end
 
-  let(:user) { FactoryGirl.create.create(:user, login: :rkh) }
-  let(:org)  { FactoryGirl.create.create(:org, login: :travis) }
-  let(:private_repo)   { FactoryGirl.create.create(:repository_without_last_build, owner: org, private: true) }
-  let(:public_repo)    { FactoryGirl.create.create(:repository_without_last_build, owner: org, private: false) }
-  let!(:private_build) { FactoryGirl.create.create(:build, repository: private_repo, private: true) }
-  let!(:public_build)  { FactoryGirl.create.create(:build, repository: public_repo, private: false) }
+  let(:user) { FactoryGirl.create(:user, login: :rkh) }
+  let(:org)  { FactoryGirl.create(:org, login: :travis) }
+  let(:private_repo)   { FactoryGirl.create(:repository_without_last_build, owner: org, private: true) }
+  let(:public_repo)    { FactoryGirl.create(:repository_without_last_build, owner: org, private: false) }
+  let!(:private_build) { FactoryGirl.create(:build, repository: private_repo, private: true) }
+  let!(:public_build)  { FactoryGirl.create(:build, repository: public_repo, private: false) }
 
   before { Travis.config.host = 'example.com' }
 
@@ -45,13 +45,13 @@ describe Travis::Services::FindBranches do
 
     describe 'given the current user has a permission on the repository' do
       it 'finds a private build' do
-        FactoryGirl.create.create(:permission, user: user, repository: private_repo)
+        FactoryGirl.create(:permission, user: user, repository: private_repo)
         service = described_class.new(user, repository_id: private_repo.id)
         service.run.should include(private_build)
       end
 
       it 'finds a public build' do
-        FactoryGirl.create.create(:permission, user: user, repository: public_repo)
+        FactoryGirl.create(:permission, user: user, repository: public_repo)
         service = described_class.new(user, repository_id: public_repo.id)
         service.run.should include(public_build)
       end
@@ -75,13 +75,13 @@ describe Travis::Services::FindBranches do
 
     describe 'given the current user has a permission on the repository' do
       it 'finds a private build' do
-        FactoryGirl.create.create(:permission, user: user, repository: private_repo)
+        FactoryGirl.create(:permission, user: user, repository: private_repo)
         service = described_class.new(user, repository_id: private_repo.id)
         service.run.should include(private_build)
       end
 
       it 'finds a public build' do
-        FactoryGirl.create.create(:permission, user: user, repository: public_repo)
+        FactoryGirl.create(:permission, user: user, repository: public_repo)
         service = described_class.new(user, repository_id: public_repo.id)
         service.run.should include(public_build)
       end

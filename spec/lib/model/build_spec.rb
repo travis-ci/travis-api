@@ -4,50 +4,50 @@ describe Build do
   let(:repository) { FactoryGirl.create(:repository_without_last_build) }
 
   it 'caches matrix ids' do
-    build = FactoryGirl.create.create(:build, config: { rvm: ['1.9.3', '2.0.0'] })
+    build = FactoryGirl.create(:build, config: { rvm: ['1.9.3', '2.0.0'] })
     build.cached_matrix_ids.should == build.matrix_ids
   end
 
   it 'returns nil if cached_matrix_ids are not set' do
-    build = FactoryGirl.create.create(:build)
+    build = FactoryGirl.create(:build)
     build.update_column(:cached_matrix_ids, nil)
     build.reload.cached_matrix_ids.should be_nil
   end
 
   it 'is cancelable if at least one job is cancelable' do
-    jobs = [FactoryGirl.create.build(:test), FactoryGirl.create.build(:test)]
+    jobs = [FactoryGirl.build(:test), FactoryGirl.create.build(:test)]
     jobs.first.stubs(:cancelable?).returns(true)
     jobs.second.stubs(:cancelable?).returns(false)
 
-    build = FactoryGirl.create.build(:build, matrix: jobs)
+    build = FactoryGirl.build(:build, matrix: jobs)
     build.should be_cancelable
   end
 
   it 'is not cancelable if none of the jobs are cancelable' do
-    jobs = [FactoryGirl.create.build(:test), FactoryGirl.create.build(:test)]
+    jobs = [FactoryGirl.build(:test), FactoryGirl.create.build(:test)]
     jobs.first.stubs(:cancelable?).returns(false)
     jobs.second.stubs(:cancelable?).returns(false)
 
-    build = FactoryGirl.create.build(:build, matrix: jobs)
+    build = FactoryGirl.build(:build, matrix: jobs)
     build.should_not be_cancelable
   end
 
   describe '#secure_env_enabled?' do
     it 'returns true if we\'re not dealing with pull request' do
-      build = FactoryGirl.create.build(:build)
+      build = FactoryGirl.build(:build)
       build.stubs(:pull_request?).returns(false)
       build.secure_env_enabled?.should be true
     end
 
     it 'returns true if pull request is from the same repository' do
-      build = FactoryGirl.create.build(:build)
+      build = FactoryGirl.build(:build)
       build.stubs(:pull_request?).returns(true)
       build.stubs(:same_repo_pull_request?).returns(true)
       build.secure_env_enabled?.should be true
     end
 
     it 'returns false if pull request is not from the same repository' do
-      build = FactoryGirl.create.build(:build)
+      build = FactoryGirl.build(:build)
       build.stubs(:pull_request?).returns(true)
       build.stubs(:same_repo_pull_request?).returns(false)
       build.secure_env_enabled?.should be false
@@ -228,12 +228,12 @@ describe Build do
       end
 
       it 'downcases the language on config' do
-        build = FactoryGirl.create.create(:build, config: { language: "PYTHON" })
+        build = FactoryGirl.create(:build, config: { language: "PYTHON" })
         Build.last.config[:language].should == "python"
       end
 
       it 'sets ruby as default language' do
-        build = FactoryGirl.create.create(:build, config: { 'foo' => { 'bar' => 'bar' } })
+        build = FactoryGirl.create(:build, config: { 'foo' => { 'bar' => 'bar' } })
         Build.last.config[:language].should == "ruby"
       end
     end

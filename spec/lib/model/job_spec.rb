@@ -1,18 +1,18 @@
 describe Job do
   describe '.result' do
     it 'returns 1 for failed builds' do
-      job = FactoryGirl.create.build(:test, state: :failed)
+      job = FactoryGirl.build(:test, state: :failed)
       job.result.should == 1
     end
 
     it 'returns 0 for passed builds' do
-      job = FactoryGirl.create.build(:test, state: :passed)
+      job = FactoryGirl.build(:test, state: :passed)
       job.result.should == 0
     end
   end
 
   describe ".queued" do
-    let(:jobs) { [FactoryGirl.create.create(:test), FactoryGirl.create.create(:test), FactoryGirl.create.create(:test)] }
+    let(:jobs) { [FactoryGirl.create(:test), FactoryGirl.create.create(:test), FactoryGirl.create.create(:test)] }
 
     it "returns jobs that are created but not started or finished" do
       jobs.first.start!
