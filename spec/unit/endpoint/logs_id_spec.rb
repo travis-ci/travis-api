@@ -2,12 +2,12 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
   after { Travis.config.public_mode = false }
 
   context do
-    let(:user) { Factory.create(:user, login: :rkh) }
+    let(:user) { FactoryGirl.create(:user, login: :rkh) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
-    let(:private_repo)   { Factory.create(:repository, private: true) }
-    let(:public_repo)    { Factory.create(:repository, private: false) }
-    let!(:private_build) { Factory.create(:build, repository: private_repo, private: true) }
-    let!(:public_build)  { Factory.create(:build, repository: public_repo, private: false) }
+    let(:private_repo)   { FactoryGirl.create(:repository, private: true) }
+    let(:public_repo)    { FactoryGirl.create(:repository, private: false) }
+    let!(:private_build) { FactoryGirl.create(:build, repository: private_repo, private: true) }
+    let!(:public_build)  { FactoryGirl.create(:build, repository: public_repo, private: false) }
     let(:authenticated_headers) {
       { 'HTTP_ACCEPT' => 'text/vnd.travis-ci.2+plain', 'HTTP_AUTHORIZATION' => "token #{token}" }
     }
@@ -43,14 +43,14 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
       describe 'given the current user has a permission on the repository' do
         it 'responds with a private log' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create(:permission, user: user, repository: private_repo)
           response = get("/logs/1", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'private'
         end
 
         it 'responds with a public log' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           response = get("/logs/2", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'public'
@@ -93,14 +93,14 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
       describe 'given the current user has a permission on the repository' do
         it 'responds with a private log' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create(:permission, user: user, repository: private_repo)
           response = get("/logs/1", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'private'
         end
 
         it 'responds with a public log' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           response = get("/logs/2", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'public'
@@ -143,14 +143,14 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
       describe 'given the current user has a permission on the repository' do
         it 'responds with a private log' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create(:permission, user: user, repository: private_repo)
           response = get("/logs/1", {}, v21_authenticated_headers)
           response.should be_ok
           response.body.should == 'private'
         end
 
         it 'responds with a public log' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           response = get("/logs/2", {}, v21_authenticated_headers)
           response.should be_ok
           response.body.should == 'public'
@@ -194,7 +194,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
       describe 'given the current user has a permission on the repository' do
         it 'responds with a public log' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create(:permission, user: user, repository: public_repo)
           response = get("/logs/2", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'public'

@@ -4,9 +4,9 @@ describe Travis::API::V3::Services::Queues::Stats, set_app: true do
     let(:repo)  { FactoryGirl.create(:repository, name: 'travis-web') }
 
     before do
-      Factory.create(:job, repository: repo, queue: 'builds.linux', state: 'queued')
-      Factory.create(:job, repository: repo, queue: 'builds.linux', state: 'queued')
-      Factory.create(:job, repository: repo, queue: 'builds.linux', state: 'started')
+      FactoryGirl.create(:job, repository: repo, queue: 'builds.linux', state: 'queued')
+      FactoryGirl.create(:job, repository: repo, queue: 'builds.linux', state: 'queued')
+      FactoryGirl.create(:job, repository: repo, queue: 'builds.linux', state: 'started')
     end
 
     context 'when authenticated by user token' do

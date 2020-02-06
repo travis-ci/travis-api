@@ -42,8 +42,6 @@ require 'support/shared_examples'
 require 'support/ssl_keys'
 require 'support/test_helpers'
 
-FactoryBot = FactoryGirl
-
 module TestHelpers
   include Sinatra::TestHelpers
 

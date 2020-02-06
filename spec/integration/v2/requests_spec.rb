@@ -1,10 +1,10 @@
 require 'json'
 
 describe 'Requests', set_app: true do
-  let(:repo)    { Factory.create(:repository) }
-  let(:request) { Factory.create(:request, repository: repo) }
-  let(:build)   { Factory.create(:build, repository: repo) }
-  let(:user)    { Factory.create(:user) }
+  let(:repo)    { FactoryGirl.create(:repository) }
+  let(:request) { FactoryGirl.create(:request, repository: repo) }
+  let(:build)   { FactoryGirl.create(:build, repository: repo) }
+  let(:user)    { FactoryGirl.create(:user) }
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 

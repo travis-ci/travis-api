@@ -17,8 +17,8 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
   end
 
   context 'caches endpoints' do
-    let(:user) { Factory.create(:user) }
-    let(:repo) { Factory.create(:repository, private: false, owner_name: 'user', name: 'repo') }
+    let(:user) { FactoryGirl.create(:user) }
+    let(:repo) { FactoryGirl.create(:repository, private: false, owner_name: 'user', name: 'repo') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     let(:cache_options) {{ s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} }}

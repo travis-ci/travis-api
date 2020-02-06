@@ -1,6 +1,6 @@
 describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
   describe "migrating a repository" do
-    let(:user) { Factory.create(:user, login: 'merge-user') }
+    let(:user) { FactoryGirl.create(:user, login: 'merge-user') }
     let(:repo) { Travis::API::V3::Models::Repository.first }
     before do
       Travis::Features.activate_owner(:allow_migration, repo.owner)
