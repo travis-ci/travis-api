@@ -375,7 +375,7 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    timecop (0.8.1)
+    timecop (0.9.1)
     tool (0.2.3)
     travis-rollout (0.0.2)
     trollop (2.1.2)
@@ -467,7 +467,7 @@ DEPENDENCIES
   sinatra
   sinatra-contrib
   stackprof
-  timecop (~> 0.8.0)
+  timecop (~> 0.9.0)
   tool
   travis-amqp!
   travis-config!
