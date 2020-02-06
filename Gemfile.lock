@@ -134,7 +134,7 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     dalli (2.7.6)
-    database_cleaner (1.7.0)
+    database_cleaner (1.8.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.3)
@@ -412,7 +412,7 @@ DEPENDENCIES
   coder (~> 0.4.0)
   composite_primary_keys (~> 8.0)
   dalli
-  database_cleaner (~> 1.7)
+  database_cleaner (~> 1.8)
   factory_girl (~> 2.4.0)
   faraday
   faraday_middleware

@@ -84,7 +84,7 @@ group :test do
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
   gem 'mocha',         '~> 0.12'
-  gem 'database_cleaner', '~> 1.7'
+  gem 'database_cleaner', '~> 1.8'
   gem 'timecop',       '~> 0.9.0'
   gem 'webmock'
   gem 'hashdiff'
