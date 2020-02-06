@@ -1,5 +1,5 @@
 describe Travis::API::V3::Models::RepositoryMigration do
-  let(:repository) { Factory(:repository) }
+  let(:repository) { FactoryGirl.create(:repository) }
 
   subject { Travis::API::V3::Models::RepositoryMigration.new(repository) }
 

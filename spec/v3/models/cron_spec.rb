@@ -7,7 +7,7 @@ RSpec::Matchers.define :eq_datetime do |*expected|
 end
 
 describe Travis::API::V3::Models::Cron do
-  let(:subject) { Factory(:cron, branch_id: Factory(:branch).id) }
+  let(:subject) { FactoryGirl.create(:cron, branch_id: FactoryGirl.create(:branch).id) }
 
   let!(:scheduler_interval) { Travis::API::V3::Models::Cron::SCHEDULER_INTERVAL + 1.minute }
 
@@ -18,8 +18,8 @@ describe Travis::API::V3::Models::Cron do
 
   describe "scheduled scope" do
     it "collects all upcoming cron jobs" do
-      cron1 = Factory(:cron)
-      cron2 = Factory(:cron)
+      cron1 = FactoryGirl.create(:cron)
+      cron2 = FactoryGirl.create(:cron)
 
       cron2.update_attribute(:next_run, 2.hours.from_now)
       Timecop.travel(scheduler_interval.from_now)
@@ -118,22 +118,22 @@ describe Travis::API::V3::Models::Cron do
 
   context "when always_run? is false" do
     context "when no build has existed before running a cron build" do
-      let(:cron) { Factory(:cron, branch_id: Factory(:branch).id, dont_run_if_recent_build_exists: true) }
+      let(:cron) { FactoryGirl.create(:cron, branch_id: FactoryGirl.create(:branch).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
         cron.needs_new_build?.should be_truthy
       end
     end
 
     context "when last build within last 24h has no started_at" do
-      let(:build) { Factory(:v3_build, started_at: nil, number: 100) }
-      let(:cron) { Factory(:cron, branch_id: Factory(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
+      let(:build) { FactoryGirl.create(:v3_build, started_at: nil, number: 100) }
+      let(:cron) { FactoryGirl.create(:cron, branch_id: FactoryGirl.create(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
         cron.needs_new_build?.should be_truthy
       end
     end
 
     context "when there was a build in the last 24h" do
-      let(:cron) { Factory(:cron, branch_id: Factory(:branch, last_build: Factory(:v3_build, number: 200)).id, dont_run_if_recent_build_exists: true) }
+      let(:cron) { FactoryGirl.create(:cron, branch_id: FactoryGirl.create(:branch, last_build: FactoryGirl.create(:v3_build, number: 200)).id, dont_run_if_recent_build_exists: true) }
 
       it "needs_new_build? returns false" do
         cron.needs_new_build?.should be_falsey
@@ -163,7 +163,7 @@ describe Travis::API::V3::Models::Cron do
 
   context "when repo ownership is transferred" do
     it "enqueues a cron for the repo with the new owner" do
-      subject.branch.repository.update_attribute(:owner, Factory(:user, name: "Yoda", login: "yoda", email: "yoda@yoda.com"))
+      subject.branch.repository.update_attribute(:owner, FactoryGirl.create(:user, name: "Yoda", login: "yoda", email: "yoda@yoda.com"))
       Sidekiq::Client.any_instance.expects(:push).once
       subject.enqueue
     end

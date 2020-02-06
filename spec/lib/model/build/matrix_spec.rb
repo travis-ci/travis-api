@@ -3,7 +3,7 @@ describe Build, 'matrix' do
     context 'if config[:matrix][:finish_fast] is not set' do
       context 'if at least one job has not finished and is not allowed to fail' do
         it 'returns false' do
-          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
+          build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'] })
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started)
 
@@ -13,7 +13,7 @@ describe Build, 'matrix' do
 
       context 'if at least one job has not finished and is allowed to fail' do
         it 'returns false' do
-          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
+          build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'] })
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started, allow_failure: true)
 
@@ -23,7 +23,7 @@ describe Build, 'matrix' do
 
       context 'if all jobs have finished' do
         it 'returns true' do
-          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
+          build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'] })
           build.matrix[0].update_attributes!(state: :passed)
           build.matrix[1].update_attributes!(state: :passed)
 
@@ -34,7 +34,7 @@ describe Build, 'matrix' do
     context 'if config[:matrix][:finish_fast] is set' do
       context 'if at least one job has not finished and is not allowed to fail' do
         it 'returns false' do
-          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
+          build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started)
 
@@ -44,7 +44,7 @@ describe Build, 'matrix' do
 
       context 'if at least one job has not finished and is allowed to fail' do
         it 'returns true' do
-          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
+          build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started, allow_failure: true)
 
@@ -54,7 +54,7 @@ describe Build, 'matrix' do
 
       context 'if all jobs have finished' do
         it 'returns true' do
-          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
+          build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
           build.matrix[0].update_attributes!(state: :passed)
           build.matrix[1].update_attributes!(state: :passed)
 
@@ -65,7 +65,7 @@ describe Build, 'matrix' do
   end
 
   describe :matrix_state do
-    let(:build) { Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] }) }
+    let(:build) { FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'] }) }
 
     it 'returns :passed if all jobs have passed' do
       build.matrix[0].update_attributes!(state: "passed")
@@ -123,7 +123,7 @@ describe Build, 'matrix' do
   end
 
   context 'matrix with one allow_failure job' do
-    let(:build) { Factory(:build, config: { rvm: ['1.9.3'] }) }
+    let(:build) { FactoryGirl.create(:build, config: { rvm: ['1.9.3'] }) }
 
     it 'returns :passed' do
       build.matrix[0].update_attributes!(state: "failed", allow_failure: true)
@@ -391,7 +391,7 @@ describe Build, 'matrix' do
 
     describe :expand_matrix do
       it 'does not expand on :os' do
-        build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
+        build = FactoryGirl.create.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3' },
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0' }
@@ -399,7 +399,7 @@ describe Build, 'matrix' do
       end
 
       it 'does not clobber env and global_env vars' do
-        build = Factory(:build, config: env_global_config)
+        build = FactoryGirl.create(:build, config: env_global_config)
 
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-4.0.0', env: 'FOO=bar', global_env: ['TOKEN=abcdef'] },
@@ -410,28 +410,28 @@ describe Build, 'matrix' do
       end
 
       it 'sets the config to the jobs (no config)' do
-        build = Factory(:build, config: {})
+        build = FactoryGirl.create(:build, config: {})
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise' }
         ]
       end
 
       it 'sets the config to the jobs (no matrix config)' do
-        build = Factory(:build, config: no_matrix_config)
+        build = FactoryGirl.create(:build, config: no_matrix_config)
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci' }
         ]
       end
 
       it 'sets the config to the jobs (single test config)' do
-        build = Factory(:build, config: single_test_config)
+        build = FactoryGirl.create(:build, config: single_test_config)
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.6', env: 'USE_GIT_REPOS=true' }
         ]
       end
 
       it 'sets the config to the jobs (multiple tests config)' do
-        build = Factory(:build, config: multiple_tests_config)
+        build = FactoryGirl.create(:build, config: multiple_tests_config)
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.6',      env: 'USE_GIT_REPOS=true' },
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.7',      env: 'USE_GIT_REPOS=true' },
@@ -449,18 +449,18 @@ describe Build, 'matrix' do
       end
 
       it 'sets the config to the jobs (allow failures config)' do
-        build = Factory(:build, config: multiple_tests_config_with_allow_failures)
+        build = FactoryGirl.create(:build, config: multiple_tests_config_with_allow_failures)
         build.matrix.map(&:allow_failure).should == [false, true, false, false]
       end
 
       it 'ignores global env config when setting allow failures' do
-        build = Factory(:build, config: allow_failures_with_global_env)
+        build = FactoryGirl.create(:build, config: allow_failures_with_global_env)
         build.matrix.map(&:allow_failure).should == [true, false, false, false]
       end
 
       context 'when matrix specifies incorrect allow_failures' do
         before :each do
-          @build = Factory(:build, config: ruby_matrix_with_incorrect_allow_failures)
+          @build = FactoryGirl.create(:build, config: ruby_matrix_with_incorrect_allow_failures)
         end
 
         it 'excludes matrices correctly' do
@@ -470,7 +470,7 @@ describe Build, 'matrix' do
 
       context 'when matrix specifies scalar allow_failures' do
         before :each do
-          @build = Factory(:build, config: scalar_allow_failures)
+          @build = FactoryGirl.create(:build, config: scalar_allow_failures)
         end
 
         it 'ignores allow_failures silently' do
@@ -480,7 +480,7 @@ describe Build, 'matrix' do
 
       context 'when ruby project contains unwanted key' do
         before :each do
-          @build_ruby = Factory(:build, config: matrix_with_unwanted_expansion_ruby)
+          @build_ruby = FactoryGirl.create(:build, config: matrix_with_unwanted_expansion_ruby)
         end
 
         it 'ignores irrelevant matrix dimensions' do
@@ -502,7 +502,7 @@ describe Build, 'matrix' do
 
       context 'when python project contains unwanted key' do
         before :each do
-          @build_python = Factory(:build, config: matrix_with_unwanted_expansion_python)
+          @build_python = FactoryGirl.create(:build, config: matrix_with_unwanted_expansion_python)
         end
 
         it 'ignores irrelevant matrix dimensions' do
@@ -519,19 +519,19 @@ describe Build, 'matrix' do
 
       it 'copies build attributes' do
         # TODO spec other attributes!
-        build = Factory(:build, config: multiple_tests_config)
+        build = FactoryGirl.create(:build, config: multiple_tests_config)
         build.matrix.map(&:commit_id).uniq.should == [build.commit_id]
       end
 
       it 'adds a sub-build number to the job number' do
-        build = Factory(:build, config: multiple_tests_config)
+        build = FactoryGirl.create(:build, config: multiple_tests_config)
         numbers = build.matrix.map(&:number)[0..3].map { |num| num.split('.').last }
         numbers.should == ['1', '2', '3', '4']
       end
 
       describe :exclude_matrix_config do
         it 'excludes a matrix config when all config items are defined in the exclusion' do
-          build = Factory(:build, config: multiple_tests_config_with_exculsion)
+          build = FactoryGirl.create(:build, config: multiple_tests_config_with_exculsion)
           matrix_exclusion = {
             exclude: [
               { rvm: '1.8.7', gemfile: 'gemfiles/rails-3.1.x' },
@@ -548,7 +548,7 @@ describe Build, 'matrix' do
         end
 
         it "excludes a matrix config without specifying global env vars in the exclusion" do
-          build = Factory(:build, config: multiple_tests_config_with_global_env_and_exclusion)
+          build = FactoryGirl.create(:build, config: multiple_tests_config_with_global_env_and_exclusion)
           matrix_exclusion = { exclude: [{ rvm: "1.9.2", gemfile: "gemfiles/rails-4.0.x" }] }
 
           build.matrix.map(&:config).should eq([
@@ -559,7 +559,7 @@ describe Build, 'matrix' do
         end
 
         it 'excludes jobs from a matrix config when the matrix exclusion definition is incomplete' do
-          build = Factory(:build, config: multiple_tests_config_with_invalid_exculsion)
+          build = FactoryGirl.create(:build, config: multiple_tests_config_with_invalid_exculsion)
 
           matrix_exclusion = { exclude: [{ rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x' }] }
 
@@ -577,7 +577,7 @@ describe Build, 'matrix' do
 
     describe :include_matrix_config do
       it 'includes a matrix config' do
-          build = Factory(:build, config: multiple_tests_config_with_inclusion)
+          build = FactoryGirl.create(:build, config: multiple_tests_config_with_inclusion)
 
           matrix_inclusion = {
             include: [
@@ -595,7 +595,7 @@ describe Build, 'matrix' do
         end
 
       it 'does not include "empty" matrix config' do
-        build = Factory(:build, config: matrix_with_inclusion_only)
+        build = FactoryGirl.create(:build, config: matrix_with_inclusion_only)
 
         matrix_inclusion = {
           include: [
@@ -613,7 +613,7 @@ describe Build, 'matrix' do
       end
 
       it 'includes "empty" matrix config when matrix.include is null' do
-        build = Factory(:build, config: matrix_with_empty_include)
+        build = FactoryGirl.create(:build, config: matrix_with_empty_include)
 
         matrix_inclusion = {
           include: nil
@@ -624,10 +624,10 @@ describe Build, 'matrix' do
     end
 
     describe 'matrix expansion' do
-      let(:repository) { Factory(:repository) }
+      let(:repository) { FactoryGirl.create(:repository) }
 
       it 'with string values' do
-        build = Factory(:build, config: { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: 'FOO=bar' })
+        build = FactoryGirl.create(:build, config: { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: 'FOO=bar' })
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: 'FOO=bar' }
         ]
@@ -637,14 +637,14 @@ describe Build, 'matrix' do
         repository.regenerate_key!
         env = repository.key.secure.encrypt('FOO=bar').symbolize_keys
         config = { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: env }
-        build = Factory(:build, repository: repository, config: config)
+        build = FactoryGirl.create(:build, repository: repository, config: config)
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: env }
         ]
       end
 
       it 'with two Rubies and Gemfiles' do
-        build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], gemfile: ['gemfiles/rails-2.3.x', 'gemfiles/rails-3.0.x'] })
+        build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'], gemfile: ['gemfiles/rails-2.3.x', 'gemfiles/rails-3.0.x'] })
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x' },
@@ -654,7 +654,7 @@ describe Build, 'matrix' do
       end
 
       it 'with unequal number of Rubies, env variables and Gemfiles' do
-        build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2', 'ree'], gemfile: ['gemfiles/rails-3.0.x'], env: ['DB=postgresql', 'DB=mysql'] })
+        build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2', 'ree'], gemfile: ['gemfiles/rails-3.0.x'], env: ['DB=postgresql', 'DB=mysql'] })
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=postgresql' },
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=mysql' },
@@ -666,7 +666,7 @@ describe Build, 'matrix' do
       end
 
       it 'with an array of Rubies and a single Gemfile' do
-        build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], gemfile: 'gemfiles/rails-2.3.x' })
+        build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'], gemfile: 'gemfiles/rails-2.3.x' })
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-2.3.x' }
@@ -677,14 +677,14 @@ describe Build, 'matrix' do
 
   describe 'for Scala projects' do
     it 'with a single Scala version given as a string' do
-      build = Factory(:build, config: { language: 'scala', scala: '2.8.2', env: 'NETWORK=false' })
+      build = FactoryGirl.create(:build, config: { language: 'scala', scala: '2.8.2', env: 'NETWORK=false' })
         build.matrix.map(&:config).should == [
         { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.8.2', env: 'NETWORK=false' }
       ]
     end
 
     it 'with multiple Scala versions and no env variables' do
-      build = Factory(:build, config: { language: 'scala', scala: ['2.8.2', '2.9.1']})
+      build = FactoryGirl.create(:build, config: { language: 'scala', scala: ['2.8.2', '2.9.1']})
         build.matrix.map(&:config).should == [
         { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.8.2' },
         { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.9.1' }
@@ -692,7 +692,7 @@ describe Build, 'matrix' do
     end
 
     it 'with a single Scala version passed in as array and two env variables' do
-      build = Factory(:build, config: { language: 'scala', scala: ['2.8.2'], env: ['STORE=postgresql', 'STORE=redis'] })
+      build = FactoryGirl.create(:build, config: { language: 'scala', scala: ['2.8.2'], env: ['STORE=postgresql', 'STORE=redis'] })
         build.matrix.map(&:config).should == [
         { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.8.2', env: 'STORE=postgresql' },
         { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.8.2', env: 'STORE=redis' }
@@ -715,13 +715,13 @@ describe Build, 'matrix' do
       )).deep_symbolize_keys
     }
 
-    let(:repository) { Factory(:repository)}
-    let(:test) { Factory(:test, repository: repository) }
+    let(:repository) { FactoryGirl.create(:repository)}
+    let(:test) { FactoryGirl.create(:test, repository: repository) }
 
     context 'the feature is active' do
       it 'expands on :os' do
         repository.stubs(:multi_os_enabled?).returns(true)
-        build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
+        build = FactoryGirl.create(:build, config: matrix_with_os_ruby, repository: repository)
 
         build.matrix.map(&:config).should == [
           { os: 'osx', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
@@ -735,7 +735,7 @@ describe Build, 'matrix' do
     context 'the feature is inactive' do
       it 'does not expand on :os' do
         repository.stubs(:multi_os_enabled?).returns(false)
-        build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
+        build = FactoryGirl.create(:build, config: matrix_with_os_ruby, repository: repository)
 
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
@@ -761,8 +761,8 @@ describe Build, 'matrix' do
               compiler: clang
       )).deep_symbolize_keys
     }
-    let(:repository) { Factory(:repository) }
-    let(:build)      { Factory(:build, repository: repository, config: matrix_with_includes_os_ruby) }
+    let(:repository) { FactoryGirl.create(:repository) }
+    let(:build)      { FactoryGirl.create(:build, repository: repository, config: matrix_with_includes_os_ruby) }
 
     it 'expands on :os if the feature is active' do
       repository.stubs(:multi_os_enabled?).returns(true)
@@ -800,12 +800,12 @@ describe Build, 'matrix' do
           - 'gemfiles/rails-4'
       )).deep_symbolize_keys
     }
-    let(:repository) { Factory(:repository) }
+    let(:repository) { FactoryGirl.create(:repository) }
 
     context 'the feature is active' do
       it 'expands on :dist and :group' do
         repository.stubs(:dist_group_expansion_enabled?).returns(true)
-        build = Factory(:build, repository: repository, config: matrix_with_dist_and_group_ruby)
+        build = FactoryGirl.create(:build, repository: repository, config: matrix_with_dist_and_group_ruby)
 
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', dist: 'precise', group: 'current', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
@@ -823,7 +823,7 @@ describe Build, 'matrix' do
     context 'the feature is inactive' do
       it 'does not expand on :dist or :group' do
         Build.any_instance.stubs(:dist_group_expansion_enabled?).returns(false)
-        build = Factory(:build, config: matrix_with_dist_and_group_ruby)
+        build = FactoryGirl.create(:build, config: matrix_with_dist_and_group_ruby)
 
         build.matrix.map(&:config).should == [
           { os: 'linux', language: 'ruby', dist: ['precise', 'trusty'], group: ['current', 'update'], rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
@@ -835,17 +835,17 @@ describe Build, 'matrix' do
 
   describe 'filter_matrix' do
     it 'selects matching builds' do
-      build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
+      build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
       build.filter_matrix({ rvm: '1.8.7', env: 'DB=sqlite3' }).should == [build.matrix[0]]
     end
 
     it 'does not select builds with non-matching values' do
-      build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
+      build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
       build.filter_matrix({ rvm: 'nomatch', env: 'DB=sqlite3' }).should be_empty
     end
 
     it 'does not select builds with non-matching keys' do
-      build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
+      build = FactoryGirl.create(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
       build.filter_matrix({ rvm: '1.8.7', nomatch: 'DB=sqlite3' }).should == [build.matrix[0], build.matrix[1]]
     end
   end
@@ -853,19 +853,19 @@ describe Build, 'matrix' do
   describe 'does not explode' do
     it 'on a config key that is `true`' do
       config = { true => 'broken' }
-      build = Factory(:build, config: config, repository: Factory(:repository))
+      build = FactoryGirl.create(:build, config: config, repository: FactoryGirl.create(:repository))
       expect { build.expand_matrix }.to_not raise_error
     end
 
     it 'on bad matrix include values' do
       config = { matrix: { include: ['broken'] } }
-      build = Factory(:build, config: config, repository: Factory(:repository))
+      build = FactoryGirl.create(:build, config: config, repository: FactoryGirl.create(:repository))
       expect { build.expand_matrix }.to_not raise_error
     end
 
     it 'on config[:matrix] being an array' do
       config = { matrix: [{ foo: 'kaputt' }] }
-      build = Factory(:build, config: config, repository: Factory(:repository))
+      build = FactoryGirl.create(:build, config: config, repository: FactoryGirl.create(:repository))
       expect { build.expand_matrix }.to_not raise_error
     end
   end

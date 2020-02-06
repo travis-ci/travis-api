@@ -1,5 +1,5 @@
 describe Build, 'denormalization' do
-  let(:build) { Factory(:build, state: :started, duration: 30) }
+  let(:build) { FactoryGirl.create(:build, state: :started, duration: 30) }
 
   describe 'on build:started' do
     before :each do

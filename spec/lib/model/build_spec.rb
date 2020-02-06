@@ -1,53 +1,53 @@
 describe Build do
   before { DatabaseCleaner.clean_with :truncation }
 
-  let(:repository) { Factory(:repository_without_last_build) }
+  let(:repository) { FactoryGirl.create(:repository_without_last_build) }
 
   it 'caches matrix ids' do
-    build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'] })
+    build = FactoryGirl.create.create(:build, config: { rvm: ['1.9.3', '2.0.0'] })
     build.cached_matrix_ids.should == build.matrix_ids
   end
 
   it 'returns nil if cached_matrix_ids are not set' do
-    build = Factory.create(:build)
+    build = FactoryGirl.create.create(:build)
     build.update_column(:cached_matrix_ids, nil)
     build.reload.cached_matrix_ids.should be_nil
   end
 
   it 'is cancelable if at least one job is cancelable' do
-    jobs = [Factory.build(:test), Factory.build(:test)]
+    jobs = [FactoryGirl.create.build(:test), FactoryGirl.create.build(:test)]
     jobs.first.stubs(:cancelable?).returns(true)
     jobs.second.stubs(:cancelable?).returns(false)
 
-    build = Factory.build(:build, matrix: jobs)
+    build = FactoryGirl.create.build(:build, matrix: jobs)
     build.should be_cancelable
   end
 
   it 'is not cancelable if none of the jobs are cancelable' do
-    jobs = [Factory.build(:test), Factory.build(:test)]
+    jobs = [FactoryGirl.create.build(:test), FactoryGirl.create.build(:test)]
     jobs.first.stubs(:cancelable?).returns(false)
     jobs.second.stubs(:cancelable?).returns(false)
 
-    build = Factory.build(:build, matrix: jobs)
+    build = FactoryGirl.create.build(:build, matrix: jobs)
     build.should_not be_cancelable
   end
 
   describe '#secure_env_enabled?' do
     it 'returns true if we\'re not dealing with pull request' do
-      build = Factory.build(:build)
+      build = FactoryGirl.create.build(:build)
       build.stubs(:pull_request?).returns(false)
       build.secure_env_enabled?.should be true
     end
 
     it 'returns true if pull request is from the same repository' do
-      build = Factory.build(:build)
+      build = FactoryGirl.create.build(:build)
       build.stubs(:pull_request?).returns(true)
       build.stubs(:same_repo_pull_request?).returns(true)
       build.secure_env_enabled?.should be true
     end
 
     it 'returns false if pull request is not from the same repository' do
-      build = Factory.build(:build)
+      build = FactoryGirl.create.build(:build)
       build.stubs(:pull_request?).returns(true)
       build.stubs(:same_repo_pull_request?).returns(false)
       build.secure_env_enabled?.should be false
@@ -57,9 +57,9 @@ describe Build do
   describe 'class methods' do
     describe 'recent' do
       it 'returns recent finished builds ordered by id descending' do
-        Factory(:build, state: 'passed')
-        Factory(:build, state: 'failed')
-        Factory(:build, state: 'created')
+        FactoryGirl.create(:build, state: 'passed')
+        FactoryGirl.create(:build, state: 'failed')
+        FactoryGirl.create(:build, state: 'created')
 
         Build.recent.all.map(&:state).should == [:failed, :passed]
       end
@@ -67,9 +67,9 @@ describe Build do
 
     describe 'was_started' do
       it 'returns builds that are either started or finished' do
-        Factory(:build, state: 'passed')
-        Factory(:build, state: 'started')
-        Factory(:build, state: 'created')
+        FactoryGirl.create(:build, state: 'passed')
+        FactoryGirl.create(:build, state: 'started')
+        FactoryGirl.create(:build, state: 'created')
 
         Build.was_started.map(&:state).sort.should == [:passed, :started]
       end
@@ -77,23 +77,23 @@ describe Build do
 
     describe 'on_branch' do
       it 'returns builds that are on any of the given branches' do
-        Factory(:build, commit: Factory(:commit, branch: 'master'))
-        Factory(:build, commit: Factory(:commit, branch: 'develop'))
-        Factory(:build, commit: Factory(:commit, branch: 'feature'))
+        FactoryGirl.create(:build, commit: FactoryGirl.create(:commit, branch: 'master'))
+        FactoryGirl.create(:build, commit: FactoryGirl.create(:commit, branch: 'develop'))
+        FactoryGirl.create(:build, commit: FactoryGirl.create(:commit, branch: 'feature'))
 
         Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
       end
 
       it 'does not include pull requests' do
-        Factory(:build, commit: Factory(:commit, branch: 'no-pull'), request: Factory(:request, event_type: 'pull_request'))
-        Factory(:build, commit: Factory(:commit, branch: 'no-pull'), request: Factory(:request, event_type: 'push'))
+        FactoryGirl.create(:build, commit: FactoryGirl.create(:commit, branch: 'no-pull'), request: FactoryGirl.create(:request, event_type: 'pull_request'))
+        FactoryGirl.create(:build, commit: FactoryGirl.create(:commit, branch: 'no-pull'), request: FactoryGirl.create(:request, event_type: 'push'))
         Build.on_branch('no-pull').count.should be == 1
       end
     end
 
     describe 'older_than' do
       before do
-        5.times { |i| Factory(:build, number: i) }
+        5.times { |i| FactoryGirl.create(:build, number: i) }
         Build.stubs(:per_page).returns(2)
       end
 
@@ -132,14 +132,14 @@ describe Build do
 
     describe 'paged' do
       it 'limits the results to the `per_page` value' do
-        3.times { Factory(:build) }
+        3.times { FactoryGirl.create(:build) }
         Build.stubs(:per_page).returns(1)
 
         expect(Build.descending.paged({}).size).to eq(1)
       end
 
       it 'uses an offset' do
-        3.times { |i| Factory(:build) }
+        3.times { |i| FactoryGirl.create(:build) }
         Build.stubs(:per_page).returns(1)
 
         builds = Build.descending.paged({page: 2})
@@ -150,8 +150,8 @@ describe Build do
 
     describe 'pushes' do
       before do
-        Factory(:build)
-        Factory(:build, request: Factory(:request, event_type: 'pull_request'))
+        FactoryGirl.create(:build)
+        FactoryGirl.create(:build, request: FactoryGirl.create(:request, event_type: 'pull_request'))
       end
 
       it "returns only builds which have Requests with an event_type of push" do
@@ -161,8 +161,8 @@ describe Build do
 
     describe 'pull_requests' do
       before do
-        Factory(:build)
-        Factory(:build, request: Factory(:request, event_type: 'pull_request'))
+        FactoryGirl.create(:build)
+        FactoryGirl.create(:build, request: FactoryGirl.create(:request, event_type: 'pull_request'))
       end
 
       it "returns only builds which have Requests with an event_type of pull_request" do
@@ -174,20 +174,20 @@ describe Build do
   describe 'creation' do
     describe 'previous_state' do
       it 'is set to the last finished build state on the same branch' do
-        Factory(:build, state: 'failed')
-        Factory(:build).reload.previous_state.should == 'failed'
+        FactoryGirl.create(:build, state: 'failed')
+        FactoryGirl.create(:build).reload.previous_state.should == 'failed'
       end
 
       it 'is set to the last finished build state on the same branch (disregards non-finished builds)' do
-        Factory(:build, state: 'failed')
-        Factory(:build, state: 'started')
-        Factory(:build).reload.previous_state.should == 'failed'
+        FactoryGirl.create(:build, state: 'failed')
+        FactoryGirl.create(:build, state: 'started')
+        FactoryGirl.create(:build).reload.previous_state.should == 'failed'
       end
 
       it 'is set to the last finished build state on the same branch (disregards other branches)' do
-        Factory(:build, state: 'failed')
-        Factory(:build, state: 'passed', commit: Factory(:commit, branch: 'something'))
-        Factory(:build).reload.previous_state.should == 'failed'
+        FactoryGirl.create(:build, state: 'failed')
+        FactoryGirl.create(:build, state: 'passed', commit: FactoryGirl.create(:commit, branch: 'something'))
+        FactoryGirl.create(:build).reload.previous_state.should == 'failed'
       end
     end
 
@@ -201,18 +201,18 @@ describe Build do
   describe 'instance methods' do
     it 'sets its number to the next build number on creation' do
       1.upto(3) do |number|
-        Factory(:build).reload.number.should == number.to_s
+        FactoryGirl.create(:build).reload.number.should == number.to_s
       end
     end
 
     it 'sets previous_state to nil if no last build exists on the same branch' do
-      build = Factory(:build, commit: Factory(:commit, branch: 'master'))
+      build = FactoryGirl.create(:build, commit: FactoryGirl.create(:commit, branch: 'master'))
       build.reload.previous_state.should == nil
     end
 
     it 'sets previous_state to the result of the last build on the same branch if exists' do
-      build = Factory(:build, state: :canceled, commit: Factory(:commit, branch: 'master'))
-      build = Factory(:build, commit: Factory(:commit, branch: 'master'))
+      build = FactoryGirl.create(:build, state: :canceled, commit: FactoryGirl.create(:commit, branch: 'master'))
+      build = FactoryGirl.create(:build, commit: FactoryGirl.create(:commit, branch: 'master'))
       build.reload.previous_state.should == 'canceled'
     end
 
@@ -223,77 +223,77 @@ describe Build do
       end
 
       it 'deep_symbolizes keys on write' do
-        build = Factory(:build, config: { 'foo' => { 'bar' => 'bar' } })
+        build = FactoryGirl.create(:build, config: { 'foo' => { 'bar' => 'bar' } })
         build.config[:foo].should == { bar: 'bar' }
       end
 
       it 'downcases the language on config' do
-        build = Factory.create(:build, config: { language: "PYTHON" })
+        build = FactoryGirl.create.create(:build, config: { language: "PYTHON" })
         Build.last.config[:language].should == "python"
       end
 
       it 'sets ruby as default language' do
-        build = Factory.create(:build, config: { 'foo' => { 'bar' => 'bar' } })
+        build = FactoryGirl.create.create(:build, config: { 'foo' => { 'bar' => 'bar' } })
         Build.last.config[:language].should == "ruby"
       end
     end
 
     describe :pending? do
       it 'returns true if the build is finished' do
-        build = Factory(:build, state: :finished)
+        build = FactoryGirl.create(:build, state: :finished)
         build.pending?.should be false
       end
 
       it 'returns true if the build is not finished' do
-        build = Factory(:build, state: :started)
+        build = FactoryGirl.create(:build, state: :started)
         build.pending?.should be true
       end
     end
 
     describe :passed? do
       it 'passed? returns true if state equals :passed' do
-        build = Factory(:build, state: :passed)
+        build = FactoryGirl.create(:build, state: :passed)
         build.passed?.should be true
       end
 
       it 'passed? returns true if result does not equal :passed' do
-        build = Factory(:build, state: :failed)
+        build = FactoryGirl.create(:build, state: :failed)
         build.passed?.should be false
       end
     end
 
     describe :color do
       it 'returns "green" if the build has passed' do
-        build = Factory(:build, state: :passed)
+        build = FactoryGirl.create(:build, state: :passed)
         build.color.should == 'green'
       end
 
       it 'returns "red" if the build has failed' do
-        build = Factory(:build, state: :failed)
+        build = FactoryGirl.create(:build, state: :failed)
         build.color.should == 'red'
       end
 
       it 'returns "yellow" if the build is pending' do
-        build = Factory(:build, state: :started)
+        build = FactoryGirl.create(:build, state: :started)
         build.color.should == 'yellow'
       end
     end
 
     it 'saves event_type before create' do
-      build = Factory(:build,  request: Factory(:request, event_type: 'pull_request'))
+      build = FactoryGirl.create(:build,  request: FactoryGirl.create(:request, event_type: 'pull_request'))
       build.event_type.should == 'pull_request'
 
-      build = Factory(:build,  request: Factory(:request, event_type: 'push'))
+      build = FactoryGirl.create(:build,  request: FactoryGirl.create(:request, event_type: 'push'))
       build.event_type.should == 'push'
     end
 
     it 'saves branch before create' do
-      build = Factory(:build,  commit: Factory(:commit, branch: 'development'))
+      build = FactoryGirl.create(:build,  commit: FactoryGirl.create(:commit, branch: 'development'))
       build.branch.should == 'development'
     end
 
     describe 'reset' do
-      let(:build) { Factory(:build, state: 'finished') }
+      let(:build) { FactoryGirl.create(:build, state: 'finished') }
 
       before :each do
         build.matrix.each { |job| job.stubs(:reset) }

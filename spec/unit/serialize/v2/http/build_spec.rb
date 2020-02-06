@@ -94,7 +94,7 @@ describe Travis::Api::Serialize::V2::Http::Build do
 end
 
 describe Travis::Api::Serialize::V2::Http::Build, 'using Travis::Services::Builds::FindOne' do
-  let!(:record) { Factory(:build) }
+  let!(:record) { FactoryGirl.create(:build) }
   let(:build)   { Travis.run_service(:find_build, nil, :id => record.id) }
   let(:data)    { described_class.new(build).data }
 

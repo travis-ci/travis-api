@@ -1,7 +1,7 @@
 require 'travis/api/v3/config_obfuscator'
 
 describe Travis::API::V3::ConfigObfuscator do
-  let(:repo) { Factory(:repository) }
+  let(:repo) { FactoryGirl.create(:repository) }
   before { repo.regenerate_key! }
 
   it 'handles nil env' do

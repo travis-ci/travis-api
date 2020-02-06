@@ -1,9 +1,9 @@
 describe Travis::Services::FindCaches do
   include Support::S3, Support::GCS
 
-  let(:user) { User.first || Factory(:user) }
+  let(:user) { User.first || FactoryGirl.create(:user) }
   let(:service) { described_class.new(user, params) }
-  let(:repo) { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let(:repo) { FactoryGirl.create(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
   let(:cache_options) {{ s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} }}
   let(:result) { service.run }
   subject { result }

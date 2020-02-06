@@ -1,8 +1,8 @@
 describe Travis::Services::FindBranches do
   describe 'on org' do
-    let(:user)    { Factory(:user) }
-    let(:repo)    { Factory(:repository_without_last_build, :owner_name => 'travis-ci', :name => 'travis-core') }
-    let!(:build)  { Factory(:build, :repository => repo, :state => :finished) }
+    let(:user)    { FactoryGirl.create(:user) }
+    let(:repo)    { FactoryGirl.create(:repository_without_last_build, :owner_name => 'travis-ci', :name => 'travis-core') }
+    let!(:build)  { FactoryGirl.create(:build, :repository => repo, :state => :finished) }
     let(:service) { described_class.new(user, params) }
 
     attr_reader :params
@@ -16,7 +16,7 @@ describe Travis::Services::FindBranches do
 
     it 'scopes to the given repository' do
       @params = { :repository_id => repo.id }
-      build = Factory(:build, :repository => Factory(:repository_without_last_build), :state => :finished)
+      build = FactoryGirl.create(:build, :repository => FactoryGirl.create(:repository_without_last_build), :state => :finished)
       service.run.should_not include(build)
     end
 
@@ -31,12 +31,12 @@ describe Travis::Services::FindBranches do
     end
   end
 
-  let(:user) { Factory.create(:user, login: :rkh) }
-  let(:org)  { Factory.create(:org, login: :travis) }
-  let(:private_repo)   { Factory.create(:repository_without_last_build, owner: org, private: true) }
-  let(:public_repo)    { Factory.create(:repository_without_last_build, owner: org, private: false) }
-  let!(:private_build) { Factory.create(:build, repository: private_repo, private: true) }
-  let!(:public_build)  { Factory.create(:build, repository: public_repo, private: false) }
+  let(:user) { FactoryGirl.create.create(:user, login: :rkh) }
+  let(:org)  { FactoryGirl.create.create(:org, login: :travis) }
+  let(:private_repo)   { FactoryGirl.create.create(:repository_without_last_build, owner: org, private: true) }
+  let(:public_repo)    { FactoryGirl.create.create(:repository_without_last_build, owner: org, private: false) }
+  let!(:private_build) { FactoryGirl.create.create(:build, repository: private_repo, private: true) }
+  let!(:public_build)  { FactoryGirl.create.create(:build, repository: public_repo, private: false) }
 
   before { Travis.config.host = 'example.com' }
 
@@ -45,13 +45,13 @@ describe Travis::Services::FindBranches do
 
     describe 'given the current user has a permission on the repository' do
       it 'finds a private build' do
-        Factory.create(:permission, user: user, repository: private_repo)
+        FactoryGirl.create.create(:permission, user: user, repository: private_repo)
         service = described_class.new(user, repository_id: private_repo.id)
         service.run.should include(private_build)
       end
 
       it 'finds a public build' do
-        Factory.create(:permission, user: user, repository: public_repo)
+        FactoryGirl.create.create(:permission, user: user, repository: public_repo)
         service = described_class.new(user, repository_id: public_repo.id)
         service.run.should include(public_build)
       end
@@ -75,13 +75,13 @@ describe Travis::Services::FindBranches do
 
     describe 'given the current user has a permission on the repository' do
       it 'finds a private build' do
-        Factory.create(:permission, user: user, repository: private_repo)
+        FactoryGirl.create.create(:permission, user: user, repository: private_repo)
         service = described_class.new(user, repository_id: private_repo.id)
         service.run.should include(private_build)
       end
 
       it 'finds a public build' do
-        Factory.create(:permission, user: user, repository: public_repo)
+        FactoryGirl.create.create(:permission, user: user, repository: public_repo)
         service = described_class.new(user, repository_id: public_repo.id)
         service.run.should include(public_build)
       end

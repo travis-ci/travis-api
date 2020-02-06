@@ -16,7 +16,7 @@ describe Travis::API::V3::Services::Gdpr::Export, set_app: true, gdpr_spec_helpe
   end
 
   context 'authenticated' do
-    let(:user) { Factory(:user) }
+    let(:user) { FactoryGirl.create(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 

@@ -17,8 +17,8 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
   end
 
   context 'authenticated' do
-    let(:user) { Factory(:user) }
-    let(:organization) { Factory(:org, login: 'travis') }
+    let(:user) { FactoryGirl.create(:user) }
+    let(:organization) { FactoryGirl.create(:org, login: 'travis') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}

@@ -1,7 +1,7 @@
 describe Travis::API::V3::Services::Subscription::Pay, set_app: true, billing_spec_helper: true do
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
-  let(:organization) { Factory(:org, login: 'travis') }
+  let(:organization) { FactoryGirl.create(:org, login: 'travis') }
 
   before do
     Travis.config.billing.url = billing_url
@@ -17,7 +17,7 @@ describe Travis::API::V3::Services::Subscription::Pay, set_app: true, billing_sp
   end
 
   context 'authenticated' do
-    let(:user) { Factory(:user) }
+    let(:user) { FactoryGirl.create(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}

@@ -1,11 +1,11 @@
 describe Travis::API::V3::Models::Build do
-  let(:build) { Factory(:build, state: nil) }
+  let(:build) { FactoryGirl.create(:build, state: nil) }
   subject { Travis::API::V3::Models::Build.find_by_id(build.id) }
 
   example { expect(subject.state).to eq 'created' }
 
   describe 'casting sender to V3 model' do
-    let(:sender) { Factory(:user) }
+    let(:sender) { FactoryGirl.create(:user) }
 
     before do
       subject.update_attributes(sender_type: 'User', sender_id: sender.id)

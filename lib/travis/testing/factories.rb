@@ -2,8 +2,8 @@ require 'factory_girl'
 
 FactoryGirl.define do
   factory :build do
-    owner { User.first || Factory(:user) }
-    repository { Repository.first || Factory(:repository_without_last_build) }
+    owner { User.first || FactoryGirl.create(:user) }
+    repository { Repository.first || FactoryGirl.create(:repository_without_last_build) }
     association :request
     association :commit
     started_at { Time.now.utc }
@@ -26,10 +26,10 @@ FactoryGirl.define do
   end
 
   factory :test, :class => 'Job::Test', aliases: [:job] do
-    owner      { User.first || Factory(:user) }
-    repository { Repository.first || Factory(:repository) }
-    commit     { Factory(:commit) }
-    source     { Factory(:build) }
+    owner      { User.first || FactoryGirl.create(:user) }
+    repository { Repository.first || FactoryGirl.create(:repository) }
+    commit     { FactoryGirl.create(:commit) }
+    source     { FactoryGirl.create(:build) }
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
     number     '2.1'
     tags       ""
@@ -38,7 +38,7 @@ FactoryGirl.define do
   end
 
   factory :request do
-    repository { Repository.first || Factory(:repository) }
+    repository { Repository.first || FactoryGirl.create(:repository) }
     association :commit
     token 'the-token'
     event_type 'push'
@@ -46,7 +46,7 @@ FactoryGirl.define do
   end
 
   factory :repository_without_last_build, class: Repository do
-    owner { User.find_by_login('svenfuchs') || Factory(:user) }
+    owner { User.find_by_login('svenfuchs') || FactoryGirl.create(:user) }
     name 'minimal'
     owner_name 'svenfuchs'
     owner_email 'svenfuchs@artweb-design.de'
@@ -64,7 +64,7 @@ FactoryGirl.define do
 
   factory :repository, :parent => :repository_without_last_build do
     after_create do |repo|
-      repo.last_build ||= Factory(:build, repository: repo)
+      repo.last_build ||= FactoryGirl.create(:build, repository: repo)
     end
   end
 
@@ -75,12 +75,12 @@ FactoryGirl.define do
     name 'enginex'
     owner_name 'josevalim'
     owner_email 'josevalim@email.example.com'
-    owner { User.find_by_login('josevalim') || Factory(:user, :login => 'josevalim') }
+    owner { User.find_by_login('josevalim') || FactoryGirl.create(:user, :login => 'josevalim') }
   end
 
   factory :event do
-    repository { Repository.first || Factory(:repository) }
-    source { Build.first || Factory(:build) }
+    repository { Repository.first || FactoryGirl.create(:repository) }
+    source { Build.first || FactoryGirl.create(:build) }
     event 'build:started'
   end
 
@@ -88,8 +88,8 @@ FactoryGirl.define do
   end
 
   factory :membership, class: Travis::API::V3::Models::Membership do
-    organization_id { Factory(:org_v3).id }
-    user_id         { Factory(:user).id }
+    organization_id { FactoryGirl.create(:org_v3).id }
+    user_id         { FactoryGirl.create(:user).id }
     role         "admin"
   end
 
@@ -111,28 +111,28 @@ FactoryGirl.define do
   end
 
   factory :running_build, :parent => :build do
-    repository { Factory(:repository, :name => 'running_build') }
+    repository { FactoryGirl.create(:repository, :name => 'running_build') }
     state :started
   end
 
   factory :successful_build, :parent => :build do
-    repository { |b| Factory(:repository, :name => 'successful_build') }
+    repository { |b| FactoryGirl.create(:repository, :name => 'successful_build') }
     state :passed
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
   end
 
   factory :broken_build, :parent => :build do
-    repository { Factory(:repository, :name => 'broken_build', :last_build_state => :failed) }
+    repository { FactoryGirl.create(:repository, :name => 'broken_build', :last_build_state => :failed) }
     state :failed
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
   end
 
   factory :broken_build_with_tags, :parent => :build do
-    repository  { Factory(:repository, :name => 'broken_build_with_tags', :last_build_state => :errored) }
-    matrix      {[Factory(:test, :tags => "database_missing,rake_not_bundled",   :number => "1.1"),
-                  Factory(:test, :tags => "database_missing,log_limit_exceeded", :number => "1.2")]}
+    repository  { FactoryGirl.create(:repository, :name => 'broken_build_with_tags', :last_build_state => :errored) }
+    matrix      {[FactoryGirl.create(:test, :tags => "database_missing,rake_not_bundled",   :number => "1.1"),
+                  FactoryGirl.create(:test, :tags => "database_missing,log_limit_exceeded", :number => "1.2")]}
     state       :failed
     started_at  { Time.now.utc }
     finished_at { Time.now.utc }
@@ -140,12 +140,12 @@ FactoryGirl.define do
 
   factory :branch, class: Travis::API::V3::Models::Branch do
     name Random.rand(1..1000)
-    repository_id { Factory(:repository).id }
+    repository_id { FactoryGirl.create(:repository).id }
   end
 
   factory :v3_build, class: Travis::API::V3::Models::Build do
-    owner { User.first || Factory(:user) }
-    repository { Repository.first || Factory(:repository) }
+    owner { User.first || FactoryGirl.create(:user) }
+    repository { Repository.first || FactoryGirl.create(:repository) }
     association :request
     association :commit
     started_at { Time.now.utc }
@@ -155,14 +155,14 @@ FactoryGirl.define do
   end
 
   factory :cron, class: Travis::API::V3::Models::Cron do
-    branch { Factory(:branch) }
+    branch { FactoryGirl.create(:branch) }
     interval "daily"
     dont_run_if_recent_build_exists false
     active true
   end
 
   factory :beta_migration_request, class: Travis::API::V3::Models::BetaMigrationRequest do
-    owner_id { Factory(:user, :login => 'dummy_user').id }
+    owner_id { FactoryGirl.create(:user, :login => 'dummy_user').id }
     owner_name 'dummy_user'
     owner_type 'User'
     accepted_at nil

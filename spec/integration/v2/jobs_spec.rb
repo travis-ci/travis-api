@@ -196,7 +196,7 @@ describe 'Jobs', set_app: true do
       end
 
       context 'when job is finished' do
-        let(:finished_job) { Factory(:test, state: 'passed') }
+        let(:finished_job) { FactoryGirl.create(:test, state: 'passed') }
 
         before :each do
           user.permissions.create!(

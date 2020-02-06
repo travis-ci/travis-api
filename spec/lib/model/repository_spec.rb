@@ -2,9 +2,9 @@ describe Repository do
   before { DatabaseCleaner.clean_with :truncation }
 
   describe '#last_completed_build' do
-    let(:repo)   { Factory(:repository, name: 'foobarbaz') }
-    let(:build1) { Factory(:build, repository: repo, finished_at: 1.hour.ago, state: :passed) }
-    let(:build2) { Factory(:build, repository: repo, finished_at: Time.now, state: :failed) }
+    let(:repo)   { FactoryGirl.create(:repository, name: 'foobarbaz') }
+    let(:build1) { FactoryGirl.create(:build, repository: repo, finished_at: 1.hour.ago, state: :passed) }
+    let(:build2) { FactoryGirl.create(:build, repository: repo, finished_at: Time.now, state: :failed) }
 
     before do
       build1.update_attributes(branch: 'master')
@@ -21,7 +21,7 @@ describe Repository do
   end
 
   describe '#regenerate_key!' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryGirl.create(:repository) }
     before { repo.regenerate_key! }
     it 'regenerates key' do
       expect { repo.regenerate_key! }.to change { repo.key.private_key }
@@ -30,16 +30,16 @@ describe Repository do
 
   describe 'associations' do
     describe 'owner' do
-      let(:user) { Factory(:user) }
-      let(:org)  { Factory(:org)  }
+      let(:user) { FactoryGirl.create(:user) }
+      let(:org)  { FactoryGirl.create(:org)  }
 
       it 'can be a user' do
-        repo = Factory(:repository, owner: user)
+        repo = FactoryGirl.create(:repository, owner: user)
         repo.reload.owner.should == user
       end
 
       it 'can be an organization' do
-        repo = Factory(:repository, owner: org)
+        repo = FactoryGirl.create(:repository, owner: org)
         repo.reload.owner.should == org
       end
     end
@@ -47,7 +47,7 @@ describe Repository do
 
   describe 'class methods' do
     describe 'by_params' do
-      let(:minimal) { Factory(:repository) }
+      let(:minimal) { FactoryGirl.create(:repository) }
 
       it "should find a repository by it's github_id" do
         Repository.by_params(github_id: minimal.github_id).to_a.first.should == minimal
@@ -70,13 +70,13 @@ describe Repository do
 
     describe 'timeline' do
       before do
-        Factory(:repository, name: 'unbuilt 1',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
-        Factory(:repository, name: 'unbuilt 2',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
-        Factory(:repository, name: 'finished 1',  active: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
-        Factory(:repository, name: 'finished 2',  active: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
-        Factory(:repository, name: 'started 1',   active: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
-        Factory(:repository, name: 'started 2',   active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
-        Factory(:repository, name: 'invalidated', active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil, invalidated_at: '2012-11-11 12:00:06')
+        FactoryGirl.create(:repository, name: 'unbuilt 1',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        FactoryGirl.create(:repository, name: 'unbuilt 2',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        FactoryGirl.create(:repository, name: 'finished 1',  active: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
+        FactoryGirl.create(:repository, name: 'finished 2',  active: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
+        FactoryGirl.create(:repository, name: 'started 1',   active: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
+        FactoryGirl.create(:repository, name: 'started 2',   active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
+        FactoryGirl.create(:repository, name: 'invalidated', active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil, invalidated_at: '2012-11-11 12:00:06')
       end
 
       it 'sorts repositories with running builds to the top, most recent builds next, un-built repos last' do
@@ -92,12 +92,12 @@ describe Repository do
 
     describe 'with_builds' do
       it 'gets only projects with existing builds' do
-        one   = Factory(:repository, name: 'one',   last_build_started_at: '2011-11-11', last_build_id: nil)
-        two   = Factory(:repository, name: 'two',   last_build_started_at: '2011-11-12')
-        three = Factory(:repository, name: 'three', last_build_started_at: nil)
-        two.last_build_id = Factory(:build, repository: two).id
+        one   = FactoryGirl.create(:repository, name: 'one',   last_build_started_at: '2011-11-11', last_build_id: nil)
+        two   = FactoryGirl.create(:repository, name: 'two',   last_build_started_at: '2011-11-12')
+        three = FactoryGirl.create(:repository, name: 'three', last_build_started_at: nil)
+        two.last_build_id = FactoryGirl.create(:build, repository: two).id
         two.save
-        three.last_build_id = Factory(:build, repository: three).id
+        three.last_build_id = FactoryGirl.create(:build, repository: three).id
         three.save
 
         repositories = Repository.with_builds.all
@@ -106,9 +106,9 @@ describe Repository do
     end
 
     describe 'active' do
-      let(:active)      { Factory(:repository, active: true) }
-      let(:inactive)    { Factory(:repository, active: false) }
-      let(:invalidated) { Factory(:repository, invalidated_at: Time.now) }
+      let(:active)      { FactoryGirl.create(:repository, active: true) }
+      let(:inactive)    { FactoryGirl.create(:repository, active: false) }
+      let(:invalidated) { FactoryGirl.create(:repository, invalidated_at: Time.now) }
 
       it 'contains active repositories' do
         Repository.active.should include(active)
@@ -125,9 +125,9 @@ describe Repository do
 
     describe 'search' do
       before(:each) do
-        Factory(:repository, name: 'repo 1', last_build_started_at: '2011-11-11')
-        Factory(:repository, name: 'repo 2', last_build_started_at: '2011-11-12')
-        Factory(:repository, name: 'invalidated', invalidated_at: Time.now)
+        FactoryGirl.create(:repository, name: 'repo 1', last_build_started_at: '2011-11-11')
+        FactoryGirl.create(:repository, name: 'repo 2', last_build_started_at: '2011-11-12')
+        FactoryGirl.create(:repository, name: 'invalidated', invalidated_at: Time.now)
       end
 
       it 'performs searches case-insensitive' do
@@ -148,11 +148,11 @@ describe Repository do
     end
 
     describe 'by_member' do
-      let(:user)        { Factory(:user) }
-      let(:org)         { Factory(:org) }
-      let(:user_repo)   { Factory(:repository, owner: user)}
-      let(:org_repo)    { Factory(:repository, owner: org, name: 'globalize')}
-      let(:invalidated) { Factory(:repository, owner: org, name: 'invalidated', invalidated_at: Time.now)}
+      let(:user)        { FactoryGirl.create(:user) }
+      let(:org)         { FactoryGirl.create(:org) }
+      let(:user_repo)   { FactoryGirl.create(:repository, owner: user)}
+      let(:org_repo)    { FactoryGirl.create(:repository, owner: org, name: 'globalize')}
+      let(:invalidated) { FactoryGirl.create(:repository, owner: org, name: 'invalidated', invalidated_at: Time.now)}
       before do
         Permission.create!(user: user, repository: user_repo, pull: true, push: true)
         Permission.create!(user: user, repository: org_repo, pull: true)
@@ -170,9 +170,9 @@ describe Repository do
 
     describe 'counts_by_owner_ids' do
       let!(:repositories) do
-        Factory(:repository, owner: Factory(:org), owner_name: 'svenfuchs', name: 'minimal')
-        Factory(:repository, owner: Factory(:org), owner_name: 'travis-ci', name: 'travis-ci')
-        Factory(:repository, owner: Factory(:org), owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
+        FactoryGirl.create(:repository, owner: FactoryGirl.create(:org), owner_name: 'svenfuchs', name: 'minimal')
+        FactoryGirl.create(:repository, owner: FactoryGirl.create(:org), owner_name: 'travis-ci', name: 'travis-ci')
+        FactoryGirl.create(:repository, owner: FactoryGirl.create(:org), owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
       end
 
       it 'returns repository counts per owner_id for the given owner_ids' do
@@ -243,18 +243,18 @@ describe Repository do
   end
 
   describe "#last_build" do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryGirl.create(:repository) }
     let(:attributes) { { repository: repo, state: 'finished' } }
-    let(:api_req)    { Factory(:request, {event_type: 'api'}) }
+    let(:api_req)    { FactoryGirl.create(:request, {event_type: 'api'}) }
 
     before :each do
-      Factory(:build, attributes)
-      Factory(:build, attributes)
+      FactoryGirl.create(:build, attributes)
+      FactoryGirl.create(:build, attributes)
     end
 
     context 'when last build is a push build' do
       before :each do
-        @build = Factory(:build, attributes)
+        @build = FactoryGirl.create(:build, attributes)
       end
 
       it 'returns the most recent build' do
@@ -264,7 +264,7 @@ describe Repository do
 
     context 'when last build is an API build' do
       before :each do
-        @build = Factory(:build, attributes.merge({request: api_req}))
+        @build = FactoryGirl.create(:build, attributes.merge({request: api_req}))
       end
 
       it 'returns the most recent build' do
@@ -274,17 +274,17 @@ describe Repository do
   end
 
   describe '#last_build_on' do
-    let(:repo)       { Factory(:repository) }
+    let(:repo)       { FactoryGirl.create(:repository) }
     let(:attributes) { { repository: repo, state: 'finished' } }
-    let(:api_req)    { Factory(:request, {event_type: 'api'}) }
+    let(:api_req)    { FactoryGirl.create(:request, {event_type: 'api'}) }
 
     before :each do
-      Factory(:build, attributes)
+      FactoryGirl.create(:build, attributes)
     end
 
     context 'when last build is a push build' do
       before :each do
-        @build = Factory(:build, attributes)
+        @build = FactoryGirl.create(:build, attributes)
       end
 
       it 'returns the most recent build' do
@@ -294,7 +294,7 @@ describe Repository do
 
     context 'when last build is an API build' do
       before :each do
-        @build = Factory(:build, attributes.merge({request: api_req}))
+        @build = FactoryGirl.create(:build, attributes.merge({request: api_req}))
       end
 
       it 'returns the most recent build' do
@@ -304,7 +304,7 @@ describe Repository do
   end
 
   describe "keys" do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryGirl.create(:repository) }
     before { repo.regenerate_key! }
 
     it "should return the public key" do
@@ -313,11 +313,11 @@ describe Repository do
   end
 
   describe 'branches' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryGirl.create(:repository) }
 
     it 'returns branches for the given repository' do
       %w(master production).each do |branch|
-        2.times { Factory(:build, repository: repo, commit: Factory(:commit, branch: branch)) }
+        2.times { FactoryGirl.create(:build, repository: repo, commit: FactoryGirl.create(:commit, branch: branch)) }
       end
       repo.branches.sort.should == %w(master production)
     end
@@ -331,7 +331,7 @@ describe Repository do
   end
 
   describe 'settings' do
-    let(:repo) { Factory.build(:repository) }
+    let(:repo) { FactoryGirl.create.build(:repository) }
 
     it 'adds repository_id to collection records' do
       repo.save
@@ -387,13 +387,13 @@ describe Repository do
   end
 
   describe 'last_finished_builds_by_branches' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryGirl.create(:repository) }
 
     it 'properly orders branches by last build' do
       repo # load the repo
       Build.delete_all
-      one = Factory(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', commit: Factory(:commit, branch: '1one'))
-      two = Factory(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: Factory(:commit, branch: '2two'))
+      one = FactoryGirl.create(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', commit: FactoryGirl.create(:commit, branch: '1one'))
+      two = FactoryGirl.create(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: FactoryGirl.create(:commit, branch: '2two'))
 
       builds = repo.last_finished_builds_by_branches(1)
       builds.should == [two]
@@ -402,10 +402,10 @@ describe Repository do
     it 'retrieves last builds on all branches' do
       repo # load the repo
       Build.delete_all
-      old = Factory(:build, repository: repo, number: 1, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
-      one = Factory(:build, repository: repo, number: 2, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'one'))
-      two = Factory(:build, repository: repo, number: 3, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'two'))
-      three = Factory(:build, repository: repo, number: 4, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'three'))
+      old = FactoryGirl.create(:build, repository: repo, number: 1, finished_at: 1.hour.ago,      state: 'finished', commit: FactoryGirl.create(:commit, branch: 'one'))
+      one = FactoryGirl.create(:build, repository: repo, number: 2, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryGirl.create(:commit, branch: 'one'))
+      two = FactoryGirl.create(:build, repository: repo, number: 3, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryGirl.create(:commit, branch: 'two'))
+      three = FactoryGirl.create(:build, repository: repo, number: 4, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryGirl.create(:commit, branch: 'three'))
       three.update_attribute(:event_type, 'pull_request')
 
       builds = repo.last_finished_builds_by_branches
@@ -418,16 +418,16 @@ describe Repository do
 
   describe '#users_with_permission' do
     it 'returns users with the given permission linked to that repository' do
-      repo = Factory(:repository)
-      other_repo = Factory(:repository)
+      repo = FactoryGirl.create(:repository)
+      other_repo = FactoryGirl.create(:repository)
 
-      user_with_permission = Factory(:user)
+      user_with_permission = FactoryGirl.create(:user)
       user_with_permission.permissions.create!(repository: repo, admin: true)
 
-      user_wrong_repo = Factory(:user)
+      user_wrong_repo = FactoryGirl.create(:user)
       user_wrong_repo.permissions.create!(repository: other_repo, admin: true)
 
-      user_wrong_permission = Factory(:user)
+      user_wrong_permission = FactoryGirl.create(:user)
       user_wrong_permission.permissions.create!(repository: repo, push: true)
 
       repo.users_with_permission(:admin).should include(user_with_permission)

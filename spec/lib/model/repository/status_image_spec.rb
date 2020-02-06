@@ -1,8 +1,8 @@
 describe Repository::StatusImage do
   let(:cache)    { stub('states cache', fetch: nil, write: nil, fetch_state: nil) }
-  let!(:request) { Factory(:request, event_type: 'push', repository: repo) }
-  let!(:build)   { Factory(:build, repository: repo, request: request, state: :passed) }
-  let(:repo)     { Factory(:repository_without_last_build) }
+  let!(:request) { FactoryGirl.create(:request, event_type: 'push', repository: repo) }
+  let!(:build)   { FactoryGirl.create(:build, repository: repo, request: request, state: :passed) }
+  let(:repo)     { FactoryGirl.create(:repository_without_last_build) }
 
   before do
     described_class.any_instance.stubs(cache: cache)
@@ -100,10 +100,10 @@ describe Repository::StatusImage do
 
     context "when the branch has a cron and push build" do
       context "the last push build failed" do
-        let!(:last_push_build) { Factory(:build, branch: "master", repository: repo, request: request, state: :failed) }
+        let!(:last_push_build) { FactoryGirl.create(:build, branch: "master", repository: repo, request: request, state: :failed) }
         context "the last cron build, after the last push, passed" do
           it "returns :passed" do
-            last_cron_build = Factory(:build, branch: "master", repository: repo, request: Factory(:request, event_type: "cron", repository: repo), state: :passed)
+            last_cron_build = FactoryGirl.create(:build, branch: "master", repository: repo, request: FactoryGirl.create(:request, event_type: "cron", repository: repo), state: :passed)
 
             image = described_class.new(repo, "master")
             image.result.should == :passing

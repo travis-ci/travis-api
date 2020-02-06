@@ -1,9 +1,9 @@
 describe Travis::Services::FindBuilds do
   before { DatabaseCleaner.clean_with :truncation }
 
-  let(:user)    { Factory(:user) }
-  let(:repo)    { Factory(:repository_without_last_build, owner_name: 'travis-ci', name: 'travis-core') }
-  let!(:push)   { Factory(:build, repository: repo, event_type: 'push', state: :failed, number: 1) }
+  let(:user)    { FactoryGirl.create(:user) }
+  let(:repo)    { FactoryGirl.create(:repository_without_last_build, owner_name: 'travis-ci', name: 'travis-core') }
+  let!(:push)   { FactoryGirl.create(:build, repository: repo, event_type: 'push', state: :failed, number: 1) }
   let(:service) { described_class.new(user, params) }
 
   attr_reader :params
@@ -15,7 +15,7 @@ describe Travis::Services::FindBuilds do
     end
 
     it 'finds running builds when running param is passed' do
-      running = Factory(:build, repository: repo, event_type: 'push', state: 'started', number: 2)
+      running = FactoryGirl.create(:build, repository: repo, event_type: 'push', state: 'started', number: 2)
       @params = { :running => true }
       service.run.should == [running]
     end
@@ -32,8 +32,8 @@ describe Travis::Services::FindBuilds do
 
     it 'finds builds with a given number, scoped by repository' do
       @params = { :repository_id => repo.id, :number => 1 }
-      Factory(:build, :repository => Factory(:repository_without_last_build), :state => :finished, :number => 1)
-      Factory(:build, :repository => repo, :state => :finished, :number => 2)
+      FactoryGirl.create(:build, :repository => FactoryGirl.create(:repository_without_last_build), :state => :finished, :number => 1)
+      FactoryGirl.create(:build, :repository => repo, :state => :finished, :number => 2)
       service.run.should == [push]
     end
 
@@ -44,7 +44,7 @@ describe Travis::Services::FindBuilds do
 
     it 'scopes to the given repository_id' do
       @params = { :repository_id => repo.id }
-      Factory(:build, :repository => Factory(:repository_without_last_build), :state => :finished)
+      FactoryGirl.create(:build, :repository => FactoryGirl.create(:repository_without_last_build), :state => :finished)
       service.run.should == [push]
     end
 
@@ -59,8 +59,8 @@ describe Travis::Services::FindBuilds do
     end
 
     describe 'finds recent builds when event_type' do
-      let!(:pull_request) { Factory(:build, repository: repo, state: :finished, number: 2, request: Factory(:request, :event_type => 'pull_request')) }
-      let!(:api)          { Factory(:build, repository: repo, state: :finished, number: 2, request: Factory(:request, :event_type => 'api')) }
+      let!(:pull_request) { FactoryGirl.create(:build, repository: repo, state: :finished, number: 2, request: FactoryGirl.create(:request, :event_type => 'pull_request')) }
+      let!(:api)          { FactoryGirl.create(:build, repository: repo, state: :finished, number: 2, request: FactoryGirl.create(:request, :event_type => 'api')) }
 
       it 'given as push' do
         @params = { repository_id: repo.id, event_type: 'push' }
@@ -85,12 +85,12 @@ describe Travis::Services::FindBuilds do
   end
 
   context do
-    let(:user) { Factory.create(:user, login: :rkh) }
-    let(:org)  { Factory.create(:org, login: :travis) }
-    let(:private_repo)   { Factory.create(:repository, owner: org, private: true) }
-    let(:public_repo)    { Factory.create(:repository, owner: org, private: false) }
-    let!(:private_build) { Factory.create(:build, repository: private_repo, private: true) }
-    let!(:public_build)  { Factory.create(:build, repository: public_repo, private: false) }
+    let(:user) { FactoryGirl.create.create(:user, login: :rkh) }
+    let(:org)  { FactoryGirl.create.create(:org, login: :travis) }
+    let(:private_repo)   { FactoryGirl.create.create(:repository, owner: org, private: true) }
+    let(:public_repo)    { FactoryGirl.create.create(:repository, owner: org, private: false) }
+    let!(:private_build) { FactoryGirl.create.create(:build, repository: private_repo, private: true) }
+    let!(:public_build)  { FactoryGirl.create.create(:build, repository: public_repo, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -99,13 +99,13 @@ describe Travis::Services::FindBuilds do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private build' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user)
           service.run.should include(private_build)
         end
 
         it 'finds a public build' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user)
           service.run.should include(public_build)
         end
@@ -129,13 +129,13 @@ describe Travis::Services::FindBuilds do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private build' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryGirl.create.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user)
           service.run.should include(private_build)
         end
 
         it 'finds a public build' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryGirl.create.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user)
           service.run.should include(public_build)
         end
@@ -163,21 +163,21 @@ describe Travis::Services::FindBuilds do
     after { Travis.config.host = "travis-ci.org" }
 
     it "doesn't return public builds that don't belong to a user" do
-      public_repo = Factory(:repository_without_last_build, :owner_name => 'foo', :name => 'bar', private: false)
-      public_build = Factory(:build, repository: public_repo)
-      Factory(:test, :state => :started, :source => public_build, repository: public_repo)
+      public_repo = FactoryGirl.create(:repository_without_last_build, :owner_name => 'foo', :name => 'bar', private: false)
+      public_build = FactoryGirl.create(:build, repository: public_repo)
+      FactoryGirl.create(:test, :state => :started, :source => public_build, repository: public_repo)
 
-      user = Factory(:user)
-      repo = Factory(:repository_without_last_build, :owner_name => 'drogus', :name => 'test-project')
+      user = FactoryGirl.create(:user)
+      repo = FactoryGirl.create(:repository_without_last_build, :owner_name => 'drogus', :name => 'test-project')
       repo.users << user
-      build = Factory(:build, repository: repo)
-      job = Factory(:test, :state => :started, :source => build, repository: repo)
+      build = FactoryGirl.create(:build, repository: repo)
+      job = FactoryGirl.create(:test, :state => :started, :source => build, repository: repo)
 
-      other_user = Factory(:user)
-      other_repo = Factory(:repository_without_last_build, private: true)
+      other_user = FactoryGirl.create(:user)
+      other_repo = FactoryGirl.create(:repository_without_last_build, private: true)
       other_repo.users << other_user
-      other_build = Factory(:build, repository: other_repo)
-      Factory(:test, :state => :started, :source => other_build, repository: other_repo)
+      other_build = FactoryGirl.create(:build, repository: other_repo)
+      FactoryGirl.create(:test, :state => :started, :source => other_build, repository: other_repo)
 
       service = described_class.new(user)
       service.run.should == [build]

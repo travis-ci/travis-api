@@ -23,7 +23,7 @@ describe Travis::Api::Serialize::V2::Http::Repository do
 end
 
 describe Travis::Api::Serialize::V2::Http::Repository, 'using Travis::Services::FindRepo' do
-  let!(:record) { Factory(:repository) }
+  let!(:record) { FactoryGirl.create(:repository) }
   let(:repo)    { Travis.run_service(:find_repo, :id => record.id) }
   let(:data)    { described_class.new(repo).data }
 

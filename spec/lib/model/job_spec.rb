@@ -1,18 +1,18 @@
 describe Job do
   describe '.result' do
     it 'returns 1 for failed builds' do
-      job = Factory.build(:test, state: :failed)
+      job = FactoryGirl.create.build(:test, state: :failed)
       job.result.should == 1
     end
 
     it 'returns 0 for passed builds' do
-      job = Factory.build(:test, state: :passed)
+      job = FactoryGirl.create.build(:test, state: :passed)
       job.result.should == 0
     end
   end
 
   describe ".queued" do
-    let(:jobs) { [Factory.create(:test), Factory.create(:test), Factory.create(:test)] }
+    let(:jobs) { [FactoryGirl.create.create(:test), FactoryGirl.create.create(:test), FactoryGirl.create.create(:test)] }
 
     it "returns jobs that are created but not started or finished" do
       jobs.first.start!
@@ -43,7 +43,7 @@ describe Job do
   end
 
   describe 'obfuscated config' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryGirl.create(:repository) }
     before { repo.regenerate_key! }
 
     it 'handles nil env' do
@@ -212,7 +212,7 @@ describe Job do
   end
 
   describe 'decrypted config' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryGirl.create(:repository) }
     before { repo.regenerate_key! }
 
     it 'handles nil env' do
