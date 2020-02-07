@@ -94,7 +94,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
   describe '#education' do
     let(:data) { {} }
     it 'runs students check with token' do
-      education = stub(:education)
+      education = stub(:education => nil)
       education.expects(:student?).returns(true)
       Travis::Github::Education.expects(:new).with('abc123').returns(education)
 
