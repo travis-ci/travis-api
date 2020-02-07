@@ -58,7 +58,7 @@ module Travis::API::V3
     end
 
     private
-  
+
     def fetch_custom_field(custom_fields, field_name)
       custom_fields['data'].find { |field| field['name'] == field_name }
     end
