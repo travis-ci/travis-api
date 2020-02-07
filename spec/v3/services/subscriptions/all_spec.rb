@@ -17,8 +17,8 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
   end
 
   context 'authenticated' do
-    let(:user) { Factory(:user) }
-    let(:organization) { Factory(:org, login: 'travis') }
+    let(:user) { FactoryBot.create(:user) }
+    let(:organization) { FactoryBot.create(:org, login: 'travis') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     let(:plan) do
@@ -51,6 +51,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
           '@permissions' => { 'read' => true, 'write' => false },
           'id' => 1234,
           'valid_to' => '2017-11-28T00:09:59Z',
+          "created_at" => "2017-11-28T00:09:59.502Z",
           'plan' => plan,
           'coupon' => '',
           'status' => 'canceled',

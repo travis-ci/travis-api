@@ -1,5 +1,5 @@
 describe Travis::API::V3::Services::Leads::Create, set_app: true do
-  let(:user) { Factory(:user) }
+  let(:user) { FactoryBot.create(:user) }
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
   let(:endpoint) { "/v3/leads" }

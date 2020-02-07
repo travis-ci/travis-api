@@ -16,6 +16,7 @@ module Support
         "coupon" => "",
         "status" => "canceled",
         "source" => "stripe",
+        "created_at" => "2017-11-28T00:09:59.502Z",
         "billing_info" => {
           "first_name" => "ana",
           "last_name" => "rosas",

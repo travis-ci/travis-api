@@ -49,7 +49,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
     end
 
     context 'with existing user' do
-      let!(:user) { FactoryGirl.create(:user, login: 'drogus', github_id: 456, github_oauth_token: token) }
+      let!(:user) { FactoryBot.create(:user, login: 'drogus', github_id: 456, github_oauth_token: token) }
       let(:token) { nil }
 
       before do
@@ -94,7 +94,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
   describe '#education' do
     let(:data) { {} }
     it 'runs students check with token' do
-      education = stub(:education)
+      education = stub(:education => nil)
       education.expects(:student?).returns(true)
       Travis::Github::Education.expects(:new).with('abc123').returns(education)
 

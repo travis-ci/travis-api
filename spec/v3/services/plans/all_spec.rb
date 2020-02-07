@@ -18,7 +18,7 @@ describe Travis::API::V3::Services::Plans::All, set_app: true, billing_spec_help
   end
 
   context 'authenticated organization' do
-    let(:user) { Factory(:user) }
+    let(:user) { FactoryBot.create(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 
@@ -79,7 +79,7 @@ describe Travis::API::V3::Services::Plans::All, set_app: true, billing_spec_help
   end
 
   context 'authenticated user' do
-    let(:user) { Factory(:user) }
+    let(:user) { FactoryBot.create(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 

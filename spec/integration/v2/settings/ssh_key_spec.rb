@@ -1,10 +1,10 @@
 describe 'ssh keys endpoint', set_app: true do
-  let(:repo)    { Factory(:repository) }
+  let(:repo)    { FactoryBot.create(:repository) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
   describe 'without an authenticated user' do
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
-    let(:user)    { Factory(:user) }
+    let(:user)    { FactoryBot.create(:user) }
 
     describe 'GET /ssh_key' do
       it 'responds with 401' do
@@ -32,7 +32,7 @@ describe 'ssh keys endpoint', set_app: true do
   end
 
   describe 'with authenticated user' do
-    let(:user)    { Factory(:user) }
+    let(:user)    { FactoryBot.create(:user) }
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 

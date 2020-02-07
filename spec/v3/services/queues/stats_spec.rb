@@ -1,16 +1,16 @@
 describe Travis::API::V3::Services::Queues::Stats, set_app: true do
 
   describe 'jobs stats' do
-    let(:repo)  { FactoryGirl.create(:repository, name: 'travis-web') }
+    let(:repo)  { FactoryBot.create(:repository, name: 'travis-web') }
 
     before do
-      Factory.create(:job, repository: repo, queue: 'builds.linux', state: 'queued')
-      Factory.create(:job, repository: repo, queue: 'builds.linux', state: 'queued')
-      Factory.create(:job, repository: repo, queue: 'builds.linux', state: 'started')
+      FactoryBot.create(:job, repository: repo, queue: 'builds.linux', state: 'queued')
+      FactoryBot.create(:job, repository: repo, queue: 'builds.linux', state: 'queued')
+      FactoryBot.create(:job, repository: repo, queue: 'builds.linux', state: 'started')
     end
 
     context 'when authenticated by user token' do
-      let(:user)    { FactoryGirl.create(:user) }
+      let(:user)    { FactoryBot.create(:user) }
       let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
       let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 

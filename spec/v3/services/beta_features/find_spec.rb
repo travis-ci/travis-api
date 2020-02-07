@@ -5,7 +5,7 @@ describe Travis::API::V3::Services::BetaFeatures::Find, set_app: true do
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:beta_feature) { Travis::API::V3::Models::BetaFeature.create(name: 'FOO3', description: "Bar Baz.", feedback_url: "http://thisisgreat.com")}
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
-  let(:other_user) { FactoryGirl.create(:user, login: 'noone') }
+  let(:other_user) { FactoryBot.create(:user, login: 'noone') }
 
   describe 'not authenticated' do
     before { get("/v3/user/#{user.id}/beta_features") }

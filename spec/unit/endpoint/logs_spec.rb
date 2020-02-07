@@ -2,14 +2,14 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
   after { Travis.config.public_mode = false }
 
   context do
-    let(:user) { Factory.create(:user, login: :rkh) }
+    let(:user) { FactoryBot.create(:user, login: :rkh) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
-    let(:private_repo)   { Factory.create(:repository, private: true) }
-    let(:public_repo)    { Factory.create(:repository, private: false) }
-    let!(:private_build) { Factory.create(:build, repository: private_repo, private: true) }
-    let!(:public_build)  { Factory.create(:build, repository: public_repo, private: false) }
-    let(:public_migrated_repo) { Factory.create(:repository, private: false, migrated_at: 1.day.ago) }
-    let(:public_migrated_build) { Factory.create(:build, repository: public_migrated_repo, private: false) }
+    let(:private_repo)   { FactoryBot.create(:repository, private: true) }
+    let(:public_repo)    { FactoryBot.create(:repository, private: false) }
+    let!(:private_build) { FactoryBot.create(:build, repository: private_repo, private: true) }
+    let!(:public_build)  { FactoryBot.create(:build, repository: public_repo, private: false) }
+    let(:public_migrated_repo) { FactoryBot.create(:repository, private: false, migrated_at: 1.day.ago) }
+    let(:public_migrated_build) { FactoryBot.create(:build, repository: public_migrated_repo, private: false) }
     let(:public_migrated_job) { public_migrated_build.matrix.first }
     let(:authenticated_headers) {
       { 'HTTP_ACCEPT' => 'text/vnd.travis-ci.2+plain', 'HTTP_AUTHORIZATION' => "token #{token}" }
@@ -53,14 +53,14 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
       describe 'given the current user has a permission on the repository' do
         it 'responds with a private log' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           response = get("/jobs/#{private_job.id}/log", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'private'
         end
 
         it 'responds with a public log' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           response = get("/jobs/#{public_job.id}/log", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'public'
@@ -103,7 +103,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
       describe 'given the current user has a permission on the repository' do
         it 'responds with a private log' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           response = get("/jobs/#{private_job.id}/log", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'private'
@@ -116,7 +116,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
         end
 
         it 'responds with a public log' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           response = get("/jobs/#{public_job.id}/log", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'public'
@@ -125,7 +125,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
         it 'responds with public log from .org when job already migrated not restarted' do
           public_migrated_job.update_attribute(:org_id, public_job.id)
-          Factory.create(:permission, user: user, repository: public_migrated_repo)
+          FactoryBot.create(:permission, user: user, repository: public_migrated_repo)
           response = get("/jobs/#{public_migrated_job.id}/log", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'public'
@@ -135,7 +135,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
         it 'responds with public log from .com when job already migrated but since restarted' do
           public_migrated_job.update_attribute(:org_id, public_job.id)
           public_migrated_job.update_attribute(:restarted_at, 1.hour.ago)
-          Factory.create(:permission, user: user, repository: public_migrated_repo)
+          FactoryBot.create(:permission, user: user, repository: public_migrated_repo)
           response = get("/jobs/#{public_migrated_job.id}/log", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'public restarted'
@@ -179,7 +179,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
       describe 'given the current user has a permission on the repository' do
         it 'responds with a private log' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           response = get("/jobs/#{private_job.id}/log", {}, v21_authenticated_headers)
           response.should be_ok
           response.body.should == 'private'
@@ -192,7 +192,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
         end
 
         it 'responds with a public log' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           response = get("/jobs/#{public_job.id}/log", {}, v21_authenticated_headers)
           response.should be_ok
           response.body.should == 'public'
@@ -236,7 +236,7 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
 
       describe 'given the current user has a permission on the repository' do
         it 'responds with a public log' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           response = get("/jobs/#{public_job.id}/log", {}, authenticated_headers)
           response.should be_ok
           response.body.should == 'public'

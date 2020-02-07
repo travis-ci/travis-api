@@ -71,12 +71,12 @@ describe Travis::Api::Serialize::V2::Http::Builds do
 end
 
 describe Travis::Api::Serialize::V2::Http::Builds, 'using Travis::Services::Builds::FindAll' do
-  let!(:repo)  { Factory(:repository_without_last_build) }
+  let!(:repo)  { FactoryBot.create(:repository_without_last_build) }
   let(:builds) { Travis.run_service(:find_builds, nil, :event_type => 'push', :repository_id => repo.id) }
   let(:data)   { described_class.new(builds).data }
 
   before :each do
-    3.times { Factory(:build, :repository => repo) }
+    3.times { FactoryBot.create(:build, :repository => repo) }
   end
 
   it 'queries' do

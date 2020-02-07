@@ -1,6 +1,6 @@
 describe 'App' do
   before do
-    FactoryGirl.create(:test, :number => '3.1', :queue => 'builds.common')
+    FactoryBot.create(:test, :number => '3.1', :queue => 'builds.common')
 
     add_endpoint '/foo' do
       get '/:id/bar', scope: [:foo, :bar] do

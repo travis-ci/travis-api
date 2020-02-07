@@ -36,7 +36,7 @@ describe Travis::Api::Serialize::V2::Http::Jobs, 'using Travis::Services::Jobs::
   let(:data) { described_class.new(jobs).data }
 
   before :each do
-    3.times { Factory(:test) }
+    3.times { FactoryBot.create(:test) }
   end
 
   it 'does not explode' do

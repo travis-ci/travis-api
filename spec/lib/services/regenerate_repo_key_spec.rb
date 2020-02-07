@@ -1,6 +1,6 @@
 describe Travis::Services::RegenerateRepoKey do
-  let(:user)    { User.first || Factory(:user) }
-  let!(:repo)   { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let(:user)    { User.first || FactoryBot.create(:user) }
+  let!(:repo)   { FactoryBot.create(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
   let(:service) { described_class.new(user, :id => repo.id) }
 
   before :each do

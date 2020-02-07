@@ -4,9 +4,9 @@ describe 'Users', set_app: true do
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
   context 'GET /users/:id' do
-    let(:repo1) { Factory(:repository, owner: user) }
-    let(:org) { Factory(:org) }
-    let(:repo2) { Factory(:repository, owner: org) }
+    let(:repo1) { FactoryBot.create(:repository, owner: user) }
+    let(:org) { FactoryBot.create(:org) }
+    let(:repo2) { FactoryBot.create(:repository, owner: org) }
 
     before do
       user.permissions.create!(repository: repo1)

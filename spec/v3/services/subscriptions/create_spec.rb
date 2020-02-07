@@ -17,8 +17,8 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
   end
 
   context 'authenticated' do
-    let(:user) { Factory(:user) }
-    let(:organization) { Factory(:org, login: 'travis') }
+    let(:user) { FactoryBot.create(:user) }
+    let(:organization) { FactoryBot.create(:org, login: 'travis') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
@@ -103,6 +103,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           '@permissions' => { 'read' => true, 'write' => true },
           'id' => 1234,
           'valid_to' => '2017-11-28T00:09:59Z',
+          'created_at' => '2017-11-28T00:09:59.502Z',
           'plan' => {
             '@type' => 'plan',
             '@representation' => 'standard',
