@@ -1,5 +1,5 @@
 describe Travis::API::V3::Renderer::Repository do
-  let(:repo) { FactoryGirl.create(:repository_without_last_build) }
+  let(:repo) { FactoryBot.create(:repository_without_last_build) }
   let(:repo_renderer) { Travis::API::V3::Renderer::Repository.new(repo) }
 
   subject { repo_renderer }

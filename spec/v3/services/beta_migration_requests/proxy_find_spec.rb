@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::BetaMigrationRequests::Find, set_app: true do
-  let!(:user)  { FactoryGirl.create(:user) }
-  let(:beta_migration_request) { FactoryGirl.create(:beta_migration_request, owner_id: user.id) }
-  let(:org1) { FactoryGirl.create(:org_v3) }
-  let(:org2) { FactoryGirl.create(:org_v3) }
+  let!(:user)  { FactoryBot.create(:user) }
+  let(:beta_migration_request) { FactoryBot.create(:beta_migration_request, owner_id: user.id) }
+  let(:org1) { FactoryBot.create(:org_v3) }
+  let(:org2) { FactoryBot.create(:org_v3) }
 
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
-  let!(:other_user) { FactoryGirl.create(:user, login: 'noone') }
+  let!(:other_user) { FactoryBot.create(:user, login: 'noone') }
 
   let(:response_hash) do
     {

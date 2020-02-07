@@ -1,6 +1,6 @@
 describe Travis::Services::FindJob do
-  let(:repo)    { FactoryGirl.create(:repository) }
-  let!(:job)    { FactoryGirl.create(:test, repository: repo, state: :created, queue: 'builds.linux', config: {'sudo' => false}) }
+  let(:repo)    { FactoryBot.create(:repository) }
+  let!(:job)    { FactoryBot.create(:test, repository: repo, state: :created, queue: 'builds.linux', config: {'sudo' => false}) }
   let(:params)  { { id: job.id } }
   let(:service) { described_class.new(stub('user'), params) }
 
@@ -43,12 +43,12 @@ describe Travis::Services::FindJob do
   end
 
   context do
-    let(:user) { FactoryGirl.create(:user, login: :rkh) }
-    let(:org)  { FactoryGirl.create(:org, login: :travis) }
-    let(:private_repo) { FactoryGirl.create(:repository, owner: org, private: true) }
-    let(:public_repo)  { FactoryGirl.create(:repository, owner: org, private: false) }
-    let!(:private_job) { FactoryGirl.create(:job, repository: private_repo, private: true) }
-    let!(:public_job)  { FactoryGirl.create(:job, repository: public_repo, private: false) }
+    let(:user) { FactoryBot.create(:user, login: :rkh) }
+    let(:org)  { FactoryBot.create(:org, login: :travis) }
+    let(:private_repo) { FactoryBot.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { FactoryBot.create(:repository, owner: org, private: false) }
+    let!(:private_job) { FactoryBot.create(:job, repository: private_repo, private: true) }
+    let!(:public_job)  { FactoryBot.create(:job, repository: public_repo, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -57,13 +57,13 @@ describe Travis::Services::FindJob do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private job' do
-          FactoryGirl.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
           service.run.should == private_job
         end
 
         it 'finds a public job' do
-          FactoryGirl.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
           service.run.should == public_job
         end
@@ -87,13 +87,13 @@ describe Travis::Services::FindJob do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private job' do
-          FactoryGirl.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
           service.run.should == private_job
         end
 
         it 'finds a public job' do
-          FactoryGirl.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
           service.run.should == public_job
         end

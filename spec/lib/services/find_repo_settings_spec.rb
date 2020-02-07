@@ -1,7 +1,7 @@
 describe Travis::Services::FindRepoSettings do
-  let(:repo)    { FactoryGirl.create(:repository_without_last_build) }
+  let(:repo)    { FactoryBot.create(:repository_without_last_build) }
   let(:params)  { { id: repo.id } }
-  let(:user)    { FactoryGirl.create(:user) }
+  let(:user)    { FactoryBot.create(:user) }
   let(:service) { described_class.new(user, params) }
 
   before do

@@ -22,8 +22,8 @@ describe Travis::Api::Serialize::V2::Http::Repositories do
 end
 
 describe Travis::Api::Serialize::V2::Http::Repositories, 'using Travis::Services::FindRepos' do
-  let(:user)  { FactoryGirl.create(:user) }
-  let(:repo)  { FactoryGirl.create(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :active => true) }
+  let(:user)  { FactoryBot.create(:user) }
+  let(:repo)  { FactoryBot.create(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :active => true) }
   let(:repos) { Travis::Services::FindRepos.new(user, {ids: [repo.id]}).run }
   let(:data)  { described_class.new(repos).data }
 

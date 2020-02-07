@@ -1,6 +1,6 @@
 describe Travis::Services::FindJobs do
-  let(:repo)    { FactoryGirl.create(:repository) }
-  let!(:job)    { FactoryGirl.create(:test, :repository => repo, :state => :created, :queue => 'builds.linux') }
+  let(:repo)    { FactoryBot.create(:repository) }
+  let!(:job)    { FactoryBot.create(:test, :repository => repo, :state => :created, :queue => 'builds.linux') }
   let(:service) { described_class.new(stub('user'), params) }
 
   attr_reader :params
@@ -22,28 +22,28 @@ describe Travis::Services::FindJobs do
     end
 
     it 'finds jobs by state' do
-      build = FactoryGirl.create(:build)
+      build = FactoryBot.create(:build)
 
       Job::Test.destroy_all
 
-      started = FactoryGirl.create(:test, :state => :started, :source => build)
-      passed  = FactoryGirl.create(:test, :state => :passed,  :source => build)
-      created = FactoryGirl.create(:test, :state => :created, :source => build)
+      started = FactoryBot.create(:test, :state => :started, :source => build)
+      passed  = FactoryBot.create(:test, :state => :passed,  :source => build)
+      created = FactoryBot.create(:test, :state => :created, :source => build)
 
       @params = { :state => ['created', 'passed'] }
       service.run.sort_by(&:id).should == [created, passed].sort_by(&:id)
     end
 
     it 'finds jobs that are about to run without any args' do
-      build = FactoryGirl.create(:build)
+      build = FactoryBot.create(:build)
 
       Job::Test.destroy_all
 
-      started = FactoryGirl.create(:test, :state => :started, :source => build)
-      queued = FactoryGirl.create(:test, :state => :queued, :source => build)
-      passed  = FactoryGirl.create(:test, :state => :passed,  :source => build)
-      created = FactoryGirl.create(:test, :state => :created, :source => build)
-      received = FactoryGirl.create(:test, :state => :received, :source => build)
+      started = FactoryBot.create(:test, :state => :started, :source => build)
+      queued = FactoryBot.create(:test, :state => :queued, :source => build)
+      passed  = FactoryBot.create(:test, :state => :passed,  :source => build)
+      created = FactoryBot.create(:test, :state => :created, :source => build)
+      received = FactoryBot.create(:test, :state => :received, :source => build)
 
       @params = {}
       service.run.sort_by(&:id).should == [started, queued, created, received].sort_by(&:id)
@@ -56,19 +56,19 @@ describe Travis::Services::FindJobs do
 
       @params = { :queue => 'builds.linux' }
       Job.delete_all
-      FactoryGirl.create(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now - 1.hour)
-      FactoryGirl.create(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now)
+      FactoryBot.create(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now - 1.hour)
+      FactoryBot.create(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now)
       service.updated_at.to_s.should == Time.now.to_s
     end
   end
 
   context do
-    let(:user) { FactoryGirl.create(:user, login: :rkh) }
-    let(:org)  { FactoryGirl.create(:org, login: :travis) }
-    let(:private_repo) { FactoryGirl.create(:repository, owner: org, private: true) }
-    let(:public_repo)  { FactoryGirl.create(:repository, owner: org, private: false) }
-    let!(:private_job) { FactoryGirl.create(:job, repository: private_repo, private: true) }
-    let!(:public_job)  { FactoryGirl.create(:job, repository: public_repo, private: false) }
+    let(:user) { FactoryBot.create(:user, login: :rkh) }
+    let(:org)  { FactoryBot.create(:org, login: :travis) }
+    let(:private_repo) { FactoryBot.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { FactoryBot.create(:repository, owner: org, private: false) }
+    let!(:private_job) { FactoryBot.create(:job, repository: private_repo, private: true) }
+    let!(:public_job)  { FactoryBot.create(:job, repository: public_repo, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -77,13 +77,13 @@ describe Travis::Services::FindJobs do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private job' do
-          FactoryGirl.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
           service.run.should include(private_job)
         end
 
         it 'finds a public job' do
-          FactoryGirl.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
           service.run.should include(public_job)
         end
@@ -107,13 +107,13 @@ describe Travis::Services::FindJobs do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private job' do
-          FactoryGirl.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
           service.run.should include(private_job)
         end
 
         it 'finds a public job' do
-          FactoryGirl.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
           service.run.should include(public_job)
         end
@@ -138,21 +138,21 @@ describe Travis::Services::FindJobs do
     after { Travis.config.host = "travis-ci.org" }
 
     it "doesn't return public jobs that don't belong to a user" do
-      public_repo = FactoryGirl.create(:repository, :owner_name => 'foo', :name => 'bar', private: false)
-      public_build = FactoryGirl.create(:build, repository: public_repo)
-      FactoryGirl.create(:test, :state => :started, :source => public_build, repository: public_repo)
+      public_repo = FactoryBot.create(:repository, :owner_name => 'foo', :name => 'bar', private: false)
+      public_build = FactoryBot.create(:build, repository: public_repo)
+      FactoryBot.create(:test, :state => :started, :source => public_build, repository: public_repo)
 
-      user = FactoryGirl.create(:user)
-      repo = FactoryGirl.create(:repository, :owner_name => 'drogus', :name => 'test-project')
+      user = FactoryBot.create(:user)
+      repo = FactoryBot.create(:repository, :owner_name => 'drogus', :name => 'test-project')
       repo.users << user
-      build = FactoryGirl.create(:build, repository: repo)
-      job = FactoryGirl.create(:test, :state => :started, :source => build, repository: repo)
+      build = FactoryBot.create(:build, repository: repo)
+      job = FactoryBot.create(:test, :state => :started, :source => build, repository: repo)
 
-      other_user = FactoryGirl.create(:user)
-      other_repo = FactoryGirl.create(:repository, private: true)
+      other_user = FactoryBot.create(:user)
+      other_repo = FactoryBot.create(:repository, private: true)
       other_repo.users << other_user
-      other_build = FactoryGirl.create(:build, repository: other_repo)
-      FactoryGirl.create(:test, :state => :started, :source => other_build, repository: other_repo)
+      other_build = FactoryBot.create(:build, repository: other_repo)
+      FactoryBot.create(:test, :state => :started, :source => other_build, repository: other_repo)
 
       service = described_class.new(user)
       service.run.should == [job]

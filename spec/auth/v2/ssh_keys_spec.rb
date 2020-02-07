@@ -1,5 +1,5 @@
 describe 'v2 settings/ssh_key', auth_helpers: true, api_version: :v2, set_app: true do
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
   # before(:all) { SslKey.create(repository_id: 1) }

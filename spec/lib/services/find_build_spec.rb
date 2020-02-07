@@ -1,6 +1,6 @@
 describe Travis::Services::FindBuild do
-  let(:repo)    { FactoryGirl.create(:repository, owner_name: 'travis-ci', name: 'travis-core') }
-  let!(:build)  { FactoryGirl.create(:build, repository: repo, state: :finished, number: 1, config: {'sudo' => false}) }
+  let(:repo)    { FactoryBot.create(:repository, owner_name: 'travis-ci', name: 'travis-core') }
+  let!(:build)  { FactoryBot.create(:build, repository: repo, state: :finished, number: 1, config: {'sudo' => false}) }
   let(:params)  { { id: build.id } }
   let(:service) { described_class.new(stub('user'), params) }
 
@@ -52,12 +52,12 @@ describe Travis::Services::FindBuild do
   end
 
   context do
-    let(:user) { FactoryGirl.create(:user, login: :rkh) }
-    let(:org)  { FactoryGirl.create(:org, login: :travis) }
-    let(:private_repo)   { FactoryGirl.create(:repository, owner: org, private: true) }
-    let(:public_repo)    { FactoryGirl.create(:repository, owner: org, private: false) }
-    let!(:private_build) { FactoryGirl.create(:build, repository: private_repo, private: true) }
-    let!(:public_build)  { FactoryGirl.create(:build, repository: public_repo, private: false) }
+    let(:user) { FactoryBot.create(:user, login: :rkh) }
+    let(:org)  { FactoryBot.create(:org, login: :travis) }
+    let(:private_repo)   { FactoryBot.create(:repository, owner: org, private: true) }
+    let(:public_repo)    { FactoryBot.create(:repository, owner: org, private: false) }
+    let!(:private_build) { FactoryBot.create(:build, repository: private_repo, private: true) }
+    let!(:public_build)  { FactoryBot.create(:build, repository: public_repo, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -66,13 +66,13 @@ describe Travis::Services::FindBuild do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private build' do
-          FactoryGirl.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_build.id)
           service.run.should == private_build
         end
 
         it 'finds a public build' do
-          FactoryGirl.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_build.id)
           service.run.should == public_build
         end
@@ -96,13 +96,13 @@ describe Travis::Services::FindBuild do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private build' do
-          FactoryGirl.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_build.id)
           service.run.should == private_build
         end
 
         it 'finds a public build' do
-          FactoryGirl.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_build.id)
           service.run.should == public_build
         end

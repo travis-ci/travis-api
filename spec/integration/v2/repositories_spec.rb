@@ -194,7 +194,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
     repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
 
     headers = {
       'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8',
@@ -210,7 +210,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
     repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
 
     stub_request(:get, "https://api.travis-ci.com/svenfuchs/minimal.svg?branch=master").
       with(headers: { 'Accept' => 'image/svg+xml' }).
@@ -225,7 +225,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
     repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
 
     stub_request(:get, "https://api.travis-ci.com/svenfuchs/minimal.svg?branch=master").
       with(headers: { 'Accept' => 'image/svg+xml' }).
@@ -240,7 +240,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
     repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
 
     stub_request(:get, "https://api.travis-ci.com/svenfuchs/minimal?branch=master").
       with(headers: { 'Accept' => 'image/svg+xml' }).
@@ -255,7 +255,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = true
     repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
 
     headers = {
       'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8',
@@ -271,7 +271,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = true
     repo.update_attributes(migration_status: nil, migrated_at: Time.now, active: false)
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
 
     stub_request(:get, "https://api.travis-ci.org/svenfuchs/minimal.svg?branch=master").
       with(headers: { 'Accept' => 'image/svg+xml' }).
@@ -286,7 +286,7 @@ describe 'Repos', set_app: true do
   it 'responds with 200 and an image if a repo exists and with browser-like accept header' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
 
     result = get('/svenfuchs/minimal.svg?branch=master', {}, 'HTTP_ACCEPT' => 'image/webp,image/apng,image/*,*/*;q=0.8')
     result.status.should == 200
@@ -318,7 +318,7 @@ describe 'Repos', set_app: true do
   it '[.org, public_mode] responds with a passing image when the repo is public' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
 
     result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
     result.status.should == 200
@@ -330,7 +330,7 @@ describe 'Repos', set_app: true do
   it '[.com, public_mode] responds with a passing image when the repo is public' do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = true
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
 
     result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
     result.status.should == 200
@@ -343,7 +343,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = true
 
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
     Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
 
     result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_ACCEPT' => 'image/png; version=2')
@@ -358,7 +358,7 @@ describe 'Repos', set_app: true do
     Travis.config.public_mode = false
 
     Repository.by_slug('svenfuchs/minimal').first.update_column(:private, false)
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
     result = get('/repos/svenfuchs/minimal.png', {})
     result.status.should == 401
   end
@@ -367,7 +367,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = false
 
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
     Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
 
     result = get('/repos/svenfuchs/minimal.png', {})
@@ -378,7 +378,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = false
 
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
     Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
 
     result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_AUTHORIZATION' => "token #{token}")
@@ -392,7 +392,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = false
 
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
     Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
 
     result = get("/repos/svenfuchs/minimal.png?token=#{user.tokens.first.token}")
@@ -406,7 +406,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = true
 
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
     Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
 
     result = get('/repos/svenfuchs/minimal.png', {}, 'HTTP_AUTHORIZATION' => "token #{token}")
@@ -420,7 +420,7 @@ describe 'Repos', set_app: true do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = true
 
-    FactoryGirl.create(:build, repository: repo, state: :passed)
+    FactoryBot.create(:build, repository: repo, state: :passed)
     Repository.by_slug('svenfuchs/minimal').first.update_column(:private, true)
 
     result = get("/repos/svenfuchs/minimal.png?token=#{user.tokens.first.token}")
@@ -447,50 +447,50 @@ describe 'Repos', set_app: true do
   end
 
   it 'GET /repos/svenfuchs/minimal/branches/mybranch' do
-    mybuild = FactoryGirl.create(:build, repository: repo, state: :started, commit: FactoryGirl.create(:commit, branch: 'mybranch'), request: FactoryGirl.create(:request, event_type: 'push'))
+    mybuild = FactoryBot.create(:build, repository: repo, state: :started, commit: FactoryGirl.create(:commit, branch: 'mybranch'), request: FactoryGirl.create(:request, event_type: 'push'))
     response = get "/repos/svenfuchs/minimal/branches/mybranch", {}, headers
     body = JSON.parse(response.body)
     body['branch']['id'].should == mybuild.id
   end
 
   it 'GET /repos/svenfuchs/minimal/branches/my/branch' do
-    mybuild = FactoryGirl.create(:build, repository: repo, state: :started, commit: FactoryGirl.create(:commit, branch: 'my/branch'), request: FactoryGirl.create(:request, event_type: 'push'))
+    mybuild = FactoryBot.create(:build, repository: repo, state: :started, commit: FactoryGirl.create(:commit, branch: 'my/branch'), request: FactoryGirl.create(:request, event_type: 'push'))
     response = get "/repos/svenfuchs/minimal/branches/my/branch", {}, headers
     body = JSON.parse(response.body)
     body['branch']['id'].should == mybuild.id
   end
 
   describe 'GET /repos/svenfuchs/minimal.png?branch=foo,bar' do
-    let(:on_foo) { FactoryGirl.create(:commit, branch: 'foo') }
-    let(:on_bar) { FactoryGirl.create(:commit, branch: 'bar') }
+    let(:on_foo) { FactoryBot.create(:commit, branch: 'foo') }
+    let(:on_bar) { FactoryBot.create(:commit, branch: 'bar') }
 
     it '"unknown" when it only has unfinished builds on the relevant branches' do
       Build.delete_all
-      FactoryGirl.create(:build, repository: repo, state: :started, commit: on_foo)
-      FactoryGirl.create(:build, repository: repo, state: :started, commit: on_bar)
+      FactoryBot.create(:build, repository: repo, state: :started, commit: on_foo)
+      FactoryBot.create(:build, repository: repo, state: :started, commit: on_bar)
       result = get('/repos/svenfuchs/minimal.png?branch=foo,bar', {}, headers)
       result.should deliver_result_image_for('unknown')
     end
 
     it '"failing" when the last build has failed' do
-      FactoryGirl.create(:build, repository: repo, state: :failed, commit: on_foo)
-      FactoryGirl.create(:build, repository: repo, state: :failed, commit: on_bar)
+      FactoryBot.create(:build, repository: repo, state: :failed, commit: on_foo)
+      FactoryBot.create(:build, repository: repo, state: :failed, commit: on_bar)
       result = get('/repos/svenfuchs/minimal.png?branch=foo,bar', {}, headers)
       result.should deliver_result_image_for('failing')
     end
 
     it '"passing" when the last build has passed' do
-      FactoryGirl.create(:build, repository: repo, state: :failed, commit: on_foo)
-      FactoryGirl.create(:build, repository: repo, state: :passed, commit: on_bar)
+      FactoryBot.create(:build, repository: repo, state: :failed, commit: on_foo)
+      FactoryBot.create(:build, repository: repo, state: :passed, commit: on_bar)
       result = get('/repos/svenfuchs/minimal.png?branch=foo,bar', {}, headers)
       result.should deliver_result_image_for('passing')
       result.headers['Last-Modified'].should == repo.last_build_finished_at.httpdate
     end
 
     it '"passing" when there is a running build but the previous one has passed' do
-      FactoryGirl.create(:build, repository: repo, state: :passed, commit: on_foo)
-      FactoryGirl.create(:build, repository: repo, state: :passed, commit: on_bar)
-      FactoryGirl.create(:build, repository: repo, state: :started,  commit: on_bar)
+      FactoryBot.create(:build, repository: repo, state: :passed, commit: on_foo)
+      FactoryBot.create(:build, repository: repo, state: :passed, commit: on_bar)
+      FactoryBot.create(:build, repository: repo, state: :started,  commit: on_bar)
       repo.update_attributes!(last_build_state: nil)
       result = get('/repos/svenfuchs/minimal.png?branch=foo,bar', {}, headers)
       result.should deliver_result_image_for('passing')

@@ -1,7 +1,7 @@
 describe User do
   before { DatabaseCleaner.clean_with :truncation }
 
-  let(:user)    { FactoryGirl.create(:user, :github_oauth_token => 'token') }
+  let(:user)    { FactoryBot.create(:user, :github_oauth_token => 'token') }
   let(:payload) { GITHUB_PAYLOADS[:oauth] }
 
   describe 'find_or_create_for_oauth' do
@@ -27,7 +27,7 @@ describe User do
   end
 
   describe 'permission?' do
-    let!(:repo) { FactoryGirl.create(:org, :login => 'travis') }
+    let!(:repo) { FactoryBot.create(:org, :login => 'travis') }
 
     it 'given roles and a condition it returns true if the user has a matching permission for this role' do
       user.permissions.create!(push: true, repository_id: repo.id)
@@ -50,8 +50,8 @@ describe User do
   end
 
   describe 'organization_ids' do
-    let!(:travis)  { FactoryGirl.create(:org, :login => 'travis') }
-    let!(:sinatra) { FactoryGirl.create(:org, :login => 'sinatra') }
+    let!(:travis)  { FactoryBot.create(:org, :login => 'travis') }
+    let!(:sinatra) { FactoryBot.create(:org, :login => 'sinatra') }
 
     before :each do
      user.organizations << travis
@@ -68,8 +68,8 @@ describe User do
   end
 
   describe 'repository_ids' do
-    let!(:travis)  { FactoryGirl.create(:repository, :name => 'travis', :owner => FactoryGirl.create(:org, :name => 'travis')) }
-    let!(:sinatra) { FactoryGirl.create(:repository, :name => 'sinatra', :owner => FactoryGirl.create(:org, :name => 'sinatra')) }
+    let!(:travis)  { FactoryBot.create(:repository, :name => 'travis', :owner => FactoryGirl.create(:org, :name => 'travis')) }
+    let!(:sinatra) { FactoryBot.create(:repository, :name => 'sinatra', :owner => FactoryGirl.create(:org, :name => 'sinatra')) }
 
     before :each do
      user.repositories << travis
@@ -124,10 +124,10 @@ describe User do
   end
 
   describe 'service_hooks' do
-    let(:own_repo)   { FactoryGirl.create(:repository, :name => 'own-repo', :description => 'description', :active => true) }
-    let(:admin_repo) { FactoryGirl.create(:repository, :name => 'admin-repo') }
-    let(:other_repo) { FactoryGirl.create(:repository, :name => 'other-repo') }
-    let(:push_repo) { FactoryGirl.create(:repository, :name => 'push-repo') }
+    let(:own_repo)   { FactoryBot.create(:repository, :name => 'own-repo', :description => 'description', :active => true) }
+    let(:admin_repo) { FactoryBot.create(:repository, :name => 'admin-repo') }
+    let(:other_repo) { FactoryBot.create(:repository, :name => 'other-repo') }
+    let(:push_repo) { FactoryBot.create(:repository, :name => 'push-repo') }
 
     before :each do
       user.permissions.create! :user => user, :repository => own_repo, :admin => true

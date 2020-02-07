@@ -1,5 +1,5 @@
 describe 'v2.1 jobs', auth_helpers: true, api_version: :'v2.1', set_app: true do
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
   let(:job)  { repo.builds.first.matrix.first }
   let(:log)  { %({"job_id": #{job.id}, "content": "content"}) }

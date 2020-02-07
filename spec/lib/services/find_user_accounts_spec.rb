@@ -1,23 +1,23 @@
 describe Travis::Services::FindUserAccounts do
-  let!(:sven)    { FactoryGirl.create(:user, id: 9999999, :login => 'sven') }
-  let!(:travis)  { FactoryGirl.create(:org, :login => 'travis-ci') }
-  let!(:sinatra) { FactoryGirl.create(:org, :login => 'sinatra') }
-  let!(:non_user_org) { FactoryGirl.create(:org, :login => 'travis-ci') }
+  let!(:sven)    { FactoryBot.create(:user, id: 9999999, :login => 'sven') }
+  let!(:travis)  { FactoryBot.create(:org, :login => 'travis-ci') }
+  let!(:sinatra) { FactoryBot.create(:org, :login => 'sinatra') }
+  let!(:non_user_org) { FactoryBot.create(:org, :login => 'travis-ci') }
 
   let!(:repos) do
     [
-      FactoryGirl.create(:repository, :owner => sven, :owner_name => 'sven', :name => 'minimal'),
-      FactoryGirl.create(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-ci'),
-      FactoryGirl.create(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-core'),
-      FactoryGirl.create(:repository, :owner => sinatra, :owner_name => 'sinatra', :name => 'sinatra'),
+      FactoryBot.create(:repository, :owner => sven, :owner_name => 'sven', :name => 'minimal'),
+      FactoryBot.create(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-ci'),
+      FactoryBot.create(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-core'),
+      FactoryBot.create(:repository, :owner => sinatra, :owner_name => 'sinatra', :name => 'sinatra'),
     ]
   end
 
   let!(:repo_without_permissions) {
-    FactoryGirl.create(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'secret')
+    FactoryBot.create(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'secret')
   }
 
-  let!(:org) { FactoryGirl.create(:org, id: sven.id) }
+  let!(:org) { FactoryBot.create(:org, id: sven.id) }
 
   let(:service) { described_class.new(sven, params || {}) }
 

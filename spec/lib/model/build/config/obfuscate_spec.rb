@@ -1,5 +1,5 @@
 describe Build::Config::Obfuscate do
-  let(:repo)  { FactoryGirl.create(:repository) }
+  let(:repo)  { FactoryBot.create(:repository) }
   let(:build) { Build.new(repository: repo) }
 
   before { repo.regenerate_key! }

@@ -49,7 +49,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
     end
 
     context 'with existing user' do
-      let!(:user) { FactoryGirl.create(:user, login: 'drogus', github_id: 456, github_oauth_token: token) }
+      let!(:user) { FactoryBot.create(:user, login: 'drogus', github_id: 456, github_oauth_token: token) }
       let(:token) { nil }
 
       before do

@@ -1,7 +1,7 @@
 describe Broadcast do
-  let(:org)  { FactoryGirl.create(:org) }
-  let(:repo) { FactoryGirl.create(:repository) }
-  let(:user) { FactoryGirl.create(:user) }
+  let(:org)  { FactoryBot.create(:org) }
+  let(:repo) { FactoryBot.create(:repository) }
+  let(:user) { FactoryBot.create(:user) }
 
   before :each do
     user.organizations << org
@@ -22,7 +22,7 @@ describe Broadcast do
     end
 
     it 'does not find a broadcast for a different user' do
-      to_user = Broadcast.create!(recipient: FactoryGirl.create(:user, login: 'rkh'))
+      to_user = Broadcast.create!(recipient: FactoryBot.create(:user, login: 'rkh'))
       broadcasts.should_not include(to_user)
     end
 
@@ -32,7 +32,7 @@ describe Broadcast do
     end
 
     it 'does not find a broadcast for a different org' do
-      to_org = Broadcast.create!(recipient: FactoryGirl.create(:org, login: 'sinatra'))
+      to_org = Broadcast.create!(recipient: FactoryBot.create(:org, login: 'sinatra'))
       broadcasts.should_not include(to_org)
     end
 
@@ -42,7 +42,7 @@ describe Broadcast do
     end
 
     it 'does not find a broadcast for a different repo' do
-      to_repo = Broadcast.create!(recipient: FactoryGirl.create(:repository, name: 'sinatra'))
+      to_repo = Broadcast.create!(recipient: FactoryBot.create(:repository, name: 'sinatra'))
       broadcasts.should_not include(to_repo)
     end
 
@@ -71,7 +71,7 @@ describe Broadcast do
     end
 
     it 'does not find a broadcast for a different repo' do
-      to_repo = Broadcast.create!(recipient: FactoryGirl.create(:repository, name: 'sinatra'))
+      to_repo = Broadcast.create!(recipient: FactoryBot.create(:repository, name: 'sinatra'))
       broadcasts.should_not include(to_repo)
     end
 
@@ -83,7 +83,7 @@ describe Broadcast do
 
     it 'does not find a broadcast for a different org' do
       repo.update_attributes(owner: org)
-      to_org = Broadcast.create!(recipient: FactoryGirl.create(:org, login: 'sinatra'))
+      to_org = Broadcast.create!(recipient: FactoryBot.create(:org, login: 'sinatra'))
       broadcasts.should_not include(to_org)
     end
 
@@ -95,7 +95,7 @@ describe Broadcast do
 
     it 'does not find a broadcast for a different user' do
       repo.update_attributes(owner: org)
-      to_org = Broadcast.create!(recipient: FactoryGirl.create(:user, login: 'rkh'))
+      to_org = Broadcast.create!(recipient: FactoryBot.create(:user, login: 'rkh'))
       broadcasts.should_not include(to_org)
     end
   end

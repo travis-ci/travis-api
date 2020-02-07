@@ -1,5 +1,5 @@
 describe Travis::API::V3::Models::Subscription do
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
   let(:attributes) do
     {
       'id' => 'id',

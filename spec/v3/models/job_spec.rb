@@ -1,5 +1,5 @@
 describe Travis::API::V3::Models::Job do
-  let(:job) { FactoryGirl.create(:job, state: nil) }
+  let(:job) { FactoryBot.create(:job, state: nil) }
   subject { Travis::API::V3::Models::Job.find_by_id(job.id).state }
 
   it { should eq 'created' }

@@ -1,5 +1,5 @@
 describe Travis::API::V3::Services::Job::Debug, set_app: true do
-  let(:repo) { FactoryGirl.create(:repository, owner_name: 'svenfuchs', name: 'minimal') }
+  let(:repo) { FactoryBot.create(:repository, owner_name: 'svenfuchs', name: 'minimal') }
   let(:owner_type)  { repo.owner_type.constantize }
   let(:owner)       { owner_type.find(repo.owner_id)}
   let(:build)       { repo.builds.last }

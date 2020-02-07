@@ -1,7 +1,7 @@
 describe 'Jobs', set_app: true do
   let!(:jobs) {[
-    FactoryGirl.create(:test, :number => '3.1', :queue => 'builds.common'),
-    FactoryGirl.create(:test, :number => '3.2', :queue => 'builds.common')
+    FactoryBot.create(:test, :number => '3.1', :queue => 'builds.common'),
+    FactoryBot.create(:test, :number => '3.2', :queue => 'builds.common')
   ]}
   let(:job) { jobs.first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
@@ -196,7 +196,7 @@ describe 'Jobs', set_app: true do
       end
 
       context 'when job is finished' do
-        let(:finished_job) { FactoryGirl.create(:test, state: 'passed') }
+        let(:finished_job) { FactoryBot.create(:test, state: 'passed') }
 
         before :each do
           user.permissions.create!(

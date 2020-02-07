@@ -1,5 +1,5 @@
 describe Job::Test do
-  let(:job) { FactoryGirl.create(:test) }
+  let(:job) { FactoryBot.create(:test) }
   let(:log) { Travis::RemoteLog.new(job_id: job.id) }
 
   before :each do
@@ -11,24 +11,24 @@ describe Job::Test do
   end
 
   it 'is cancelable if the job has not finished yet' do
-    job = FactoryGirl.create(:test, state: :created)
+    job = FactoryBot.create(:test, state: :created)
     job.should be_cancelable
 
-    job = FactoryGirl.create(:test, state: :started)
+    job = FactoryBot.create(:test, state: :started)
     job.should be_cancelable
   end
 
   it 'is not cancelable if the job has already been finished' do
-    job = FactoryGirl.create(:test, state: :passed)
+    job = FactoryBot.create(:test, state: :passed)
     job.should_not be_cancelable
   end
 
   describe 'cancelling' do
     it 'should not propagate cancel state to source' do
-      build = FactoryGirl.create(:build, state: :started)
+      build = FactoryBot.create(:build, state: :started)
       build.matrix.destroy_all
-      job = FactoryGirl.create(:test, state: :created, source: build)
-      FactoryGirl.create(:test, state: :started, source: build)
+      job = FactoryBot.create(:test, state: :created, source: build)
+      FactoryBot.create(:test, state: :started, source: build)
       build.reload
 
       expect {
@@ -37,11 +37,11 @@ describe Job::Test do
     end
 
     it 'should put a build into canceled state if all the jobs in matrix are in finished state' do
-      build = FactoryGirl.create(:build, state: :started)
+      build = FactoryBot.create(:build, state: :started)
       build.matrix.destroy_all
-      job = FactoryGirl.create(:test, state: :created, source: build)
+      job = FactoryBot.create(:test, state: :created, source: build)
       Job::Test::FINISHED_STATES.each do |state|
-        FactoryGirl.create(:test, source: build, state: state)
+        FactoryBot.create(:test, source: build, state: state)
       end
       build.reload
 
@@ -58,7 +58,7 @@ describe Job::Test do
     end
 
     it 'should set canceled_at and finished_at on job' do
-      job = FactoryGirl.create(:test, state: :created)
+      job = FactoryBot.create(:test, state: :created)
 
       expect {
       expect {
@@ -117,7 +117,7 @@ describe Job::Test do
     end
 
     describe 'reset' do
-      let(:job) { FactoryGirl.create(:test, state: 'finished', queued_at: Time.now, finished_at: Time.now) }
+      let(:job) { FactoryBot.create(:test, state: 'finished', queued_at: Time.now, finished_at: Time.now) }
 
       it 'sets the state to :created' do
         job.reset!

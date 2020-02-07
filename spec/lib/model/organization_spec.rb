@@ -1,5 +1,5 @@
 describe User do
-  let(:org) { FactoryGirl.create(:org, :login => 'travis-organization') }
+  let(:org) { FactoryBot.create(:org, :login => 'travis-organization') }
 
   describe 'educational_org' do
     after do

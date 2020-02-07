@@ -1,5 +1,5 @@
 describe Travis::Github::Oauth do
-  let(:user) { FactoryGirl.create(:user, github_oauth_token: 'token', github_scopes: scopes) }
+  let(:user) { FactoryBot.create(:user, github_oauth_token: 'token', github_scopes: scopes) }
 
   describe 'correct_scopes?' do
     let(:scopes) { ['public_repo', 'user:email'] }

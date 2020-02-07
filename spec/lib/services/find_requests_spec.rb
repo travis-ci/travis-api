@@ -1,8 +1,8 @@
 describe Travis::Services::FindRequests do
-  let(:user) { FactoryGirl.create(:user) }
-  let(:repo) { FactoryGirl.create(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
-  let!(:request)  { FactoryGirl.create(:request, :repository => repo) }
-  let!(:newer_request)  { FactoryGirl.create(:request, :repository => repo) }
+  let(:user) { FactoryBot.create(:user) }
+  let(:repo) { FactoryBot.create(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let!(:request)  { FactoryBot.create(:request, :repository => repo) }
+  let!(:newer_request)  { FactoryBot.create(:request, :repository => repo) }
   let(:service) { described_class.new(user, params) }
 
   attr_reader :params
@@ -14,7 +14,7 @@ describe Travis::Services::FindRequests do
     end
 
     it 'includes the build_id' do
-      FactoryGirl.create(:build, request_id: request.id)
+      FactoryBot.create(:build, request_id: request.id)
       @params = { :repository_id => repo.id }
       requests = service.run
       requests.should == [newer_request, request]
@@ -36,7 +36,7 @@ describe Travis::Services::FindRequests do
 
     it 'scopes to the given repository_id' do
       @params = { :repository_id => repo.id }
-      FactoryGirl.create(:request, :repository => FactoryGirl.create(:repository))
+      FactoryBot.create(:request, :repository => FactoryGirl.create(:repository))
       service.run.should == [newer_request, request]
     end
 
@@ -66,12 +66,12 @@ describe Travis::Services::FindRequests do
   end
 
   context do
-    let(:user) { FactoryGirl.create(:user, login: :rkh) }
-    let(:org)  { FactoryGirl.create(:org, login: :travis) }
-    let(:private_repo) { FactoryGirl.create(:repository, owner: org, private: true) }
-    let(:public_repo)  { FactoryGirl.create(:repository, owner: org, private: false) }
-    let(:private_request) { FactoryGirl.create(:request, repository: private_repo, private: true) }
-    let(:public_request)  { FactoryGirl.create(:request, repository: public_repo, private: false) }
+    let(:user) { FactoryBot.create(:user, login: :rkh) }
+    let(:org)  { FactoryBot.create(:org, login: :travis) }
+    let(:private_repo) { FactoryBot.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { FactoryBot.create(:repository, owner: org, private: false) }
+    let(:private_request) { FactoryBot.create(:request, repository: private_repo, private: true) }
+    let(:public_request)  { FactoryBot.create(:request, repository: public_repo, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -80,13 +80,13 @@ describe Travis::Services::FindRequests do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private request' do
-          FactoryGirl.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, repository_id: private_repo.id)
           service.run.should include(private_request)
         end
 
         it 'finds a public request' do
-          FactoryGirl.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, repository_id: public_repo.id)
           service.run.should include(public_request)
         end
@@ -110,13 +110,13 @@ describe Travis::Services::FindRequests do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private request' do
-          FactoryGirl.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, repository_id: private_repo.id)
           service.run.should include(private_request)
         end
 
         it 'finds a public request' do
-          FactoryGirl.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, repository_id: public_repo.id)
           service.run.should include(public_request)
         end

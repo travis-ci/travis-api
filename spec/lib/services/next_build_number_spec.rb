@@ -2,11 +2,11 @@ require 'travis/services/next_build_number'
 
 describe Travis::Services::NextBuildNumber do
   let(:service) { described_class.new(user, params) }
-  let!(:user) { FactoryGirl.create(:user) }
+  let!(:user) { FactoryBot.create(:user) }
   let(:result) { service.run }
   let(:params) { { repository_id: 1234 } }
   let(:repo) do
-    FactoryGirl.create(:repository_without_last_build, owner_name: 'travis-ci', name: 'travis-core')
+    FactoryBot.create(:repository_without_last_build, owner_name: 'travis-ci', name: 'travis-core')
   end
 
   subject { result }
@@ -31,7 +31,7 @@ describe Travis::Services::NextBuildNumber do
 
   context 'with an existing repository' do
     let(:repo) do
-      FactoryGirl.create(:repository_without_last_build,
+      FactoryBot.create(:repository_without_last_build,
         owner_name: 'travis-ci', name: 'travis-core', next_build_number: 4
       )
     end

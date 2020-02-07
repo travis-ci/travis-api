@@ -1,12 +1,12 @@
 describe Travis::Api::App::Endpoint::Pusher, set_app: true do
-  let(:sven)    { FactoryGirl.create(:user) }
-  let(:rkh)     { FactoryGirl.create(:user, login: 'rkh', name: 'Konstantin Haase') }
-  let(:travis)  { FactoryGirl.create(:repository, github_id: 200) }
-  let(:sinatra) { FactoryGirl.create(:repository, name: 'sinatra', owner_name: 'sinatra', github_id: 300) }
-  let(:build)   { FactoryGirl.create(:build, request: request) }
-  let(:commit)  { FactoryGirl.create(:commit) }
-  let(:request) { FactoryGirl.create(:request, owner: travis) }
-  let(:job)     { FactoryGirl.create(:test, number: '3.1', queue: 'builds.linux', repository: travis, source: build) }
+  let(:sven)    { FactoryBot.create(:user) }
+  let(:rkh)     { FactoryBot.create(:user, login: 'rkh', name: 'Konstantin Haase') }
+  let(:travis)  { FactoryBot.create(:repository, github_id: 200) }
+  let(:sinatra) { FactoryBot.create(:repository, name: 'sinatra', owner_name: 'sinatra', github_id: 300) }
+  let(:build)   { FactoryBot.create(:build, request: request) }
+  let(:commit)  { FactoryBot.create(:commit) }
+  let(:request) { FactoryBot.create(:request, owner: travis) }
+  let(:job)     { FactoryBot.create(:test, number: '3.1', queue: 'builds.linux', repository: travis, source: build) }
   let(:auth)    { JSON.parse(last_response.body)['channels'].map{ |channel, auth| "#{channel},#{auth}" }.join("\n") }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 

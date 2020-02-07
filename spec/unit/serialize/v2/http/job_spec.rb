@@ -52,7 +52,7 @@ describe Travis::Api::Serialize::V2::Http::Job do
 end
 
 describe Travis::Api::Serialize::V2::Http::Job, 'using Travis::Services::Jobs::FindOne' do
-  let!(:record) { FactoryGirl.create(:test) }
+  let!(:record) { FactoryBot.create(:test) }
   let(:job)     { Travis.run_service(:find_job, nil, :id => record.id) }
   let(:data)    { described_class.new(job).data }
 

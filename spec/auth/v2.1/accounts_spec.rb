@@ -1,5 +1,5 @@
 describe 'v2.1 accounts', auth_helpers: true, api_version: :'v2.1', set_app: true do
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
 
   before { Broadcast.create!(recipient: user) }
 
