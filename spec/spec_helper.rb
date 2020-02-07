@@ -71,7 +71,7 @@ module TestHelpers
 end
 
 RSpec.configure do |c|
-  c.mock_framework = :mocha
+  c.mock_with :rspec
   c.expect_with :rspec
   c.include TestHelpers
   c.include Support::Env
