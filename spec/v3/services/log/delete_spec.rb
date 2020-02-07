@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::Log::Delete, set_app: true do
-  let(:user)        { Factory.create(:user) }
-  let(:repo)        { Factory.create(:repository, owner_name: user.login, name: 'minimal', owner: user)}
-  let(:repo2)       { Factory.create(:repository, owner_name: user.login, name: 'minimal2', owner: user)}
-  let(:build)       { Factory.create(:build, repository: repo) }
-  let(:build2)      { Factory.create(:build, repository: repo2) }
+  let(:user)        { FactoryGirl.create(:user) }
+  let(:repo)        { FactoryGirl.create(:repository, owner_name: user.login, name: 'minimal', owner: user)}
+  let(:repo2)       { FactoryGirl.create(:repository, owner_name: user.login, name: 'minimal2', owner: user)}
+  let(:build)       { FactoryGirl.create(:build, repository: repo) }
+  let(:build2)      { FactoryGirl.create(:build, repository: repo2) }
   let(:job)         { Travis::API::V3::Models::Job.create(build: build, repository: repo) }
   let(:job2)        { Travis::API::V3::Models::Job.create(build: build2) }
   let(:job3)        { Travis::API::V3::Models::Job.create(build: build2) }
