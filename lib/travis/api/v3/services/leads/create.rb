@@ -20,7 +20,7 @@ module Travis::API::V3
       raise WrongParams, 'invalid team size' if team_size && team_size <= 0
 
       # Prep data for request
-      api_client = Closeio::Client.new(Travis.config.closeio.key)
+      api_client = Closeio::Client.new(Travis.config.closeio.key, ENV['RACK_ENV'] != 'test')
       custom_fields = api_client.list_custom_fields
       team_size_field = fetch_custom_field(custom_fields, 'team_size')
       referral_source_field = fetch_custom_field(custom_fields, 'referral_source')
@@ -58,7 +58,7 @@ module Travis::API::V3
     end
 
     private
-  
+
     def fetch_custom_field(custom_fields, field_name)
       custom_fields['data'].find { |field| field['name'] == field_name }
     end
