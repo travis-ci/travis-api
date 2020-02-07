@@ -9,20 +9,20 @@ FactoryBot.define do
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
     sequence(:number) {|n| n }
-    state :passed
-    private false
+    state { :passed }
+    private { false }
   end
 
   factory :commit do
-    commit '62aae5f70ceee39123ef'
-    branch 'master'
-    message 'the commit message 🤔'
-    committed_at '2011-11-11T11:11:11Z'
-    committer_name 'Sven Fuchs'
-    committer_email 'svenfuchs@artweb-design.de'
-    author_name 'Sven Fuchs'
-    author_email 'svenfuchs@artweb-design.de'
-    compare_url 'https://github.com/svenfuchs/minimal/compare/master...develop'
+    commit { '62aae5f70ceee39123ef' }
+    branch { 'master' }
+    message { 'the commit message 🤔' }
+    committed_at { '2011-11-11T11:11:11Z' }
+    committer_name { 'Sven Fuchs' }
+    committer_email { 'svenfuchs@artweb-design.de' }
+    author_name { 'Sven Fuchs' }
+    author_email { 'svenfuchs@artweb-design.de' }
+    compare_url { 'https://github.com/svenfuchs/minimal/compare/master...develop' }
   end
 
   factory :test, :class => 'Job::Test', aliases: [:job] do
@@ -31,35 +31,35 @@ FactoryBot.define do
     commit     { FactoryBot.create(:commit) }
     source     { FactoryBot.create(:build) }
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
-    number     '2.1'
-    tags       ""
-    state      :created
-    private    false
+    number     { '2.1' }
+    tags       { "" }
+    state      { :created }
+    private    { false }
   end
 
   factory :request do
     repository { Repository.first || FactoryBot.create(:repository) }
     association :commit
-    token 'the-token'
-    event_type 'push'
-    private false
+    token { 'the-token' }
+    event_type { 'push' }
+    private { false }
   end
 
   factory :repository_without_last_build, class: Repository do
     owner { User.find_by_login('svenfuchs') || FactoryBot.create(:user) }
-    name 'minimal'
-    owner_name 'svenfuchs'
-    owner_email 'svenfuchs@artweb-design.de'
-    active true
+    name { 'minimal' }
+    owner_name { 'svenfuchs' }
+    owner_email { 'svenfuchs@artweb-design.de' }
+    active { true }
     url { |r| "http://github.com/#{r.owner_name}/#{r.name}" }
     created_at { |r| Time.utc(2011, 01, 30, 5, 25) }
     updated_at { |r| r.created_at + 5.minutes }
-    last_build_state :passed
-    last_build_number '2'
+    last_build_state { :passed }
+    last_build_number { '2' }
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
     sequence(:github_id) {|n| n }
-    private false
+    private { false }
   end
 
   factory :repository, :parent => :repository_without_last_build do
@@ -72,16 +72,16 @@ FactoryBot.define do
   end
 
   factory :enginex, :parent => :repository_without_last_build do
-    name 'enginex'
-    owner_name 'josevalim'
-    owner_email 'josevalim@email.example.com'
+    name { 'enginex' }
+    owner_name { 'josevalim' }
+    owner_email { 'josevalim@email.example.com' }
     owner { User.find_by_login('josevalim') || FactoryBot.create(:user, :login => 'josevalim') }
   end
 
   factory :event do
     repository { Repository.first || FactoryBot.create(:repository) }
     source { Build.first || FactoryBot.create(:build) }
-    event 'build:started'
+    event { 'build:started' }
   end
 
   factory :permission do
@@ -90,41 +90,41 @@ FactoryBot.define do
   factory :membership, class: Travis::API::V3::Models::Membership do
     organization_id { FactoryBot.create(:org_v3).id }
     user_id         { FactoryBot.create(:user).id }
-    role         "admin"
+    role         { "admin" }
   end
 
   factory :user do
-    name  'Sven Fuchs'
-    login 'svenfuchs'
-    email 'sven@fuchs.com'
+    name  { 'Sven Fuchs' }
+    login { 'svenfuchs' }
+    email { 'sven@fuchs.com' }
     tokens { [Token.new] }
-    github_oauth_token 'github_oauth_token'
+    github_oauth_token { 'github_oauth_token' }
   end
 
   factory :org, :class => 'Organization' do
-    name 'travis-ci'
+    name { 'travis-ci' }
   end
 
   factory :org_v3, class: Travis::API::V3::Models::Organization do
-    name 'travis-ci'
-    login 'travis-ci'
+    name { 'travis-ci' }
+    login { 'travis-ci' }
   end
 
   factory :running_build, :parent => :build do
     repository { FactoryBot.create(:repository, :name => 'running_build') }
-    state :started
+    state { :started }
   end
 
   factory :successful_build, :parent => :build do
     repository { |b| FactoryBot.create(:repository, :name => 'successful_build') }
-    state :passed
+    state { :passed }
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
   end
 
   factory :broken_build, :parent => :build do
     repository { FactoryBot.create(:repository, :name => 'broken_build', :last_build_state => :failed) }
-    state :failed
+    state { :failed }
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
   end
@@ -133,13 +133,13 @@ FactoryBot.define do
     repository  { FactoryBot.create(:repository, :name => 'broken_build_with_tags', :last_build_state => :errored) }
     matrix      {[FactoryBot.create(:test, :tags => "database_missing,rake_not_bundled",   :number => "1.1"),
                   FactoryBot.create(:test, :tags => "database_missing,log_limit_exceeded", :number => "1.2")]}
-    state       :failed
+    state       { :failed }
     started_at  { Time.now.utc }
     finished_at { Time.now.utc }
   end
 
   factory :branch, class: Travis::API::V3::Models::Branch do
-    name Random.rand(1..1000)
+    name { Random.rand(1..1000) }
     repository_id { FactoryBot.create(:repository).id }
   end
 
@@ -151,20 +151,20 @@ FactoryBot.define do
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
     sequence(:number) {|n| n }
-    state :passed
+    state { :passed }
   end
 
   factory :cron, class: Travis::API::V3::Models::Cron do
     branch { FactoryBot.create(:branch) }
-    interval "daily"
-    dont_run_if_recent_build_exists false
-    active true
+    interval { "daily" }
+    dont_run_if_recent_build_exists { false }
+    active { true }
   end
 
   factory :beta_migration_request, class: Travis::API::V3::Models::BetaMigrationRequest do
     owner_id { FactoryBot.create(:user, :login => 'dummy_user').id }
-    owner_name 'dummy_user'
-    owner_type 'User'
-    accepted_at nil
+    owner_name { 'dummy_user' }
+    owner_type { 'User' }
+    accepted_at { nil }
   end
 end
