@@ -32,7 +32,7 @@ describe Travis::Services::FindBuilds do
 
     it 'finds builds with a given number, scoped by repository' do
       @params = { :repository_id => repo.id, :number => 1 }
-      FactoryBot.create(:build, :repository => FactoryGirl.create(:repository_without_last_build), :state => :finished, :number => 1)
+      FactoryBot.create(:build, :repository => FactoryBot.create(:repository_without_last_build), :state => :finished, :number => 1)
       FactoryBot.create(:build, :repository => repo, :state => :finished, :number => 2)
       service.run.should == [push]
     end
@@ -44,7 +44,7 @@ describe Travis::Services::FindBuilds do
 
     it 'scopes to the given repository_id' do
       @params = { :repository_id => repo.id }
-      FactoryBot.create(:build, :repository => FactoryGirl.create(:repository_without_last_build), :state => :finished)
+      FactoryBot.create(:build, :repository => FactoryBot.create(:repository_without_last_build), :state => :finished)
       service.run.should == [push]
     end
 
@@ -59,8 +59,8 @@ describe Travis::Services::FindBuilds do
     end
 
     describe 'finds recent builds when event_type' do
-      let!(:pull_request) { FactoryBot.create(:build, repository: repo, state: :finished, number: 2, request: FactoryGirl.create(:request, :event_type => 'pull_request')) }
-      let!(:api)          { FactoryBot.create(:build, repository: repo, state: :finished, number: 2, request: FactoryGirl.create(:request, :event_type => 'api')) }
+      let!(:pull_request) { FactoryBot.create(:build, repository: repo, state: :finished, number: 2, request: FactoryBot.create(:request, :event_type => 'pull_request')) }
+      let!(:api)          { FactoryBot.create(:build, repository: repo, state: :finished, number: 2, request: FactoryBot.create(:request, :event_type => 'api')) }
 
       it 'given as push' do
         @params = { repository_id: repo.id, event_type: 'push' }

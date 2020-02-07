@@ -447,14 +447,14 @@ describe 'Repos', set_app: true do
   end
 
   it 'GET /repos/svenfuchs/minimal/branches/mybranch' do
-    mybuild = FactoryBot.create(:build, repository: repo, state: :started, commit: FactoryGirl.create(:commit, branch: 'mybranch'), request: FactoryGirl.create(:request, event_type: 'push'))
+    mybuild = FactoryBot.create(:build, repository: repo, state: :started, commit: FactoryBot.create(:commit, branch: 'mybranch'), request: FactoryBot.create(:request, event_type: 'push'))
     response = get "/repos/svenfuchs/minimal/branches/mybranch", {}, headers
     body = JSON.parse(response.body)
     body['branch']['id'].should == mybuild.id
   end
 
   it 'GET /repos/svenfuchs/minimal/branches/my/branch' do
-    mybuild = FactoryBot.create(:build, repository: repo, state: :started, commit: FactoryGirl.create(:commit, branch: 'my/branch'), request: FactoryGirl.create(:request, event_type: 'push'))
+    mybuild = FactoryBot.create(:build, repository: repo, state: :started, commit: FactoryBot.create(:commit, branch: 'my/branch'), request: FactoryBot.create(:request, event_type: 'push'))
     response = get "/repos/svenfuchs/minimal/branches/my/branch", {}, headers
     body = JSON.parse(response.body)
     body['branch']['id'].should == mybuild.id

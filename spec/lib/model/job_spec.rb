@@ -12,7 +12,7 @@ describe Job do
   end
 
   describe ".queued" do
-    let(:jobs) { [FactoryBot.create(:test), FactoryGirl.create(:test), FactoryGirl.create(:test)] }
+    let(:jobs) { [FactoryBot.create(:test), FactoryBot.create(:test), FactoryBot.create(:test)] }
 
     it "returns jobs that are created but not started or finished" do
       jobs.first.start!

@@ -853,19 +853,19 @@ describe Build, 'matrix' do
   describe 'does not explode' do
     it 'on a config key that is `true`' do
       config = { true => 'broken' }
-      build = FactoryBot.create(:build, config: config, repository: FactoryGirl.create(:repository))
+      build = FactoryBot.create(:build, config: config, repository: FactoryBot.create(:repository))
       expect { build.expand_matrix }.to_not raise_error
     end
 
     it 'on bad matrix include values' do
       config = { matrix: { include: ['broken'] } }
-      build = FactoryBot.create(:build, config: config, repository: FactoryGirl.create(:repository))
+      build = FactoryBot.create(:build, config: config, repository: FactoryBot.create(:repository))
       expect { build.expand_matrix }.to_not raise_error
     end
 
     it 'on config[:matrix] being an array' do
       config = { matrix: [{ foo: 'kaputt' }] }
-      build = FactoryBot.create(:build, config: config, repository: FactoryGirl.create(:repository))
+      build = FactoryBot.create(:build, config: config, repository: FactoryBot.create(:repository))
       expect { build.expand_matrix }.to_not raise_error
     end
   end

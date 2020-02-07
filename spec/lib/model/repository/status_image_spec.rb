@@ -103,7 +103,7 @@ describe Repository::StatusImage do
         let!(:last_push_build) { FactoryBot.create(:build, branch: "master", repository: repo, request: request, state: :failed) }
         context "the last cron build, after the last push, passed" do
           it "returns :passed" do
-            last_cron_build = FactoryBot.create(:build, branch: "master", repository: repo, request: FactoryGirl.create(:request, event_type: "cron", repository: repo), state: :passed)
+            last_cron_build = FactoryBot.create(:build, branch: "master", repository: repo, request: FactoryBot.create(:request, event_type: "cron", repository: repo), state: :passed)
 
             image = described_class.new(repo, "master")
             image.result.should == :passing

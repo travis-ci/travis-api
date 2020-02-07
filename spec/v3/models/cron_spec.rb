@@ -7,7 +7,7 @@ RSpec::Matchers.define :eq_datetime do |*expected|
 end
 
 describe Travis::API::V3::Models::Cron do
-  let(:subject) { FactoryBot.create(:cron, branch_id: FactoryGirl.create(:branch).id) }
+  let(:subject) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch).id) }
 
   let!(:scheduler_interval) { Travis::API::V3::Models::Cron::SCHEDULER_INTERVAL + 1.minute }
 
@@ -118,7 +118,7 @@ describe Travis::API::V3::Models::Cron do
 
   context "when always_run? is false" do
     context "when no build has existed before running a cron build" do
-      let(:cron) { FactoryBot.create(:cron, branch_id: FactoryGirl.create(:branch).id, dont_run_if_recent_build_exists: true) }
+      let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
         cron.needs_new_build?.should be_truthy
       end
@@ -126,14 +126,14 @@ describe Travis::API::V3::Models::Cron do
 
     context "when last build within last 24h has no started_at" do
       let(:build) { FactoryBot.create(:v3_build, started_at: nil, number: 100) }
-      let(:cron) { FactoryBot.create(:cron, branch_id: FactoryGirl.create(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
+      let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
         cron.needs_new_build?.should be_truthy
       end
     end
 
     context "when there was a build in the last 24h" do
-      let(:cron) { FactoryBot.create(:cron, branch_id: FactoryGirl.create(:branch, last_build: FactoryGirl.create(:v3_build, number: 200)).id, dont_run_if_recent_build_exists: true) }
+      let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch, last_build: FactoryBot.create(:v3_build, number: 200)).id, dont_run_if_recent_build_exists: true) }
 
       it "needs_new_build? returns false" do
         cron.needs_new_build?.should be_falsey

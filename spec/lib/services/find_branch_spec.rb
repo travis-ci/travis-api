@@ -13,7 +13,7 @@ describe Travis::Services::FindBranch do
 
   it 'scopes to the given repository' do
     @params = { :repository_id => repo.id, :branch => 'master' }
-    build = FactoryBot.create(:build, :repository => FactoryGirl.create(:repository), :state => :finished)
+    build = FactoryBot.create(:build, :repository => FactoryBot.create(:repository), :state => :finished)
     service.run.should_not be == build
   end
 

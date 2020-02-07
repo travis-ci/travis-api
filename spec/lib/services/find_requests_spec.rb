@@ -36,7 +36,7 @@ describe Travis::Services::FindRequests do
 
     it 'scopes to the given repository_id' do
       @params = { :repository_id => repo.id }
-      FactoryBot.create(:request, :repository => FactoryGirl.create(:repository))
+      FactoryBot.create(:request, :repository => FactoryBot.create(:repository))
       service.run.should == [newer_request, request]
     end
 

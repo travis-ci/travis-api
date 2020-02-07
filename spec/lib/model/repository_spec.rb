@@ -170,9 +170,9 @@ describe Repository do
 
     describe 'counts_by_owner_ids' do
       let!(:repositories) do
-        FactoryBot.create(:repository, owner: FactoryGirl.create(:org), owner_name: 'svenfuchs', name: 'minimal')
-        FactoryBot.create(:repository, owner: FactoryGirl.create(:org), owner_name: 'travis-ci', name: 'travis-ci')
-        FactoryBot.create(:repository, owner: FactoryGirl.create(:org), owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
+        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'svenfuchs', name: 'minimal')
+        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'travis-ci')
+        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
       end
 
       it 'returns repository counts per owner_id for the given owner_ids' do
@@ -317,7 +317,7 @@ describe Repository do
 
     it 'returns branches for the given repository' do
       %w(master production).each do |branch|
-        2.times { FactoryBot.create(:build, repository: repo, commit: FactoryGirl.create(:commit, branch: branch)) }
+        2.times { FactoryBot.create(:build, repository: repo, commit: FactoryBot.create(:commit, branch: branch)) }
       end
       repo.branches.sort.should == %w(master production)
     end
@@ -392,8 +392,8 @@ describe Repository do
     it 'properly orders branches by last build' do
       repo # load the repo
       Build.delete_all
-      one = FactoryBot.create(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', commit: FactoryGirl.create(:commit, branch: '1one'))
-      two = FactoryBot.create(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: FactoryGirl.create(:commit, branch: '2two'))
+      one = FactoryBot.create(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', commit: FactoryBot.create(:commit, branch: '1one'))
+      two = FactoryBot.create(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: FactoryBot.create(:commit, branch: '2two'))
 
       builds = repo.last_finished_builds_by_branches(1)
       builds.should == [two]
@@ -402,10 +402,10 @@ describe Repository do
     it 'retrieves last builds on all branches' do
       repo # load the repo
       Build.delete_all
-      old = FactoryBot.create(:build, repository: repo, number: 1, finished_at: 1.hour.ago,      state: 'finished', commit: FactoryGirl.create(:commit, branch: 'one'))
-      one = FactoryBot.create(:build, repository: repo, number: 2, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryGirl.create(:commit, branch: 'one'))
-      two = FactoryBot.create(:build, repository: repo, number: 3, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryGirl.create(:commit, branch: 'two'))
-      three = FactoryBot.create(:build, repository: repo, number: 4, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryGirl.create(:commit, branch: 'three'))
+      old = FactoryBot.create(:build, repository: repo, number: 1, finished_at: 1.hour.ago,      state: 'finished', commit: FactoryBot.create(:commit, branch: 'one'))
+      one = FactoryBot.create(:build, repository: repo, number: 2, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryBot.create(:commit, branch: 'one'))
+      two = FactoryBot.create(:build, repository: repo, number: 3, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryBot.create(:commit, branch: 'two'))
+      three = FactoryBot.create(:build, repository: repo, number: 4, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryBot.create(:commit, branch: 'three'))
       three.update_attribute(:event_type, 'pull_request')
 
       builds = repo.last_finished_builds_by_branches

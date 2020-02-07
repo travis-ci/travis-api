@@ -15,7 +15,7 @@ describe Build do
   end
 
   it 'is cancelable if at least one job is cancelable' do
-    jobs = [FactoryBot.build(:test), FactoryGirl.build(:test)]
+    jobs = [FactoryBot.build(:test), FactoryBot.build(:test)]
     jobs.first.stubs(:cancelable?).returns(true)
     jobs.second.stubs(:cancelable?).returns(false)
 
@@ -24,7 +24,7 @@ describe Build do
   end
 
   it 'is not cancelable if none of the jobs are cancelable' do
-    jobs = [FactoryBot.build(:test), FactoryGirl.build(:test)]
+    jobs = [FactoryBot.build(:test), FactoryBot.build(:test)]
     jobs.first.stubs(:cancelable?).returns(false)
     jobs.second.stubs(:cancelable?).returns(false)
 
@@ -77,16 +77,16 @@ describe Build do
 
     describe 'on_branch' do
       it 'returns builds that are on any of the given branches' do
-        FactoryBot.create(:build, commit: FactoryGirl.create(:commit, branch: 'master'))
-        FactoryBot.create(:build, commit: FactoryGirl.create(:commit, branch: 'develop'))
-        FactoryBot.create(:build, commit: FactoryGirl.create(:commit, branch: 'feature'))
+        FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'master'))
+        FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'develop'))
+        FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'feature'))
 
         Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
       end
 
       it 'does not include pull requests' do
-        FactoryBot.create(:build, commit: FactoryGirl.create(:commit, branch: 'no-pull'), request: FactoryGirl.create(:request, event_type: 'pull_request'))
-        FactoryBot.create(:build, commit: FactoryGirl.create(:commit, branch: 'no-pull'), request: FactoryGirl.create(:request, event_type: 'push'))
+        FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'no-pull'), request: FactoryBot.create(:request, event_type: 'pull_request'))
+        FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'no-pull'), request: FactoryBot.create(:request, event_type: 'push'))
         Build.on_branch('no-pull').count.should be == 1
       end
     end
@@ -151,7 +151,7 @@ describe Build do
     describe 'pushes' do
       before do
         FactoryBot.create(:build)
-        FactoryBot.create(:build, request: FactoryGirl.create(:request, event_type: 'pull_request'))
+        FactoryBot.create(:build, request: FactoryBot.create(:request, event_type: 'pull_request'))
       end
 
       it "returns only builds which have Requests with an event_type of push" do
@@ -162,7 +162,7 @@ describe Build do
     describe 'pull_requests' do
       before do
         FactoryBot.create(:build)
-        FactoryBot.create(:build, request: FactoryGirl.create(:request, event_type: 'pull_request'))
+        FactoryBot.create(:build, request: FactoryBot.create(:request, event_type: 'pull_request'))
       end
 
       it "returns only builds which have Requests with an event_type of pull_request" do
@@ -186,7 +186,7 @@ describe Build do
 
       it 'is set to the last finished build state on the same branch (disregards other branches)' do
         FactoryBot.create(:build, state: 'failed')
-        FactoryBot.create(:build, state: 'passed', commit: FactoryGirl.create(:commit, branch: 'something'))
+        FactoryBot.create(:build, state: 'passed', commit: FactoryBot.create(:commit, branch: 'something'))
         FactoryBot.create(:build).reload.previous_state.should == 'failed'
       end
     end
@@ -206,13 +206,13 @@ describe Build do
     end
 
     it 'sets previous_state to nil if no last build exists on the same branch' do
-      build = FactoryBot.create(:build, commit: FactoryGirl.create(:commit, branch: 'master'))
+      build = FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'master'))
       build.reload.previous_state.should == nil
     end
 
     it 'sets previous_state to the result of the last build on the same branch if exists' do
-      build = FactoryBot.create(:build, state: :canceled, commit: FactoryGirl.create(:commit, branch: 'master'))
-      build = FactoryBot.create(:build, commit: FactoryGirl.create(:commit, branch: 'master'))
+      build = FactoryBot.create(:build, state: :canceled, commit: FactoryBot.create(:commit, branch: 'master'))
+      build = FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'master'))
       build.reload.previous_state.should == 'canceled'
     end
 
@@ -280,15 +280,15 @@ describe Build do
     end
 
     it 'saves event_type before create' do
-      build = FactoryBot.create(:build,  request: FactoryGirl.create(:request, event_type: 'pull_request'))
+      build = FactoryBot.create(:build,  request: FactoryBot.create(:request, event_type: 'pull_request'))
       build.event_type.should == 'pull_request'
 
-      build = FactoryBot.create(:build,  request: FactoryGirl.create(:request, event_type: 'push'))
+      build = FactoryBot.create(:build,  request: FactoryBot.create(:request, event_type: 'push'))
       build.event_type.should == 'push'
     end
 
     it 'saves branch before create' do
-      build = FactoryBot.create(:build,  commit: FactoryGirl.create(:commit, branch: 'development'))
+      build = FactoryBot.create(:build,  commit: FactoryBot.create(:commit, branch: 'development'))
       build.branch.should == 'development'
     end
 

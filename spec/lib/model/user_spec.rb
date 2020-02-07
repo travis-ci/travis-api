@@ -68,8 +68,8 @@ describe User do
   end
 
   describe 'repository_ids' do
-    let!(:travis)  { FactoryBot.create(:repository, :name => 'travis', :owner => FactoryGirl.create(:org, :name => 'travis')) }
-    let!(:sinatra) { FactoryBot.create(:repository, :name => 'sinatra', :owner => FactoryGirl.create(:org, :name => 'sinatra')) }
+    let!(:travis)  { FactoryBot.create(:repository, :name => 'travis', :owner => FactoryBot.create(:org, :name => 'travis')) }
+    let!(:sinatra) { FactoryBot.create(:repository, :name => 'sinatra', :owner => FactoryBot.create(:org, :name => 'sinatra')) }
 
     before :each do
      user.repositories << travis

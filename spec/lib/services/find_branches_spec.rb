@@ -16,7 +16,7 @@ describe Travis::Services::FindBranches do
 
     it 'scopes to the given repository' do
       @params = { :repository_id => repo.id }
-      build = FactoryBot.create(:build, :repository => FactoryGirl.create(:repository_without_last_build), :state => :finished)
+      build = FactoryBot.create(:build, :repository => FactoryBot.create(:repository_without_last_build), :state => :finished)
       service.run.should_not include(build)
     end
 
