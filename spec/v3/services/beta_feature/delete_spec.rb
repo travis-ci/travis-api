@@ -12,7 +12,7 @@ describe Travis::API::V3::Services::BetaFeature::Delete, set_app: true do
   end
 
   describe 'authenticated, other user' do
-    let(:other_user) { FactoryGirl.create(:user, login: 'noone') }
+    let(:other_user) { FactoryBot.create(:user, login: 'noone') }
     let(:token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 1) }
     let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
     before { patch("/v3/user/#{user.id}/beta_feature/#{beta_feature.id}", {}, auth_headers) }

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::Log::Find, set_app: true do
-  let(:user)        { Factory.create(:user) }
-  let(:repo)        { Factory.create(:repository, owner_name: user.login, name: 'minimal', owner: user)}
-  let(:build)       { Factory.create(:build, repository: repo) }
+  let(:user)        { FactoryBot.create(:user) }
+  let(:repo)        { FactoryBot.create(:repository, owner_name: user.login, name: 'minimal', owner: user)}
+  let(:build)       { FactoryBot.create(:build, repository: repo) }
   let(:job)         { Travis::API::V3::Models::Job.create(build: build) }
   let(:job2)        { Travis::API::V3::Models::Job.create(build: build)}
   let(:job3)        { Travis::API::V3::Models::Job.create(build: build)}

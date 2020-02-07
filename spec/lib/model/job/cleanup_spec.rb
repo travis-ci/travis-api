@@ -1,11 +1,11 @@
 # describe Job::Cleanup do
-#   let(:job) { Factory(:test) }
+#   let(:job) { FactoryBot.create(:test) }
 #
 #   describe 'scopes' do
 #     let! :jobs do
-#       [ Factory(:test, :state => :created,  :created_at => Time.now.utc - Travis.config.jobs.retry.after - 60),
-#         Factory(:test, :state => :started,  :created_at => Time.now.utc - Travis.config.jobs.retry.after - 120),
-#         Factory(:test, :state => :finished, :created_at => Time.now.utc - Travis.config.jobs.retry.after + 10) ]
+#       [ FactoryBot.create(:test, :state => :created,  :created_at => Time.now.utc - Travis.config.jobs.retry.after - 60),
+#         FactoryBot.create(:test, :state => :started,  :created_at => Time.now.utc - Travis.config.jobs.retry.after - 120),
+#         FactoryBot.create(:test, :state => :finished, :created_at => Time.now.utc - Travis.config.jobs.retry.after + 10) ]
 #     end
 #
 #     describe :unfinished do

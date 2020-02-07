@@ -11,12 +11,12 @@ describe Build::States do
   describe 'events' do
     describe 'cancel' do
       it 'cancels all the cancelable jobs' do
-        build = Factory(:build)
+        build = FactoryBot.create(:build)
         build.matrix.destroy_all
 
-        created_job = Factory(:test, source: build, state: :created)
+        created_job = FactoryBot.create(:test, source: build, state: :created)
         finished_jobs = Job::Test::FINISHED_STATES.map do |state|
-          Factory(:test, source: build, state: state)
+          FactoryBot.create(:test, source: build, state: state)
         end
         build.reload
 

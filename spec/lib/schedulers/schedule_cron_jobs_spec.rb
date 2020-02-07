@@ -17,8 +17,8 @@ describe "ScheduleCronJobs" do
 
   describe "enqueue" do
     it 'continues running crons if one breaks' do
-      cron1 = Factory(:cron)
-      cron2 = Factory(:cron)
+      cron1 = FactoryBot.create(:cron)
+      cron2 = FactoryBot.create(:cron)
       Timecop.travel(scheduler_interval.from_now)
 
       Travis::API::V3::Models::Cron.any_instance.expects(:branch).raises(error)
@@ -37,7 +37,7 @@ describe "ScheduleCronJobs" do
     end
 
     it "raises exception when enqueue method errors" do
-      cron1 = Factory(:cron)
+      cron1 = FactoryBot.create(:cron)
       Timecop.travel(scheduler_interval.from_now)
 
       Travis::API::V3::Models::Cron.any_instance.stubs(:enqueue).raises(error)
@@ -52,13 +52,13 @@ describe "ScheduleCronJobs" do
     end
 
     context "dont_run_if_recent_build_exists is true" do
-      let!(:cron) { Factory(:cron, dont_run_if_recent_build_exists: true) }
+      let!(:cron) { FactoryBot.create(:cron, dont_run_if_recent_build_exists: true) }
 
       before { Timecop.freeze(DateTime.now) }
 
       context "no new build in the last 24h" do
         before do
-          last_build = Factory.create(:build,
+          last_build = FactoryBot.create(:build,
             repository_id: cron.branch.repository.id,
             finished_at: DateTime.now - 1.hour)
           cron.branch.update_attribute(:last_build_id, last_build.id)

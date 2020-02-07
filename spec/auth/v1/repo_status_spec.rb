@@ -1,7 +1,10 @@
 describe 'v1 status', auth_helpers: true, api_version: :v1, set_app: true do
   let(:user)  { FactoryBot.create(:user) }
-  let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }
+
+  def repo
+    @repo ||= Repository.by_slug('svenfuchs/minimal').first
+  end
 
   before(:all) { SslKey.create(repository_id: repo.id) }
   before { SslKey.update_all(repository_id: repo.id) }

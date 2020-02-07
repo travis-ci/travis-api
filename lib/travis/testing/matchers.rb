@@ -58,7 +58,7 @@ RSpec::Matchers.define :eql_json do |expected|
 
   failure_message_for_should do |actual|
     message = "expected to match JSON:\n"
-    diff = HashDiff.diff(expected, actual)
+    diff = Hashdiff.diff(expected, actual)
     diff_messages = diff.map do |type, path, a, b|
       if type == '-'
         "missing #{path} == #{a}"

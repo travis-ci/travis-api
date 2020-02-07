@@ -60,7 +60,7 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
   let(:json_headers) { { 'HTTP_ACCEPT' => 'application/json' } }
 
   context 'not authenticated' do
-    let(:user)       { FactoryGirl.create(:user, name: 'Joe', login: 'joe') }
+    let(:user)       { FactoryBot.create(:user, name: 'Joe', login: 'joe') }
     let(:user_repo)  { V3::Models::Repository.create(owner: user, name: 'Kneipe') }
     let(:user_build) { V3::Models::Build.create(repository: user_repo, owner: user, state: 'created') }
     let!(:user_job)  { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'queued', repository: user_repo) }
@@ -124,7 +124,7 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
   end
 
   context 'authenticated' do
-    let(:user)       { FactoryGirl.create(:user, name: 'Joe', login: 'joe') }
+    let(:user)       { FactoryBot.create(:user, name: 'Joe', login: 'joe') }
     let(:user_repo)  { V3::Models::Repository.create(owner: user, name: 'Kneipe') }
     let(:user_build) { V3::Models::Build.create(repository: user_repo, owner: user, state: 'created') }
     let!(:user_job)  { V3::Models::Job.create(source_id: user_build.id, source_type: 'Build', owner: user, state: 'queued', repository: user_repo) }
@@ -147,7 +147,7 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
     end
 
     context 'viewing another user' do
-      let(:other_user)  { FactoryGirl.create(:user) }
+      let(:other_user)  { FactoryBot.create(:user) }
       let(:other_token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 1) }
 
       describe 'can see anything public' do

@@ -1,7 +1,7 @@
 describe Travis::Services::FindHooks do
-  let(:user)    { User.first || Factory(:user) }
-  let(:repo)    { Factory(:repository) }
-  let(:push_repo) { Factory(:repository, name: 'push-repo') }
+  let(:user)    { User.first || FactoryBot.create(:user) }
+  let(:repo)    { FactoryBot.create(:repository) }
+  let(:push_repo) { FactoryBot.create(:repository, name: 'push-repo') }
   let(:service) { described_class.new(user, params) }
 
   before :each do
@@ -23,8 +23,8 @@ describe Travis::Services::FindHooks do
   end
 
   it 'does not order the repos with order=none' do
-    first = Factory(:repository, name: 'abc')
-    last = Factory(:repository, name: 'zyx')
+    first = FactoryBot.create(:repository, name: 'abc')
+    last = FactoryBot.create(:repository, name: 'zyx')
 
     user.permissions.create!(:repository => first, :admin => true)
     user.permissions.create!(:repository => last,  :admin => true)

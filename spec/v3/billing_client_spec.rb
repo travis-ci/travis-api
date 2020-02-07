@@ -3,7 +3,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
   let(:user_id) { rand(999) }
   let(:billing_url) { 'https://billing.travis-ci.com/' }
   let(:auth_key) { 'supersecret' }
-  let(:organization) { Factory(:org, login: 'travis') }
+  let(:organization) { FactoryBot.create(:org, login: 'travis') }
 
   before do
     Travis.config.billing.url = billing_url

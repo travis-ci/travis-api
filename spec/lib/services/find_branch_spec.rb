@@ -1,7 +1,7 @@
 describe Travis::Services::FindBranch do
-  let(:user)    { Factory(:user) }
-  let(:repo)    { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
-  let!(:build)  { Factory(:build, :repository => repo, :state => :finished) }
+  let(:user)    { FactoryBot.create(:user) }
+  let(:repo)    { FactoryBot.create(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let!(:build)  { FactoryBot.create(:build, :repository => repo, :state => :finished) }
   let(:service) { described_class.new(user, params) }
 
   attr_reader :params
@@ -13,7 +13,7 @@ describe Travis::Services::FindBranch do
 
   it 'scopes to the given repository' do
     @params = { :repository_id => repo.id, :branch => 'master' }
-    build = Factory(:build, :repository => Factory(:repository), :state => :finished)
+    build = FactoryBot.create(:build, :repository => FactoryBot.create(:repository), :state => :finished)
     service.run.should_not be == build
   end
 
