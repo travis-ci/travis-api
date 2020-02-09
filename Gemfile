@@ -80,7 +80,7 @@ gem 'multi_json'
 gem 'closeio',           '~> 3.5'
 
 group :test do
-  gem 'rspec',         '~> 2.13'
+  gem 'rspec',         '2.99'
   gem 'rspec-its'
   gem 'factory_bot',  '~> 5.1.0'
   gem 'mocha'

@@ -455,7 +455,7 @@ DEPENDENCIES
   redlock
   rerun
   rollout (~> 1.1.0)
-  rspec (~> 2.13)
+  rspec (= 2.99)
   rspec-its
   s3!
   sentry-raven
