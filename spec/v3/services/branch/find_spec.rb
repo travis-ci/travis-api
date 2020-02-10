@@ -3,17 +3,17 @@ describe Travis::API::V3::Services::Branch::Find, set_app: true do
   let(:build) { repo.builds.first }
 
   describe "public repository, existing branch" do
-    before     { get("/v3/repo/#{repo.id}/branch/master") }
+    before     { get("/v3/repo/1/branch/master") }
     example    { expect(last_response).to be_ok           }
     example    { expect(JSON.load(body)).to be == {
       "@type"            => "branch",
-      "@href"            => "/v3/repo/#{repo.id}/branch/master",
+      "@href"            => "/v3/repo/1/branch/master",
       "@representation"  => "standard",
       "name"             => "master",
       "exists_on_github" => true,
       "repository"       => {
         "@type"          => "repository",
-        "@href"          => "/repo/#{repo.id}",
+        "@href"          => "/repo/1",
         "@representation"=> "standard",
         "@permissions"=> {
           "read"=>true,
@@ -29,7 +29,7 @@ describe Travis::API::V3::Services::Branch::Find, set_app: true do
           "create_env_var"=>false,
           "create_key_pair"=>false
         },
-        "id"             => repo.id,
+        "id"             => 1,
         "name"           => "standard",
         "slug"           => "svenfuchs/standard",
         "description"=>nil,
