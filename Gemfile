@@ -80,6 +80,7 @@ gem 'multi_json'
 gem 'closeio',           '~> 3.5'
 
 group :test do
+  gem 'rspec-bisect'
   gem 'rspec',         '2.99'
   gem 'rspec-its'
   gem 'factory_bot',  '~> 5.1.0'
