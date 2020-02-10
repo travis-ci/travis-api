@@ -34,7 +34,7 @@ describe 'Exception', set_app: true do
       Travis::Api::App::Endpoint::Repos.any_instance.stubs(:service).raises(error)
       res = get '/repos/1', nil, 'HTTP_X_REQUEST_ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975'
     rescue TestError => e
-      e.message.should == 'a test error'
+      expect(e.message).to eq('a test error')
     ensure
       Travis.testing = true
     end

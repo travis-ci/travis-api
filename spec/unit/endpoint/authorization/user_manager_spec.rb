@@ -16,16 +16,16 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
     before { manager.stubs(:education).returns(false) }
 
     it 'gets data from github payload' do
-      manager.info.should == {
+      expect(manager.info).to eq({
         name: 'Piotr Sarnacki', login: 'drogus', gravatar_id: '123', github_id: 456, education: false, vcs_id: 456
-      }.stringify_keys
+      }.stringify_keys)
     end
 
     it 'allows to overwrite existing keys' do
-      manager.info({login: 'piotr.sarnacki', bar: 'baz'}.stringify_keys).should == {
+      expect(manager.info({login: 'piotr.sarnacki', bar: 'baz'}.stringify_keys)).to eq({
         name: 'Piotr Sarnacki', login: 'piotr.sarnacki', gravatar_id: '123',
         github_id: 456, bar: 'baz', education: false, vcs_id: 456
-      }.stringify_keys
+      }.stringify_keys)
     end
   end
 
@@ -35,7 +35,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
      }
 
     it 'drops the token when drop_token is set to true' do
-      user = stub('user', login: 'drogus', github_id: 456, previous_changes: {}, recently_signed_up?: false, tokens: [stub('token')])
+      user = double('user', login: 'drogus', github_id: 456, previous_changes: {}, recently_signed_up?: false, tokens: [double('token')])
       User.expects(:find_by_github_id).with(456).returns(user)
 
       manager = described_class.new(data, 'abc123', true)
@@ -45,7 +45,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
       user.expects(:update_attributes).with(attributes)
 
-      manager.fetch.should == user
+      expect(manager.fetch).to eq(user)
     end
 
     context 'with existing user' do
@@ -64,14 +64,14 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
         it 'creates a User#tokens record' do
           User.any_instance.expects(:create_a_token)
           User.any_instance.expects(:tokens).returns([])
-          manager.fetch.should == user
+          expect(manager.fetch).to eq(user)
         end
       end
 
       it 'updates user data' do
         attributes = { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false, vcs_id: 456 }.stringify_keys
         User.any_instance.expects(:update_attributes).with(attributes)
-        manager.fetch.should == user
+        expect(manager.fetch).to eq(user)
       end
     end
 
@@ -86,7 +86,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
       it 'creates new user' do
         User.expects(:create!).with(attrs).returns(user)
-        manager.fetch.should == user
+        expect(manager.fetch).to eq(user)
       end
     end
   end
@@ -94,11 +94,11 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
   describe '#education' do
     let(:data) { {} }
     it 'runs students check with token' do
-      education = stub(:education => nil)
+      education = double(:education => nil)
       education.expects(:student?).returns(true)
       Travis::Github::Education.expects(:new).with('abc123').returns(education)
 
-      manager.education.should be_truthy
+      expect(manager.education).to be_truthy
     end
   end
 end

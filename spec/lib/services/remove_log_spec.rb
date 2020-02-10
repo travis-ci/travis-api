@@ -15,9 +15,9 @@ describe Travis::Services::RemoveLog do
     end
 
     it 'raises JobUnfinished error' do
-      lambda {
+      expect {
         service.run
-      }.should raise_error Travis::JobUnfinished
+      }.to raise_error Travis::JobUnfinished
     end
   end
 
@@ -30,15 +30,15 @@ describe Travis::Services::RemoveLog do
     end
 
     it 'raises AuthorizationDenied' do
-      lambda {
+      expect {
         service.run
-      }.should raise_error Travis::AuthorizationDenied
+      }.to raise_error Travis::AuthorizationDenied
     end
   end
 
   context 'when a job is found' do
     before do
-      find_by_id = stub
+      find_by_id = double
       find_by_id.stubs(:find_by_id).returns job
       job.stubs(:finished?).returns true
       service.stubs(:scope).returns find_by_id
@@ -85,22 +85,22 @@ describe Travis::Services::RemoveLog do
     context 'when log is already removed' do
       it 'raises LogAlreadyRemoved error' do
         service.run
-        lambda {
+        expect {
           service.run
-        }.should raise_error Travis::LogAlreadyRemoved
+        }.to raise_error Travis::LogAlreadyRemoved
       end
     end
   end
 
   context 'when a job is not found' do
     before :each do
-      find_by_id = stub
+      find_by_id = double
       find_by_id.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
       service.stubs(:scope).returns(find_by_id)
     end
 
     it 'raises ActiveRecord::RecordNotFound exception' do
-      lambda { service.run }.should raise_error(ActiveRecord::RecordNotFound)
+      expect { service.run }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
@@ -126,7 +126,7 @@ describe Travis::Services::RemoveLog::Instrument do
 
   it 'publishes a event' do
     service.run
-    event.should publish_instrumentation_event(
+    expect(event).to publish_instrumentation_event(
       event: 'travis.services.remove_log.run:completed',
       message: "Travis::Services::RemoveLog#run:completed for <Job id=#{job.id}> (svenfuchs)",
     )

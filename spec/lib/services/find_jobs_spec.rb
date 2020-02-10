@@ -1,24 +1,24 @@
 describe Travis::Services::FindJobs do
   let(:repo)    { FactoryBot.create(:repository) }
   let!(:job)    { FactoryBot.create(:test, :repository => repo, :state => :created, :queue => 'builds.linux') }
-  let(:service) { described_class.new(stub('user'), params) }
+  let(:service) { described_class.new(double('user'), params) }
 
   attr_reader :params
 
   describe 'run' do
     it 'finds jobs on the given queue' do
       @params = { :queue => 'builds.linux' }
-      service.run.should include(job)
+      expect(service.run).to include(job)
     end
 
     it 'does not find jobs on other queues' do
       @params = { :queue => 'builds.nodejs' }
-      service.run.should_not include(job)
+      expect(service.run).not_to include(job)
     end
 
     it 'finds jobs by a given list of ids' do
       @params = { :ids => [job.id] }
-      service.run.should == [job]
+      expect(service.run).to eq([job])
     end
 
     it 'finds jobs by state' do
@@ -31,7 +31,7 @@ describe Travis::Services::FindJobs do
       created = FactoryBot.create(:test, :state => :created, :source => build)
 
       @params = { :state => ['created', 'passed'] }
-      service.run.sort_by(&:id).should == [created, passed].sort_by(&:id)
+      expect(service.run.sort_by(&:id)).to eq([created, passed].sort_by(&:id))
     end
 
     it 'finds jobs that are about to run without any args' do
@@ -46,7 +46,7 @@ describe Travis::Services::FindJobs do
       received = FactoryBot.create(:test, :state => :received, :source => build)
 
       @params = {}
-      service.run.sort_by(&:id).should == [started, queued, created, received].sort_by(&:id)
+      expect(service.run.sort_by(&:id)).to eq([started, queued, created, received].sort_by(&:id))
     end
   end
 
@@ -58,7 +58,7 @@ describe Travis::Services::FindJobs do
       Job.delete_all
       FactoryBot.create(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now - 1.hour)
       FactoryBot.create(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now)
-      service.updated_at.to_s.should == Time.now.to_s
+      expect(service.updated_at.to_s).to eq(Time.now.to_s)
     end
   end
 
@@ -79,25 +79,25 @@ describe Travis::Services::FindJobs do
         it 'finds a private job' do
           FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
-          service.run.should include(private_job)
+          expect(service.run).to include(private_job)
         end
 
         it 'finds a public job' do
           FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
-          service.run.should include(public_job)
+          expect(service.run).to include(public_job)
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'does not find a private job' do
           service = described_class.new(user, id: private_job.id)
-          service.run.should_not include(private_job)
+          expect(service.run).not_to include(private_job)
         end
 
         it 'does not find a public job' do
           service = described_class.new(user, id: public_job.id)
-          service.run.should_not include(public_job)
+          expect(service.run).not_to include(public_job)
         end
       end
     end
@@ -109,25 +109,25 @@ describe Travis::Services::FindJobs do
         it 'finds a private job' do
           FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
-          service.run.should include(private_job)
+          expect(service.run).to include(private_job)
         end
 
         it 'finds a public job' do
           FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
-          service.run.should include(public_job)
+          expect(service.run).to include(public_job)
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'does not find a private job' do
           service = described_class.new(user, id: private_job.id)
-          service.run.should_not include(private_job)
+          expect(service.run).not_to include(private_job)
         end
 
         it 'does not find a public job' do
           service = described_class.new(user, id: public_job.id)
-          service.run.should_not include(public_job)
+          expect(service.run).not_to include(public_job)
         end
       end
     end
@@ -155,7 +155,7 @@ describe Travis::Services::FindJobs do
       FactoryBot.create(:test, :state => :started, :source => other_build, repository: other_repo)
 
       service = described_class.new(user)
-      service.run.should == [job]
+      expect(service.run).to eq([job])
     end
   end
 end

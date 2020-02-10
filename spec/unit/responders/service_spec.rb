@@ -2,8 +2,8 @@ describe Travis::Api::App::Responders::Service do
   class MyService < Travis::Api::App::Responders::Service
   end
 
-  let(:endpoint) { stub 'endpoint', public?: true }
-  let(:resource) { stub 'resource', run: {} }
+  let(:endpoint) { double 'endpoint', public?: true }
+  let(:resource) { double 'resource', run: {} }
   let(:options)  { {} }
   let(:service)  { MyService.new(endpoint, resource, options) }
 

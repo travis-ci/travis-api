@@ -3,28 +3,28 @@ describe Travis::Api::Serialize::V2::Http::Permissions do
 
   let(:permissions) do
     [
-      stub(:repository_id => 1, :admin? => true, :pull? => false, :push? => false),
-      stub(:repository_id => 2, :admin? => false, :pull? => true, :push? => false),
-      stub(:repository_id => 3, :admin? => false, :pull? => false, :push? => true)
+      double(:repository_id => 1, :admin? => true, :pull? => false, :push? => false),
+      double(:repository_id => 2, :admin? => false, :pull? => true, :push? => false),
+      double(:repository_id => 3, :admin? => false, :pull? => false, :push? => true)
     ]
   end
 
   let(:data) { described_class.new(permissions).data }
 
   it 'permissions' do
-    data['permissions'].should == [1, 2, 3]
+    expect(data['permissions']).to eq([1, 2, 3])
   end
 
   it 'finds admin perms' do
-    data['admin'].should == [1]
+    expect(data['admin']).to eq([1])
   end
 
   it 'finds pull perms' do
-    data['pull'].should == [2]
+    expect(data['pull']).to eq([2])
   end
 
   it 'finds push perms' do
-    data['push'].should == [3]
+    expect(data['push']).to eq([3])
   end
 end
 

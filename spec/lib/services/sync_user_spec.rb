@@ -1,7 +1,7 @@
 describe Travis::Services::SyncUser do
   include Travis::Testing::Stubs
 
-  let(:publisher) { stub('publisher', :publish => true) }
+  let(:publisher) { double('publisher', :publish => true) }
   let(:service)   { described_class.new(user, {}) }
 
   describe 'given the user is not currently syncing' do

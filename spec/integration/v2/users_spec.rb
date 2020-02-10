@@ -15,7 +15,7 @@ describe 'Users', set_app: true do
 
     it 'fetches a list of channels for a user' do
       response = get "/users/#{user.id}", {}, headers
-      JSON.parse(response.body)['user']['channels'].should == ["private-user-#{user.id}"]
+      expect(JSON.parse(response.body)['user']['channels']).to eq(["private-user-#{user.id}"])
     end
   end
 
@@ -23,9 +23,9 @@ describe 'Users', set_app: true do
     it 'updates user data and returns the user' do
       params = {user: {id: user.id, locale: 'pl'}}
       response = put "/users/#{user.id}", params, headers
-      response.should be_successful
-      response.should deliver_json_for('result' => true, 'flash' => [{ 'notice' => 'Your profile was successfully updated.' }])
-      user.reload.locale.should == 'pl'
+      expect(response).to be_successful
+      expect(response).to deliver_json_for('result' => true, 'flash' => [{ 'notice' => 'Your profile was successfully updated.' }])
+      expect(user.reload.locale).to eq('pl')
     end
   end
 
@@ -33,7 +33,7 @@ describe 'Users', set_app: true do
     it 'syncs current_user repos' do
       user.update_attribute :is_syncing, false
       response = post "/users/sync", {}, headers
-      response.should be_successful
+      expect(response).to be_successful
     end
   end
 end

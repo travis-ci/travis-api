@@ -27,7 +27,7 @@ describe Travis::Api::Serialize::V2::Http::User do
   end
 
   it 'user' do
-    data['user'].should == expected_data
+    expect(data['user']).to eq(expected_data)
   end
 
   context 'allow_migration' do
@@ -61,7 +61,7 @@ describe Travis::Api::Serialize::V2::Http::User do
 
       expected_data["secure_user_hash"] = secure_user_hash
 
-      data['user'].should == expected_data
+      expect(data['user']).to eq(expected_data)
     end
 
     after do

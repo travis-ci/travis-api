@@ -34,36 +34,36 @@ describe Travis::Services::FindUserAccounts do
 
   it 'includes all repositories with :all param' do
     @params = { all: true }
-    service.run.should include(Account.from(sven), Account.from(travis), Account.from(sinatra))
+    expect(service.run).to include(Account.from(sven), Account.from(travis), Account.from(sinatra))
   end
 
   it 'includes the user' do
-    service.run.should include(Account.from(sven))
+    expect(service.run).to include(Account.from(sven))
   end
 
   it 'includes accounts where the user has admin access' do
-    service.run.should include(Account.from(travis))
+    expect(service.run).to include(Account.from(travis))
   end
 
   it 'does not include accounts where the user does not have admin access' do
-    service.run.should_not include(Account.from(sinatra))
+    expect(service.run).not_to include(Account.from(sinatra))
   end
 
   it 'does not include account of organizations that do not belong to the user, even though they match by name' do
-    service.run.should_not include(Account.from(non_user_org))
+    expect(service.run).not_to include(Account.from(non_user_org))
   end
 
   it 'does not include organizations with the same id as a user' do
-    service.run.should_not include(Account.from(org))
+    expect(service.run).not_to include(Account.from(org))
   end
 
   it 'includes repository counts' do
-    service.run.map(&:repos_count).should == [1, 2]
+    expect(service.run.map(&:repos_count)).to eq([1, 2])
   end
 
   it 'works when user doesn\'t have any repos' do
     Permission.destroy_all
 
-    service.run.should include(Account.from(sven))
+    expect(service.run).to include(Account.from(sven))
   end
 end

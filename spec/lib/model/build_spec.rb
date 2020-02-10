@@ -5,13 +5,13 @@ describe Build do
 
   it 'caches matrix ids' do
     build = FactoryBot.create(:build, config: { rvm: ['1.9.3', '2.0.0'] })
-    build.cached_matrix_ids.should == build.matrix_ids
+    expect(build.cached_matrix_ids).to eq(build.matrix_ids)
   end
 
   it 'returns nil if cached_matrix_ids are not set' do
     build = FactoryBot.create(:build)
     build.update_column(:cached_matrix_ids, nil)
-    build.reload.cached_matrix_ids.should be_nil
+    expect(build.reload.cached_matrix_ids).to be_nil
   end
 
   it 'is cancelable if at least one job is cancelable' do
@@ -20,7 +20,7 @@ describe Build do
     jobs.second.stubs(:cancelable?).returns(false)
 
     build = FactoryBot.build(:build, matrix: jobs)
-    build.should be_cancelable
+    expect(build).to be_cancelable
   end
 
   it 'is not cancelable if none of the jobs are cancelable' do
@@ -29,28 +29,28 @@ describe Build do
     jobs.second.stubs(:cancelable?).returns(false)
 
     build = FactoryBot.build(:build, matrix: jobs)
-    build.should_not be_cancelable
+    expect(build).not_to be_cancelable
   end
 
   describe '#secure_env_enabled?' do
     it 'returns true if we\'re not dealing with pull request' do
       build = FactoryBot.build(:build)
       build.stubs(:pull_request?).returns(false)
-      build.secure_env_enabled?.should be true
+      expect(build.secure_env_enabled?).to be true
     end
 
     it 'returns true if pull request is from the same repository' do
       build = FactoryBot.build(:build)
       build.stubs(:pull_request?).returns(true)
       build.stubs(:same_repo_pull_request?).returns(true)
-      build.secure_env_enabled?.should be true
+      expect(build.secure_env_enabled?).to be true
     end
 
     it 'returns false if pull request is not from the same repository' do
       build = FactoryBot.build(:build)
       build.stubs(:pull_request?).returns(true)
       build.stubs(:same_repo_pull_request?).returns(false)
-      build.secure_env_enabled?.should be false
+      expect(build.secure_env_enabled?).to be false
     end
   end
 
@@ -61,7 +61,7 @@ describe Build do
         FactoryBot.create(:build, state: 'failed')
         FactoryBot.create(:build, state: 'created')
 
-        Build.recent.all.map(&:state).should == [:failed, :passed]
+        expect(Build.recent.all.map(&:state)).to eq([:failed, :passed])
       end
     end
 
@@ -71,7 +71,7 @@ describe Build do
         FactoryBot.create(:build, state: 'started')
         FactoryBot.create(:build, state: 'created')
 
-        Build.was_started.map(&:state).sort.should == [:passed, :started]
+        expect(Build.was_started.map(&:state).sort).to eq([:passed, :started])
       end
     end
 
@@ -81,13 +81,13 @@ describe Build do
         FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'develop'))
         FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'feature'))
 
-        Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
+        expect(Build.on_branch('master,develop').map(&:commit).map(&:branch).sort).to eq(['develop', 'master'])
       end
 
       it 'does not include pull requests' do
         FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'no-pull'), request: FactoryBot.create(:request, event_type: 'pull_request'))
         FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'no-pull'), request: FactoryBot.create(:request, event_type: 'push'))
-        Build.on_branch('no-pull').count.should be == 1
+        expect(Build.on_branch('no-pull').count).to eq(1)
       end
     end
 
@@ -105,7 +105,7 @@ describe Build do
         end
 
         it "should return older than the passed build" do
-          subject.map(&:number).should == ['2', '1']
+          expect(subject.map(&:number)).to eq(['2', '1'])
         end
       end
 
@@ -117,7 +117,7 @@ describe Build do
         end
 
         it "should return older than the passed build" do
-          subject.map(&:number).should == ['2', '1']
+          expect(subject.map(&:number)).to eq(['2', '1'])
         end
       end
 
@@ -144,7 +144,7 @@ describe Build do
 
         builds = Build.descending.paged({page: 2})
         expect(builds.size).to eq(1)
-        builds.first.number.should == '2'
+        expect(builds.first.number).to eq('2')
       end
     end
 
@@ -155,7 +155,7 @@ describe Build do
       end
 
       it "returns only builds which have Requests with an event_type of push" do
-        Build.pushes.all.count.should == 1
+        expect(Build.pushes.all.count).to eq(1)
       end
     end
 
@@ -166,7 +166,7 @@ describe Build do
       end
 
       it "returns only builds which have Requests with an event_type of pull_request" do
-        Build.pull_requests.all.count.should == 1
+        expect(Build.pull_requests.all.count).to eq(1)
       end
     end
   end
@@ -175,121 +175,121 @@ describe Build do
     describe 'previous_state' do
       it 'is set to the last finished build state on the same branch' do
         FactoryBot.create(:build, state: 'failed')
-        FactoryBot.create(:build).reload.previous_state.should == 'failed'
+        expect(FactoryBot.create(:build).reload.previous_state).to eq('failed')
       end
 
       it 'is set to the last finished build state on the same branch (disregards non-finished builds)' do
         FactoryBot.create(:build, state: 'failed')
         FactoryBot.create(:build, state: 'started')
-        FactoryBot.create(:build).reload.previous_state.should == 'failed'
+        expect(FactoryBot.create(:build).reload.previous_state).to eq('failed')
       end
 
       it 'is set to the last finished build state on the same branch (disregards other branches)' do
         FactoryBot.create(:build, state: 'failed')
         FactoryBot.create(:build, state: 'passed', commit: FactoryBot.create(:commit, branch: 'something'))
-        FactoryBot.create(:build).reload.previous_state.should == 'failed'
+        expect(FactoryBot.create(:build).reload.previous_state).to eq('failed')
       end
     end
 
     it "updates the last_build on the build's branch" do
       build = FactoryBot.create(:build)
       branch = Branch.where(repository_id: build.repository_id, name: build.branch).first
-      branch.last_build.should == build
+      expect(branch.last_build).to eq(build)
     end
   end
 
   describe 'instance methods' do
     it 'sets its number to the next build number on creation' do
       1.upto(3) do |number|
-        FactoryBot.create(:build).reload.number.should == number.to_s
+        expect(FactoryBot.create(:build).reload.number).to eq(number.to_s)
       end
     end
 
     it 'sets previous_state to nil if no last build exists on the same branch' do
       build = FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'master'))
-      build.reload.previous_state.should == nil
+      expect(build.reload.previous_state).to eq(nil)
     end
 
     it 'sets previous_state to the result of the last build on the same branch if exists' do
       build = FactoryBot.create(:build, state: :canceled, commit: FactoryBot.create(:commit, branch: 'master'))
       build = FactoryBot.create(:build, commit: FactoryBot.create(:commit, branch: 'master'))
-      build.reload.previous_state.should == 'canceled'
+      expect(build.reload.previous_state).to eq('canceled')
     end
 
     describe 'config' do
       it 'defaults to a hash with language and os set' do
         build = Build.new(repository: Repository.new(owner: User.new))
-        build.config.should == { language: 'ruby', group: 'stable', dist: 'precise', os: 'linux' }
+        expect(build.config).to eq({ language: 'ruby', group: 'stable', dist: 'precise', os: 'linux' })
       end
 
       it 'deep_symbolizes keys on write' do
         build = FactoryBot.create(:build, config: { 'foo' => { 'bar' => 'bar' } })
-        build.config[:foo].should == { bar: 'bar' }
+        expect(build.config[:foo]).to eq({ bar: 'bar' })
       end
 
       it 'downcases the language on config' do
         build = FactoryBot.create(:build, config: { language: "PYTHON" })
-        Build.last.config[:language].should == "python"
+        expect(Build.last.config[:language]).to eq("python")
       end
 
       it 'sets ruby as default language' do
         build = FactoryBot.create(:build, config: { 'foo' => { 'bar' => 'bar' } })
-        Build.last.config[:language].should == "ruby"
+        expect(Build.last.config[:language]).to eq("ruby")
       end
     end
 
     describe :pending? do
       it 'returns true if the build is finished' do
         build = FactoryBot.create(:build, state: :finished)
-        build.pending?.should be false
+        expect(build.pending?).to be false
       end
 
       it 'returns true if the build is not finished' do
         build = FactoryBot.create(:build, state: :started)
-        build.pending?.should be true
+        expect(build.pending?).to be true
       end
     end
 
     describe :passed? do
       it 'passed? returns true if state equals :passed' do
         build = FactoryBot.create(:build, state: :passed)
-        build.passed?.should be true
+        expect(build.passed?).to be true
       end
 
       it 'passed? returns true if result does not equal :passed' do
         build = FactoryBot.create(:build, state: :failed)
-        build.passed?.should be false
+        expect(build.passed?).to be false
       end
     end
 
     describe :color do
       it 'returns "green" if the build has passed' do
         build = FactoryBot.create(:build, state: :passed)
-        build.color.should == 'green'
+        expect(build.color).to eq('green')
       end
 
       it 'returns "red" if the build has failed' do
         build = FactoryBot.create(:build, state: :failed)
-        build.color.should == 'red'
+        expect(build.color).to eq('red')
       end
 
       it 'returns "yellow" if the build is pending' do
         build = FactoryBot.create(:build, state: :started)
-        build.color.should == 'yellow'
+        expect(build.color).to eq('yellow')
       end
     end
 
     it 'saves event_type before create' do
       build = FactoryBot.create(:build,  request: FactoryBot.create(:request, event_type: 'pull_request'))
-      build.event_type.should == 'pull_request'
+      expect(build.event_type).to eq('pull_request')
 
       build = FactoryBot.create(:build,  request: FactoryBot.create(:request, event_type: 'push'))
-      build.event_type.should == 'push'
+      expect(build.event_type).to eq('push')
     end
 
     it 'saves branch before create' do
       build = FactoryBot.create(:build,  commit: FactoryBot.create(:commit, branch: 'development'))
-      build.branch.should == 'development'
+      expect(build.branch).to eq('development')
     end
 
     describe 'reset' do
@@ -301,13 +301,13 @@ describe Build do
 
       it 'sets the state to :created' do
         build.reset
-        build.state.should == :created
+        expect(build.state).to eq(:created)
       end
 
       it 'resets related attributes' do
         build.reset
-        build.duration.should be_nil
-        build.finished_at.should be_nil
+        expect(build.duration).to be_nil
+        expect(build.finished_at).to be_nil
       end
 
       it 'resets each job if :reset_matrix is given' do

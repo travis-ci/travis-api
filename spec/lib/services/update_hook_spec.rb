@@ -80,7 +80,7 @@ describe Travis::Services::UpdateHook::Instrument do
 
   it 'publishes a event' do
     service.run
-    event.should publish_instrumentation_event(
+    expect(event).to publish_instrumentation_event(
       event: 'travis.services.update_hook.run:completed',
       message: 'Travis::Services::UpdateHook#run:completed for svenfuchs/minimal active=true (svenfuchs)',
       result: true

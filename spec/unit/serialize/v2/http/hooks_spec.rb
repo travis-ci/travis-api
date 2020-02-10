@@ -8,7 +8,7 @@ describe Travis::Api::Serialize::V2::Http::Hooks do
   }
 
   it 'hooks' do
-    data['hooks'].should == [
+    expect(data['hooks']).to eq([
       {
         'id' => 1,
         'name' => 'minimal',
@@ -18,6 +18,6 @@ describe Travis::Api::Serialize::V2::Http::Hooks do
         'private' => false,
         'admin' => true
       }
-    ]
+    ])
   end
 end

@@ -76,7 +76,7 @@ describe Travis::Github::Services::SetKey do
 
   it 'publishes an event' do
     service.run
-    event.should publish_instrumentation_event(
+    expect(event).to publish_instrumentation_event(
       event: 'travis.github.services.set_key.run:completed',
       message: 'Travis::Github::Services::SetKey#run:completed for travis-ci/travis-core',
       result: nil

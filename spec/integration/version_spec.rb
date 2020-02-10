@@ -14,7 +14,7 @@ describe 'App' do
         returns(false).then.returns(true)
 
     response = get '/foo', {}, 'HTTP_ACCEPT' => 'application/json; version=2, application/json; version=1'
-    response.content_type.should == 'application/json;charset=utf-8'
+    expect(response.content_type).to eq('application/json;charset=utf-8')
   end
 
   it 'uses v1 by default' do

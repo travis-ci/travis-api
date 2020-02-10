@@ -7,13 +7,13 @@ describe Travis::Api::App::Endpoint::Lint, set_app: true do
 
   it "accepts content in parameter" do
     response = post('/lint', content: content)
-    response.should be_ok
-    response.body.should eq body
+    expect(response).to be_ok
+    expect(response.body).to eq body
   end
 
   it "accepts content as body" do
     response = put('/lint', content)
-    response.should be_ok
-    response.body.should eq body
+    expect(response).to be_ok
+    expect(response.body).to eq body
   end
 end

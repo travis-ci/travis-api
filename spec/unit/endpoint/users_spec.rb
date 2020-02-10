@@ -9,12 +9,12 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
   end
 
   it 'needs to be authenticated' do
-    get('/users', {}, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01').should_not be_ok
+    expect(get('/users', {}, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01')).not_to be_ok
   end
 
   it 'replies with the current user' do
-    get('/users', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01').should be_ok
-    parsed_body['user'].should == {
+    expect(get('/users', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01')).to be_ok
+    expect(parsed_body['user']).to eq({
       'id'                 => user.id,
       'login'              => user.login,
       'name'               => user.name,
@@ -29,7 +29,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       'correct_scopes'     => true,
       'channels'           => ["private-user-1"],
       "allow_migration"    => false,
-    }
+    })
   end
 
   context 'when responding to POST for /users/sync' do
@@ -41,8 +41,8 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       it 'returns 409' do
         response = post('/users/sync', { access_token: access_token.to_s }, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json, */*; q=0.01')
 
-        response.status.should == 409
-        JSON.parse(response.body).should == { 'message' => 'Sync already in progress. Try again later.' }
+        expect(response.status).to eq(409)
+        expect(JSON.parse(response.body)).to eq({ 'message' => 'Sync already in progress. Try again later.' })
       end
     end
   end

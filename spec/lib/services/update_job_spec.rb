@@ -9,7 +9,7 @@ describe Travis::Services::UpdateJob do
 
   before :each do
     build.matrix.delete_all
-    remote = stub('remote')
+    remote = double('remote')
     Travis::RemoteLog::Remote.stubs(:new).returns(remote)
     remote.stubs(:find_by_job_id).returns(log)
     remote.stubs(:write_content_for_job_id).returns(log)
@@ -19,7 +19,7 @@ describe Travis::Services::UpdateJob do
     let(:event) { :start }
 
     it 'sends cancel event to the worker' do
-      publisher = mock('publisher')
+      publisher = double('publisher')
       service.stubs(:publisher).returns(publisher)
 
       publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id, source: 'update_job_service')
@@ -42,38 +42,38 @@ describe Travis::Services::UpdateJob do
         service.expects(:cancel_job_in_worker)
 
         service.run
-        job.reload.state.should == :canceled
+        expect(job.reload.state).to eq(:canceled)
       end
     end
 
     it 'sets the job state to received' do
       service.run
-      job.reload.state.should == :received
+      expect(job.reload.state).to eq(:received)
     end
 
     it 'sets the job received_at' do
       service.run
-      job.reload.received_at.to_s.should == '2011-01-01 00:02:00 UTC'
+      expect(job.reload.received_at.to_s).to eq('2011-01-01 00:02:00 UTC')
     end
 
     it 'sets the job worker name' do
       service.run
-      job.reload.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
+      expect(job.reload.worker).to eq('ruby3.worker.travis-ci.org:travis-ruby-4')
     end
 
     it 'sets the build state to received' do
       service.run
-      job.reload.source.state.should == :received
+      expect(job.reload.source.state).to eq(:received)
     end
 
     it 'sets the build received_at' do
       service.run
-      job.reload.source.received_at.to_s.should == '2011-01-01 00:02:00 UTC'
+      expect(job.reload.source.received_at.to_s).to eq('2011-01-01 00:02:00 UTC')
     end
 
     it 'sets the build state to received' do
       service.run
-      job.reload.source.state.should == :received
+      expect(job.reload.source.state).to eq(:received)
     end
   end
 
@@ -92,43 +92,43 @@ describe Travis::Services::UpdateJob do
         service.expects(:cancel_job_in_worker)
 
         service.run
-        job.reload.state.should == :canceled
+        expect(job.reload.state).to eq(:canceled)
       end
     end
 
     it 'sets the job state to started' do
       service.run
-      job.reload.state.should == :started
+      expect(job.reload.state).to eq(:started)
     end
 
     it 'sets the job started_at' do
       service.run
-      job.reload.started_at.to_s.should == '2011-01-01 00:02:00 UTC'
+      expect(job.reload.started_at.to_s).to eq('2011-01-01 00:02:00 UTC')
     end
 
     it 'sets the build state to started' do
       service.run
-      job.reload.source.state.should == :started
+      expect(job.reload.source.state).to eq(:started)
     end
 
     it 'sets the build started_at' do
       service.run
-      job.reload.source.started_at.to_s.should == '2011-01-01 00:02:00 UTC'
+      expect(job.reload.source.started_at.to_s).to eq('2011-01-01 00:02:00 UTC')
     end
 
     it 'sets the build state to started' do
       service.run
-      job.reload.source.state.should == :started
+      expect(job.reload.source.state).to eq(:started)
     end
 
     it 'sets the repository last_build_state to started' do
       service.run
-      job.reload.repository.last_build_state.should == 'started'
+      expect(job.reload.repository.last_build_state).to eq('started')
     end
 
     it 'sets the repository last_build_started_at' do
       service.run
-      job.reload.repository.last_build_started_at.to_s.should == '2011-01-01 00:02:00 UTC'
+      expect(job.reload.repository.last_build_started_at.to_s).to eq('2011-01-01 00:02:00 UTC')
     end
   end
 
@@ -146,38 +146,38 @@ describe Travis::Services::UpdateJob do
         service.expects(:cancel_job_in_worker)
 
         service.run
-        job.reload.state.should == :canceled
+        expect(job.reload.state).to eq(:canceled)
       end
     end
 
     it 'sets the job state to passed' do
       service.run
-      job.reload.state.should == :passed
+      expect(job.reload.state).to eq(:passed)
     end
 
     it 'sets the job finished_at' do
       service.run
-      job.reload.finished_at.to_s.should == '2011-01-01 00:03:00 UTC'
+      expect(job.reload.finished_at.to_s).to eq('2011-01-01 00:03:00 UTC')
     end
 
     it 'sets the build state to passed' do
       service.run
-      job.reload.source.state.should == :passed
+      expect(job.reload.source.state).to eq(:passed)
     end
 
     it 'sets the build finished_at' do
       service.run
-      job.reload.source.finished_at.to_s.should == '2011-01-01 00:03:00 UTC'
+      expect(job.reload.source.finished_at.to_s).to eq('2011-01-01 00:03:00 UTC')
     end
 
     it 'sets the repository last_build_state to passed' do
       service.run
-      job.reload.repository.last_build_state.should == 'passed'
+      expect(job.reload.repository.last_build_state).to eq('passed')
     end
 
     it 'sets the repository last_build_finished_at' do
       service.run
-      job.reload.repository.last_build_finished_at.to_s.should == '2011-01-01 00:03:00 UTC'
+      expect(job.reload.repository.last_build_finished_at.to_s).to eq('2011-01-01 00:03:00 UTC')
     end
   end
 
@@ -187,13 +187,13 @@ describe Travis::Services::UpdateJob do
     it 'swaps :result for :state (passed) if present' do
       payload.delete(:state)
       payload.merge!(result: 0)
-      service.data[:state].should == :passed
+      expect(service.data[:state]).to eq(:passed)
     end
 
     it 'swaps :result for :state (failed) if present' do
       payload.delete(:state)
       payload.merge!(result: 1)
-      service.data[:state].should == :failed
+      expect(service.data[:state]).to eq(:failed)
     end
   end
 
@@ -206,42 +206,42 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the job state to created' do
       service.run
-      job.reload.state.should == :created
+      expect(job.reload.state).to eq(:created)
     end
 
     it 'resets the job started_at' do
       service.run
-      job.reload.started_at.should be_nil
+      expect(job.reload.started_at).to be_nil
     end
 
     it 'resets the job worker name' do
       service.run
-      job.reload.worker.should be_nil
+      expect(job.reload.worker).to be_nil
     end
 
     it 'resets the build state to started' do
       service.run
-      job.reload.source.state.should == :created
+      expect(job.reload.source.state).to eq(:created)
     end
 
     it 'resets the build started_at' do
       service.run
-      job.reload.source.started_at.should be_nil
+      expect(job.reload.source.started_at).to be_nil
     end
 
     it 'resets the build state to started' do
       service.run
-      job.reload.source.state.should == :created
+      expect(job.reload.source.state).to eq(:created)
     end
 
     it 'resets the repository last_build_state to started' do
       service.run
-      job.reload.repository.last_build_state.should == 'created'
+      expect(job.reload.repository.last_build_state).to eq('created')
     end
 
     it 'resets the repository last_build_started_at' do
       service.run
-      job.reload.repository.last_build_started_at.should be_nil
+      expect(job.reload.repository.last_build_started_at).to be_nil
     end
   end
 end

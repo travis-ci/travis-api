@@ -1,13 +1,13 @@
 describe Travis::Api::App::Endpoint::Home, set_app: true do
   describe 'GET /' do
     it 'replies with a json response by default' do
-      get('/')["Content-Type"].should include("json")
+      expect(get('/')["Content-Type"]).to include("json")
     end
 
     it 'redirects HTML requests to /docs' do
       get '/', {}, 'HTTP_ACCEPT' => 'text/html'
-      status.should == 302
-      headers['Location'].should end_with('/docs/')
+      expect(status).to eq(302)
+      expect(headers['Location']).to end_with('/docs/')
     end
 
     it 'does not check auth' do

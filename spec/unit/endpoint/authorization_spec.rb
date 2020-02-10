@@ -44,8 +44,8 @@ describe Travis::Api::App::Endpoint::Authorization do
       it 'does not succeed if state cookie mismatches' do
         Travis.redis.sadd('github:states', 'github-state')
         response = get '/auth/handshake?state=github-state&code=oauth-code'
-        response.status.should be == 400
-        response.body.should be == "state mismatch"
+        expect(response.status).to eq(400)
+        expect(response.body).to eq("state mismatch")
         Travis.redis.srem('github:states', 'github-state')
       end
     end
@@ -74,7 +74,7 @@ describe Travis::Api::App::Endpoint::Authorization do
 
         it 'it does allow redirect' do
           response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
-          response.status.should be == 200
+          expect(response.status).to eq(200)
         end
       end
 
@@ -83,8 +83,8 @@ describe Travis::Api::App::Endpoint::Authorization do
 
         it 'does not allow redirect' do
           response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
-          response.status.should be == 401
-          response.body.should be == "target URI not allowed"
+          expect(response.status).to eq(401)
+          expect(response.body).to eq("target URI not allowed")
         end
       end
 
@@ -93,8 +93,8 @@ describe Travis::Api::App::Endpoint::Authorization do
 
         it 'does not allow redirect' do
           response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
-          response.status.should be == 401
-          response.body.should be == "target URI not allowed"
+          expect(response.status).to eq(401)
+          expect(response.body).to eq("target URI not allowed")
         end
       end
 
@@ -103,8 +103,8 @@ describe Travis::Api::App::Endpoint::Authorization do
 
         it 'does not allow redirect' do
           response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
-          response.status.should be == 401
-          response.body.should be == "target URI not allowed"
+          expect(response.status).to eq(401)
+          expect(response.body).to eq("target URI not allowed")
         end
       end
     end
@@ -114,7 +114,7 @@ describe Travis::Api::App::Endpoint::Authorization do
         Travis.redis.sadd('github:states', 'github-state')
         rack_mock_session.cookie_jar['travis.state'] = 'github-state'
 
-        response = mock('response')
+        response = double('response')
         response.expects(:body).returns('access_token=foobarbaz-token')
         Faraday.expects(:post).with('https://foobar.com/access_token_path',
                                     client_id: 'client-id',
@@ -138,16 +138,16 @@ describe Travis::Api::App::Endpoint::Authorization do
       # TODO disabling this as per @rkh's advice
       xit 'redirects to insufficient access page' do
         response = get '/auth/handshake?state=github-state&code=oauth-code'
-        response.should redirect_to('https://travis-ci.org/insufficient_access')
+        expect(response).to redirect_to('https://travis-ci.org/insufficient_access')
       end
 
       # TODO disabling this as per @rkh's advice
       xit 'redirects to insufficient access page for existing user' do
-        user = mock('user')
+        user = double('user')
         User.expects(:find_by_github_id).with(111).returns(user)
         expect {
           response = get '/auth/handshake?state=github-state&code=oauth-code'
-          response.should redirect_to('https://travis-ci.org/insufficient_access#existing-user')
+          expect(response).to redirect_to('https://travis-ci.org/insufficient_access#existing-user')
         }.to_not change { User.count }
       end
     end
@@ -156,63 +156,63 @@ describe Travis::Api::App::Endpoint::Authorization do
   describe 'POST /auth/github' do
     before do
       data = { 'id' => user.github_id, 'name' => user.name, 'login' => user.login, 'gravatar_id' => user.gravatar_id }
-      GH.stubs(:with).with(token: 'private repos', client_id: nil).returns stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'}, :to_hash => data)
-      GH.stubs(:with).with(token: 'public repos', client_id: nil).returns  stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'}, :to_hash => data)
-      GH.stubs(:with).with(token: 'no repos', client_id: nil).returns      stub(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'}, :to_hash => data)
+      GH.stubs(:with).with(token: 'private repos', client_id: nil).returns double(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'}, :to_hash => data)
+      GH.stubs(:with).with(token: 'public repos', client_id: nil).returns  double(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'}, :to_hash => data)
+      GH.stubs(:with).with(token: 'no repos', client_id: nil).returns      double(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'}, :to_hash => data)
       GH.stubs(:with).with(token: 'invalid token', client_id: nil).raises(Faraday::Error::ClientError, 'CLIENT ERROR!')
     end
 
     def get_token(github_token)
-      post('/auth/github', github_token: github_token).should be_ok
+      expect(post('/auth/github', github_token: github_token)).to be_ok
       parsed_body['access_token']
     end
 
     def user_for(github_token)
       get '/info/login', access_token: get_token(github_token)
-      last_response.status.should == 200
+      expect(last_response.status).to eq(200)
       user if user.login == body
     end
 
     it 'accepts tokens with repo scope' do
-      user_for('private repos').name.should == user.name
+      expect(user_for('private repos').name).to eq(user.name)
     end
 
     it 'accepts tokens with public_repo scope' do
-      user_for('public repos').name.should == user.name
+      expect(user_for('public repos').name).to eq(user.name)
     end
 
     it 'rejects tokens with user scope' do
-      post('/auth/github', github_token: 'no repos').should_not be_ok
-      body.should_not include('access_token')
+      expect(post('/auth/github', github_token: 'no repos')).not_to be_ok
+      expect(body).not_to include('access_token')
     end
 
     it 'rejects tokens with user scope' do
-      post('/auth/github', github_token: 'invalid token').should_not be_ok
-      body.should_not include('access_token')
+      expect(post('/auth/github', github_token: 'invalid token')).not_to be_ok
+      expect(body).not_to include('access_token')
     end
 
     it 'does not store the token' do
-      user_for('public repos').github_oauth_token.should_not == 'public repos'
+      expect(user_for('public repos').github_oauth_token).not_to eq('public repos')
     end
 
     it "errors if no token is given" do
       User.stubs(:find_by_github_id).with(111).returns(user)
-      post("/auth/github").should_not be_ok
-      last_response.status.should == 422
-      body.should_not include("access_token")
+      expect(post("/auth/github")).not_to be_ok
+      expect(last_response.status).to eq(422)
+      expect(body).not_to include("access_token")
     end
 
     it "errors if github throws an error" do
       GH.stubs(:with).raises(GH::Error)
-      post("/auth/github", github_token: 'foo bar').should_not be_ok
-      last_response.status.should == 403
-      body.should_not include("access_token")
-      body.should include("not a Travis user")
+      expect(post("/auth/github", github_token: 'foo bar')).not_to be_ok
+      expect(last_response.status).to eq(403)
+      expect(body).not_to include("access_token")
+      expect(body).to include("not a Travis user")
     end
 
     it 'syncs the user' do
       Travis.expects(:run_service).with(:sync_user, instance_of(User))
-      post('/auth/github', github_token: 'public repos').should be_ok
+      expect(post('/auth/github', github_token: 'public repos')).to be_ok
     end
   end
 end

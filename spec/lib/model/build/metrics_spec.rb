@@ -20,9 +20,9 @@ class BuildMetricsMock
 end
 
 describe Build::Metrics do
-  let(:request) { stub('request', created_at: Time.now - 60) }
+  let(:request) { double('request', created_at: Time.now - 60) }
   let(:build) { BuildMetricsMock.new(request) }
-  let(:timer) { stub('meter', :update) }
+  let(:timer) { double('meter', :update) }
 
   before :each do
     Metriks.stubs(:timer).returns(timer)

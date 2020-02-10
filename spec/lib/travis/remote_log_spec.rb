@@ -18,7 +18,7 @@ describe Travis::RemoteLog do
   end
 
   it 'delegates public methods to client' do
-    client = mock('client')
+    client = double('client')
     client.expects(:find_by_job_id)
     client.expects(:find_by_id)
     client.expects(:write_content_for_job_id)
@@ -31,7 +31,7 @@ describe Travis::RemoteLog do
   end
 
   it 'delegates public methods to archive_client' do
-    archive_client = mock('archive_client')
+    archive_client = double('archive_client')
     archive_client.expects(:fetch_archived_url)
     remote = described_class::Remote.new
     remote.expects(:archive_client).returns(archive_client)
@@ -60,41 +60,41 @@ describe Travis::RemoteLog do
 
   it 'has a nil removed_by without a removed_by_id' do
     subject.removed_by_id = nil
-    subject.removed_by.should be_nil
+    expect(subject.removed_by).to be_nil
   end
 
   it 'has a non-nil removed_by with a removed_by_id' do
-    user = mock('user')
+    user = double('user')
     subject.removed_by_id = 4
     User.expects(:find).with(4).returns(user)
-    subject.removed_by.should == user
+    expect(subject.removed_by).to eq(user)
   end
 
   it 'has a job' do
-    job = mock('job')
+    job = double('job')
     Job.expects(:find).with(attrs[:job_id]).returns(job)
-    subject.job.should == job
+    expect(subject.job).to eq(job)
   end
 
   it 'has archived content' do
-    remote = stub()
+    remote = double()
     remote.expects(:fetch_archived_url)
       .with(5, expires: nil)
       .returns('yep')
     described_class::Remote.expects(:new).returns(remote)
-    subject.archived_url.should eq 'yep'
+    expect(subject.archived_url).to eq 'yep'
   end
 
   it 'has parts' do
     found_parts = [
       Travis::RemoteLogPart.new(number: 42, content: 'yey', final: false)
     ]
-    remote = stub()
+    remote = double()
     described_class::Remote.expects(:new).returns(remote)
     remote.stubs(:find_parts_by_job_id)
       .with(5, after: nil, part_numbers: [])
       .returns(found_parts)
-    subject.parts.should eq found_parts
+    expect(subject.parts).to eq found_parts
   end
 
   {
@@ -106,7 +106,7 @@ describe Travis::RemoteLog do
       before { subject.aggregated_at = aggregated_at }
 
       it "has aggregated?=#{is_aggregated}" do
-        subject.aggregated?.should == is_aggregated
+        expect(subject.aggregated?).to eq(is_aggregated)
       end
     end
   end
@@ -127,17 +127,17 @@ describe Travis::RemoteLog do
       end
 
       it "has archived?=#{is_archived}" do
-        subject.archived?.should == is_archived
+        expect(subject.archived?).to eq(is_archived)
       end
     end
   end
 
   it 'can serialize via #to_json' do
     from_json = JSON.parse(subject.to_json).fetch('log')
-    from_json.fetch('id').should == attrs[:id]
-    from_json.fetch('job_id').should == attrs[:job_id]
-    from_json.fetch('type').should == 'Log'
-    from_json.fetch('body').should == attrs[:content]
+    expect(from_json.fetch('id')).to eq(attrs[:id])
+    expect(from_json.fetch('job_id')).to eq(attrs[:job_id])
+    expect(from_json.fetch('type')).to eq('Log')
+    expect(from_json.fetch('body')).to eq(attrs[:content])
   end
 
   it 'can serialize chunked via #to_json' do
@@ -158,23 +158,23 @@ describe Travis::RemoteLog do
       )
     ).fetch('log')
 
-    from_json.fetch('id').should == attrs[:id]
-    from_json.fetch('job_id').should == attrs[:job_id]
-    from_json.fetch('type').should == 'Log'
-    from_json.fetch('parts').should == [
+    expect(from_json.fetch('id')).to eq(attrs[:id])
+    expect(from_json.fetch('job_id')).to eq(attrs[:job_id])
+    expect(from_json.fetch('type')).to eq('Log')
+    expect(from_json.fetch('parts')).to eq([
       { 'number' => 8, 'content' => 'whats that', 'final' => false },
       { 'number' => 11, 'content' => 'whats thaaaaat', 'final' => false },
-    ]
-    from_json.should_not include('body')
+    ])
+    expect(from_json).not_to include('body')
   end
 
   it 'can serialize removed logs via #to_json' do
     user_id = 8
-    user = mock('user')
+    user = double('user')
     user.stubs(:name).returns('Twizzler HotDog')
     user.stubs(:id).returns(user_id)
 
-    now = mock('now')
+    now = double('now')
     now.stubs(:utc).returns(now)
     now.stubs(:to_s).returns('whenebber')
     Time.stubs(:now).returns(now)
@@ -184,32 +184,32 @@ describe Travis::RemoteLog do
     subject.removed_by_id = user_id
 
     from_json = JSON.parse(subject.to_json).fetch('log')
-    from_json.fetch('id').should == attrs[:id]
-    from_json.fetch('job_id').should == attrs[:job_id]
-    from_json.fetch('type').should == 'Log'
-    from_json.fetch('body').should == attrs[:content]
-    from_json.fetch('removed_by').should == 'Twizzler HotDog'
-    from_json.fetch('removed_at').should == 'whenebber'
+    expect(from_json.fetch('id')).to eq(attrs[:id])
+    expect(from_json.fetch('job_id')).to eq(attrs[:job_id])
+    expect(from_json.fetch('type')).to eq('Log')
+    expect(from_json.fetch('body')).to eq(attrs[:content])
+    expect(from_json.fetch('removed_by')).to eq('Twizzler HotDog')
+    expect(from_json.fetch('removed_at')).to eq('whenebber')
   end
 
   it 'can be cleared' do
     content = 'Log removed by Floof MaGoof at sometime'
     user_id = 8
 
-    remote = mock('remote')
+    remote = double('remote')
     described_class::Remote.expects(:new).returns(remote)
     remote.expects(:write_content_for_job_id)
       .with(attrs.fetch(:job_id), content: content, removed_by: user_id)
       .returns(described_class.new(content: content, removed_by: user_id))
 
-    user = mock('user')
+    user = double('user')
     user.expects(:name).returns('Floof MaGoof')
     user.expects(:id).returns(user_id)
-    now = mock('now')
+    now = double('now')
     now.expects(:utc).returns('sometime')
     Time.stubs(:now).returns(now)
 
-    subject.clear!(user).should eq(content)
+    expect(subject.clear!(user)).to eq(content)
   end
 end
 
@@ -267,25 +267,25 @@ describe Travis::RemoteLog::Client do
   end
 
   it 'can find logs by id' do
-    subject.find_by_id(4).should_not be_nil
+    expect(subject.find_by_id(4)).not_to be_nil
   end
 
   it 'can find logs by job id' do
-    subject.find_by_job_id(4).should_not be_nil
+    expect(subject.find_by_job_id(4)).not_to be_nil
   end
 
   it 'can find log ids by job id' do
-    subject.find_id_by_job_id(4).should_not be_nil
+    expect(subject.find_id_by_job_id(4)).not_to be_nil
   end
 
   it 'can write content for job id' do
-    subject.write_content_for_job_id(8, content: 'oh hi', removed_by: 3)
-      .should_not be_nil
+    expect(subject.write_content_for_job_id(8, content: 'oh hi', removed_by: 3))
+      .not_to be_nil
   end
 
   it 'can find parts by job id' do
-    subject.find_parts_by_job_id(8, after: 4, part_numbers: [42, 17])
-      .should_not be_nil
+    expect(subject.find_parts_by_job_id(8, after: 4, part_numbers: [42, 17]))
+      .not_to be_nil
   end
 
   context 'when the responses are sad' do
@@ -299,15 +299,15 @@ describe Travis::RemoteLog::Client do
     end
 
     it 'cannot find logs by id' do
-      subject.find_by_id(4).should be_nil
+      expect(subject.find_by_id(4)).to be_nil
     end
 
     it 'cannot find logs by job id' do
-      subject.find_by_job_id(4).should be_nil
+      expect(subject.find_by_job_id(4)).to be_nil
     end
 
     it 'cannot find log ids by job id' do
-      subject.find_id_by_job_id(4).should be_nil
+      expect(subject.find_id_by_job_id(4)).to be_nil
     end
 
     it 'cannot write content for job id' do
@@ -332,7 +332,7 @@ describe Travis::RemoteLog::ArchiveClient do
     )
   end
 
-  let(:s3) { mock('s3') }
+  let(:s3) { double('s3') }
 
   before do
     subject.instance_variable_set(:@s3, s3)
@@ -346,14 +346,14 @@ describe Travis::RemoteLog::ArchiveClient do
   it 'fetches public archived URLs' do
     s3.stubs(:public?).returns(true)
     s3.stubs(:public_url).returns('https://wowneat.example.com/flah')
-    subject.fetch_archived_url(9).should eq 'https://wowneat.example.com/flah'
+    expect(subject.fetch_archived_url(9)).to eq 'https://wowneat.example.com/flah'
   end
 
   it 'fetches private archived URLs' do
     s3.stubs(:public?).returns(false)
     s3.stubs(:url).with(8001)
       .returns('https://whoabud.example.com/flah?sig=ya&exp=nah')
-    subject.fetch_archived_url(9, expires: 8001)
-      .should eq'https://whoabud.example.com/flah?sig=ya&exp=nah'
+    expect(subject.fetch_archived_url(9, expires: 8001))
+      .to eq'https://whoabud.example.com/flah?sig=ya&exp=nah'
   end
 end

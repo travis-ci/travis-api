@@ -20,7 +20,7 @@ describe Travis::API::V3::Models::Mailer do
   end
 
   describe '#send_email' do
-    let(:redis_client) { mock('Redis') }
+    let(:redis_client) { double('Redis') }
 
     before { subject.stubs(client: redis_client) }
 

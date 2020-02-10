@@ -19,13 +19,13 @@ describe Travis::Services::NextBuildNumber do
     before(:each) { repo.next_build_number = nil }
 
     it 'returns 1' do
-      subject.should == 1
+      expect(subject).to eq(1)
     end
 
     it 'initializes the next_build_number' do
-      repo.next_build_number.should be_nil
+      expect(repo.next_build_number).to be_nil
       subject
-      repo.next_build_number.should == 2
+      expect(repo.next_build_number).to eq(2)
     end
   end
 
@@ -37,12 +37,12 @@ describe Travis::Services::NextBuildNumber do
     end
 
     it 'returns the next_build_number' do
-      subject.should == 4
+      expect(subject).to eq(4)
     end
 
     it 'increments the next_build_number' do
       subject
-      repo.next_build_number.should == 5
+      expect(repo.next_build_number).to eq(5)
     end
   end
 end

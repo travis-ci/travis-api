@@ -9,7 +9,7 @@ describe Travis::Api::Serialize::V2::Http::Requests do
   }
 
   it 'returns requests data' do
-    data['requests'].should == [
+    expect(data['requests']).to eq([
       {
         'id' => 1,
         'repository_id' => 1,
@@ -29,11 +29,11 @@ describe Travis::Api::Serialize::V2::Http::Requests do
         'pull_request_number' => nil,
         'build_id' => 1
       }
-    ]
+    ])
   end
 
   it 'returns commits data' do
-    data['commits'].first.should == {
+    expect(data['commits'].first).to eq({
       'id' => commit.id,
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
@@ -45,7 +45,7 @@ describe Travis::Api::Serialize::V2::Http::Requests do
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
       'pull_request_number' => nil,
-    }
+    })
   end
 
   context "without commits" do
@@ -57,7 +57,7 @@ describe Travis::Api::Serialize::V2::Http::Requests do
     }
 
     it "doesn't fail if there is no commit data for a given request" do
-      data['commits'].should == []
+      expect(data['commits']).to eq([])
     end
   end
 end

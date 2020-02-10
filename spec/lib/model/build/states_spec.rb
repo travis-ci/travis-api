@@ -24,8 +24,8 @@ describe Build::States do
           build.cancel!
         }.to change { created_job.reload.state }
 
-        created_job.state.should == :canceled
-        finished_jobs.map { |j| j.state.to_sym }.should == Job::Test::FINISHED_STATES
+        expect(created_job.state).to eq(:canceled)
+        expect(finished_jobs.map { |j| j.state.to_sym }).to eq(Job::Test::FINISHED_STATES)
       end
     end
 
@@ -34,14 +34,14 @@ describe Build::States do
         build.stubs(:write_attribute)
       end
       it 'does not set the state to created if any jobs in the matrix are running' do
-        build.stubs(matrix: [stub(state: :started)])
+        build.stubs(matrix: [double(state: :started)])
         build.reset
-        build.state.should_not == :started
+        expect(build.state).not_to eq(:started)
       end
       it 'sets the state to created if none of the jobs in the matrix are running' do
-        build.stubs(matrix: [stub(state: :passed)])
+        build.stubs(matrix: [double(state: :passed)])
         build.reset
-        build.state.should == :created
+        expect(build.state).to eq(:created)
       end
     end
 
@@ -49,13 +49,13 @@ describe Build::States do
       let(:data) { WORKER_PAYLOADS['job:test:receive'] }
 
       it 'does not denormalize attributes' do
-        build.denormalize?('job:test:receive').should be false
+        expect(build.denormalize?('job:test:receive')).to be false
       end
 
       describe 'when the build is not already received' do
         it 'sets the state to :received' do
           build.receive(data)
-          build.state.should == :received
+          expect(build.state).to eq(:received)
         end
       end
 
@@ -84,7 +84,7 @@ describe Build::States do
       describe 'when the build is not already started' do
         it 'sets the state to :started' do
           build.start(data)
-          build.state.should == :started
+          expect(build.state).to eq(:started)
         end
 
         it 'denormalizes attributes' do
@@ -160,12 +160,12 @@ describe Build::States do
 
           it 'sets the state to the matrix state' do
             build.finish(data)
-            build.state.should == :passed
+            expect(build.state).to eq(:passed)
           end
 
           it 'calculates the duration based on the matrix durations' do
             build.finish(data)
-            build.duration.should == 30
+            expect(build.duration).to eq(30)
           end
 
           it 'denormalizes attributes' do

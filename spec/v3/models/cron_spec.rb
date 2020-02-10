@@ -23,7 +23,7 @@ describe Travis::API::V3::Models::Cron do
 
       cron2.update_attribute(:next_run, 2.hours.from_now)
       Timecop.travel(scheduler_interval.from_now)
-      Travis::API::V3::Models::Cron.scheduled.count.should eql 1
+      expect(Travis::API::V3::Models::Cron.scheduled.count).to eql 1
       Timecop.return
       cron1.destroy
       cron2.destroy
@@ -63,7 +63,7 @@ describe Travis::API::V3::Models::Cron do
     it "sets the next_run correctly" do
       subject.last_run = 1.day.ago.utc + 5.minutes
       subject.schedule_next_build
-      subject.next_run.to_i.should eql 5.minutes.from_now.utc.to_i
+      expect(subject.next_run.to_i).to eql 5.minutes.from_now.utc.to_i
     end
   end
 
@@ -84,7 +84,7 @@ describe Travis::API::V3::Models::Cron do
     context "and from: is more than one interval in the past" do
       it "ensures that the next_run is in the future" do
         subject.schedule_next_build(from: DateTime.now - 2.day)
-        subject.next_run.should be >= DateTime.now
+        expect(subject.next_run).to be >= DateTime.now
       end
     end
   end
@@ -120,7 +120,7 @@ describe Travis::API::V3::Models::Cron do
     context "when no build has existed before running a cron build" do
       let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
-        cron.needs_new_build?.should be_truthy
+        expect(cron.needs_new_build?).to be_truthy
       end
     end
 
@@ -128,7 +128,7 @@ describe Travis::API::V3::Models::Cron do
       let(:build) { FactoryBot.create(:v3_build, started_at: nil, number: 100) }
       let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
-        cron.needs_new_build?.should be_truthy
+        expect(cron.needs_new_build?).to be_truthy
       end
     end
 
@@ -136,7 +136,7 @@ describe Travis::API::V3::Models::Cron do
       let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch, last_build: FactoryBot.create(:v3_build, number: 200)).id, dont_run_if_recent_build_exists: true) }
 
       it "needs_new_build? returns false" do
-        cron.needs_new_build?.should be_falsey
+        expect(cron.needs_new_build?).to be_falsey
       end
     end
   end

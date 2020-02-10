@@ -45,43 +45,43 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
         it 'responds with a private log' do
           FactoryBot.create(:permission, user: user, repository: private_repo)
           response = get("/logs/1", {}, authenticated_headers)
-          response.should be_ok
-          response.body.should == 'private'
+          expect(response).to be_ok
+          expect(response.body).to eq('private')
         end
 
         it 'responds with a public log' do
           FactoryBot.create(:permission, user: user, repository: public_repo)
           response = get("/logs/2", {}, authenticated_headers)
-          response.should be_ok
-          response.body.should == 'public'
+          expect(response).to be_ok
+          expect(response.body).to eq('public')
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'responds with 404 when fetching private log' do
           response = get("/logs/1", {}, authenticated_headers)
-          response.should_not be_ok
-          response.status.should == 404
+          expect(response).not_to be_ok
+          expect(response.status).to eq(404)
         end
 
         it 'responds with 404 when fetching public log' do
           response = get("/logs/2", {}, authenticated_headers)
-          response.should_not be_ok
-          response.status.should == 404
+          expect(response).not_to be_ok
+          expect(response.status).to eq(404)
         end
       end
 
       describe 'unauthenticated request' do
         it 'responds with 401 when fetching private log' do
           response = get("/logs/1", {}, headers)
-          response.should_not be_ok
-          response.status.should == 401
+          expect(response).not_to be_ok
+          expect(response.status).to eq(401)
         end
 
         it 'responds with 401 when fetching public log' do
           response = get("/logs/2", {}, headers)
-          response.should_not be_ok
-          response.status.should == 401
+          expect(response).not_to be_ok
+          expect(response.status).to eq(401)
         end
       end
     end
@@ -95,43 +95,43 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
         it 'responds with a private log' do
           FactoryBot.create(:permission, user: user, repository: private_repo)
           response = get("/logs/1", {}, authenticated_headers)
-          response.should be_ok
-          response.body.should == 'private'
+          expect(response).to be_ok
+          expect(response.body).to eq('private')
         end
 
         it 'responds with a public log' do
           FactoryBot.create(:permission, user: user, repository: public_repo)
           response = get("/logs/2", {}, authenticated_headers)
-          response.should be_ok
-          response.body.should == 'public'
+          expect(response).to be_ok
+          expect(response.body).to eq('public')
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'responds with 404 when fetching private log' do
           response = get("/logs/1", {}, authenticated_headers)
-          response.should_not be_ok
-          response.status.should == 404
+          expect(response).not_to be_ok
+          expect(response.status).to eq(404)
         end
 
         it 'responds with the log when fetching public log' do
           response = get("/logs/2", {}, authenticated_headers)
-          response.should be_ok
-          response.body.should == 'public'
+          expect(response).to be_ok
+          expect(response.body).to eq('public')
         end
       end
 
       describe 'unauthenticated request' do
         it 'responds with 401 when fetching private log' do
           response = get("/logs/1", {}, headers)
-          response.should_not be_ok
-          response.status.should == 401
+          expect(response).not_to be_ok
+          expect(response.status).to eq(401)
         end
 
         it 'responds with 401 when fetching public log' do
           response = get("/logs/2", {}, headers)
-          response.should_not be_ok
-          response.status.should == 401
+          expect(response).not_to be_ok
+          expect(response.status).to eq(401)
         end
       end
     end
@@ -145,44 +145,44 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
         it 'responds with a private log' do
           FactoryBot.create(:permission, user: user, repository: private_repo)
           response = get("/logs/1", {}, v21_authenticated_headers)
-          response.should be_ok
-          response.body.should == 'private'
+          expect(response).to be_ok
+          expect(response.body).to eq('private')
         end
 
         it 'responds with a public log' do
           FactoryBot.create(:permission, user: user, repository: public_repo)
           response = get("/logs/2", {}, v21_authenticated_headers)
-          response.should be_ok
-          response.body.should == 'public'
-          response.headers["X-Log-Access-Token"].should be_nil
+          expect(response).to be_ok
+          expect(response.body).to eq('public')
+          expect(response.headers["X-Log-Access-Token"]).to be_nil
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'responds with 404 when fetching private log' do
           response = get("/logs/1", {}, v21_authenticated_headers)
-          response.should_not be_ok
-          response.status.should == 404
+          expect(response).not_to be_ok
+          expect(response.status).to eq(404)
         end
 
         it 'responds with the log when fetching public log' do
           response = get("/logs/2", {}, v21_authenticated_headers)
-          response.should be_ok
-          response.body.should == 'public'
+          expect(response).to be_ok
+          expect(response.body).to eq('public')
         end
       end
 
       describe 'unauthenticated request' do
         it 'responds with 404 when fetching private log' do
           response = get("/logs/1", {}, v21_headers)
-          response.should_not be_ok
-          response.status.should == 404
+          expect(response).not_to be_ok
+          expect(response.status).to eq(404)
         end
 
         it 'responds with the log when fetching public log' do
           response = get("/logs/2", {}, v21_headers)
-          response.should be_ok
-          response.body.should == 'public'
+          expect(response).to be_ok
+          expect(response.body).to eq('public')
         end
       end
     end
@@ -196,24 +196,24 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
         it 'responds with a public log' do
           FactoryBot.create(:permission, user: user, repository: public_repo)
           response = get("/logs/2", {}, authenticated_headers)
-          response.should be_ok
-          response.body.should == 'public'
+          expect(response).to be_ok
+          expect(response.body).to eq('public')
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'responds with the log when fetching public log' do
           response = get("/logs/2", {}, authenticated_headers)
-          response.should be_ok
-          response.body.should == 'public'
+          expect(response).to be_ok
+          expect(response.body).to eq('public')
         end
       end
 
       describe 'unauthenticated request' do
         it 'responds with the log when fetching public log' do
           response = get("/logs/2", {}, headers)
-          response.should be_ok
-          response.body.should == 'public'
+          expect(response).to be_ok
+          expect(response.body).to eq('public')
         end
       end
     end
