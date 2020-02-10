@@ -26,7 +26,7 @@
         <dt class="info-label">Source:</dt>
         <dd>
           <%= @subscription.source %>
-          <b><%= " - You are not allowed to edit github subscriptions" if @subscription.github? %></b>
+          <b><%= " - You are not allowed to edit vcs subscriptions" if @subscription.github? %></b>
         </dd>
         <dt class="info-label"><%= @subscription.expiration_status %></dt>
         <dd>

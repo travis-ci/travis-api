@@ -9,4 +9,10 @@ test:
     url: redis://localhost:6379
   encryption:
     key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  providers:
+    github:
+      base_url: https://github.com/
+  vcs:
+    endpoint: https://api-fake.travis-ci.com
+    token: fake-token
   service_hook_url: https://notify.fake.travis-ci.com

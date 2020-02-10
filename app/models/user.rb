@@ -20,6 +20,12 @@ class User < ApplicationRecord
   scope :inactive, -> { where('suspended = false AND github_oauth_token IS NULL') }
   scope :suspended, -> { where(suspended: true) }
 
+  alias_attribute :vcs_token, :github_token
+  alias_attribute :vcs_oauth_token, :github_oauth_token
+  alias_attribute :vcs_scopes, :github_scopes
+  alias_attribute :vcs_language, :github_language
+
+
   def has_2fa?
     Travis::DataStores.redis.get("admin-v2:otp:#{login}")
   end

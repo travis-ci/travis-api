@@ -5,25 +5,33 @@
     <dt class="info-label">Name</dt>
     <dd><%= @organization.name %></dd>
 
-    <dt class="info-label">GitHub login</dt>
+    <dt class="info-label">VCS Login</dt>
     <dd>
       <%= image_tag(@organization.avatar_url, size: "20x20", alt: "Organization Avatar", class: "avatar") if @organization.avatar_url %>
-      <%= @organization.login %>
-      <%= link_to fa_icon("github"), "https://github.com/#{@organization.login}", target: "_blank" %>
+      <%= link_to @organization.login, vcs_organization_profile_url(@organization), target: '_blank' %>
     </dd>
 
-    <dt class="info-label">GitHub ID</dt>
-    <dd><%= @organization.github_id %></dd>
+    <dt class="info-label">VCS Type</dt>
+    <dd>
+      <%= @organization.vcs_type %>
+      (
+      <%= image_tag(@organization.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if @organization.avatar_url %>
+      <%= link_to @organization.login, vcs_organization_profile_url(@organization), target: '_blank' %>
+      )
+    </dd>
 
-    <dt class="info-label">GitHub Integration</dt>
+    <dt class="info-label">VCS ID</dt>
+    <dd><%= @organization.vcs_id %></dd>
+
+    <dt class="info-label">VCS Integration</dt>
     <dd class="inline">
       <p>
         <% if @installation.present? %>
-          GitHub App installed with
+          VCS App installed with
           <strong>id: <%= @installation.id %></strong>
           and
-          <strong>github_id: <%= @installation.github_id %></strong>
-          <%= link_to '[Manage repos link]', github_config_url(@installation.github_id) %>
+          <strong>vcs_id: <%= @installation.vcs_id %></strong>
+          <%= link_to '[Manage repos link]', manage_repo_link_url(@organization) %>
         <% else %>
           Service Hook
         <% end %>

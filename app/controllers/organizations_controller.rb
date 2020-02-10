@@ -1,5 +1,7 @@
 class OrganizationsController < ApplicationController
-  include BuildCounters, RenderEither, PermittedParams
+  include PermittedParams
+  include RenderEither
+  include BuildCounters
 
   before_action :get_organization
 
@@ -12,7 +14,7 @@ class OrganizationsController < ApplicationController
       Services::JobBoost::Update.new(@organization.login, current_user).call(hours, limit)
       flash[:notice] = "Owner limit set to #{limit}, and expires after #{hours} hours."
     else
-      flash[:error] = "Owner limit must be greater than 0."
+      flash[:error] = 'Owner limit must be greater than 0.'
     end
 
     redirect_to @organization
@@ -48,7 +50,10 @@ class OrganizationsController < ApplicationController
   end
 
   def repositories
-    @repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active).paginate(page: params[:page], per_page: 20)
+    @repositories = @organization.repositories
+                                 .where(invalidated_at: nil)
+                                 .order(:last_build_id, :name, :active)
+                                 .paginate(page: params[:page], per_page: 20)
     render_either 'shared/repositories'
   end
 
@@ -64,7 +69,10 @@ class OrganizationsController < ApplicationController
   end
 
   def requests
-    @requests = Request.from_owner('Organization', params[:id]).includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 20)
+    @requests = Request.from_owner('Organization', params[:id])
+                       .includes(builds: :repository)
+                       .order('id DESC')
+                       .paginate(page: params[:page], per_page: 20)
     render_either 'shared/requests', locals: { origin: @organization }
   end
 
@@ -84,8 +92,14 @@ class OrganizationsController < ApplicationController
   end
 
   def sync
-    Services::Organization::Sync.new(@organization).call
-    flash[:notice] = "Triggered sync for Organization #{@organization.login}"
+    response = Services::Organization::Sync.new(@organization).call
+
+    flash[:notice] = if response.success?
+                       "Triggered sync for Organization #{@organization.login}"
+                     else
+                       "Sync for Organization #{@organization.login} failed"
+                     end
+
     redirect_back(fallback_location: root_path)
   end
 
@@ -106,7 +120,9 @@ class OrganizationsController < ApplicationController
 
   def get_organization
     @organization = Organization.find_by(id: params[:id])
-    return redirect_to not_found_path, flash: {error: "There is no organization associated with ID #{params[:id]}."} if @organization.nil?
+    return if @organization.present?
+
+    redirect_to not_found_path, flash: { error: "There is no organization associated with ID #{params[:id]}." }
   end
 
   def feature_params

@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.feature 'Display a users github token', js: true, type: :feature do
-  let!(:user) { create(:user, login: 'lisbethmarianne', github_oauth_token: '3k0Tjf#kdlskbkjbkhvbiuviv') }
+RSpec.feature 'Display a users vcs token', js: true, type: :feature do
+  let!(:user) { create(:user, login: 'lisbethmarianne', vcs_oauth_token: '3k0Tjf#kdlskbkjbkhvbiuviv') }
 
-  scenario 'Display a users github token' do
+  scenario 'Display a users vcs token' do
     allow_any_instance_of(ROTP::TOTP).to receive(:verify).with('123456').and_return(true)
 
     visit "/users/#{user.id}"

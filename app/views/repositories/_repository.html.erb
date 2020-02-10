@@ -4,8 +4,15 @@
   <dl class="simple-info">
     <dt class="info-label">Name</dt>
     <dd>
-      <%= describe(@repository) %>
-      <%= link_to fa_icon("github"), "https://github.com/#{describe(@repository)}", target: "_blank" %>
+      <%= link_to describe(@repository), vcs_repo_url(@repository), target: '_blank' %>
+    </dd>
+
+    <dt class="info-label">VCS Type</dt>
+    <dd>
+      <%= @repository.vcs_type %>
+      (
+      <%= link_to @repository.slug, vcs_repo_url(@repository), target: '_blank' %>
+      )
     </dd>
 
     <dt class="info-label">Description</dt>
@@ -32,11 +39,14 @@
         <%= fa_icon("exclamation-triangle", title: "Warning") %> no admin
       <% end %>
     </dd>
-    <div class="gh-integration-container">
-      <dt class="info-label">GH Integration</dt>
+    <div class="vcs-integration-container">
+      <dt class="info-label">VCS ID</dt>
+      <dd><%= @repository.vcs_id %></dd>
+
+      <dt class="info-label">VCS Integration</dt>
       <dd class="inline">
         <% if @repository.managed_by_installation_at.present? %>
-          This repo uses a GitHub App Installation
+          This repo uses a VCS App Installation
         <% else %>
           This repo uses a Service Hook
           <div class="inline">

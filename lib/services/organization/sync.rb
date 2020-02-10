@@ -1,6 +1,8 @@
 module Services
   module Organization
     class Sync
+      include Travis::VCS
+
       attr_reader :organization
 
       def initialize(organization)
@@ -8,11 +10,7 @@ module Services
       end
 
       def call
-        ::Sidekiq::Client.push(
-          'queue' => 'sync',
-          'class' => 'Travis::GithubSync::Worker',
-          'args' => [:sync_org, { org_id: organization.id }, full: true]
-        )
+        vcs.post("/organizations/#{organization.id}/sync_data")
       end
     end
   end

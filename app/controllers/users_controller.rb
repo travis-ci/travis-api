@@ -22,9 +22,21 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def check_scopes
+    response = Services::User::CheckScopes.new(@user).call
+
+    if response.success?
+      flash[:notice] = "Scopes checked for #{@user.login}"
+    else
+      flash[:error] = 'Checking scopes failed.'
+    end
+
+    redirect_to @user
+  end
+
   def display_token
     if otp_valid?
-      flash[:warning] = "This page contains the user's GitHub token."
+      flash[:warning] = "This page contains the user's VCS token."
       cookies["display_token_#{@user.login}"] = {
         value: true,
         expires: 15.minutes.from_now,
@@ -123,7 +135,7 @@ class UsersController < ApplicationController
     response = Services::User::Sync.new(@user).call
 
     if response.success?
-      flash[:notice] = "Triggered sync with GitHub."
+      flash[:notice] = "Triggered sync with VCS."
       Services::AuditTrail::Sync.new(current_user, @user).call
     else
       flash[:error] = "Error: #{response.headers[:status]}"
@@ -148,7 +160,7 @@ class UsersController < ApplicationController
       logins << user.login
       SyncWorker.perform_async(user.id)
     end
-    flash[:notice] = "Triggered sync with GitHub for all users in the organization."
+    flash[:notice] = "Triggered sync with VCS for all users in the organization."
     Services::AuditTrail::Sync.new(current_user, logins).call
     redirect_to back_link
   end

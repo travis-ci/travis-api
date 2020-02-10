@@ -1,7 +1,7 @@
 <% if @repository.active? %>
-  <p><%= link_to describe(@repository), @repository %> is marked active in our database but the GitHub hook is disabled.</p>
+  <p><%= link_to describe(@repository), @repository %> is marked active in our database but the VCS hook is disabled.</p>
 <% else %>
-  <p><%= link_to describe(@repository), @repository %> is marked inactive in our database but the GitHub hook is enabled.</p>
+  <p><%= link_to describe(@repository), @repository %> is marked inactive in our database but the VCS hook is enabled.</p>
 <% end %>
 
 <p>What should we do about it?</p>

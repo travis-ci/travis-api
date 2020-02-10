@@ -4,7 +4,15 @@ module UsersHelper
   end
 
   def hidden(user, field)
-    truncate(user.public_send(field).to_s.gsub(/./, ?*), 30)
+    truncate(user.public_send(field).to_s.gsub(/./, '*'), 30)
+  end
+
+  def vcs_user_profile_url(user)
+    Travis::Providers.get(user.vcs_type).new(user).profile_link
+  end
+
+  def manage_repo_link_url(user)
+    Travis::Providers.get(user.vcs_type).new(user).manage_repo_link
   end
 
   private

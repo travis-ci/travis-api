@@ -2,7 +2,7 @@ require 'travis/api'
 
 module Services
   module User
-    class Sync
+    class CheckScopes
       include Travis::VCS
 
       attr_reader :user
@@ -12,8 +12,9 @@ module Services
       end
 
       def call
-        vcs.post("/users/#{user.id}/sync_data")
+        vcs.post("/users/#{user.id}/check_scopes")
       end
     end
   end
 end
+

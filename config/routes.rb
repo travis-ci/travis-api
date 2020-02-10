@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   resources :broadcasts, only: [:index, :create, :update]
 
+  # Backwards compability from admin v1
+  get '/build/:id' => 'builds#show'
   resources :builds, only: [:show] do
     member do
       post 'cancel'
@@ -24,6 +26,8 @@ Rails.application.routes.draw do
 
   get 'help', to: 'search#help'
 
+  # Backwards compability from admin v1
+  get '/job/:id' => 'jobs#show'
   resources :jobs, only: [:show] do
     member do
       post 'cancel'
@@ -55,6 +59,8 @@ Rails.application.routes.draw do
     end
   end
 
+  # Backwards compability from admin v1
+  get '/repository/:id' => 'repositories#show'
   resources :repositories, only: [:show] do
     member do
       post 'add_hook_event'
@@ -90,10 +96,13 @@ Rails.application.routes.draw do
 
   resources :subscriptions,  only: [:create, :update]
 
+  # Backwards compability from admin v1
+  get '/user/:id' => 'users#show'
   resources :users, only: [:show] do
     member do
       post 'boost'
       post 'display_token'
+      post 'check_scopes'
       post 'features'
       post 'hide_token'
       post 'reset_2fa'
@@ -138,8 +147,4 @@ Rails.application.routes.draw do
   get '/*owner/*repo', to: 'unknown#repository'
 
   get '/*other', to: 'unknown#canonical_route'
-
-  direct :github_config do |installation_id|
-    "https://github.com/apps/travis-ci/installations/new/permissions?suggested_target_id=#{installation_id}"
-  end
 end
