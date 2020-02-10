@@ -108,6 +108,7 @@ GEM
     allocation_tracer (0.6.3)
     amq-protocol (2.3.0)
     arel (6.0.4)
+    ast (2.4.0)
     atomic (1.1.99)
     avl_tree (1.1.3)
     axiom-types (0.1.1)
@@ -127,7 +128,6 @@ GEM
     coderay (1.1.1)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    colorize (0.7.3)
     composite_primary_keys (8.1.8)
       activerecord (~> 4.2.0)
     concurrent-ruby (1.1.5)
@@ -275,6 +275,8 @@ GEM
       google-cloud-trace (~> 0.31)
       opencensus (~> 0.3)
     os (1.0.0)
+    parser (2.7.0.2)
+      ast (~> 2.4.0)
     pg (0.21.0)
     proxies (0.2.1)
     pry (0.10.4)
@@ -302,6 +304,7 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    rainbow (1.99.2)
     raindrops (0.19.1)
     rake (0.9.6)
     rb-fsevent (0.9.8)
@@ -328,10 +331,6 @@ GEM
       rspec-core (~> 2.99.0)
       rspec-expectations (~> 2.99.0)
       rspec-mocks (~> 2.99.0)
-    rspec-bisect (0.1.3)
-      colorize (= 0.7.3)
-      rspec (> 2.12)
-      ruby-progressbar (= 1.6.1)
     rspec-core (2.99.2)
     rspec-expectations (2.99.2)
       diff-lcs (>= 1.1.3, < 2.0)
@@ -339,7 +338,6 @@ GEM
       rspec-core (>= 2.99.0.beta1)
       rspec-expectations (>= 2.99.0.beta1)
     rspec-mocks (2.99.4)
-    ruby-progressbar (1.6.1)
     ruby_dep (1.5.0)
     safe_yaml (1.0.5)
     sentry-raven (2.11.3)
@@ -381,6 +379,10 @@ GEM
     tilt (2.0.8)
     timecop (0.9.1)
     tool (0.2.3)
+    transpec (0.2.6)
+      parser (~> 2.0)
+      rainbow (~> 1.1)
+      rspec (~> 2.14)
     travis-rollout (0.0.2)
     trollop (2.1.2)
     tzinfo (1.2.6)
@@ -462,7 +464,6 @@ DEPENDENCIES
   rerun
   rollout (~> 1.1.0)
   rspec (= 2.99)
-  rspec-bisect
   rspec-its
   s3!
   sentry-raven
@@ -474,6 +475,7 @@ DEPENDENCIES
   stackprof
   timecop (~> 0.9.0)
   tool
+  transpec
   travis-amqp!
   travis-config!
   travis-lock!
