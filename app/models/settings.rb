@@ -10,6 +10,9 @@ class Settings
   attr_reader :attributes
 
   def initialize(settings)
+    if settings.is_a? String
+      settings = YAML.load(settings)
+    end
     settings.each do |setting_name, setting_value|
       settings[setting_name] = set_value(setting_name, setting_value)
     end

@@ -29,7 +29,11 @@ class Repository < ApplicationRecord
   end
 
   def settings
-    @settings ||= super || {}
+    sup = super
+    if sup.is_a? String
+      sup = YAML.load(super)
+    end
+    @settings ||= sup || {}
   end
 
   def has_custom_ssh_key?
