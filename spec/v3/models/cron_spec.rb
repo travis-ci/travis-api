@@ -71,13 +71,13 @@ describe Travis::API::V3::Models::Cron do
     context "and from: is not passed" do
       it "sets the next_run from now" do
         subject.schedule_next_build
-        subject.next_run.should be == DateTime.now + 1.day
+        expect(subject.next_run).to be_within(1.second).of DateTime.now + 1.day
       end
     end
     context "and from: is passed" do
       it "sets the next_run from from:" do
         subject.schedule_next_build(from: DateTime.now + 3.day)
-        subject.next_run.should be == DateTime.now + 4.day
+        expect(subject.next_run).to be_within(1.second).of DateTime.now + 4.day
       end
     end
 
@@ -97,12 +97,12 @@ describe Travis::API::V3::Models::Cron do
 
     it "set the last_run time to now" do
       subject.enqueue
-      subject.last_run.should be == DateTime.now.utc
+      expect(subject.last_run).to be_within(1.second).of DateTime.now.utc
     end
 
     it "schedules the next run" do
       subject.enqueue
-      subject.next_run.should be == DateTime.now.utc + 1.day
+      expect(subject.next_run).to be_within(1.second).of DateTime.now.utc + 1.day
     end
 
     context "when branch does not exist on github" do
