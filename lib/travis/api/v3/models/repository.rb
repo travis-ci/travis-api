@@ -38,8 +38,13 @@ module Travis::API::V3
     end
 
     def slug
-      @slug ||= "#{owner_name}/#{name}"
+      @slug ||= "#{owner_name}/#{name_from_url}"
     end
+
+    def name_from_url
+      return url.split('/')[1].gsub('.git', '') if vcs_type == 'BitbucketRepository' && url && url.split('/')[1]
+      name
+    end  
 
     def default_branch_name
       read_attribute(:default_branch)
