@@ -16,7 +16,7 @@ describe Travis::Services::UpdateHook do
   end
 
   it 'sets the given :active param to the hook' do
-    expect(service).to receive(:run_service).with(:github_set_hook, is_a(Hash))
+    expect(service).to receive(:run_service).with(:github_set_hook, instance_of(Hash))
     service.run
   end
 
