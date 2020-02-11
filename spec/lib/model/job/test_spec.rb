@@ -3,7 +3,7 @@ describe Job::Test do
   let(:log) { Travis::RemoteLog.new(job_id: job.id) }
 
   before :each do
-    Travis::Event.stubs(:dispatch)
+    allow(Travis::Event).to receive(:dispatch)
     remote = double('remote')
     allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
     allow(remote).to receive(:find_by_job_id).and_return(log)

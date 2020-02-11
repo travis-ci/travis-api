@@ -31,15 +31,15 @@ describe Build::States do
 
     describe 'reset' do
       before :each do
-        build.stubs(:write_attribute)
+        allow(build).to receive(:write_attribute)
       end
       it 'does not set the state to created if any jobs in the matrix are running' do
-        build.stubs(matrix: [double(state: :started)])
+        allow(build).to receive(:matrix).and_return([double(state: :started)])
         build.reset
         expect(build.state).not_to eq(:started)
       end
       it 'sets the state to created if none of the jobs in the matrix are running' do
-        build.stubs(matrix: [double(state: :passed)])
+        allow(build).to receive(:matrix).and_return([double(state: :passed)])
         build.reset
         expect(build.state).to eq(:created)
       end
@@ -132,7 +132,7 @@ describe Build::States do
 
       describe 'when the matrix is not finished' do
         before(:each) do
-          build.stubs(matrix_finished?: false)
+          allow(build).to receive(:matrix_finished?).and_return(false)
         end
 
         describe 'when the build is already finished' do
@@ -149,7 +149,9 @@ describe Build::States do
 
       describe 'when the matrix is finished' do
         before(:each) do
-          build.stubs(matrix_finished?: true, matrix_state: :passed, matrix_duration: 30)
+          allow(build).to receive(:matrix_finished?).and_return(true)
+          allow(build).to receive(:matrix_state).and_return(:passed)
+          allow(build).to receive(:matrix_duration).and_return(30)
         end
 
         describe 'when the build has not finished' do

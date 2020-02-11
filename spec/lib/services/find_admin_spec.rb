@@ -21,7 +21,7 @@ describe Travis::Services::FindAdmin do
     describe 'given a user does not have access to a repository' do
       before :each do
         allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => false })
-        user.stubs(:update_attributes!)
+        allow(user).to receive(:update_attributes!)
       end
 
       xit 'raises an exception' do
@@ -38,7 +38,7 @@ describe Travis::Services::FindAdmin do
       let(:error) { double('error', :backtrace => [], :response => double('response')) }
 
       before :each do
-        GH.stubs(:[]).with("repos/#{repository.slug}").raises(GH::Error.new(error))
+        allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_raise(GH::Error.new(error))
       end
 
       xit 'raises an exception' do
@@ -46,7 +46,7 @@ describe Travis::Services::FindAdmin do
       end
 
       it 'does not revoke permissions' do
-        user.expects(:update_permissions!).never
+        expect(user).not_to receive(:update_permissions!)
         ignore_exception { result }
       end
     end

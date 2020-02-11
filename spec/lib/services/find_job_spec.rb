@@ -20,7 +20,7 @@ describe Travis::Services::FindJob do
         allow(s).to receive(:column_names).and_return(%w(id config))
         allow(s).to receive(:includes).and_return(s)
         allow(s).to receive(:select).and_return(s)
-        s.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
+        allow(s).to receive(:find_by_id).and_raise(ActiveRecord::SubclassNotFound)
       end
       allow(service).to receive(:scope).and_return(find_by_id)
       expect { service.run }.to raise_error(ActiveRecord::RecordNotFound)

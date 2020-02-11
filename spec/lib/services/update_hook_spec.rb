@@ -5,8 +5,8 @@ describe Travis::Services::UpdateHook do
   let(:params)  { { id: repo.id, active: true } }
 
   before :each do
-    repo.stubs(:update_column)
-    service.stubs(:run_service)
+    allow(repo).to receive(:update_column)
+    allow(service).to receive(:run_service)
     allow(user).to receive(:service_hook).and_return(repo)
   end
 
@@ -73,7 +73,7 @@ describe Travis::Services::UpdateHook::Instrument do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    service.stubs(:run_service)
+    allow(service).to receive(:run_service)
     allow(user).to receive(:service_hook).and_return(repo)
     allow(repo).to receive(:update_column).and_return(true)
   end

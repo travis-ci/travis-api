@@ -296,7 +296,7 @@ describe Build do
       let(:build) { FactoryBot.create(:build, state: 'finished') }
 
       before :each do
-        build.matrix.each { |job| job.stubs(:reset) }
+        build.matrix.each { |job| allow(job).to receive(:reset) }
       end
 
       it 'sets the state to :created' do

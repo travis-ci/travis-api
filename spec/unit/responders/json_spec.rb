@@ -39,7 +39,7 @@ module Travis::Api::App::Responders
       let(:builder)       { double 'builder', data: { foo: 'bar' } }
       let(:builder_class) { double 'builder class', new: builder }
       before do
-        json.stubs :builder => builder_class
+        allow(json).to receive(:builder).and_return(builder_class)
       end
 
       it 'returns proper data converted to json' do

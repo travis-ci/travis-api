@@ -15,8 +15,8 @@ describe Travis::Github::Services::SetKey do
 
   before :each do
     allow(GH).to receive(:[]).and_return([])
-    GH.stubs(:post)
-    GH.stubs(:delete)
+    allow(GH).to receive(:post)
+    allow(GH).to receive(:delete)
     Travis::Notification.publishers.replace([publisher])
     allow_any_instance_of(Travis::Services::FindRepo).to receive(:run).and_return(repo)
   end

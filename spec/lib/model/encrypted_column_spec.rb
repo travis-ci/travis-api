@@ -31,7 +31,7 @@ class Travis::Model < ActiveRecord::Base
     end
 
     context 'when encryption is disabled' do
-      before { column.stubs :encrypt? => false }
+      before { allow(column).to receive(:encrypt?).and_return(false) }
 
       describe '#dump' do
         it 'does not encrypt data' do
@@ -50,10 +50,10 @@ class Travis::Model < ActiveRecord::Base
     end
 
     context 'when encryption is enabled' do
-      before { column.stubs :encrypt? => true }
+      before { allow(column).to receive(:encrypt?).and_return(true) }
 
       context 'when prefix usage is disabled' do
-        before { column.stubs :use_prefix? => false }
+        before { allow(column).to receive(:use_prefix?).and_return(false) }
 
         describe '#load' do
           it 'decrypts data even with no prefix' do
@@ -78,7 +78,7 @@ class Travis::Model < ActiveRecord::Base
 
         describe '#dump' do
           it 'attaches iv to encrypted string' do
-            column.stubs(:iv => iv)
+            allow(column).to receive(:iv).and_return(iv)
             expect(column).to receive(:create_aes).with(:encrypt, 'secret-key', iv).and_return(aes)
             expect(aes).to receive(:update).with('to-encrypt').and_return('encrypted')
 
@@ -88,7 +88,7 @@ class Travis::Model < ActiveRecord::Base
       end
 
       context 'when prefix usage is enabled' do
-        before { column.stubs :use_prefix? => true }
+        before { allow(column).to receive(:use_prefix?).and_return(true) }
 
         describe '#load' do
           it 'does not decrypt data if prefix is not used' do

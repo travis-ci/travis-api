@@ -95,7 +95,7 @@ describe Travis::Services::RemoveLog do
   context 'when a job is not found' do
     before :each do
       find_by_id = double
-      find_by_id.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
+      allow(find_by_id).to receive(:find_by_id).and_raise(ActiveRecord::SubclassNotFound)
       allow(service).to receive(:scope).and_return(find_by_id)
     end
 
@@ -117,7 +117,7 @@ describe Travis::Services::RemoveLog::Instrument do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    service.stubs(:run_service)
+    allow(service).to receive(:run_service)
     allow(user).to receive(:permission?).with(:push, anything).and_return true
     stub_request(
       :any, /#{URI(Travis.config.logs_api.url).hostname}/

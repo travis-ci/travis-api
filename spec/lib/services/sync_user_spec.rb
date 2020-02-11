@@ -6,7 +6,7 @@ describe Travis::Services::SyncUser do
 
   describe 'given the user is not currently syncing' do
     before :each do
-      user.stubs(:update_column)
+      allow(user).to receive(:update_column)
       allow(user).to receive(:syncing?).and_return(false)
     end
 
