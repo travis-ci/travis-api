@@ -94,7 +94,7 @@ describe Repository::Settings do
             max = MAX[status][type]
 
             before :each do
-              Travis::Features.stubs(:repository_active?).with(:custom_timeouts, 1).returns true if status == :on
+              allow(Travis::Features).to receive(:repository_active?).with(:custom_timeouts, 1).and_return true if status == :on
             end
 
             describe 'is valid' do

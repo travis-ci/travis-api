@@ -10,9 +10,9 @@ describe Travis::Services::UpdateJob do
   before :each do
     build.matrix.delete_all
     remote = double('remote')
-    Travis::RemoteLog::Remote.stubs(:new).returns(remote)
-    remote.stubs(:find_by_job_id).returns(log)
-    remote.stubs(:write_content_for_job_id).returns(log)
+    allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
+    allow(remote).to receive(:find_by_job_id).and_return(log)
+    allow(remote).to receive(:write_content_for_job_id).and_return(log)
   end
 
   describe '#cancel_job_in_worker' do
@@ -20,7 +20,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sends cancel event to the worker' do
       publisher = double('publisher')
-      service.stubs(:publisher).returns(publisher)
+      allow(service).to receive(:publisher).and_return(publisher)
 
       publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id, source: 'update_job_service')
 

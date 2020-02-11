@@ -3,8 +3,8 @@ describe Travis::Api::Serialize::V2::Http::Requests do
 
   let(:data) {
     request = stub_request
-    request.stubs(:build_id).returns(1)
-    request.stubs(:tag_name).returns(nil)
+    allow(request).to receive(:build_id).and_return(1)
+    allow(request).to receive(:tag_name).and_return(nil)
     described_class.new([request]).data
   }
 
@@ -51,8 +51,8 @@ describe Travis::Api::Serialize::V2::Http::Requests do
   context "without commits" do
     let(:data) {
       request = stub_request
-      request.stubs(:commit).returns(nil)
-      request.stubs(:build_id).returns(1)
+      allow(request).to receive(:commit).and_return(nil)
+      allow(request).to receive(:build_id).and_return(1)
       described_class.new([request]).data
     }
 

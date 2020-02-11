@@ -5,37 +5,37 @@ describe Repository::StatusImage do
   let(:repo)     { FactoryBot.create(:repository_without_last_build) }
 
   before do
-    described_class.any_instance.stubs(cache: cache)
-    described_class.any_instance.stubs(:cache_enabled? => true)
+    allow_any_instance_of(described_class).to receive(:cache).and_return(cache)
+    allow_any_instance_of(described_class).to receive(:cache_enabled?).and_return(true)
   end
 
   describe('with cache') do
     it 'tries to get state from cache first' do
       image = described_class.new(repo, 'foobar')
-      cache.expects(:fetch_state).with(repo.id, 'foobar').returns(:passed)
+      expect(cache).to receive(:fetch_state).with(repo.id, 'foobar').and_return(:passed)
 
       expect(image.result).to eq(:passing)
     end
 
     it 'saves state to the cache if it needs to be fetched from the db' do
       image = described_class.new(repo, 'master')
-      cache.expects(:fetch_state).with(repo.id, 'master').returns(nil)
-      cache.expects(:write).with(repo.id, 'master', build)
+      expect(cache).to receive(:fetch_state).with(repo.id, 'master').and_return(nil)
+      expect(cache).to receive(:write).with(repo.id, 'master', build)
 
       expect(image.result).to eq(:passing)
     end
 
     it 'saves state of the build to the cache with its branch even if branch is not given' do
       image = described_class.new(repo, nil)
-      cache.expects(:fetch_state).with(repo.id, nil).returns(nil)
-      cache.expects(:write).with(repo.id, 'master', build)
+      expect(cache).to receive(:fetch_state).with(repo.id, nil).and_return(nil)
+      expect(cache).to receive(:write).with(repo.id, 'master', build)
 
       expect(image.result).to eq(:passing)
     end
 
     it 'handles cache failures gracefully' do
       image = described_class.new(repo, nil)
-      cache.expects(:fetch_state).raises(Travis::StatesCache::CacheError)
+      expect(cache).to receive(:fetch_state).and_raise(Travis::StatesCache::CacheError)
       expect {
         expect(image.result).to eq(:passing)
       }.to_not raise_error

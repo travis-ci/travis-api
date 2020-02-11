@@ -30,20 +30,20 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
       private_job_id = private_job.id
       private_log = Travis::RemoteLog.new(content: 'private', job_id: private_job_id)
       remote = double('remote')
-      Travis::RemoteLog::Remote.stubs(:new).returns(remote)
-      remote.stubs(:find_by_job_id).with(private_job_id).returns(private_log)
+      allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
+      allow(remote).to receive(:find_by_job_id).with(private_job_id).and_return(private_log)
 
       public_job_id = public_job.id
       public_log = Travis::RemoteLog.new(content: 'public', job_id: public_job_id)
-      remote.stubs(:find_by_job_id).with(public_job_id).returns(public_log)
+      allow(remote).to receive(:find_by_job_id).with(public_job_id).and_return(public_log)
       # We expect to hit org as well as the migrated job references the public
       # job via its org_id.
       fallback_remote = double('fallback remote')
-      Travis::RemoteLog::Remote.stubs(:new).with(platform: :fallback).returns(fallback_remote)
-      fallback_remote.stubs(:find_by_job_id).with(public_job_id).returns(public_log)
+      allow(Travis::RemoteLog::Remote).to receive(:new).with(platform: :fallback).and_return(fallback_remote)
+      allow(fallback_remote).to receive(:find_by_job_id).with(public_job_id).and_return(public_log)
 
       restarted_public_migrated_log = Travis::RemoteLog.new(content: 'public restarted', job_id: public_migrated_job.id)
-      remote.stubs(:find_by_job_id).with(public_migrated_job.id).returns(restarted_public_migrated_log)
+      allow(remote).to receive(:find_by_job_id).with(public_migrated_job.id).and_return(restarted_public_migrated_log)
     end
 
     describe 'private mode, .com' do

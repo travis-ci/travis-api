@@ -5,12 +5,12 @@ describe Travis::Services::FindAdmin do
     let(:result) { described_class.new(nil, repository: repository).run }
 
     before :each do
-      User.stubs(:with_permissions).with(:repository_id => repository.id, :admin => true).returns [user]
+      allow(User).to receive(:with_permissions).with(:repository_id => repository.id, :admin => true).and_return [user]
     end
 
     describe 'given a user has admin access to a repository (as seen by github)' do
       before :each do
-        GH.stubs(:[]).with("repos/#{repository.slug}").returns('permissions' => { 'admin' => true })
+        allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => true })
       end
 
       it 'returns that user' do
@@ -20,7 +20,7 @@ describe Travis::Services::FindAdmin do
 
     describe 'given a user does not have access to a repository' do
       before :each do
-        GH.stubs(:[]).with("repos/#{repository.slug}").returns('permissions' => { 'admin' => false })
+        allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => false })
         user.stubs(:update_attributes!)
       end
 
@@ -73,8 +73,8 @@ describe Travis::Services::FindAdmin::Instrument do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    User.stubs(:with_permissions).with(repository_id: repository.id, admin: true).returns [user]
-    GH.stubs(:[]).with("repos/#{repository.slug}").returns('permissions' => { 'admin' => true })
+    allow(User).to receive(:with_permissions).with(repository_id: repository.id, admin: true).and_return [user]
+    allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => true })
     service.run
   end
 

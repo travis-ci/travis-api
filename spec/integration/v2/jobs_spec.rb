@@ -50,8 +50,8 @@ describe 'Jobs', set_app: true do
         remote = double('remote')
         remote_log = double('remote log')
         remote_log.expects(:archived?).returns(true)
-        remote_log.stubs(:removed_at).returns(nil)
-        remote.stubs(:find_by_job_id).returns(remote_log)
+        allow(remote_log).to receive(:removed_at).and_return(nil)
+        allow(remote).to receive(:find_by_job_id).and_return(remote_log)
         remote_log.expects(:archived_url).returns("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
         Travis::RemoteLog::Remote.expects(:new).returns(remote)
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
@@ -102,7 +102,7 @@ describe 'Jobs', set_app: true do
               archive_verified: true
             )
           )
-        Travis::RemoteLog.any_instance.stubs(:archived_url).returns(
+        allow_any_instance_of(Travis::RemoteLog).to receive(:archived_url).and_return(
           "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
         )
         response = get(
@@ -174,7 +174,7 @@ describe 'Jobs', set_app: true do
     context 'when user has push permission' do
       context 'when job is not finished' do
         before :each do
-          job.stubs(:finished?).returns false
+          allow(job).to receive(:finished?).and_return false
           user.permissions.create!(
             repository_id: job.repository.id, push: true
           )

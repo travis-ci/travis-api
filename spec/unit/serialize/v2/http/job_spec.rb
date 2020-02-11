@@ -22,7 +22,7 @@ describe Travis::Api::Serialize::V2::Http::Job do
 
   describe 'with a tag' do
     before do
-      test.commit.stubs(tag_name: 'v1.0.0')
+      allow(test.commit).to receive(:tag_name).and_return('v1.0.0')
     end
 
     it 'includes the tag name to commit' do
@@ -42,7 +42,7 @@ describe Travis::Api::Serialize::V2::Http::Job do
 
   describe 'with a tag' do
     before do
-      test.commit.stubs(tag_name: 'v1.0.0')
+      allow(test.commit).to receive(:tag_name).and_return('v1.0.0')
     end
 
     it 'includes the tag name to commit' do

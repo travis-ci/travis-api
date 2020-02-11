@@ -10,7 +10,7 @@ describe Travis::Api::App::Extensions::Scoping do
       get('/pass_me') { 'second' }
     end
 
-    User.stubs(:find).with(user.id).returns(user)
+    allow(User).to receive(:find).with(user.id).and_return(user)
   end
 
   def with_scopes(url, *scopes)

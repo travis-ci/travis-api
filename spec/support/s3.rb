@@ -14,7 +14,7 @@ module Support
       attr_reader :buckets
       def initialize(bucket)
         @buckets = [bucket]
-        @buckets.stubs(:find).returns(bucket)
+        allow(@buckets).to receive(:find).and_return(bucket)
       end
     end
 
@@ -39,7 +39,7 @@ module Support
     extend ActiveSupport::Concern
 
     included do
-      before(:each)    { ::S3::Service.stubs(:new).returns(s3_service) }
+      before(:each)    { allow(::S3::Service).to receive(:new).and_return(s3_service) }
       let(:s3_service) { FakeService.new(s3_bucket) }
       let(:s3_bucket)  { FakeBucket.new(s3_objects) }
       let(:s3_objects) { [] }

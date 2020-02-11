@@ -47,8 +47,8 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   end
 
   before do
-    Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true)
-    Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true)
+    allow_any_instance_of(Travis::API::V3::AccessControl::LegacyToken).to receive(:visible?).and_return(true)
+    allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:delete_log?).and_return(true)
     stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
       to_return(:status => 200, :body => xml_content, :headers => {})
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/?prefix=jobs/#{job.id}/log.txt").

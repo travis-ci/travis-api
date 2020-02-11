@@ -17,12 +17,12 @@ describe Travis::Services::FindJob do
 
     it 'raises RecordNotFound if a SubclassNotFound error is raised during find' do
       find_by_id = double.tap do |s|
-        s.stubs(:column_names).returns(%w(id config))
-        s.stubs(:includes).returns(s)
-        s.stubs(:select).returns(s)
+        allow(s).to receive(:column_names).and_return(%w(id config))
+        allow(s).to receive(:includes).and_return(s)
+        allow(s).to receive(:select).and_return(s)
         s.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
       end
-      service.stubs(:scope).returns(find_by_id)
+      allow(service).to receive(:scope).and_return(find_by_id)
       expect { service.run }.to raise_error(ActiveRecord::RecordNotFound)
     end
 

@@ -19,8 +19,8 @@ describe 'Job::Queue' do
     ]
     Job::Queue.instance_variable_set(:@queues, nil)
     Job::Queue.instance_variable_set(:@default, nil)
-    Travis::Features.stubs(:owner_active?).returns(true)
-    Travis::Github::Education.stubs(:education_queue?).returns(false)
+    allow(Travis::Features).to receive(:owner_active?).and_return(true)
+    allow(Travis::Github::Education).to receive(:education_queue?).and_return(false)
   end
 
   after do
@@ -79,14 +79,14 @@ describe 'Job::Queue' do
     end
 
     it 'returns the docker queue by default for educational repositories' do
-      Travis::Github::Education.stubs(:education_queue?).returns(true)
+      allow(Travis::Github::Education).to receive(:education_queue?).and_return(true)
       owner = double('owner', :education => true)
       job = double('job', :config => { }, :repository => double('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => the_past))
       expect(Job::Queue.for(job).name).to eq('builds.docker')
     end
 
     it 'returns the queue matching configuration for educational repository' do
-      Travis::Github::Education.stubs(:education_queue?).returns(true)
+      allow(Travis::Github::Education).to receive(:education_queue?).and_return(true)
       owner = double('owner', :education => true)
       job = double('job', :config => { :os => 'osx' }, :repository => double('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => the_past))
       expect(Job::Queue.for(job).name).to eq('builds.mac_osx')
@@ -123,8 +123,8 @@ describe 'Job::Queue' do
 
     context 'when "docker_default_queue" feature is active' do
       before do
-        Travis::Features.stubs(:feature_active?).with(:docker_default_queue).returns(true)
-        Travis::Features.stubs(:feature_active?).with(:education).returns(true)
+        allow(Travis::Features).to receive(:feature_active?).with(:docker_default_queue).and_return(true)
+        allow(Travis::Features).to receive(:feature_active?).with(:education).and_return(true)
       end
 
       it 'returns "builds.docker" when sudo: nil and the repo created_at is nil' do

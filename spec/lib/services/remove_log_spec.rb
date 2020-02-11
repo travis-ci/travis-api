@@ -7,8 +7,8 @@ describe Travis::Services::RemoveLog do
 
   context 'when job is not finished' do
     before :each do
-      job.stubs(:finished?).returns false
-      user.stubs(:permission?).with(:push, anything).returns true
+      allow(job).to receive(:finished?).and_return false
+      allow(user).to receive(:permission?).with(:push, anything).and_return true
       stub_request(
         :any, /#{URI(Travis.config.logs_api.url).hostname}/
       ).to_return(status: 200, body: JSON.dump(content: '', job_id: job.id))
@@ -23,7 +23,7 @@ describe Travis::Services::RemoveLog do
 
   context 'when user does not have push permissions' do
     before :each do
-      user.stubs(:permission?).with(:push, anything).returns false
+      allow(user).to receive(:permission?).with(:push, anything).and_return false
       stub_request(
         :any, /#{URI(Travis.config.logs_api.url).hostname}/
       ).to_return(status: 200, body: JSON.dump(content: '', job_id: job.id))
@@ -39,10 +39,10 @@ describe Travis::Services::RemoveLog do
   context 'when a job is found' do
     before do
       find_by_id = double
-      find_by_id.stubs(:find_by_id).returns job
-      job.stubs(:finished?).returns true
-      service.stubs(:scope).returns find_by_id
-      user.stubs(:permission?).with(:push, anything).returns true
+      allow(find_by_id).to receive(:find_by_id).and_return job
+      allow(job).to receive(:finished?).and_return true
+      allow(service).to receive(:scope).and_return find_by_id
+      allow(user).to receive(:permission?).with(:push, anything).and_return true
       stub_request(
         :get,
         "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api"
@@ -96,7 +96,7 @@ describe Travis::Services::RemoveLog do
     before :each do
       find_by_id = double
       find_by_id.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
-      service.stubs(:scope).returns(find_by_id)
+      allow(service).to receive(:scope).and_return(find_by_id)
     end
 
     it 'raises ActiveRecord::RecordNotFound exception' do
@@ -118,7 +118,7 @@ describe Travis::Services::RemoveLog::Instrument do
   before :each do
     Travis::Notification.publishers.replace([publisher])
     service.stubs(:run_service)
-    user.stubs(:permission?).with(:push, anything).returns true
+    allow(user).to receive(:permission?).with(:push, anything).and_return true
     stub_request(
       :any, /#{URI(Travis.config.logs_api.url).hostname}/
     ).to_return(status: 200, body: JSON.dump(content: '', job_id: job.id))

@@ -141,7 +141,7 @@ describe Travis::RemoteLog do
   end
 
   it 'can serialize chunked via #to_json' do
-    subject.stubs(:parts).returns([
+    allow(subject).to receive(:parts).and_return([
       Travis::RemoteLogPart.new(
         number: 8, content: 'whats that', final: false
       ),
@@ -171,15 +171,15 @@ describe Travis::RemoteLog do
   it 'can serialize removed logs via #to_json' do
     user_id = 8
     user = double('user')
-    user.stubs(:name).returns('Twizzler HotDog')
-    user.stubs(:id).returns(user_id)
+    allow(user).to receive(:name).and_return('Twizzler HotDog')
+    allow(user).to receive(:id).and_return(user_id)
 
     now = double('now')
-    now.stubs(:utc).returns(now)
-    now.stubs(:to_s).returns('whenebber')
-    Time.stubs(:now).returns(now)
+    allow(now).to receive(:utc).and_return(now)
+    allow(now).to receive(:to_s).and_return('whenebber')
+    allow(Time).to receive(:now).and_return(now)
 
-    subject.stubs(:removed_by).returns(user)
+    allow(subject).to receive(:removed_by).and_return(user)
     subject.removed_at = now
     subject.removed_by_id = user_id
 
@@ -207,7 +207,7 @@ describe Travis::RemoteLog do
     user.expects(:id).returns(user_id)
     now = double('now')
     now.expects(:utc).returns('sometime')
-    Time.stubs(:now).returns(now)
+    allow(Time).to receive(:now).and_return(now)
 
     expect(subject.clear!(user)).to eq(content)
   end
@@ -336,21 +336,21 @@ describe Travis::RemoteLog::ArchiveClient do
 
   before do
     subject.instance_variable_set(:@s3, s3)
-    s3.stubs(:directories).returns(s3)
+    allow(s3).to receive(:directories).and_return(s3)
     s3.stubs(:get)
       .with('fluffernutter-pretzel-pie', prefix: 'jobs/9/log.txt')
       .returns(s3)
-    s3.stubs(:files).returns([s3])
+    allow(s3).to receive(:files).and_return([s3])
   end
 
   it 'fetches public archived URLs' do
-    s3.stubs(:public?).returns(true)
-    s3.stubs(:public_url).returns('https://wowneat.example.com/flah')
+    allow(s3).to receive(:public?).and_return(true)
+    allow(s3).to receive(:public_url).and_return('https://wowneat.example.com/flah')
     expect(subject.fetch_archived_url(9)).to eq 'https://wowneat.example.com/flah'
   end
 
   it 'fetches private archived URLs' do
-    s3.stubs(:public?).returns(false)
+    allow(s3).to receive(:public?).and_return(false)
     s3.stubs(:url).with(8001)
       .returns('https://whoabud.example.com/flah?sig=ya&exp=nah')
     expect(subject.fetch_archived_url(9, expires: 8001))

@@ -56,7 +56,7 @@ describe Travis::Api::Serialize::V2::Http::Build do
 
   describe 'with a tag' do
     before do
-      build.commit.stubs(tag_name: 'v1.0.0')
+      allow(test.commit).to receive(:tag_name).and_return('v1.0.0')
     end
 
     it 'includes the tag name to commit' do
@@ -66,7 +66,7 @@ describe Travis::Api::Serialize::V2::Http::Build do
 
   describe 'with a tag' do
     before do
-      build.commit.stubs(tag_name: 'v1.0.0')
+      allow(test.commit).to receive(:tag_name).and_return('v1.0.0')
     end
 
     it 'includes the tag name to commit' do
@@ -85,7 +85,7 @@ describe Travis::Api::Serialize::V2::Http::Build do
   end
 
   context 'without logs' do
-    before { build.matrix.first.stubs(:log).returns(nil) }
+    allow(before { build.matrix.first).to receive(:log).and_return(nil) }
 
     it 'returns null log_id' do
       expect(data['log_id']).to be_nil

@@ -3,9 +3,9 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
   let(:access_token) { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
 
   before do
-    User.stubs(:find_by_github_id).returns(user)
-    User.stubs(:find).returns(user)
-    user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
+    allow(User).to receive(:find_by_github_id).and_return(user)
+    allow(User).to receive(:find).and_return(user)
+    allow(user).to receive(:github_scopes).and_return(['public_repo', 'user:email'])
   end
 
   it 'needs to be authenticated' do
@@ -35,7 +35,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
   context 'when responding to POST for /users/sync' do
     context 'when sync is in progress' do
       before :each do
-        user.stubs(:syncing?).returns(true)
+        allow(user).to receive(:syncing?).and_return(true)
       end
 
       it 'returns 409' do

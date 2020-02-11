@@ -8,9 +8,9 @@ describe Travis::Api::App::Endpoint::Authorization do
       end
     end
 
-    user.stubs(:github_id).returns(42)
-    User.stubs(:find_github_id).returns(user)
-    User.stubs(:find).returns(user)
+    allow(user).to receive(:github_id).and_return(42)
+    allow(User).to receive(:find_github_id).and_return(user)
+    allow(User).to receive(:find).and_return(user)
 
     @original_config = Travis.config.oauth2
     Travis.config.oauth2 = {
@@ -156,10 +156,10 @@ describe Travis::Api::App::Endpoint::Authorization do
   describe 'POST /auth/github' do
     before do
       data = { 'id' => user.github_id, 'name' => user.name, 'login' => user.login, 'gravatar_id' => user.gravatar_id }
-      GH.stubs(:with).with(token: 'private repos', client_id: nil).returns double(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'}, :to_hash => data)
-      GH.stubs(:with).with(token: 'public repos', client_id: nil).returns  double(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'}, :to_hash => data)
-      GH.stubs(:with).with(token: 'no repos', client_id: nil).returns      double(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'}, :to_hash => data)
-      GH.stubs(:with).with(token: 'invalid token', client_id: nil).raises(Faraday::Error::ClientError, 'CLIENT ERROR!')
+      allow(GH).to receive(:with).with(token: 'private repos', client_id: nil).and_return double(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'}, :to_hash => data)
+      allow(GH).to receive(:with).with(token: 'public repos', client_id: nil).and_return  double(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'}, :to_hash => data)
+      allow(GH).to receive(:with).with(token: 'no repos', client_id: nil).and_return      double(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'}, :to_hash => data)
+      allow(GH).to receve(:with).with(token: 'invalid token', client_id: nil).and_raise(Faraday::Error::ClientError)
     end
 
     def get_token(github_token)
@@ -196,14 +196,14 @@ describe Travis::Api::App::Endpoint::Authorization do
     end
 
     it "errors if no token is given" do
-      User.stubs(:find_by_github_id).with(111).returns(user)
+      allow(User).to receive(:find_by_github_id).with(111).and_return(user)
       expect(post("/auth/github")).not_to be_ok
       expect(last_response.status).to eq(422)
       expect(body).not_to include("access_token")
     end
 
     it "errors if github throws an error" do
-      GH.stubs(:with).raises(GH::Error)
+      allow(GH).to receive(:with).and_raise(GH::Error)
       expect(post("/auth/github", github_token: 'foo bar')).not_to be_ok
       expect(last_response.status).to eq(403)
       expect(body).not_to include("access_token")

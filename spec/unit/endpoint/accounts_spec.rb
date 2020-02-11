@@ -3,10 +3,10 @@ describe Travis::Api::App::Endpoint::Accounts, set_app: true do
   let(:access_token) { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
 
   before do
-    User.stubs(:find_by_github_id).returns(user)
-    User.stubs(:find).returns(user)
-    Travis::Services::FindUserAccounts.any_instance.stubs(:owners_with_counts).returns([{ 'owner_id' => user.id, 'owner_type' => 'User', 'repos_count' => 1}])
-    user.stubs(:attributes).returns(:id => user.id, :login => user.login, :name => user.name)
+    allow(User).to receive(:find_by_github_id).and_return(user)
+    allow(User).to receive(:find).and_return(user)
+    allow_any_instance_of(Travis::Services::FindUserAccounts).to receive(:owners_with_counts).and_return([{ 'owner_id' => user.id, 'owner_type' => 'User', 'repos_count' => 1}])
+    allow(user).to receive(:attributes).and_return(:id => user.id, :login => user.login, :name => user.name)
 
   end
 

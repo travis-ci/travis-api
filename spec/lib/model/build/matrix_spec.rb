@@ -141,14 +141,14 @@ describe Build, 'matrix' do
 
     context 'if the matrix is finished' do
       it 'returns the sum of the matrix job durations' do
-        build.stubs(:matrix_finished?).returns(true)
+        allow(build).to receive(:matrix_finished?).and_return(true)
         expect(build.matrix_duration).to eq(30)
       end
     end
 
     context 'if the matrix is not finished' do
       it 'returns nil' do
-        build.stubs(:matrix_finished?).returns(false)
+        allow(build).to receive(:matrix_finished?).and_return(false)
         expect(build.matrix_duration).to be_nil
       end
     end
@@ -720,7 +720,7 @@ describe Build, 'matrix' do
 
     context 'the feature is active' do
       it 'expands on :os' do
-        repository.stubs(:multi_os_enabled?).returns(true)
+        allow(repository).to receive(:multi_os_enabled?).and_return(true)
         build = FactoryBot.create(:build, config: matrix_with_os_ruby, repository: repository)
 
         expect(build.matrix.map(&:config)).to eq([
@@ -734,7 +734,7 @@ describe Build, 'matrix' do
 
     context 'the feature is inactive' do
       it 'does not expand on :os' do
-        repository.stubs(:multi_os_enabled?).returns(false)
+        allow(repository).to receive(:multi_os_enabled?).and_return(false)
         build = FactoryBot.create(:build, config: matrix_with_os_ruby, repository: repository)
 
         expect(build.matrix.map(&:config)).to eq([
@@ -765,7 +765,7 @@ describe Build, 'matrix' do
     let(:build)      { FactoryBot.create(:build, repository: repository, config: matrix_with_includes_os_ruby) }
 
     it 'expands on :os if the feature is active' do
-      repository.stubs(:multi_os_enabled?).returns(true)
+      allow(repository).to receive(:multi_os_enabled?).and_return(true)
       expect(build.matrix.map(&:config)).to eq([
         { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'gcc' },
         { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'clang' },
@@ -775,7 +775,7 @@ describe Build, 'matrix' do
     end
 
     it 'ignores the os key if the feature is inactive' do
-      repository.stubs(:multi_os_enabled?).returns(false)
+      allow(repository).to receive(:multi_os_enabled?).and_return(false)
       expect(build.matrix.map(&:config)).to eq([
         { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'gcc' },
         { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'clang' }
@@ -804,7 +804,7 @@ describe Build, 'matrix' do
 
     context 'the feature is active' do
       it 'expands on :dist and :group' do
-        repository.stubs(:dist_group_expansion_enabled?).returns(true)
+        allow(repository).to receive(:dist_group_expansion_enabled?).and_return(true)
         build = FactoryBot.create(:build, repository: repository, config: matrix_with_dist_and_group_ruby)
 
         expect(build.matrix.map(&:config)).to eq([
@@ -822,7 +822,7 @@ describe Build, 'matrix' do
 
     context 'the feature is inactive' do
       it 'does not expand on :dist or :group' do
-        Build.any_instance.stubs(:dist_group_expansion_enabled?).returns(false)
+        allow_any_instance_of(Build).to receive(:dist_group_expansion_enabled?).and_return(false)
         build = FactoryBot.create(:build, config: matrix_with_dist_and_group_ruby)
 
         expect(build.matrix.map(&:config)).to eq([

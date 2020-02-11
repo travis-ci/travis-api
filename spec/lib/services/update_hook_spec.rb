@@ -7,7 +7,7 @@ describe Travis::Services::UpdateHook do
   before :each do
     repo.stubs(:update_column)
     service.stubs(:run_service)
-    user.stubs(:service_hook).returns(repo)
+    allow(user).to receive(:service_hook).and_return(repo)
   end
 
   it 'finds the repo by the given params' do
@@ -74,8 +74,8 @@ describe Travis::Services::UpdateHook::Instrument do
   before :each do
     Travis::Notification.publishers.replace([publisher])
     service.stubs(:run_service)
-    user.stubs(:service_hook).returns(repo)
-    repo.stubs(:update_column).returns(true)
+    allow(user).to receive(:service_hook).and_return(repo)
+    allow(repo).to receive(:update_column).and_return(true)
   end
 
   it 'publishes a event' do

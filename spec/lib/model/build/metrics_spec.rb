@@ -25,7 +25,7 @@ describe Build::Metrics do
   let(:timer) { double('meter', :update) }
 
   before :each do
-    Metriks.stubs(:timer).returns(timer)
+    allow(Metriks).to receive(:timer).and_return(timer)
   end
 
   it 'measures on "travis.builds.start.delay"' do

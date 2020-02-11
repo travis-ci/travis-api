@@ -91,7 +91,7 @@ describe Travis::API::V3::Models::Cron do
 
   describe "enqueue" do
     it "enqueues the cron" do
-      Sidekiq::Client.any_instance.expects(:push).once
+      expect_any_instance_of(Sidekiq::Client).to receive(:push).once
       subject.enqueue
     end
 
@@ -164,7 +164,7 @@ describe Travis::API::V3::Models::Cron do
   context "when repo ownership is transferred" do
     it "enqueues a cron for the repo with the new owner" do
       subject.branch.repository.update_attribute(:owner, FactoryBot.create(:user, name: "Yoda", login: "yoda", email: "yoda@yoda.com"))
-      Sidekiq::Client.any_instance.expects(:push).once
+      expect_any_instance_of(Sidekiq::Client).to receive(:push).once
       subject.enqueue
     end
   end

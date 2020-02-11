@@ -12,7 +12,7 @@ describe Travis::Api::App::Middleware::ScopeCheck do
       get('/token') { env['travis.access_token'].to_s }
     end
 
-    User.stubs(:find).with(user.id).returns(user)
+    allow(User).to receive(:find).with(user.id).and_return(user)
   end
 
   it 'lets through requests without a token' do
@@ -44,8 +44,8 @@ describe Travis::Api::App::Middleware::ScopeCheck do
     let(:token) { travis_token.token }
 
     before do
-      Token.stubs(:find_by_token).with(travis_token.token).returns(travis_token)
-      Token.stubs(:find_by_token).with("invalid").returns(nil)
+      allow(Token).to receive(:find_by_token).with(travis_token.token).and_return(travis_token)
+      allow(Token).to receive(:find_by_token).with("invalid").and_return(nil)
     end
 
     it 'accepts a valid travis token' do

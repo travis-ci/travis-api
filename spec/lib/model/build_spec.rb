@@ -16,8 +16,8 @@ describe Build do
 
   it 'is cancelable if at least one job is cancelable' do
     jobs = [FactoryBot.build(:test), FactoryBot.build(:test)]
-    jobs.first.stubs(:cancelable?).returns(true)
-    jobs.second.stubs(:cancelable?).returns(false)
+    allow(jobs.first).to receive(:cancelable?).and_return(true)
+    allow(jobs.second).to receive(:cancelable?).and_return(false)
 
     build = FactoryBot.build(:build, matrix: jobs)
     expect(build).to be_cancelable
@@ -25,8 +25,8 @@ describe Build do
 
   it 'is not cancelable if none of the jobs are cancelable' do
     jobs = [FactoryBot.build(:test), FactoryBot.build(:test)]
-    jobs.first.stubs(:cancelable?).returns(false)
-    jobs.second.stubs(:cancelable?).returns(false)
+    allow(jobs.first).to receive(:cancelable?).and_return(false)
+    allow(jobs.second).to receive(:cancelable?).and_return(false)
 
     build = FactoryBot.build(:build, matrix: jobs)
     expect(build).not_to be_cancelable
@@ -35,21 +35,21 @@ describe Build do
   describe '#secure_env_enabled?' do
     it 'returns true if we\'re not dealing with pull request' do
       build = FactoryBot.build(:build)
-      build.stubs(:pull_request?).returns(false)
+      allow(build).to receive(:pull_request?).and_return(false)
       expect(build.secure_env_enabled?).to be true
     end
 
     it 'returns true if pull request is from the same repository' do
       build = FactoryBot.build(:build)
-      build.stubs(:pull_request?).returns(true)
-      build.stubs(:same_repo_pull_request?).returns(true)
+      allow(build).to receive(:pull_request?).and_return(true)
+      allow(build).to receive(:same_repo_pull_request?).and_return(true)
       expect(build.secure_env_enabled?).to be true
     end
 
     it 'returns false if pull request is not from the same repository' do
       build = FactoryBot.build(:build)
-      build.stubs(:pull_request?).returns(true)
-      build.stubs(:same_repo_pull_request?).returns(false)
+      allow(build).to receive(:pull_request?).and_return(true)
+      allow(build).to receive(:same_repo_pull_request?).and_return(false)
       expect(build.secure_env_enabled?).to be false
     end
   end
@@ -94,7 +94,7 @@ describe Build do
     describe 'older_than' do
       before do
         5.times { |i| FactoryBot.create(:build, number: i) }
-        Build.stubs(:per_page).returns(2)
+        allow(Build).to receive(:per_page).and_return(2)
       end
 
       context "when a Build is passed in" do
@@ -133,14 +133,14 @@ describe Build do
     describe 'paged' do
       it 'limits the results to the `per_page` value' do
         3.times { FactoryBot.create(:build) }
-        Build.stubs(:per_page).returns(1)
+        allow(Build).to receive(:per_page).and_return(1)
 
         expect(Build.descending.paged({}).size).to eq(1)
       end
 
       it 'uses an offset' do
         3.times { |i| FactoryBot.create(:build) }
-        Build.stubs(:per_page).returns(1)
+        allow(Build).to receive(:per_page).and_return(1)
 
         builds = Build.descending.paged({page: 2})
         expect(builds.size).to eq(1)

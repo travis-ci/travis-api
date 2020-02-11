@@ -31,7 +31,7 @@ describe 'Exception', set_app: true do
       Travis.testing = false
 
       error = TestError.new('a test error')
-      Travis::Api::App::Endpoint::Repos.any_instance.stubs(:service).raises(error)
+      allow_any_instance_of(Travis::Api::App::Endpoint::Repos).to receive(:service).and_raise(error)
       res = get '/repos/1', nil, 'HTTP_X_REQUEST_ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975'
     rescue TestError => e
       expect(e.message).to eq('a test error')
@@ -42,7 +42,7 @@ describe 'Exception', set_app: true do
 
   it 'enqueues error into a thread' do
     error = TestError.new('Konstantin broke all the thingz!')
-    Travis::Api::App::Endpoint::Repos.any_instance.stubs(:service).raises(error)
+    allow_any_instance_of(Travis::Api::App::Endpoint::Repos).to receive(:service).and_raise(error)
     Raven.expects(:send_event).with do |event|
       event['logentry']['message'] == "#{error.class}: #{error.message}"
     end
@@ -61,7 +61,7 @@ describe 'Exception', set_app: true do
 
   it 'returns request_id in body' do
     error = TestError.new('Konstantin broke all the thingz!')
-    Travis::Api::App::Endpoint::Repos.any_instance.stubs(:service).raises(error)
+    allow_any_instance_of(Travis::Api::App::Endpoint::Repos).to receive(:service).and_raise(error)
     Raven.stubs(:send_event)
     res = get '/repos/1', nil, 'HTTP_X_REQUEST_ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975'
     expect(res.status).to eq(500)

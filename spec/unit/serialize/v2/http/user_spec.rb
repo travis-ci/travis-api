@@ -23,7 +23,7 @@ describe Travis::Api::Serialize::V2::Http::User do
   }
 
   before do
-    user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
+    allow(user).to receive(:github_scopes).and_return(['public_repo', 'user:email'])
   end
 
   it 'user' do

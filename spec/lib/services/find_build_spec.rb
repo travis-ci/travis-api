@@ -44,7 +44,7 @@ describe Travis::Services::FindBuild do
 
   describe 'without updated_at in one of the resources' do
     it 'returns updated_at of newest result' do
-      Build.any_instance.stubs(updated_at: nil)
+      allow_any_instance_of(Build).to receive(:updated_at).and_return(nil)
       expect {
         service.updated_at
       }.to_not raise_error

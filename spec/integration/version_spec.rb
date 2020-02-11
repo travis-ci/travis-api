@@ -10,8 +10,7 @@ describe 'App' do
   it 'uses version from current accept header' do
     Travis::Api::Serialize.expects(:builder).with { |r, options| options[:version] == 'v1' }
 
-    Travis::Api::App::Responders::Json.any_instance.stubs(:apply?).
-        returns(false).then.returns(true)
+    allow_any_instance_of(Travis::Api::App::Responders::Json).to receive(:apply?).and_return(false)
 
     response = get '/foo', {}, 'HTTP_ACCEPT' => 'application/json; version=2, application/json; version=1'
     expect(response.content_type).to eq('application/json;charset=utf-8')

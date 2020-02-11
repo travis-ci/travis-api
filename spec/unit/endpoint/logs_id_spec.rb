@@ -24,16 +24,16 @@ describe Travis::Api::App::Endpoint::Logs, set_app: true do
     let(:public_job)  { public_build.matrix.first }
 
     before do
-      remote = stubs('remote')
-      Travis::RemoteLog::Remote.stubs(:new).returns(remote)
+      remote = double('remote')
+      allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
 
       private_job_id = private_job.id
       private_log = Travis::RemoteLog.new(content: 'private', job_id: private_job_id, id: 1)
-      remote.stubs(:find_by_id).with(1).returns(private_log)
+      allow(remote).to receive(:find_by_id).with(1).and_return(private_log)
 
       public_job_id = public_job.id
       public_log = Travis::RemoteLog.new(content: 'public', job_id: public_job_id, id: 2)
-      remote.stubs(:find_by_id).with(2).returns(public_log)
+      allow(remote).to receive(:find_by_id).with(2).and_return(public_log)
     end
 
     describe 'private mode, .com' do

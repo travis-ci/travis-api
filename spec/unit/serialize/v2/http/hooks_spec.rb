@@ -3,7 +3,7 @@ describe Travis::Api::Serialize::V2::Http::Hooks do
 
   let(:data) {
     r = repository
-    r.stubs(:admin?).returns(true)
+    allow(r).to receive(:admin?).and_return(true)
     described_class.new([r]).data
   }
 

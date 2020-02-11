@@ -3,8 +3,8 @@ describe Travis::Api::Serialize::V2::Http::Request do
 
   let(:data) {
     request = stub_request
-    request.stubs(:builds).returns([build])
-    request.stubs(:tag_name).returns(nil)
+    allow(request).to receive(:builds).and_return([build])
+    allow(request).to receive(:tag_name).and_return(nil)
     described_class.new(request).data
   }
 

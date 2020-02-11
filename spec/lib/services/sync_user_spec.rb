@@ -7,7 +7,7 @@ describe Travis::Services::SyncUser do
   describe 'given the user is not currently syncing' do
     before :each do
       user.stubs(:update_column)
-      user.stubs(:syncing?).returns(false)
+      allow(user).to receive(:syncing?).and_return(false)
     end
 
     it 'enqueues a sync job' do
@@ -27,7 +27,7 @@ describe Travis::Services::SyncUser do
 
   describe 'given the user is currently syncing' do
     before :each do
-      user.stubs(:syncing?).returns(true)
+      allow(user).to receive(:syncing?).and_return(true)
     end
 
     it 'does not set the user to syncing' do

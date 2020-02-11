@@ -22,7 +22,7 @@ describe Travis::Services::Helpers do
   let(:object) { Test::Foo.new }
 
   before :each do
-    Travis.stubs(:services).returns(Test::Services)
+    allow(Travis).to receive(:services).and_return(Test::Services)
     Test::Services.add(:do_stuff, Test::Services::DoStuff)
   end
 
@@ -45,7 +45,7 @@ describe Travis::Services::Helpers do
     end
 
     it 'defaults the user to the current user if the object responds to :current_user' do
-      object.stubs(:current_user).returns(user)
+      allow(object).to receive(:current_user).and_return(user)
       expect(object.service(:do_stuff, {}).current_user).to eq(user)
     end
 

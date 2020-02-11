@@ -4,7 +4,7 @@ describe Travis::Api::Serialize::V2::Http::SslKey do
 
   let(:key) {
     key = stub_key
-    key.stubs(:private_key).returns(TEST_PRIVATE_KEY)
+    allow(key).to receive(:private_key).and_return(TEST_PRIVATE_KEY)
     key
   }
   let(:data) { described_class.new(key).data }

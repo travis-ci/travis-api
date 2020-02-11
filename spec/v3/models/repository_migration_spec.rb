@@ -4,9 +4,9 @@ describe Travis::API::V3::Models::RepositoryMigration do
   subject { Travis::API::V3::Models::RepositoryMigration.new(repository) }
 
   before do
-    Travis::Features.stubs(:feature_active?).with(:multi_os).returns(true)
-    Travis::Features.stubs(:feature_active?).with(:dist_group_expansion).returns(true)
-    Travis::Features.stubs(:feature_active?).with(:education).returns(true)
+    allow(Travis::Features).to receive(:feature_active?).with(:multi_os).and_return(true)
+    allow(Travis::Features).to receive(:feature_active?).with(:dist_group_expansion).and_return(true)
+    allow(Travis::Features).to receive(:feature_active?).with(:education).and_return(true)
   end
 
   context 'when migration is enabled globally' do
