@@ -22,7 +22,7 @@ describe Travis::API::V3::Models::Mailer do
   describe '#send_email' do
     let(:redis_client) { double('Redis') }
 
-    before { subject.stubs(client: redis_client) }
+    before { allow(subject).to receive(:client).and_return(redis_client) }
 
     it 'pushes a task to redis' do
       expect(redis_client).to receive(:push).with(

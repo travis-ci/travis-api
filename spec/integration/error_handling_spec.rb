@@ -62,7 +62,7 @@ describe 'Exception', set_app: true do
   it 'returns request_id in body' do
     error = TestError.new('Konstantin broke all the thingz!')
     allow_any_instance_of(Travis::Api::App::Endpoint::Repos).to receive(:service).and_raise(error)
-    Raven.stubs(:send_event)
+    allow(Raven).to receive(:send_event)
     res = get '/repos/1', nil, 'HTTP_X_REQUEST_ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975'
     expect(res.status).to eq(500)
     expect(res.body).to eq("Sorry, we experienced an error.\n\nrequest_id:235dd08f-10d5-4fcc-9a4d-6b8e6a24f975\n")
