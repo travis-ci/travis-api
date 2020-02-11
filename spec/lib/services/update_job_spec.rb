@@ -22,7 +22,7 @@ describe Travis::Services::UpdateJob do
       publisher = double('publisher')
       allow(service).to receive(:publisher).and_return(publisher)
 
-      publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id, source: 'update_job_service')
+      expect(publisher).to receive(:publish).with(type: 'cancel_job', job_id: job.id, source: 'update_job_service')
 
       service.cancel_job_in_worker
     end
@@ -39,7 +39,7 @@ describe Travis::Services::UpdateJob do
       before { job.update_attribute(:state, :canceled) }
 
       it 'does not update state' do
-        service.expects(:cancel_job_in_worker)
+        expect(service).to receive(:cancel_job_in_worker)
 
         service.run
         expect(job.reload.state).to eq(:canceled)
@@ -89,7 +89,7 @@ describe Travis::Services::UpdateJob do
       before { job.update_attribute(:state, :canceled) }
 
       it 'does not update state' do
-        service.expects(:cancel_job_in_worker)
+        expect(service).to receive(:cancel_job_in_worker)
 
         service.run
         expect(job.reload.state).to eq(:canceled)
@@ -143,7 +143,7 @@ describe Travis::Services::UpdateJob do
       before { job.update_attribute(:state, :canceled) }
 
       it 'does not update state' do
-        service.expects(:cancel_job_in_worker)
+        expect(service).to receive(:cancel_job_in_worker)
 
         service.run
         expect(job.reload.state).to eq(:canceled)
