@@ -156,7 +156,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
           "@href"          => "/repo/#{repo.id}",
           "@representation"=> "standard",
           "@permissions"   => {
-            "read"           => true,
+            "read"           => false,
             "admin"          => false,
             "delete_key_pair"=> false,
             "create_request" => false,
@@ -178,7 +178,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
           "vcs_type"                 => "GithubRepository",
           "github_language"          => nil,
           "active"                   => true,
-          "private"                  => false,
+          "private"                  => true,
           "owner"                    => {
             "@type"                    => "user",
             "id"                       => 1,
