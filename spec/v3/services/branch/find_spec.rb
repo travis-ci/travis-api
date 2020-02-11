@@ -11,6 +11,7 @@ describe Travis::API::V3::Services::Branch::Find, set_app: true do
       "@representation"  => "standard",
       "name"             => "master",
       "exists_on_github" => true,
+      "default_branch"   => true,
       "repository"       => {
         "@type"          => "repository",
         "@href"          => "/repo/1",
