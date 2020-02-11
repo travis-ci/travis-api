@@ -110,7 +110,7 @@ class Travis::Model < ActiveRecord::Base
 
         describe '#dump' do
           it 'attaches iv and prefix to encrypted string' do
-            column.stubs(:iv => iv)
+            allow(column).to receive(:iv).and_return(iv)
             expect(column).to receive(:create_aes).with(:encrypt, 'secret-key', iv).and_return(aes)
             expect(aes).to receive(:update).with('to-encrypt').and_return('encrypted')
 
