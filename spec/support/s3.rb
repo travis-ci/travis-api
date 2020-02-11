@@ -41,8 +41,9 @@ module Support
       before(:each)    { allow(::S3::Service).to receive(:new).and_return(s3_service) }
       before(:each)    { allow(::S3::Service).to receive(:new).and_return(s3_service) }
       let(:s3_service) {
-        bucket = FakeService.new(s3_bucket)
-        allow(bucket.buckets).to receive(:find).and_return(s3_bucket)
+        service = FakeService.new(s3_bucket)
+        allow(service.buckets).to receive(:find).and_return(s3_bucket)
+        service
       }
       let(:s3_bucket)  { FakeBucket.new(s3_objects) }
       let(:s3_objects) { [] }
