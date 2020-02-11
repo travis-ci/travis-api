@@ -59,8 +59,8 @@ class Travis::Model < ActiveRecord::Base
           it 'decrypts data even with no prefix' do
             data = encode "to-decrypt#{iv}"
 
-            column.expects(:create_aes).with(:decrypt, 'secret-key', iv).returns(aes)
-            aes.expects(:update).with('to-decrypt').returns('decrypted')
+            expect(column).to receive(:create_aes).with(:decrypt, 'secret-key', iv).and_return(aes)
+            expect(aes).to receive(:update).with('to-decrypt').and_return('decrypted')
 
             expect(column.load(data)).to eq('decrypted')
           end
@@ -69,8 +69,8 @@ class Travis::Model < ActiveRecord::Base
             data = encode "to-decrypt#{iv}"
             data = "#{column.prefix}#{data}"
 
-            column.expects(:create_aes).with(:decrypt, 'secret-key', iv).returns(aes)
-            aes.expects(:update).with('to-decrypt').returns('decrypted')
+            expect(column).to receive(:create_aes).with(:decrypt, 'secret-key', iv).and_return(aes)
+            expect(aes).to receive(:update).with('to-decrypt').and_return('decrypted')
 
             expect(column.load(data)).to eq('decrypted')
           end
@@ -79,8 +79,8 @@ class Travis::Model < ActiveRecord::Base
         describe '#dump' do
           it 'attaches iv to encrypted string' do
             column.stubs(:iv => iv)
-            column.expects(:create_aes).with(:encrypt, 'secret-key', iv).returns(aes)
-            aes.expects(:update).with('to-encrypt').returns('encrypted')
+            expect(column).to receive(:create_aes).with(:encrypt, 'secret-key', iv).and_return(aes)
+            expect(aes).to receive(:update).with('to-encrypt').and_return('encrypted')
 
             expect(column.dump('to-encrypt')).to eq(encode("encrypted#{iv}"))
           end
@@ -101,8 +101,8 @@ class Travis::Model < ActiveRecord::Base
             data = encode "to-decrypt#{iv}"
             data = "#{column.prefix}#{data}"
 
-            column.expects(:create_aes).with(:decrypt, 'secret-key', iv).returns(aes)
-            aes.expects(:update).with('to-decrypt').returns('decrypted')
+            expect(column).to receive(:create_aes).with(:decrypt, 'secret-key', iv).and_return(aes)
+            expect(aes).to receive(:update).with('to-decrypt').and_return('decrypted')
 
             expect(column.load(data)).to eq('decrypted')
           end
@@ -111,8 +111,8 @@ class Travis::Model < ActiveRecord::Base
         describe '#dump' do
           it 'attaches iv and prefix to encrypted string' do
             column.stubs(:iv => iv)
-            column.expects(:create_aes).with(:encrypt, 'secret-key', iv).returns(aes)
-            aes.expects(:update).with('to-encrypt').returns('encrypted')
+            expect(column).to receive(:create_aes).with(:encrypt, 'secret-key', iv).and_return(aes)
+            expect(aes).to receive(:update).with('to-encrypt').and_return('encrypted')
 
             result = encode "encrypted#{iv}"
             expect(column.dump('to-encrypt')).to eq("#{column.prefix}#{result}")

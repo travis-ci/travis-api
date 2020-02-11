@@ -41,7 +41,7 @@ describe Travis::Github::Oauth do
       end
 
       it 'updates github scopes' do
-        Travis::Github::Oauth.expects(:scopes_for).returns(['foo', 'bar'])
+        expect(Travis::Github::Oauth).to receive(:scopes_for).and_return(['foo', 'bar'])
         described_class.update_scopes(user)
         expect(user.reload.github_scopes).to eq ['foo', 'bar']
       end
@@ -56,7 +56,7 @@ describe Travis::Github::Oauth do
       end
 
       it 'updates github scopes' do
-        Travis::Github::Oauth.expects(:scopes_for).returns(['foo', 'bar'])
+        expect(Travis::Github::Oauth).to receive(:scopes_for).and_return(['foo', 'bar'])
         described_class.update_scopes(user)
         expect(user.reload.github_scopes).to eq ['foo', 'bar']
       end

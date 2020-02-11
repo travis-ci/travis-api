@@ -63,7 +63,7 @@ describe Job do
 
     it 'leaves regular vars untouched' do
       job = Job.new(repository: repo)
-      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      expect(job).to receive(:secure_env_enabled?).and_return(true).at_least(:once)
       job.config = { rvm: '1.8.7', env: 'FOO=foo' }
 
       expect(job.obfuscated_config).to eq({
@@ -75,7 +75,7 @@ describe Job do
     it 'obfuscates env vars, including accidents' do
       job = Job.new(repository: repo)
       secure = job.repository.key.secure
-      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      expect(job).to receive(:secure_env_enabled?).and_return(true).at_least(:once)
       config = { rvm: '1.8.7',
                  env: [secure.encrypt('BAR=barbaz'), secure.encrypt('PROBLEM'), 'FOO=foo']
                }
@@ -90,7 +90,7 @@ describe Job do
     it 'handles nil secure var' do
       job = Job.new(repository: repo)
       secure = job.repository.key.secure
-      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      expect(job).to receive(:secure_env_enabled?).and_return(true).at_least(:once)
       config = { rvm: '1.8.7',
                  env: [{ secure: nil }, { secure: secure.encrypt('FOO=foo') }],
                  global_env: [{ secure: nil }, { secure: secure.encrypt('BAR=bar') }]
@@ -106,7 +106,7 @@ describe Job do
 
     it 'normalizes env vars which are hashes to strings' do
       job = Job.new(repository: repo)
-      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      expect(job).to receive(:secure_env_enabled?).and_return(true).at_least(:once)
 
       config = { rvm: '1.8.7',
                  env: [{FOO: 'bar', BAR: 'baz'},
@@ -162,7 +162,7 @@ describe Job do
     context 'when job has secure env disabled' do
       let :job do
         job = Job.new(repository: repo)
-        job.expects(:secure_env_enabled?).returns(false).at_least_once
+        expect(job).to receive(:secure_env_enabled?).and_return(false).at_least(:once)
         job
       end
 
@@ -208,7 +208,7 @@ describe Job do
   describe '#pull_request?' do
     it 'is delegated to commit' do
       commit = Commit.new
-      commit.expects(:pull_request?).returns(true)
+      expect(commit).to receive(:pull_request?).and_return(true)
 
       job = Job.new
       job.commit = commit
@@ -233,7 +233,7 @@ describe Job do
 
     it 'handles float env' do
       job = Job.new(repository: repo)
-      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      expect(job).to receive(:secure_env_enabled?).and_return(true).at_least(:once)
 
       job.config = { rvm: '1.8.7', env: 2.0, global_env: nil }
 
@@ -246,7 +246,7 @@ describe Job do
 
     it 'normalizes env vars which are hashes to strings' do
       job = Job.new(repository: repo)
-      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      expect(job).to receive(:secure_env_enabled?).and_return(true).at_least(:once)
 
       config = { rvm: '1.8.7',
                  env: [{FOO: 'bar', BAR: 'baz'},
@@ -265,7 +265,7 @@ describe Job do
 
     it 'does not change original config' do
       job = Job.new(repository: repo)
-      job.expects(:secure_env_enabled?).at_least_once.returns(true)
+      expect(job).to receive(:secure_env_enabled?).and_return(true).at_least(:once)
 
       config = {
                  env: [{secure: 'invalid'}],
@@ -282,7 +282,7 @@ describe Job do
 
     it 'leaves regular vars untouched' do
       job = Job.new(repository: repo)
-      job.expects(:secure_env_enabled?).returns(true).at_least_once
+      expect(job).to receive(:secure_env_enabled?).and_return(true).at_least(:once)
       job.config = { rvm: '1.8.7', env: 'FOO=foo', global_env: 'BAR=bar' }
 
       expect(job.decrypted_config).to eq({
@@ -295,7 +295,7 @@ describe Job do
     context 'when secure env is not enabled' do
       let :job do
         job = Job.new(repository: repo)
-        job.expects(:secure_env_enabled?).returns(false).at_least_once
+        expect(job).to receive(:secure_env_enabled?).and_return(false).at_least(:once)
         job
       end
 
@@ -329,7 +329,7 @@ describe Job do
     context 'when addons are disabled' do
       let :job do
         job = Job.new(repository: repo)
-        job.expects(:addons_enabled?).returns(false).at_least_once
+        expect(job).to receive(:addons_enabled?).and_return(false).at_least(:once)
         job
       end
 
@@ -380,7 +380,7 @@ describe Job do
     context 'when job has secure env enabled' do
       let :job do
         job = Job.new(repository: repo)
-        job.expects(:secure_env_enabled?).returns(true).at_least_once
+        expect(job).to receive(:secure_env_enabled?).and_return(true).at_least(:once)
         job
       end
 
@@ -416,7 +416,7 @@ describe Job do
     context 'when job has addons enabled' do
       let :job do
         job = Job.new(repository: repo)
-        job.expects(:addons_enabled?).returns(true).at_least_once
+        expect(job).to receive(:addons_enabled?).and_return(true).at_least(:once)
         job
       end
 

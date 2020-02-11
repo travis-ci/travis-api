@@ -29,7 +29,7 @@ describe Build::Metrics do
   end
 
   it 'measures on "travis.builds.start.delay"' do
-    Metriks.expects(:timer).with('travis.builds.start.delay').returns(timer)
+    expect(Metriks).to receive(:timer).with('travis.builds.start.delay').and_return(timer)
     build.start(started_at: Time.now)
   end
 

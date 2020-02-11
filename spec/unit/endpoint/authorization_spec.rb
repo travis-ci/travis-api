@@ -115,7 +115,7 @@ describe Travis::Api::App::Endpoint::Authorization do
         rack_mock_session.cookie_jar['travis.state'] = 'github-state'
 
         response = double('response')
-        response.expects(:body).returns('access_token=foobarbaz-token')
+        expect(response).to receive(:body).and_return('access_token=foobarbaz-token')
         Faraday.expects(:post).with('https://foobar.com/access_token_path',
                                     client_id: 'client-id',
                                     client_secret: 'client-secret',
@@ -125,8 +125,8 @@ describe Travis::Api::App::Endpoint::Authorization do
                                     code: 'oauth-code').returns(response)
 
         data = { 'id' => 111 }
-        data.expects(:headers).returns('x-oauth-scopes' => 'public_repo,user:email')
-        GH.expects(:with).with(token: 'foobarbaz-token', client_id: nil).returns(data)
+        expect(data).to receive(:headers).and_return('x-oauth-scopes' => 'public_repo,user:email')
+        expect(GH).to receive(:with).with(token: 'foobarbaz-token', client_id: nil).and_return(data)
       end
 
       after do
@@ -144,7 +144,7 @@ describe Travis::Api::App::Endpoint::Authorization do
       # TODO disabling this as per @rkh's advice
       xit 'redirects to insufficient access page for existing user' do
         user = double('user')
-        User.expects(:find_by_github_id).with(111).returns(user)
+        expect(User).to receive(:find_by_github_id).with(111).and_return(user)
         expect {
           response = get '/auth/handshake?state=github-state&code=oauth-code'
           expect(response).to redirect_to('https://travis-ci.org/insufficient_access#existing-user')

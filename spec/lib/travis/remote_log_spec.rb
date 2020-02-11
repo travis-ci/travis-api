@@ -23,7 +23,7 @@ describe Travis::RemoteLog do
     client.expects(:find_by_id)
     client.expects(:write_content_for_job_id)
     remote = described_class::Remote.new
-    remote.expects(:client).times(3).returns(client)
+    expect(remote).to receive(:client).times(3).and_return(client)
 
     remote.find_by_id
     remote.find_by_job_id
@@ -34,7 +34,7 @@ describe Travis::RemoteLog do
     archive_client = double('archive_client')
     archive_client.expects(:fetch_archived_url)
     remote = described_class::Remote.new
-    remote.expects(:archive_client).returns(archive_client)
+    expect(remote).to receive(:archive_client).and_return(archive_client)
 
     remote.fetch_archived_url
   end
@@ -66,13 +66,13 @@ describe Travis::RemoteLog do
   it 'has a non-nil removed_by with a removed_by_id' do
     user = double('user')
     subject.removed_by_id = 4
-    User.expects(:find).with(4).returns(user)
+    expect(User).to receive(:find).with(4).and_return(user)
     expect(subject.removed_by).to eq(user)
   end
 
   it 'has a job' do
     job = double('job')
-    Job.expects(:find).with(attrs[:job_id]).returns(job)
+    expect(Job).to receive(:find).with(attrs[:job_id]).and_return(job)
     expect(subject.job).to eq(job)
   end
 
@@ -81,7 +81,7 @@ describe Travis::RemoteLog do
     remote.expects(:fetch_archived_url)
       .with(5, expires: nil)
       .returns('yep')
-    described_class::Remote.expects(:new).returns(remote)
+    expect(described_class::Remote).to receive(:new).and_return(remote)
     expect(subject.archived_url).to eq 'yep'
   end
 
@@ -90,7 +90,7 @@ describe Travis::RemoteLog do
       Travis::RemoteLogPart.new(number: 42, content: 'yey', final: false)
     ]
     remote = double()
-    described_class::Remote.expects(:new).returns(remote)
+    expect(described_class::Remote).to receive(:new).and_return(remote)
     remote.stubs(:find_parts_by_job_id)
       .with(5, after: nil, part_numbers: [])
       .returns(found_parts)
@@ -197,16 +197,16 @@ describe Travis::RemoteLog do
     user_id = 8
 
     remote = double('remote')
-    described_class::Remote.expects(:new).returns(remote)
+    expect(described_class::Remote).to receive(:new).and_return(remote)
     remote.expects(:write_content_for_job_id)
       .with(attrs.fetch(:job_id), content: content, removed_by: user_id)
       .returns(described_class.new(content: content, removed_by: user_id))
 
     user = double('user')
-    user.expects(:name).returns('Floof MaGoof')
-    user.expects(:id).returns(user_id)
+    expect(user).to receive(:name).and_return('Floof MaGoof')
+    expect(user).to receive(:id).and_return(user_id)
     now = double('now')
-    now.expects(:utc).returns('sometime')
+    expect(now).to receive(:utc).and_return('sometime')
     allow(Time).to receive(:now).and_return(now)
 
     expect(subject.clear!(user)).to eq(content)

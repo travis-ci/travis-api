@@ -36,7 +36,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
     it 'drops the token when drop_token is set to true' do
       user = double('user', login: 'drogus', github_id: 456, previous_changes: {}, recently_signed_up?: false, tokens: [double('token')])
-      User.expects(:find_by_github_id).with(456).returns(user)
+      expect(User).to receive(:find_by_github_id).with(456).and_return(user)
 
       manager = described_class.new(data, 'abc123', true)
       allow(manager).to receive(:education).and_return(false)
@@ -85,7 +85,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
       end
 
       it 'creates new user' do
-        User.expects(:create!).with(attrs).returns(user)
+        expect(User).to receive(:create!).with(attrs).and_return(user)
         expect(manager.fetch).to eq(user)
       end
     end
@@ -95,8 +95,8 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
     let(:data) { {} }
     it 'runs students check with token' do
       education = double(:education => nil)
-      education.expects(:student?).returns(true)
-      Travis::Github::Education.expects(:new).with('abc123').returns(education)
+      expect(education).to receive(:student?).and_return(true)
+      expect(Travis::Github::Education).to receive(:new).with('abc123').and_return(education)
 
       expect(manager.education).to be_truthy
     end

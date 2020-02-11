@@ -11,7 +11,7 @@ describe Travis::Services::UpdateHook do
   end
 
   it 'finds the repo by the given params' do
-    user.expects(:service_hook).with(id: repo.id).returns(repo)
+    expect(user).to receive(:service_hook).with(id: repo.id).and_return(repo)
     service.run
   end
 

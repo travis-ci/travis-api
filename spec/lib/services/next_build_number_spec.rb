@@ -12,7 +12,7 @@ describe Travis::Services::NextBuildNumber do
   subject { result }
 
   before do
-    Repository.expects(:find).with(1234).returns(repo)
+    expect(Repository).to receive(:find).with(1234).and_return(repo)
   end
 
   context 'with a new repository' do

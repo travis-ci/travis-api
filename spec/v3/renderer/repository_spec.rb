@@ -22,7 +22,7 @@ describe Travis::API::V3::Renderer::Repository do
     end
 
     context 'when feature is enabled for the user' do
-      before { Travis::Features.expects(:owner_active?).with(:allow_migration, repo.owner).returns(true) }
+      before { expect(Travis::Features).to receive(:owner_active?).with(:allow_migration, repo.owner).and_return(true) }
 
       it { is_expected.to be_truthy }
     end

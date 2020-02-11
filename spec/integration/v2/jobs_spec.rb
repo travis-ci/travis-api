@@ -49,11 +49,11 @@ describe 'Jobs', set_app: true do
       it 'redirects to archive' do
         remote = double('remote')
         remote_log = double('remote log')
-        remote_log.expects(:archived?).returns(true)
+        expect(remote_log).to receive(:archived?).and_return(true)
         allow(remote_log).to receive(:removed_at).and_return(nil)
         allow(remote).to receive(:find_by_job_id).and_return(remote_log)
-        remote_log.expects(:archived_url).returns("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
-        Travis::RemoteLog::Remote.expects(:new).returns(remote)
+        expect(remote_log).to receive(:archived_url).and_return("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
+        expect(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(
             status: 200,
