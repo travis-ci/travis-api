@@ -8,10 +8,10 @@ describe Travis::Api::App::Responders::Service do
   let(:service)  { MyService.new(endpoint, resource, options) }
 
   context 'with final resource' do
-    before { resource.expects(:final?).returns(true) }
+    before { allow(resource).to receive(:final?).and_return(true) }
 
     it 'caches resource for a year' do
-      endpoint.expects(:expires).with(31536000, :public)
+      expect(endpoint).to receive(:expires).with(31536000, :public)
       service.apply
     end
   end

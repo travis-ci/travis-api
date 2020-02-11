@@ -41,7 +41,7 @@ describe Travis::Api::Serialize::V2::Http::Builds do
 
   it 'uses uses cached_matrix_ids if the column exists in DB' do
     build = stub_build
-    build.expects(:cached_matrix_ids).returns([1, 2, 3])
+    allow(build).to receive(:cached_matrix_ids).and_return([1, 2, 3])
     data = described_class.new([build]).data
     expect(data['builds'].first['job_ids']).to eq([1, 2, 3])
   end

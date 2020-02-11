@@ -7,7 +7,7 @@ describe Travis::Api::App::Middleware::UserAgentTracker do
   end
 
   def expect_meter(name)
-    Metriks.expects(:meter).with(name).returns(double("meter", mark: nil))
+    allow(Metriks).to receive(:meter).with(name).returns(double("meter", mark: nil))
   end
 
   def get(env = {})
@@ -24,7 +24,7 @@ describe Travis::Api::App::Middleware::UserAgentTracker do
     end
 
     it "denies request if require_user_agent feature is enabled" do
-      Travis::Features.expects(:feature_active?).with(:require_user_agent).returns(true)
+      allow(Travis::Features).to receive(:feature_active?).with(:require_user_agent).and_return(true)
       expect(get.status).to eq(400)
     end
   end
