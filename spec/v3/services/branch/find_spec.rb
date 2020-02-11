@@ -1,5 +1,5 @@
 describe Travis::API::V3::Services::Branch::Find, set_app: true do
-  let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'standard').first }
+  let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
 
   describe "public repository, existing branch" do
@@ -29,11 +29,11 @@ describe Travis::API::V3::Services::Branch::Find, set_app: true do
           "create_env_var" => false,
           "create_key_pair"=> false
         },
-        "id"                       => 1,
-        "name"                     => "standard",
-        "slug"                     => "svenfuchs/standard",
+        "id"                       => repo.id,
+        "name"                     => "minimal",
+        "slug"                     => "svenfuchs/minimal",
         "description"              => nil,
-        "github_id"                => 1,
+        "github_id"                => repo.id,
         "vcs_id"                   => nil,
         "vcs_type"                 => "GithubRepository",
         "github_language"          => nil,
@@ -47,7 +47,7 @@ describe Travis::API::V3::Services::Branch::Find, set_app: true do
         },
         "default_branch"           => {
           "@type"                    => "branch",
-          "@href"                    => "/repo/1/branch/master",
+          "@href"                    => "/repo/#{repo.id}/branch/master",
           "@representation"          => "minimal",
           "name"                     => "master"
         },
@@ -78,7 +78,7 @@ describe Travis::API::V3::Services::Branch::Find, set_app: true do
   end
 
   describe "including recent_builds" do
-    before     { get("/v3/repo/1/branch/master?include=branch.recent_builds") }
+    before     { get("/v3/repo/#{repo.id}/branch/master?include=branch.recent_builds") }
     example    { expect(last_response).to be_ok }
     example    { expect(JSON.load(body)).to include('recent_builds')}
   end

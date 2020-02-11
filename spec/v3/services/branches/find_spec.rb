@@ -1,5 +1,5 @@
 describe Travis::API::V3::Services::Branches::Find, set_app: true do
-  let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'standard').first }
+  let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:branch) { Travis::API::V3::Models::Branch.where(repository_id: repo.id).first }
   let(:build)  { branch.last_build }
 
@@ -54,7 +54,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
         "exists_on_github" => true,
         "repository"       => {
           "@type"          => "repository",
-          "@href"          => "/repo/1",
+          "@href"          => "/repo/#{repo.id}",
           "@representation"=> "standard",
           "@permissions"   => {
             "read"           => true,
@@ -71,8 +71,8 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
             "create_key_pair"=> false
           },
           "id"                       => 1,
-          "name"                     => "standard",
-          "slug"                     => "svenfuchs/standard",
+          "name"                     => "minimal",
+          "slug"                     => "svenfuchs/minimal",
           "description"              => nil,
           "github_id"                => 1,
           "vcs_id"                   => nil,
@@ -88,7 +88,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
           },
           "default_branch"           => {
             "@type"                    => "branch",
-            "@href"                    => "/repo/1/branch/master",
+            "@href"                    => "/repo/#{repo.id}/branch/master",
             "@representation"          => "minimal",
             "name"                     => "master"
           },
@@ -153,7 +153,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
         "exists_on_github" => true,
         "repository"       => {
           "@type"          => "repository",
-          "@href"          => "/repo/1",
+          "@href"          => "/repo/#{repo.id}",
           "@representation"=> "standard",
           "@permissions"   => {
             "read"           => true,
@@ -169,11 +169,11 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
             "create_env_var" => false,
             "create_key_pair"=> false
           },
-          "id"                       => 1,
-          "name"                     => "standard",
-          "slug"                     => "svenfuchs/standard",
+          "id"                       => repo.id,
+          "name"                     => "minimal",
+          "slug"                     => "svenfuchs/minimal",
           "description"              => nil,
-          "github_id"                => 1,
+          "github_id"                => repo.id,
           "vcs_id"                   => nil,
           "vcs_type"                 => "GithubRepository",
           "github_language"          => nil,
@@ -187,7 +187,7 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
           },
           "default_branch"           => {
             "@type"                    => "branch",
-            "@href"                    => "/repo/1/branch/master",
+            "@href"                    => "/repo/#{repo.id}/branch/master",
             "@representation"          => "minimal",
             "name"                     => "master"
           },
