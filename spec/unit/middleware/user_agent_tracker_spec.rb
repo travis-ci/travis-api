@@ -7,7 +7,7 @@ describe Travis::Api::App::Middleware::UserAgentTracker do
   end
 
   def expect_meter(name)
-    allow(Metriks).to receive(:meter).with(name).returns(double("meter", mark: nil))
+    allow(Metriks).to receive(:meter).with(name).and_return(double("meter", mark: nil))
   end
 
   def get(env = {})

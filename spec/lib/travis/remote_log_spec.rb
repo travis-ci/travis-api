@@ -78,9 +78,9 @@ describe Travis::RemoteLog do
 
   it 'has archived content' do
     remote = double()
-    remote.expects(:fetch_archived_url)
+    expect(remote).to receive(:fetch_archived_url)
       .with(5, expires: nil)
-      .returns('yep')
+      .and_return('yep')
     expect(described_class::Remote).to receive(:new).and_return(remote)
     expect(subject.archived_url).to eq 'yep'
   end
@@ -91,9 +91,9 @@ describe Travis::RemoteLog do
     ]
     remote = double()
     expect(described_class::Remote).to receive(:new).and_return(remote)
-    remote.stubs(:find_parts_by_job_id)
+    allow(remote).to receive(:find_parts_by_job_id)
       .with(5, after: nil, part_numbers: [])
-      .returns(found_parts)
+      .and_return(found_parts)
     expect(subject.parts).to eq found_parts
   end
 
@@ -198,9 +198,9 @@ describe Travis::RemoteLog do
 
     remote = double('remote')
     expect(described_class::Remote).to receive(:new).and_return(remote)
-    remote.expects(:write_content_for_job_id)
+    expect(remote).to receive(:write_content_for_job_id)
       .with(attrs.fetch(:job_id), content: content, removed_by: user_id)
-      .returns(described_class.new(content: content, removed_by: user_id))
+      .and_return(described_class.new(content: content, removed_by: user_id))
 
     user = double('user')
     expect(user).to receive(:name).and_return('Floof MaGoof')
@@ -337,9 +337,9 @@ describe Travis::RemoteLog::ArchiveClient do
   before do
     subject.instance_variable_set(:@s3, s3)
     allow(s3).to receive(:directories).and_return(s3)
-    s3.stubs(:get)
+    allow(s3).to receive(:get)
       .with('fluffernutter-pretzel-pie', prefix: 'jobs/9/log.txt')
-      .returns(s3)
+      .and_return(s3)
     allow(s3).to receive(:files).and_return([s3])
   end
 
@@ -351,8 +351,8 @@ describe Travis::RemoteLog::ArchiveClient do
 
   it 'fetches private archived URLs' do
     allow(s3).to receive(:public?).and_return(false)
-    s3.stubs(:url).with(8001)
-      .returns('https://whoabud.example.com/flah?sig=ya&exp=nah')
+    allow(s3).to receive(:url).with(8001)
+      .and_return('https://whoabud.example.com/flah?sig=ya&exp=nah')
     expect(subject.fetch_archived_url(9, expires: 8001))
       .to eq'https://whoabud.example.com/flah?sig=ya&exp=nah'
   end

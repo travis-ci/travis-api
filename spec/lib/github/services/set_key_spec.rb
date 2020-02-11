@@ -22,7 +22,7 @@ describe Travis::Github::Services::SetKey do
   end
 
   it 'authenticates with the current user' do
-    Travis::Github.expects(:authenticated).with(user).at_least_once.returns([])
+    expects(Travis::Github).to receive(:authenticated).with(user).at_least(:once).and_return([])
     service.run
   end
 

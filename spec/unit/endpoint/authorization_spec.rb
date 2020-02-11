@@ -116,13 +116,13 @@ describe Travis::Api::App::Endpoint::Authorization do
 
         response = double('response')
         expect(response).to receive(:body).and_return('access_token=foobarbaz-token')
-        Faraday.expects(:post).with('https://foobar.com/access_token_path',
+        expect(Faraday).to receive(:post).with('https://foobar.com/access_token_path',
                                     client_id: 'client-id',
                                     client_secret: 'client-secret',
                                     scope: 'public_repo,user:email,new_scope',
                                     redirect_uri: 'http://example.org/auth/handshake',
                                     state: 'github-state',
-                                    code: 'oauth-code').returns(response)
+                                    code: 'oauth-code').and_return(response)
 
         data = { 'id' => 111 }
         expect(data).to receive(:headers).and_return('x-oauth-scopes' => 'public_repo,user:email')
