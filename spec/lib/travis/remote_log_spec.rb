@@ -23,7 +23,7 @@ describe Travis::RemoteLog do
     expect(client).to receive(:find_by_id)
     expect(client).to receive(:write_content_for_job_id)
     remote = described_class::Remote.new
-    expect(remote).to receive(:client).times(3).and_return(client)
+    expect(remote).to receive(:client).and_return(client).exactly(3).times
 
     remote.find_by_id
     remote.find_by_job_id
