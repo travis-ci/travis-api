@@ -106,12 +106,12 @@ describe 'Builds', set_app: true do
         end
 
         it 'cancels the build' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           post "/builds/#{build.id}/cancel", {}, headers
         end
 
         it 'responds with 204' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/builds/#{build.id}/cancel", {}, headers
           expect(response.status).to eq(204)
         end
@@ -166,13 +166,13 @@ describe 'Builds', set_app: true do
         before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
 
         it 'restarts the build' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/builds/#{build.id}/restart", {}, headers
           expect(response.status).to eq(202)
         end
 
         it 'sends the correct response body' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/builds/#{build.id}/restart", {}, headers
           body = JSON.parse(response.body)
           expect(body).to eq({"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]})

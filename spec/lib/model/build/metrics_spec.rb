@@ -34,7 +34,7 @@ describe Build::Metrics do
   end
 
   xit 'measures the time it takes from creating the request until starting the build' do
-    timer.expects(:update).with(60)
+    expect(timer).to receive(:update).with(60)
     build.start(started_at: Time.now)
   end
 end

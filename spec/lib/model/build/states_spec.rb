@@ -88,7 +88,7 @@ describe Build::States do
         end
 
         it 'denormalizes attributes' do
-          build.expects(:denormalize)
+          expect(build).to receive(:denormalize)
           build.start(data)
         end
       end
@@ -99,7 +99,7 @@ describe Build::States do
         end
 
         it 'does not denormalize attributes' do
-          build.expects(:denormalize).never
+          expect(build).not_to receive(:denormalize)
           build.start(data)
         end
       end
@@ -110,7 +110,7 @@ describe Build::States do
         end
 
         it 'does not denormalize attributes' do
-          build.expects(:denormalize).never
+          expect(build).not_to receive(:denormalize)
           build.start(data)
         end
       end
@@ -121,7 +121,7 @@ describe Build::States do
         end
 
         it 'does not denormalize attributes' do
-          build.expects(:denormalize).never
+          expect(build).not_to receive(:denormalize)
           build.start(data)
         end
       end
@@ -141,7 +141,7 @@ describe Build::States do
           end
 
           it 'does not denormalize attributes' do
-            build.expects(:denormalize).never
+            expect(build).not_to receive(:denormalize)
             build.finish(data)
           end
         end
@@ -157,7 +157,7 @@ describe Build::States do
         describe 'when the build has not finished' do
           before(:each) do
             build.state = :started
-            build.expects(:save!)
+            expect(build).to receive(:save!)
           end
 
           it 'sets the state to the matrix state' do
@@ -171,7 +171,7 @@ describe Build::States do
           end
 
           it 'denormalizes attributes' do
-            build.expects(:denormalize).with(:finish, data)
+            expect(build).to receive(:denormalize).with(:finish, data)
             build.finish(data)
           end
         end
@@ -182,7 +182,7 @@ describe Build::States do
           end
 
           it 'does not denormalize attributes' do
-            build.expects(:denormalize).never
+            expect(build).not_to receive(:denormalize)
             build.finish(data)
           end
         end

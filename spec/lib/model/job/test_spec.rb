@@ -83,7 +83,7 @@ describe Job::Test do
       end
 
       it 'propagates the event to the source' do
-        job.source.expects(:receive)
+        expect(job.source).to receive(:receive)
         job.receive(data)
       end
     end
@@ -97,7 +97,7 @@ describe Job::Test do
       end
 
       it 'propagates the event to the source' do
-        job.source.expects(:start)
+        expect(job.source).to receive(:start)
         job.start(data)
       end
     end
@@ -111,7 +111,7 @@ describe Job::Test do
       end
 
       it 'propagates the event to the source' do
-        job.source.expects(:finish).with(data)
+        expect(job.source).to receive(:finish).with(data)
         job.finish(data)
       end
     end
@@ -131,7 +131,7 @@ describe Job::Test do
       end
 
       it 'resets log attributes' do
-        log.expects(:clear!)
+        expect(log).to receive(:clear!)
         job.reset!
       end
     end

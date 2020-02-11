@@ -311,12 +311,12 @@ describe Build do
       end
 
       it 'resets each job if :reset_matrix is given' do
-        build.matrix.each { |job| job.expects(:reset) }
+        build.matrix.each { |job| expect(job).to receive(:reset) }
         build.reset(reset_matrix: true)
       end
 
       it 'does not reset jobs if :reset_matrix is not given' do
-        build.matrix.each { |job| job.expects(:reset).never }
+        build.matrix.each { |job| expect(job).not_to receive(:reset) }
         build.reset
       end
     end

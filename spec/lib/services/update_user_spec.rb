@@ -17,7 +17,7 @@ describe Travis::Services::UpdateUser do
 
   it 'does not update the locale if invalid' do
     @params = { :locale => 'foo' }
-    user.expects(:update_attributes!).never
+    expect(user).not_to receive(:update_attributes!)
     service.run
   end
 end

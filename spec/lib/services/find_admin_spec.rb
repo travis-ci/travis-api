@@ -29,7 +29,7 @@ describe Travis::Services::FindAdmin do
       end
 
       xit 'revokes admin permissions for that user on our side' do
-        user.expects(:update_attributes!).with(:permissions => { 'admin' => false })
+        expect(user).to receive(:update_attributes!).with(:permissions => { 'admin' => false })
         ignore_exception { result }
       end
     end

@@ -284,12 +284,12 @@ describe 'Jobs', set_app: true do
         before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
 
         it 'cancels the job' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           post "/jobs/#{job.id}/cancel", {}, headers
         end
 
         it 'responds with 204' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/jobs/#{job.id}/cancel", {}, headers
           expect(response.status).to eq(204)
         end
@@ -343,12 +343,12 @@ describe 'Jobs', set_app: true do
         before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
 
         it 'restarts the job' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/jobs/#{job.id}/restart", {}, headers
           expect(response.status).to eq(202)
         end
         it 'sends the correct response body' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/jobs/#{job.id}/restart", {}, headers
           body = JSON.parse(response.body)
           expect(body).to eq({"result"=>true, "flash"=>[{"notice"=>"The job was successfully restarted."}]})

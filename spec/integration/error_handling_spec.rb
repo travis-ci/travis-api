@@ -43,7 +43,7 @@ describe 'Exception', set_app: true do
   it 'enqueues error into a thread' do
     error = TestError.new('Konstantin broke all the thingz!')
     allow_any_instance_of(Travis::Api::App::Endpoint::Repos).to receive(:service).and_raise(error)
-    Raven.expects(:send_event).with do |event|
+    expect(Raven).to receive(:send_event).with do |event|
       event['logentry']['message'] == "#{error.class}: #{error.message}"
     end
     res = get '/repos/1'

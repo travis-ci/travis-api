@@ -211,7 +211,7 @@ describe Travis::Api::App::Endpoint::Authorization do
     end
 
     it 'syncs the user' do
-      Travis.expects(:run_service).with(:sync_user, instance_of(User))
+      expect(Travis).to receive(:run_service).with(:sync_user, instance_of(User))
       expect(post('/auth/github', github_token: 'public repos')).to be_ok
     end
   end

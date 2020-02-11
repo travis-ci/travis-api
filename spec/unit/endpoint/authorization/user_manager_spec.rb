@@ -43,7 +43,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
       attributes = { login: 'drogus', github_id: 456, education: false, vcs_id: 456 }.stringify_keys
 
-      user.expects(:update_attributes).with(attributes)
+      expect(user).to receive(:update_attributes).with(attributes)
 
       expect(manager.fetch).to eq(user)
     end

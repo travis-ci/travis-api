@@ -11,7 +11,7 @@ describe Travis::Services::SyncUser do
     end
 
     it 'enqueues a sync job' do
-      Sidekiq::Client.expects(:push).with(
+      expect(Sidekiq::Client).to receive(:push).with(
         'queue' => 'sync',
         'class' => 'Travis::GithubSync::Worker',
         'args'  => [:sync_user, { user_id: user.id }]
@@ -20,7 +20,7 @@ describe Travis::Services::SyncUser do
     end
 
     it 'sets the user to syncing' do
-      user.expects(:update_column).with(:is_syncing, true)
+      expect(user).to receive(:update_column).with(:is_syncing, true)
       service.run
     end
   end
@@ -31,7 +31,7 @@ describe Travis::Services::SyncUser do
     end
 
     it 'does not set the user to syncing' do
-      user.expects(:update_column).never
+      expect(user).not_to receive(:update_column)
       service.run
     end
   end

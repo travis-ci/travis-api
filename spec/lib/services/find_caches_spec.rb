@@ -55,7 +55,7 @@ describe Travis::Services::FindCaches do
 
       describe 'without s3 credentials' do
         let(:cache_options) {{ }}
-        before { service.logger.expects(:warn).with("[services:find-caches] cache settings incomplete") }
+        before { expect(service.logger).to receive(:warn).with("[services:find-caches] cache settings incomplete") }
         it { should be == [] }
       end
 

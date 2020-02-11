@@ -27,7 +27,7 @@ describe Travis::Github::Oauth do
       let(:scopes) { ['public_repo', 'user:email'] }
 
       it 'does not resolve github scopes' do
-        Travis::Github::Oauth.expects(:scopes_for).never
+        expect(Travis::Github::Oauth).not_to receive(:scopes_for)
         described_class.update_scopes(user)
       end
     end

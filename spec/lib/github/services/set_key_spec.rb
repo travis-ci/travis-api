@@ -22,7 +22,7 @@ describe Travis::Github::Services::SetKey do
   end
 
   it 'authenticates with the current user' do
-    expects(Travis::Github).to receive(:authenticated).with(user).at_least(:once).and_return([])
+    expect(Travis::Github).to receive(:authenticated).with(user).at_least(:once).and_return([])
     service.run
   end
 
@@ -33,19 +33,19 @@ describe Travis::Github::Services::SetKey do
 
     it 'does not try to delete an existing key on github' do
       allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return(keys)
-      GH.expects(:delete).never
+      expect(GH).not_to receive(:delete)
       service.run
     end
 
     it 'sets the encoded public repository key to github if github does not have it' do
       allow(GH).to receive(:[]).with(keys_path).and_return([])
-      GH.expects(:post).with(keys_path, title: 'travis-ci.org', key: SSL_KEYS[:public_base64], read_only: true)
+      expect(GH).to receive(:post).with(keys_path, title: 'travis-ci.org', key: SSL_KEYS[:public_base64], read_only: true)
       service.run
     end
 
     it 'does not set anything to github if github already has the encoded public repository key' do
       allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return(keys)
-      GH.expects(:post).never
+      expect(GH).not_to receive(:post)
       service.run
     end
   end
@@ -57,19 +57,19 @@ describe Travis::Github::Services::SetKey do
 
     it 'does not try to delete a key on github when no one exists' do
       allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return([])
-      GH.expects(:delete).never
+      expect(GH).not_to receive(:delete)
       service.run
     end
 
     it 'deletes an existing key on github' do
       allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return(keys)
-      GH.expects(:delete).with(key_path)
+      expect(GH).to receive(:delete).with(key_path)
       service.run
     end
 
     it 'sets the encoded public repository key to github' do
       allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return(keys)
-      GH.expects(:post).with(keys_path, title: 'travis-ci.org', key: SSL_KEYS[:public_base64], read_only: true)
+      expect(GH).to receive(:post).with(keys_path, title: 'travis-ci.org', key: SSL_KEYS[:public_base64], read_only: true)
       service.run
     end
   end

@@ -19,9 +19,9 @@ describe Travis::RemoteLog do
 
   it 'delegates public methods to client' do
     client = double('client')
-    client.expects(:find_by_job_id)
-    client.expects(:find_by_id)
-    client.expects(:write_content_for_job_id)
+    expect(client).to receive(:find_by_job_id)
+    expect(client).to receive(:find_by_id)
+    expect(client).to receive(:write_content_for_job_id)
     remote = described_class::Remote.new
     expect(remote).to receive(:client).times(3).and_return(client)
 
@@ -32,7 +32,7 @@ describe Travis::RemoteLog do
 
   it 'delegates public methods to archive_client' do
     archive_client = double('archive_client')
-    archive_client.expects(:fetch_archived_url)
+    expect(archive_client).to receive(:fetch_archived_url)
     remote = described_class::Remote.new
     expect(remote).to receive(:archive_client).and_return(archive_client)
 

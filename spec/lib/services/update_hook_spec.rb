@@ -16,39 +16,39 @@ describe Travis::Services::UpdateHook do
   end
 
   it 'sets the given :active param to the hook' do
-    service.expects(:run_service).with(:github_set_hook, is_a(Hash))
+    expect(service).to receive(:run_service).with(:github_set_hook, is_a(Hash))
     service.run
   end
 
   describe 'sets the repo to the active param' do
     it 'given true' do
       service.params.update(active: true)
-      repo.expects(:update_column).with(:active, true)
+      expect(repo).to receive(:update_column).with(:active, true)
       service.run
     end
 
     it 'given false' do
       service.params.update(active: false)
-      repo.expects(:update_column).with(:active, false)
+      expect(repo).to receive(:update_column).with(:active, false)
       service.run
     end
 
     it 'given "true"' do
       service.params.update(active: 'true')
-      repo.expects(:update_column).with(:active, true)
+      expect(repo).to receive(:update_column).with(:active, true)
       service.run
     end
 
     it 'given "false"' do
       service.params.update(active: 'false')
-      repo.expects(:update_column).with(:active, false)
+      expect(repo).to receive(:update_column).with(:active, false)
       service.run
     end
   end
 
   it 'syncs the repo when activated' do
     service.params.update(active: true)
-    Sidekiq::Client.expects(:push).with(
+    expect(Sidekiq::Client).to receive(:push).with(
       'queue' => 'sync',
       'class' => 'Travis::GithubSync::Worker',
       'args'  => [:sync_repo, repo_id: 1, user_id: user.id]
@@ -58,7 +58,7 @@ describe Travis::Services::UpdateHook do
 
   it 'does not sync the repo when deactivated' do
     service.params.update(active: false)
-    Sidekiq::Client.expects(:push).never
+    expect(Sidekiq::Client).not_to receive(:push)
     service.run
   end
 end

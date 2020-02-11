@@ -155,7 +155,7 @@ describe Travis::API::V3::Models::Cron do
       let(:active) { false }
       it { expect(cron.enqueue).to eq false }
       it "logs the reason" do
-        Travis.logger.expects(:info).with("Removing cron #{cron.id} because the associated #{Travis::API::V3::Models::Cron::REPO_IS_INACTIVE}")
+        expect(Travis.logger).to receive(:info).with("Removing cron #{cron.id} because the associated #{Travis::API::V3::Models::Cron::REPO_IS_INACTIVE}")
         cron.enqueue
       end
     end
