@@ -27,6 +27,10 @@ RSpec::Matchers.define :issue_queries do |count|
     code.call
     queries
   end
+
+  def supports_block_expectations?
+    true
+  end
 end
 
 RSpec::Matchers.define :publish_instrumentation_event do |data|
