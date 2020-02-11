@@ -36,6 +36,11 @@ describe Job do
       job.duration.should be_nil
     end
 
+    it 'returns nil if finished_at is after started_at' do
+      job = Job.new(started_at: 10.seconds.ago, finished_at: 20.seconds.ago)
+      job.duration.should be 0
+    end
+
     it 'returns the duration if both started_at and finished_at are populated' do
       job = Job.new(started_at: 20.seconds.ago, finished_at: 10.seconds.ago)
       job.duration.should be_within(0.1).of(10)
