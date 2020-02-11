@@ -85,7 +85,7 @@ describe Travis::Api::Serialize::V2::Http::Build do
   end
 
   context 'without logs' do
-    allow(before { build.matrix.first).to receive(:log).and_return(nil) }
+    before { allow(build.matrix.first).to receive(:log).and_return(nil) }
 
     it 'returns null log_id' do
       expect(data['log_id']).to be_nil
