@@ -159,7 +159,7 @@ describe Travis::Api::App::Endpoint::Authorization do
       allow(GH).to receive(:with).with(token: 'private repos', client_id: nil).and_return double(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'}, :to_hash => data)
       allow(GH).to receive(:with).with(token: 'public repos', client_id: nil).and_return  double(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'}, :to_hash => data)
       allow(GH).to receive(:with).with(token: 'no repos', client_id: nil).and_return      double(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'}, :to_hash => data)
-      allow(GH).to receve(:with).with(token: 'invalid token', client_id: nil).and_raise(Faraday::Error::ClientError)
+      allow(GH).to receive(:with).with(token: 'invalid token', client_id: nil).and_raise(Faraday::Error::ClientError)
     end
 
     def get_token(github_token)
