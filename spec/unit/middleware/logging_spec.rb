@@ -7,7 +7,7 @@ describe Travis::Api::App::Middleware::Logging do
     mock_app do
       use Travis::Api::App::Middleware::Logging
       get '/check_logger' do
-        expect(logger).to eq(Travis.logger)
+        throw unless logger == Travis.logger
         'ok'
       end
     end
