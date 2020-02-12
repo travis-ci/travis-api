@@ -38,7 +38,7 @@ describe Job do
 
     it 'returns nil if started_at is after finished_at' do
       job = Job.new(started_at: 10.seconds.ago, finished_at: 20.seconds.ago)
-      job.duration.should be 0
+      expect(job.duration).to eq(0)
     end
 
     it 'returns the duration if both started_at and finished_at are populated' do
