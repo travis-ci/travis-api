@@ -42,8 +42,6 @@ require 'support/shared_examples'
 require 'support/ssl_keys'
 require 'support/test_helpers'
 
-FactoryBot = FactoryGirl
-
 module TestHelpers
   include Sinatra::TestHelpers
 
@@ -85,6 +83,7 @@ RSpec.configure do |c|
   # c.filter_run mode: :private, repo: :private
   # c.filter_run_excluding mode: :public, repo: :public
 
+  c.raise_errors_for_deprecations!
   c.before :suite do
     Travis.testing = true
     Travis.logger = Logger.new(StringIO.new)

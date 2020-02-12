@@ -1,7 +1,7 @@
 describe Travis::Services::RemoveLog do
-  let(:repo)    { Factory(:repository) }
-  let(:job)     { Factory(:test, repository: repo, state: :created) }
-  let(:user)    { Factory(:user) }
+  let(:repo)    { FactoryBot.create(:repository) }
+  let(:job)     { FactoryBot.create(:test, repository: repo, state: :created) }
+  let(:user)    { FactoryBot.create(:user) }
   let(:service) { described_class.new(user, params) }
   let(:params)  { { id: job.id, reason: 'Because reason!'} }
 
@@ -108,9 +108,9 @@ end
 
 describe Travis::Services::RemoveLog::Instrument do
   let(:service)   { Travis::Services::RemoveLog.new(user, params) }
-  let(:repo)      { Factory(:repository) }
-  let(:user)      { Factory(:user) }
-  let(:job)       { Factory(:test, repository: repo, state: :passed) }
+  let(:repo)      { FactoryBot.create(:repository) }
+  let(:user)      { FactoryBot.create(:user) }
+  let(:job)       { FactoryBot.create(:test, repository: repo, state: :passed) }
   let(:params)    { { id: job.id, reason: 'Because Science!' } }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.last }

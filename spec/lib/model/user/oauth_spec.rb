@@ -1,5 +1,5 @@
 describe User::Oauth do
-  let(:user)    { Factory(:user, :github_oauth_token => 'token') }
+  let(:user)    { FactoryBot.create(:user, :github_oauth_token => 'token') }
   let(:payload) { GITHUB_PAYLOADS[:oauth] }
 
   describe 'find_or_create_by' do

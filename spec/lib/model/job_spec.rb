@@ -1,18 +1,18 @@
 describe Job do
   describe '.result' do
     it 'returns 1 for failed builds' do
-      job = Factory.build(:test, state: :failed)
+      job = FactoryBot.build(:test, state: :failed)
       job.result.should == 1
     end
 
     it 'returns 0 for passed builds' do
-      job = Factory.build(:test, state: :passed)
+      job = FactoryBot.build(:test, state: :passed)
       job.result.should == 0
     end
   end
 
   describe ".queued" do
-    let(:jobs) { [Factory.create(:test), Factory.create(:test), Factory.create(:test)] }
+    let(:jobs) { [FactoryBot.create(:test), FactoryBot.create(:test), FactoryBot.create(:test)] }
 
     it "returns jobs that are created but not started or finished" do
       jobs.first.start!
@@ -36,6 +36,11 @@ describe Job do
       job.duration.should be_nil
     end
 
+    it 'returns nil if started_at is after finished_at' do
+      job = Job.new(started_at: 10.seconds.ago, finished_at: 20.seconds.ago)
+      job.duration.should be 0
+    end
+
     it 'returns the duration if both started_at and finished_at are populated' do
       job = Job.new(started_at: 20.seconds.ago, finished_at: 10.seconds.ago)
       job.duration.should be_within(0.1).of(10)
@@ -43,7 +48,7 @@ describe Job do
   end
 
   describe 'obfuscated config' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryBot.create(:repository) }
     before { repo.regenerate_key! }
 
     it 'handles nil env' do
@@ -212,7 +217,7 @@ describe Job do
   end
 
   describe 'decrypted config' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryBot.create(:repository) }
     before { repo.regenerate_key! }
 
     it 'handles nil env' do

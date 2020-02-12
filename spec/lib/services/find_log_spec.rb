@@ -1,7 +1,7 @@
 describe Travis::Services::FindLog do
   let(:params) { {} }
   let(:service) { described_class.new(stub('user'), params) }
-  let(:job) { FactoryGirl.create(:job) }
+  let(:job) { FactoryBot.create(:job) }
 
   describe 'run' do
     it 'finds the log with the given id' do

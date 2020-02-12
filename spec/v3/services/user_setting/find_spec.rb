@@ -10,7 +10,7 @@ describe Travis::API::V3::Services::UserSetting::Find, set_app: true do
   end
 
   describe 'authenticated as wrong user' do
-    let(:other_user) { FactoryGirl.create(:user) }
+    let(:other_user) { FactoryBot.create(:user) }
     let(:other_token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 1) }
 
     before do

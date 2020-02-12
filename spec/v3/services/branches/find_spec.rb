@@ -266,12 +266,12 @@ describe Travis::API::V3::Services::Branches::Find, set_app: true do
   end
 
   describe "sorting by last_build" do
-    let!(:repo) { FactoryGirl.create(:repository_without_last_build) }
-    let!(:build1) { FactoryGirl.create(:v3_build, number: 10) }
-    let!(:build2) { FactoryGirl.create(:v3_build, number: 11) }
-    let!(:branch1) { FactoryGirl.create(:branch, name: 'older', last_build: build1, repository: repo) }
-    let!(:branch2) { FactoryGirl.create(:branch, name: 'newer', last_build: build2, repository: repo) }
-    let!(:branch3) { FactoryGirl.create(:branch, name: 'no-builds', last_build: nil, repository: repo) }
+    let!(:repo) { FactoryBot.create(:repository_without_last_build) }
+    let!(:build1) { FactoryBot.create(:v3_build, number: 10) }
+    let!(:build2) { FactoryBot.create(:v3_build, number: 11) }
+    let!(:branch1) { FactoryBot.create(:branch, name: 'older', last_build: build1, repository: repo) }
+    let!(:branch2) { FactoryBot.create(:branch, name: 'newer', last_build: build2, repository: repo) }
+    let!(:branch3) { FactoryBot.create(:branch, name: 'no-builds', last_build: nil, repository: repo) }
 
     context 'desc' do
       before  { get("/v3/repo/#{repo.id}/branches?sort_by=last_build:desc&limit=10") }

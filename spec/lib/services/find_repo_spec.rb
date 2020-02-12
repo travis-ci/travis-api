@@ -1,7 +1,7 @@
 describe Travis::Services::FindRepo do
 
-  let(:user) { Factory(:user) }
-  let!(:repo)   { Factory(:repository_without_last_build, :owner => user, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let(:user) { FactoryBot.create(:user) }
+  let!(:repo)   { FactoryBot.create(:repository_without_last_build, :owner => user, :owner_name => 'travis-ci', :name => 'travis-core') }
   let(:service) { described_class.new(user, params) }
 
   attr_reader :params
@@ -31,10 +31,10 @@ describe Travis::Services::FindRepo do
   end
 
   context do
-    let(:user) { Factory.create(:user, login: :rkh) }
-    let(:org)  { Factory.create(:org, login: :travis) }
-    let(:private_repo) { Factory.create(:repository, owner: org, private: true) }
-    let(:public_repo)  { Factory.create(:repository, owner: org, private: false) }
+    let(:user) { FactoryBot.create(:user, login: :rkh) }
+    let(:org)  { FactoryBot.create(:org, login: :travis) }
+    let(:private_repo) { FactoryBot.create(:repository, owner: org, private: true) }
+    let(:public_repo)  { FactoryBot.create(:repository, owner: org, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -43,13 +43,13 @@ describe Travis::Services::FindRepo do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private repository' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_repo.id)
           service.run.should == private_repo
         end
 
         it 'finds a public repository' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_repo.id)
           service.run.should == public_repo
         end
@@ -74,13 +74,13 @@ describe Travis::Services::FindRepo do
       describe 'given the current user has a permission on the repository' do
 
         it 'finds a private repository' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_repo.id)
           service.run.should == private_repo
         end
 
         it 'finds a public repository' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_repo.id)
           service.run.should == public_repo
         end

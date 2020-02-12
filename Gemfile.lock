@@ -90,20 +90,20 @@ GEM
   specs:
     active_model_serializers (0.9.5)
       activemodel (>= 3.2)
-    activemodel (4.2.10)
-      activesupport (= 4.2.10)
+    activemodel (4.2.11.1)
+      activesupport (= 4.2.11.1)
       builder (~> 3.1)
-    activerecord (4.2.10)
-      activemodel (= 4.2.10)
-      activesupport (= 4.2.10)
+    activerecord (4.2.11.1)
+      activemodel (= 4.2.11.1)
+      activesupport (= 4.2.11.1)
       arel (~> 6.0)
-    activesupport (4.2.10)
+    activesupport (4.2.11.1)
       i18n (~> 0.7)
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    addressable (2.5.2)
-      public_suffix (>= 2.0.2, < 4.0)
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
     aggregate (0.2.2)
     allocation_tracer (0.6.3)
     amq-protocol (2.3.0)
@@ -127,14 +127,14 @@ GEM
     coderay (1.1.1)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    composite_primary_keys (8.1.6)
+    composite_primary_keys (8.1.8)
       activerecord (~> 4.2.0)
-    concurrent-ruby (1.0.5)
+    concurrent-ruby (1.1.5)
     connection_pool (2.2.1)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     dalli (2.7.6)
-    database_cleaner (1.7.0)
+    database_cleaner (1.8.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.3)
@@ -143,8 +143,8 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.11)
     excon (0.72.0)
-    factory_girl (2.4.2)
-      activesupport
+    factory_bot (5.1.1)
+      activesupport (>= 4.2.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
@@ -213,7 +213,7 @@ GEM
     grpc (1.15.0)
       google-protobuf (~> 3.1)
       googleapis-common-protos-types (~> 1.0.0)
-    hashdiff (0.3.7)
+    hashdiff (1.0.0)
     hashr (2.0.0)
     hitimes (1.2.4)
     http (2.2.2)
@@ -233,7 +233,7 @@ GEM
     ipaddress (0.8.3)
     json (2.1.0)
     jwt (2.1.0)
-    kgio (2.10.0)
+    kgio (2.11.3)
     knapsack (1.14.0)
       rake
     libhoney (1.3.2)
@@ -248,7 +248,6 @@ GEM
     memcachier (0.0.2)
     memoist (0.16.0)
     memory_profiler (0.9.10)
-    metaclass (0.0.4)
     method_source (0.8.2)
     metriks (0.9.9.6)
       atomic (~> 1.0)
@@ -258,9 +257,8 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.4.0)
-    minitest (5.11.3)
-    mocha (0.14.0)
-      metaclass (~> 0.0.1)
+    minitest (5.14.0)
+    mocha (1.11.2)
     msgpack (1.2.4)
     multi_json (1.13.1)
     multipart-post (2.1.1)
@@ -285,7 +283,7 @@ GEM
     pry-byebug (3.6.0)
       byebug (~> 10.0)
       pry (~> 0.10)
-    public_suffix (3.0.3)
+    public_suffix (4.0.3)
     pusher (0.14.6)
       httpclient (~> 2.5)
       multi_json (~> 1.0)
@@ -303,7 +301,7 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
-    raindrops (0.17.0)
+    raindrops (0.19.1)
     rake (0.9.6)
     rb-fsevent (0.9.8)
     rb-inotify (0.9.7)
@@ -337,8 +335,8 @@ GEM
       rspec-expectations (>= 2.99.0.beta1)
     rspec-mocks (2.99.4)
     ruby_dep (1.5.0)
-    safe_yaml (1.0.4)
-    sentry-raven (2.5.3)
+    safe_yaml (1.0.5)
+    sentry-raven (2.11.3)
       faraday (>= 0.7.6, < 1.0)
     sidekiq (4.2.6)
       concurrent-ruby (~> 1.0)
@@ -375,17 +373,17 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    timecop (0.8.1)
+    timecop (0.9.1)
     tool (0.2.3)
     travis-rollout (0.0.2)
     trollop (2.1.2)
-    tzinfo (1.2.5)
+    tzinfo (1.2.6)
       thread_safe (~> 0.1)
     uber (0.0.15)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
-    unicorn (5.2.0)
+    unicorn (5.5.3)
       kgio (~> 2.6)
       raindrops (~> 0.7)
     useragent (0.16.8)
@@ -394,10 +392,10 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    webmock (3.3.0)
+    webmock (3.8.1)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
-      hashdiff
+      hashdiff (>= 0.4.0, < 2.0.0)
     yard (0.9.20)
 
 PLATFORMS
@@ -412,8 +410,8 @@ DEPENDENCIES
   coder (~> 0.4.0)
   composite_primary_keys (~> 8.0)
   dalli
-  database_cleaner (~> 1.7)
-  factory_girl (~> 2.4.0)
+  database_cleaner (~> 1.8)
+  factory_bot (~> 5.1.0)
   faraday
   faraday_middleware
   fog-aws (~> 0.12.0)
@@ -434,7 +432,7 @@ DEPENDENCIES
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
   mime-types
-  mocha (~> 0.12)
+  mocha
   multi_json
   mustermann
   nakayoshi_fork
@@ -467,7 +465,7 @@ DEPENDENCIES
   sinatra
   sinatra-contrib
   stackprof
-  timecop (~> 0.8.0)
+  timecop (~> 0.9.0)
   tool
   travis-amqp!
   travis-config!
