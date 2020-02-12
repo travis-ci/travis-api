@@ -20,6 +20,8 @@ describe 'Exception', set_app: true do
     Travis.config.sentry.dsn = 'https://fake:token@app.getsentry.com/12345'
     Travis::Api::App.setup_monitoring
     Travis.testing = false
+
+    allow(Raven).to receive(:send_event)
   end
 
   after do
@@ -43,9 +45,9 @@ describe 'Exception', set_app: true do
   it 'enqueues error into a thread' do
     error = TestError.new('Konstantin broke all the thingz!')
     allow_any_instance_of(Travis::Api::App::Endpoint::Repos).to receive(:service).and_raise(error)
-    expect(Raven).to receive(:send_event).with do |event|
-      event['logentry']['message'] == "#{error.class}: #{error.message}"
-    end
+    expect(Raven).to receive(:send_event).with(
+      satisfy { |event| event['logentry']['message'] == "#{error.class}: #{error.message}" }
+    )
     res = get '/repos/1'
     expect(res.status).to eq(500)
     expect(res.body).to eq("Sorry, we experienced an error.\n")
