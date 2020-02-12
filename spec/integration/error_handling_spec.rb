@@ -16,6 +16,10 @@ describe 'Exception', set_app: true do
   end
 
   before do
+    Raven.configure do |config|
+      config.silence_ready = true
+    end
+
     set_app Raven::Rack.new(FixRaven.new(app))
     Travis.config.sentry.dsn = 'https://fake:token@app.getsentry.com/12345'
     Travis::Api::App.setup_monitoring
