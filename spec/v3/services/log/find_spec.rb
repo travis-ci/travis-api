@@ -60,7 +60,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:archived_content) { "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch" }
 
   before do
-    allow(Travis::API::V3::AccessControl::LegacyToken.any_instance).to receive(:visible?).and_return(true)
+    allow_any_instance_of(Travis::API::V3::AccessControl::LegacyToken).to receive(:visible?).and_return(true)
     stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
       to_return(:status => 200, :body => xml_content, :headers => {})
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job.id}/log.txt").
