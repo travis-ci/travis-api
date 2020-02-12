@@ -10,6 +10,6 @@ describe 'Uptime', set_app: true do
     response = get '/uptime'
     expect(response.status).to eq(500)
     expect(response.body).to eq("Error: error!")
-    ActiveRecord::Base.connection.unstub(:execute)
+    allow(ActiveRecord::Base.connection).to receive(:execute).and_call_original
   end
 end
