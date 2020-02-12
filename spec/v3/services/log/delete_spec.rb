@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Travis::API::V3::Services::Log::Delete, set_app: true do
   let(:user)        { FactoryBot.create(:user) }
   let(:repo)        { FactoryBot.create(:repository, owner_name: user.login, name: 'minimal', owner: user)}
@@ -41,9 +39,10 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   }
 
   around(:each) do |example|
+    options = Travis.config.log_options
     Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
     example.run
-    Travis.config.log_options = {}
+    Travis.config.log_options = options
   end
 
   before do
