@@ -22,7 +22,7 @@ end
 describe Build::Metrics do
   let(:request) { double('request', created_at: Time.now - 60) }
   let(:build) { BuildMetricsMock.new(request) }
-  let(:timer) { double('meter', :update) }
+  let(:timer) { double('meter', update: nil) }
 
   before :each do
     allow(Metriks).to receive(:timer).and_return(timer)
