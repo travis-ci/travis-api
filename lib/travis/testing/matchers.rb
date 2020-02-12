@@ -12,7 +12,7 @@ RSpec::Matchers.define :issue_queries do |count|
   match do |code|
     queries = call(code)
 
-    failure_message_for_should do
+    failure_message do
       (["expected #{count} queries to be issued, but got #{queries.size}:"] + queries).join("\n\n")
     end
 
@@ -39,7 +39,7 @@ RSpec::Matchers.define :publish_instrumentation_event do |data|
     expected_keys = [:uuid, :event, :started_at]
     missing_keys = expected_keys.select { |key| !event.key?(key) }
 
-    failure_message_for_should do
+    failure_message do
       message =  "Expected a notification event to be published:\n\n\t#{event.inspect}\n\n"
       message << "Including:\n\n\t#{data.inspect}\n\n"
 
@@ -60,7 +60,7 @@ RSpec::Matchers.define :eql_json do |expected|
     actual == expected
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     message = "expected to match JSON:\n"
     diff = Hashdiff.diff(expected, actual)
     diff_messages = diff.map do |type, path, a, b|
