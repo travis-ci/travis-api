@@ -10,14 +10,14 @@ describe Travis::Services::FindRequests do
   describe 'run' do
     it 'finds recent requests when older_than is not given' do
       @params = { :repository_id => repo.id }
-      expect(service.run).to eq([newer_request, request])
+      expect(service.run).to match_array([newer_request, request])
     end
 
     it 'includes the build_id' do
       FactoryBot.create(:build, request_id: request.id)
       @params = { :repository_id => repo.id }
       requests = service.run
-      expect(requests).to eq([newer_request, request])
+      expect(requests).to match_array([newer_request, request])
       requests.first.build_id  = nil
       requests.second.build_id = request.builds.first.id
     end
@@ -37,7 +37,7 @@ describe Travis::Services::FindRequests do
     it 'scopes to the given repository_id' do
       @params = { :repository_id => repo.id }
       FactoryBot.create(:request, :repository => FactoryBot.create(:repository))
-      expect(service.run).to eq([newer_request, request])
+      expect(service.run).to match_array([newer_request, request])
     end
 
     it 'raises when the repository could not be found' do
