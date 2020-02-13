@@ -88,9 +88,10 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   end
 
   around(:each) do |example|
+    options = Travis.config.log_options
     Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
     example.run
-    Travis.config.log_options = {}
+    Travis.config.log_options = options
   end
 
   context 'without authentication' do
