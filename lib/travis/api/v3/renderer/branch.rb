@@ -5,7 +5,7 @@ module Travis::API::V3
     representation(:additional, :recent_builds)
 
     def repository
-      puts "Oto model.repository: #{model.repository.to_s}"
+      puts "Oto model.repository: #{model.repository.permissions.to_s}"
       Renderer.render_model(model.repository, mode: :standard)
     end
 
