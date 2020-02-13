@@ -7,6 +7,6 @@ describe Travis::API::V3::Services::User::Logout, set_app: true do
   describe "logout user" do
     before  { get("/v3/logout", {}, headers)    }
     before  { get("/v3/user", {}, headers)      }
-    example { puts last_response; expect(last_response).not_to be_ok }
+    example { expect(last_response).not_to be_ok }
   end
 end
