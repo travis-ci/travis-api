@@ -1,5 +1,3 @@
-require 'mustermann'
-
 module Travis::API::V3
   class Routes::Resource
     attr_accessor :identifier, :route, :services, :meta_data, :hidden_services
