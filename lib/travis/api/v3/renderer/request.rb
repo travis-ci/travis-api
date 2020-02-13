@@ -23,5 +23,9 @@ module Travis::API::V3
       return [] unless model.yaml_config
       [{ config: model.yaml_config.yaml, source: '.travis.yml' }]
     end
+
+    def repository
+      Renderer.render_model(model.repository, mode: :standard)
+    end
   end
 end
