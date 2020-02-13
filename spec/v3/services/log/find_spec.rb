@@ -82,7 +82,10 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
     allow(remote).to receive(:find_by_job_id).and_return(Travis::RemoteLog.new(log_from_api))
   end
-  after { Fog::Mock.reset }
+  after do
+    Fog.unmock!
+    Fog::Mock.reset
+  end
 
   around(:each) do |example|
     Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
