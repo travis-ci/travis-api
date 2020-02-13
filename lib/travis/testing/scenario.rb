@@ -92,7 +92,7 @@ module Scenario
 
     def repositories(*names)
       names.map { |name|
-        repo = Factory(name)
+        repo = FactoryBot.create(name)
         repo.create_key
         repo
       }
@@ -101,9 +101,9 @@ module Scenario
     def build(attributes)
       commit = attributes.delete(:commit)
       jobs  = attributes.delete(:jobs)
-      commit = Factory(:commit, commit)
+      commit = FactoryBot.create(:commit, commit)
 
-      build  = Factory(:build, attributes.merge(:commit => commit))
+      build  = FactoryBot.create(:build, attributes.merge(:commit => commit))
       build.matrix.each_with_index do |job, ix|
         job.update_attributes!(jobs[ix] || {})
       end

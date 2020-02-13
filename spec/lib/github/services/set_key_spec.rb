@@ -14,15 +14,15 @@ describe Travis::Github::Services::SetKey do
   let(:event)     { publisher.events.last }
 
   before :each do
-    GH.stubs(:[]).returns([])
-    GH.stubs(:post)
-    GH.stubs(:delete)
+    allow(GH).to receive(:[]).and_return([])
+    allow(GH).to receive(:post)
+    allow(GH).to receive(:delete)
     Travis::Notification.publishers.replace([publisher])
-    Travis::Services::FindRepo.any_instance.stubs(:run).returns(repo)
+    allow_any_instance_of(Travis::Services::FindRepo).to receive(:run).and_return(repo)
   end
 
   it 'authenticates with the current user' do
-    Travis::Github.expects(:authenticated).with(user).at_least_once.returns([])
+    expect(Travis::Github).to receive(:authenticated).with(user).at_least(:once).and_return([])
     service.run
   end
 
@@ -32,20 +32,20 @@ describe Travis::Github::Services::SetKey do
     end
 
     it 'does not try to delete an existing key on github' do
-      GH.stubs(:[]).with('repos/travis-ci/travis-core/keys').returns(keys)
-      GH.expects(:delete).never
+      allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return(keys)
+      expect(GH).not_to receive(:delete)
       service.run
     end
 
     it 'sets the encoded public repository key to github if github does not have it' do
-      GH.stubs(:[]).with(keys_path).returns([])
-      GH.expects(:post).with(keys_path, title: 'travis-ci.org', key: SSL_KEYS[:public_base64], read_only: true)
+      allow(GH).to receive(:[]).with(keys_path).and_return([])
+      expect(GH).to receive(:post).with(keys_path, title: 'travis-ci.org', key: SSL_KEYS[:public_base64], read_only: true)
       service.run
     end
 
     it 'does not set anything to github if github already has the encoded public repository key' do
-      GH.stubs(:[]).with('repos/travis-ci/travis-core/keys').returns(keys)
-      GH.expects(:post).never
+      allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return(keys)
+      expect(GH).not_to receive(:post)
       service.run
     end
   end
@@ -56,27 +56,27 @@ describe Travis::Github::Services::SetKey do
     end
 
     it 'does not try to delete a key on github when no one exists' do
-      GH.stubs(:[]).with('repos/travis-ci/travis-core/keys').returns([])
-      GH.expects(:delete).never
+      allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return([])
+      expect(GH).not_to receive(:delete)
       service.run
     end
 
     it 'deletes an existing key on github' do
-      GH.stubs(:[]).with('repos/travis-ci/travis-core/keys').returns(keys)
-      GH.expects(:delete).with(key_path)
+      allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return(keys)
+      expect(GH).to receive(:delete).with(key_path)
       service.run
     end
 
     it 'sets the encoded public repository key to github' do
-      GH.stubs(:[]).with('repos/travis-ci/travis-core/keys').returns(keys)
-      GH.expects(:post).with(keys_path, title: 'travis-ci.org', key: SSL_KEYS[:public_base64], read_only: true)
+      allow(GH).to receive(:[]).with('repos/travis-ci/travis-core/keys').and_return(keys)
+      expect(GH).to receive(:post).with(keys_path, title: 'travis-ci.org', key: SSL_KEYS[:public_base64], read_only: true)
       service.run
     end
   end
 
   it 'publishes an event' do
     service.run
-    event.should publish_instrumentation_event(
+    expect(event).to publish_instrumentation_event(
       event: 'travis.github.services.set_key.run:completed',
       message: 'Travis::Github::Services::SetKey#run:completed for travis-ci/travis-core',
       result: nil

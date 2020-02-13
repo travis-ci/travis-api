@@ -1,6 +1,6 @@
 describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
   describe "migrating a repository" do
-    let(:user) { Factory.create(:user, login: 'merge-user') }
+    let(:user) { FactoryBot.create(:user, login: 'merge-user') }
     let(:repo) { Travis::API::V3::Models::Repository.first }
     before do
       Travis::Features.activate_owner(:allow_migration, repo.owner)
@@ -18,8 +18,8 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
 
         it "makes a request to the merge app" do
           response = post("/v3/repo/#{repo.id}/migrate", {}, headers)
-          response.status.should == 202
-          JSON.parse(response.body)['@href'].should == "/v3/repo/#{repo.id}"
+          expect(response.status).to eq(202)
+          expect(JSON.parse(response.body)['@href']).to eq("/v3/repo/#{repo.id}")
         end
 
         context "when repo is migrating" do
@@ -50,7 +50,7 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
           before { Travis::Features.deactivate_owner(:allow_migration, repo.owner) }
           it "returns 403" do
             response = post("/v3/repo/#{repo.id}/migrate", {}, headers)
-            response.status.should == 403
+            expect(response.status).to eq(403)
           end
         end
       end
@@ -60,8 +60,8 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
 
         it "returns a 403 response" do
           response = post("/v3/repo/#{repo.id}/migrate", {}, headers)
-          response.status.should == 403
-          JSON.parse(response.body)['@type'].should == "error"
+          expect(response.status).to eq(403)
+          expect(JSON.parse(response.body)['@type']).to eq("error")
         end
       end
     end

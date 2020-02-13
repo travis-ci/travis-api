@@ -1,6 +1,6 @@
 describe Travis::API::V3::Services::Jobs::Find, set_app: true do
   def create(type, attributes = {})
-    FactoryGirl.create(type, attributes)
+    FactoryBot.create(type, attributes)
   end
 
   let!(:repo1)   { create(:repository_without_last_build, owner: user) }

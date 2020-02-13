@@ -15,17 +15,17 @@ describe Travis::Api::App::AccessToken do
     token     = described_class.new(app_id: 1, user_id: 2).tap(&:save)
     new_token = described_class.new(app_id: 1, user_id: 2, expires_in: 10)
 
-    token.token.should_not == new_token.token
+    expect(token.token).not_to eq(new_token.token)
   end
 
   it 'expires the token after given period of time' do
     token = described_class.new(app_id: 1, user_id: 2, expires_in: 1).tap(&:save)
 
-    described_class.find_by_token(token.token).should_not be_nil
+    expect(described_class.find_by_token(token.token)).not_to be_nil
 
     sleep 2
 
-    described_class.find_by_token(token.token).should be_nil
+    expect(described_class.find_by_token(token.token)).to be_nil
   end
 
   it 'allows to save extra information' do
@@ -39,9 +39,9 @@ describe Travis::Api::App::AccessToken do
     }
 
     token = described_class.new(attrs).tap(&:save)
-    token.extra.should == attrs[:extra]
+    expect(token.extra).to eq(attrs[:extra])
 
     token = described_class.find_by_token(token.token)
-    token.extra.should == { 'required_params' => { 'job_id' => '1' } }
+    expect(token.extra).to eq({ 'required_params' => { 'job_id' => '1' } })
   end
 end

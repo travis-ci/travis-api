@@ -5,7 +5,7 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
   let!(:time) { Time.now.utc }
 
   it 'commits' do
-    data['commits'].first.should == {
+    expect(data['commits'].first).to eq({
       'id' => 1,
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
@@ -17,16 +17,16 @@ describe Travis::Api::Serialize::V2::Http::Jobs do
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-    }
+    })
   end
 
   describe 'with a tag' do
     before do
-      test.commit.stubs(tag_name: 'v1.0.0')
+      allow(test.commit).to receive(:tag_name).and_return('v1.0.0')
     end
 
     it 'includes the tag name to commit' do
-      data['commits'][0]['tag'].should == 'v1.0.0'
+      expect(data['commits'][0]['tag']).to eq('v1.0.0')
     end
   end
 end
@@ -36,10 +36,10 @@ describe Travis::Api::Serialize::V2::Http::Jobs, 'using Travis::Services::Jobs::
   let(:data) { described_class.new(jobs).data }
 
   before :each do
-    3.times { Factory(:test) }
+    3.times { FactoryBot.create(:test) }
   end
 
   it 'does not explode' do
-    data.should_not be_nil
+    expect(data).not_to be_nil
   end
 end

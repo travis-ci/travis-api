@@ -5,7 +5,7 @@ describe Travis::Api::Serialize::V2::Http::Branches do
   let(:branches) { [build] }
 
   it 'branches' do
-    data['branches'].first.should == {
+    expect(data['branches'].first).to eq({
       'id' => 1,
       'repository_id' => 1,
       'commit_id' => 1,
@@ -17,11 +17,11 @@ describe Travis::Api::Serialize::V2::Http::Branches do
       'finished_at' => json_format_time(Time.now.utc),
       'duration' => 60,
       'pull_request' => false
-    }
+    })
   end
 
   it 'commits' do
-    data['commits'].first.should == {
+    expect(data['commits'].first).to eq({
       'id' => 1,
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
@@ -32,6 +32,6 @@ describe Travis::Api::Serialize::V2::Http::Branches do
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-    }
+    })
   end
 end

@@ -4,7 +4,7 @@ describe Travis::Api::Serialize::V2::Http::Job do
   let(:data) { described_class.new(test).data }
 
   it 'commit' do
-    data['commit'].should == {
+    expect(data['commit']).to eq({
       'id' => 1,
       'sha' => '62aae5f70ceee39123ef',
       'message' => 'the commit message',
@@ -17,16 +17,16 @@ describe Travis::Api::Serialize::V2::Http::Job do
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-    }
+    })
   end
 
   describe 'with a tag' do
     before do
-      test.commit.stubs(tag_name: 'v1.0.0')
+      allow(test.commit).to receive(:tag_name).and_return('v1.0.0')
     end
 
     it 'includes the tag name to commit' do
-      data['commit']['tag'].should == 'v1.0.0'
+      expect(data['commit']['tag']).to eq('v1.0.0')
     end
   end
 
@@ -36,27 +36,27 @@ describe Travis::Api::Serialize::V2::Http::Job do
     end
 
     it 'shows encrypted env vars in human readable way' do
-      data['job']['config']['env'].should == 'FOO=[secure]'
+      expect(data['job']['config']['env']).to eq('FOO=[secure]')
     end
   end
 
   describe 'with a tag' do
     before do
-      test.commit.stubs(tag_name: 'v1.0.0')
+      allow(test.commit).to receive(:tag_name).and_return('v1.0.0')
     end
 
     it 'includes the tag name to commit' do
-      data['commit']['tag'].should == 'v1.0.0'
+      expect(data['commit']['tag']).to eq('v1.0.0')
     end
   end
 end
 
 describe Travis::Api::Serialize::V2::Http::Job, 'using Travis::Services::Jobs::FindOne' do
-  let!(:record) { Factory(:test) }
+  let!(:record) { FactoryBot.create(:test) }
   let(:job)     { Travis.run_service(:find_job, nil, :id => record.id) }
   let(:data)    { described_class.new(job).data }
 
   it 'does not explode' do
-    data.should_not be_nil
+    expect(data).not_to be_nil
   end
 end

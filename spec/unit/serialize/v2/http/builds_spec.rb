@@ -4,7 +4,7 @@ describe Travis::Api::Serialize::V2::Http::Builds do
   let(:data) { described_class.new([build]).data }
 
   it 'builds' do
-    data['builds'].first.should == {
+    expect(data['builds'].first).to eq({
       'id' => 1,
       'repository_id' => 1,
       'commit_id' => 1,
@@ -19,11 +19,11 @@ describe Travis::Api::Serialize::V2::Http::Builds do
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
       'duration' => 60
-    }
+    })
   end
 
   it 'commit' do
-    data['commits'].first.should == {
+    expect(data['commits'].first).to eq({
       'id' => commit.id,
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
@@ -36,23 +36,23 @@ describe Travis::Api::Serialize::V2::Http::Builds do
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
       'pull_request_number' => nil,
-    }
+    })
   end
 
   it 'uses uses cached_matrix_ids if the column exists in DB' do
     build = stub_build
-    build.expects(:cached_matrix_ids).returns([1, 2, 3])
+    allow(build).to receive(:cached_matrix_ids).and_return([1, 2, 3])
     data = described_class.new([build]).data
-    data['builds'].first['job_ids'].should == [1, 2, 3]
+    expect(data['builds'].first['job_ids']).to eq([1, 2, 3])
   end
 
   describe 'with a tag' do
     before do
-      build.commit.stubs(tag_name: 'v1.0.0')
+      allow(build.commit).to receive(:tag_name).and_return('v1.0.0')
     end
 
     it 'includes the tag name to commit' do
-      data['commits'][0]['tag'].should == 'v1.0.0'
+      expect(data['commits'][0]['tag']).to eq('v1.0.0')
     end
   end
 
@@ -64,22 +64,22 @@ describe Travis::Api::Serialize::V2::Http::Builds do
     end
 
     it 'returns pull request data' do
-      data['builds'].first['pull_request'].should == true
-      data['builds'].first['pull_request_number'].should == 44
+      expect(data['builds'].first['pull_request']).to eq(true)
+      expect(data['builds'].first['pull_request_number']).to eq(44)
     end
   end
 end
 
 describe Travis::Api::Serialize::V2::Http::Builds, 'using Travis::Services::Builds::FindAll' do
-  let!(:repo)  { Factory(:repository_without_last_build) }
+  let!(:repo)  { FactoryBot.create(:repository_without_last_build) }
   let(:builds) { Travis.run_service(:find_builds, nil, :event_type => 'push', :repository_id => repo.id) }
   let(:data)   { described_class.new(builds).data }
 
   before :each do
-    3.times { Factory(:build, :repository => repo) }
+    3.times { FactoryBot.create(:build, :repository => repo) }
   end
 
   it 'queries' do
-    lambda { data }.should issue_queries(12)
+    expect { data }.to issue_queries(12)
   end
 end

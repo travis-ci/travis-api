@@ -1,5 +1,5 @@
 describe Travis::Api::App::Services::ScheduleRequest::Throttle do
-  let(:repo) { Factory(:repository) }
+  let(:repo) { FactoryBot.create(:repository) }
   subject    { described_class.new(repo.slug) }
 
   it 'does not throttle by default' do
@@ -12,7 +12,7 @@ describe Travis::Api::App::Services::ScheduleRequest::Throttle do
   end
 
   it 'does not throttle with more then N requests for other repos in the last hour' do
-    10.times { Request.create!(repository: Factory(:repository), event_type: 'api', result: 'accepted') }
+    10.times { Request.create!(repository: FactoryBot.create(:repository), event_type: 'api', result: 'accepted') }
     expect(subject.throttled?).to eq false
   end
 end

@@ -41,14 +41,14 @@ describe Travis::Api::App::SettingsEndpoint do
 
         response = get "/settings/item/#{repo.id}", {}, headers
         json = JSON.parse(response.body)
-        json['item']['name'].should == 'an item'
-        json['item'].should_not have_key('secret')
+        expect(json['item']['name']).to eq('an item')
+        expect(json['item']).not_to have_key('secret')
       end
 
       it 'returns 404 if item can\'t be found' do
         response = get "/settings/item/#{repo.id}", {}, headers
         json = JSON.parse(response.body)
-        json['error'].should == "Could not find a requested setting"
+        expect(json['error']).to eq("Could not find a requested setting")
       end
     end
 
@@ -59,7 +59,7 @@ describe Travis::Api::App::SettingsEndpoint do
         it "responds with 403" do
           body = { item: { name: 'a name', secret: 'a secret' } }.to_json
           response = patch "/settings/item/#{repo.id}", body, headers
-          response.status.should == 403
+          expect(response.status).to eq(403)
         end
       end
 
@@ -69,7 +69,7 @@ describe Travis::Api::App::SettingsEndpoint do
         it "responds with 403" do
           body = { item: { name: 'a name', secret: 'a secret' } }.to_json
           response = patch "/settings/item/#{repo.id}", body, headers
-          response.status.should == 403
+          expect(response.status).to eq(403)
         end
       end
 
@@ -81,44 +81,44 @@ describe Travis::Api::App::SettingsEndpoint do
         body = { item: { name: 'a new name', secret: 'a new secret' } }.to_json
         response = patch "/settings/item/#{repo.id}", body, headers
         json = JSON.parse(response.body)
-        json['item']['name'].should == 'a new name'
-        json['item'].should_not have_key('secret')
+        expect(json['item']['name']).to eq('a new name')
+        expect(json['item']).not_to have_key('secret')
 
         updated_item = repo.reload.settings.item
-        updated_item.name.should == 'a new name'
-        updated_item.secret.decrypt.should == 'a new secret'
+        expect(updated_item.name).to eq('a new name')
+        expect(updated_item.secret.decrypt).to eq('a new secret')
       end
 
       it 'should create an item if it does not exist' do
-        repo.settings.item.should be_nil
+        expect(repo.settings.item).to be_nil
 
         body = { item: { name: 'a name', secret: 'a secret' } }.to_json
         response = patch "/settings/item/#{repo.id}", body, headers
         json = JSON.parse(response.body)
-        json['item']['name'].should == 'a name'
-        json['item'].should_not have_key('secret')
+        expect(json['item']['name']).to eq('a name')
+        expect(json['item']).not_to have_key('secret')
 
         item = repo.reload.settings.item
-        item.name.should == 'a name'
-        item.secret.decrypt.should == 'a secret'
+        expect(item.name).to eq('a name')
+        expect(item.secret.decrypt).to eq('a secret')
       end
 
       it 'returns an error message if item is invalid' do
         body = { item: { name: '' } }.to_json
         response = patch "/settings/item/#{repo.id}", body, headers
-        response.status.should == 422
+        expect(response.status).to eq(422)
 
         json = JSON.parse(response.body)
-        json['message'].should == 'Validation failed'
-        json['errors'].should == [{
+        expect(json['message']).to eq('Validation failed')
+        expect(json['errors']).to eq([{
           'field' => 'name',
           'code' => 'missing_field'
         }, {
           'field' => 'secret',
           'code' => 'missing_field'
-        }]
+        }])
 
-        repo.reload.settings.item.should be_nil
+        expect(repo.reload.settings.item).to be_nil
       end
     end
 
@@ -128,7 +128,7 @@ describe Travis::Api::App::SettingsEndpoint do
 
         it "responds with 403" do
           response = delete "/settings/item/#{repo.id}", {}, headers
-          response.status.should == 403
+          expect(response.status).to eq(403)
         end
       end
 
@@ -137,7 +137,7 @@ describe Travis::Api::App::SettingsEndpoint do
 
         it "responds with 403" do
           response = delete "/settings/item/#{repo.id}", {}, headers
-          response.status.should == 403
+          expect(response.status).to eq(403)
         end
       end
 
@@ -148,10 +148,10 @@ describe Travis::Api::App::SettingsEndpoint do
 
         response = delete "/settings/item/#{repo.id}", {}, headers
         json = JSON.parse(response.body)
-        json['item']['name'].should == 'an item'
-        json['item'].should_not have_key('secret')
+        expect(json['item']['name']).to eq('an item')
+        expect(json['item']).not_to have_key('secret')
 
-        repo.reload.settings.item.should be_nil
+        expect(repo.reload.settings.item).to be_nil
       end
     end
   end

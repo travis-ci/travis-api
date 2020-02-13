@@ -3,16 +3,16 @@ module Travis::Api::App::Responders
     class MyJson < Json
     end
 
-    let(:request)  { stub 'request', params: {} }
-    let(:endpoint) { stub 'endpoint', request: request, content_type: nil  }
-    let(:resource) { stub 'resource' }
-    let(:accept)   { stub 'accept entry', version: '2', params: {} }
+    let(:request)  { double 'request', params: {} }
+    let(:endpoint) { double 'endpoint', request: request, content_type: nil  }
+    let(:resource) { double 'resource' }
+    let(:accept)   { double 'accept entry', version: '2', params: {} }
     let(:options)  { { :accept => accept} }
     let(:json)  { MyJson.new(endpoint, resource, options) }
 
     context 'with resource not associated with Api data class' do
       it 'returns nil result' do
-        json.apply.should be_nil
+        expect(json.apply).to be_nil
       end
     end
 
@@ -21,7 +21,7 @@ module Travis::Api::App::Responders
         let(:resource) { { foo: 'bar' } }
 
         it 'returns resource converted to_json' do
-          json.apply.should == { foo: 'bar' }
+          expect(json.apply).to eq({ foo: 'bar' })
         end
       end
 
@@ -29,21 +29,21 @@ module Travis::Api::App::Responders
         let(:resource) { nil }
 
         it 'responds with 404' do
-          json.apply?.should be_falsey
-          json.apply.should be_falsey
+          expect(json.apply?).to be_falsey
+          expect(json.apply).to be_falsey
         end
       end
     end
 
     context 'with resource associated with Api data class' do
-      let(:builder)       { stub 'builder', data: { foo: 'bar' } }
-      let(:builder_class) { stub 'builder class', new: builder }
+      let(:builder)       { double 'builder', data: { foo: 'bar' } }
+      let(:builder_class) { double 'builder class', new: builder }
       before do
-        json.stubs :builder => builder_class
+        allow(json).to receive(:builder).and_return(builder_class)
       end
 
       it 'returns proper data converted to json' do
-        json.apply.should == { foo: 'bar' }
+        expect(json.apply).to eq({ foo: 'bar' })
       end
     end
   end

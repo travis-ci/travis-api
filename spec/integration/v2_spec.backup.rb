@@ -7,7 +7,7 @@ describe 'v2' do
     let(:action) { :index }
 
     it 'routes to V2::RepositoriesController#index' do
-      { :get => 'repositories.json?version=2' }.should route_to(params)
+      expect({ :get => 'repositories.json?version=2' }).to route_to(params)
     end
   end
 
@@ -16,7 +16,7 @@ describe 'v2' do
     let(:action) { :show }
 
     it 'routes to V2::RepositoriesController#show' do
-      { :get => 'repositories/1.json?version=2' }.should route_to(params.merge(:id => 1))
+      expect({ :get => 'repositories/1.json?version=2' }).to route_to(params.merge(:id => 1))
     end
   end
 
@@ -25,7 +25,7 @@ describe 'v2' do
     let(:action) { :index }
 
     it 'routes to V2::BuildsController#index' do
-      { :get => 'builds.json?version=2' }.should route_to(params)
+      expect({ :get => 'builds.json?version=2' }).to route_to(params)
     end
   end
 
@@ -34,7 +34,7 @@ describe 'v2' do
     let(:action) { :show }
 
     it 'routes to V2::BuildsController#show' do
-      { :get => 'builds/1.json?version=2' }.should route_to(params.merge(:id => 1))
+      expect({ :get => 'builds/1.json?version=2' }).to route_to(params.merge(:id => 1))
     end
   end
 
@@ -43,7 +43,7 @@ describe 'v2' do
     let(:action) { :index }
 
     it 'routes to V2::BranchesController#index' do
-      { :get => 'branches.json?version=2' }.should route_to(params)
+      expect({ :get => 'branches.json?version=2' }).to route_to(params)
     end
   end
 
@@ -52,7 +52,7 @@ describe 'v2' do
     let(:action) { :index }
 
     it 'routes to V2::JobsController#index' do
-      { :get => 'jobs.json?version=2' }.should route_to(params)
+      expect({ :get => 'jobs.json?version=2' }).to route_to(params)
     end
   end
 
@@ -61,7 +61,7 @@ describe 'v2' do
     let(:action) { :show }
 
     it 'routes to V2::JobsController#show' do
-      { :get => 'jobs/1.json?version=2' }.should route_to(params.merge(:id => 1))
+      expect({ :get => 'jobs/1.json?version=2' }).to route_to(params.merge(:id => 1))
     end
   end
 
@@ -70,7 +70,7 @@ describe 'v2' do
     let(:action) { :show }
 
     it 'routes to V2::ArtifactsController#index' do
-      { :get => 'artifacts/1.json?version=2' }.should route_to(params.merge(:id => 1))
+      expect({ :get => 'artifacts/1.json?version=2' }).to route_to(params.merge(:id => 1))
     end
   end
 
@@ -79,7 +79,7 @@ describe 'v2' do
     let(:action) { :index }
 
     it 'routes to V2::WorkersController#index' do
-      { :get => 'workers.json?version=2' }.should route_to(params)
+      expect({ :get => 'workers.json?version=2' }).to route_to(params)
     end
   end
 
@@ -88,7 +88,7 @@ describe 'v2' do
     let(:action) { :index }
 
     it 'routes to V2::ServiceHooksController#index' do
-      { :get => 'service_hooks.json?version=2' }.should route_to(params)
+      expect({ :get => 'service_hooks.json?version=2' }).to route_to(params)
     end
   end
 
@@ -100,7 +100,7 @@ describe 'v2' do
       hook_params = params.merge(:id => 'svenfuchs:minimal')
       hook_params.delete(:format)
 
-      { :put => 'service_hooks/svenfuchs:minimal?version=2' }.should route_to(hook_params)
+      expect({ :put => 'service_hooks/svenfuchs:minimal?version=2' }).to route_to(hook_params)
     end
   end
 
@@ -109,19 +109,19 @@ describe 'v2' do
     let(:action) { :show }
 
     it 'routes to V2::RepositoriesController#show' do
-      { :get => 'owner/name.json?version=2' }.should route_to(params.merge(:owner_name => 'owner', :name => 'name'))
+      expect({ :get => 'owner/name.json?version=2' }).to route_to(params.merge(:owner_name => 'owner', :name => 'name'))
     end
 
     it 'routes to V2::RepositoriesController#show when owner contains dots' do
-      { :get => 'some.owner/name.json?version=2' }.should route_to(params.merge(:owner_name => 'some.owner', :name => 'name'))
+      expect({ :get => 'some.owner/name.json?version=2' }).to route_to(params.merge(:owner_name => 'some.owner', :name => 'name'))
     end
 
     it 'routes to V2::RepositoriesController#show when repository name contains dots' do
-      { :get => 'owner/some.name.json?version=2' }.should route_to(params.merge(:owner_name => 'owner', :name => 'some.name'))
+      expect({ :get => 'owner/some.name.json?version=2' }).to route_to(params.merge(:owner_name => 'owner', :name => 'some.name'))
     end
 
     it 'routes to V2::RepositoriesController#show when owner name and repository name contains dots' do
-      { :get => 'some.owner/some.name.json?version=2' }.should route_to(params.merge(:owner_name => 'some.owner', :name => 'some.name'))
+      expect({ :get => 'some.owner/some.name.json?version=2' }).to route_to(params.merge(:owner_name => 'some.owner', :name => 'some.name'))
     end
   end
 
@@ -131,19 +131,19 @@ describe 'v2' do
     let(:format) { :png }
 
     it 'routes to V2::RepositoriesController#show' do
-      { :get => 'owner/name.png?version=2' }.should route_to(params.merge(:owner_name => 'owner', :name => 'name'))
+      expect({ :get => 'owner/name.png?version=2' }).to route_to(params.merge(:owner_name => 'owner', :name => 'name'))
     end
 
     it 'routes to V2::RepositoriesController#show when owner contains dots' do
-      { :get => 'some.owner/name.png?version=2' }.should route_to(params.merge(:owner_name => 'some.owner', :name => 'name'))
+      expect({ :get => 'some.owner/name.png?version=2' }).to route_to(params.merge(:owner_name => 'some.owner', :name => 'name'))
     end
 
     it 'routes to V2::RepositoriesController#show when repository name contains dots' do
-      { :get => 'owner/some.name.png?version=2' }.should route_to(params.merge(:owner_name => 'owner', :name => 'some.name'))
+      expect({ :get => 'owner/some.name.png?version=2' }).to route_to(params.merge(:owner_name => 'owner', :name => 'some.name'))
     end
 
     it 'routes to V2::RepositoriesController#show when owner name and repository name contains dots' do
-      { :get => 'some.owner/some.name.png?version=2' }.should route_to(params.merge(:owner_name => 'some.owner', :name => 'some.name'))
+      expect({ :get => 'some.owner/some.name.png?version=2' }).to route_to(params.merge(:owner_name => 'some.owner', :name => 'some.name'))
     end
   end
 
@@ -153,11 +153,11 @@ describe 'v2' do
     let(:format) { :xml }
 
     it 'routes to V2::RepositoriesController#show in XML format with the cctray schema' do
-      { :get => 'owner/name/cc.xml?version=2' }.should route_to(params.merge(:owner_name => 'owner', :name => 'name', :schema => 'cctray'))
+      expect({ :get => 'owner/name/cc.xml?version=2' }).to route_to(params.merge(:owner_name => 'owner', :name => 'name', :schema => 'cctray'))
     end
 
     it 'routes to V2::RepositoriesController#show in XML format with the cctray schema when owner and repository name contains dots' do
-      { :get => 'some.owner/some.name/cc.xml?version=2' }.should route_to(params.merge(:owner_name => 'some.owner', :name => 'some.name', :schema => 'cctray'))
+      expect({ :get => 'some.owner/some.name/cc.xml?version=2' }).to route_to(params.merge(:owner_name => 'some.owner', :name => 'some.name', :schema => 'cctray'))
     end
   end
 
@@ -166,7 +166,7 @@ describe 'v2' do
     let(:action) { :index }
 
     it 'routes to V2::BuildsController#index' do
-      { :get => 'owner/name/builds.json?version=2' }.should route_to(params.merge(:owner_name => 'owner', :name => 'name'))
+      expect({ :get => 'owner/name/builds.json?version=2' }).to route_to(params.merge(:owner_name => 'owner', :name => 'name'))
     end
   end
 
@@ -175,7 +175,7 @@ describe 'v2' do
     let(:action) { :show }
 
     it 'routes to V2::BuildsController#show' do
-      { :get => 'owner/name/builds/1.json?version=2' }.should route_to(params.merge(:owner_name => 'owner', :name => 'name', :id => 1))
+      expect({ :get => 'owner/name/builds/1.json?version=2' }).to route_to(params.merge(:owner_name => 'owner', :name => 'name', :id => 1))
     end
   end
 end

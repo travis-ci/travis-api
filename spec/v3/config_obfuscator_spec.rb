@@ -1,27 +1,27 @@
 require 'travis/api/v3/config_obfuscator'
 
 describe Travis::API::V3::ConfigObfuscator do
-  let(:repo) { Factory(:repository) }
+  let(:repo) { FactoryBot.create(:repository) }
   before { repo.regenerate_key! }
 
   it 'handles nil env' do
     config = { rvm: '1.8.7', env: nil }
     result = obfuscator = described_class.new(config, repo.key).obfuscate
 
-    result.should == {
+    expect(result).to eq({
       rvm: '1.8.7',
       env: nil
-    }
+    })
   end
 
   it 'leaves regular vars untouched' do
     config = { rvm: '1.8.7', env: 'FOO=foo' }
     result = obfuscator = described_class.new(config, repo.key).obfuscate
 
-    result.should == {
+    expect(result).to eq({
       rvm: '1.8.7',
       env: 'FOO=foo'
-    }
+    })
   end
 
   it 'obfuscates env vars given as strings, including accidents' do
@@ -31,10 +31,10 @@ describe Travis::API::V3::ConfigObfuscator do
              }
     result = obfuscator = described_class.new(config, repo.key).obfuscate
 
-    result.should == {
+    expect(result).to eq({
       rvm: '1.8.7',
       env: 'BAR=[secure] [secure] FOO=foo'
-    }
+    })
   end
 
   it 'obfuscates env vars given as hashes' do
@@ -44,10 +44,10 @@ describe Travis::API::V3::ConfigObfuscator do
              }
     result = obfuscator = described_class.new(config, repo.key).obfuscate
 
-    result.should == {
+    expect(result).to eq({
       rvm: '1.8.7',
       env: 'BAR=[secure] FOO=foo'
-    }
+    })
   end
 
   it 'handles nil secure var' do
@@ -58,11 +58,11 @@ describe Travis::API::V3::ConfigObfuscator do
              }
     result = obfuscator = described_class.new(config, repo.key).obfuscate
 
-    result.should == {
+    expect(result).to eq({
       rvm: '1.8.7',
       env: 'FOO=[secure]',
       global_env: 'BAR=[secure]'
-    }
+    })
   end
 
   it 'normalizes env vars which are hashes to strings' do
@@ -73,10 +73,10 @@ describe Travis::API::V3::ConfigObfuscator do
              }
     result = obfuscator = described_class.new(config, repo.key).obfuscate
 
-    result.should == {
+    expect(result).to eq({
       rvm: '1.8.7',
       env: 'FOO=bar BAR=baz BAR=[secure]'
-    }
+    })
   end
 
   it 'removes addons config if it is not a hash' do
@@ -85,9 +85,9 @@ describe Travis::API::V3::ConfigObfuscator do
              }
     result = obfuscator = described_class.new(config, repo.key).obfuscate
 
-    result.should == {
+    expect(result).to eq({
       rvm: '1.8.7'
-    }
+    })
   end
 
   it 'removes addons items which are not safelisted' do
@@ -96,12 +96,12 @@ describe Travis::API::V3::ConfigObfuscator do
              }
     result = obfuscator = described_class.new(config, repo.key).obfuscate
 
-    result.should == {
+    expect(result).to eq({
       rvm: '1.8.7',
       addons: {
         firefox: '22.0'
       }
-    }
+    })
   end
 
   it 'removes source key' do
@@ -110,8 +110,8 @@ describe Travis::API::V3::ConfigObfuscator do
              }
     result = obfuscator = described_class.new(config, repo.key).obfuscate
 
-    result.should == {
+    expect(result).to eq({
       rvm: '1.8.7',
-    }
+    })
   end
 end

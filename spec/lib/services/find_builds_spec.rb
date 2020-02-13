@@ -1,9 +1,9 @@
 describe Travis::Services::FindBuilds do
   before { DatabaseCleaner.clean_with :truncation }
 
-  let(:user)    { Factory(:user) }
-  let(:repo)    { Factory(:repository_without_last_build, owner_name: 'travis-ci', name: 'travis-core') }
-  let!(:push)   { Factory(:build, repository: repo, event_type: 'push', state: :failed, number: 1) }
+  let(:user)    { FactoryBot.create(:user) }
+  let(:repo)    { FactoryBot.create(:repository_without_last_build, owner_name: 'travis-ci', name: 'travis-core') }
+  let!(:push)   { FactoryBot.create(:build, repository: repo, event_type: 'push', state: :failed, number: 1) }
   let(:service) { described_class.new(user, params) }
 
   attr_reader :params
@@ -11,86 +11,86 @@ describe Travis::Services::FindBuilds do
   describe 'run' do
     it 'finds recent builds when empty params given' do
       @params = { :repository_id => repo.id }
-      service.run.should == [push]
+      expect(service.run).to eq([push])
     end
 
     it 'finds running builds when running param is passed' do
-      running = Factory(:build, repository: repo, event_type: 'push', state: 'started', number: 2)
+      running = FactoryBot.create(:build, repository: repo, event_type: 'push', state: 'started', number: 2)
       @params = { :running => true }
-      service.run.should == [running]
+      expect(service.run).to eq([running])
     end
 
     it 'finds no recent builds when no repo given' do
       @params = nil
-      service.run.should == []
+      expect(service.run).to eq([])
     end
 
     it 'finds builds older than the given number' do
       @params = { :repository_id => repo.id, :after_number => 2 }
-      service.run.should == [push]
+      expect(service.run).to eq([push])
     end
 
     it 'finds builds with a given number, scoped by repository' do
       @params = { :repository_id => repo.id, :number => 1 }
-      Factory(:build, :repository => Factory(:repository_without_last_build), :state => :finished, :number => 1)
-      Factory(:build, :repository => repo, :state => :finished, :number => 2)
-      service.run.should == [push]
+      FactoryBot.create(:build, :repository => FactoryBot.create(:repository_without_last_build), :state => :finished, :number => 1)
+      FactoryBot.create(:build, :repository => repo, :state => :finished, :number => 2)
+      expect(service.run).to eq([push])
     end
 
     it 'does not find by number if repository_id is missing' do
       @params = { :number => 1 }
-      service.run.empty?.should be_truthy
+      expect(service.run.empty?).to be_truthy
     end
 
     it 'scopes to the given repository_id' do
       @params = { :repository_id => repo.id }
-      Factory(:build, :repository => Factory(:repository_without_last_build), :state => :finished)
-      service.run.should == [push]
+      FactoryBot.create(:build, :repository => FactoryBot.create(:repository_without_last_build), :state => :finished)
+      expect(service.run).to eq([push])
     end
 
     it 'returns an empty build scope when the repository could not be found' do
       @params = { :repository_id => repo.id + 1 }
-      service.run.empty?.should be_truthy
+      expect(service.run.empty?).to be_truthy
     end
 
     it 'finds builds by a given list of ids' do
       @params = { :ids => [push.id] }
-      service.run.should == [push]
+      expect(service.run).to eq([push])
     end
 
     describe 'finds recent builds when event_type' do
-      let!(:pull_request) { Factory(:build, repository: repo, state: :finished, number: 2, request: Factory(:request, :event_type => 'pull_request')) }
-      let!(:api)          { Factory(:build, repository: repo, state: :finished, number: 2, request: Factory(:request, :event_type => 'api')) }
+      let!(:pull_request) { FactoryBot.create(:build, repository: repo, state: :finished, number: 2, request: FactoryBot.create(:request, :event_type => 'pull_request')) }
+      let!(:api)          { FactoryBot.create(:build, repository: repo, state: :finished, number: 2, request: FactoryBot.create(:request, :event_type => 'api')) }
 
       it 'given as push' do
         @params = { repository_id: repo.id, event_type: 'push' }
-        service.run.should == [push]
+        expect(service.run).to eq([push])
       end
 
       it 'given as pull_request' do
         @params = { repository_id: repo.id, event_type: 'pull_request' }
-        service.run.should == [pull_request]
+        expect(service.run).to eq([pull_request])
       end
 
       it 'given as api' do
         @params = { repository_id: repo.id, event_type: 'api' }
-        service.run.should == [api]
+        expect(service.run).to eq([api])
       end
 
       it 'given as [push, api]' do
         @params = { repository_id: repo.id, event_type: ['push', 'api'] }
-        service.run.sort.should == [push, api]
+        expect(service.run.sort).to eq([push, api])
       end
     end
   end
 
   context do
-    let(:user) { Factory.create(:user, login: :rkh) }
-    let(:org)  { Factory.create(:org, login: :travis) }
-    let(:private_repo)   { Factory.create(:repository, owner: org, private: true) }
-    let(:public_repo)    { Factory.create(:repository, owner: org, private: false) }
-    let!(:private_build) { Factory.create(:build, repository: private_repo, private: true) }
-    let!(:public_build)  { Factory.create(:build, repository: public_repo, private: false) }
+    let(:user) { FactoryBot.create(:user, login: :rkh) }
+    let(:org)  { FactoryBot.create(:org, login: :travis) }
+    let(:private_repo)   { FactoryBot.create(:repository, owner: org, private: true) }
+    let(:public_repo)    { FactoryBot.create(:repository, owner: org, private: false) }
+    let!(:private_build) { FactoryBot.create(:build, repository: private_repo, private: true) }
+    let!(:public_build)  { FactoryBot.create(:build, repository: public_repo, private: false) }
 
     before { Travis.config.host = 'example.com' }
 
@@ -99,27 +99,27 @@ describe Travis::Services::FindBuilds do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private build' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user)
-          service.run.should include(private_build)
+          expect(service.run).to include(private_build)
         end
 
         it 'finds a public build' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user)
-          service.run.should include(public_build)
+          expect(service.run).to include(public_build)
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'does not find a private build' do
           service = described_class.new(user)
-          service.run.should_not include(private_build)
+          expect(service.run).not_to include(private_build)
         end
 
         it 'does not fine a public build' do
           service = described_class.new(user)
-          service.run.should_not include(public_build)
+          expect(service.run).not_to include(public_build)
         end
       end
     end
@@ -129,27 +129,27 @@ describe Travis::Services::FindBuilds do
 
       describe 'given the current user has a permission on the repository' do
         it 'finds a private build' do
-          Factory.create(:permission, user: user, repository: private_repo)
+          FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user)
-          service.run.should include(private_build)
+          expect(service.run).to include(private_build)
         end
 
         it 'finds a public build' do
-          Factory.create(:permission, user: user, repository: public_repo)
+          FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user)
-          service.run.should include(public_build)
+          expect(service.run).to include(public_build)
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'does not find a private build' do
           service = described_class.new(user)
-          service.run.should_not include(private_build)
+          expect(service.run).not_to include(private_build)
         end
 
         it 'does not find a public build' do
           service = described_class.new(user)
-          service.run.should_not include(public_build)
+          expect(service.run).not_to include(public_build)
         end
       end
     end
@@ -163,24 +163,24 @@ describe Travis::Services::FindBuilds do
     after { Travis.config.host = "travis-ci.org" }
 
     it "doesn't return public builds that don't belong to a user" do
-      public_repo = Factory(:repository_without_last_build, :owner_name => 'foo', :name => 'bar', private: false)
-      public_build = Factory(:build, repository: public_repo)
-      Factory(:test, :state => :started, :source => public_build, repository: public_repo)
+      public_repo = FactoryBot.create(:repository_without_last_build, :owner_name => 'foo', :name => 'bar', private: false)
+      public_build = FactoryBot.create(:build, repository: public_repo)
+      FactoryBot.create(:test, :state => :started, :source => public_build, repository: public_repo)
 
-      user = Factory(:user)
-      repo = Factory(:repository_without_last_build, :owner_name => 'drogus', :name => 'test-project')
+      user = FactoryBot.create(:user)
+      repo = FactoryBot.create(:repository_without_last_build, :owner_name => 'drogus', :name => 'test-project')
       repo.users << user
-      build = Factory(:build, repository: repo)
-      job = Factory(:test, :state => :started, :source => build, repository: repo)
+      build = FactoryBot.create(:build, repository: repo)
+      job = FactoryBot.create(:test, :state => :started, :source => build, repository: repo)
 
-      other_user = Factory(:user)
-      other_repo = Factory(:repository_without_last_build, private: true)
+      other_user = FactoryBot.create(:user)
+      other_repo = FactoryBot.create(:repository_without_last_build, private: true)
       other_repo.users << other_user
-      other_build = Factory(:build, repository: other_repo)
-      Factory(:test, :state => :started, :source => other_build, repository: other_repo)
+      other_build = FactoryBot.create(:build, repository: other_repo)
+      FactoryBot.create(:test, :state => :started, :source => other_build, repository: other_repo)
 
       service = described_class.new(user)
-      service.run.should == [build]
+      expect(service.run).to eq([build])
     end
   end
 end

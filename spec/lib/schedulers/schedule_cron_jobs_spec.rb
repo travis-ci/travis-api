@@ -5,7 +5,7 @@ describe "ScheduleCronJobs" do
   let(:subject) { Travis::Api::App::Schedulers::ScheduleCronJobs.enqueue }
 
   before do
-    Travis::Api::App::Schedulers::ScheduleCronJobs.stubs(:options).returns({
+    allow(Travis::Api::App::Schedulers::ScheduleCronJobs).to receive(:options).and_return({
       strategy:      :redis,
       url: 'redis://localhost:6379',
       retries: 2
@@ -17,16 +17,13 @@ describe "ScheduleCronJobs" do
 
   describe "enqueue" do
     it 'continues running crons if one breaks' do
-      cron1 = Factory(:cron)
-      cron2 = Factory(:cron)
+      cron1 = FactoryBot.create(:cron)
+      cron2 = FactoryBot.create(:cron)
       Timecop.travel(scheduler_interval.from_now)
 
-      Travis::API::V3::Models::Cron.any_instance.expects(:branch).raises(error)
-      Raven.expects(:capture_exception).with(error, tags: {'cron_id' => cron1.id })
-
-
-      Travis::API::V3::Models::Cron.any_instance.expects(:branch).raises(error)
-      Raven.expects(:capture_exception).with(error, tags: {'cron_id' => cron2.id })
+      allow_any_instance_of(Travis::API::V3::Models::Cron).to receive(:branch).and_raise(error)
+      expect(Raven).to receive(:capture_exception).with(error, tags: {'cron_id' => cron1.id })
+      expect(Raven).to receive(:capture_exception).with(error, tags: {'cron_id' => cron2.id })
 
       subject
 
@@ -37,12 +34,12 @@ describe "ScheduleCronJobs" do
     end
 
     it "raises exception when enqueue method errors" do
-      cron1 = Factory(:cron)
+      cron1 = FactoryBot.create(:cron)
       Timecop.travel(scheduler_interval.from_now)
 
-      Travis::API::V3::Models::Cron.any_instance.stubs(:enqueue).raises(error)
+      expect_any_instance_of(Travis::API::V3::Models::Cron).to receive(:enqueue).and_raise(error)
 
-      Raven.expects(:capture_exception).with(error, tags: {'cron_id' => cron1.id })
+      expect(Raven).to receive(:capture_exception).with(error, tags: {'cron_id' => cron1.id })
 
       subject
 
@@ -52,13 +49,13 @@ describe "ScheduleCronJobs" do
     end
 
     context "dont_run_if_recent_build_exists is true" do
-      let!(:cron) { Factory(:cron, dont_run_if_recent_build_exists: true) }
+      let!(:cron) { FactoryBot.create(:cron, dont_run_if_recent_build_exists: true) }
 
       before { Timecop.freeze(DateTime.now) }
 
       context "no new build in the last 24h" do
         before do
-          last_build = Factory.create(:build,
+          last_build = FactoryBot.create(:build,
             repository_id: cron.branch.repository.id,
             finished_at: DateTime.now - 1.hour)
           cron.branch.update_attribute(:last_build_id, last_build.id)
@@ -71,7 +68,7 @@ describe "ScheduleCronJobs" do
         end
 
         it "skips enqueuing a cron job" do
-          Sidekiq::Client.any_instance.expects(:push).never
+          expect_any_instance_of(Sidekiq::Client).not_to receive(:push)
           subject
         end
 
@@ -79,7 +76,7 @@ describe "ScheduleCronJobs" do
           subject
 
           cron.reload
-          expect(cron.next_run.to_i).to eql (Time.now.utc + 1.day).to_i
+          expect(cron.next_run).to be_within(1.second).of Time.now.utc + 1.day
         end
       end
     end

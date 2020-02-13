@@ -1,5 +1,5 @@
 describe Travis::API::V3::Services::Insights::ActiveRepos, set_app: true do
-  let(:user) { Factory(:user) }
+  let(:user) { FactoryBot.create(:user) }
   let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
   let(:expected_data) { ['whatever'] }

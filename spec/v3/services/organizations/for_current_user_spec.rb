@@ -18,7 +18,7 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
       another_org.memberships.create(user: repo.owner, role: 'member')
 
       get("/v3/orgs", {role: 'admin'}, headers)
-      JSON.load(body)['organizations'].map { |o| o['id'] }.should == [org.id]
+      expect(JSON.load(body)['organizations'].map { |o| o['id'] }).to eq([org.id])
     end
   end
 

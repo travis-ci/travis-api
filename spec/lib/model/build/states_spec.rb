@@ -11,12 +11,12 @@ describe Build::States do
   describe 'events' do
     describe 'cancel' do
       it 'cancels all the cancelable jobs' do
-        build = Factory(:build)
+        build = FactoryBot.create(:build)
         build.matrix.destroy_all
 
-        created_job = Factory(:test, source: build, state: :created)
+        created_job = FactoryBot.create(:test, source: build, state: :created)
         finished_jobs = Job::Test::FINISHED_STATES.map do |state|
-          Factory(:test, source: build, state: state)
+          FactoryBot.create(:test, source: build, state: state)
         end
         build.reload
 
@@ -24,24 +24,24 @@ describe Build::States do
           build.cancel!
         }.to change { created_job.reload.state }
 
-        created_job.state.should == :canceled
-        finished_jobs.map { |j| j.state.to_sym }.should == Job::Test::FINISHED_STATES
+        expect(created_job.state).to eq(:canceled)
+        expect(finished_jobs.map { |j| j.state.to_sym }).to eq(Job::Test::FINISHED_STATES)
       end
     end
 
     describe 'reset' do
       before :each do
-        build.stubs(:write_attribute)
+        allow(build).to receive(:write_attribute)
       end
       it 'does not set the state to created if any jobs in the matrix are running' do
-        build.stubs(matrix: [stub(state: :started)])
+        allow(build).to receive(:matrix).and_return([double(state: :started)])
         build.reset
-        build.state.should_not == :started
+        expect(build.state).not_to eq(:started)
       end
       it 'sets the state to created if none of the jobs in the matrix are running' do
-        build.stubs(matrix: [stub(state: :passed)])
+        allow(build).to receive(:matrix).and_return([double(state: :passed)])
         build.reset
-        build.state.should == :created
+        expect(build.state).to eq(:created)
       end
     end
 
@@ -49,13 +49,13 @@ describe Build::States do
       let(:data) { WORKER_PAYLOADS['job:test:receive'] }
 
       it 'does not denormalize attributes' do
-        build.denormalize?('job:test:receive').should be false
+        expect(build.denormalize?('job:test:receive')).to be false
       end
 
       describe 'when the build is not already received' do
         it 'sets the state to :received' do
           build.receive(data)
-          build.state.should == :received
+          expect(build.state).to eq(:received)
         end
       end
 
@@ -84,11 +84,11 @@ describe Build::States do
       describe 'when the build is not already started' do
         it 'sets the state to :started' do
           build.start(data)
-          build.state.should == :started
+          expect(build.state).to eq(:started)
         end
 
         it 'denormalizes attributes' do
-          build.expects(:denormalize)
+          expect(build).to receive(:denormalize)
           build.start(data)
         end
       end
@@ -99,7 +99,7 @@ describe Build::States do
         end
 
         it 'does not denormalize attributes' do
-          build.expects(:denormalize).never
+          expect(build).not_to receive(:denormalize)
           build.start(data)
         end
       end
@@ -110,7 +110,7 @@ describe Build::States do
         end
 
         it 'does not denormalize attributes' do
-          build.expects(:denormalize).never
+          expect(build).not_to receive(:denormalize)
           build.start(data)
         end
       end
@@ -121,7 +121,7 @@ describe Build::States do
         end
 
         it 'does not denormalize attributes' do
-          build.expects(:denormalize).never
+          expect(build).not_to receive(:denormalize)
           build.start(data)
         end
       end
@@ -132,7 +132,7 @@ describe Build::States do
 
       describe 'when the matrix is not finished' do
         before(:each) do
-          build.stubs(matrix_finished?: false)
+          allow(build).to receive(:matrix_finished?).and_return(false)
         end
 
         describe 'when the build is already finished' do
@@ -141,7 +141,7 @@ describe Build::States do
           end
 
           it 'does not denormalize attributes' do
-            build.expects(:denormalize).never
+            expect(build).not_to receive(:denormalize)
             build.finish(data)
           end
         end
@@ -149,27 +149,29 @@ describe Build::States do
 
       describe 'when the matrix is finished' do
         before(:each) do
-          build.stubs(matrix_finished?: true, matrix_state: :passed, matrix_duration: 30)
+          allow(build).to receive(:matrix_finished?).and_return(true)
+          allow(build).to receive(:matrix_state).and_return(:passed)
+          allow(build).to receive(:matrix_duration).and_return(30)
         end
 
         describe 'when the build has not finished' do
           before(:each) do
             build.state = :started
-            build.expects(:save!)
+            expect(build).to receive(:save!)
           end
 
           it 'sets the state to the matrix state' do
             build.finish(data)
-            build.state.should == :passed
+            expect(build.state).to eq(:passed)
           end
 
           it 'calculates the duration based on the matrix durations' do
             build.finish(data)
-            build.duration.should == 30
+            expect(build.duration).to eq(30)
           end
 
           it 'denormalizes attributes' do
-            build.expects(:denormalize).with(:finish, data)
+            expect(build).to receive(:denormalize).with(:finish, data)
             build.finish(data)
           end
         end
@@ -180,7 +182,7 @@ describe Build::States do
           end
 
           it 'does not denormalize attributes' do
-            build.expects(:denormalize).never
+            expect(build).not_to receive(:denormalize)
             build.finish(data)
           end
         end

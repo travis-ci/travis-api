@@ -5,8 +5,8 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
   let(:payload) { { 'id'=> "#{build.id}", 'user_id' => 1 } }
 
   before do
-    Travis::Features.stubs(:owner_active?).returns(true)
-    Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(false)
+    allow(Travis::Features).to receive(:owner_active?).and_return(true)
+    allow(Travis::Features).to receive(:owner_active?).with(:enqueue_to_hub, repo.owner).and_return(false)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
@@ -178,7 +178,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                                 }}
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-      Travis::Features.stubs(:owner_active?).with(:enqueue_to_hub, repo.owner).returns(true)
+      allow(Travis::Features).to receive(:owner_active?).with(:enqueue_to_hub, repo.owner).and_return(true)
     end
 
     shared_examples 'clears debug_options for all jobs' do

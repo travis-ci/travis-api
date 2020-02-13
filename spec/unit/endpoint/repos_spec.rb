@@ -8,17 +8,17 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
     end
 
     it 'matches :id with digits' do
-      get('/repos/spec/match/123').body.should be == "id"
+      expect(get('/repos/spec/match/123').body).to eq("id")
     end
 
     it 'does not match :id with non-digits' do
-      get('/repos/spec/match/f123').body.should be == "name"
+      expect(get('/repos/spec/match/f123').body).to eq("name")
     end
   end
 
   context 'caches endpoints' do
-    let(:user) { Factory.create(:user) }
-    let(:repo) { Factory.create(:repository, private: false, owner_name: 'user', name: 'repo') }
+    let(:user) { FactoryBot.create(:user) }
+    let(:repo) { FactoryBot.create(:repository, private: false, owner_name: 'user', name: 'repo') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     let(:cache_options) {{ s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} }}
@@ -29,10 +29,10 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
       before { user.permissions.create(repository_id: repo.id, push: true) }
 
       it 'responds with 200' do
-        get("/repos/#{repo.id}/caches", cache_options, headers).status.should == 200
-        delete("/repos/#{repo.id}/caches", cache_options, headers).status.should == 200
-        get("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status.should == 200
-        delete("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status.should == 200
+        expect(get("/repos/#{repo.id}/caches", cache_options, headers).status).to eq(200)
+        expect(delete("/repos/#{repo.id}/caches", cache_options, headers).status).to eq(200)
+        expect(get("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status).to eq(200)
+        expect(delete("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status).to eq(200)
       end
     end
 
@@ -40,10 +40,10 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
       before { user.permissions.create(repository_id: repo.id, push: false) }
 
       it 'responds with 403' do
-        get("/repos/#{repo.id}/caches", cache_options, headers).status.should == 403
-        delete("/repos/#{repo.id}/caches", cache_options, headers).status.should == 403
-        get("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status.should == 403
-        delete("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status.should == 403
+        expect(get("/repos/#{repo.id}/caches", cache_options, headers).status).to eq(403)
+        expect(delete("/repos/#{repo.id}/caches", cache_options, headers).status).to eq(403)
+        expect(get("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status).to eq(403)
+        expect(delete("/repos/#{repo.owner_name}/#{repo.name}/caches", cache_options, headers).status).to eq(403)
       end
     end
   end

@@ -148,7 +148,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
-    before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true) }
+    before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:delete_log?).and_return(true) }
     before        { get("/v3/job/#{job.id}", {}, headers)                             }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }

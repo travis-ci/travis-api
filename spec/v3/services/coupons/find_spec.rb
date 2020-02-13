@@ -17,8 +17,8 @@ describe Travis::API::V3::Services::Coupons::Find, set_app: true, billing_spec_h
   end
 
   context 'authenticated' do
-    let(:user) { Factory(:user) }
-    let(:organization) { Factory(:org, login: 'travis') }
+    let(:user) { FactoryBot.create(:user) }
+    let(:organization) { FactoryBot.create(:org, login: 'travis') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     before do
