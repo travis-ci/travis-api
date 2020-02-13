@@ -5,48 +5,48 @@ describe Travis::Services::FindAdmin do
     let(:result) { described_class.new(nil, repository: repository).run }
 
     before :each do
-      User.stubs(:with_permissions).with(:repository_id => repository.id, :admin => true).returns [user]
+      allow(User).to receive(:with_permissions).with(:repository_id => repository.id, :admin => true).and_return [user]
     end
 
     describe 'given a user has admin access to a repository (as seen by github)' do
       before :each do
-        GH.stubs(:[]).with("repos/#{repository.slug}").returns('permissions' => { 'admin' => true })
+        allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => true })
       end
 
       it 'returns that user' do
-        result.should == user
+        expect(result).to eq(user)
       end
     end
 
     describe 'given a user does not have access to a repository' do
       before :each do
-        GH.stubs(:[]).with("repos/#{repository.slug}").returns('permissions' => { 'admin' => false })
-        user.stubs(:update_attributes!)
+        allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => false })
+        allow(user).to receive(:update_attributes!)
       end
 
       xit 'raises an exception' do
-        lambda { result }.should raise_error(Travis::AdminMissing, 'no admin available for svenfuchs/minimal')
+        expect { result }.to raise_error(Travis::AdminMissing, 'no admin available for svenfuchs/minimal')
       end
 
       xit 'revokes admin permissions for that user on our side' do
-        user.expects(:update_attributes!).with(:permissions => { 'admin' => false })
+        expect(user).to receive(:update_attributes!).with(:permissions => { 'admin' => false })
         ignore_exception { result }
       end
     end
 
     describe 'given an error occurs while retrieving the repository info' do
-      let(:error) { stub('error', :backtrace => [], :response => stub('response')) }
+      let(:error) { double('error', :backtrace => [], :response => double('response')) }
 
       before :each do
-        GH.stubs(:[]).with("repos/#{repository.slug}").raises(GH::Error.new(error))
+        allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_raise(GH::Error.new(error))
       end
 
       xit 'raises an exception' do
-        lambda { result }.should raise_error(Travis::AdminMissing, 'no admin available for svenfuchs/minimal')
+        expect { result }.to raise_error(Travis::AdminMissing, 'no admin available for svenfuchs/minimal')
       end
 
       it 'does not revoke permissions' do
-        user.expects(:update_permissions!).never
+        expect(user).not_to receive(:update_permissions!)
         ignore_exception { result }
       end
     end
@@ -73,13 +73,13 @@ describe Travis::Services::FindAdmin::Instrument do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    User.stubs(:with_permissions).with(repository_id: repository.id, admin: true).returns [user]
-    GH.stubs(:[]).with("repos/#{repository.slug}").returns('permissions' => { 'admin' => true })
+    allow(User).to receive(:with_permissions).with(repository_id: repository.id, admin: true).and_return [user]
+    allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => true })
     service.run
   end
 
   it 'publishes a event' do
-    event.should publish_instrumentation_event(
+    expect(event).to publish_instrumentation_event(
       event: 'travis.services.find_admin.run:completed',
       message: 'Travis::Services::FindAdmin#run:completed for svenfuchs/minimal: svenfuchs',
       result: user,

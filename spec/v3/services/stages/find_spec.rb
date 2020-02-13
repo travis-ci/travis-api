@@ -119,8 +119,8 @@ describe "stages private repository, private API, authenticated as user with pus
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true) }
-    before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:delete_log?).returns(true) }
-    before        { Travis::API::V3::Permissions::Job.any_instance.stubs(:debug?).returns(true) }
+    before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:delete_log?).and_return(true) }
+    before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:debug?).and_return(true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { get("/v3/build/#{build.id}/stages", {}, headers)                           }
     after         { repo.update_attribute(:private, false)                            }

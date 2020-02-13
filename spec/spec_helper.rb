@@ -71,7 +71,7 @@ module TestHelpers
 end
 
 RSpec.configure do |c|
-  c.mock_framework = :mocha
+  c.mock_with :rspec
   c.expect_with :rspec
   c.include TestHelpers
   c.include Support::Env
@@ -84,6 +84,7 @@ RSpec.configure do |c|
   # c.filter_run_excluding mode: :public, repo: :public
 
   c.raise_errors_for_deprecations!
+
   c.before :suite do
     Travis.testing = true
     Travis.logger = Logger.new(StringIO.new)

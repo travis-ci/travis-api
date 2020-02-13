@@ -11,45 +11,45 @@ describe 'Requests', set_app: true do
   describe 'GET /requests' do
     it 'fetches requests' do
       response = get '/requests', { repository_id: repo.id }, headers
-      response.should deliver_json_for(repo.requests, version: 'v2', type: 'requests')
+      expect(response).to deliver_json_for(repo.requests, version: 'v2', type: 'requests')
     end
 
     it 'returns an error response if repo can\'t be found' do
       response = get '/requests', { repository_id: 0 }, headers
-      JSON.parse(response.body)['error'].should == "Repository could not be found"
+      expect(JSON.parse(response.body)['error']).to eq("Repository could not be found")
     end
   end
 
   describe 'GET /requests/:id' do
     it 'fetches a request' do
       response = get "/requests/#{request.id}", {}, headers
-      response.should deliver_json_for(request, version: 'v2', type: 'request')
+      expect(response).to deliver_json_for(request, version: 'v2', type: 'request')
     end
   end
 
   describe 'POST /requests' do
     it 'triggers a build request using Hub' do
       response = post "/requests", { build_id: build.id }, headers
-      response.status.should be(200)
+      expect(response.status).to be(200)
     end
 
     context 'when the repo is migrating' do
       before { repo.update_attributes(migration_status: "migrating") }
       before { post "/requests", { build_id: build.id }, headers }
-      it { last_response.status.should == 403 }
+      it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated' do
       before { repo.update_attributes(migration_status: "migrated") }
       before { post "/requests", { build_id: build.id }, headers }
-      it { last_response.status.should == 403 }
+      it { expect(last_response.status).to eq(403) }
     end
   end
 
   it 'triggers a job request' do
     payload = { job_id: build.matrix.first.id, user_id: repo.owner.id }
     response = post "/requests", payload, headers
-    response.status.should be(200)
+    expect(response.status).to be(200)
   end
 
 end

@@ -3,24 +3,24 @@ describe Job::Test do
   let(:log) { Travis::RemoteLog.new(job_id: job.id) }
 
   before :each do
-    Travis::Event.stubs(:dispatch)
-    remote = stub('remote')
-    Travis::RemoteLog::Remote.stubs(:new).returns(remote)
-    remote.stubs(:find_by_job_id).returns(log)
-    remote.stubs(:write_content_for_job_id).returns(log)
+    allow(Travis::Event).to receive(:dispatch)
+    remote = double('remote')
+    allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
+    allow(remote).to receive(:find_by_job_id).and_return(log)
+    allow(remote).to receive(:write_content_for_job_id).and_return(log)
   end
 
   it 'is cancelable if the job has not finished yet' do
     job = FactoryBot.create(:test, state: :created)
-    job.should be_cancelable
+    expect(job).to be_cancelable
 
     job = FactoryBot.create(:test, state: :started)
-    job.should be_cancelable
+    expect(job).to be_cancelable
   end
 
   it 'is not cancelable if the job has already been finished' do
     job = FactoryBot.create(:test, state: :passed)
-    job.should_not be_cancelable
+    expect(job).not_to be_cancelable
   end
 
   describe 'cancelling' do
@@ -53,8 +53,8 @@ describe Job::Test do
       }.to change { build.canceled_at }
       }.to change { build.repository.reload.last_build_state }
 
-      build.reload.state.should == :canceled
-      build.repository.last_build_state.should == 'canceled'
+      expect(build.reload.state).to eq(:canceled)
+      expect(build.repository.last_build_state).to eq('canceled')
     end
 
     it 'should set canceled_at and finished_at on job' do
@@ -74,16 +74,16 @@ describe Job::Test do
 
       it 'sets the state to :received' do
         job.receive(data)
-        job.state.should == :received
+        expect(job.state).to eq(:received)
       end
 
       it 'sets the worker from the payload' do
         job.receive(data)
-        job.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
+        expect(job.worker).to eq('ruby3.worker.travis-ci.org:travis-ruby-4')
       end
 
       it 'propagates the event to the source' do
-        job.source.expects(:receive)
+        expect(job.source).to receive(:receive)
         job.receive(data)
       end
     end
@@ -93,11 +93,11 @@ describe Job::Test do
 
       it 'sets the state to :started' do
         job.start(data)
-        job.state.should == :started
+        expect(job.state).to eq(:started)
       end
 
       it 'propagates the event to the source' do
-        job.source.expects(:start)
+        expect(job.source).to receive(:start)
         job.start(data)
       end
     end
@@ -107,11 +107,11 @@ describe Job::Test do
 
       it 'sets the state to the given result state' do
         job.finish(data)
-        job.state.should == :passed
+        expect(job.state).to eq(:passed)
       end
 
       it 'propagates the event to the source' do
-        job.source.expects(:finish).with(data)
+        expect(job.source).to receive(:finish).with(data)
         job.finish(data)
       end
     end
@@ -121,17 +121,17 @@ describe Job::Test do
 
       it 'sets the state to :created' do
         job.reset!
-        job.reload.state.should == :created
+        expect(job.reload.state).to eq(:created)
       end
 
       it 'resets job attributes' do
         job.reset!
-        job.reload.queued_at.should be_nil
-        job.reload.finished_at.should be_nil
+        expect(job.reload.queued_at).to be_nil
+        expect(job.reload.finished_at).to be_nil
       end
 
       it 'resets log attributes' do
-        log.expects(:clear!)
+        expect(log).to receive(:clear!)
         job.reset!
       end
     end

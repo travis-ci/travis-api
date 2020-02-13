@@ -8,27 +8,27 @@ describe Build, 'denormalization' do
     end
 
     it 'denormalizes last_build_id to its repository' do
-      build.repository.last_build_id.should == build.id
+      expect(build.repository.last_build_id).to eq(build.id)
     end
 
     it 'denormalizes last_build_state to its repository' do
-      build.repository.last_build_state.should == 'started'
+      expect(build.repository.last_build_state).to eq('started')
     end
 
     it 'denormalizes last_build_number to its repository' do
-      build.repository.last_build_number.should == build.number
+      expect(build.repository.last_build_number).to eq(build.number)
     end
 
     it 'denormalizes last_build_duration to its repository' do
-      build.repository.last_build_duration.should == build.duration
+      expect(build.repository.last_build_duration).to eq(build.duration)
     end
 
     it 'denormalizes last_build_started_at to its repository' do
-      build.repository.last_build_started_at.should == build.started_at
+      expect(build.repository.last_build_started_at).to eq(build.started_at)
     end
 
     it 'denormalizes last_build_finished_at to its repository' do
-      build.repository.last_build_finished_at.should == build.finished_at
+      expect(build.repository.last_build_finished_at).to eq(build.finished_at)
     end
   end
 
@@ -40,15 +40,15 @@ describe Build, 'denormalization' do
     end
 
     it 'denormalizes last_build_state to its repository' do
-      build.repository.last_build_state.should == 'errored'
+      expect(build.repository.last_build_state).to eq('errored')
     end
 
     it 'denormalizes last_build_duration to its repository' do
-      build.repository.last_build_duration.should == build.duration
+      expect(build.repository.last_build_duration).to eq(build.duration)
     end
 
     it 'denormalizes last_build_finished_at to its repository' do
-      build.repository.last_build_finished_at.should == build.finished_at
+      expect(build.repository.last_build_finished_at).to eq(build.finished_at)
     end
   end
 end

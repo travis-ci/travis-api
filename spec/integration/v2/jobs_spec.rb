@@ -9,17 +9,17 @@ describe 'Jobs', set_app: true do
   it '/jobs?queue=builds.common' do
     skip('querying with a queue does not appear to be used anymore')
     response = get '/jobs', { queue: 'builds.common' }, headers
-    response.should deliver_json_for(Job.queued('builds.common'), version: 'v2')
+    expect(response).to deliver_json_for(Job.queued('builds.common'), version: 'v2')
   end
 
   it '/jobs/:id' do
     response = get "/jobs/#{job.id}", {}, headers
-    response.status.should == 200
+    expect(response.status).to eq(200)
     expected = Travis::Api::Serialize.data(job, version: 'v2')
     expected.delete('log_id')
     parsed = MultiJson.decode(response.body)
     parsed['job'].delete('log_id')
-    parsed.should == expected
+    expect(parsed).to eq(expected)
   end
 
   it "doesn't allow access with travis-token in private mode and with private repo" do
@@ -34,7 +34,7 @@ describe 'Jobs', set_app: true do
     token = user.tokens.first.token
 
     response = get "/jobs/#{job.id}?token=#{token}", {}, 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2.1+json'
-    response.status.should == 403
+    expect(response.status).to eq(403)
   end
 
   context 'GET /jobs/:job_id/log.txt' do
@@ -47,13 +47,13 @@ describe 'Jobs', set_app: true do
 
     context 'when log is archived' do
       it 'redirects to archive' do
-        remote = stub('remote')
-        remote_log = stub('remote log')
-        remote_log.expects(:archived?).returns(true)
-        remote_log.stubs(:removed_at).returns(nil)
-        remote.stubs(:find_by_job_id).returns(remote_log)
-        remote_log.expects(:archived_url).returns("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
-        Travis::RemoteLog::Remote.expects(:new).returns(remote)
+        remote = double('remote')
+        remote_log = double('remote log')
+        expect(remote_log).to receive(:archived?).and_return(true)
+        allow(remote_log).to receive(:removed_at).and_return(nil)
+        allow(remote).to receive(:find_by_job_id).and_return(remote_log)
+        expect(remote_log).to receive(:archived_url).and_return("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
+        expect(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(
             status: 200,
@@ -83,8 +83,8 @@ describe 'Jobs', set_app: true do
           {},
           { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         )
-        response.status.should == 200
-        JSON.parse(response.body, symbolize_names: true).should eq(
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body, symbolize_names: true)).to eq(
           { log: { job_id: job.id, parts: [], :@type => 'Log' } }
         )
       end
@@ -102,7 +102,7 @@ describe 'Jobs', set_app: true do
               archive_verified: true
             )
           )
-        Travis::RemoteLog.any_instance.stubs(:archived_url).returns(
+        allow_any_instance_of(Travis::RemoteLog).to receive(:archived_url).and_return(
           "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
         )
         response = get(
@@ -174,7 +174,7 @@ describe 'Jobs', set_app: true do
     context 'when user has push permission' do
       context 'when job is not finished' do
         before :each do
-          job.stubs(:finished?).returns false
+          allow(job).to receive(:finished?).and_return false
           user.permissions.create!(
             repository_id: job.repository.id, push: true
           )
@@ -244,7 +244,7 @@ describe 'Jobs', set_app: true do
 
       it 'responds with 403' do
         response = post "/jobs/#{job.id}/cancel", {}, headers
-        response.status.should == 403
+        expect(response.status).to eq(403)
       end
 
       context 'and tries to enqueue cancel event for the Hub' do
@@ -252,7 +252,7 @@ describe 'Jobs', set_app: true do
 
         it 'responds with 403' do
           response = post "/jobs/#{job.id}/cancel", {}, headers
-          response.status.should == 403
+          expect(response.status).to eq(403)
         end
       end
     end
@@ -262,7 +262,7 @@ describe 'Jobs', set_app: true do
 
       it 'responds with 422' do
         response = post "/jobs/#{job.id}/cancel", {}, headers
-        response.status.should == 422
+        expect(response.status).to eq(422)
       end
 
       context 'and tries to enqueue cancel event for the Hub' do
@@ -270,7 +270,7 @@ describe 'Jobs', set_app: true do
 
         it 'responds with 422' do
           response = post "/jobs/#{job.id}/cancel", {}, headers
-          response.status.should == 422
+          expect(response.status).to eq(422)
         end
       end
     end
@@ -284,14 +284,14 @@ describe 'Jobs', set_app: true do
         before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
 
         it 'cancels the job' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           post "/jobs/#{job.id}/cancel", {}, headers
         end
 
         it 'responds with 204' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/jobs/#{job.id}/cancel", {}, headers
-          response.status.should == 204
+          expect(response.status).to eq(204)
         end
       end
     end
@@ -311,7 +311,7 @@ describe 'Jobs', set_app: true do
 
       it 'responds with 400' do
         response = post "/jobs/#{job.id}/restart", {}, headers
-        response.status.should == 400
+        expect(response.status).to eq(400)
       end
 
       context 'when enqueuing for the Hub' do
@@ -319,7 +319,7 @@ describe 'Jobs', set_app: true do
 
         it 'responds with 400' do
           response = post "/jobs/#{job.id}/restart", {}, headers
-          response.status.should == 400
+          expect(response.status).to eq(400)
         end
       end
     end
@@ -327,13 +327,13 @@ describe 'Jobs', set_app: true do
     context 'when the repo is migrating' do
       before { job.repository.update_attributes(migration_status: "migrating") }
       before { post "/jobs/#{job.id}/restart", {}, headers }
-      it { last_response.status.should == 403 }
+      it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated' do
       before { job.repository.update_attributes(migration_status: "migrated") }
       before { post "/jobs/#{job.id}/restart", {}, headers }
-      it { last_response.status.should == 403 }
+      it { expect(last_response.status).to eq(403) }
     end
 
     context 'when job passed' do
@@ -343,15 +343,15 @@ describe 'Jobs', set_app: true do
         before { Travis::Features.activate_owner(:enqueue_to_hub, job.repository.owner) }
 
         it 'restarts the job' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/jobs/#{job.id}/restart", {}, headers
-          response.status.should == 202
+          expect(response.status).to eq(202)
         end
         it 'sends the correct response body' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/jobs/#{job.id}/restart", {}, headers
           body = JSON.parse(response.body)
-          body.should == {"result"=>true, "flash"=>[{"notice"=>"The job was successfully restarted."}]}
+          expect(body).to eq({"result"=>true, "flash"=>[{"notice"=>"The job was successfully restarted."}]})
         end
 
       end

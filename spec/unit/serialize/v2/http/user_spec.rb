@@ -24,11 +24,11 @@ describe Travis::Api::Serialize::V2::Http::User do
   }
 
   before do
-    user.stubs(:github_scopes).returns(['public_repo', 'user:email'])
+    allow(user).to receive(:github_scopes).and_return(['public_repo', 'user:email'])
   end
 
   it 'user' do
-    data['user'].should == expected_data
+    expect(data['user']).to eq(expected_data)
   end
 
   context 'allow_migration' do
@@ -39,7 +39,7 @@ describe Travis::Api::Serialize::V2::Http::User do
     end
 
     context 'when feature is enabled for the user' do
-      before { Travis::Features.expects(:user_active?).with(:allow_migration, user).returns(true) }
+      before { expect(Travis::Features).to receive(:user_active?).with(:allow_migration, user).and_return(true) }
 
       it { is_expected.to be_truthy }
     end
@@ -50,7 +50,6 @@ describe Travis::Api::Serialize::V2::Http::User do
       Travis.config.intercom = {
         hmac_secret_key: 'USER_HASH_SECRET_KEY'
       }
-
     end
 
     it 'user' do
@@ -62,7 +61,7 @@ describe Travis::Api::Serialize::V2::Http::User do
 
       expected_data["secure_user_hash"] = secure_user_hash
 
-      data['user'].should == expected_data
+      expect(data['user']).to eq(expected_data)
     end
 
     after do

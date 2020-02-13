@@ -12,30 +12,30 @@ describe Travis::Api::App::Middleware::ScopeCheck do
       get('/token') { env['travis.access_token'].to_s }
     end
 
-    User.stubs(:find).with(user.id).returns(user)
+    allow(User).to receive(:find).with(user.id).and_return(user)
   end
 
   it 'lets through requests without a token' do
-    get('/').should be_ok
-    body.should == 'ok'
-    headers['X-OAuth-Scopes'].should_not == 'foo'
+    expect(get('/')).to be_ok
+    expect(body).to eq('ok')
+    expect(headers['X-OAuth-Scopes']).not_to eq('foo')
   end
 
   describe 'sets associated scope properly' do
     it 'accepts Authorization token header' do
-      get('/', {}, 'HTTP_AUTHORIZATION' => "token #{access_token}").should be_ok
-      headers['X-OAuth-Scopes'].should == 'foo'
+      expect(get('/', {}, 'HTTP_AUTHORIZATION' => "token #{access_token}")).to be_ok
+      expect(headers['X-OAuth-Scopes']).to eq('foo')
     end
 
     it 'accepts basic auth' do
       authorize access_token.to_s, 'x'
-      get('/').should be_ok
-      headers['X-OAuth-Scopes'].should == 'foo'
+      expect(get('/')).to be_ok
+      expect(headers['X-OAuth-Scopes']).to eq('foo')
     end
 
     it 'accepts query parameters' do
-      get('/', access_token: access_token.to_s).should be_ok
-      headers['X-OAuth-Scopes'].should == 'foo'
+      expect(get('/', access_token: access_token.to_s)).to be_ok
+      expect(headers['X-OAuth-Scopes']).to eq('foo')
     end
   end
 
@@ -44,41 +44,41 @@ describe Travis::Api::App::Middleware::ScopeCheck do
     let(:token) { travis_token.token }
 
     before do
-      Token.stubs(:find_by_token).with(travis_token.token).returns(travis_token)
-      Token.stubs(:find_by_token).with("invalid").returns(nil)
+      allow(Token).to receive(:find_by_token).with(travis_token.token).and_return(travis_token)
+      allow(Token).to receive(:find_by_token).with("invalid").and_return(nil)
     end
 
     it 'accepts a valid travis token' do
-      get('/', token: token).should be_ok
+      expect(get('/', token: token)).to be_ok
     end
 
     it 'rejects an invalid travis token' do
       get('/', token: token)
-      headers['X-OAuth-Scopes'].should == 'travis_token'
+      expect(headers['X-OAuth-Scopes']).to eq('travis_token')
     end
 
     it 'sets the scope to travis_token' do
-      get('/', token: "invalid").should_not be_ok
+      expect(get('/', token: "invalid")).not_to be_ok
     end
   end
 
   describe 'reject requests with an invalid token' do
     it 'rejects Authorization token header' do
-      get('/', {}, 'HTTP_AUTHORIZATION' => "token foo").should_not be_ok
+      expect(get('/', {}, 'HTTP_AUTHORIZATION' => "token foo")).not_to be_ok
     end
 
     it 'rejects basic auth' do
       authorize 'foo', 'x'
-      get('/').should_not be_ok
+      expect(get('/')).not_to be_ok
     end
 
     it 'rejects query parameters' do
-      get('/', access_token: 'foo').should_not be_ok
+      expect(get('/', access_token: 'foo')).not_to be_ok
     end
   end
 
   it 'sets env["travis.access_token"]' do
     authorize access_token.to_s, 'x'
-    get('/token').body.should == access_token.to_s
+    expect(get('/token').body).to eq(access_token.to_s)
   end
 end
