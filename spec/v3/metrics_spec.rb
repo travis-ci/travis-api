@@ -28,13 +28,13 @@ describe Travis::API::V3::Metrics do
     metric.process(processor)
   end
 
-  its(:queue) { should be == [metric] }
+  its(:queue) { is_expected.to eq [metric] }
 
-  its(:times) { should be == [
+  its(:times) { is_expected.to eq [
     ["branch.find.example",       10.0],
     ["branch.find.other_example", 5.0],
     ["branch.find.overall",       25.0]
   ] }
 
-  its(:marks) { should be == ["status.200", "branch.find.success"] }
+  its(:marks) { is_expected.to eq ["status.200", "branch.find.success"] }
 end

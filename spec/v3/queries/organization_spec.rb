@@ -3,6 +3,6 @@ describe Travis::API::V3::Queries::Organization do
     FactoryBot.create(:org, login: 'travisbot')
     newer = FactoryBot.create(:org, login: 'travisbot')
 
-    described_class.new({ 'organization.login' => 'travisbot' }, 'Organization').find.id.should == newer.id
+    expect(described_class.new({ 'organization.login' => 'travisbot' }, 'Organization').find.id).to eq(newer.id)
   end
 end

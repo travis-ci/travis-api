@@ -10,7 +10,7 @@ describe Travis::Api::App::Extensions::Scoping do
       get('/pass_me') { 'second' }
     end
 
-    User.stubs(:find).with(user.id).returns(user)
+    allow(User).to receive(:find).with(user.id).and_return(user)
   end
 
   def with_scopes(url, *scopes)
@@ -19,58 +19,58 @@ describe Travis::Api::App::Extensions::Scoping do
   end
 
   it 'uses the default scope if no token is given' do
-    get('/').should be_ok
-    headers['X-Accepted-OAuth-Scopes'].should == 'public'
-    headers['X-OAuth-Scopes'].should == 'public'
+    expect(get('/')).to be_ok
+    expect(headers['X-Accepted-OAuth-Scopes']).to eq('public')
+    expect(headers['X-OAuth-Scopes']).to eq('public')
   end
 
   it 'allows overriding scopes for anonymous users' do
     settings.set anonymous_scopes: [:foo]
-    get('/').should_not be_ok
-    headers['X-Accepted-OAuth-Scopes'].should == 'public'
-    headers['X-OAuth-Scopes'].should == 'foo'
+    expect(get('/')).not_to be_ok
+    expect(headers['X-Accepted-OAuth-Scopes']).to eq('public')
+    expect(headers['X-OAuth-Scopes']).to eq('foo')
   end
 
   it 'allows overriding default scope' do
     settings.set default_scope: :foo
-    get('/').should_not be_ok
-    headers['X-Accepted-OAuth-Scopes'].should == 'foo'
-    headers['X-OAuth-Scopes'].should == 'public'
+    expect(get('/')).not_to be_ok
+    expect(headers['X-Accepted-OAuth-Scopes']).to eq('foo')
+    expect(headers['X-OAuth-Scopes']).to eq('public')
   end
 
   it 'allows overriding default scope and anonymous scope' do
     settings.set default_scope: :foo, anonymous_scopes: [:foo, :bar]
-    get('/').should be_ok
-    headers['X-Accepted-OAuth-Scopes'].should == 'foo'
-    headers['X-OAuth-Scopes'].should == 'foo,bar'
+    expect(get('/')).to be_ok
+    expect(headers['X-Accepted-OAuth-Scopes']).to eq('foo')
+    expect(headers['X-OAuth-Scopes']).to eq('foo,bar')
   end
 
   it 'takes the scope from the access token' do
-    with_scopes('/', :foo).should_not be_ok
-    headers['X-Accepted-OAuth-Scopes'].should == 'public'
-    headers['X-OAuth-Scopes'].should == 'foo'
+    expect(with_scopes('/', :foo)).not_to be_ok
+    expect(headers['X-Accepted-OAuth-Scopes']).to eq('public')
+    expect(headers['X-OAuth-Scopes']).to eq('foo')
   end
 
   it 'accepts the scope from the condition' do
-    with_scopes('/private', :foo, :bar, :private).should be_ok
-    headers['X-Accepted-OAuth-Scopes'].should == 'private'
-    headers['X-OAuth-Scopes'].should == 'foo,bar,private'
+    expect(with_scopes('/private', :foo, :bar, :private)).to be_ok
+    expect(headers['X-Accepted-OAuth-Scopes']).to eq('private')
+    expect(headers['X-OAuth-Scopes']).to eq('foo,bar,private')
   end
 
   it 'rejects if scope from condition is missing' do
-    with_scopes('/private', :foo, :bar).should_not be_ok
-    headers['X-Accepted-OAuth-Scopes'].should == 'private'
-    headers['X-OAuth-Scopes'].should == 'foo,bar'
+    expect(with_scopes('/private', :foo, :bar)).not_to be_ok
+    expect(headers['X-Accepted-OAuth-Scopes']).to eq('private')
+    expect(headers['X-OAuth-Scopes']).to eq('foo,bar')
   end
 
   it 'passes on to unscoped routes' do
-    get('/pass_me').should be_ok
-    body.should == 'second'
+    expect(get('/pass_me')).to be_ok
+    expect(body).to eq('second')
   end
 
 
   it 'does not pass if scope matches' do
-    with_scopes('/pass_me', :private).should be_ok
-    body.should == 'first'
+    expect(with_scopes('/pass_me', :private)).to be_ok
+    expect(body).to eq('first')
   end
 end

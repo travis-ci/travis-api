@@ -6,7 +6,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
 
   before do
     user.update_attribute(:is_syncing, false)
-    Travis::Features.stubs(:owner_active?).returns(true)
+    allow(Travis::Features).to receive(:owner_active?).and_return(true)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []

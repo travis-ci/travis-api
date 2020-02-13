@@ -5,7 +5,7 @@ describe Travis::Api::Serialize::V2::Http::Repository do
   let(:data) { described_class.new(repository).data }
 
   it 'repository' do
-    data['repo'].should == {
+    expect(data['repo']).to eq({
       'id' => repository.id,
       'slug' => 'svenfuchs/minimal',
       'description' => 'the repo description',
@@ -18,7 +18,7 @@ describe Travis::Api::Serialize::V2::Http::Repository do
       'last_build_language' => nil,
       'last_build_duration' => 60,
       'github_language' => 'ruby'
-    }
+    })
   end
 end
 
@@ -28,6 +28,6 @@ describe Travis::Api::Serialize::V2::Http::Repository, 'using Travis::Services::
   let(:data)    { described_class.new(repo).data }
 
   it 'queries' do
-    lambda { data }.should issue_queries(1)
+    expect { data }.to issue_queries(1)
   end
 end

@@ -9,7 +9,7 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
   before { ActiveRecord::Base.connection.execute("truncate requests cascade") }
 
   before do
-    Travis::Features.stubs(:owner_active?).returns(true)
+    allow(Travis::Features).to receive(:owner_active?).and_return(true)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []

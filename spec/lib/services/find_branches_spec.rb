@@ -11,23 +11,23 @@ describe Travis::Services::FindBranches do
 
     it 'finds the last builds of the given repository grouped per branch' do
       @params = { :repository_id => repo.id }
-      service.run.should include(build)
+      expect(service.run).to include(build)
     end
 
     it 'scopes to the given repository' do
       @params = { :repository_id => repo.id }
       build = FactoryBot.create(:build, :repository => FactoryBot.create(:repository_without_last_build), :state => :finished)
-      service.run.should_not include(build)
+      expect(service.run).not_to include(build)
     end
 
     it 'returns an empty build scope when the repository could not be found' do
       @params = { :repository_id => repo.id + 1 }
-      service.run.empty?.should be_truthy
+      expect(service.run.empty?).to be_truthy
     end
 
     it 'finds branches by a given list of ids' do
       @params = { :ids => [build.id] }
-      service.run.should == [build]
+      expect(service.run).to eq([build])
     end
   end
 
@@ -47,25 +47,25 @@ describe Travis::Services::FindBranches do
       it 'finds a private build' do
         FactoryBot.create(:permission, user: user, repository: private_repo)
         service = described_class.new(user, repository_id: private_repo.id)
-        service.run.should include(private_build)
+        expect(service.run).to include(private_build)
       end
 
       it 'finds a public build' do
         FactoryBot.create(:permission, user: user, repository: public_repo)
         service = described_class.new(user, repository_id: public_repo.id)
-        service.run.should include(public_build)
+        expect(service.run).to include(public_build)
       end
     end
 
     describe 'given the current user does not have a permission on the repository' do
       it 'does not find a private build' do
         service = described_class.new(user, repository_id: private_repo.id)
-        service.run.should_not include(public_build)
+        expect(service.run).not_to include(public_build)
       end
 
       it 'finds a public build' do
         service = described_class.new(user, repository_id: public_repo.id)
-        service.run.should include(public_build)
+        expect(service.run).to include(public_build)
       end
     end
   end
@@ -77,25 +77,25 @@ describe Travis::Services::FindBranches do
       it 'finds a private build' do
         FactoryBot.create(:permission, user: user, repository: private_repo)
         service = described_class.new(user, repository_id: private_repo.id)
-        service.run.should include(private_build)
+        expect(service.run).to include(private_build)
       end
 
       it 'finds a public build' do
         FactoryBot.create(:permission, user: user, repository: public_repo)
         service = described_class.new(user, repository_id: public_repo.id)
-        service.run.should include(public_build)
+        expect(service.run).to include(public_build)
       end
     end
 
     describe 'given the current user does not have a permission on the repository' do
       it 'does not find a private build' do
         service = described_class.new(user, repository_id: private_repo.id)
-        service.run.should_not include(public_build)
+        expect(service.run).not_to include(public_build)
       end
 
       it 'does not find a public build' do
         service = described_class.new(user, repository_id: public_repo.id)
-        service.run.should_not include(public_build)
+        expect(service.run).not_to include(public_build)
       end
     end
   end

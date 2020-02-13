@@ -6,14 +6,14 @@ describe Build::Config::Dist do
   let(:options) { {} }
 
   it 'sets dist to the default' do
-    subject.run[:dist].should eql(described_class::DEFAULT_DIST)
+    expect(subject.run[:dist]).to eql(described_class::DEFAULT_DIST)
   end
 
   context 'with :dist' do
     let(:config) { { dist: 'hambone' } }
 
     it 'is a no-op' do
-      subject.run[:dist].should eql('hambone')
+      expect(subject.run[:dist]).to eql('hambone')
     end
   end
 
@@ -21,7 +21,7 @@ describe Build::Config::Dist do
     let(:config) { { 'dist' => 'lentil' } }
 
     it 'is a no-op' do
-      subject.run['dist'].should eql('lentil')
+      expect(subject.run['dist']).to eql('lentil')
     end
   end
 
@@ -30,7 +30,7 @@ describe Build::Config::Dist do
     let(:language) { described_class::DIST_LANGUAGE_MAP.keys.sample }
 
     it 'sets the override for that language' do
-      subject.run[:dist].should eql(
+      expect(subject.run[:dist]).to eql(
         described_class::DIST_LANGUAGE_MAP[language]
       )
     end
@@ -41,7 +41,7 @@ describe Build::Config::Dist do
     let(:os) { described_class::DIST_OS_MAP.keys.sample }
 
     it 'sets the override for that os' do
-      subject.run[:dist].should eql(described_class::DIST_OS_MAP[os])
+      expect(subject.run[:dist]).to eql(described_class::DIST_OS_MAP[os])
     end
   end
 
@@ -51,7 +51,7 @@ describe Build::Config::Dist do
     let(:os) { described_class::DIST_OS_MAP.keys.sample }
 
     it 'sets the override for that language' do
-      subject.run[:dist].should eql(
+      expect(subject.run[:dist]).to eql(
         described_class::DIST_LANGUAGE_MAP[language]
       )
     end
@@ -63,7 +63,7 @@ describe Build::Config::Dist do
     let(:language) { described_class::DIST_LANGUAGE_MAP.keys.sample }
 
     it 'sets the override for that language' do
-      subject.run[:dist].should eql(
+      expect(subject.run[:dist]).to eql(
         described_class::DIST_LANGUAGE_MAP[language]
       )
     end
@@ -75,7 +75,7 @@ describe Build::Config::Dist do
     let(:language) { described_class::DIST_LANGUAGE_MAP.keys.sample }
 
     it 'sets dist to the default' do
-      subject.run[:dist].should eql(described_class::DEFAULT_DIST)
+      expect(subject.run[:dist]).to eql(described_class::DEFAULT_DIST)
     end
   end
 
@@ -84,7 +84,7 @@ describe Build::Config::Dist do
     let(:options) { { multi_os: false } }
 
     it 'sets the override for that os' do
-      subject.run[:dist].should eql(described_class::DIST_OS_MAP['osx'])
+      expect(subject.run[:dist]).to eql(described_class::DIST_OS_MAP['osx'])
     end
   end
 
@@ -93,7 +93,7 @@ describe Build::Config::Dist do
     let(:options) { { multi_os: false } }
 
     it 'sets dist to the default' do
-      subject.run[:dist].should eql(described_class::DEFAULT_DIST)
+      expect(subject.run[:dist]).to eql(described_class::DEFAULT_DIST)
     end
   end
 
@@ -101,7 +101,7 @@ describe Build::Config::Dist do
     let(:config) { { services: %w(docker) } }
 
     it 'sets the dist to trusty' do
-      subject.run[:dist].should eql('trusty')
+      expect(subject.run[:dist]).to eql('trusty')
     end
   end
 
@@ -114,11 +114,11 @@ describe Build::Config::Dist do
     end
 
     it 'sets the dist to trusty in the include hash' do
-      subject.run[:matrix][:include].first[:dist].should eql('trusty')
+      expect(subject.run[:matrix][:include].first[:dist]).to eql('trusty')
     end
 
     it 'sets the dist to the default at the top level' do
-      subject.run[:dist].should eql(described_class::DEFAULT_DIST)
+      expect(subject.run[:dist]).to eql(described_class::DEFAULT_DIST)
     end
   end
 end

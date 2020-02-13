@@ -8,13 +8,13 @@ describe Travis::Api::App::Endpoint, set_app: true do
   end
 
   it 'sets up endpoints automatically under given prefix' do
-    get('/my_endpoint/').should be_ok
-    body.should == "ok"
+    expect(get('/my_endpoint/')).to be_ok
+    expect(body).to eq("ok")
   end
 
   it 'does not require a trailing slash' do
-    get('/my_endpoint').should be_ok
-    body.should == "ok"
+    expect(get('/my_endpoint')).to be_ok
+    expect(body).to eq("ok")
   end
 
   context 'without forcing authentication' do

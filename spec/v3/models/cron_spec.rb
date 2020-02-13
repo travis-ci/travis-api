@@ -23,7 +23,7 @@ describe Travis::API::V3::Models::Cron do
 
       cron2.update_attribute(:next_run, 2.hours.from_now)
       Timecop.travel(scheduler_interval.from_now)
-      Travis::API::V3::Models::Cron.scheduled.count.should eql 1
+      expect(Travis::API::V3::Models::Cron.scheduled.count).to eql 1
       Timecop.return
       cron1.destroy
       cron2.destroy
@@ -63,7 +63,7 @@ describe Travis::API::V3::Models::Cron do
     it "sets the next_run correctly" do
       subject.last_run = 1.day.ago.utc + 5.minutes
       subject.schedule_next_build
-      subject.next_run.to_i.should eql 5.minutes.from_now.utc.to_i
+      expect(subject.next_run.to_i).to eql 5.minutes.from_now.utc.to_i
     end
   end
 
@@ -71,38 +71,38 @@ describe Travis::API::V3::Models::Cron do
     context "and from: is not passed" do
       it "sets the next_run from now" do
         subject.schedule_next_build
-        subject.next_run.should be == DateTime.now + 1.day
+        expect(subject.next_run).to be_within(1.second).of DateTime.now + 1.day
       end
     end
     context "and from: is passed" do
       it "sets the next_run from from:" do
         subject.schedule_next_build(from: DateTime.now + 3.day)
-        subject.next_run.should be == DateTime.now + 4.day
+        expect(subject.next_run).to be_within(1.second).of DateTime.now + 4.day
       end
     end
 
     context "and from: is more than one interval in the past" do
       it "ensures that the next_run is in the future" do
         subject.schedule_next_build(from: DateTime.now - 2.day)
-        subject.next_run.should be >= DateTime.now
+        expect(subject.next_run).to be >= DateTime.now
       end
     end
   end
 
   describe "enqueue" do
     it "enqueues the cron" do
-      Sidekiq::Client.any_instance.expects(:push).once
+      expect_any_instance_of(Sidekiq::Client).to receive(:push).once
       subject.enqueue
     end
 
     it "set the last_run time to now" do
       subject.enqueue
-      subject.last_run.should be == DateTime.now.utc
+      expect(subject.last_run).to be_within(1.second).of DateTime.now.utc
     end
 
     it "schedules the next run" do
       subject.enqueue
-      subject.next_run.should be == DateTime.now.utc + 1.day
+      expect(subject.next_run).to be_within(1.second).of DateTime.now.utc + 1.day
     end
 
     context "when branch does not exist on github" do
@@ -120,7 +120,7 @@ describe Travis::API::V3::Models::Cron do
     context "when no build has existed before running a cron build" do
       let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
-        cron.needs_new_build?.should be_truthy
+        expect(cron.needs_new_build?).to be_truthy
       end
     end
 
@@ -128,7 +128,7 @@ describe Travis::API::V3::Models::Cron do
       let(:build) { FactoryBot.create(:v3_build, started_at: nil, number: 100) }
       let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
-        cron.needs_new_build?.should be_truthy
+        expect(cron.needs_new_build?).to be_truthy
       end
     end
 
@@ -136,7 +136,7 @@ describe Travis::API::V3::Models::Cron do
       let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch, last_build: FactoryBot.create(:v3_build, number: 200)).id, dont_run_if_recent_build_exists: true) }
 
       it "needs_new_build? returns false" do
-        cron.needs_new_build?.should be_falsey
+        expect(cron.needs_new_build?).to be_falsey
       end
     end
   end
@@ -155,7 +155,7 @@ describe Travis::API::V3::Models::Cron do
       let(:active) { false }
       it { expect(cron.enqueue).to eq false }
       it "logs the reason" do
-        Travis.logger.expects(:info).with("Removing cron #{cron.id} because the associated #{Travis::API::V3::Models::Cron::REPO_IS_INACTIVE}")
+        expect(Travis.logger).to receive(:info).with("Removing cron #{cron.id} because the associated #{Travis::API::V3::Models::Cron::REPO_IS_INACTIVE}")
         cron.enqueue
       end
     end
@@ -164,7 +164,7 @@ describe Travis::API::V3::Models::Cron do
   context "when repo ownership is transferred" do
     it "enqueues a cron for the repo with the new owner" do
       subject.branch.repository.update_attribute(:owner, FactoryBot.create(:user, name: "Yoda", login: "yoda", email: "yoda@yoda.com"))
-      Sidekiq::Client.any_instance.expects(:push).once
+      expect_any_instance_of(Sidekiq::Client).to receive(:push).once
       subject.enqueue
     end
   end

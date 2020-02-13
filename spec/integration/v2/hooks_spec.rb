@@ -13,7 +13,7 @@ describe 'Hooks', set_app: true do
 
   it 'GET /hooks' do
     response = get '/hooks', {}, headers
-    response.should deliver_json_for(user.service_hooks, version: 'v2', type: 'hooks')
+    expect(response).to deliver_json_for(user.service_hooks, version: 'v2', type: 'hooks')
   end
 
   describe 'PUT /hooks' do # TODO really should be /hooks/1
@@ -36,20 +36,20 @@ describe 'Hooks', set_app: true do
 
     it 'sets the hook' do
       response = put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers
-      repo.reload.active?.should == true
-      response.should be_successful
+      expect(repo.reload.active?).to eq(true)
+      expect(response).to be_successful
     end
 
     context 'when the repo is migrating' do
       before { repo.update_attributes(migration_status: "migrating") }
       before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
-      it { last_response.status.should == 403 }
+      it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated' do
       before { repo.update_attributes(migration_status: "migrated") }
       before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
-      it { last_response.status.should == 403 }
+      it { expect(last_response.status).to eq(403) }
     end
   end
 end

@@ -8,11 +8,11 @@ describe User do
 
     it 'returns true if organization is flagged as educational_org' do
       Travis::Features.activate_owner(:educational_org, org)
-      org.education?.should be true
+      expect(org.education?).to be true
     end
 
     it 'returns false if the organization has not been flagged as educational_org' do
-      org.education?.should be false
+      expect(org.education?).to be false
     end
   end
 end

@@ -6,14 +6,14 @@ describe Travis::Api::App::Extensions::SmartConstants do
   describe :helpers do
     it 'works' do # :)
       some_app.helpers :respond_with
-      some_app.ancestors.should include(Travis::Api::App::Helpers::RespondWith)
+      expect(some_app.ancestors).to include(Travis::Api::App::Helpers::RespondWith)
     end
   end
 
   describe :register do
     it 'works' do # :)
       some_app.register :subclass_tracker
-      some_app.should be_a(Travis::Api::App::Extensions::SubclassTracker)
+      expect(some_app).to be_a(Travis::Api::App::Extensions::SubclassTracker)
     end
   end
 

@@ -12,11 +12,11 @@ describe Repository do
     end
 
     it 'returns last completed build' do
-      repo.last_completed_build.should == build2
+      expect(repo.last_completed_build).to eq(build2)
     end
 
     it 'returns last completed build for a branch' do
-      repo.last_completed_build('master').should == build1
+      expect(repo.last_completed_build('master')).to eq(build1)
     end
   end
 
@@ -35,12 +35,12 @@ describe Repository do
 
       it 'can be a user' do
         repo = FactoryBot.create(:repository, owner: user)
-        repo.reload.owner.should == user
+        expect(repo.reload.owner).to eq(user)
       end
 
       it 'can be an organization' do
         repo = FactoryBot.create(:repository, owner: org)
-        repo.reload.owner.should == org
+        expect(repo.reload.owner).to eq(org)
       end
     end
   end
@@ -50,21 +50,21 @@ describe Repository do
       let(:minimal) { FactoryBot.create(:repository) }
 
       it "should find a repository by it's github_id" do
-        Repository.by_params(github_id: minimal.github_id).to_a.first.should == minimal
+        expect(Repository.by_params(github_id: minimal.github_id).to_a.first).to eq(minimal)
       end
 
       it "should find a repository by it's id" do
-        Repository.by_params(id: minimal.id).to_a.first.id.should == minimal.id
+        expect(Repository.by_params(id: minimal.id).to_a.first.id).to eq(minimal.id)
       end
 
       it "should find a repository by it's name and owner_name" do
         repo = Repository.by_params(name: minimal.name, owner_name: minimal.owner_name).to_a.first
-        repo.owner_name.should == minimal.owner_name
-        repo.name.should == minimal.name
+        expect(repo.owner_name).to eq(minimal.owner_name)
+        expect(repo.name).to eq(minimal.name)
       end
 
       it "returns nil when a repository couldn't be found using params" do
-        Repository.by_params(name: 'emptiness').to_a.should == []
+        expect(Repository.by_params(name: 'emptiness').to_a).to eq([])
       end
     end
 
@@ -81,12 +81,12 @@ describe Repository do
 
       it 'sorts repositories with running builds to the top, most recent builds next, un-built repos last' do
         repositories = Repository.timeline
-        repositories.map(&:name).should == ['started 2', 'started 1', 'finished 2', 'finished 1', 'unbuilt 2', 'unbuilt 1']
+        expect(repositories.map(&:name)).to eq(['started 2', 'started 1', 'finished 2', 'finished 1', 'unbuilt 2', 'unbuilt 1'])
       end
 
       it 'does not include invalidated repos' do
         repositories = Repository.timeline
-        repositories.map(&:name).should_not include('invalidated')
+        expect(repositories.map(&:name)).not_to include('invalidated')
       end
     end
 
@@ -101,7 +101,7 @@ describe Repository do
         three.save
 
         repositories = Repository.with_builds.all
-        repositories.map(&:id).sort.should == [two, three].map(&:id).sort
+        expect(repositories.map(&:id).sort).to eq([two, three].map(&:id).sort)
       end
     end
 
@@ -111,15 +111,15 @@ describe Repository do
       let(:invalidated) { FactoryBot.create(:repository, invalidated_at: Time.now) }
 
       it 'contains active repositories' do
-        Repository.active.should include(active)
+        expect(Repository.active).to include(active)
       end
 
       it 'does not include inactive repositories' do
-        Repository.active.should_not include(inactive)
+        expect(Repository.active).not_to include(inactive)
       end
 
       it 'does not include invalidated repositories' do
-        Repository.active.should_not include(invalidated)
+        expect(Repository.active).not_to include(invalidated)
       end
     end
 
@@ -131,19 +131,19 @@ describe Repository do
       end
 
       it 'performs searches case-insensitive' do
-        Repository.search('rEpO').to_a.count.should == 2
+        expect(Repository.search('rEpO').to_a.count).to eq(2)
       end
 
       it 'performs searches with / entered' do
-        Repository.search('fuchs/').to_a.count.should == 2
+        expect(Repository.search('fuchs/').to_a.count).to eq(2)
       end
 
       it 'performs searches with \ entered' do
-        Repository.search('fuchs\\').to_a.count.should == 2
+        expect(Repository.search('fuchs\\').to_a.count).to eq(2)
       end
 
       it 'does not find invalidated repos' do
-        Repository.search('fuchs').map(&:name).should_not include('invalidated')
+        expect(Repository.search('fuchs').map(&:name)).not_to include('invalidated')
       end
     end
 
@@ -164,7 +164,7 @@ describe Repository do
       end
 
       it 'does not find invalidated repos' do
-        Repository.by_member('svenfuchs').map(&:name).should_not include('invalidated')
+        expect(Repository.by_member('svenfuchs').map(&:name)).not_to include('invalidated')
       end
     end
 
@@ -177,7 +177,7 @@ describe Repository do
 
       it 'returns repository counts per owner_id for the given owner_ids' do
         counts = Repository.counts_by_owner_ids([1, 2], 'Organization')
-        counts.should == { 1 => 1, 2 => 1 }
+        expect(counts).to eq({ 1 => 1, 2 => 1 })
       end
     end
   end
@@ -190,7 +190,7 @@ describe Repository do
     end
 
     it 'returns the api url for the repository' do
-      repo.api_url.should == 'https://api.github.com/repos/travis-ci/travis-ci'
+      expect(repo.api_url).to eq('https://api.github.com/repos/travis-ci/travis-ci')
     end
   end
 
@@ -204,12 +204,12 @@ describe Repository do
 
       it 'returns the public git source url for a public repository' do
         repo.private = false
-        repo.source_url.should == 'git://github.com/travis-ci/travis-ci.git'
+        expect(repo.source_url).to eq('git://github.com/travis-ci/travis-ci.git')
       end
 
       it 'returns the private git source url for a private repository' do
         repo.private = true
-        repo.source_url.should == 'git@github.com:travis-ci/travis-ci.git'
+        expect(repo.source_url).to eq('git@github.com:travis-ci/travis-ci.git')
       end
     end
 
@@ -222,12 +222,12 @@ describe Repository do
 
       it 'returns the private git source url for a public repository' do
         repo.private = false
-        repo.source_url.should == 'git@localhost:travis-ci/travis-ci.git'
+        expect(repo.source_url).to eq('git@localhost:travis-ci/travis-ci.git')
       end
 
       it 'returns the private git source url for a private repository' do
         repo.private = true
-        repo.source_url.should == 'git@localhost:travis-ci/travis-ci.git'
+        expect(repo.source_url).to eq('git@localhost:travis-ci/travis-ci.git')
       end
     end
   end
@@ -238,7 +238,7 @@ describe Repository do
     end
 
     it 'returns the source_host name from Travis.config' do
-      Repository.new.source_host.should == 'localhost'
+      expect(Repository.new.source_host).to eq('localhost')
     end
   end
 
@@ -258,7 +258,7 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        repo.last_build('master').id.should == @build.id
+        expect(repo.last_build('master').id).to eq(@build.id)
       end
     end
 
@@ -268,7 +268,7 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        repo.last_build('master').id.should == @build.id
+        expect(repo.last_build('master').id).to eq(@build.id)
       end
     end
   end
@@ -288,7 +288,7 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        repo.last_build_on('master').id.should == @build.id
+        expect(repo.last_build_on('master').id).to eq(@build.id)
       end
     end
 
@@ -298,7 +298,7 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        repo.last_build_on('master').id.should == @build.id
+        expect(repo.last_build_on('master').id).to eq(@build.id)
       end
     end
   end
@@ -308,7 +308,7 @@ describe Repository do
     before { repo.regenerate_key! }
 
     it "should return the public key" do
-      repo.public_key.should == repo.key.public_key
+      expect(repo.public_key).to eq(repo.key.public_key)
     end
   end
 
@@ -319,14 +319,14 @@ describe Repository do
       %w(master production).each do |branch|
         2.times { FactoryBot.create(:build, repository: repo, commit: FactoryBot.create(:commit, branch: branch)) }
       end
-      repo.branches.sort.should == %w(master production)
+      expect(repo.branches.sort).to eq(%w(master production))
     end
 
     it 'is empty for empty repository' do
       repo.last_build_id = nil
       repo.save
       Build.delete_all
-      repo.branches.should eql []
+      expect(repo.branches).to eql []
     end
   end
 
@@ -337,13 +337,13 @@ describe Repository do
       repo.save
 
       env_var = repo.settings.env_vars.create(name: 'FOO')
-      env_var.repository_id.should == repo.id
+      expect(env_var.repository_id).to eq(repo.id)
 
       repo.settings.save
 
       repo.reload
 
-      repo.settings.env_vars.first.repository_id.should == repo.id
+      expect(repo.settings.env_vars.first.repository_id).to eq(repo.id)
     end
 
     it "is reset on reload" do
@@ -352,37 +352,37 @@ describe Repository do
       repo.settings = {}
       repo.update_column(:settings, { 'build_pushes' => false }.to_json)
       repo.reload
-      repo.settings.build_pushes?.should be false
+      expect(repo.settings.build_pushes?).to be false
       repo.update_column(:settings, { 'build_pushes' => true }.to_json)
       repo.reload
-      repo.settings.build_pushes?.should be true
+      expect(repo.settings.build_pushes?).to be true
     end
 
     it "allows to set nil for settings" do
       repo.settings = nil
-      repo.settings.to_hash.should == Repository::Settings.new.to_hash
+      expect(repo.settings.to_hash).to eq(Repository::Settings.new.to_hash)
     end
 
     it "allows to set settings as JSON string" do
       repo.settings = '{"maximum_number_of_builds": 44}'
-      repo.settings.to_hash.should == Repository::Settings.new(maximum_number_of_builds: 44).to_hash
+      expect(repo.settings.to_hash).to eq(Repository::Settings.new(maximum_number_of_builds: 44).to_hash)
     end
 
     it "allows to set settings as a Hash" do
       repo.settings = { maximum_number_of_builds: 44}
-      repo.settings.to_hash.should == Repository::Settings.new(maximum_number_of_builds: 44).to_hash
+      expect(repo.settings.to_hash).to eq(Repository::Settings.new(maximum_number_of_builds: 44).to_hash)
     end
 
     it 'updates settings in the DB' do
       repo.settings = {'build_pushes' => false}
       repo.save
 
-      repo.reload.settings.build_pushes?.should == false
+      expect(repo.reload.settings.build_pushes?).to eq(false)
 
       repo.settings.merge('build_pushes' => true)
       repo.settings.save
 
-      repo.reload.settings.build_pushes?.should == true
+      expect(repo.reload.settings.build_pushes?).to eq(true)
     end
   end
 
@@ -396,7 +396,7 @@ describe Repository do
       two = FactoryBot.create(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: FactoryBot.create(:commit, branch: '2two'))
 
       builds = repo.last_finished_builds_by_branches(1)
-      builds.should == [two]
+      expect(builds).to eq([two])
     end
 
     it 'retrieves last builds on all branches' do
@@ -409,10 +409,10 @@ describe Repository do
       three.update_attribute(:event_type, 'pull_request')
 
       builds = repo.last_finished_builds_by_branches
-      builds.size.should == 2
-      builds.should include(one)
-      builds.should include(two)
-      builds.should_not include(old)
+      expect(builds.size).to eq(2)
+      expect(builds).to include(one)
+      expect(builds).to include(two)
+      expect(builds).not_to include(old)
     end
   end
 
@@ -430,9 +430,9 @@ describe Repository do
       user_wrong_permission = FactoryBot.create(:user)
       user_wrong_permission.permissions.create!(repository: repo, push: true)
 
-      repo.users_with_permission(:admin).should include(user_with_permission)
-      repo.users_with_permission(:admin).should_not include(user_wrong_repo)
-      repo.users_with_permission(:admin).should_not include(user_wrong_permission)
+      expect(repo.users_with_permission(:admin)).to include(user_with_permission)
+      expect(repo.users_with_permission(:admin)).not_to include(user_wrong_repo)
+      expect(repo.users_with_permission(:admin)).not_to include(user_wrong_permission)
     end
   end
 end
