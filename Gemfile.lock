@@ -129,7 +129,7 @@ GEM
       descendants_tracker (~> 0.0.1)
     composite_primary_keys (8.1.8)
       activerecord (~> 4.2.0)
-    concurrent-ruby (1.1.5)
+    concurrent-ruby (1.1.6)
     connection_pool (2.2.1)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
@@ -397,7 +397,7 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    webmock (3.8.1)
+    webmock (3.8.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -415,8 +415,8 @@ DEPENDENCIES
   coder (~> 0.4.0)
   composite_primary_keys (~> 8.0)
   dalli
-  database_cleaner (~> 1.8)
-  factory_bot (~> 5.1.0)
+  database_cleaner
+  factory_bot
   faraday
   faraday_middleware
   fog-aws (~> 0.12.0)
@@ -470,7 +470,7 @@ DEPENDENCIES
   sinatra
   sinatra-contrib
   stackprof
-  timecop (~> 0.9.0)
+  timecop
   tool
   travis-amqp!
   travis-config!
