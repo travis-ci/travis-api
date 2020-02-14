@@ -46,7 +46,7 @@ module Travis::API::V3
     end
 
     def mustermann(*input)
-      Mustermann.new(*input, **mustermann_options)
+      ::Mustermann.new(*input, **mustermann_options)
     end
 
     def mustermann_options
