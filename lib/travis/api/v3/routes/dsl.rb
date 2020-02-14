@@ -1,4 +1,5 @@
 require 'travis/api/v3/routes/resource'
+require 'mustermann'
 
 module Travis::API::V3
   module Routes::DSL
