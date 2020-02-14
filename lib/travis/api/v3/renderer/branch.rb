@@ -4,10 +4,9 @@ module Travis::API::V3
     representation(:standard, :name, :repository, :default_branch, :exists_on_github, :last_build)
     representation(:additional, :recent_builds)
 
-    def repository
-      puts "Oto model.repository: #{model.repository.permissions.to_json.to_s}"
-      Renderer.render_model(model.repository, mode: :standard)
-    end
+#    def repository
+#      Renderer.render_model(model.repository, mode: :standard)
+#    end
 
     def recent_builds
       return unless include_recent_builds?
