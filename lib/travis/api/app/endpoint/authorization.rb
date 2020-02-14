@@ -52,7 +52,7 @@ class Travis::Api::App
       SUSPICIOUS_CODES = ['<script', 'javascript', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseover', 'onmouseout', 'onmouseup', 'onkeydown',
                           'onkeypress', 'onkeyup', 'onabort', 'onerror', 'onload', 'onresize', 'onscroll', 'onunload', 'onsubmit', 'onblur', 'oncanplay',
                           'onchange', 'onfocus', 'onreset', 'onselect', 'onmoveon', 'onbegin', 'onpropertychange', 'onmouseenter', 'onreadystatechange',
-                          'onpagehide', 'onmouseleave', 'onmousewheel', 'onpageshow', 'onstart', 'onbeforeunload', 'onpopstate', 'onbeforeload',
+                          'onpagehide', 'onmouseleave', 'onmousewheel', 'onpageshow', 'onstart', 'onbeforeunload', 'onpopstate', 'onbeforeload', 'onanimation'
                           'expression', 'oninput', 'formaction', 'onforminput', 'poster', 'onformchange', 'background', '<object', '<embed', 'onfilterchange',
                           '<vmlframe', '<frame', '<iframe', '<input', '<form', '<audio', '<']
 
