@@ -90,13 +90,13 @@ GEM
   specs:
     active_model_serializers (0.9.5)
       activemodel (>= 3.2)
-    activemodel (5.2.4)
-      activesupport (= 5.2.4)
-    activerecord (5.2.4)
-      activemodel (= 5.2.4)
-      activesupport (= 5.2.4)
+    activemodel (5.2.4.1)
+      activesupport (= 5.2.4.1)
+    activerecord (5.2.4.1)
+      activemodel (= 5.2.4.1)
+      activesupport (= 5.2.4.1)
       arel (>= 9.0)
-    activesupport (5.2.4)
+    activesupport (5.2.4.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
@@ -226,7 +226,7 @@ GEM
     http_parser.rb (0.6.0)
     httpclient (2.8.3)
     hurley (0.2)
-    i18n (1.7.0)
+    i18n (1.8.2)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     ipaddress (0.8.3)
@@ -408,7 +408,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
-  activerecord (~> 5.2.4)
+  activerecord (~> 5.0)
   allocation_tracer
   bunny (~> 2.9.2)
   closeio (~> 3.5)
