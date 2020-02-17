@@ -44,7 +44,7 @@ module Travis
             billing:              {},
             closeio:              { key: 'key' },
             gdpr:                 {},
-            insights:             Travis.env == 'test' ? { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' } : {},
+            insights:             { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' },
             database:             { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             fallback_logs_api:    { url: fallback_logs_api_auth_url, token: fallback_logs_api_auth_token },
             logs_api:             { url: logs_api_url, token: logs_api_auth_token },
