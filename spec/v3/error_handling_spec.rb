@@ -6,6 +6,6 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
   let(:resources) { json.fetch('resources')  }
 
   it "handles wrong HTTP method with 405 status" do
-    response.status.should == 405
+    expect(response.status).to eq(405)
   end
 end

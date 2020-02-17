@@ -60,7 +60,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:archived_content) { "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch" }
 
   before do
-    Travis::API::V3::AccessControl::LegacyToken.any_instance.stubs(:visible?).returns(true)
+    allow_any_instance_of(Travis::API::V3::AccessControl::LegacyToken).to receive(:visible?).and_return(true)
     stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
       to_return(:status => 200, :body => xml_content, :headers => {})
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job.id}/log.txt").
@@ -78,16 +78,20 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       key: "jobs/#{s3job.id}/log.txt",
       body: archived_content
     )
-    remote = stubs('remote')
-    Travis::RemoteLog::Remote.stubs(:new).returns(remote)
-    remote.stubs(:find_by_job_id).returns(Travis::RemoteLog.new(log_from_api))
+    remote = double('remote')
+    allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
+    allow(remote).to receive(:find_by_job_id).and_return(Travis::RemoteLog.new(log_from_api))
   end
-  after { Fog::Mock.reset }
+  after do
+    Fog.unmock!
+    Fog::Mock.reset
+  end
 
   around(:each) do |example|
+    options = Travis.config.log_options
     Travis.config.log_options.s3 = { access_key_id: 'key', secret_access_key: 'secret' }
     example.run
-    Travis.config.log_options = {}
+    Travis.config.log_options = options
   end
 
   context 'without authentication' do

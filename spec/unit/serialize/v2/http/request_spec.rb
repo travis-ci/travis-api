@@ -3,13 +3,13 @@ describe Travis::Api::Serialize::V2::Http::Request do
 
   let(:data) {
     request = stub_request
-    request.stubs(:builds).returns([build])
-    request.stubs(:tag_name).returns(nil)
+    allow(request).to receive(:builds).and_return([build])
+    allow(request).to receive(:tag_name).and_return(nil)
     described_class.new(request).data
   }
 
   it 'returns request data' do
-    data['request'].should == {
+    expect(data['request']).to eq({
       'id' => 1,
       'repository_id' => 1,
       'commit_id' => 1,
@@ -27,11 +27,11 @@ describe Travis::Api::Serialize::V2::Http::Request do
       'pull_request_title' => nil,
       'pull_request_number' => nil,
       'build_id' => build.id
-    }
+    })
   end
 
   it 'returns commit data' do
-    data['commit'].should == {
+    expect(data['commit']).to eq({
       'id' => commit.id,
       'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
@@ -43,6 +43,6 @@ describe Travis::Api::Serialize::V2::Http::Request do
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
       'pull_request_number' => nil,
-    }
+    })
   end
 end

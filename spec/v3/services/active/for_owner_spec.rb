@@ -6,7 +6,7 @@ RSpec::Matchers.define :contain_builds do |*builds|
     @returned = response['builds'].map { |b| b['id'] }
     builds.map(&:id).all? { |id| @returned.include?(id) }
   end
-  failure_message_for_should { |_| "expected response #{@returned} to contain builds #{builds.map(&:id)}" }
+  failure_message { |_| "expected response #{@returned} to contain builds #{builds.map(&:id)}" }
 end
 
 RSpec::Matchers.define :not_contain_builds do |*builds|
@@ -15,7 +15,7 @@ RSpec::Matchers.define :not_contain_builds do |*builds|
     @returned = response['builds'].map { |b| b['id'] }
     builds.map(&:id).none? { |id| @returned.include?(id) }
   end
-  failure_message_for_should { |_| "expected response #{@returned} not to contain builds #{builds.map(&:id)}" }
+  failure_message { |_| "expected response #{@returned} not to contain builds #{builds.map(&:id)}" }
 end
 
 RSpec::Matchers.define :contain_jobs do |*jobs|
@@ -24,7 +24,7 @@ RSpec::Matchers.define :contain_jobs do |*jobs|
     @returned = response['builds'].flat_map { |b| b['jobs'] }.map { |j| j['id'] }
     jobs.map(&:id).all? { |id| @returned.include?(id) }
   end
-  failure_message_for_should { |_| "expected response #{@returned} to contain jobs #{jobs.map(&:id)}" }
+  failure_message { |_| "expected response #{@returned} to contain jobs #{jobs.map(&:id)}" }
 end
 
 RSpec::Matchers.define :contain_full_jobs do
@@ -33,7 +33,7 @@ RSpec::Matchers.define :contain_full_jobs do
     @response = response['builds'].flat_map { |b| b['jobs'] }
     @response.all? { |j| j["@representation"] == "standard" }
   end
-  failure_message_for_should { |_| "expected response #{@response} to contain for jobs: '@representation' => 'standard'"}
+  failure_message { |_| "expected response #{@response} to contain for jobs: '@representation' => 'standard'"}
 end
 
 RSpec::Matchers.define :contain_minimal_jobs do
@@ -42,7 +42,7 @@ RSpec::Matchers.define :contain_minimal_jobs do
     @response = response['builds'].flat_map { |b| b['jobs'] }
     @response.all? { |j| j["@representation"] == "minimal" }
   end
-  failure_message_for_should { |_| "expected response #{@response} to contain for jobs: '@representation' => 'minimal'"}
+  failure_message { |_| "expected response #{@response} to contain for jobs: '@representation' => 'minimal'"}
 end
 
 RSpec::Matchers.define :not_contain_jobs do |*jobs|
@@ -51,7 +51,7 @@ RSpec::Matchers.define :not_contain_jobs do |*jobs|
     @returned = response['builds'].flat_map { |b| b['jobs'] }.map { |j| j['id'] }
     jobs.map(&:id).none? { |id| @returned.include?(id) }
   end
-  failure_message_for_should { |_| "expected response #{@returned} not to contain jobs #{jobs.map(&:id)}" }
+  failure_message { |_| "expected response #{@returned} not to contain jobs #{jobs.map(&:id)}" }
 end
 
 RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do

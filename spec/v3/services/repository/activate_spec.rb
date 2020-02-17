@@ -42,7 +42,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       let(:service_hook_payload) { JSON.dump(events: Travis::API::V3::GitHub::EVENTS, active: false) }
 
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, pull: true, push: true) }
-      before { Travis::API::V3::GitHub.any_instance.stubs(:upload_key) }
+      before { allow_any_instance_of(Travis::API::V3::GitHub).to receive(:upload_key) }
       before { stub_request(:any, %r(https://api.github.com/repositories/#{repo.github_id}/hooks(/\d+)?)) }
 
       around do |ex|

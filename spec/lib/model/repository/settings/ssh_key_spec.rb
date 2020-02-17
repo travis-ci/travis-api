@@ -33,27 +33,27 @@ tFns8eTxHpZOYOftxpX91vS3tzKCKgkdPhnYBDrvFFWnGgRLXFpb
 
   it 'validates correctness of private key' do
     ssh_key = described_class.new(value: private_key)
-    ssh_key.should be_valid
+    expect(ssh_key).to be_valid
 
     ssh_key.value = 'foo'
-    ssh_key.should_not be_valid
+    expect(ssh_key).not_to be_valid
 
-    ssh_key.errors[:value].should == [:not_a_private_key]
+    expect(ssh_key.errors[:value]).to eq([:not_a_private_key])
   end
 
   it 'allows only private key' do
     public_key =  OpenSSL::PKey::RSA.new(private_key).public_key.to_s
     ssh_key = described_class.new(value: public_key)
 
-    ssh_key.should_not be_valid
-    ssh_key.errors[:value].should == [:not_a_private_key]
+    expect(ssh_key).not_to be_valid
+    expect(ssh_key.errors[:value]).to eq([:not_a_private_key])
   end
 
   it 'does not check key if a value is nil' do
     ssh_key = described_class.new({})
 
-    ssh_key.should_not be_valid
-    ssh_key.errors[:value].should == [:blank]
+    expect(ssh_key).not_to be_valid
+    expect(ssh_key.errors[:value]).to eq([:blank])
   end
 
   describe 'with a passphrase' do
@@ -94,9 +94,9 @@ zkrhrvtsjexdwYje7xjngPXrZ9USh13CoYNlduTlWB72m+wN8W7zyCLn1Zl/grTI
     it 'returns key_with_a_passphrase validation error' do
       ssh_key = described_class.new(value: private_key)
 
-      ssh_key.should_not be_valid
+      expect(ssh_key).not_to be_valid
 
-      ssh_key.errors[:value].should == [:key_with_a_passphrase]
+      expect(ssh_key.errors[:value]).to eq([:key_with_a_passphrase])
     end
   end
 end

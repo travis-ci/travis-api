@@ -33,8 +33,8 @@ module Support
 
     included do
       before :each do
-        ::Google::Apis::StorageV1::StorageService.stubs(:new).returns(gcs_storage)
-        ::Google::Auth::ServiceAccountCredentials.stubs(:make_creds).returns(FakeAuthorization.new)
+        allow(::Google::Apis::StorageV1::StorageService).to receive(:new).and_return(gcs_storage)
+        allow(::Google::Auth::ServiceAccountCredentials).to receive(:make_creds).and_return(FakeAuthorization.new)
       end
       let(:gcs_storage) { FakeService.new }
     end

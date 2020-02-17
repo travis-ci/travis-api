@@ -2,43 +2,43 @@ describe Travis::Services::FindJob do
   let(:repo)    { FactoryBot.create(:repository) }
   let!(:job)    { FactoryBot.create(:test, repository: repo, state: :created, queue: 'builds.linux', config: {'sudo' => false}) }
   let(:params)  { { id: job.id } }
-  let(:service) { described_class.new(stub('user'), params) }
+  let(:service) { described_class.new(double('user'), params) }
 
   describe 'run' do
     it 'finds the job with the given id' do
       @params = { id: job.id }
-      service.run.should == job
+      expect(service.run).to eq(job)
     end
 
     it 'does not raise if the job could not be found' do
       @params = { id: job.id + 1 }
-      lambda { service.run }.should_not raise_error
+      expect { service.run }.not_to raise_error
     end
 
     it 'raises RecordNotFound if a SubclassNotFound error is raised during find' do
-      find_by_id = stub.tap do |s|
-        s.stubs(:column_names).returns(%w(id config))
-        s.stubs(:includes).returns(s)
-        s.stubs(:select).returns(s)
-        s.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
+      find_by_id = double.tap do |s|
+        allow(s).to receive(:column_names).and_return(%w(id config))
+        allow(s).to receive(:includes).and_return(s)
+        allow(s).to receive(:select).and_return(s)
+        allow(s).to receive(:find_by_id).and_raise(ActiveRecord::SubclassNotFound)
       end
-      service.stubs(:scope).returns(find_by_id)
-      lambda { service.run }.should raise_error(ActiveRecord::RecordNotFound)
+      allow(service).to receive(:scope).and_return(find_by_id)
+      expect { service.run }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'includes config by default' do
-      service.run.config.should include(:sudo)
+      expect(service.run.config).to include(:sudo)
     end
 
     it 'excludes config when requested' do
       params[:exclude_config] = '1'
-      service.run.config.should_not include(:sudo)
+      expect(service.run.config).not_to include(:sudo)
     end
   end
 
   describe 'updated_at' do
     it 'returns jobs updated_at attribute' do
-      service.updated_at.to_s.should == job.reload.updated_at.to_s
+      expect(service.updated_at.to_s).to eq(job.reload.updated_at.to_s)
     end
   end
 
@@ -59,25 +59,25 @@ describe Travis::Services::FindJob do
         it 'finds a private job' do
           FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
-          service.run.should == private_job
+          expect(service.run).to eq(private_job)
         end
 
         it 'finds a public job' do
           FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
-          service.run.should == public_job
+          expect(service.run).to eq(public_job)
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'does not find a private job' do
           service = described_class.new(user, id: private_job.id)
-          service.run.should be_nil
+          expect(service.run).to be_nil
         end
 
         it 'finds a public job' do
           service = described_class.new(user, id: public_job.id)
-          service.run.should == public_job
+          expect(service.run).to eq(public_job)
         end
       end
     end
@@ -89,25 +89,25 @@ describe Travis::Services::FindJob do
         it 'finds a private job' do
           FactoryBot.create(:permission, user: user, repository: private_repo)
           service = described_class.new(user, id: private_job.id)
-          service.run.should == private_job
+          expect(service.run).to eq(private_job)
         end
 
         it 'finds a public job' do
           FactoryBot.create(:permission, user: user, repository: public_repo)
           service = described_class.new(user, id: public_job.id)
-          service.run.should == public_job
+          expect(service.run).to eq(public_job)
         end
       end
 
       describe 'given the current user does not have a permission on the repository' do
         it 'does not find a private job' do
           service = described_class.new(user, id: private_job.id)
-          service.run.should be_nil
+          expect(service.run).to be_nil
         end
 
         it 'does not find a public job' do
           service = described_class.new(user, id: public_job.id)
-          service.run.should == public_job
+          expect(service.run).to eq(public_job)
         end
       end
     end

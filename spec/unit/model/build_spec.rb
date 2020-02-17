@@ -1,8 +1,7 @@
 describe Build do
-  context 'given state is nil' do
-    let(:build) { FactoryBot.build(:build, state: nil) }
-    subject { build.state }
+  let(:build) { FactoryBot.build(:build, state: nil) }
 
-    it { should eq :created }
+  it 'defaults state to :created' do
+    expect(build.state).to eq(:created)
   end
 end
