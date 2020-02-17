@@ -66,6 +66,17 @@ GIT
       hashr (~> 2.0.0)
 
 GIT
+  remote: https://github.com/travis-ci/travis-github_apps
+  revision: fb865ee510534006f15553f4ef3746c2610a4668
+  specs:
+    travis-github_apps (0.2.0)
+      activesupport (>= 3.2)
+      faraday
+      faraday_middleware
+      jwt
+      redis
+
+GIT
   remote: https://github.com/travis-ci/travis-lock
   revision: b418401c79e082aa53a62364f7b01a9be6f0d768
   specs:
@@ -474,6 +485,7 @@ DEPENDENCIES
   tool
   travis-amqp!
   travis-config!
+  travis-github_apps!
   travis-lock!
   travis-rollout (~> 0.0.2)
   travis-settings!

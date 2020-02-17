@@ -56,6 +56,7 @@ module Travis
             smtp:                 {},
             email:                {},
             github:               { api_url: 'https://api.github.com', token: 'travisbot-token' },
+            github_apps:          { id: nil, private_pem: nil },
             async:                {},
             notifications:        [], # TODO rename to event.handlers
             metrics:              { reporter: 'librato' },
