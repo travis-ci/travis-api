@@ -54,6 +54,11 @@ class Travis::Api::App
                           'onchange', 'onfocus', 'onreset', 'onselect', 'onmoveon', 'onbegin', 'onpropertychange', 'onmouseenter', 'onreadystatechange',
                           'onpagehide', 'onmouseleave', 'onmousewheel', 'onpageshow', 'onstart', 'onbeforeunload', 'onpopstate', 'onbeforeload', 'onanimation',
                           'expression', 'oninput', 'formaction', 'onforminput', 'poster', 'onformchange', 'background', 'object', 'embed', 'onfilterchange',
+                          'onpointermove', 'onstorage', 'ononline', 'onoffline', 'onmessage', 'onhashchange', 'onbeforeprint', 'onafterprint',
+                          'oncontextmenu', 'oninvalid', 'onsearch', 'onwheel', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 'ondragover',
+                          'ondragstart', 'ondrop', 'oncopy', 'oncut', 'onpaste', 'ontoggle', 'oncanplaythrough', 'oncuechange', 'ondurationchange',
+                          'onemptied', 'onended', 'onloadeddata', 'onloadedmetadata', 'onloadstart', 'onpause', 'onplay', 'onplaying', 'onprogress',
+                          'onratechange', 'onseeked', 'onseeking', 'onstalled', 'onsuspend', 'ontimeupdate', 'onvolumechange', 'onwaiting',
                           'vmlframe', 'frame', 'iframe', 'input', 'form', 'audio', '<']
 
       # Endpoint for retrieving an authorization code, which in turn can be used
