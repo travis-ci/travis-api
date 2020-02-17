@@ -79,7 +79,6 @@ module Travis::Api
 
     def self.new(options = {})
       setup(options)
-      super()
     end
 
     def self.deploy_sha
