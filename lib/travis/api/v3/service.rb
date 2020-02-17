@@ -2,7 +2,7 @@ require 'travis/remote_vcs/repository'
 
 module Travis::API::V3
   class Service
-    DEFAULT_PARAMS = [ "include".freeze, "@type".freeze ]
+    DEFAULT_PARAMS = [ "include".freeze, "@type".freeze, 'representation'.freeze ]
     private_constant :DEFAULT_PARAMS
 
     def self.result_type(rt = nil)
