@@ -4,7 +4,9 @@ describe Build do
   let(:repository) { FactoryBot.create(:repository_without_last_build) }
 
   it 'caches matrix ids' do
+    pp "# of builds: #{Build.count}"
     build = FactoryBot.create(:build, config: { rvm: ['1.9.3', '2.0.0'] })
+    pp "test matrix ids: #{build.matrix_ids}"
     expect(build.cached_matrix_ids).to eq(build.matrix_ids)
   end
 

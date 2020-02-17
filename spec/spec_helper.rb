@@ -102,6 +102,7 @@ RSpec.configure do |c|
   end
 
   c.before :each do
+    puts "in spec_helper before :each block"
     DatabaseCleaner.start
     Redis.new(Travis.config.redis.to_h).flushall
     Travis.config.public_mode = true
@@ -110,10 +111,12 @@ RSpec.configure do |c|
   end
 
   c.before :each, set_app: true do
+    puts "in spec_helper before :each set_app true block"
     set_app Travis::Api::App.new
   end
 
   c.after :each do
+    puts "in spec_helper after :each set_app true block"
     DatabaseCleaner.clean
     custom_endpoints.each do |endpoint|
       endpoint.superclass.direct_subclasses.delete(endpoint)
