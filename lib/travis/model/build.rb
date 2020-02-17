@@ -139,24 +139,14 @@ class Build < Travis::Model
   end
 
   after_save do
-    pp "after svae: #{matrix_ids}"
-
     unless cached_matrix_ids
-      update_column(:cached_matrix_ids, to_postgres_array(matrix_ids))
+      update_columns(cached_matrix_ids: to_postgres_array(matrix_ids))
     end
+    true
   end
 
   def state
     (super || :created).to_sym
-  end
-
-  # AR 3.2 does not handle pg arrays and the plugins supporting them
-  # do not work well with jdbc drivers
-  # TODO: remove this once we're on >= 4.0
-  def cached_matrix_ids
-    if (value = super) && value =~ /^{/
-      value.gsub(/^{|}$/, '').split(',').map(&:to_i)
-    end
   end
 
   def matrix_ids
