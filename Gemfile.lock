@@ -90,24 +90,23 @@ GEM
   specs:
     active_model_serializers (0.9.5)
       activemodel (>= 3.2)
-    activemodel (4.2.11.1)
-      activesupport (= 4.2.11.1)
-      builder (~> 3.1)
-    activerecord (4.2.11.1)
-      activemodel (= 4.2.11.1)
-      activesupport (= 4.2.11.1)
-      arel (~> 6.0)
-    activesupport (4.2.11.1)
+    activemodel (5.0.0)
+      activesupport (= 5.0.0)
+    activerecord (5.0.0)
+      activemodel (= 5.0.0)
+      activesupport (= 5.0.0)
+      arel (~> 7.0)
+    activesupport (5.0.0)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (~> 0.7)
       minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     aggregate (0.2.2)
     allocation_tracer (0.6.3)
     amq-protocol (2.3.0)
-    arel (6.0.4)
+    arel (7.1.4)
     atomic (1.1.99)
     avl_tree (1.1.3)
     axiom-types (0.1.1)
@@ -127,8 +126,8 @@ GEM
     coderay (1.1.1)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    composite_primary_keys (8.1.8)
-      activerecord (~> 4.2.0)
+    composite_primary_keys (9.0.9)
+      activerecord (~> 5.0.0)
     concurrent-ruby (1.1.6)
     connection_pool (2.2.1)
     crack (0.4.3)
@@ -408,12 +407,12 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
-  activerecord (~> 4.2)
+  activerecord (= 5.0)
   allocation_tracer
   bunny (~> 2.9.2)
   closeio (~> 3.5)
   coder (~> 0.4.0)
-  composite_primary_keys (~> 8.0)
+  composite_primary_keys
   dalli
   database_cleaner
   factory_bot
