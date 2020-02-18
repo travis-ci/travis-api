@@ -18,8 +18,9 @@ WORKDIR /app
 COPY Gemfile      /app
 COPY Gemfile.lock /app
 
-RUN gem install bundler -v '2.1.4'
+RUN gem install bundler -v '2.0.1'
 RUN bundler install --verbose --retry=3 --deployment --without development test
+RUN gem install --user-install executable-hooks
 
 COPY . /app
 
