@@ -23,12 +23,15 @@ class Repository < Travis::Model
   has_many :permissions, dependent: :delete_all
   has_many :users, through: :permissions
 
-  has_one :last_build, -> { order('id DESC') }, class_name: 'Build'
   has_one :key, class_name: 'SslKey'
   belongs_to :owner, polymorphic: true
 
   validates :name,       presence: true
   validates :owner_name, presence: true
+
+  def last_build
+    self.builds.order(id: :desc).first
+  end
 
   # before_create do
   #   build_key
