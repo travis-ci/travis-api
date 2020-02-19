@@ -1,7 +1,3 @@
-# require 'knapsack'
-#
-# Knapsack::Adapters::RspecAdapter.bind
-
 $: << 'lib'
 
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
