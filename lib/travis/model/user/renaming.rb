@@ -6,7 +6,7 @@ module User::Renaming
       users.update_all(login: nil)
     end
 
-    organizations = Organization.where(["login = ?", login])
+    organizations = Organization.where(["login = ? AND vcs_type = ?", login, 'GithubOrganization'])
     if organizations.exists?
       Travis.logger.info("About to nullify login (#{login}) for organizations: #{organizations.map(&:id).join(', ')}")
       organizations.update_all(login: nil)
