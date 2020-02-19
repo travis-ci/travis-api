@@ -1,6 +1,6 @@
 module User::Renaming
   def nullify_logins(github_id, login)
-    users = User.where(["github_id <> ? AND login = ?", github_id, login])
+    users = User.where(["github_id <> ? AND login = ? and vcs_type = ?", github_id, login, 'GithubUser'])
     if users.exists?
       Travis.logger.info("About to nullify login (#{login}) for users: #{users.map(&:id).join(', ')}")
       users.update_all(login: nil)
