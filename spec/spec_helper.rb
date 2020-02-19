@@ -19,9 +19,6 @@ require 'pry'
 require 'stackprof'
 require 'webmock/rspec'
 
-require 'active_record'
-ActiveRecord::Base.raise_in_transactional_callbacks = true
-
 require 'travis/api/app'
 require 'travis/testing'
 require 'travis/testing/scenario'
