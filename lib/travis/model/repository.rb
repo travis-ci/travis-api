@@ -30,10 +30,6 @@ class Repository < Travis::Model
   validates :name,       presence: true
   validates :owner_name, presence: true
 
-  # before_create do
-  #   build_key
-  # end
-
   delegate :public_key, to: :key
 
   scope :by_params, ->(params) {
