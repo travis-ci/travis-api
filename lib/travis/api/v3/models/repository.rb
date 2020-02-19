@@ -42,7 +42,9 @@ module Travis::API::V3
     end
 
     def name_from_url
+      puts "vcs_type: #{vcs_type} url: #{url}"
       return url.split('/')[1].gsub('.git', '') if vcs_type == 'BitbucketRepository' && url && url.split('/')[1]
+      puts "name #{name}"
       name
     end  
 
