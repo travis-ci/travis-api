@@ -148,15 +148,6 @@ class Build < Travis::Model
     (super || :created).to_sym
   end
 
-  # AR 3.2 does not handle pg arrays and the plugins supporting them
-  # do not work well with jdbc drivers
-  # TODO: remove this once we're on >= 4.0
-  def cached_matrix_ids
-    if (value = super) && value =~ /^{/
-      value.gsub(/^{|}$/, '').split(',').map(&:to_i)
-    end
-  end
-
   def matrix_ids
     matrix.map(&:id)
   end
