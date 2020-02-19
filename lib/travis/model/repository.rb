@@ -106,7 +106,7 @@ class Repository < Travis::Model
   end
 
   def slug
-    @slug ||= [owner_name, name_from_url].join('/')
+    @slug ||= [owner.login, name_from_url].join('/')
   end
 
   def name_from_url

@@ -38,7 +38,7 @@ module Travis::API::V3
     end
 
     def slug
-      @slug ||= "#{owner_name}/#{name_from_url}"
+      @slug ||= "#{owner.login}/#{name_from_url}"
     end
 
     def name_from_url
