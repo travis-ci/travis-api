@@ -10,7 +10,7 @@ module Travis::API::V3
 
   class Models::RequestRawConfiguration < Model
     belongs_to :request
-    belongs_to :raw_config, foreign_key: :request_raw_config_id, class_name: Models::RequestRawConfig
+    belongs_to :raw_config, foreign_key: :request_raw_config_id, class_name: 'Models::RequestRawConfig'
   end
 
   class Models::Request < Model
@@ -22,10 +22,10 @@ module Travis::API::V3
     belongs_to :pull_request
     belongs_to :repository
     belongs_to :owner, polymorphic: true
-    belongs_to :config, foreign_key: :config_id, class_name: Models::RequestConfig
-    belongs_to :yaml_config, foreign_key: :yaml_config_id, class_name: Models::RequestYamlConfig
-    has_many   :raw_configurations, -> { order 'request_raw_configurations.id' }, class_name: Models::RequestRawConfiguration
-    has_many   :raw_configs, through: :raw_configurations, class_name: Models::RequestRawConfig
+    belongs_to :config, foreign_key: :config_id, class_name: 'Models::RequestConfig'
+    belongs_to :yaml_config, foreign_key: :yaml_config_id, class_name: 'Models::RequestYamlConfig'
+    has_many   :raw_configurations, -> { order 'request_raw_configurations.id' }, class_name: 'Models::RequestRawConfiguration'
+    has_many   :raw_configs, through: :raw_configurations, class_name: 'Models::RequestRawConfig'
     has_many   :builds
     serialize  :config
     serialize  :payload

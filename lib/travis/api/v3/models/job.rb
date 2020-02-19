@@ -13,7 +13,7 @@ module Travis::API::V3
     belongs_to :build, autosave: true, foreign_key: 'source_id'
     belongs_to :stage
     belongs_to :owner, polymorphic: true
-    belongs_to :config, foreign_key: :config_id, class_name: Models::JobConfig
+    belongs_to :config, foreign_key: :config_id, class_name: 'Models::JobConfig'
     serialize :config
     serialize :debug_options
 
