@@ -258,7 +258,7 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        expect(repo.last_build('master').id).to eq(@build.id)
+        expect(repo.last_build.id).to eq(@build.id)
       end
     end
 
@@ -268,7 +268,18 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        expect(repo.last_build('master').id).to eq(@build.id)
+        expect(repo.last_build.id).to eq(@build.id)
+      end
+    end
+
+    context 'when last_build_id is set' do
+      before :each do
+        @build = FactoryBot.create(:build)
+        repo.update_attribute(:last_build_id, @build.id)
+      end
+
+      it 'returns the most recent build' do
+        expect(repo.last_build.id).to eq(@build.id)
       end
     end
   end

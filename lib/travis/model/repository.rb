@@ -23,7 +23,6 @@ class Repository < Travis::Model
   has_many :permissions, dependent: :delete_all
   has_many :users, through: :permissions
 
-  has_one :last_build, -> { order('id DESC') }, class_name: 'Build'
   has_one :key, class_name: 'SslKey'
   belongs_to :owner, polymorphic: true
 
@@ -31,6 +30,15 @@ class Repository < Travis::Model
   validates :owner_name, presence: true
 
   delegate :public_key, to: :key
+
+  def last_build
+    # TODO: Determine if memoization is a bad idea here
+    @last_build ||= if last_build_id
+      Build.find(last_build_id)
+    else
+      builds.order(id: :desc).first
+    end
+  end
 
   scope :by_params, ->(params) {
     if id = params[:repository_id] || params[:id]
