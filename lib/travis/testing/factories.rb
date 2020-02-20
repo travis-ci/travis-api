@@ -103,6 +103,7 @@ FactoryBot.define do
 
   factory :org, :class => 'Organization' do
     name { 'travis-ci' }
+    login { 'travis-ci' }
   end
 
   factory :org_v3, class: Travis::API::V3::Models::Organization do
