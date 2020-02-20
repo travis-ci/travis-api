@@ -1,3 +1,5 @@
+require 'travis/github_apps'
+
 module Travis::API::V3
   class Models::Repository < Model
     has_many :commits,     dependent: :delete_all
@@ -140,6 +142,31 @@ module Travis::API::V3
       Models::KeyPair.load(settings['ssh_key'], repository_id: id).tap do |kp|
         kp.sync(self, :settings)
       end
+    end
+
+    def private_key
+      key.private_key
+    end
+
+    def token
+      installation ? app_token : admin&.github_oauth_token
+    end
+
+    def app_token
+      github_apps.access_token
+    end
+
+    def github_apps
+      Travis::GithubApps.new(
+        installation.github_id,
+        apps_id: Travis.config[:github_apps][:id],
+        private_pem: Travis.config[:github_apps][:private_pem],
+        redis: Travis.config[:redis].to_h,
+      )
+    end
+
+    def installation
+      owner&.installation
     end
 
     def debug_tools_enabled?

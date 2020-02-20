@@ -32,6 +32,7 @@ module Travis::API::V3
       add_info Renderer[type].render(resource,
         href:           href,
         script_name:    env['SCRIPT_NAME'.freeze],
+        params:         params,
         include:        include,
         access_control: access_control,
         meta_data:      meta_data,

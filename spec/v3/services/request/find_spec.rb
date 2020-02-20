@@ -86,6 +86,13 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
     end
   end
 
+  describe 'include messages' do
+    before { Travis::API::V3::Models::Message.create!(level: 'warn', subject_id: request.id, subject_type: 'Request')}
+    before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.messages") }
+    subject { JSON.load(body)['messages'][0]['@type'] }
+    it { should eq 'message' }
+  end
+
   describe "retrieve request on private repository, private API, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
