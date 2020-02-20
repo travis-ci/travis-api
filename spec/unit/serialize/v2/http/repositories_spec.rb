@@ -29,6 +29,6 @@ describe Travis::Api::Serialize::V2::Http::Repositories, 'using Travis::Services
 
   it 'queries' do
     user.permissions.create!(admin: true, push: true, repository_id: repo.id)
-    expect { data }.to issue_queries(1)
+    expect { data }.to issue_queries(2)
   end
 end
