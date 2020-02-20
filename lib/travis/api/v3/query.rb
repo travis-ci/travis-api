@@ -205,9 +205,7 @@ module Travis::API::V3
         collection = collection.joins(field.to_sym)
       end
 
-      # Fix AR deprecation warnings, but be overly cautious for now about what
-      # this could be.
-      line = Arel.sql(line) if line == "number::int DESC"
+      line = Arel.sql(line)
       first ? collection.reorder(line) : collection.order(line)
     end
 

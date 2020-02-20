@@ -5,8 +5,9 @@ module Travis::API::V3
     def sync(parent, attr)
       @parent, @attr = parent, attr
       @sync = -> do
-        previous = @parent[@attr] || {}
-        @parent[@attr] = previous.merge(to_h).to_json
+        attr = @parent[@attr]
+        hsh = (ActiveSupport::JSON.decode(attr) if attr && attr.is_a?(String)) || {}
+        @parent[@attr] = hsh.merge(to_h).to_json
         @parent.save!
       end
     end

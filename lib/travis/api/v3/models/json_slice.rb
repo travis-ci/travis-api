@@ -2,7 +2,10 @@ require_relative './json_sync'
 
 module Travis::API::V3
   class Models::JsonSlice
-    include Virtus.model, Enumerable, Models::JsonSync, ActiveModel::Validations
+    include Virtus.model
+    include Enumerable
+    include Models::JsonSync
+    include ActiveModel::Validations
 
     class << self
       attr_accessor :child_klass

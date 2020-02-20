@@ -112,7 +112,8 @@ module Travis::API::V3
     end
 
     def settings
-      super || {}
+      return ActiveSupport::JSON.decode(super) if super.is_a?(String)
+      {}
     end
 
     def user_settings
