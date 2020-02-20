@@ -28,6 +28,6 @@ describe Travis::Api::Serialize::V2::Http::Repository, 'using Travis::Services::
   let(:data)    { described_class.new(repo).data }
 
   it 'queries' do
-    expect { data }.to issue_queries(1)
+    expect { data }.to issue_queries(2)
   end
 end
