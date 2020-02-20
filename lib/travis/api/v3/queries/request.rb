@@ -3,11 +3,18 @@ module Travis::API::V3
     params  :id, :message, :branch, :config, :token, prefix: :request
 
     def find
+      raise WrongParams, 'missing request.id'.freeze unless id
       relation = Models::Request
       relation = relation.includes(raw_configurations: :raw_config) if includes?('request.raw_configs')
       relation = relation.includes(:config) if includes?('request.config')
-      return relation.find_by_id(id) if id
-      raise WrongParams, 'missing request.id'.freeze
+      request = relation.find_by_id(id)
+      # not sure why includes(:messages) does not include the association
+      request.messages = messages(request) if includes?('request.messages')
+      request
+    end
+
+    def messages(request)
+      Queries::Messages.new(params, :message).for_request(request)
     end
 
     def schedule(repository, user)

@@ -121,7 +121,7 @@ module Travis::API::V3
           pattern.to_templates.each do |template|
             params    = factory.params if request_method == 'GET'.freeze
             params  &&= params.reject { |p| p.start_with?(?@.freeze) }
-            params  &&= params.reject { |p| p == 'skip_count'.freeze }
+            params  &&= params.reject { |p| p == 'skip_count'.freeze || p == 'representation'.freeze }
 
             if query
               params &&= params.reject { |p| query.get_experimental_params.include?(p) }
