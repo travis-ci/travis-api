@@ -42,6 +42,7 @@ module Travis::API::V3
     end
 
     def by_slug
+      puts "provider: #{provider} slug: #{slug}"
       if provider.downcase == 'bitbucket'
         url_org = "git@bitbucket.org:#{slug}.git"
         url_com = "git@bitbucket.com:#{slug}.git"
