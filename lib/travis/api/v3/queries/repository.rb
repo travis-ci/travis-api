@@ -46,7 +46,7 @@ module Travis::API::V3
         url_org = "git@bitbucket.org:#{slug}.git"
         url_com = "git@bitbucket.com:#{slug}.git"
         return Models::Repository.where(
-          ("url = ? or url = ? "\
+          "(url = ? or url = ?) "\
           "and lower(repositories.vcs_type) = ? "\
           "and repositories.invalidated_at is null",
           url_org.downcase,
