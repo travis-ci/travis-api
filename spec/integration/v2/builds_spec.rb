@@ -5,44 +5,44 @@ describe 'Builds', set_app: true do
 
   it 'GET /builds?repository_id=1' do
     response = get '/builds', { repository_id: repo.id }, headers
-    response.should deliver_json_for(repo.builds.order('id DESC'), version: 'v2')
+    expect(response).to deliver_json_for(repo.builds.order('id DESC'), version: 'v2')
   end
 
   it 'GET /builds/1' do
     response = get "/builds/#{build.id}", {}, headers
-    response.should deliver_json_for(build, version: 'v2')
+    expect(response).to deliver_json_for(build, version: 'v2')
   end
 
   it 'GET /builds/1?repository_id=1' do
     response = get "/builds/#{build.id}", { repository_id: repo.id }, headers
-    response.should deliver_json_for(build, version: 'v2')
+    expect(response).to deliver_json_for(build, version: 'v2')
   end
 
   it 'GET /repos/svenfuchs/minimal/builds' do
     response = get '/repos/svenfuchs/minimal/builds', {}, headers
-    response.should deliver_json_for(repo.builds.order('id DESC'), version: 'v2', type: :builds)
+    expect(response).to deliver_json_for(repo.builds.order('id DESC'), version: 'v2', type: :builds)
   end
 
   it 'GET /repos/svenfuchs/minimal/builds?ids=1,2' do
     ids = repo.builds.map(&:id).sort.join(',')
     response = get "/repos/svenfuchs/minimal/builds?ids=#{ids}", {}, headers
-    response.should deliver_json_for(repo.builds.order('id ASC'), version: 'v2')
+    expect(response).to deliver_json_for(repo.builds.order('id ASC'), version: 'v2')
   end
 
   it 'GET /builds?ids=1,2' do
     ids = repo.builds.map(&:id).sort.join(',')
     response = get "/builds?ids=#{ids}", {}, headers
-    response.should deliver_json_for(repo.builds.order('id ASC'), version: 'v2')
+    expect(response).to deliver_json_for(repo.builds.order('id ASC'), version: 'v2')
   end
 
   it 'GET /repos/svenfuchs/minimal/builds/1' do
     response = get "/repos/svenfuchs/minimal/builds/#{build.id}", {}, headers
-    response.should deliver_json_for(build, version: 'v2')
+    expect(response).to deliver_json_for(build, version: 'v2')
   end
 
   it 'GET /builds/1?repository_id=1&branches=true' do
     response = get "/builds?repository_id=#{repo.id}&branches=true", {}, headers
-    response.should deliver_json_for(repo.last_finished_builds_by_branches, version: 'v2')
+    expect(response).to deliver_json_for(repo.last_finished_builds_by_branches, version: 'v2')
   end
 
   describe 'POST /builds/:id/cancel' do
@@ -59,7 +59,7 @@ describe 'Builds', set_app: true do
 
       it 'responds with 403' do
         response = post "/builds/#{build.id}/cancel", {}, headers
-        response.status.should == 403
+        expect(response.status).to eq(403)
       end
 
       context 'and enqueues cancel event for the Hub' do
@@ -67,7 +67,7 @@ describe 'Builds', set_app: true do
 
         it 'responds with 403' do
           response = post "/builds/#{build.id}/cancel", {}, headers
-          response.status.should == 403
+          expect(response.status).to eq(403)
         end
 
       end
@@ -78,7 +78,7 @@ describe 'Builds', set_app: true do
 
       it 'responds with 422' do
         response = post "/builds/#{build.id}/cancel", {}, headers
-        response.status.should == 422
+        expect(response.status).to eq(422)
       end
 
       context 'and enqueues cancel event for the Hub' do
@@ -86,7 +86,7 @@ describe 'Builds', set_app: true do
 
         it 'responds with 422' do
           response = post "/builds/#{build.id}/cancel", {}, headers
-          response.status.should == 422
+          expect(response.status).to eq(422)
         end
       end
     end
@@ -106,14 +106,14 @@ describe 'Builds', set_app: true do
         end
 
         it 'cancels the build' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           post "/builds/#{build.id}/cancel", {}, headers
         end
 
         it 'responds with 204' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/builds/#{build.id}/cancel", {}, headers
-          response.status.should == 204
+          expect(response.status).to eq(204)
         end
       end
     end
@@ -133,27 +133,27 @@ describe 'Builds', set_app: true do
 
       it 'responds with 400' do
         response = post "/builds/#{build.id}/restart", {}, headers
-        response.status.should == 400
+        expect(response.status).to eq(400)
       end
     end
 
     context 'when the repo is migrating' do
       before { repo.update_attributes(migration_status: "migrating") }
       before { post "/builds/#{build.id}/restart", {}, headers }
-      it { last_response.status.should == 403 }
+      it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated' do
       before { repo.update_attributes(migration_status: "migrated") }
       before { post "/builds/#{build.id}/restart", {}, headers }
-      it { last_response.status.should == 403 }
+      it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated on .com' do
       before { Travis.config.host = 'travis-ci.com' }
       before { repo.update_attributes(migration_status: "migrated") }
       before { post "/builds/#{build.id}/restart", {}, headers }
-      it { last_response.status.should == 202 }
+      it { expect(last_response.status).to eq(202) }
     end
 
     context 'when build passed' do
@@ -166,16 +166,16 @@ describe 'Builds', set_app: true do
         before { Travis::Features.activate_owner(:enqueue_to_hub, repo.owner) }
 
         it 'restarts the build' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/builds/#{build.id}/restart", {}, headers
-          response.status.should == 202
+          expect(response.status).to eq(202)
         end
 
         it 'sends the correct response body' do
-          ::Sidekiq::Client.expects(:push)
+          expect(::Sidekiq::Client).to receive(:push)
           response = post "/builds/#{build.id}/restart", {}, headers
           body = JSON.parse(response.body)
-          body.should == {"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]}
+          expect(body).to eq({"result"=>true, "flash"=>[{"notice"=>"The build was successfully restarted."}]})
         end
       end
     end

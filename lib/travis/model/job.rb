@@ -113,6 +113,7 @@ class Job < Travis::Model
   end
 
   def duration
+    return 0 if started_at && finished_at && started_at > finished_at
     started_at && finished_at ? finished_at - started_at : nil
   end
 

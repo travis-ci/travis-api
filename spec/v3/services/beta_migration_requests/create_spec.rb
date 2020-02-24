@@ -1,24 +1,24 @@
 require 'spec_helper'
 
 describe Travis::API::V3::Services::BetaMigrationRequests::Create, set_app: true do
-  let(:user)  { Factory(:user, login: 'some_beta_user') }
+  let(:user)  { FactoryBot.create(:user, login: 'some_beta_user') }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => 'internal some_app:sometoken' } }
   let(:params)  { { user_login: user.login, organizations: valid_org_names } }
 
-  let!(:org1) { Factory(:org_v3, name: "org_1", login: "org_1")}
-  let!(:org2) { Factory(:org_v3, name: "org_2", login: "org_2")}
-  let!(:org3) { Factory(:org_v3, name: "org_3", login: "org_3")}
+  let!(:org1) { FactoryBot.create(:org_v3, name: "org_1", login: "org_1")}
+  let!(:org2) { FactoryBot.create(:org_v3, name: "org_2", login: "org_2")}
+  let!(:org3) { FactoryBot.create(:org_v3, name: "org_3", login: "org_3")}
 
   let(:valid_org_names) { [org1.login, org2.login, org3.login]}
   let(:valid_orgs) { [org1, org2, org3]}
 
-  let(:invalid_org) { Factory(:org_v3, name: "invalid_org") }
+  let(:invalid_org) { FactoryBot.create(:org_v3, name: "invalid_org") }
 
   before do
     Travis.config.applications[:some_app] = { token: 'sometoken', full_access: true }
 
     valid_orgs.each do |org|
-      Factory(:membership, role: "admin", organization_id: org.id, user_id: user.id)
+      FactoryBot.create(:membership, role: "admin", organization_id: org.id, user_id: user.id)
     end
   end
 

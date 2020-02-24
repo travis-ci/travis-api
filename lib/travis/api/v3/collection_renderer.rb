@@ -1,6 +1,6 @@
 module Travis::API::V3
   class CollectionRenderer
-    def self.render(list, **options)
+    def self.render(list, mode = nil, **options)
       new(list, **options).render
     end
 
@@ -21,10 +21,11 @@ module Travis::API::V3
       available_attributes << value
     end
 
-    attr_reader :href, :options, :list, :included, :include, :meta_data
+    attr_reader :href, :params, :options, :list, :included, :include, :meta_data
 
-    def initialize(list, href: nil, included: [], include: [], meta_data: {}, **options)
+    def initialize(list, href: nil, params: {}, included: [], include: [], meta_data: {}, **options)
       @href      = href
+      @params    = params
       @options   = options
       @list      = list
       @included  = included

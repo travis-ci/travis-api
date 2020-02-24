@@ -10,12 +10,12 @@ describe Travis::Api::App::Extensions::ExposePattern do
   before { set_app(Foo) }
 
   example "it exposes the pattern" do
-    get('/foo').should be_ok
-    headers['X-Pattern'].should be == '/:id'
+    expect(get('/foo')).to be_ok
+    expect(headers['X-Pattern']).to eq('/:id')
   end
 
   example "it exposes the app class" do
-    get('/foo').should be_ok
-    headers['X-Endpoint'].should be == 'Foo'
+    expect(get('/foo')).to be_ok
+    expect(headers['X-Endpoint']).to eq('Foo')
   end
 end

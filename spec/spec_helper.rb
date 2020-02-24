@@ -34,6 +34,7 @@ require 'support/env'
 require 'support/formats'
 require 'support/gcs'
 require 'support/gdpr_spec_helper'
+require 'support/github_apps'
 require 'support/matchers'
 require 'support/payloads'
 require 'support/private_key'
@@ -41,8 +42,6 @@ require 'support/s3'
 require 'support/shared_examples'
 require 'support/ssl_keys'
 require 'support/test_helpers'
-
-FactoryBot = FactoryGirl
 
 module TestHelpers
   include Sinatra::TestHelpers
@@ -73,7 +72,7 @@ module TestHelpers
 end
 
 RSpec.configure do |c|
-  c.mock_framework = :mocha
+  c.mock_with :rspec
   c.expect_with :rspec
   c.include TestHelpers
   c.include Support::Env
@@ -84,6 +83,8 @@ RSpec.configure do |c|
   # for auth tests against staging, how the hell does this work, if at all
   # c.filter_run mode: :private, repo: :private
   # c.filter_run_excluding mode: :public, repo: :public
+
+  c.raise_errors_for_deprecations!
 
   c.before :suite do
     Travis.testing = true

@@ -1,8 +1,7 @@
 describe Job do
-  context 'given state is nil' do
-    let(:job) { FactoryGirl.build(:job, state: nil) }
-    subject { job.state }
+  let(:job) { FactoryBot.build(:job, state: nil) }
 
-    it { should eq :created }
+  it 'defaults state to :created' do
+    expect(job.state).to eq(:created)
   end
 end

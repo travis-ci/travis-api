@@ -1,5 +1,5 @@
 describe Travis::Github::Oauth do
-  let(:user) { Factory(:user, github_oauth_token: 'token', github_scopes: scopes) }
+  let(:user) { FactoryBot.create(:user, github_oauth_token: 'token', github_scopes: scopes) }
 
   describe 'correct_scopes?' do
     let(:scopes) { ['public_repo', 'user:email'] }
@@ -27,7 +27,7 @@ describe Travis::Github::Oauth do
       let(:scopes) { ['public_repo', 'user:email'] }
 
       it 'does not resolve github scopes' do
-        Travis::Github::Oauth.expects(:scopes_for).never
+        expect(Travis::Github::Oauth).not_to receive(:scopes_for)
         described_class.update_scopes(user)
       end
     end
@@ -41,7 +41,7 @@ describe Travis::Github::Oauth do
       end
 
       it 'updates github scopes' do
-        Travis::Github::Oauth.expects(:scopes_for).returns(['foo', 'bar'])
+        expect(Travis::Github::Oauth).to receive(:scopes_for).and_return(['foo', 'bar'])
         described_class.update_scopes(user)
         expect(user.reload.github_scopes).to eq ['foo', 'bar']
       end
@@ -56,7 +56,7 @@ describe Travis::Github::Oauth do
       end
 
       it 'updates github scopes' do
-        Travis::Github::Oauth.expects(:scopes_for).returns(['foo', 'bar'])
+        expect(Travis::Github::Oauth).to receive(:scopes_for).and_return(['foo', 'bar'])
         described_class.update_scopes(user)
         expect(user.reload.github_scopes).to eq ['foo', 'bar']
       end

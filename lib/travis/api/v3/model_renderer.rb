@@ -42,16 +42,17 @@ module Travis::API::V3
       @available_attributes ||= superclass.available_attributes.dup
     end
 
-    def self.render(model, representation = :standard, **options)
+    def self.render(model, representation = nil, **options)
       new(model, **options).render(representation)
     end
 
-    attr_reader :model, :options, :script_name, :include, :included, :access_control
+    attr_reader :model, :options, :script_name, :params, :include, :included, :access_control
     attr_writer :href
 
-    def initialize(model, script_name: nil, include: [], included: [], access_control: nil, **options)
+    def initialize(model, script_name: nil, params: {}, include: [], included: [], access_control: nil, **options)
       @model          = model
       @options        = options
+      @params         = params
       @script_name    = script_name
       @include        = include
       @included       = included
@@ -77,8 +78,12 @@ module Travis::API::V3
       instance_variable_get(:"@representation") == name
     end
 
+    def representation
+      :standard
+    end
+
     def render(representation)
-      @representation = representation
+      @representation = representation ||= self.representation
 
       if included.include? model
         return REDUNDANT unless href

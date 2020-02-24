@@ -7,23 +7,23 @@ describe Travis::Api::App::Extensions::SubclassTracker do
 
   it 'tracks direct subclasses' do
     classes = root.direct_subclasses
-    classes.size.should == 2
-    classes.should include(left)
-    classes.should include(right)
+    expect(classes.size).to eq(2)
+    expect(classes).to include(left)
+    expect(classes).to include(right)
   end
 
   it 'tracks leaf subclasses' do
     classes = root.subclasses
-    classes.size.should == 3
-    classes.should include(left)
-    classes.should include(sub1)
-    classes.should include(sub2)
+    expect(classes.size).to eq(3)
+    expect(classes).to include(left)
+    expect(classes).to include(sub1)
+    expect(classes).to include(sub2)
   end
 
   it 'tracks subclasses of subclasses properly' do
     classes = right.subclasses
-    classes.size.should == 2
-    classes.should include(sub1)
-    classes.should include(sub2)
+    expect(classes.size).to eq(2)
+    expect(classes).to include(sub1)
+    expect(classes).to include(sub2)
   end
 end

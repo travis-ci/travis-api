@@ -4,7 +4,7 @@ describe Travis::Api::Serialize::V2::Http::Repositories do
   let(:data) { described_class.new([repository]).data }
 
   it 'repositories' do
-    data['repos'].first.should == {
+    expect(data['repos'].first).to eq({
       'id' => repository.id,
       'slug' => 'svenfuchs/minimal',
       'description' => 'the repo description',
@@ -17,18 +17,18 @@ describe Travis::Api::Serialize::V2::Http::Repositories do
       'last_build_duration' => 60,
       'active' => true,
       'github_language' => 'ruby'
-    }
+    })
   end
 end
 
 describe Travis::Api::Serialize::V2::Http::Repositories, 'using Travis::Services::FindRepos' do
-  let(:user)  { Factory(:user) }
-  let(:repo)  { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :active => true) }
+  let(:user)  { FactoryBot.create(:user) }
+  let(:repo)  { FactoryBot.create(:repository, :owner_name => 'travis-ci', :name => 'travis-core', :active => true) }
   let(:repos) { Travis::Services::FindRepos.new(user, {ids: [repo.id]}).run }
   let(:data)  { described_class.new(repos).data }
 
   it 'queries' do
     user.permissions.create!(admin: true, push: true, repository_id: repo.id)
-    lambda { data }.should issue_queries(1)
+    expect { data }.to issue_queries(1)
   end
 end

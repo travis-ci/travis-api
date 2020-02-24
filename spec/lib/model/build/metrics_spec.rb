@@ -20,21 +20,21 @@ class BuildMetricsMock
 end
 
 describe Build::Metrics do
-  let(:request) { stub('request', created_at: Time.now - 60) }
+  let(:request) { double('request', created_at: Time.now - 60) }
   let(:build) { BuildMetricsMock.new(request) }
-  let(:timer) { stub('meter', :update) }
+  let(:timer) { double('meter', update: nil) }
 
   before :each do
-    Metriks.stubs(:timer).returns(timer)
+    allow(Metriks).to receive(:timer).and_return(timer)
   end
 
   it 'measures on "travis.builds.start.delay"' do
-    Metriks.expects(:timer).with('travis.builds.start.delay').returns(timer)
+    expect(Metriks).to receive(:timer).with('travis.builds.start.delay').and_return(timer)
     build.start(started_at: Time.now)
   end
 
   xit 'measures the time it takes from creating the request until starting the build' do
-    timer.expects(:update).with(60)
+    expect(timer).to receive(:update).with(60)
     build.start(started_at: Time.now)
   end
 end

@@ -1,5 +1,5 @@
 describe Travis::API::V3::Services::Requests::Create, set_app: true do
-  let(:repo)    { Factory(:repository_without_last_build, owner_name: 'svenfuchs', name: 'minimal') }
+  let(:repo)    { FactoryBot.create(:repository_without_last_build, owner_name: 'svenfuchs', name: 'minimal') }
   let(:request) { Travis::API::V3::Models::Request.last }
   let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].last[:payload]).deep_symbolize_keys }
   let(:sidekiq_params) { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
@@ -9,7 +9,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
   }
 
   before do
-    Travis::Features.stubs(:owner_active?).returns(true)
+    allow(Travis::Features).to receive(:owner_active?).and_return(true)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []

@@ -1,8 +1,8 @@
 describe Travis::API::V3::Queries::User do
   it 'fetches the newest user if multiple users exist with the same login' do
-    Factory(:user, login: 'travisbot')
-    newer = Factory(:user, login: 'travisbot')
+    FactoryBot.create(:user, login: 'travisbot')
+    newer = FactoryBot.create(:user, login: 'travisbot')
 
-    described_class.new({ 'user.login' => 'travisbot' }, 'User').find.id.should == newer.id
+    expect(described_class.new({ 'user.login' => 'travisbot' }, 'User').find.id).to eq(newer.id)
   end
 end

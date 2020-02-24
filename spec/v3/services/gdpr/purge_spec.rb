@@ -16,7 +16,7 @@ describe Travis::API::V3::Services::Gdpr::Purge, set_app: true, gdpr_spec_helper
   end
 
   context 'authenticated' do
-    let(:user) { Factory(:user) }
+    let(:user) { FactoryBot.create(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 

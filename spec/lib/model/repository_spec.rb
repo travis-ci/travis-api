@@ -2,9 +2,9 @@ describe Repository do
   before { DatabaseCleaner.clean_with :truncation }
 
   describe '#last_completed_build' do
-    let(:repo)   { Factory(:repository, name: 'foobarbaz') }
-    let(:build1) { Factory(:build, repository: repo, finished_at: 1.hour.ago, state: :passed) }
-    let(:build2) { Factory(:build, repository: repo, finished_at: Time.now, state: :failed) }
+    let(:repo)   { FactoryBot.create(:repository, name: 'foobarbaz') }
+    let(:build1) { FactoryBot.create(:build, repository: repo, finished_at: 1.hour.ago, state: :passed) }
+    let(:build2) { FactoryBot.create(:build, repository: repo, finished_at: Time.now, state: :failed) }
 
     before do
       build1.update_attributes(branch: 'master')
@@ -12,16 +12,16 @@ describe Repository do
     end
 
     it 'returns last completed build' do
-      repo.last_completed_build.should == build2
+      expect(repo.last_completed_build).to eq(build2)
     end
 
     it 'returns last completed build for a branch' do
-      repo.last_completed_build('master').should == build1
+      expect(repo.last_completed_build('master')).to eq(build1)
     end
   end
 
   describe '#regenerate_key!' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryBot.create(:repository) }
     before { repo.regenerate_key! }
     it 'regenerates key' do
       expect { repo.regenerate_key! }.to change { repo.key.private_key }
@@ -30,129 +30,129 @@ describe Repository do
 
   describe 'associations' do
     describe 'owner' do
-      let(:user) { Factory(:user) }
-      let(:org)  { Factory(:org)  }
+      let(:user) { FactoryBot.create(:user) }
+      let(:org)  { FactoryBot.create(:org)  }
 
       it 'can be a user' do
-        repo = Factory(:repository, owner: user)
-        repo.reload.owner.should == user
+        repo = FactoryBot.create(:repository, owner: user)
+        expect(repo.reload.owner).to eq(user)
       end
 
       it 'can be an organization' do
-        repo = Factory(:repository, owner: org)
-        repo.reload.owner.should == org
+        repo = FactoryBot.create(:repository, owner: org)
+        expect(repo.reload.owner).to eq(org)
       end
     end
   end
 
   describe 'class methods' do
     describe 'by_params' do
-      let(:minimal) { Factory(:repository) }
+      let(:minimal) { FactoryBot.create(:repository) }
 
       it "should find a repository by it's github_id" do
-        Repository.by_params(github_id: minimal.github_id).to_a.first.should == minimal
+        expect(Repository.by_params(github_id: minimal.github_id).to_a.first).to eq(minimal)
       end
 
       it "should find a repository by it's id" do
-        Repository.by_params(id: minimal.id).to_a.first.id.should == minimal.id
+        expect(Repository.by_params(id: minimal.id).to_a.first.id).to eq(minimal.id)
       end
 
       it "should find a repository by it's name and owner_name" do
         repo = Repository.by_params(name: minimal.name, owner_name: minimal.owner_name).to_a.first
-        repo.owner_name.should == minimal.owner_name
-        repo.name.should == minimal.name
+        expect(repo.owner_name).to eq(minimal.owner_name)
+        expect(repo.name).to eq(minimal.name)
       end
 
       it "returns nil when a repository couldn't be found using params" do
-        Repository.by_params(name: 'emptiness').to_a.should == []
+        expect(Repository.by_params(name: 'emptiness').to_a).to eq([])
       end
     end
 
     describe 'timeline' do
       before do
-        Factory(:repository, name: 'unbuilt 1',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
-        Factory(:repository, name: 'unbuilt 2',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
-        Factory(:repository, name: 'finished 1',  active: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
-        Factory(:repository, name: 'finished 2',  active: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
-        Factory(:repository, name: 'started 1',   active: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
-        Factory(:repository, name: 'started 2',   active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
-        Factory(:repository, name: 'invalidated', active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil, invalidated_at: '2012-11-11 12:00:06')
+        FactoryBot.create(:repository, name: 'unbuilt 1',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        FactoryBot.create(:repository, name: 'unbuilt 2',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        FactoryBot.create(:repository, name: 'finished 1',  active: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
+        FactoryBot.create(:repository, name: 'finished 2',  active: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
+        FactoryBot.create(:repository, name: 'started 1',   active: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
+        FactoryBot.create(:repository, name: 'started 2',   active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
+        FactoryBot.create(:repository, name: 'invalidated', active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil, invalidated_at: '2012-11-11 12:00:06')
       end
 
       it 'sorts repositories with running builds to the top, most recent builds next, un-built repos last' do
         repositories = Repository.timeline
-        repositories.map(&:name).should == ['started 2', 'started 1', 'finished 2', 'finished 1', 'unbuilt 2', 'unbuilt 1']
+        expect(repositories.map(&:name)).to eq(['started 2', 'started 1', 'finished 2', 'finished 1', 'unbuilt 2', 'unbuilt 1'])
       end
 
       it 'does not include invalidated repos' do
         repositories = Repository.timeline
-        repositories.map(&:name).should_not include('invalidated')
+        expect(repositories.map(&:name)).not_to include('invalidated')
       end
     end
 
     describe 'with_builds' do
       it 'gets only projects with existing builds' do
-        one   = Factory(:repository, name: 'one',   last_build_started_at: '2011-11-11', last_build_id: nil)
-        two   = Factory(:repository, name: 'two',   last_build_started_at: '2011-11-12')
-        three = Factory(:repository, name: 'three', last_build_started_at: nil)
-        two.last_build_id = Factory(:build, repository: two).id
+        one   = FactoryBot.create(:repository, name: 'one',   last_build_started_at: '2011-11-11', last_build_id: nil)
+        two   = FactoryBot.create(:repository, name: 'two',   last_build_started_at: '2011-11-12')
+        three = FactoryBot.create(:repository, name: 'three', last_build_started_at: nil)
+        two.last_build_id = FactoryBot.create(:build, repository: two).id
         two.save
-        three.last_build_id = Factory(:build, repository: three).id
+        three.last_build_id = FactoryBot.create(:build, repository: three).id
         three.save
 
         repositories = Repository.with_builds.all
-        repositories.map(&:id).sort.should == [two, three].map(&:id).sort
+        expect(repositories.map(&:id).sort).to eq([two, three].map(&:id).sort)
       end
     end
 
     describe 'active' do
-      let(:active)      { Factory(:repository, active: true) }
-      let(:inactive)    { Factory(:repository, active: false) }
-      let(:invalidated) { Factory(:repository, invalidated_at: Time.now) }
+      let(:active)      { FactoryBot.create(:repository, active: true) }
+      let(:inactive)    { FactoryBot.create(:repository, active: false) }
+      let(:invalidated) { FactoryBot.create(:repository, invalidated_at: Time.now) }
 
       it 'contains active repositories' do
-        Repository.active.should include(active)
+        expect(Repository.active).to include(active)
       end
 
       it 'does not include inactive repositories' do
-        Repository.active.should_not include(inactive)
+        expect(Repository.active).not_to include(inactive)
       end
 
       it 'does not include invalidated repositories' do
-        Repository.active.should_not include(invalidated)
+        expect(Repository.active).not_to include(invalidated)
       end
     end
 
     describe 'search' do
       before(:each) do
-        Factory(:repository, name: 'repo 1', last_build_started_at: '2011-11-11')
-        Factory(:repository, name: 'repo 2', last_build_started_at: '2011-11-12')
-        Factory(:repository, name: 'invalidated', invalidated_at: Time.now)
+        FactoryBot.create(:repository, name: 'repo 1', last_build_started_at: '2011-11-11')
+        FactoryBot.create(:repository, name: 'repo 2', last_build_started_at: '2011-11-12')
+        FactoryBot.create(:repository, name: 'invalidated', invalidated_at: Time.now)
       end
 
       it 'performs searches case-insensitive' do
-        Repository.search('rEpO').to_a.count.should == 2
+        expect(Repository.search('rEpO').to_a.count).to eq(2)
       end
 
       it 'performs searches with / entered' do
-        Repository.search('fuchs/').to_a.count.should == 2
+        expect(Repository.search('fuchs/').to_a.count).to eq(2)
       end
 
       it 'performs searches with \ entered' do
-        Repository.search('fuchs\\').to_a.count.should == 2
+        expect(Repository.search('fuchs\\').to_a.count).to eq(2)
       end
 
       it 'does not find invalidated repos' do
-        Repository.search('fuchs').map(&:name).should_not include('invalidated')
+        expect(Repository.search('fuchs').map(&:name)).not_to include('invalidated')
       end
     end
 
     describe 'by_member' do
-      let(:user)        { Factory(:user) }
-      let(:org)         { Factory(:org) }
-      let(:user_repo)   { Factory(:repository, owner: user)}
-      let(:org_repo)    { Factory(:repository, owner: org, name: 'globalize')}
-      let(:invalidated) { Factory(:repository, owner: org, name: 'invalidated', invalidated_at: Time.now)}
+      let(:user)        { FactoryBot.create(:user) }
+      let(:org)         { FactoryBot.create(:org) }
+      let(:user_repo)   { FactoryBot.create(:repository, owner: user)}
+      let(:org_repo)    { FactoryBot.create(:repository, owner: org, name: 'globalize')}
+      let(:invalidated) { FactoryBot.create(:repository, owner: org, name: 'invalidated', invalidated_at: Time.now)}
       before do
         Permission.create!(user: user, repository: user_repo, pull: true, push: true)
         Permission.create!(user: user, repository: org_repo, pull: true)
@@ -164,20 +164,20 @@ describe Repository do
       end
 
       it 'does not find invalidated repos' do
-        Repository.by_member('svenfuchs').map(&:name).should_not include('invalidated')
+        expect(Repository.by_member('svenfuchs').map(&:name)).not_to include('invalidated')
       end
     end
 
     describe 'counts_by_owner_ids' do
       let!(:repositories) do
-        Factory(:repository, owner: Factory(:org), owner_name: 'svenfuchs', name: 'minimal')
-        Factory(:repository, owner: Factory(:org), owner_name: 'travis-ci', name: 'travis-ci')
-        Factory(:repository, owner: Factory(:org), owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
+        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'svenfuchs', name: 'minimal')
+        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'travis-ci')
+        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
       end
 
       it 'returns repository counts per owner_id for the given owner_ids' do
         counts = Repository.counts_by_owner_ids([1, 2], 'Organization')
-        counts.should == { 1 => 1, 2 => 1 }
+        expect(counts).to eq({ 1 => 1, 2 => 1 })
       end
     end
   end
@@ -190,7 +190,7 @@ describe Repository do
     end
 
     it 'returns the api url for the repository' do
-      repo.api_url.should == 'https://api.github.com/repos/travis-ci/travis-ci'
+      expect(repo.api_url).to eq('https://api.github.com/repos/travis-ci/travis-ci')
     end
   end
 
@@ -204,12 +204,12 @@ describe Repository do
 
       it 'returns the public git source url for a public repository' do
         repo.private = false
-        repo.source_url.should == 'git://github.com/travis-ci/travis-ci.git'
+        expect(repo.source_url).to eq('git://github.com/travis-ci/travis-ci.git')
       end
 
       it 'returns the private git source url for a private repository' do
         repo.private = true
-        repo.source_url.should == 'git@github.com:travis-ci/travis-ci.git'
+        expect(repo.source_url).to eq('git@github.com:travis-ci/travis-ci.git')
       end
     end
 
@@ -222,12 +222,12 @@ describe Repository do
 
       it 'returns the private git source url for a public repository' do
         repo.private = false
-        repo.source_url.should == 'git@localhost:travis-ci/travis-ci.git'
+        expect(repo.source_url).to eq('git@localhost:travis-ci/travis-ci.git')
       end
 
       it 'returns the private git source url for a private repository' do
         repo.private = true
-        repo.source_url.should == 'git@localhost:travis-ci/travis-ci.git'
+        expect(repo.source_url).to eq('git@localhost:travis-ci/travis-ci.git')
       end
     end
   end
@@ -238,112 +238,112 @@ describe Repository do
     end
 
     it 'returns the source_host name from Travis.config' do
-      Repository.new.source_host.should == 'localhost'
+      expect(Repository.new.source_host).to eq('localhost')
     end
   end
 
   describe "#last_build" do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryBot.create(:repository) }
     let(:attributes) { { repository: repo, state: 'finished' } }
-    let(:api_req)    { Factory(:request, {event_type: 'api'}) }
+    let(:api_req)    { FactoryBot.create(:request, {event_type: 'api'}) }
 
     before :each do
-      Factory(:build, attributes)
-      Factory(:build, attributes)
+      FactoryBot.create(:build, attributes)
+      FactoryBot.create(:build, attributes)
     end
 
     context 'when last build is a push build' do
       before :each do
-        @build = Factory(:build, attributes)
+        @build = FactoryBot.create(:build, attributes)
       end
 
       it 'returns the most recent build' do
-        repo.last_build('master').id.should == @build.id
+        expect(repo.last_build('master').id).to eq(@build.id)
       end
     end
 
     context 'when last build is an API build' do
       before :each do
-        @build = Factory(:build, attributes.merge({request: api_req}))
+        @build = FactoryBot.create(:build, attributes.merge({request: api_req}))
       end
 
       it 'returns the most recent build' do
-        repo.last_build('master').id.should == @build.id
+        expect(repo.last_build('master').id).to eq(@build.id)
       end
     end
   end
 
   describe '#last_build_on' do
-    let(:repo)       { Factory(:repository) }
+    let(:repo)       { FactoryBot.create(:repository) }
     let(:attributes) { { repository: repo, state: 'finished' } }
-    let(:api_req)    { Factory(:request, {event_type: 'api'}) }
+    let(:api_req)    { FactoryBot.create(:request, {event_type: 'api'}) }
 
     before :each do
-      Factory(:build, attributes)
+      FactoryBot.create(:build, attributes)
     end
 
     context 'when last build is a push build' do
       before :each do
-        @build = Factory(:build, attributes)
+        @build = FactoryBot.create(:build, attributes)
       end
 
       it 'returns the most recent build' do
-        repo.last_build_on('master').id.should == @build.id
+        expect(repo.last_build_on('master').id).to eq(@build.id)
       end
     end
 
     context 'when last build is an API build' do
       before :each do
-        @build = Factory(:build, attributes.merge({request: api_req}))
+        @build = FactoryBot.create(:build, attributes.merge({request: api_req}))
       end
 
       it 'returns the most recent build' do
-        repo.last_build_on('master').id.should == @build.id
+        expect(repo.last_build_on('master').id).to eq(@build.id)
       end
     end
   end
 
   describe "keys" do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryBot.create(:repository) }
     before { repo.regenerate_key! }
 
     it "should return the public key" do
-      repo.public_key.should == repo.key.public_key
+      expect(repo.public_key).to eq(repo.key.public_key)
     end
   end
 
   describe 'branches' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryBot.create(:repository) }
 
     it 'returns branches for the given repository' do
       %w(master production).each do |branch|
-        2.times { Factory(:build, repository: repo, commit: Factory(:commit, branch: branch)) }
+        2.times { FactoryBot.create(:build, repository: repo, commit: FactoryBot.create(:commit, branch: branch)) }
       end
-      repo.branches.sort.should == %w(master production)
+      expect(repo.branches.sort).to eq(%w(master production))
     end
 
     it 'is empty for empty repository' do
       repo.last_build_id = nil
       repo.save
       Build.delete_all
-      repo.branches.should eql []
+      expect(repo.branches).to eql []
     end
   end
 
   describe 'settings' do
-    let(:repo) { Factory.build(:repository) }
+    let(:repo) { FactoryBot.build(:repository) }
 
     it 'adds repository_id to collection records' do
       repo.save
 
       env_var = repo.settings.env_vars.create(name: 'FOO')
-      env_var.repository_id.should == repo.id
+      expect(env_var.repository_id).to eq(repo.id)
 
       repo.settings.save
 
       repo.reload
 
-      repo.settings.env_vars.first.repository_id.should == repo.id
+      expect(repo.settings.env_vars.first.repository_id).to eq(repo.id)
     end
 
     it "is reset on reload" do
@@ -352,87 +352,87 @@ describe Repository do
       repo.settings = {}
       repo.update_column(:settings, { 'build_pushes' => false }.to_json)
       repo.reload
-      repo.settings.build_pushes?.should be false
+      expect(repo.settings.build_pushes?).to be false
       repo.update_column(:settings, { 'build_pushes' => true }.to_json)
       repo.reload
-      repo.settings.build_pushes?.should be true
+      expect(repo.settings.build_pushes?).to be true
     end
 
     it "allows to set nil for settings" do
       repo.settings = nil
-      repo.settings.to_hash.should == Repository::Settings.new.to_hash
+      expect(repo.settings.to_hash).to eq(Repository::Settings.new.to_hash)
     end
 
     it "allows to set settings as JSON string" do
       repo.settings = '{"maximum_number_of_builds": 44}'
-      repo.settings.to_hash.should == Repository::Settings.new(maximum_number_of_builds: 44).to_hash
+      expect(repo.settings.to_hash).to eq(Repository::Settings.new(maximum_number_of_builds: 44).to_hash)
     end
 
     it "allows to set settings as a Hash" do
       repo.settings = { maximum_number_of_builds: 44}
-      repo.settings.to_hash.should == Repository::Settings.new(maximum_number_of_builds: 44).to_hash
+      expect(repo.settings.to_hash).to eq(Repository::Settings.new(maximum_number_of_builds: 44).to_hash)
     end
 
     it 'updates settings in the DB' do
       repo.settings = {'build_pushes' => false}
       repo.save
 
-      repo.reload.settings.build_pushes?.should == false
+      expect(repo.reload.settings.build_pushes?).to eq(false)
 
       repo.settings.merge('build_pushes' => true)
       repo.settings.save
 
-      repo.reload.settings.build_pushes?.should == true
+      expect(repo.reload.settings.build_pushes?).to eq(true)
     end
   end
 
   describe 'last_finished_builds_by_branches' do
-    let(:repo) { Factory(:repository) }
+    let(:repo) { FactoryBot.create(:repository) }
 
     it 'properly orders branches by last build' do
       repo # load the repo
       Build.delete_all
-      one = Factory(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', commit: Factory(:commit, branch: '1one'))
-      two = Factory(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: Factory(:commit, branch: '2two'))
+      one = FactoryBot.create(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', commit: FactoryBot.create(:commit, branch: '1one'))
+      two = FactoryBot.create(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: FactoryBot.create(:commit, branch: '2two'))
 
       builds = repo.last_finished_builds_by_branches(1)
-      builds.should == [two]
+      expect(builds).to eq([two])
     end
 
     it 'retrieves last builds on all branches' do
       repo # load the repo
       Build.delete_all
-      old = Factory(:build, repository: repo, number: 1, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
-      one = Factory(:build, repository: repo, number: 2, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'one'))
-      two = Factory(:build, repository: repo, number: 3, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'two'))
-      three = Factory(:build, repository: repo, number: 4, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'three'))
+      old = FactoryBot.create(:build, repository: repo, number: 1, finished_at: 1.hour.ago,      state: 'finished', commit: FactoryBot.create(:commit, branch: 'one'))
+      one = FactoryBot.create(:build, repository: repo, number: 2, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryBot.create(:commit, branch: 'one'))
+      two = FactoryBot.create(:build, repository: repo, number: 3, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryBot.create(:commit, branch: 'two'))
+      three = FactoryBot.create(:build, repository: repo, number: 4, finished_at: 1.hour.from_now, state: 'finished', commit: FactoryBot.create(:commit, branch: 'three'))
       three.update_attribute(:event_type, 'pull_request')
 
       builds = repo.last_finished_builds_by_branches
-      builds.size.should == 2
-      builds.should include(one)
-      builds.should include(two)
-      builds.should_not include(old)
+      expect(builds.size).to eq(2)
+      expect(builds).to include(one)
+      expect(builds).to include(two)
+      expect(builds).not_to include(old)
     end
   end
 
   describe '#users_with_permission' do
     it 'returns users with the given permission linked to that repository' do
-      repo = Factory(:repository)
-      other_repo = Factory(:repository)
+      repo = FactoryBot.create(:repository)
+      other_repo = FactoryBot.create(:repository)
 
-      user_with_permission = Factory(:user)
+      user_with_permission = FactoryBot.create(:user)
       user_with_permission.permissions.create!(repository: repo, admin: true)
 
-      user_wrong_repo = Factory(:user)
+      user_wrong_repo = FactoryBot.create(:user)
       user_wrong_repo.permissions.create!(repository: other_repo, admin: true)
 
-      user_wrong_permission = Factory(:user)
+      user_wrong_permission = FactoryBot.create(:user)
       user_wrong_permission.permissions.create!(repository: repo, push: true)
 
-      repo.users_with_permission(:admin).should include(user_with_permission)
-      repo.users_with_permission(:admin).should_not include(user_wrong_repo)
-      repo.users_with_permission(:admin).should_not include(user_wrong_permission)
+      expect(repo.users_with_permission(:admin)).to include(user_with_permission)
+      expect(repo.users_with_permission(:admin)).not_to include(user_wrong_repo)
+      expect(repo.users_with_permission(:admin)).not_to include(user_wrong_permission)
     end
   end
 end

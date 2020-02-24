@@ -1,5 +1,5 @@
 describe Travis::API::V3::Services::Job::Debug, set_app: true do
-  let(:repo) { Factory(:repository, owner_name: 'svenfuchs', name: 'minimal') }
+  let(:repo) { FactoryBot.create(:repository, owner_name: 'svenfuchs', name: 'minimal') }
   let(:owner_type)  { repo.owner_type.constantize }
   let(:owner)       { owner_type.find(repo.owner_id)}
   let(:build)       { repo.builds.last }
@@ -9,7 +9,7 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
   before { ActiveRecord::Base.connection.execute("truncate requests cascade") }
 
   before do
-    Travis::Features.stubs(:owner_active?).returns(true)
+    allow(Travis::Features).to receive(:owner_active?).and_return(true)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []

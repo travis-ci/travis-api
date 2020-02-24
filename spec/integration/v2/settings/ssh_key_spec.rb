@@ -1,38 +1,38 @@
 describe 'ssh keys endpoint', set_app: true do
-  let(:repo)    { Factory(:repository) }
+  let(:repo)    { FactoryBot.create(:repository) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
   describe 'without an authenticated user' do
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
-    let(:user)    { Factory(:user) }
+    let(:user)    { FactoryBot.create(:user) }
 
     describe 'GET /ssh_key' do
       it 'responds with 401' do
         response = get "/settings/ssh_key/#{repo.id}", {}, headers
-        response.should_not be_successful
-        response.status.should == 401
+        expect(response).not_to be_successful
+        expect(response.status).to eq(401)
       end
     end
 
     describe 'PATCH /ssh_key' do
       it 'responds with 401' do
         response = patch "/settings/ssh_key/#{repo.id}", {}, headers
-        response.should_not be_successful
-        response.status.should == 401
+        expect(response).not_to be_successful
+        expect(response.status).to eq(401)
       end
     end
 
     describe 'DELETE /ssh_key' do
       it 'responds with 401' do
         response = delete "/settings/ssh_key/#{repo.id}", {}, headers
-        response.should_not be_successful
-        response.status.should == 401
+        expect(response).not_to be_successful
+        expect(response.status).to eq(401)
       end
     end
   end
 
   describe 'with authenticated user' do
-    let(:user)    { Factory(:user) }
+    let(:user)    { FactoryBot.create(:user) }
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
@@ -46,16 +46,16 @@ describe 'ssh keys endpoint', set_app: true do
 
         response = get "/settings/ssh_key/#{repo.id}", {}, headers
         json = JSON.parse(response.body)
-        json['ssh_key']['description'].should == 'key for my repo'
-        json['ssh_key']['id'].should == repo.id
-        json['ssh_key'].should_not have_key('value')
-        json['ssh_key']['fingerprint'].should == '57:78:65:c2:c9:c8:c9:f7:dd:2b:35:39:40:27:d2:40'
+        expect(json['ssh_key']['description']).to eq('key for my repo')
+        expect(json['ssh_key']['id']).to eq(repo.id)
+        expect(json['ssh_key']).not_to have_key('value')
+        expect(json['ssh_key']['fingerprint']).to eq('57:78:65:c2:c9:c8:c9:f7:dd:2b:35:39:40:27:d2:40')
       end
 
       it 'returns 404 if ssh_key can\'t be found' do
         response = get "/settings/ssh_key/#{repo.id}", {}, headers
         json = JSON.parse(response.body)
-        json['error'].should == "Could not find a requested setting"
+        expect(json['error']).to eq("Could not find a requested setting")
       end
     end
 
@@ -69,13 +69,13 @@ describe 'ssh keys endpoint', set_app: true do
         body = { ssh_key: { description: 'bar', value: new_key } }.to_json
         response = patch "/settings/ssh_key/#{repo.id}", body, headers
         json = JSON.parse(response.body)
-        json['ssh_key']['description'].should == 'bar'
-        json['ssh_key'].should_not have_key('value')
+        expect(json['ssh_key']['description']).to eq('bar')
+        expect(json['ssh_key']).not_to have_key('value')
 
         updated_ssh_key = repo.reload.settings.ssh_key
-        updated_ssh_key.description.should == 'bar'
-        updated_ssh_key.repository_id.should == repo.id
-        updated_ssh_key.value.decrypt.should == new_key
+        expect(updated_ssh_key.description).to eq('bar')
+        expect(updated_ssh_key.repository_id).to eq(repo.id)
+        expect(updated_ssh_key.value.decrypt).to eq(new_key)
       end
 
       it 'returns an error message if ssh_key is invalid' do
@@ -86,34 +86,34 @@ describe 'ssh keys endpoint', set_app: true do
         body = { ssh_key: { value: nil } }.to_json
         response = patch "/settings/ssh_key/#{repo.id}", body, headers
 
-        response.status.should == 422
+        expect(response.status).to eq(422)
 
         json = JSON.parse(response.body)
-        json['message'].should == 'Validation failed'
-        json['errors'].should == [{
+        expect(json['message']).to eq('Validation failed')
+        expect(json['errors']).to eq([{
           'field' => 'value',
           'code' => 'missing_field'
-        }]
+        }])
 
         ssh_key = repo.reload.settings.ssh_key
-        ssh_key.description.should == 'foo'
-        ssh_key.repository_id.should == repo.id
-        ssh_key.value.decrypt.should == 'the key'
+        expect(ssh_key.description).to eq('foo')
+        expect(ssh_key.repository_id).to eq(repo.id)
+        expect(ssh_key.value.decrypt).to eq('the key')
       end
 
       context 'when the repo is migrating' do
         let(:env_var) { repo.settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY).tap { repo.settings.save } }
         before { repo.update_attributes(migration_status: "migrating") }
         before { patch "/settings/ssh_key/#{repo.id}", '{"settings": {}}', headers }
-        it { last_response.status.should == 403 }
+        it { expect(last_response.status).to eq(403) }
       end
 
       context 'when the repo is migrated' do
         let(:env_var) { repo.settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY).tap { repo.settings.save } }
         before { repo.update_attributes(migration_status: "migrated") }
         before { patch "/settings/ssh_key/#{repo.id}", '{}', headers }
-        it { JSON.parse(last_response.body)["error_type"].should == "migrated_repository" }
-        it { last_response.status.should == 403 }
+        it { expect(JSON.parse(last_response.body)["error_type"]).to eq("migrated_repository") }
+        it { expect(last_response.status).to eq(403) }
       end
     end
 
@@ -125,10 +125,10 @@ describe 'ssh keys endpoint', set_app: true do
 
         response = delete "/settings/ssh_key/#{repo.id}", {}, headers
         json = JSON.parse(response.body)
-        json['ssh_key']['description'].should == 'foo'
-        json['ssh_key'].should_not have_key('value')
+        expect(json['ssh_key']['description']).to eq('foo')
+        expect(json['ssh_key']).not_to have_key('value')
 
-        repo.reload.settings.ssh_key.should be_nil
+        expect(repo.reload.settings.ssh_key).to be_nil
       end
     end
   end

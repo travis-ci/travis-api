@@ -3,7 +3,7 @@ describe 'v2 logs', auth_helpers: true, api_version: :v2, set_app: true do
   let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }
   let(:job)   { build.matrix.first }
-  let(:log)   { stub(id: 1) }
+  let(:log)   { double(id: 1) }
 
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
   before { stub_request(:get, log_url).to_return(status: 200, body: %({"job_id": #{job.id}, "content": "content"})) }

@@ -1,9 +1,9 @@
 describe Travis::Services::FindCaches do
   include Support::S3, Support::GCS
 
-  let(:user) { User.first || Factory(:user) }
+  let(:user) { User.first || FactoryBot.create(:user) }
   let(:service) { described_class.new(user, params) }
-  let(:repo) { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let(:repo) { FactoryBot.create(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
   let(:cache_options) {{ s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} }}
   let(:result) { service.run }
   subject { result }
@@ -18,7 +18,7 @@ describe Travis::Services::FindCaches do
     let(:params) {{ repository_id: repo.id }}
 
     describe 'without any caches' do
-      it { should be == [] }
+      it { is_expected.to eq [] }
     end
 
     describe 'with caches' do
@@ -28,24 +28,24 @@ describe Travis::Services::FindCaches do
         s3_bucket << "#{repo.github_id.succ}/master/cache--example3.tbz"
       end
 
-      its(:size) { should be == 2 }
+      its(:size) { is_expected.to eq 2 }
 
       describe 'the cache instances' do
         subject { result.first }
-        its(:slug)       { should be == 'cache--example1' }
-        its(:branch)     { should be == 'master' }
-        its(:repository) { should be == repo }
-        its(:size)       { should be == 0 }
+        its(:slug)       { is_expected.to eq 'cache--example1' }
+        its(:branch)     { is_expected.to eq 'master' }
+        its(:repository) { is_expected.to eq repo }
+        its(:size)       { is_expected.to eq 0 }
       end
 
       describe 'with branch' do
         let(:params) {{ repository_id: repo.id, branch: 'other' }}
-        its(:size) { should be == 1 }
+        its(:size) { is_expected.to eq 1 }
       end
 
       describe 'with match' do
         let(:params) {{ repository_id: repo.id, match: 'example1' }}
-        its(:size) { should be == 1 }
+        its(:size) { is_expected.to eq 1 }
       end
 
       it 'returns nil if user does not have push permission' do
@@ -55,8 +55,8 @@ describe Travis::Services::FindCaches do
 
       describe 'without s3 credentials' do
         let(:cache_options) {{ }}
-        before { service.logger.expects(:warn).with("[services:find-caches] cache settings incomplete") }
-        it { should be == [] }
+        before { expect(service.logger).to receive(:warn).with("[services:find-caches] cache settings incomplete") }
+        it { is_expected.to eq [] }
       end
 
       describe 'with multiple buckets' do
@@ -65,14 +65,14 @@ describe Travis::Services::FindCaches do
         } }
         its(:size) do
           skip "this isn't valid anymore we don't use multiple buckets"
-          should be == 4
+          is_expected.to eq 4
         end
       end
     end
 
     context 'with GCS configuration' do
       let(:cache_options) { { gcs: { bucket_name: '', json_key: '' } } }
-      its(:size) { should be == 0 }
+      its(:size) { is_expected.to eq 0 }
     end
   end
 end

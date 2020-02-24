@@ -5,15 +5,15 @@ describe Permission do
     end
 
     it 'returns matching permissions if two roles given as symbols' do
-      Permission.by_roles([:admin, :pull]).size.should == 2
+      expect(Permission.by_roles([:admin, :pull]).size).to eq(2)
     end
 
     it 'returns a single permission if one role given' do
-      Permission.by_roles('admin').size.should == 1
+      expect(Permission.by_roles('admin').size).to eq(1)
     end
 
     it 'returns an empty scope if no roles given' do
-      Permission.by_roles('').size.should == 0
+      expect(Permission.by_roles('').size).to eq(0)
     end
   end
 end
