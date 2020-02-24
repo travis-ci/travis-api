@@ -8,20 +8,28 @@ require 'virtus'
 
 module Travis
   class RemoteLog
-    include Virtus.model(nullify_blank: true)
+    include ActiveModel::Model
 
-    attribute :aggregated_at, Time
-    attribute :archive_verified, Boolean, default: false
-    attribute :archived_at, Time
-    attribute :archiving, Boolean, default: false
-    attribute :content, String
-    attribute :created_at, Time
-    attribute :id, Integer
-    attribute :job_id, Integer
-    attribute :purged_at, Time
-    attribute :removed_at, Time
-    attribute :removed_by_id, Integer
-    attribute :updated_at, Time
+    def self.attributes
+      [:id,
+      :aggregated_at,
+      :archive_verified,
+      :archived_at,
+      :archiving,
+      :content,
+      :created_at,
+      :job_id,
+      :purged_at,
+      :removed_at,
+      :removed_by_id,
+      :updated_at]
+    end
+
+    def attributes
+      self.class.attributes
+    end
+
+    attr_accessor *self.attributes
 
     def platform=(platform)
       @platform = platform
@@ -69,6 +77,10 @@ module Travis
 
     def archived?
       !!(!archived_at.nil? && archive_verified?)
+    end
+
+    def archive_verified?
+      !!archive_verified
     end
 
     def archived_url(expires: nil)
@@ -122,7 +134,7 @@ module Travis
         removed_by: removed_by
       )
 
-      attributes.keys.each do |k|
+      attributes.each do |k|
         send("#{k}=", updated.send(k))
       end
 
