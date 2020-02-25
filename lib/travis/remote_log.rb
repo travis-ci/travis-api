@@ -5,23 +5,25 @@ require 'faraday'
 require 'faraday_middleware'
 require 'virtus'
 
-
 module Travis
   class RemoteLog
-    include Virtus.model(nullify_blank: true)
+    include ActiveModel::Model
+    include ActiveModel::Attributes
 
-    attribute :aggregated_at, Time
-    attribute :archive_verified, Boolean, default: false
-    attribute :archived_at, Time
-    attribute :archiving, Boolean, default: false
-    attribute :content, String
-    attribute :created_at, Time
-    attribute :id, Integer
-    attribute :job_id, Integer
-    attribute :purged_at, Time
-    attribute :removed_at, Time
-    attribute :removed_by_id, Integer
-    attribute :updated_at, Time
+    # TODO: Confirm this should be untyped. Test fails if :datetime is
+    # specified, in the test we expect 'huh' to be a valid value. Huh?
+    attribute :aggregated_at
+    attribute :archive_verified, :boolean, default: false
+    attribute :archived_at, :datetime
+    attribute :archiving, :boolean, default: false
+    attribute :content, :string
+    attribute :created_at, :datetime
+    attribute :id, :integer
+    attribute :job_id, :integer
+    attribute :purged_at, :datetime
+    attribute :removed_at, :datetime
+    attribute :removed_by_id, :integer
+    attribute :updated_at, :datetime
 
     def platform=(platform)
       @platform = platform
@@ -38,6 +40,10 @@ module Travis
     def removed_by
       return nil unless removed_by_id
       @removed_by ||= User.find(removed_by_id)
+    end
+
+    def archive_verified?
+      !!archive_verified
     end
 
     def removed?

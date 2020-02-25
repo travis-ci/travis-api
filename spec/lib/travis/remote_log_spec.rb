@@ -100,6 +100,8 @@ describe Travis::RemoteLog do
   {
     nil => false,
     Time.now => true,
+    # TODO: Confirm we should accept untyped input. Not sure why we would want
+    # this...
     'huh' => true
   }.each do |aggregated_at, is_aggregated|
     context "when aggregated_at=#{aggregated_at}" do
@@ -200,7 +202,7 @@ describe Travis::RemoteLog do
     expect(described_class::Remote).to receive(:new).and_return(remote)
     expect(remote).to receive(:write_content_for_job_id)
       .with(attrs.fetch(:job_id), content: content, removed_by: user_id)
-      .and_return(described_class.new(content: content, removed_by: user_id))
+      .and_return(described_class.new(content: content, removed_by_id: user_id))
 
     user = double('user')
     expect(user).to receive(:name).and_return('Floof MaGoof')
