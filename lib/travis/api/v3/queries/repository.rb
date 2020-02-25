@@ -44,7 +44,7 @@ module Travis::API::V3
     def by_slug
       owner_name, repo_name = slug.split('/')
       Models::Repository.where(
-        "(lower(repo_slug) = ? "\
+        "(lower(vcs_slug) = ? "\
         "or (lower(repositories.owner_name) = ? and lower(repositories.name) = ?)) "\
         "and lower(repositories.vcs_type) = ? "\
         "and repositories.invalidated_at is null",

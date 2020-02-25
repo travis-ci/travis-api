@@ -40,7 +40,7 @@ module Travis::API::V3
     end
 
     def slug
-      @slug ||= repo_slug || "#{owner_name}/#{name}"
+      @slug ||= vcs_slug || "#{owner_name}/#{name}"
     end
 
     def default_branch_name
