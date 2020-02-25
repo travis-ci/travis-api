@@ -138,7 +138,8 @@ module Travis::Api
 
         use Rack::SSL if Endpoint.production?
 
-        use ActiveRecord::QueryCache
+        # TODO: Figure out why this breaks
+        # use ActiveRecord::QueryCache
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
