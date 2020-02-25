@@ -10,7 +10,7 @@ module Travis::API::V3
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
     belongs_to :sender, polymorphic: true
-    belongs_to :config, foreign_key: :config_id, class_name: Models::BuildConfig
+    belongs_to :config, foreign_key: :config_id, class_name: 'Models::BuildConfig'
 
     has_many :stages
 
