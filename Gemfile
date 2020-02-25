@@ -46,8 +46,6 @@ gem 'rbtrace'
 gem 'memory_profiler'
 gem 'allocation_tracer'
 
-gem 'jemalloc', git: 'https://github.com/travis-ci/jemalloc-rb'
-
 gem 'redlock'
 gem 'rake', '~> 0.9.2'
 

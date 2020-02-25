@@ -32,12 +32,6 @@ GIT
       net-http-pipeline
 
 GIT
-  remote: https://github.com/travis-ci/jemalloc-rb
-  revision: e9528e26aff663efa2c124cdeca47700e389097d
-  specs:
-    jemalloc (1.0.2)
-
-GIT
   remote: https://github.com/travis-ci/marginalia
   revision: 46bbe301640efb5ea81828cb7deeaf874516de78
   specs:
@@ -438,7 +432,6 @@ DEPENDENCIES
   hashdiff
   hashr
   ipaddress (~> 0.8.3)
-  jemalloc!
   knapsack
   libhoney
   librato-metrics

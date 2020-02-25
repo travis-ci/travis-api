@@ -18,16 +18,16 @@ else
 fi
 
 if [ "$PGBOUNCER_ENABLED" = '1' ] || [ "$PGBOUNCER_ENABLED" = 'true' ]; then
-  $bexec je script/monitor-pgbouncer &
+  $bexec script/monitor-pgbouncer &
 fi
 
 cmd="unicorn config.ru -E $RACK_ENV -c config/unicorn.rb"
 [[ $RACK_ENV == "development" ]] && cmd="rerun -b -- $cmd"
 
 if [ -z "$DYNO" ]; then
-  cmd="bundle exec je $cmd"
+  cmd="bundle exec $cmd"
 else
-  cmd="bin/start-nginx je $cmd"
+  cmd="bin/start-nginx $cmd"
 fi
 
 exec $cmd
