@@ -16,7 +16,10 @@ class Travis::Api::App
 
     # TODO hmmm?
     before { flash.clear }
-    after { content_type :json unless content_type }
+    after do
+      content_type :json unless content_type
+      ActiveRecord::Base.clear_active_connections!
+    end
 
     before do
       halt 406 if accept_version == 'v2.1' && ENV['DISABLE_V2_1']
