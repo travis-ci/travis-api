@@ -100,8 +100,7 @@ describe Travis::RemoteLog do
   {
     nil => false,
     Time.now => true,
-    # TODO: Confirm we should accept untyped input. Not sure why we would want
-    # this...
+    # TODO: Confirm we should accept any type of input. Not sure why...
     'huh' => true
   }.each do |aggregated_at, is_aggregated|
     context "when aggregated_at=#{aggregated_at}" do

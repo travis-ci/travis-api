@@ -57,8 +57,6 @@ module Travis
       )
     end
 
-    alias log_parts parts
-
     private def solo_part
       [
         RemoteLogPart.new(
@@ -332,15 +330,16 @@ module Travis
   end
 
   class RemoteLogPart
-    include Virtus.model(nullify_blank: true)
+    include ActiveModel::Model
+    include ActiveModel::Attributes
 
-    attribute :content, String
-    attribute :final, Boolean
-    attribute :id, Integer
-    attribute :number, Integer
+    attribute :content, :string
+    attribute :final, :boolean
+    attribute :id, :integer
+    attribute :number, :integer
 
     def as_json(**_)
-      attributes.slice(*%i(content final number))
+      attributes.slice("content", "final", "number")
     end
   end
 end
