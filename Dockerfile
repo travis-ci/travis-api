@@ -5,9 +5,11 @@ LABEL maintainer Travis CI GmbH <support+travis-api-docker-images@travis-ci.com>
 # packages required for bundle install
 RUN ( \
    apt-get update ; \
-   apt-get install -y --no-install-recommends git make gcc g++ libpq-dev \
+   apt-get install -y --no-install-recommends git make gcc g++ libpq-dev libjemalloc-dev \
    && rm -rf /var/lib/apt/lists/* \
 )
+
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1

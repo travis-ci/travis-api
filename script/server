@@ -25,9 +25,9 @@ cmd="unicorn config.ru -E $RACK_ENV -c config/unicorn.rb"
 [[ $RACK_ENV == "development" ]] && cmd="rerun -b -- $cmd"
 
 if [ -z "$DYNO" ]; then
-  cmd="jemalloc.sh bundle exec $cmd"
+  cmd="bundle exec $cmd"
 else
-  cmd="jemalloc.sh bin/start-nginx $cmd"
+  cmd="bin/start-nginx $cmd"
 fi
 
 exec $cmd
