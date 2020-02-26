@@ -1,12 +1,12 @@
 language: ruby
-rvm: '2.3.4'
+rvm: '2.5.5'
 cache: bundler
 addons:
   postgresql: 9.6
 services:
   - redis
 before_install:
-  - 'gem install bundler -v 1.17.3'
+  - 'gem install bundler -v 2.1.4'
 before_script:
   - cp config/travis.example.yml config/travis.yml
   - "createdb travis_test || true"

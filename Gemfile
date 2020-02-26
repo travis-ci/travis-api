@@ -61,7 +61,7 @@ group :test do
   gem 'launchy'
   gem 'poltergeist'
   gem 'rake'
-  gem 'webmock', '~> 2.1.0'
+  gem 'webmock', '~> 2.3.0'
 end
 
 group :development do
