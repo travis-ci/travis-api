@@ -3,7 +3,7 @@ $(document).ready(function(){
     $('.otp').on('click', function(ev) {
       ev.preventDefault();
       $(this).siblings('.popup').removeClass('is-hidden');
-
+      $('.popup.is-hidden').removeClass('is-hidden');
       if ($('.export').length && $('.purge').length) {
         var container = ev.currentTarget.parentElement.parentElement.parentElement;
         var className = container.className;

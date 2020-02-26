@@ -26,6 +26,12 @@ development:
       github_id: 1206
       name: Bootstrap
       price: 8900
+  providers:
+    github:
+      base_url: https://github.com/
+  vcs:
+    endpoint: https://travis-pro-vcs-staging.herokuapp.com
+    token: 0f7a9c8806bd49c3b026c26d0708b5d297c30036e2ddf4181745aea301d46776ed160df93af99cdb1f21b8867334fb56cd544ff473d807d01ef3ce0aeb1bc952
   service_hook_url: https://notify.staging.travis-ci.com
   session_secret: Cubb3nvcqbb9BblhNuYnv8NvAvvlrvj2rvSnrlb2LrGub6nvSbuAt2anvKh9vncurbQ9bbabbbAtrv2ravr2nuGutbbE8Krr
 test:
@@ -39,4 +45,10 @@ test:
     url: redis://localhost:6379
   encryption:
     key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  providers:
+    github:
+      base_url: https://github.com/
+  vcs:
+    endpoint: https://api-fake.travis-ci.com
+    token: fake-token
   service_hook_url: https://notify.fake.travis-ci.com

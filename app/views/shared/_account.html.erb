@@ -12,8 +12,16 @@
       </time>
     </dd>
 
+    <% trial_builds_remaining = 0 %>
+    <% trial_builds_allowed = 0 %>
+    <%if owner.latest_trial %>
+      <% owner.latest_trial.trial_allowances.each do |ta| %>
+        <% trial_builds_remaining += ta.builds_remaining %>
+        <% trial_builds_allowed += ta.builds_allowed %>
+      <% end %>
+    <% end %>
 
-    <dt class="info-label">Trial</dt>
+    <dt class="info-label">Trial <%if trial_builds_allowed > 0 then %>  <%= "( %d remaining from %d )" % [ trial_builds_remaining, trial_builds_allowed ] %> <%end%></dt>
     <dd>
       <% if owner.latest_trial %>
         <ul style="margin: 0;">

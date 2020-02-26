@@ -13,6 +13,7 @@ RSpec.describe Subscription, type: :model do
     end
 
     it 'returns false for invalid subscriptions' do
+			binding.pry
       expect(invalid_subscription.active?).to be false
       expect(missing_token_subscription.active?).to be false
       expect(missing_token_invalid_subscription.active?).to be false

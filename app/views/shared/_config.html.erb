@@ -1,9 +1,19 @@
-<section class="info-block config">
-  <h2 class="info-header">Configuration</h2>
+<section class="info-block-config">
+  <div class="clearfix">
+    <h2 class="info-header">Configuration</h2>
+    <button class="btn copy-btn" data-clipboard-target="#config_content">
+      Copy to clipboard
+    </button>
+  </div>
 
   <% if config.empty? %>
     <p>No configuration.</p>
   <% else %>
-    <pre><%= yaml_format(config) %></pre>
+    <pre id="config_content"><%= yaml_format(config) %></pre>
   <% end %>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  new ClipboardJS('.copy-btn');
+</script>

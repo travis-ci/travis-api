@@ -14,7 +14,6 @@ class Repository < ApplicationRecord
   scope :by_slug,             -> (slug) { without_invalidated.where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC') }
   scope :without_invalidated, -> { where(invalidated_at: nil) }
 
-  serialize :settings
 
   def find_admin
     permissions.admin_access.first.try(:user)
@@ -30,7 +29,11 @@ class Repository < ApplicationRecord
   end
 
   def settings
-    @settings ||= super || {}
+    sup = super
+    if sup.is_a? String
+      sup = YAML.load(super)
+    end
+    @settings ||= sup || {}
   end
 
   def has_custom_ssh_key?

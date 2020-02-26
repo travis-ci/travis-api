@@ -24,23 +24,31 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">GitHub login</dt>
+    <dt class="info-label">VCS Login</dt>
     <dd>
       <%= image_tag(@user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if @user.avatar_url %>
-      <%= @user.login %>
-      <%= link_to fa_icon("github"), "https://github.com/#{@user.login}", target: "_blank" %>
+      <%= link_to @user.login, vcs_user_profile_url(@user), target: '_blank' %>
     </dd>
 
-    <dt class="info-label">GitHub ID</dt>
-    <dd><%= @user.github_id %></dd>
+    <dt class="info-label">VCS Type</dt>
+    <dd>
+      <%= @user.vcs_type %>
+      (
+      <%= image_tag(@user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if @user.avatar_url %>
+      <%= link_to @user.login, vcs_user_profile_url(@user), target: '_blank' %>
+      )
+    </dd>
 
-    <dt class="info-label">Token</dt>
+    <dt class="info-label">VCS ID</dt>
+    <dd><%= @user.vcs_id %></dd>
+
+    <dt class="info-label">VCS Token</dt>
     <dd class="inline">
       <% if @display_gh_token %>
-        <pre><%= @user.github_oauth_token %></pre>
+        <pre><%= @user.vcs_oauth_token %></pre>
         <%= button_to 'Hide', hide_token_user_path(@user), class: 'button', form_class: 'hide_gh_token' %>
       <% else %>
-        <%= hidden(@user, :github_oauth_token) %>
+        <%= hidden(@user, :vcs_oauth_token) %>
         <%= form_tag({action: 'display_token', controller: "users", id: @user.id, method: 'post'}, {class: 'display_gh_token'}) do %>
           <%= render partial: "shared/otp" %>
           <%= submit_tag 'Display', class: 'button otp', id: "display_gh_token" %>
@@ -48,31 +56,32 @@
       <% end %>
     </dd>
 
-    <dt class="info-label">Scopes</dt>
-    <dd>
-      <% if @user.github_scopes.present? %>
-        <%= @user.github_scopes %>
+    <dt class="info-label">VCS Scopes</dt>
+    <dd class="inline">
+      <% if @user.vcs_scopes.present? %>
+        <%= @user.vcs_scopes %>
       <% else %>
         none
       <% end %>
+      <%= button_to 'Verify', check_scopes_user_path(@user), form_class: "sync-button", class: 'button' %>
     </dd>
 
-    <dt class="info-label">GitHub Integration</dt>
+    <dt class="info-label">VCS Integration</dt>
     <dd class="inline">
       <p>
           <% if @user.installation.present? %>
-            GitHub App installed with
+            VCS App installed with
             <strong>id: <%= @user.installation.id %></strong>
             and
-            <strong>github_id: <%= @user.installation.github_id %></strong>
-            <%= link_to '[Manage repos link]', github_config_url(@user.installation.github_id) %>
+            <strong>vcs_id: <%= @user.installation.vcs_id %></strong>
+            <%= link_to '[Manage repos link]', manage_repo_link_url(@user) %>
           <% else %>
             Service Hook
           <% end %>
       </p>
     </dd>
 
-    <dt class="info-label">Last sync</dt>
+    <dt class="info-label">Last Sync</dt>
     <dd class="inline">
       <p>
         <% if @user.is_syncing? %>
@@ -140,4 +149,3 @@
     </dd>
   </dl>
 </section>
-

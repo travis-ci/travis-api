@@ -1,24 +1,22 @@
 require 'rails_helper'
+require 'shared/vcs'
+require 'shared/response_stubs/vcs_responses'
 
-RSpec.feature 'Integrate Github Repository', js: true, type: :feature do
+RSpec.feature 'Integrate VCS Repository', js: true, type: :feature do
+  include_context 'vcs'
+  include_context 'vcs_responses'
+
   let!(:integrated_repo) { create(:repo_with_users, active: true, managed_by_installation_at: Time.current) }
-  let!(:repo) { create(:repo_with_users, active: true) }
-  let(:gh) do
-    [{
-      'name' => 'travis',
-      'active' => true,
-      'events' => %w[pull_request push],
-      'config' => { 'domain' => 'notify.fake.travis-ci.com' }
-    }]
-  end
+  let!(:repo) { create(:repo_with_users, owner_type: 'User', name: 'travis', active: true) }
+  let!(:user) { repo.owner }
 
   before { allow_any_instance_of(Services::Repository::Crons).to receive(:call).and_return([]) }
 
-  scenario 'repo uses a GitHub App Installation' do
+  scenario 'repo uses a VCS App Installation' do
     visit "/repositories/#{integrated_repo.id}"
 
-    within(:css, '.gh-integration-container') do
-      expect(page).to have_text('This repo uses a GitHub App Installation')
+    within(:css, '.vcs-integration-container') do
+      expect(page).to have_text('This repo uses a VCS App Installation')
     end
 
     within(:css, '.activation-container') do
@@ -27,10 +25,11 @@ RSpec.feature 'Integrate Github Repository', js: true, type: :feature do
   end
 
   scenario 'repo uses a Service Hook' do
-    WebMock.stub_request(:get, "https://api.github.com/repos/#{repo.slug}/hooks?per_page=100")
-           .to_return(status: 200, body: gh, headers: {})
+    stub_request(:get, "#{url}/repos/#{repo.id}/hooks?user_id=#{user.id}")
+      .with(headers: { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/json' })
+      .to_return(status: 200, body: vcs_response, headers: {})
 
-    WebMock.stub_request(:post, "https://api-fake.travis-ci.com/repo/#{repo.id}/disable")
+    stub_request(:post, "#{url}/repo/#{repo.id}/disable")
            .to_return(status: 200, body: '', headers: {})
 
     allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])
@@ -47,9 +46,9 @@ RSpec.feature 'Integrate Github Repository', js: true, type: :feature do
       find_button('Disable').trigger('click')
     end
 
-    expect(page).to have_text('Disabled travis-pro/travis-admin')
+    expect(page).to have_text('Disabled travis-pro/travis')
 
-    within(:css, '.gh-integration-container') do
+    within(:css, '.vcs-integration-container') do
       expect(page).to have_text('This repo uses a Service Hook')
 
       find_button('Check hook').trigger('click')

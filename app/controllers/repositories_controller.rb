@@ -3,7 +3,7 @@ class RepositoriesController < ApplicationController
   before_action :get_repository
 
   def add_hook_event
-    Services::Repository::AddHookEvent.new(@repository, params[:event], hook_link).call
+    Services::Repository::AddHookEvent.new(current_user, @repository, params[:event]).call
     Services::AuditTrail::AddHookEvent.new(current_user, @repository, params[:event].gsub('_', ' ')).call
     flash[:notice] = "Added #{params[:event].gsub('_', ' ')} event to #{@repository.slug}."
     redirect_to @repository
@@ -11,8 +11,11 @@ class RepositoriesController < ApplicationController
 
   def check_hook
     case
+    when hook && hook['error_message'].present?
+      flash[:error] = hook['error_message']
+      redirect_to @repository
     when hook.nil?
-      flash[:error] = 'No hook found on GitHub.'
+      flash[:error] = 'No hook found on VCS.'
       redirect_to @repository
     when hook['active'] != @repository.active?
       render :check_hook
@@ -94,18 +97,24 @@ class RepositoriesController < ApplicationController
   end
 
   def requests
-    @requests = @repository.requests.includes(builds: :repository).order('id DESC').paginate(page: params[:page], per_page: 20)
+    @requests = @repository.requests
+                    .includes(builds: :repository)
+                    .order('id DESC')
+                    .paginate(page: params[:page], per_page: 20)
     render_either 'shared/requests', locals: { origin: @repository }
   end
 
   def users
-    @users = @repository.users.select('users.*, permissions.admin as admin, permissions.push as push, permissions.pull as pull').order(:name).paginate(page: params[:page], per_page: 25)
+    @users = @repository.users
+                 .select('users.*, permissions.admin as admin, permissions.push as push, permissions.pull as pull')
+                 .order(:name)
+                 .paginate(page: params[:page], per_page: 25)
     render_either 'users'
   end
 
   def set_hook_url
     config = hook['config'].merge('domain' => hook_url(travis_config.service_hook_url))
-    Services::Repository::SetHookUrl.new(@repository, config, hook_link).call
+    Services::Repository::SetHookUrl.new(current_user, @repository, config).call
     Services::AuditTrail::SetHookUrl.new(current_user, @repository, travis_config.service_hook_url).call
     flash[:notice] = "Set notification target to #{travis_config.service_hook_url}."
     redirect_to @repository
@@ -120,7 +129,7 @@ class RepositoriesController < ApplicationController
   end
 
   def test_hook
-    Services::Repository::TestHook.new(@repository, hook["_links"]["test"]["href"]).call
+    Services::Repository::TestHook.new(@repository).call
     flash[:notice] = 'Test hook fired.'
     redirect_to @repository
   end
@@ -129,7 +138,7 @@ class RepositoriesController < ApplicationController
 
   def get_repository
     @repository = Repository.find_by(id: params[:id])
-    return redirect_to not_found_path, flash: {error: "There is no repository associated with ID #{params[:id]}."} if @repository.nil?
+    return redirect_to not_found_path, flash: { error: "There is no repository associated with ID #{params[:id]}." } if @repository.nil?
   end
 
   def feature_params
@@ -146,6 +155,6 @@ class RepositoriesController < ApplicationController
   end
 
   def hook_link
-    hook["_links"]["self"]["href"]
+    hook['config']['url']
   end
 end
