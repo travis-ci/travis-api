@@ -38,6 +38,8 @@ module Travis::API::V3
       te_license = replicated_response["fields"].find { |te_fields| te_fields["field"] == "te_license" }
       yaml = YAML.load(te_license["value"])
       yaml["production"]["license"]["seats"]
+      rescue Psych::SyntaxError, TypeError => e
+        raise InsufficientAccess
     end
   end
 end
