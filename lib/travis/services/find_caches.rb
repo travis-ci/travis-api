@@ -105,6 +105,8 @@ module Travis
       private
 
         def setup?
+          puts "valid_cache_options?: #{valid_cache_options?}"
+          puts "valid_s3?: #{valid_s3?}, valid_gcs?: #{valid_gcs?}"
           return true if valid_cache_options?
 
           logger.warn "[services:find-caches] cache settings incomplete"
