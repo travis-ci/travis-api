@@ -24,6 +24,7 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
       "education"        => nil,
       "allow_migration"  => false,
       "recently_signed_up"=>false,
+      "secure_user_hash" => nil,
     }}
   end
 end
