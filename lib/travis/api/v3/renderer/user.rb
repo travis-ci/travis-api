@@ -12,7 +12,7 @@ module Travis::API::V3
     
     def secure_user_hash
       hmac_secret_key = Travis.config.intercom && Travis.config.intercom.hmac_secret_key
-      OpenSSL::HMAC.hexdigest('sha256', hmac_secret_key, @model.id) if @model.id && hmac_secret_key
+      OpenSSL::HMAC.hexdigest('sha256', hmac_secret_key, @model.id.to_s) if @model.id && hmac_secret_key
     end
   end
 end
