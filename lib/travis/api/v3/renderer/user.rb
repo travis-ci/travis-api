@@ -2,7 +2,7 @@ require 'travis/api/v3/renderer/owner'
 
 module Travis::API::V3
   class Renderer::User < Renderer::Owner
-    representation(:standard, :is_syncing, :synced_at, :recently_signed_up)
+    representation(:standard, :is_syncing, :synced_at, :recently_signed_up, :secure_user_hash)
     representation(:additional, :emails)
 
     def emails
