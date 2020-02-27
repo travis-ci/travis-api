@@ -29,7 +29,6 @@ describe Travis::API::V3::Services::User::Find, set_app: true do
       "education"        => true,
       "allow_migration"  => false,
       "recently_signed_up"=>false,
-      "secure_user_hash" => nil,
     }}
   end
 end
