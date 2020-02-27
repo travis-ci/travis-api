@@ -4,16 +4,17 @@ FactoryGirl.define do
     billing_email 'contact@travis-ci.com'
     vat_id 'DE999999999'
     selected_plan 'travis-ci-twenty-builds-annual'
+		country 'Germany'
 
     trait :active do
       valid_to { 1.week.from_now }
       first_name 'Katrin'
       last_name 'Mustermann'
       company 'Travis CI'
-      country 'Germany'
       address 'Nice Street 12'
       city 'Berlin'
       zip_code '12344'
+			customer_id 'cus_123'
     end
 
     trait :expired do

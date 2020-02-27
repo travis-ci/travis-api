@@ -28,10 +28,12 @@ class SubscriptionsController < ApplicationController
 				message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
 				flash[:notice] = message.sub(/./) {$&.upcase}
 
-				tax_id = @subscription.vat_required? ? [tax_id(@subscription.country)] : ''
-				options = { default_tax_rates: tax_id }
-				stripe_subscription = stripe_service.fetch_customer(@subscription).subscription
-				stripe_service.update_subscription(stripe_subscription.id, options)
+				if changes[:vat_id].present?
+					tax_id = @subscription.vat_required? ? [tax_id(@subscription.country)] : ''
+					options = { default_tax_rates: tax_id }
+					stripe_subscription = stripe_service.fetch_customer(@subscription).subscription
+					stripe_service.update_subscription(stripe_subscription.id, options)
+				end
 
 				Services::AuditTrail::UpdateSubscription.new(current_user, message).call
 			else

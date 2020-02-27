@@ -9,11 +9,10 @@ RSpec.describe Subscription, type: :model do
     let!(:missing_token_invalid_subscription) { create :subscription }
 
     it 'returns true for valid subscription with cc_token' do
-      expect(valid_subscription.active?).to be true
+			expect(valid_subscription.active?).to be true
     end
 
     it 'returns false for invalid subscriptions' do
-			binding.pry
       expect(invalid_subscription.active?).to be false
       expect(missing_token_subscription.active?).to be false
       expect(missing_token_invalid_subscription.active?).to be false

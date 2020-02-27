@@ -3,13 +3,13 @@ require 'rails_helper'
 RSpec.describe Services::Stripe do
   subject { described_class.new }
   let(:user) { create(:user) }
-	let(:subscription) { create :subscription }
+	let(:subscription) { create :subscription,customer_id: 'cus_123' }
   let(:stripe_service) { Services::Stripe.new }
   let(:tax_id) { ['txr_1FeeUY2eZvKYlo2CF3XQrEBu'] }
   describe '#fetch_customer' do
 
 	let!(:stubbed_request) do
-		WebMock.stub_request(:get, 'https://api.stripe.com/v1/customers/cus_123')
+		stub_request(:get, 'https://api.stripe.com/v1/customers/cus_123')
 			.to_return(status: 200, body: JSON.dump(id: 'cus_123'))
 	end
 
@@ -21,10 +21,10 @@ RSpec.describe Services::Stripe do
 
   describe '#update_subscription' do
     let(:options) { { cancel_at_period_end: false } }
-    let(:subscription) { stripe_subscription(status: 'incomplete', canceled_at: nil, cancel_at: nil, cancel_at_period_end: false) }
+    let(:subscription) { create :subscription}
     let!(:stubbed_request) do
-      stub_request(:post, "https://api.stripe.com/v1/subscriptions/sub_123")
-        .to_return(body: JSON.dump(id: 'sub_123'))
+			stub_request(:post, "https://api.stripe.com/v1/subscriptions/#{subscription.id}")
+        .to_return(body: JSON.dump(id: subscription.id))
     end
 
     it 'successfully updates the subscription' do
