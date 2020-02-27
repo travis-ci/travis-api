@@ -94,6 +94,7 @@ module Travis
       end
 
       def run
+        puts "jestem w run"
         return [] unless setup?
         raise Travis::AuthorizationDenied unless authorized?
 
