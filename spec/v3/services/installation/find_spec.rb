@@ -36,23 +36,28 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
       "@representation"  => "standard",
       "id"               => installation.id,
       "github_id"        => installation.github_id,
-      "owner"            =>{
-        "@type"=>"user",
-        "@href"=>"/v3/user/#{user.id}",
-        "@representation"=>"standard",
-        "@permissions"=>{"read"=>true, "sync"=>true},
-        "id"=>1,
-        "login"=>user.login,
-        "name"=>user.name,
-        "github_id"=>nil,
-        "vcs_id"=>user.vcs_id,
-        "vcs_type"=>user.vcs_type,
-        "avatar_url"=>"https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
-        "is_syncing"=>nil,
-        "synced_at"=>nil,
-        "education"=>nil,
-        "allow_migration"=>false,
-        "recently_signed_up"=>false}
+      "owner"            => {
+        "@type" => "user",
+        "@href" => "/v3/user/#{user.id}",
+        "@representation" => "standard",
+        "@permissions" => {
+          "read" => true, 
+          "sync" => true
+        },
+        "id" => 1,
+        "login" => user.login,
+        "name" => user.name,
+        "github_id" => nil,
+        "vcs_id" => user.vcs_id,
+        "vcs_type" => user.vcs_type,
+        "avatar_url" => "https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
+        "is_syncing" => nil,
+        "synced_at" => nil,
+        "education" => nil,
+        "allow_migration" => false,
+        "recently_signed_up" => false,
+        "secure_user_hash" => nil,
+      }
     }}
   end
 end
