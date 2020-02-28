@@ -108,6 +108,7 @@ module Travis::API::V3
 
     def gcs_objects
       items = gcs_bucket.items
+      puts "gcs_objects items: #{items.to_s}"
       return [] if items.nil?
       items.map { |item| GcsWrapper.new(item) }
     end
