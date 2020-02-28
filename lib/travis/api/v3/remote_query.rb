@@ -103,6 +103,7 @@ module Travis::API::V3
     end
 
     def gcs_bucket
+      puts "gcs_bucket: #{gcs_config[:bucket_name]}, #{prefix}, #{gcs_connection.list_objects(gcs_config[:bucket_name], prefix: prefix).to_s}"
        gcs_connection.list_objects(gcs_config[:bucket_name], prefix: prefix)
     end
 
