@@ -9,10 +9,10 @@ module Travis::API::V3
       return @model.emails.map(&:email) if access_control.class == Travis::API::V3::AccessControl::LegacyToken && access_control.user.id == @model.id
       []
     end
-    
+
     def secure_user_hash
-      hmac_secret_key = Travis.config.intercom && Travis.config.intercom.hmac_secret_key
-      OpenSSL::HMAC.hexdigest('sha256', hmac_secret_key, @model.id) if @model.id && hmac_secret_key
+      hmac_secret_key = Travis.config.intercom && Travis.config.intercom.hmac_secret_key.to_s
+      OpenSSL::HMAC.hexdigest('sha256', hmac_secret_key, @model.id.to_s) if @model.id && hmac_secret_key
     end
   end
 end
