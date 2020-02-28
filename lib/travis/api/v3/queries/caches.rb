@@ -27,10 +27,9 @@ module Travis::API::V3
     private
 
     def prefix
-      prefix = "#{@repo.vcs_id || @repo.github_id}/#{branch}".gsub(/([{}-])/, '')
+      prefix = "#{@repo.vcs_id || @repo.github_id}/#{branch}"
       prefix << '/' unless prefix.last == '/'
       prefix
-      666
     end
   end
 end
