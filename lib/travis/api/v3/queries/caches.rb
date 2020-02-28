@@ -5,8 +5,6 @@ module Travis::API::V3
     def find(repo)
       @repo = repo
       caches = fetch
-      puts "Jesttem w Travis::API::V3::Queries::Caches repo: #{repo.to_s}, caches: #{caches.to_s}"
-      puts "Config: #{config.to_s}"
       filter Models::Cache.factory(caches, repo)
     end
 
@@ -30,7 +28,6 @@ module Travis::API::V3
       prefix = "#{@repo.vcs_id || @repo.github_id}/#{branch}"
       prefix << '/' unless prefix.last == '/'
       prefix
-      "231599797/"
     end
   end
 end

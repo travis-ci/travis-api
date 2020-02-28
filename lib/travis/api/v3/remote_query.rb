@@ -103,13 +103,11 @@ module Travis::API::V3
     end
 
     def gcs_bucket
-      puts "gcs_bucket: #{gcs_config[:bucket_name]}, #{prefix}, #{gcs_connection.list_objects(gcs_config[:bucket_name], prefix: prefix).to_s}"
-       gcs_connection.list_objects(gcs_config[:bucket_name], prefix: prefix)
+      gcs_connection.list_objects(gcs_config[:bucket_name], prefix: prefix)
     end
 
     def gcs_objects
       items = gcs_bucket.items
-      puts "gcs_objects items: #{items.to_s}"
       return [] if items.nil?
       items.map { |item| GcsWrapper.new(item) }
     end
@@ -123,8 +121,6 @@ module Travis::API::V3
     end
 
     def gcs_config
-      puts "TO jes main_type: #{main_type}"
-      puts "to jest config[cache_options.to_sym][:gcs]: #{config["#{main_type}_options".to_sym][:gcs]}"
       config["#{main_type}_options".to_sym][:gcs]
     end
   end
