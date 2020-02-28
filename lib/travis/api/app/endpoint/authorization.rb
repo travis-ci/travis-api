@@ -455,7 +455,7 @@ class Travis::Api::App
           elsif uri.host =~ /\A(.+\.)?travis-ci\.(com|org)\Z/
             uri.scheme == 'https'
           elsif uri.host == 'localhost' or uri.host == '127.0.0.1'
-            uri.port > 1023
+            uri.inferred_port.to_i > 1023
           end
         end
 
