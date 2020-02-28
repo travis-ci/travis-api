@@ -5,6 +5,7 @@ module Travis::API::V3
     def find(repo)
       @repo = repo
       caches = fetch
+      puts "Jesttem w Travis::API::V3::Queries::Caches repo: #{repo.to_s}, caches: #{caches.to_s}"
       filter Models::Cache.factory(caches, repo)
     end
 
