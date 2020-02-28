@@ -6,6 +6,7 @@ module Travis::API::V3
       @repo = repo
       caches = fetch
       puts "Jesttem w Travis::API::V3::Queries::Caches repo: #{repo.to_s}, caches: #{caches.to_s}"
+      puts "Config: #{config.to_s}"
       filter Models::Cache.factory(caches, repo)
     end
 
