@@ -123,6 +123,7 @@ module Travis::API::V3
 
     def gcs_config
       puts "TO jes main_type: #{main_type}"
+      puts "to jest config[cache_options.to_sym][:gcs]: #{config["#{main_type}_options".to_sym][:gcs]}"
       config["#{main_type}_options".to_sym][:gcs]
     end
   end
