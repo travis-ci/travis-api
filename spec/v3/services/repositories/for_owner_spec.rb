@@ -437,6 +437,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "github_id"       => repo2.github_id,
         "vcs_id"          => repo2.vcs_id,
         "vcs_type"        => repo2.vcs_type,
+        "vcs_name"        => "maximal",
         "github_language" => nil,
         "active"          => true,
         "private"         => false,
