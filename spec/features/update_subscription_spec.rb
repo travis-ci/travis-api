@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.feature 'Update subscription information', js: true, type: :feature do
+  before do
+		allow_any_instance_of(Valvat::Lookup).to receive(:valid?).and_return(true)
+	end
+
   let!(:user) { create :user_with_active_subscription}
 	let!(:stup_vat_rate_list) do
 		stub_request(:get, 'https://api.stripe.com/v1/tax_rates?limit=50')

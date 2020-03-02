@@ -51,7 +51,6 @@ FactoryGirl.define do
 
     trait :with_active_subscription do
       after(:create) do |user|
-        WebMock.stub_request(:get, "http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl").to_return(:status => 200)
         user.subscription = create(:active_subscription)
       end
     end
