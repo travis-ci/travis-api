@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.5.7'
+ruby '2.6.5'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
@@ -45,8 +45,6 @@ gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
 gem 'rbtrace'
 gem 'memory_profiler'
 gem 'allocation_tracer'
-
-gem 'jemalloc', git: 'https://github.com/travis-ci/jemalloc-rb'
 
 gem 'redlock'
 gem 'rake', '~> 0.9.2'

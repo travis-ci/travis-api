@@ -41,7 +41,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "@href" => "/v3/user/#{user.id}",
         "@representation" => "standard",
         "@permissions" => {
-          "read" => true, 
+          "read" => true,
           "sync" => true
         },
         "id" => 1,

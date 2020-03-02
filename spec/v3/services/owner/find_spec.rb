@@ -251,7 +251,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "education"      => nil,
         "allow_migration"=> false,
         "recently_signed_up"=>false,
-        "secure_user_hash"=> nil,
+        "secure_user_hash" => nil,
       }}
     end
 
@@ -275,7 +275,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "synced_at"      => nil,
         "allow_migration"=> false,
         "recently_signed_up"=>false,
-        "secure_user_hash"=> nil,
+        "secure_user_hash" => nil,
       }}
     end
 

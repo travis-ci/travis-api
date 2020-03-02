@@ -1,3 +1,3 @@
 web: ./script/server-buildpacks
-console: bundle exec je ./script/console
-cron: bundle exec je ./bin/cron
+console: bundle exec ./script/console
+cron: bundle exec ./bin/cron

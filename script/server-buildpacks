@@ -18,7 +18,7 @@ for d in $TRAVIS_API_LOGS_API_ENABLED_DYNOS; do
   fi
 done
 
-if [ ! -f "bin/start-pgbouncer-stunnel" ]; then
+if [ ! -f "bin/start-pgbouncer" ]; then
   echo "warning: pgbouncer buildpack not found, setting PGBOUNCER_ENABLED=false"
   export PGBOUNCER_ENABLED=false
 fi
@@ -27,7 +27,7 @@ cmd="script/server"
 
 if [ "$PGBOUNCER_ENABLED" = 'true' ]; then
   export PGBOUNCER_PREPARED_STATEMENTS=false
-  cmd="bin/start-pgbouncer-stunnel $cmd"
+  cmd="bin/start-pgbouncer $cmd"
 fi
 
 exec $cmd
