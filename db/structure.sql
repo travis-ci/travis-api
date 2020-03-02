@@ -10,6 +10,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
 -- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -780,7 +794,7 @@ $$;
 
 SET default_tablespace = '';
 
-SET default_table_access_method = heap;
+SET default_with_oids = false;
 
 --
 -- Name: abuses; Type: TABLE; Schema: public; Owner: -
@@ -977,9 +991,9 @@ CREATE TABLE public.build_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
+    config jsonb,
     org_id bigint,
-    com_id bigint,
-    config json
+    com_id bigint
 );
 
 
@@ -1248,9 +1262,9 @@ CREATE TABLE public.deleted_build_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
+    config jsonb,
     org_id bigint,
-    com_id bigint,
-    config json
+    com_id bigint
 );
 
 
@@ -1339,9 +1353,9 @@ CREATE TABLE public.deleted_job_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
+    config jsonb,
     org_id bigint,
-    com_id bigint,
-    config json
+    com_id bigint
 );
 
 
@@ -1414,9 +1428,9 @@ CREATE TABLE public.deleted_request_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
+    config jsonb,
     org_id bigint,
-    com_id bigint,
-    config json
+    com_id bigint
 );
 
 
@@ -1734,10 +1748,21 @@ CREATE TABLE public.job_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
+    config jsonb,
     org_id bigint,
-    com_id bigint,
-    config json
+    com_id bigint
 );
+
+
+--
+-- Name: job_configs_gpu; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+--
+
+CREATE MATERIALIZED VIEW public.job_configs_gpu AS
+ SELECT job_configs.id
+   FROM public.job_configs
+  WHERE (public.is_json((job_configs.config ->> 'resources'::text)) AND ((((job_configs.config ->> 'resources'::text))::jsonb ->> 'gpu'::text) IS NOT NULL))
+  WITH NO DATA;
 
 
 --
@@ -2198,9 +2223,9 @@ CREATE TABLE public.request_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
+    config jsonb,
     org_id bigint,
-    com_id bigint,
-    config json
+    com_id bigint
 );
 
 
@@ -3960,6 +3985,13 @@ CREATE UNIQUE INDEX index_job_configs_on_com_id ON public.job_configs USING btre
 
 
 --
+-- Name: index_job_configs_on_config_resources_gpu; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_job_configs_on_config_resources_gpu ON public.job_configs USING btree (((((config ->> 'resources'::text))::jsonb ->> 'gpu'::text))) WHERE (public.is_json((config ->> 'resources'::text)) AND ((((config ->> 'resources'::text))::jsonb ->> 'gpu'::text) IS NOT NULL));
+
+
+--
 -- Name: index_job_configs_on_org_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4789,119 +4821,119 @@ CREATE INDEX user_preferences_build_emails_false ON public.users USING btree (id
 -- Name: builds set_unique_number_on_builds; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER set_unique_number_on_builds BEFORE INSERT OR UPDATE ON public.builds FOR EACH ROW EXECUTE FUNCTION public.set_unique_number();
+CREATE TRIGGER set_unique_number_on_builds BEFORE INSERT OR UPDATE ON public.builds FOR EACH ROW EXECUTE PROCEDURE public.set_unique_number();
 
 
 --
 -- Name: builds set_updated_at_on_builds; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER set_updated_at_on_builds BEFORE INSERT OR UPDATE ON public.builds FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+CREATE TRIGGER set_updated_at_on_builds BEFORE INSERT OR UPDATE ON public.builds FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
 
 
 --
 -- Name: jobs set_updated_at_on_jobs; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER set_updated_at_on_jobs BEFORE INSERT OR UPDATE ON public.jobs FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+CREATE TRIGGER set_updated_at_on_jobs BEFORE INSERT OR UPDATE ON public.jobs FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
 
 
 --
 -- Name: branches trg_count_branch_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_branch_deleted AFTER DELETE ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_branches('-1');
+CREATE TRIGGER trg_count_branch_deleted AFTER DELETE ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_branches('-1');
 
 
 --
 -- Name: branches trg_count_branch_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_branch_inserted AFTER INSERT ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_branches('1');
+CREATE TRIGGER trg_count_branch_inserted AFTER INSERT ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_branches('1');
 
 
 --
 -- Name: builds trg_count_build_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_build_deleted AFTER DELETE ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_builds('-1');
+CREATE TRIGGER trg_count_build_deleted AFTER DELETE ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_builds('-1');
 
 
 --
 -- Name: builds trg_count_build_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_build_inserted AFTER INSERT ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_builds('1');
+CREATE TRIGGER trg_count_build_inserted AFTER INSERT ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_builds('1');
 
 
 --
 -- Name: commits trg_count_commit_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_commit_deleted AFTER DELETE ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_commits('-1');
+CREATE TRIGGER trg_count_commit_deleted AFTER DELETE ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_commits('-1');
 
 
 --
 -- Name: commits trg_count_commit_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_commit_inserted AFTER INSERT ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_commits('1');
+CREATE TRIGGER trg_count_commit_inserted AFTER INSERT ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_commits('1');
 
 
 --
 -- Name: jobs trg_count_job_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_job_deleted AFTER DELETE ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_jobs('-1');
+CREATE TRIGGER trg_count_job_deleted AFTER DELETE ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_jobs('-1');
 
 
 --
 -- Name: jobs trg_count_job_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_job_inserted AFTER INSERT ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_jobs('1');
+CREATE TRIGGER trg_count_job_inserted AFTER INSERT ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_jobs('1');
 
 
 --
 -- Name: pull_requests trg_count_pull_request_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_pull_request_deleted AFTER DELETE ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_pull_requests('-1');
+CREATE TRIGGER trg_count_pull_request_deleted AFTER DELETE ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_pull_requests('-1');
 
 
 --
 -- Name: pull_requests trg_count_pull_request_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_pull_request_inserted AFTER INSERT ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_pull_requests('1');
+CREATE TRIGGER trg_count_pull_request_inserted AFTER INSERT ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_pull_requests('1');
 
 
 --
 -- Name: requests trg_count_request_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_request_deleted AFTER DELETE ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_requests('-1');
+CREATE TRIGGER trg_count_request_deleted AFTER DELETE ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_requests('-1');
 
 
 --
 -- Name: requests trg_count_request_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_request_inserted AFTER INSERT ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_requests('1');
+CREATE TRIGGER trg_count_request_inserted AFTER INSERT ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_requests('1');
 
 
 --
 -- Name: tags trg_count_tag_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_tag_deleted AFTER DELETE ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_tags('-1');
+CREATE TRIGGER trg_count_tag_deleted AFTER DELETE ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_tags('-1');
 
 
 --
 -- Name: tags trg_count_tag_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_tag_inserted AFTER INSERT ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_tags('1');
+CREATE TRIGGER trg_count_tag_inserted AFTER INSERT ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_tags('1');
 
 
 --
@@ -5533,9 +5565,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191112172015'),
 ('20191112172332'),
 ('20191219091445'),
-('20191219091446'),
-('20200122000000'),
-('20200127000000'),
-('20200127000001');
+('20191219091446');
 
 

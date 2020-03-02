@@ -2,6 +2,10 @@ require 'rails_helper'
 
 RSpec.describe Services::Stripe do
   subject { described_class.new }
+  before do
+    allow_any_instance_of(Valvat::Lookup).to receive(:valid?).and_return(true)
+  end
+
   let(:user) { create(:user) }
 	let(:subscription) { create :subscription,customer_id: 'cus_123' }
   let(:stripe_service) { Services::Stripe.new }

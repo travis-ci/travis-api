@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Subscription, type: :model do
+  before do
+    allow_any_instance_of(Valvat::Lookup).to receive(:valid?).and_return(true)
+  end
+
   let!(:valid_subscription) { create :active_subscription }
 
   describe '.active?' do

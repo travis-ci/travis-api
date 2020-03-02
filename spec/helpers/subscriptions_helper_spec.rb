@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe SubscriptionsHelper, type: :helper do
+  before do
+    allow_any_instance_of(Valvat::Lookup).to receive(:valid?).and_return(true)
+  end
+
   describe 'format_price' do
     it 'formats prices' do
       expect(helper.format_price(24900)).to eq('$249.00')
