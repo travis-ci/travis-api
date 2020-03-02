@@ -12,9 +12,6 @@ class Subscription < ApplicationRecord
 	].freeze
 
   validates :valid_to, date: true, allow_blank: true
-	# TODO: we're skipping this validation unless we changed the value because we have old invalid
-	# values in the database which make saving unrelated updates fail. Same as above, we should fix
-	# those in the database if possible! And then remove the condition.
 	validates :vat_id, valvat: { lookup: :fail_if_down }, allow_blank: true, if: :vat_id_changed?
 
 	def vat_required?
