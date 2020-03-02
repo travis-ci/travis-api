@@ -10,20 +10,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
 -- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -71,56 +57,56 @@ CREATE FUNCTION public.agg_all_repo_counts() RETURNS boolean
     LANGUAGE plpgsql
     AS $$
 begin
-    with src as (
-        select cnt.repository_id
-        from repo_counts cnt
-        group by cnt.repository_id
-        having count(1) > 1
-    ),
-         del as (
-             delete from repo_counts cnt
-                 using src
-                 where cnt.repository_id = src.repository_id
-                 returning cnt.*
-         ),
-         agg as (
-             select
-                 del.repository_id,
-                 sum(del.requests)::integer as requests,
-                 sum(del.commits)::integer as commits,
-                 sum(del.branches)::integer as branches,
-                 sum(del.pull_requests)::integer as pull_requests,
-                 sum(del.tags)::integer as tags,
-                 sum(del.builds)::integer as builds,
-                 -- sum(del.stages)::integer as stages,
-                 sum(del.jobs)::integer as jobs
-             from del
-             group by del.repository_id
-         )
-    insert into repo_counts(
-        repository_id,
-        requests,
-        commits,
-        branches,
-        pull_requests,
-        tags,
-        builds,
-        -- stages,
-        jobs
-    )
+  with src as (
+    select cnt.repository_id
+    from repo_counts cnt
+    group by cnt.repository_id
+    having count(1) > 1
+  ),
+  del as (
+    delete from repo_counts cnt
+    using src
+    where cnt.repository_id = src.repository_id
+    returning cnt.*
+  ),
+  agg as (
     select
-        agg.repository_id,
-        agg.requests,
-        agg.commits,
-        agg.branches,
-        agg.pull_requests,
-        agg.tags,
-        agg.builds,
-        -- agg.stages,
-        agg.jobs
-    from agg;
+      del.repository_id,
+      sum(del.requests)::integer as requests,
+      sum(del.commits)::integer as commits,
+      sum(del.branches)::integer as branches,
+      sum(del.pull_requests)::integer as pull_requests,
+      sum(del.tags)::integer as tags,
+      sum(del.builds)::integer as builds,
+      -- sum(del.stages)::integer as stages,
+      sum(del.jobs)::integer as jobs
+    from del
+    group by del.repository_id
+  )
+  insert into repo_counts(
+    repository_id,
+    requests,
+    commits,
+    branches,
+    pull_requests,
+    tags,
+    builds,
+    -- stages,
+    jobs
+  )
+  select
+    agg.repository_id,
+    agg.requests,
+    agg.commits,
+    agg.branches,
+    agg.pull_requests,
+    agg.tags,
+    agg.builds,
+    -- agg.stages,
+    agg.jobs
+  from agg;
 
-    return true;
+  return true;
 end;
 $$;
 
@@ -133,58 +119,58 @@ CREATE FUNCTION public.agg_repo_counts(_repo_id integer) RETURNS boolean
     LANGUAGE plpgsql
     AS $$
 begin
-    with src as (
-        select cnt.repository_id
-        from repo_counts cnt
-        where cnt.repository_id = _repo_id
-        group by cnt.repository_id
-        having count(1) > 1
-    ),
-         del as (
-             delete from repo_counts cnt
-                 using src
-                 where cnt.repository_id = src.repository_id
-                 returning cnt.*
-         ),
-         agg as (
-             select
-                 del.repository_id,
-                 sum(del.requests)::integer as requests,
-                 sum(del.commits)::integer as commits,
-                 sum(del.branches)::integer as branches,
-                 sum(del.pull_requests)::integer as pull_requests,
-                 sum(del.tags)::integer as tags,
-                 sum(del.builds)::integer as builds,
-                 -- sum(del.stages)::integer as stages,
-                 sum(del.jobs)::integer as jobs
-             from del
-             group by del.repository_id
-         )
-    insert into repo_counts(
-        repository_id,
-        requests,
-        commits,
-        branches,
-        pull_requests,
-        tags,
-        builds,
-        -- stages,
-        jobs
-    )
+  with src as (
+    select cnt.repository_id
+    from repo_counts cnt
+    where cnt.repository_id = _repo_id
+    group by cnt.repository_id
+    having count(1) > 1
+  ),
+  del as (
+    delete from repo_counts cnt
+    using src
+    where cnt.repository_id = src.repository_id
+    returning cnt.*
+  ),
+  agg as (
     select
-        agg.repository_id,
-        agg.requests,
-        agg.commits,
-        agg.branches,
-        agg.pull_requests,
-        agg.tags,
-        agg.builds,
-        -- agg.stages,
-        agg.jobs
-    from agg
-    where agg.requests > 0 or agg.builds > 0 or agg.jobs > 0;
+      del.repository_id,
+      sum(del.requests)::integer as requests,
+      sum(del.commits)::integer as commits,
+      sum(del.branches)::integer as branches,
+      sum(del.pull_requests)::integer as pull_requests,
+      sum(del.tags)::integer as tags,
+      sum(del.builds)::integer as builds,
+      -- sum(del.stages)::integer as stages,
+      sum(del.jobs)::integer as jobs
+    from del
+    group by del.repository_id
+  )
+  insert into repo_counts(
+    repository_id,
+    requests,
+    commits,
+    branches,
+    pull_requests,
+    tags,
+    builds,
+    -- stages,
+    jobs
+  )
+  select
+    agg.repository_id,
+    agg.requests,
+    agg.commits,
+    agg.branches,
+    agg.pull_requests,
+    agg.tags,
+    agg.builds,
+    -- agg.stages,
+    agg.jobs
+  from agg
+  where agg.requests > 0 or agg.builds > 0 or agg.jobs > 0;
 
-    return true;
+  return true;
 end;
 $$;
 
@@ -198,18 +184,18 @@ CREATE FUNCTION public.count_all_branches(_count integer, _start integer, _end i
     AS $$
 declare max int;
 begin
-    select id + _count from branches order by id desc limit 1 into max;
+  select id + _count from branches order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting branches %', i;
-                insert into repo_counts(repository_id, branches, range)
-                select * from count_branches(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting branches %', i;
+      insert into repo_counts(repository_id, branches, range)
+      select * from count_branches(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -223,18 +209,18 @@ CREATE FUNCTION public.count_all_builds(_count integer, _start integer, _end int
     AS $$
 declare max int;
 begin
-    select id + _count from builds order by id desc limit 1 into max;
+  select id + _count from builds order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting builds %', i;
-                insert into repo_counts(repository_id, builds, range)
-                select * from count_builds(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting builds %', i;
+      insert into repo_counts(repository_id, builds, range)
+      select * from count_builds(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -248,18 +234,18 @@ CREATE FUNCTION public.count_all_commits(_count integer, _start integer, _end in
     AS $$
 declare max int;
 begin
-    select id + _count from commits order by id desc limit 1 into max;
+  select id + _count from commits order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting commits %', i;
-                insert into repo_counts(repository_id, commits, range)
-                select * from count_commits(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting commits %', i;
+      insert into repo_counts(repository_id, commits, range)
+      select * from count_commits(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -273,18 +259,18 @@ CREATE FUNCTION public.count_all_jobs(_count integer, _start integer, _end integ
     AS $$
 declare max int;
 begin
-    select id + _count from jobs order by id desc limit 1 into max;
+  select id + _count from jobs order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting jobs %', i;
-                insert into repo_counts(repository_id, jobs, range)
-                select * from count_jobs(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting jobs %', i;
+      insert into repo_counts(repository_id, jobs, range)
+      select * from count_jobs(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -298,18 +284,18 @@ CREATE FUNCTION public.count_all_pull_requests(_count integer, _start integer, _
     AS $$
 declare max int;
 begin
-    select id + _count from pull_requests order by id desc limit 1 into max;
+  select id + _count from pull_requests order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting pull_requests %', i;
-                insert into repo_counts(repository_id, pull_requests, range)
-                select * from count_pull_requests(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting pull_requests %', i;
+      insert into repo_counts(repository_id, pull_requests, range)
+      select * from count_pull_requests(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -323,17 +309,17 @@ CREATE FUNCTION public.count_all_requests(_count integer, _start integer, _end i
     AS $$
 declare max int;
 begin
-    select id + _count from requests order by id desc limit 1 into max;
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting requests %', i;
-                insert into repo_counts(repository_id, requests, range)
-                select * from count_requests(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  select id + _count from requests order by id desc limit 1 into max;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting requests %', i;
+      insert into repo_counts(repository_id, requests, range)
+      select * from count_requests(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -347,18 +333,18 @@ CREATE FUNCTION public.count_all_tags(_count integer, _start integer, _end integ
     AS $$
 declare max int;
 begin
-    select id + _count from tags order by id desc limit 1 into max;
+  select id + _count from tags order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting tags %', i;
-                insert into repo_counts(repository_id, tags, range)
-                select * from count_tags(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting tags %', i;
+      insert into repo_counts(repository_id, tags, range)
+      select * from count_tags(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -371,19 +357,19 @@ CREATE FUNCTION public.count_branches() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, branches)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, branches)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -396,11 +382,11 @@ CREATE FUNCTION public.count_branches(_start integer, _end integer) RETURNS TABL
     LANGUAGE plpgsql
     AS $$
 begin
-    return query select r.id, count(t.id) as branches, ('branches' || ':' || _start || ':' || _end)::varchar as range
-                 from branches as t
-                          join repositories as r on t.repository_id = r.id
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by r.id;
+  return query select r.id, count(t.id) as branches, ('branches' || ':' || _start || ':' || _end)::varchar as range
+  from branches as t
+  join repositories as r on t.repository_id = r.id
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by r.id;
 end;
 $$;
 
@@ -413,19 +399,19 @@ CREATE FUNCTION public.count_builds() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, builds)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, builds)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -438,10 +424,10 @@ CREATE FUNCTION public.count_builds(_start integer, _end integer) RETURNS TABLE(
     LANGUAGE plpgsql
     AS $$
 begin
-    return query select t.repository_id, count(id) as builds, ('builds' || ':' || _start || ':' || _end)::varchar as range
-                 from builds as t
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by t.repository_id;
+  return query select t.repository_id, count(id) as builds, ('builds' || ':' || _start || ':' || _end)::varchar as range
+  from builds as t
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by t.repository_id;
 end;
 $$;
 
@@ -454,19 +440,19 @@ CREATE FUNCTION public.count_commits() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, commits)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, commits)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -479,11 +465,11 @@ CREATE FUNCTION public.count_commits(_start integer, _end integer) RETURNS TABLE
     LANGUAGE plpgsql
     AS $$
 begin
-    return query select r.id, count(t.id) as commits, ('commits' || ':' || _start || ':' || _end)::varchar as range
-                 from commits as t
-                          join repositories as r on t.repository_id = r.id
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by r.id;
+  return query select r.id, count(t.id) as commits, ('commits' || ':' || _start || ':' || _end)::varchar as range
+  from commits as t
+  join repositories as r on t.repository_id = r.id
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by r.id;
 end;
 $$;
 
@@ -496,19 +482,19 @@ CREATE FUNCTION public.count_jobs() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, jobs)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, jobs)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -521,10 +507,10 @@ CREATE FUNCTION public.count_jobs(_start integer, _end integer) RETURNS TABLE(re
     LANGUAGE plpgsql
     AS $$
 begin
-    return query select t.repository_id, count(id) as jobs, ('jobs' || ':' || _start || ':' || _end)::varchar as range
-                 from jobs as t
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by t.repository_id;
+  return query select t.repository_id, count(id) as jobs, ('jobs' || ':' || _start || ':' || _end)::varchar as range
+  from jobs as t
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by t.repository_id;
 end;
 $$;
 
@@ -537,19 +523,19 @@ CREATE FUNCTION public.count_pull_requests() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, pull_requests)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, pull_requests)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -562,11 +548,11 @@ CREATE FUNCTION public.count_pull_requests(_start integer, _end integer) RETURNS
     LANGUAGE plpgsql
     AS $$
 begin
-    return query select r.id, count(t.id) as pull_requests, ('pull_requests' || ':' || _start || ':' || _end)::varchar as range
-                 from pull_requests as t
-                          join repositories as r on t.repository_id = r.id
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by r.id;
+  return query select r.id, count(t.id) as pull_requests, ('pull_requests' || ':' || _start || ':' || _end)::varchar as range
+  from pull_requests as t
+  join repositories as r on t.repository_id = r.id
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by r.id;
 end;
 $$;
 
@@ -579,19 +565,19 @@ CREATE FUNCTION public.count_requests() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, requests)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, requests)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -604,10 +590,10 @@ CREATE FUNCTION public.count_requests(_start integer, _end integer) RETURNS TABL
     LANGUAGE plpgsql
     AS $$
 begin
-    return query select t.repository_id, count(id) as requests, ('requests' || ':' || _start || ':' || _end)::varchar as range
-                 from requests as t
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by t.repository_id;
+  return query select t.repository_id, count(id) as requests, ('requests' || ':' || _start || ':' || _end)::varchar as range
+  from requests as t
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by t.repository_id;
 end;
 $$;
 
@@ -620,19 +606,19 @@ CREATE FUNCTION public.count_tags() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null is not null then
-        insert into repo_counts(repository_id, tags)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null is not null then
+    insert into repo_counts(repository_id, tags)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -645,11 +631,11 @@ CREATE FUNCTION public.count_tags(_start integer, _end integer) RETURNS TABLE(re
     LANGUAGE plpgsql
     AS $$
 begin
-    return query select r.id, count(t.id) as tags, ('tags' || ':' || _start || ':' || _end)::varchar as range
-                 from tags as t
-                          join repositories as r on t.repository_id = r.id
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by r.id;
+  return query select r.id, count(t.id) as tags, ('tags' || ':' || _start || ':' || _end)::varchar as range
+  from tags as t
+  join repositories as r on t.repository_id = r.id
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by r.id;
 end;
 $$;
 
@@ -661,12 +647,12 @@ $$;
 CREATE FUNCTION public.is_json(text) RETURNS boolean
     LANGUAGE plpgsql IMMUTABLE
     AS $_$
-BEGIN
+  BEGIN
     perform $1::json;
     return true;
-EXCEPTION WHEN invalid_text_representation THEN
+  EXCEPTION WHEN invalid_text_representation THEN
     return false;
-END
+  END
 $_$;
 
 
@@ -678,24 +664,24 @@ CREATE FUNCTION public.set_unique_number() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 DECLARE
-    disable boolean;
+  disable boolean;
 BEGIN
-    disable := 'f';
-    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-        BEGIN
-            disable := current_setting('set_unique_number_on_builds.disable');
-        EXCEPTION
-            WHEN others THEN
-                set set_unique_number_on_builds.disable = 'f';
-        END;
+  disable := 'f';
+  IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+    BEGIN
+       disable := current_setting('set_unique_number_on_builds.disable');
+    EXCEPTION
+    WHEN others THEN
+      set set_unique_number_on_builds.disable = 'f';
+    END;
 
-        IF NOT disable THEN
-            IF NEW.unique_number IS NULL OR NEW.unique_number > 0 THEN
-                NEW.unique_number := NEW.number;
-            END IF;
-        END IF;
+    IF NOT disable THEN
+      IF NEW.unique_number IS NULL OR NEW.unique_number > 0 THEN
+        NEW.unique_number := NEW.number;
+      END IF;
     END IF;
-    RETURN NEW;
+  END IF;
+  RETURN NEW;
 END;
 $$;
 
@@ -707,14 +693,14 @@ $$;
 CREATE FUNCTION public.set_updated_at() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
-BEGIN
-    IF TG_OP = 'INSERT' OR
-       (TG_OP = 'UPDATE' AND NEW.* IS DISTINCT FROM OLD.*) THEN
-        NEW.updated_at := statement_timestamp();
-    END IF;
-    RETURN NEW;
-END;
-$$;
+      BEGIN
+        IF TG_OP = 'INSERT' OR
+             (TG_OP = 'UPDATE' AND NEW.* IS DISTINCT FROM OLD.*) THEN
+          NEW.updated_at := statement_timestamp();
+        END IF;
+        RETURN NEW;
+      END;
+      $$;
 
 
 --
@@ -725,76 +711,76 @@ CREATE FUNCTION public.soft_delete_repo_data(r_id bigint) RETURNS void
     LANGUAGE plpgsql
     AS $$
 DECLARE
-    request_raw_config_ids bigint[];
-    request_raw_configuration_ids bigint[];
-    request_yaml_config_ids bigint[];
-    request_config_ids bigint[];
-    tag_ids bigint[];
-    ssl_key_ids bigint[];
-    build_config_ids bigint[];
-    job_config_ids bigint[];
-    build_ids bigint[];
-    pull_request_ids bigint[];
-    commit_ids bigint[];
-    request_ids bigint[];
-    request_payload_ids bigint[];
-    stage_ids bigint[];
-    job_ids bigint[];
+  request_raw_config_ids bigint[];
+  request_raw_configuration_ids bigint[];
+  request_yaml_config_ids bigint[];
+  request_config_ids bigint[];
+  tag_ids bigint[];
+  ssl_key_ids bigint[];
+  build_config_ids bigint[];
+  job_config_ids bigint[];
+  build_ids bigint[];
+  pull_request_ids bigint[];
+  commit_ids bigint[];
+  request_ids bigint[];
+  request_payload_ids bigint[];
+  stage_ids bigint[];
+  job_ids bigint[];
 BEGIN
-    SELECT INTO job_ids array_agg(id) FROM jobs WHERE repository_id = r_id;
-    SELECT INTO stage_ids array_agg(id) FROM stages WHERE build_id IN (SELECT id FROM builds WHERE repository_id = r_id);
-    SELECT INTO request_payload_ids array_agg(id) FROM request_payloads WHERE request_id IN (SELECT id FROM requests WHERE repository_id = r_id);
-    SELECT INTO request_ids array_agg(id) FROM requests WHERE repository_id = r_id;
-    SELECT INTO commit_ids array_agg(id) FROM commits WHERE repository_id = r_id;
-    SELECT INTO pull_request_ids array_agg(id) FROM pull_requests WHERE repository_id = r_id;
-    SELECT INTO build_ids array_agg(id) FROM builds WHERE repository_id = r_id;
-    SELECT INTO job_config_ids array_agg(id) FROM job_configs WHERE repository_id = r_id;
-    SELECT INTO build_config_ids array_agg(id) FROM build_configs WHERE repository_id = r_id;
-    SELECT INTO ssl_key_ids array_agg(id) FROM ssl_keys WHERE repository_id = r_id;
-    SELECT INTO tag_ids array_agg(id) FROM tags WHERE repository_id = r_id;
-    SELECT INTO request_config_ids array_agg(id) FROM request_configs WHERE repository_id = r_id;
-    SELECT INTO request_yaml_config_ids array_agg(id) FROM request_yaml_configs WHERE repository_id = r_id;
-    SELECT INTO request_raw_configuration_ids array_agg(id) FROM request_raw_configurations WHERE request_id = ANY(request_ids);
-    SELECT INTO request_raw_config_ids array_agg(id) FROM request_raw_configs WHERE id IN (SELECT request_raw_config_id FROM request_raw_configurations WHERE request_id = ANY(request_ids));
+  SELECT INTO job_ids array_agg(id) FROM jobs WHERE repository_id = r_id;
+  SELECT INTO stage_ids array_agg(id) FROM stages WHERE build_id IN (SELECT id FROM builds WHERE repository_id = r_id);
+  SELECT INTO request_payload_ids array_agg(id) FROM request_payloads WHERE request_id IN (SELECT id FROM requests WHERE repository_id = r_id);
+  SELECT INTO request_ids array_agg(id) FROM requests WHERE repository_id = r_id;
+  SELECT INTO commit_ids array_agg(id) FROM commits WHERE repository_id = r_id;
+  SELECT INTO pull_request_ids array_agg(id) FROM pull_requests WHERE repository_id = r_id;
+  SELECT INTO build_ids array_agg(id) FROM builds WHERE repository_id = r_id;
+  SELECT INTO job_config_ids array_agg(id) FROM job_configs WHERE repository_id = r_id;
+  SELECT INTO build_config_ids array_agg(id) FROM build_configs WHERE repository_id = r_id;
+  SELECT INTO ssl_key_ids array_agg(id) FROM ssl_keys WHERE repository_id = r_id;
+  SELECT INTO tag_ids array_agg(id) FROM tags WHERE repository_id = r_id;
+  SELECT INTO request_config_ids array_agg(id) FROM request_configs WHERE repository_id = r_id;
+  SELECT INTO request_yaml_config_ids array_agg(id) FROM request_yaml_configs WHERE repository_id = r_id;
+  SELECT INTO request_raw_configuration_ids array_agg(id) FROM request_raw_configurations WHERE request_id = ANY(request_ids);
+  SELECT INTO request_raw_config_ids array_agg(id) FROM request_raw_configs WHERE id IN (SELECT request_raw_config_id FROM request_raw_configurations WHERE request_id = ANY(request_ids));
 
-    INSERT INTO deleted_jobs SELECT * FROM jobs WHERE id = ANY(job_ids);
-    INSERT INTO deleted_stages SELECT * FROM stages WHERE id = ANY(stage_ids);
-    INSERT INTO deleted_request_payloads SELECT * FROM request_payloads WHERE id = ANY(request_payload_ids);
-    INSERT INTO deleted_requests SELECT * FROM requests WHERE id = ANY(request_ids);
-    INSERT INTO deleted_commits SELECT * FROM commits WHERE id = ANY(commit_ids);
-    INSERT INTO deleted_pull_requests SELECT * FROM pull_requests WHERE id = ANY(pull_request_ids);
-    INSERT INTO deleted_builds SELECT * FROM builds WHERE id = ANY(build_ids);
-    INSERT INTO deleted_job_configs SELECT * FROM job_configs WHERE id = ANY(job_config_ids);
-    INSERT INTO deleted_build_configs SELECT * FROM build_configs WHERE id = ANY(build_config_ids);
-    INSERT INTO deleted_ssl_keys SELECT * FROM ssl_keys WHERE id = ANY(ssl_key_ids);
-    INSERT INTO deleted_tags SELECT * FROM tags WHERE id = ANY(tag_ids);
-    INSERT INTO deleted_request_configs SELECT * FROM request_configs WHERE id = ANY(request_config_ids);
-    INSERT INTO deleted_request_yaml_configs SELECT * FROM request_yaml_configs WHERE id = ANY(request_yaml_config_ids);
-    INSERT INTO deleted_request_raw_configurations SELECT * FROM request_raw_configurations WHERE id = ANY(request_raw_configuration_ids);
-    INSERT INTO deleted_request_raw_configs SELECT * FROM request_raw_configs WHERE id = ANY(request_raw_config_ids);
+  INSERT INTO deleted_jobs SELECT * FROM jobs WHERE id = ANY(job_ids);
+  INSERT INTO deleted_stages SELECT * FROM stages WHERE id = ANY(stage_ids);
+  INSERT INTO deleted_request_payloads SELECT * FROM request_payloads WHERE id = ANY(request_payload_ids);
+  INSERT INTO deleted_requests SELECT * FROM requests WHERE id = ANY(request_ids);
+  INSERT INTO deleted_commits SELECT * FROM commits WHERE id = ANY(commit_ids);
+  INSERT INTO deleted_pull_requests SELECT * FROM pull_requests WHERE id = ANY(pull_request_ids);
+  INSERT INTO deleted_builds SELECT * FROM builds WHERE id = ANY(build_ids);
+  INSERT INTO deleted_job_configs SELECT * FROM job_configs WHERE id = ANY(job_config_ids);
+  INSERT INTO deleted_build_configs SELECT * FROM build_configs WHERE id = ANY(build_config_ids);
+  INSERT INTO deleted_ssl_keys SELECT * FROM ssl_keys WHERE id = ANY(ssl_key_ids);
+  INSERT INTO deleted_tags SELECT * FROM tags WHERE id = ANY(tag_ids);
+  INSERT INTO deleted_request_configs SELECT * FROM request_configs WHERE id = ANY(request_config_ids);
+  INSERT INTO deleted_request_yaml_configs SELECT * FROM request_yaml_configs WHERE id = ANY(request_yaml_config_ids);
+  INSERT INTO deleted_request_raw_configurations SELECT * FROM request_raw_configurations WHERE id = ANY(request_raw_configuration_ids);
+  INSERT INTO deleted_request_raw_configs SELECT * FROM request_raw_configs WHERE id = ANY(request_raw_config_ids);
 
-    DELETE FROM jobs WHERE id = ANY(job_ids);
-    DELETE FROM stages WHERE id = ANY(stage_ids);
-    DELETE FROM request_payloads WHERE id = ANY(request_payload_ids);
-    DELETE FROM requests WHERE id = ANY(request_ids);
-    DELETE FROM commits WHERE id = ANY(commit_ids);
-    DELETE FROM pull_requests WHERE id = ANY(pull_request_ids);
-    DELETE FROM builds WHERE id = ANY(build_ids);
-    DELETE FROM job_configs WHERE id = ANY(job_config_ids);
-    DELETE FROM build_configs WHERE id = ANY(build_config_ids);
-    DELETE FROM ssl_keys WHERE id = ANY(ssl_key_ids);
-    DELETE FROM tags WHERE id = ANY(tag_ids);
-    DELETE FROM request_configs WHERE id = ANY(request_config_ids);
-    DELETE FROM request_yaml_configs WHERE id = ANY(request_yaml_config_ids);
-    DELETE FROM request_raw_configurations WHERE id = ANY(request_raw_configuration_ids);
-    DELETE FROM request_raw_configs WHERE id = ANY(request_raw_config_ids);
+  DELETE FROM jobs WHERE id = ANY(job_ids);
+  DELETE FROM stages WHERE id = ANY(stage_ids);
+  DELETE FROM request_payloads WHERE id = ANY(request_payload_ids);
+  DELETE FROM requests WHERE id = ANY(request_ids);
+  DELETE FROM commits WHERE id = ANY(commit_ids);
+  DELETE FROM pull_requests WHERE id = ANY(pull_request_ids);
+  DELETE FROM builds WHERE id = ANY(build_ids);
+  DELETE FROM job_configs WHERE id = ANY(job_config_ids);
+  DELETE FROM build_configs WHERE id = ANY(build_config_ids);
+  DELETE FROM ssl_keys WHERE id = ANY(ssl_key_ids);
+  DELETE FROM tags WHERE id = ANY(tag_ids);
+  DELETE FROM request_configs WHERE id = ANY(request_config_ids);
+  DELETE FROM request_yaml_configs WHERE id = ANY(request_yaml_config_ids);
+  DELETE FROM request_raw_configurations WHERE id = ANY(request_raw_configuration_ids);
+  DELETE FROM request_raw_configs WHERE id = ANY(request_raw_config_ids);
 END;
 $$;
 
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: abuses; Type: TABLE; Schema: public; Owner: -
@@ -991,9 +977,9 @@ CREATE TABLE public.build_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
-    config jsonb,
     org_id bigint,
-    com_id bigint
+    com_id bigint,
+    config json
 );
 
 
@@ -1262,9 +1248,9 @@ CREATE TABLE public.deleted_build_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
-    config jsonb,
     org_id bigint,
-    com_id bigint
+    com_id bigint,
+    config json
 );
 
 
@@ -1353,9 +1339,9 @@ CREATE TABLE public.deleted_job_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
-    config jsonb,
     org_id bigint,
-    com_id bigint
+    com_id bigint,
+    config json
 );
 
 
@@ -1409,6 +1395,7 @@ CREATE TABLE public.deleted_pull_requests (
     title character varying,
     state character varying,
     head_repo_github_id integer,
+    head_repo_vcs_id character varying,
     head_repo_slug character varying,
     head_ref character varying,
     created_at timestamp without time zone,
@@ -1427,9 +1414,9 @@ CREATE TABLE public.deleted_request_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
-    config jsonb,
     org_id bigint,
-    com_id bigint
+    com_id bigint,
+    config json
 );
 
 
@@ -1747,21 +1734,10 @@ CREATE TABLE public.job_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
-    config jsonb,
     org_id bigint,
-    com_id bigint
+    com_id bigint,
+    config json
 );
-
-
---
--- Name: job_configs_gpu; Type: MATERIALIZED VIEW; Schema: public; Owner: -
---
-
-CREATE MATERIALIZED VIEW public.job_configs_gpu AS
- SELECT job_configs.id
-   FROM public.job_configs
-  WHERE (public.is_json((job_configs.config ->> 'resources'::text)) AND ((((job_configs.config ->> 'resources'::text))::jsonb ->> 'gpu'::text) IS NOT NULL))
-  WITH NO DATA;
 
 
 --
@@ -2074,6 +2050,7 @@ CREATE TABLE public.pull_requests (
     title character varying,
     state character varying,
     head_repo_github_id integer,
+    head_repo_vcs_id character varying,
     head_repo_slug character varying,
     head_ref character varying,
     created_at timestamp without time zone,
@@ -2189,7 +2166,8 @@ CREATE TABLE public.repositories (
     migration_status character varying,
     history_migration_status character varying,
     vcs_type character varying DEFAULT 'GithubRepository'::character varying,
-    vcs_id character varying
+    vcs_id character varying,
+    fork boolean
 );
 
 
@@ -2220,9 +2198,9 @@ CREATE TABLE public.request_configs (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     key character varying NOT NULL,
-    config jsonb,
     org_id bigint,
-    com_id bigint
+    com_id bigint,
+    config json
 );
 
 
@@ -3919,6 +3897,13 @@ CREATE UNIQUE INDEX index_crons_on_org_id ON public.crons USING btree (org_id);
 
 
 --
+-- Name: index_deleted_pull_requests_on_head_repo_vcs_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_deleted_pull_requests_on_head_repo_vcs_id ON public.deleted_pull_requests USING btree (head_repo_vcs_id);
+
+
+--
 -- Name: index_email_unsubscribes_on_repository_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3972,13 +3957,6 @@ CREATE INDEX index_invoices_on_stripe_id ON public.invoices USING btree (stripe_
 --
 
 CREATE UNIQUE INDEX index_job_configs_on_com_id ON public.job_configs USING btree (com_id);
-
-
---
--- Name: index_job_configs_on_config_resources_gpu; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_job_configs_on_config_resources_gpu ON public.job_configs USING btree (((((config ->> 'resources'::text))::jsonb ->> 'gpu'::text))) WHERE (public.is_json((config ->> 'resources'::text)) AND ((((config ->> 'resources'::text))::jsonb ->> 'gpu'::text) IS NOT NULL));
 
 
 --
@@ -4227,6 +4205,13 @@ CREATE UNIQUE INDEX index_pull_requests_on_com_id ON public.pull_requests USING 
 
 
 --
+-- Name: index_pull_requests_on_head_repo_vcs_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pull_requests_on_head_repo_vcs_id ON public.pull_requests USING btree (head_repo_vcs_id);
+
+
+--
 -- Name: index_pull_requests_on_org_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4364,6 +4349,13 @@ CREATE INDEX index_repositories_on_updated_at ON public.repositories USING btree
 --
 
 CREATE INDEX index_repositories_on_vcs_id_and_vcs_type ON public.repositories USING btree (vcs_id, vcs_type);
+
+
+--
+-- Name: index_repositories_on_vcs_type_and_vcs_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_repositories_on_vcs_type_and_vcs_id ON public.repositories USING btree (vcs_type, vcs_id);
 
 
 --
@@ -4759,6 +4751,13 @@ CREATE INDEX index_users_on_vcs_id_and_vcs_type ON public.users USING btree (vcs
 
 
 --
+-- Name: index_users_on_vcs_type_and_vcs_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_vcs_type_and_vcs_id ON public.users USING btree (vcs_type, vcs_id);
+
+
+--
 -- Name: managed_repositories_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4790,119 +4789,119 @@ CREATE INDEX user_preferences_build_emails_false ON public.users USING btree (id
 -- Name: builds set_unique_number_on_builds; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER set_unique_number_on_builds BEFORE INSERT OR UPDATE ON public.builds FOR EACH ROW EXECUTE PROCEDURE public.set_unique_number();
+CREATE TRIGGER set_unique_number_on_builds BEFORE INSERT OR UPDATE ON public.builds FOR EACH ROW EXECUTE FUNCTION public.set_unique_number();
 
 
 --
 -- Name: builds set_updated_at_on_builds; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER set_updated_at_on_builds BEFORE INSERT OR UPDATE ON public.builds FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE TRIGGER set_updated_at_on_builds BEFORE INSERT OR UPDATE ON public.builds FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 
 --
 -- Name: jobs set_updated_at_on_jobs; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER set_updated_at_on_jobs BEFORE INSERT OR UPDATE ON public.jobs FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE TRIGGER set_updated_at_on_jobs BEFORE INSERT OR UPDATE ON public.jobs FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 
 --
 -- Name: branches trg_count_branch_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_branch_deleted AFTER DELETE ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_branches('-1');
+CREATE TRIGGER trg_count_branch_deleted AFTER DELETE ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_branches('-1');
 
 
 --
 -- Name: branches trg_count_branch_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_branch_inserted AFTER INSERT ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_branches('1');
+CREATE TRIGGER trg_count_branch_inserted AFTER INSERT ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_branches('1');
 
 
 --
 -- Name: builds trg_count_build_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_build_deleted AFTER DELETE ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_builds('-1');
+CREATE TRIGGER trg_count_build_deleted AFTER DELETE ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_builds('-1');
 
 
 --
 -- Name: builds trg_count_build_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_build_inserted AFTER INSERT ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_builds('1');
+CREATE TRIGGER trg_count_build_inserted AFTER INSERT ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_builds('1');
 
 
 --
 -- Name: commits trg_count_commit_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_commit_deleted AFTER DELETE ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_commits('-1');
+CREATE TRIGGER trg_count_commit_deleted AFTER DELETE ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_commits('-1');
 
 
 --
 -- Name: commits trg_count_commit_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_commit_inserted AFTER INSERT ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_commits('1');
+CREATE TRIGGER trg_count_commit_inserted AFTER INSERT ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_commits('1');
 
 
 --
 -- Name: jobs trg_count_job_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_job_deleted AFTER DELETE ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_jobs('-1');
+CREATE TRIGGER trg_count_job_deleted AFTER DELETE ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_jobs('-1');
 
 
 --
 -- Name: jobs trg_count_job_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_job_inserted AFTER INSERT ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_jobs('1');
+CREATE TRIGGER trg_count_job_inserted AFTER INSERT ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_jobs('1');
 
 
 --
 -- Name: pull_requests trg_count_pull_request_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_pull_request_deleted AFTER DELETE ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_pull_requests('-1');
+CREATE TRIGGER trg_count_pull_request_deleted AFTER DELETE ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_pull_requests('-1');
 
 
 --
 -- Name: pull_requests trg_count_pull_request_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_pull_request_inserted AFTER INSERT ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_pull_requests('1');
+CREATE TRIGGER trg_count_pull_request_inserted AFTER INSERT ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_pull_requests('1');
 
 
 --
 -- Name: requests trg_count_request_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_request_deleted AFTER DELETE ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_requests('-1');
+CREATE TRIGGER trg_count_request_deleted AFTER DELETE ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_requests('-1');
 
 
 --
 -- Name: requests trg_count_request_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_request_inserted AFTER INSERT ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_requests('1');
+CREATE TRIGGER trg_count_request_inserted AFTER INSERT ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_requests('1');
 
 
 --
 -- Name: tags trg_count_tag_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_tag_deleted AFTER DELETE ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_tags('-1');
+CREATE TRIGGER trg_count_tag_deleted AFTER DELETE ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_tags('-1');
 
 
 --
 -- Name: tags trg_count_tag_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_tag_inserted AFTER INSERT ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_tags('1');
+CREATE TRIGGER trg_count_tag_inserted AFTER INSERT ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE FUNCTION public.count_tags('1');
 
 
 --
@@ -5529,6 +5528,14 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190913092543'),
 ('20190913092554'),
 ('20190913092565'),
-('20190920160300');
+('20190920160300'),
+('20191112000000'),
+('20191112172015'),
+('20191112172332'),
+('20191219091445'),
+('20191219091446'),
+('20200122000000'),
+('20200127000000'),
+('20200127000001');
 
 
