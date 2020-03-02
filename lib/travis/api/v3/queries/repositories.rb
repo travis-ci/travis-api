@@ -55,7 +55,7 @@ module Travis::API::V3
         query = name_filter.strip.downcase
         sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
 
-        query = ActiveRecord::Base.sanitize(query)
+        query = ActiveRecord::Base.connection.quote(query)
 
         list = list.where(["(lower(repositories.name)) LIKE ?", sql_phrase])
         list = list.select("repositories.*, similarity(lower(repositories.name), #{query}) as name_filter")
@@ -65,7 +65,7 @@ module Travis::API::V3
         query = slug_filter.strip.downcase
         sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
 
-        query = ActiveRecord::Base.sanitize(query)
+        query = ActiveRecord::Base.connection.quote(query)
 
         list = list.where(["(lower(repositories.owner_name) || '/'
                               || lower(repositories.name)) LIKE ?", sql_phrase])
