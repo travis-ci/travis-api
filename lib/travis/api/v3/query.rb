@@ -205,6 +205,8 @@ module Travis::API::V3
         collection = collection.joins(field.to_sym)
       end
 
+      line = Arel.sql(line)
+
       first ? collection.reorder(line) : collection.order(line)
     end
 

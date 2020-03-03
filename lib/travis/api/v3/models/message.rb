@@ -5,7 +5,7 @@ module Travis::API::V3
     belongs_to :subject, polymorphic: true
 
     scope :ordered, -> do
-      order(%Q{
+      order(Arel.sql(%Q{
         CASE
         WHEN level = 'alert' THEN '0'
         WHEN level = 'error' THEN '1'
@@ -13,7 +13,7 @@ module Travis::API::V3
         WHEN level = 'info' THEN '3'
         WHEN level IS NULL THEN '4'
         END
-      }.strip)
+      }).strip)
     end
   end
 end
