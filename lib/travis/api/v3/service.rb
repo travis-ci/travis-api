@@ -7,7 +7,7 @@ module Travis::API::V3
 
     def self.result_type(rt = nil)
       @result_type   = rt if rt
-      @result_type ||= parent.result_type if parent and parent.respond_to? :result_type
+      @result_type ||= module_parent.result_type if module_parent and module_parent.respond_to? :result_type
       raise 'result type not set' unless defined? @result_type
       @result_type
     end
