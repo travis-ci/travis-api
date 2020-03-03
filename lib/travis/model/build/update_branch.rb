@@ -7,7 +7,7 @@ class Build
 
     def update_last_build
       logger.info MSGS[:update] % [build.id, branch_name, repository.slug]
-      branch.update_attributes!(last_build_id: build.id)
+      branch.update!(last_build_id: build.id)
       validate_branch_last_build_id # TODO double check and remove after a few days
     end
 

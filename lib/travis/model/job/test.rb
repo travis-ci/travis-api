@@ -28,7 +28,7 @@ class Job
     event :all, after: [:propagate]
 
     def enqueue # TODO rename to queue and make it an event, simple_states should support that now
-      update_attributes!(state: :queued, queued_at: Time.now.utc)
+      update!(state: :queued, queued_at: Time.now.utc)
     end
 
     def receive(data = {})

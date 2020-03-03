@@ -21,7 +21,7 @@ describe Travis::Services::FindAdmin do
     describe 'given a user does not have access to a repository' do
       before :each do
         allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => false })
-        allow(user).to receive(:update_attributes!)
+        allow(user).to receive(:update!)
       end
 
       xit 'raises an exception' do
@@ -29,7 +29,7 @@ describe Travis::Services::FindAdmin do
       end
 
       xit 'revokes admin permissions for that user on our side' do
-        expect(user).to receive(:update_attributes!).with(:permissions => { 'admin' => false })
+        expect(user).to receive(:update!).with(:permissions => { 'admin' => false })
         ignore_exception { result }
       end
     end

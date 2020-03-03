@@ -17,7 +17,7 @@ module Travis::API::V3
       else
         github(admin).set_hook(repository, true)
       end
-      repository.update_attributes(active: true)
+      repository.update(active: true)
 
       if repository.private? || access_control.enterprise?
         if Travis::Features.deactivate_owner(:use_vcs, admin) || !admin.github?

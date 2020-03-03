@@ -17,7 +17,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
     let!(:build) { Travis::API::V3::Models::Build.create(repository: repo2, branch_id: branch.id, branch_name: 'other-branch') }
 
     before do
-      branch.update_attributes!(last_build_id: build.id)
+      branch.update!(last_build_id: build.id)
       Travis::API::V3::Models::Permission.create(repository: repo2, user: repo2.owner, pull: true)
       get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build:desc&include=repository.default_branch", {}, headers)
     end

@@ -145,7 +145,7 @@ class Travis::Api::App
         # update first login date if not set
         def update_first_login(user)
           unless user.first_logged_in_at
-            user.update_attributes(first_logged_in_at: Time.now)
+            user.update(first_logged_in_at: Time.now)
           end
         end
 
@@ -174,7 +174,7 @@ class Travis::Api::App
           }
 
           log_with_request_id("[handshake] Starting handshake")
-          
+
           if params[:code]
             unless state_ok?(params[:state])
               log_with_request_id("[handshake] Handshake failed (state mismatch)")
@@ -330,7 +330,7 @@ class Travis::Api::App
               if user
                 ensure_token_is_available
                 rename_repos_owner(user.login, info['login'])
-                user.update_attributes info
+                user.update info
               else
                 self.user = ::User.create! info
               end

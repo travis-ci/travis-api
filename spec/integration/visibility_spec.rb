@@ -7,13 +7,13 @@ describe 'visibilty', set_app: true do
   let(:status)   { response.status }
   let(:body)     { JSON.parse(response.body).deep_symbolize_keys }
 
-  before { repo.update_attributes(private: false) }
+  before { repo.update(private: false) }
   before { requests.update_all(private: true) }
   before { builds.update_all(private: true) }
   before { jobs.update_all(private: true) }
-  before { requests[0].update_attributes(private: false) }
-  before { builds[0].update_attributes(private: false) }
-  before { jobs[0].update_attributes(private: false) }
+  before { requests[0].update(private: false) }
+  before { builds[0].update(private: false) }
+  before { jobs[0].update(private: false) }
 
   let(:public_request)  { requests[0] }
   let(:public_build)    { builds[0] }
@@ -156,17 +156,17 @@ describe 'visibilty', set_app: true do
   end
 
   describe 'GET /repos/%{repo.id}' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
     it { expect(status).to eq 404 }
   end
 
   describe 'GET /repos/%{repo.id}/caches' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
     it { expect(status).to eq 404 }
   end
 
   describe 'GET /repos/%{repo.slug}' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
     it { expect(status).to eq 404 }
   end
 
