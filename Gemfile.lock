@@ -95,23 +95,22 @@ GEM
   specs:
     active_model_serializers (0.9.5)
       activemodel (>= 3.2)
-    activemodel (5.2.4.1)
-      activesupport (= 5.2.4.1)
-    activerecord (5.2.4.1)
-      activemodel (= 5.2.4.1)
-      activesupport (= 5.2.4.1)
-      arel (>= 9.0)
-    activesupport (5.2.4.1)
+    activemodel (6.0.2.1)
+      activesupport (= 6.0.2.1)
+    activerecord (6.0.2.1)
+      activemodel (= 6.0.2.1)
+      activesupport (= 6.0.2.1)
+    activesupport (6.0.2.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+      zeitwerk (~> 2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     aggregate (0.2.2)
     allocation_tracer (0.6.3)
     amq-protocol (2.3.0)
-    arel (9.0.0)
     atomic (1.1.99)
     avl_tree (1.1.3)
     axiom-types (0.1.1)
@@ -131,8 +130,8 @@ GEM
     coderay (1.1.1)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    composite_primary_keys (11.2.0)
-      activerecord (~> 5.2.1)
+    composite_primary_keys (12.0.1)
+      activerecord (~> 6.0.0)
     concurrent-ruby (1.1.6)
     connection_pool (2.2.1)
     crack (0.4.3)
@@ -406,13 +405,14 @@ GEM
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
     yard (0.9.20)
+    zeitwerk (2.2.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   active_model_serializers
-  activerecord (~> 5.2)
+  activerecord (~> 6.0)
   allocation_tracer
   bunny (~> 2.9.2)
   closeio (~> 3.5)
