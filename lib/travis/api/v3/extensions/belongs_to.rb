@@ -58,7 +58,7 @@ module Travis::API::V3
 
       def []=(key, value)
         value &&= value.sub("#{self.class.parent}::", ''.freeze) if self.class.polymorfic_foreign_types.include?(key)
-        super(key, value)
+        super(key, value) if key
       end
     end
   end
