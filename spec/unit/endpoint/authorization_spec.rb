@@ -72,7 +72,7 @@ describe Travis::Api::App::Endpoint::Authorization do
       context 'when redirect uri is correct' do
         let(:state) { 'github-state:::https://travis-ci.com/?any=params' }
 
-        it 'it does allow redirect' do
+        it 'does allow redirect' do
           response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
           expect(response.status).to eq(200)
         end
@@ -90,6 +90,25 @@ describe Travis::Api::App::Endpoint::Authorization do
 
       context 'when script tag is injected into redirect uri' do
         let(:state) { 'github-state:::https://travis-ci.com/<sCrIpt' }
+
+        it 'does not allow redirect' do
+          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          expect(response.status).to eq(401)
+          expect(response.body).to eq("target URI not allowed")
+        end
+      end
+
+      context 'when form3tech is present within redirect uri' do
+        let(:state) { 'github-state:::https://travis-ci.com/form3tech' }
+
+        it 'does allow redirect' do
+          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          expect(response.status).to eq(200)
+        end
+      end
+
+      context 'when form3tech is present within redirect uri and form tag is injected into redirect uri' do
+        let(:state) { 'github-state:::https://travis-ci.com/form3tech/<form' }
 
         it 'does not allow redirect' do
           response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"

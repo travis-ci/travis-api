@@ -448,7 +448,12 @@ class Travis::Api::App
 
         def target_ok?(target_origin)
           test_target_origin = URI.decode(target_origin).downcase
-          return if SUSPICIOUS_CODES.any? { |word| test_target_origin.include?(word) }
+          SUSPICIOUS_CODES.each do |word|
+            if word == "form"
+              test_target_origin = test_target_origin.gsub("form3tech", "")
+            end
+            return if test_target_origin.include?(word)
+          end
           return unless uri = Addressable::URI.parse(target_origin)
           if allowed_https_targets.include?(uri.host)
             uri.scheme == 'https'
