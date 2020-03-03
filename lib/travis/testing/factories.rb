@@ -64,7 +64,7 @@ FactoryBot.define do
 
   factory :repository, :parent => :repository_without_last_build do
     after(:create) do |repo|
-      repo.last_build ||= FactoryBot.create(:build, repository: repo)
+      FactoryBot.create(:build, repository: repo)
     end
   end
 
