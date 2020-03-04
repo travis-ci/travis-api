@@ -9,12 +9,12 @@ module Travis::API::V3
     end
 
     def initialize(cache, repo)
-      puts "Travis::API::V3::Models::Cache.initialize cache: #{cache.to_s} #{cache.key.to_s}"
+      puts "Travis::API::V3::Models::Cache.initialize cacheL"
       @repo = repo
       @repository_id = repo.id
       @size = Integer(cache.content_length)
       @name = cache.name.to_s.split('/').last
-      @branch =  cache.key[%r{[^/]+(?:\/\/[^/]*)*}, 1]
+      @branch =  cache.key[%r{^(.*)/(.*)/[^/]+$}, 2]
       @last_modified = cache.last_modified
       @source = cache.source
       @key = cache.key
