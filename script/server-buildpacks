@@ -4,6 +4,9 @@
 # or if the space-delimited list
 # $PGBOUNCER_ENABLED_FOR_DYNOS contains $DYNO
 
+# for api running in k8s (when PGBOUNCER_SERVICE_HOST is set)
+# it replace the DATABASE_URL with pgbouncer service name
+
 cd "$(dirname "$0")/.."
 
 for d in $PGBOUNCER_ENABLED_FOR_DYNOS; do
@@ -28,6 +31,34 @@ cmd="script/server"
 if [ "$PGBOUNCER_ENABLED" = 'true' ]; then
   export PGBOUNCER_PREPARED_STATEMENTS=false
   cmd="bin/start-pgbouncer $cmd"
+fi
+
+if [ -n "$PGBOUNCER_SERVICE_HOST" ]; then
+  echo "info: using k8s pgbouncer service"
+  PROTO="$(echo $DATABASE_URL | grep :// | sed -e's,^\(.*://\).*,\1,g')"
+  DB_URL="$(echo $DATABASE_URL | sed -e s,$PROTO,,g)"
+
+  # extract the user and password (if any)
+  USER_PASS="$(echo $DB_URL | grep @ | cut -d@ -f1)"
+  DB_PASSWORD="$(echo $USER_PASS | grep : | cut -d: -f2)"
+  if [ -n "$DB_PASSWORD" ]; then
+    DB_USER=$(echo $USER_PASS | grep : | cut -d: -f1)
+  else
+    DB_USER=$USER_PASS
+  fi
+
+  # extract the host
+  HOSTPORT=`echo $DB_URL | sed -e s,$USER_PASS@,,g | cut -d/ -f1`
+  PORT=`echo $HOSTPORT | grep : | cut -d: -f2`
+  if [ -n "$PORT" ]; then
+    DB_HOST=`echo $HOSTPORT | grep : | cut -d: -f1`
+    DB_PORT=$PORT
+  else
+    DB_HOST=$HOSTPORT
+  fi
+
+  DB_NAME="$(echo $DB_URL | grep / | cut -d/ -f2-)"
+  DATABASE_URL=$PROTO$DB_USER:$DB_PASSWORD@pgbouncer:$DB_PORT/$DB_NAME
 fi
 
 exec $cmd
