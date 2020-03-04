@@ -77,14 +77,6 @@ GIT
     travis-lock (0.1.1)
 
 GIT
-  remote: https://github.com/travis-ci/travis-settings
-  revision: debef595a6a54b082176edba630fdb5ee9d705af
-  specs:
-    travis-settings (0.0.1)
-      activemodel
-      virtus
-
-GIT
   remote: https://github.com/travis-ci/travis-support
   revision: 4dda53ffa96b804db22c261551256caa18c4a2cc
   specs:
@@ -480,7 +472,6 @@ DEPENDENCIES
   travis-github_apps!
   travis-lock!
   travis-rollout (~> 0.0.2)
-  travis-settings!
   travis-support!
   unicorn
   useragent
