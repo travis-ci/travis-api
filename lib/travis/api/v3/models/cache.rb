@@ -9,6 +9,7 @@ module Travis::API::V3
     end
 
     def initialize(cache, repo)
+      puts "Travis::API::V3::Models::Cache.initialize cache: #{cache.to_s} #{cache.key.to_s}"
       @repo = repo
       @repository_id = repo.id
       @size = Integer(cache.content_length)
