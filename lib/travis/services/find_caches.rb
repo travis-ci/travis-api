@@ -167,8 +167,6 @@ module Travis
           if items = storage.list_objects(bucket_name, prefix: prefix).items
             items.each { |object| cache_objects << GcsWrapper.new(storage, bucket_name, repo, object) }
           end
-
-          puts "cache_objects: #{cache_objects.to_s}"
         end
 
         def cache_options
