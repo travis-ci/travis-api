@@ -111,6 +111,7 @@ class Repository < Travis::Model
 
   def name_from_url
     return url.split('/')[1].gsub('.git', '') if vcs_type == 'BitbucketRepository' && url && url.split('/')[1]
+    name
   end
 
   def api_url
