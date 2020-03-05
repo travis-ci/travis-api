@@ -10,12 +10,9 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
   let(:stubbed_response_body) { JSON.dump(expected_data) }
   let(:stubbed_response_headers) {{ content_type: 'application/json' }}
 
-  let!(:stubbed_request) do
-    stub_request(:get, insights_url).with(headers: { 'Authorization' => "Token token=\"#{Travis.config.insights.auth_token}\""}).to_return(status: stubbed_response_status, body: stubbed_response_body, headers: stubbed_response_headers)
-  end
-
-  before do
+  before(:each) do
     Travis.config.host = "travis-ci.#{site}"
+    stubbed_request
   end
 
   subject(:response) { get("/v3/insights/metrics?owner_type=#{owner_type}&owner_id=#{owner_id}&private=#{passed_private_flag}&rest-of-params=value", {}, headers) }
@@ -26,6 +23,10 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
     end
 
     it 'requests the metrics from the insights service' do
+      response
+      response
+      response
+      response
       expect(response.status).to eq(200)
       response_data = JSON.parse(response.body)
       expect(response_data['data']).to eq(expected_data)
@@ -351,5 +352,9 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
         end
       end
     end
+  end
+
+  def stubbed_request
+    stub_request(:get, insights_url).with(headers: { 'Authorization' => "Token token=\"#{Travis.config.insights.auth_token}\""}).to_return(status: stubbed_response_status, body: stubbed_response_body, headers: stubbed_response_headers)
   end
 end

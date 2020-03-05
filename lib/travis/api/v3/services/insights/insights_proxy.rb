@@ -3,6 +3,7 @@ module Travis::API::V3
     def run!
       check_owner_class
       proxy! do |request|
+        pp private_flag
         request.params.merge!(private: private_flag) unless Travis.config.org?
       end
     end
