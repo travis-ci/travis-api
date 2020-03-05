@@ -106,11 +106,11 @@ class Repository < Travis::Model
   end
 
   def slug
-    @slug ||= [owner.login, name_from_url].join('/')
+    @slug ||= [owner.login, name_from_vcs_slug].join('/')
   end
 
-  def name_from_url
-    return url.split('/')[1].gsub('.git', '') if vcs_type == 'BitbucketRepository' && url && url.split('/')[1]
+  def name_from_vcs_slug
+    return vcs_slug.split('/')[1] if vcs_slug && vcs_slug.split('/')[1]
     name
   end
 
