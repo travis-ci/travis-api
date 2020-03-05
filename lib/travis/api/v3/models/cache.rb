@@ -9,7 +9,6 @@ module Travis::API::V3
     end
 
     def initialize(cache, repo)
-      puts "cache.key: #{cache.key}"
       @repo = repo
       @repository_id = repo.id
       @size = Integer(cache.content_length)
