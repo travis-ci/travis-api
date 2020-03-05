@@ -29,6 +29,6 @@ describe Travis::Api::Serialize::V2::Http::Repository, 'using Travis::Services::
 
   it 'queries' do
     require 'pry'; binding.pry
-    expect { data }.to issue_queries(2)
+    expect { data }.to issue_queries(1)
   end
 end
