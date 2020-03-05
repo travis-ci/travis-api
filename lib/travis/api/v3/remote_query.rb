@@ -62,7 +62,6 @@ module Travis::API::V3
       objects = []
       s3_objects.each { |object| objects << object } if s3_config
       gcs_objects.each { |object| objects << object } if gcs_config
-      puts "objects in repote_query: #{objects}"
       objects
     end
 
