@@ -114,7 +114,9 @@ module Travis::API::V3
     end
 
     def settings
-      super || {}
+      return super if super.is_a?(Hash)
+      return JSON.parse(super) if super.is_a?(String)
+      return {} if super.nil?
     end
 
     def user_settings

@@ -5,9 +5,12 @@ module Travis::API::V3
     def sync(parent, attr)
       @parent, @attr = parent, attr
       @sync = -> do
-        previous = @parent[@attr] || {}
-        @parent[@attr] = previous.merge(to_h)
-        @parent.save!
+
+        if attr
+          previous = @parent.send(@attr) || {}
+          @parent[@attr] = previous.merge(to_h)
+          @parent.save!
+        end
       end
     end
 
