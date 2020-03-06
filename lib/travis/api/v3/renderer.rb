@@ -51,6 +51,7 @@ module Travis::API::V3
       when *PRIMITIVE             then value
       when Time, DateTime         then value.strftime('%Y-%m-%dT%H:%M:%SZ')
       when Model                  then render_model(value, **options)
+      when Build                  then render_model(value, **options)
       when ActiveRecord::Relation then render_value(value.to_a, **options)
       when ActiveRecord::Associations::CollectionProxy then render_value(value.to_a, **options)
       when Travis::Settings::EncryptedValue then value.decrypt
