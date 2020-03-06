@@ -21,29 +21,16 @@ module Services
         end
       end
 
-      def access_token
-        travis_config.auth_keys.first
-      end
-
-      def host
-        travis_config.legacy_host
-      end
-
       def http_request
         invoice_type = @type == "refund" ? "&type=refunds" : ""
-        uri = URI(host + "/report?from=#{@from}&to=#{@to}" + invoice_type)
+        uri = URI(Services::Billing_v2_authentication.new.billing_url + "/report?from=#{@from}&to=#{@to}" + invoice_type)
         http = Net::HTTP.new(uri.host, uri.port)
         request = Net::HTTP::Get.new(uri)
         request["Content-Type"] = 'application/x-www-form-urlencoded'
-        request["Authorization"] = 'Token token=' + access_token
+        request["Authorization"] = 'Token token=' + Services::Billing_v2_authentication.new.billing_auth_key
         request = http.request(request)
         CSV.parse( request.read_body.gsub(/[\r\t]/, ''), col_sep: ',')
       end
-
-      def travis_config
-        TravisConfig.load
-      end
-
     end
   end
 end

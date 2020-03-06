@@ -44,16 +44,16 @@
 
     <dt class="info-label">VCS Token</dt>
     <dd class="inline">
-      <% if @display_gh_token %>
-        <pre><%= @user.vcs_oauth_token %></pre>
-        <%= button_to 'Hide', hide_token_user_path(@user), class: 'button', form_class: 'hide_gh_token' %>
-      <% else %>
-        <%= hidden(@user, :vcs_oauth_token) %>
-        <%= form_tag({action: 'display_token', controller: "users", id: @user.id, method: 'post'}, {class: 'display_gh_token'}) do %>
-          <%= render partial: "shared/otp" %>
-          <%= submit_tag 'Display', class: 'button otp', id: "display_gh_token" %>
-        <% end %>
-      <% end %>
+      <%# if @display_gh_token %>
+<!--        <pre><%#= @user.vcs_oauth_token %></pre>-->
+        <%#= button_to 'Hide', hide_token_user_path(@user), class: 'button', form_class: 'hide_gh_token' %>
+      <%# else %>
+        <%#= hidden(@user, :vcs_oauth_token) %>
+        <%#= form_tag({action: 'display_token', controller: "users", id: @user.id, method: 'post'}, {class: 'display_gh_token'}) do %>
+          <%#= render partial: "shared/otp" %>
+          <%#= submit_tag 'Display', class: 'button otp', id: "display_gh_token" %>
+        <%# end %>
+      <%# end %>
     </dd>
 
     <dt class="info-label">VCS Scopes</dt>
@@ -101,7 +101,7 @@
       <dt class="info-label">Enterprise Status</dt>
       <dd class="inline">
         <p>
-          <%= @user.enterprise_status %>
+          <%#= @user.enterprise_status %>
           <% if @user.suspended? %>
             <div class="call-to-action"><%= button_to "Unsuspend", unsuspend_user_path(@user), class: "button", data: { disable_with: 'Loading' } %>
           <% else %>

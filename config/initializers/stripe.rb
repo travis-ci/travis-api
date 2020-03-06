@@ -1,5 +1,5 @@
-Rails.configuration.stripe = {
-	:token => Travis::Config.load.stripe.token
-}
+# Rails.configuration.stripe = {
+# 	:token => Travis::Config.load.stripe.token
+# }
 
-Stripe.api_key = Rails.configuration.stripe[:token]
+# Stripe.api_key = Rails.configuration.stripe[:token]
