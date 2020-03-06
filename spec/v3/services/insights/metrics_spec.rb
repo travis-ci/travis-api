@@ -159,10 +159,7 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
         before do
           # we need to use the v3 model to manipulate the preferences
           v3 = Travis::API::V3::Models::User.find requested_user.id
-          pp v3.preferences
-          pp preference_value
           v3.preferences.update(:private_insights_visibility, preference_value)
-          pp v3.preferences
         end
 
         context 'themselves' do
