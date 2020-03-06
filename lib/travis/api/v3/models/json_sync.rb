@@ -8,7 +8,7 @@ module Travis::API::V3
 
         if attr
           previous = @parent.send(@attr) || {}
-          @parent[@attr] = previous.merge(to_h)
+          @parent[@attr] = previous.to_h.merge(to_h)
           @parent.save!
         end
       end
