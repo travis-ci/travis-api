@@ -46,15 +46,22 @@ module Travis::API::V3
           # if a query string parameter skip_count=true is given,
           # we pretend there is another full page of results,
           # which populates `@pagination.next`.
-          count = offset + (limit * 2)
+          result.resource = result.resource.limit(limit)   unless limit  == 0
+          result.resource = result.resource.offset(offset) unless offset == 0
+
+          count = offset + result.resource.length
+          count += 1 if result.resource.length == limit
         elsif ENV['PAGINATION_COUNT_CACHE_ENABLED'] == 'true'
           count = CountCache.new(result).count
+
+          result.resource = result.resource.limit(limit)   unless limit  == 0
+          result.resource = result.resource.offset(offset) unless offset == 0
         else
           count = result.resource.count(:all)
-        end
 
-        result.resource = result.resource.limit(limit)   unless limit  == 0
-        result.resource = result.resource.offset(offset) unless offset == 0
+          result.resource = result.resource.limit(limit)   unless limit  == 0
+          result.resource = result.resource.offset(offset) unless offset == 0
+        end
 
         pagination_info = {
           limit:  limit,
