@@ -165,6 +165,10 @@ module Travis::API::V3
       )
     end
 
+    def installation?
+      !!installation
+    end
+
     def installation
       owner&.installation
     end
