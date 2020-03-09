@@ -48,7 +48,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
             { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds",    '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'maximum_number_of_builds',    'value' => 0 },
             { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes",          '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'auto_cancel_pushes',          'value' => false },
             { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests",   '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'auto_cancel_pull_requests',   'value' => false },
-            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/config_validation",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'config_validation',           'value' => true },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/config_validation",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'config_validation',           'value' => false },
           ]
         )
       end
@@ -85,7 +85,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
           { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/maximum_number_of_builds",    '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'maximum_number_of_builds',    'value' => 0 },
           { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes",          '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'auto_cancel_pushes',          'value' => false },
           { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests",   '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'auto_cancel_pull_requests',   'value' => false },
-          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/config_validation",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'config_validation',           'value' => true },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/config_validation",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => false }, 'name' => 'config_validation',           'value' => false },
         ]
       )
     end
