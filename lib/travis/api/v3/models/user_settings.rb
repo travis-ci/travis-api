@@ -30,6 +30,7 @@ module Travis::API::V3
     JAN_15 = Date.parse('2020-01-15')
 
     def config_validation?
+      return false if ENV['RACK_ENV'] == 'test'
       new_repo? || old_repo?
     end
 
