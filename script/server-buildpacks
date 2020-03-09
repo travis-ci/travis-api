@@ -34,6 +34,7 @@ if [ "$PGBOUNCER_ENABLED" = 'true' ]; then
 fi
 
 if [ -n "$PGBOUNCER_SERVICE_HOST" ]; then
+  export PGBOUNCER_PREPARED_STATEMENTS=false
   echo "info: using k8s pgbouncer service"
   PROTO="$(echo $DATABASE_URL | grep :// | sed -e's,^\(.*://\).*,\1,g')"
   DB_URL="$(echo $DATABASE_URL | sed -e s,$PROTO,,g)"
@@ -47,18 +48,13 @@ if [ -n "$PGBOUNCER_SERVICE_HOST" ]; then
     DB_USER=$USER_PASS
   fi
 
-  # extract the host
-  HOSTPORT=`echo $DB_URL | sed -e s,$USER_PASS@,,g | cut -d/ -f1`
-  PORT=`echo $HOSTPORT | grep : | cut -d: -f2`
-  if [ -n "$PORT" ]; then
-    DB_HOST=`echo $HOSTPORT | grep : | cut -d: -f1`
-    DB_PORT=$PORT
-  else
-    DB_HOST=$HOSTPORT
-  fi
-
   DB_NAME="$(echo $DB_URL | grep / | cut -d/ -f2-)"
-  DATABASE_URL=$PROTO$DB_USER:$DB_PASSWORD@pgbouncer:$DB_PORT/$DB_NAME
+  if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
+  then
+    DATABASE_URL=$PROTO$DB_USER:$DB_PASSWORD@pgbouncer:5432/$DB_NAME?prepared_statements=false
+  else
+    DATABASE_URL=$PROTO$DB_USER:$DB_PASSWORD@pgbouncer:5432/$DB_NAME
+  fi
 fi
 
 exec $cmd
