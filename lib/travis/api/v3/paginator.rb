@@ -44,7 +44,8 @@ module Travis::API::V3
           # slow.
           #
           # if a query string parameter skip_count=true is given,
-          # we pretend there is another full page of results,
+          # AND the resource length is equal to its limit,
+          # we pretend there is another page of results,
           # which populates `@pagination.next`.
           result.resource = result.resource.limit(limit)   unless limit  == 0
           result.resource = result.resource.offset(offset) unless offset == 0
