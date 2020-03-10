@@ -88,9 +88,9 @@ class Rack::Attack
   ####
   # Ban based on: IP address or access token
   # Ban time:     1 hour
-  # Ban after:    10 POST requests within 30 seconds
+  # Ban after:    50 POST requests within 30 seconds
   blocklist('spamming_post_requests') do |request|
-    Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 10, findtime: 30.seconds, bantime: bantime(1.hour)) do
+    Rack::Attack::Allow2Ban.filter(request.identifier, maxretry: 50, findtime: 30.seconds, bantime: bantime(1.hour)) do
       request.post? and not POST_SAFELIST.include? request.path
     end
   end
