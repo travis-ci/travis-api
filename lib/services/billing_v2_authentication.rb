@@ -9,19 +9,6 @@ module Services
     def update_address(subscription_id, address_data)
       response = connection.patch("/subscriptions/#{subscription_id}/address", address_data)
       handle_subscription_response(response)
-      end
-
-    # def csv_data(from, to invoice_type)
-    #   response = connection.patch("/report?from=#{from}&to=#{to}" + invoice_type)
-    #   handle_subscription_response(response)
-    # end
-
-    def billing_url
-      travis_config.billing.url || raise(ConfigurationError, 'No billing url configured')
-    end
-
-    def billing_auth_key
-      travis_config.billing.auth_key || raise(ConfigurationError, 'No billing auth key configured')
     end
 
     private
@@ -44,24 +31,22 @@ module Services
     end
 
     def connection
-      # binding.pry
-      @connection ||= Faraday.new(url: billing_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
+      @connection ||= Faraday.new(url: billing_url) do |conn|
         conn.basic_auth '_', billing_auth_key
         conn.headers['X-Travis-User-Id'] = @subscription.owner_id.to_s
-        conn.headers['Content-Type'] = 'application/json'
-        conn.request :json
-        conn.response :json
-        conn.adapter :net_http
+        conn.request :url_encoded
+        conn.response :json, content_type: 'application/x-www-form-urlencoded'
+        conn.adapter Faraday.default_adapter
       end
     end
 
-    # def billing_url
-    #   travis_config.billing.url || raise(ConfigurationError, 'No billing url configured')
-    # end
-    #
-    # def billing_auth_key
-    #   travis_config.billing.auth_key || raise(ConfigurationError, 'No billing auth key configured')
-    # end
+    def billing_url
+      travis_config.billing.url || raise(ConfigurationError, 'No billing url configured')
+    end
+
+    def billing_auth_key
+      travis_config.billing.auth_key || raise(ConfigurationError, 'No billing auth key configured')
+    end
 
     def travis_config
       TravisConfig.load

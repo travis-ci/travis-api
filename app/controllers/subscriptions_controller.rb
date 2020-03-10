@@ -27,8 +27,6 @@ class SubscriptionsController < ApplicationController
 			if changes.any?
 
         begin
-          # binding.pry
-
           Services::BillingUpdate.new(@subscription , subscription_params).call
           message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
           flash[:notice] = message.sub(/./) {$&.upcase}
