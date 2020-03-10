@@ -54,7 +54,7 @@ module Travis::API::V3
 
       def client
         Faraday.new(config.url, ssl: config.ssl) do |c|
-          c.headers['Authorization'] = "internal #{config.internal_token}"
+          c.headers['Authorization'] = "internal #{config.token}"
           c.headers['Content-Type'] = 'application/json'
           c.headers['Accept'] = 'application/json'
           c.headers['X-Source'] = 'travis-ci/travis-api'
@@ -66,7 +66,8 @@ module Travis::API::V3
       def handle_errors(resp)
         case resp.status
         when 400 then raise Error, resp.body
-        when 500 then raise Error, 'travis-yml application error'
+        when 401 then raise Error, 'unable to authenticate with Yml'
+        when 500 then raise Error, 'Yml application error'
         end
       end
 
