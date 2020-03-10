@@ -25,6 +25,7 @@ module Travis::API::V3
       def data
         data = { repo: repo_data }
         data = data.merge(params)
+        data[:ref] ||= repo.default_branch.name
         data[:data] ||= {}
         data[:data][:repo] ||= repo.slug
         data[:data][:fork] ||= repo.fork?
