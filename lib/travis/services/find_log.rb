@@ -1,4 +1,5 @@
 require 'travis/services/base'
+require 'byebug'
 
 module Travis
   module Services
@@ -12,6 +13,7 @@ module Travis
       end
 
       private def result
+        byebug
         if params[:id]
           # as we don't have the job id, we first need to get the log to check
           # permissions

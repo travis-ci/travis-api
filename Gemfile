@@ -96,3 +96,5 @@ group :development do
   gem 'rb-fsevent', '~> 0.9.1'
 end
 
+
+gem "byebug", "~> 10.0", :groups => [:development, :test, :staging]

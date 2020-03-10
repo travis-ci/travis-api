@@ -416,6 +416,7 @@ DEPENDENCIES
   activerecord (~> 4.2)
   allocation_tracer
   bunny (~> 2.9.2)
+  byebug (~> 10.0)
   closeio (~> 3.5)
   coder (~> 0.4.0)
   composite_primary_keys (~> 8.0)
