@@ -6,7 +6,11 @@ module Travis::API::V3
     def find
       return Models::User.find_by_id(id) if id
       return Models::User.find_by(vcs_id: github_id) || Models::User.find_by(github_id: github_id) if github_id
-      return Models::User.where('lower(login) = ?'.freeze, login.downcase).order("id DESC").first if login
+      return Models::User.where(
+        'lower(login) = ? and lower(vcs_type) = ?'.freeze,
+        login.downcase,
+        provider.downcase + 'user'
+      ).order("id DESC").first if login
       return find_by_email(email) if email
       raise WrongParams, 'missing user.id or user.login'.freeze
     end
@@ -30,5 +34,12 @@ module Travis::API::V3
         user
       end
     end
+
+    private
+
+    def provider
+      params['provider'] || 'github'
+    end
+
   end
 end

@@ -269,7 +269,8 @@ module Travis
           first_logged_in_at: Time.now.utc - 5400,
           subscribed?: false,
           education: false,
-          github?: true
+          github?: true,
+          vcs_type: 'GithubUser'
         )
       end
 

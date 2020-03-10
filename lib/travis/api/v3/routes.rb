@@ -102,7 +102,7 @@ module Travis::API::V3
     end
 
     resource :owner do
-      route '/owner/({owner.login}|{user.login}|{organization.login}|github_id/{owner.github_id})'
+      route '/owner/(github_id/{github_id}|({provider}/)?{login})'
       get :find
 
       resource :repositories do
@@ -123,7 +123,7 @@ module Travis::API::V3
 
     resource :repository do
       capture id: :digit, slug: %r{[^/]+%2[fF][^/]+}
-      route '/repo/({repository.id}|{repository.slug})'
+      route '/repo/({provider}/)?({repository.id}|{repository.slug})'
       get :find
 
       post :activate, '/activate'

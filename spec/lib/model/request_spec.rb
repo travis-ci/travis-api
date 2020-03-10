@@ -1,5 +1,6 @@
 describe Request do
-  let(:repo)         { Repository.new(owner_name: 'travis-ci', name: 'travis-core') }
+  let(:owner)        { User.new(login: 'travis-ci') }
+  let(:repo)         { Repository.new(owner_name: 'travis-ci', name: 'travis-core', owner: owner) }
   let(:commit)       { Commit.new(commit: '12345678') }
   let(:request)      { Request.new(repository: repo, commit: commit, pull_request: pull_request) }
   let(:pull_request) { nil }

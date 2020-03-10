@@ -44,6 +44,7 @@ module Travis
                   'first_logged_in_at' => format_date(user.first_logged_in_at),
                   'channels'           => channels,
                   'allow_migration'    => allow_migration,
+                  'vcs_type'           => user.vcs_type
                 }
 
                 if hmac_secret_key

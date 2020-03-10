@@ -19,6 +19,7 @@ describe Travis::Api::Serialize::V2::Http::User do
       'first_logged_in_at' => json_format_time(Time.now.utc - 1.5.hours),
       'channels'           => ["private-user-1"],
       'allow_migration'    => false,
+      'vcs_type'           => 'GithubUser'
     }
   }
 

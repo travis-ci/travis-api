@@ -183,7 +183,7 @@ describe Repository do
   end
 
   describe 'api_url' do
-    let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
+    let(:repo) { Repository.new(owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'travis-ci') }
 
     before :each do
       Travis.config.github.api_url = 'https://api.github.com'
@@ -196,7 +196,7 @@ describe Repository do
 
   describe 'source_url' do
     describe 'default source endpoint' do
-      let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
+      let(:repo) { Repository.new(owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'travis-ci') }
 
       before :each do
         Travis.config.github.source_host = nil
@@ -214,7 +214,7 @@ describe Repository do
     end
 
     describe 'custom source endpoint' do
-      let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
+      let(:repo) { Repository.new(owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'travis-ci') }
 
       before :each do
         Travis.config.github.source_host = 'localhost'
