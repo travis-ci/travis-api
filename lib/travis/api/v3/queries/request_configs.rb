@@ -65,7 +65,7 @@ module Travis::API::V3
 
       def handle_errors(resp)
         case resp.status
-        when 400 then raise Error, resp.body
+        when 400 then raise ClientError, resp.body
         when 401 then raise Error, 'unable to authenticate with Yml'
         when 500 then raise Error, 'Yml application error'
         end
