@@ -83,7 +83,8 @@ module Travis::API::V3
     end
 
     def included_owner?
-      included.any? { |i| i.is_a? Model and i.class.polymorphic_name == model.owner_type and i.id == model.owner_id }
+      # included.any? { |i| i.is_a? Model and i.class.polymorphic_name == model.owner_type and i.id == model.owner_id }
+      included.any? { |i| i.is_a? Model and i.class.polymorphic_name == model.owner_type and i and i.id == model.owner_id }
     end
 
     def owner_type
