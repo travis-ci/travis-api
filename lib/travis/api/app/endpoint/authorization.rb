@@ -91,11 +91,9 @@ class Travis::Api::App
           halt 422, { "error" => "Must pass 'github_token' parameter" }
         end
 
-        if Travis::Features.enabled_for_all?(:vcs_login)
-          renew_access_token(token: params[:github_token], app_id: 1, provider: :github)
-        else
-          { 'access_token' => github_to_travis(params[:github_token], app_id: 1, drop_token: true) }
-        end
+        # For new provider method
+        # renew_access_token(token: params[:github_token], app_id: 1, provider: :github)
+        { 'access_token' => github_to_travis(params[:github_token], app_id: 1, drop_token: true) }
       end
 
       # Endpoint for making sure user authorized Travis CI to access GitHub.
@@ -164,7 +162,7 @@ class Travis::Api::App
           }
 
           log_with_request_id("[handshake] Starting handshake")
-          
+
           if params[:code]
             unless state_ok?(params[:state])
               log_with_request_id("[handshake] Handshake failed (state mismatch)")
