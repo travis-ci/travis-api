@@ -44,6 +44,7 @@ module Travis
                   'first_logged_in_at' => format_date(user.first_logged_in_at),
                   'channels'           => channels,
                   'allow_migration'    => allow_migration,
+                  'vcs_type'           => user.vcs_type
                 }
 
                 if hmac_secret_key
@@ -54,7 +55,7 @@ module Travis
               end
 
             def check_scopes
-              return Github::Oauth.correct_scopes?(user) unless Travis::Features.enabled_for_all?(:vcs_login)
+              return Github::Oauth.correct_scopes?(user) if user.github?
 
               ::Travis::RemoteVCS::User.new.check_scopes(user_id: user.id)
             rescue ::Travis::RemoteVCS::ResponseError

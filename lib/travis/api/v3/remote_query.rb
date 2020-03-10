@@ -103,7 +103,7 @@ module Travis::API::V3
     end
 
     def gcs_bucket
-       gcs_connection.list_objects(gcs_config[:bucket_name], prefix: prefix)
+      gcs_connection.list_objects(gcs_config[:bucket_name], prefix: prefix)
     end
 
     def gcs_objects

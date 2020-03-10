@@ -47,7 +47,7 @@ gem 'memory_profiler'
 gem 'allocation_tracer'
 
 gem 'redlock'
-gem 'rake', '~> 0.9.2'
+gem 'rake', '~> 12.3.3'
 
 gem 'libhoney'
 gem 'opencensus'

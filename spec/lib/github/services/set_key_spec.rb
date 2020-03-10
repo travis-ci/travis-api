@@ -5,7 +5,8 @@ describe Travis::Github::Services::SetKey do
   let(:key_path)  { "#{keys_path}/1" }
   let(:keys)      { [{ 'id' => 1, 'key' => SSL_KEYS[:public_base64], '_links' => { 'self' => { 'href' => key_path } } }] }
   let(:key)       { SslKey.new(SSL_KEYS.slice(:private_key, :public_key)) }
-  let(:repo)      { Repository.new(owner_name: 'travis-ci', name: 'travis-core', key: key) }
+  let(:owner)     { User.new(login: 'travis-ci') }
+  let(:repo)      { Repository.new(owner_name: 'travis-ci', name: 'travis-core', key: key, owner: owner) }
 
   let(:params)    { { id: repo.id } }
   let(:service)   { described_class.new(user, params) }

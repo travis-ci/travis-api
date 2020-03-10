@@ -40,7 +40,12 @@ module Travis::API::V3
     end
 
     def slug
-      @slug ||= "#{owner_name}/#{name}"
+      @slug ||= vcs_slug || "#{owner_name}/#{name}"
+    end
+
+    def vcs_name
+      return vcs_slug.split('/')[1] if vcs_slug && vcs_slug.split('/')[1]
+      name
     end
 
     def default_branch_name
@@ -158,6 +163,10 @@ module Travis::API::V3
         private_pem: Travis.config[:github_apps][:private_pem],
         redis: Travis.config[:redis].to_h,
       )
+    end
+
+    def installation?
+      !!installation
     end
 
     def installation

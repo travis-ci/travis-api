@@ -29,6 +29,7 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
       'correct_scopes'     => true,
       'channels'           => ["private-user-1"],
       "allow_migration"    => false,
+      "vcs_type"           => "GithubUser",
     })
   end
 

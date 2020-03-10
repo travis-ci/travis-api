@@ -39,9 +39,9 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   end
 
   describe 'slug_filter' do
-    let(:web_repo)  { FactoryBot.create(:repository, owner_name: 'travis-ci', name: 'travis-web') }
-    let(:api_repo)  { FactoryBot.create(:repository, owner_name: 'travis-ci', name: 'travis-api') }
-    let(:long_name) { FactoryBot.create(:repository, owner_name: 'this-is', name: 'rather-vague') }
+    let(:web_repo)  { FactoryBot.create(:repository, owner_name: 'travis-ci', name: 'travis-web', owner: FactoryBot.create(:org, name: 'travis-ci', login: 'travis-ci')) }
+    let(:api_repo)  { FactoryBot.create(:repository, owner_name: 'travis-ci', name: 'travis-api', owner: FactoryBot.create(:org, name: 'travis-ci', login: 'travis-ci')) }
+    let(:long_name) { FactoryBot.create(:repository, owner_name: 'this-is', name: 'rather-vague', owner: FactoryBot.create(:org, name: 'this-is', login: 'this-is')) }
 
     before { Travis::API::V3::Models::Permission.create(repository: web_repo, user: user, pull: true, push: true, admin: true) }
     before { Travis::API::V3::Models::Permission.create(repository: api_repo, user: user, pull: true, push: true, admin: true) }

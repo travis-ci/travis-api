@@ -310,9 +310,9 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
 
         describe "find action" do
           let(:action) { resource.fetch("actions").fetch("find") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}owner/{owner.login}{?include}") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}owner/{user.login}{?include}") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}owner/{organization.login}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}owner/{login}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}owner/{provider}/{login}{?include}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}owner/github_id/{github_id}{?include}") }
         end
       end
 
