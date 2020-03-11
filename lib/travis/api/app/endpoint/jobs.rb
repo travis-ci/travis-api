@@ -103,6 +103,9 @@ class Travis::Api::App
             else
               redirect archived_log_path, 307
             end
+          elsif accepts?('application/json')
+            attach_log_token if job.try(:private?)
+            respond_with({"body" => resource.archived_log_content}.to_json)
           else
             status 406
           end

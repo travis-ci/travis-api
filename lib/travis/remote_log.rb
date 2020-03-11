@@ -75,6 +75,10 @@ module Travis
       @archived_url ||= remote.fetch_archived_url(job_id, expires: expires)
     end
 
+    def archived_log_content
+      @archived_content ||= remote.fetch_archived_log_content(job_id)
+    end
+
     def to_json(chunked: false, after: nil, part_numbers: [])
       as_json(
         chunked: chunked,
@@ -243,6 +247,12 @@ module Travis
         file.url(expires)
       end
 
+      def fetch_archived_log_content(job_id)
+        file = fetch_archived(job_id)
+        return "" if file.nil?
+        file.body
+      end
+
       private def fetch_archived(job_id)
         candidates = s3.directories.get(
           bucket_name,
@@ -268,7 +278,7 @@ module Travis
       def_delegators :client, :find_by_job_id, :find_by_id,
         :find_id_by_job_id, :find_parts_by_job_id, :write_content_for_job_id
 
-      def_delegators :archive_client, :fetch_archived_url
+      def_delegators :archive_client, :fetch_archived_url, :fetch_archived_log_content
 
       attr_accessor :platform
 
