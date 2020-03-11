@@ -14,8 +14,8 @@ module Services
 
     def update_address
       address_data = @subscription_params.each{|key,value| value}
-      client = Services::Billing_v2_authentication.new(@subscription)
-      client.update_address(@subscription.id, address_data)
+      client = Services::BillingClient.new
+      client.update_address_request(@subscription, address_data)
     end
   end
 end

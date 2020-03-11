@@ -31,7 +31,7 @@ class SubscriptionsController < ApplicationController
           message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
           flash[:notice] = message.sub(/./) {$&.upcase}
         rescue => e
-          flash[:error] = "failed #{e}"
+          flash[:error] = "#{e}"
         end
 
 				Services::AuditTrail::UpdateSubscription.new(current_user, message).call

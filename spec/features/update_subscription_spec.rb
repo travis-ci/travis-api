@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature 'Update subscription information', billing_spec_helper: true , js: true, type: :feature do
+RSpec.feature 'Update subscription information', js: true, type: :feature do
   let!(:billing_url) { 'https://billing-fake.travis-ci.com' }
   let!(:auth_key) { 'fake_auth_key' }
   let!(:user) { create :user_with_active_subscription}
@@ -8,7 +8,8 @@ RSpec.feature 'Update subscription information', billing_spec_helper: true , js:
 
   scenario 'Update expiry date for User' do
     stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
-        .with(:body => {"billing_email"=>"contact@travis-ci.com", "valid_to"=> 2.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE999999998"}).to_return(status: 204)
+        .with(:body => {"billing_email"=>"contact@travis-ci.com", "valid_to" => 2.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE999999998"})
+                          .to_return(status: 204)
 
     visit "/users/#{user.id}/subscription"
     click_on('Subscription')
@@ -24,7 +25,7 @@ RSpec.feature 'Update subscription information', billing_spec_helper: true , js:
 
   scenario 'Update VAT ID and billing email' do
     stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
-         .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to"=>"2020-03-17", "vat_id"=>"DE999999998"}).to_return(status: 204)
+         .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to" => 1.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE999999998"}).to_return(status: 204)
 
     visit "/users/#{user.id}/subscription"
     click_on('Subscription')

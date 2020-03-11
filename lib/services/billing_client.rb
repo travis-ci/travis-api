@@ -1,14 +1,16 @@
 module Services
-  class Billing_v2_authentication
-    attr_reader :subscription
+  class BillingClient
 
-    def initialize(subscription)
+    def update_address_request(subscription, address_data)
       @subscription = subscription
+      response = connection.patch("/subscriptions/#{@subscription.id}/address", address_data)
+      handle_subscription_response(response)
     end
 
-    def update_address(subscription_id, address_data)
-      response = connection.patch("/subscriptions/#{subscription_id}/address", address_data)
-      handle_subscription_response(response)
+    def csv_import(from, to , type)
+      invoice_type = type == "refund" ? "&type=refunds" : ""
+      response = connection_csv.get("/report?from=#{from}&to=#{to}#{invoice_type}")
+      CSV.parse( response.body.gsub(/[\r\t]/, ''), col_sep: ',')
     end
 
     private
@@ -26,7 +28,7 @@ module Services
       when 204
         true
       else
-        raise response.body['error']
+        raise JSON.parse(response.body)["error"]
       end
     end
 
@@ -36,6 +38,13 @@ module Services
         conn.headers['X-Travis-User-Id'] = @subscription.owner_id.to_s
         conn.request :url_encoded
         conn.response :json, content_type: 'application/x-www-form-urlencoded'
+        conn.adapter Faraday.default_adapter
+      end
+    end
+
+    def connection_csv
+      @connection_csv ||= Faraday.new(url: billing_url) do |conn|
+        conn.headers['Authorization'] = "Token token=#{billing_auth_key}"
         conn.adapter Faraday.default_adapter
       end
     end

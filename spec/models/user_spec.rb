@@ -1,10 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  before do
-    allow_any_instance_of(Valvat::Lookup).to receive(:valid?).and_return(true)
-  end
-
   let!(:user) { create(:user) }
   let!(:email) { create(:email, user: user) }
 

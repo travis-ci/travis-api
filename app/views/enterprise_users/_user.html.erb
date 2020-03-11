@@ -3,7 +3,7 @@
     <%= image_tag(user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if user.avatar_url %>
     <%= link_to describe(user), user %>
   </p>
-<!--  <p><%#= user.enterprise_status %></p>-->
+  <p><%= user.enterprise_status %></p>
   <% if user.suspended? %>
     <div class="call-to-action"><%= button_to "Unsuspend", unsuspend_enterprise_user_path(user, page: params[:page]), class: "button", remote: true, data: { disable_with: 'Loading' } %></div>
   <% else %>
