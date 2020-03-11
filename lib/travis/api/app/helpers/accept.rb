@@ -68,6 +68,7 @@ class Travis::Api::App
 
       def accepts?(mime_type)
         # TODO shouldn't this really use acceptable_formats?
+        Travis.logger.info "accept_entries=#{accept_entries}"
         accept_entries.any? { |e| e.accepts?(mime_type) }
       end
 

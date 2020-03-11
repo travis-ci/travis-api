@@ -80,6 +80,8 @@ class Travis::Api::App
       get '/:job_id/log', scope: [:public, :log] do
         resource = service(:find_log, job_id: params[:job_id]).run
         job = Job.find(params[:job_id])
+        Travis.logger.info "serving log for #{params[:job_id]}"
+        Travis.logger.info "resource=#{resource}"
 
         if (job.try(:private?) || !allow_public?) && !has_permission?(job)
           halt 404
@@ -104,7 +106,9 @@ class Travis::Api::App
               redirect archived_log_path, 307
             end
           elsif accepts?('application/json')
+            Travis.logger.info "serving json"
             attach_log_token if job.try(:private?)
+            Travis.logger.info "archived_log_content=#{resource.archived_log_content}"
             respond_with({"body" => resource.archived_log_content}.to_json)
           else
             status 406
