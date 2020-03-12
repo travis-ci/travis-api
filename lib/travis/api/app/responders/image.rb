@@ -39,9 +39,6 @@ module Travis::Api::App::Responders
       end
 
       def result
-        puts "Travis::Api::App::Responders::Image resource #{resource.inspect}"
-        puts "params[:branch]: #{params[:branch]}"
-        puts "Repository::StatusImage.new(resource, params[:branch]).result: #{Repository::StatusImage.new(resource, params[:branch]).result}"
         if resource
           Repository::StatusImage.new(resource, params[:branch]).result
         else
