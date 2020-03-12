@@ -8,7 +8,7 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
 
   scenario 'Update expiry date for User' do
     stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
-        .with(:body => {"billing_email"=>"contact@travis-ci.com", "valid_to" => 2.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE999999998"})
+                          .with(:body => {"billing_email"=>"contact@travis-ci.com", "valid_to" => 2.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE999999998"})
                           .to_return(status: 204)
 
     visit "/users/#{user.id}/subscription"
@@ -24,8 +24,9 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
   end
 
   scenario 'Update VAT ID and billing email' do
-    stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
-         .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to" => 1.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE999999998"}).to_return(status: 204)
+    stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
+                                 .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to" => 1.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE999999998"})
+                                 .to_return(status: 204)
 
     visit "/users/#{user.id}/subscription"
     click_on('Subscription')
@@ -36,6 +37,24 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
     find_button('Update').trigger('click')
 
     expect(page).to have_text("Updated travisbot's subscription: billing_email changed from contact@travis-ci.com to contact@travis-ci.org, vat_id changed from DE999999999 to DE999999998")
+    expect(stubbed_request).to have_been_made
+  end
+
+  scenario 'Update VAT ID wrong' do
+    stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
+                           .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to" => 1.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE99999"})
+                           .to_return(status: 422, body: '{"error":"Vat is not a valid German vat number"}')
+
+    visit "/users/#{user.id}/subscription"
+    click_on('Subscription')
+
+    fill_in('subscription_vat_id', :with => 'DE99999')
+    fill_in('subscription_billing_email', :with => 'contact@travis-ci.org')
+
+    find_button('Update').trigger('click')
+
+    expect(page).to have_text("Vat is not a valid German vat number")
+    expect(stubbed_request).to have_been_made
   end
 
   scenario 'No changes made to subscription' do
