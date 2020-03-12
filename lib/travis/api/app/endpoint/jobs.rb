@@ -109,7 +109,13 @@ class Travis::Api::App
             Travis.logger.info "serving json"
             attach_log_token if job.try(:private?)
             Travis.logger.info "archived_log_content=#{resource.archived_log_content}"
-            {"body" => resource.archived_log_content}.to_json
+            {
+              "log" => {
+                "id" => resource.id,
+                "job_id" => params[:job_id],
+                "body" => resource.archived_log_content
+              }
+            }.to_json
           else
             status 406
           end
