@@ -18,7 +18,7 @@ module Travis
       private
 
         def result
-          puts "Travis::Services::FindRepo result: #{result}"
+          puts "Travis::Services::FindRepo result: #{@result}"
           puts "Travis::Services::FindRepo scope: #{scope(:repository).by_params(params).to_a.first}"
           @result ||= scope(:repository).by_params(params).to_a.first
         end
