@@ -73,9 +73,10 @@ class Repository < Travis::Model
   }
   scope :by_slug, ->(slug) {
     owner_name, repo_name = slug.split('/')
+    puts "RepositoryRepositoryRepository by_slug: #{slug}"
     without_invalidated.where(
       "(LOWER(repositories.owner_name) = ? AND LOWER(repositories.name) = ?) OR LOWER(vcs_slug) = ?",
-      owner_name.downcase, repo_name.downcase, "#{owner_name.downcase}/#{repo_name.downcase}"
+      owner_name.downcase, repo_name.downcase, "#{slug.downcase}"
     ).order('id DESC')
   }
   scope :search, ->(query) {
