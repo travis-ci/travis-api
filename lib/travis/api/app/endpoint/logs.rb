@@ -18,7 +18,7 @@ class Travis::Api::App
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')
             redirect resource.archived_url, 307
-          elsif accepts?('application.json') || accepts?('application/vnd.travis-ci.2+json')
+          elsif accepts?('application/json') || accepts?('application/vnd.travis-ci.2+json')
             {
               "log" => {
                 "id" => resource.id,
