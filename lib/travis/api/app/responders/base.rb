@@ -3,7 +3,7 @@ module Travis::Api::App::Responders
     attr_reader :endpoint, :resource, :options
 
     def initialize(endpoint, resource, options = {})
-      puts "Travis::Api::App::Responders::Base.initialize endpoint: #{endpoint} resource: #{resource} options: #{options}"
+      puts "Travis::Api::App::Responders::Base.initialize endpoint: #{endpoint.inspect} resource: #{resource.inspect} options: #{options.inspect}"
       @endpoint = endpoint
       @resource = resource
       @options  = options
