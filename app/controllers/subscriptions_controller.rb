@@ -7,6 +7,8 @@ class SubscriptionsController < ApplicationController
     @subscription.valid_to      = 1.year.from_now
     @subscription.billing_email = "support@travis-ci.com"
     @subscription.status        = 'subscribed'
+    @subscription.source        = 'manual'
+    @subscription.concurrency   = travis_config.plans[@subscription.selected_plan.to_sym][:builds]
 
     if @subscription.save
       flash[:notice] = "Created a new subscription for #{describe(@subscription.owner)}"
