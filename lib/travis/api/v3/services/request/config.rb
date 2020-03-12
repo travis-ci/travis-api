@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Services::Request::Configs < Service
+  class Services::Request::Config < Service
     result_type :request_configs
     params :ref, :config, :mode, :data
 
@@ -7,7 +7,7 @@ module Travis::API::V3
       repository = check_login_and_find(:repository)
       access_control.permissions(repository).create_request!
       user = access_control.user
-      result query(:request_configs).expand(user, repo)
+      result query(:request_config).expand(user, repo)
     end
 
     private
