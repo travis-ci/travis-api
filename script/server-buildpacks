@@ -36,6 +36,7 @@ fi
 # PGBOUNCER_SERVICE_NAME is from env variables (currently Heroku)
 # service name is used in connection string (DATABASE_URL)
 # PGBOUNCER_SERVICE_HOST is set by k8s
+
 if [[ -n "$PGBOUNCER_SERVICE_HOST" && -n "$PGBOUNCER_SERVICE_NAME" ]]; then
   export PGBOUNCER_PREPARED_STATEMENTS=false
   echo "info: using k8s pgbouncer service"
