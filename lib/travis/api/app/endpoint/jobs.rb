@@ -94,7 +94,7 @@ class Travis::Api::App
         elsif resource.archived?
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
-          if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')
+          if accepts?('text/plain')
             archived_log_path = resource.archived_url
 
             if params[:cors_hax]
