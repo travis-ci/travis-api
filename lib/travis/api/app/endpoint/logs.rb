@@ -19,13 +19,7 @@ class Travis::Api::App
           if accepts?('text/plain')
             redirect resource.archived_url, 307
           elsif accepts?('application/json')
-            {
-              "log" => {
-                "id" => resource.id,
-                "job_id" => resource.job_id,
-                "body" => resource.archived_log_content
-              }
-            }.to_json
+            respond_with resource.as_json
           else
             status 406
           end
