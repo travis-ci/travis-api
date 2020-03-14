@@ -45,10 +45,11 @@ module Travis::API::V3
     end
 
     def enqueue
+      puts "CRON RB JOB 1"
       return deactivate_and_log_reason(REPO_IS_INACTIVE) if branch &&!branch.repository&.active?
-
+      puts "CRON RB JOB 2"
       return deactivate_and_log_reason(BRANCH_MISSING_ON_GH) unless branch&.exists_on_github
-
+      puts "CRON RB JOB 3"
       user_id = branch.repository.users.detect { |u| u.github_oauth_token }.try(:id)
       user_id ||= branch.repository.owner.id
 
