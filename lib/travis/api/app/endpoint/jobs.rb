@@ -105,7 +105,7 @@ class Travis::Api::App
             else
               redirect archived_log_path, 307
             end
-          elsif accepts?('application/json') || accepts?('application/vnd.travis-ci.2+json')
+          elsif accepts?('application/json')
             Travis.logger.info "serving json"
             attach_log_token if job.try(:private?)
             Travis.logger.info "archived_log_content=#{resource.archived_log_content}"
