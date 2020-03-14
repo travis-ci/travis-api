@@ -45,9 +45,9 @@ module Travis::API::V3
     end
 
     def enqueue
-      return deactivate_and_log_reason(REPO_IS_INACTIVE) unless branch.repository&.active?
+      return deactivate_and_log_reason(REPO_IS_INACTIVE) if branch &&!branch.repository&.active?
 
-      return deactivate_and_log_reason(BRANCH_MISSING_ON_GH) unless branch.exists_on_github
+      return deactivate_and_log_reason(BRANCH_MISSING_ON_GH) unless branch&.exists_on_github
 
       user_id = branch.repository.users.detect { |u| u.github_oauth_token }.try(:id)
       user_id ||= branch.repository.owner.id

@@ -42,6 +42,7 @@ module Travis
         end
 
         def set_key
+          puts "SET KEY TO THE REPOSITORY #{current_user.login} == #{current_user.github?}"
           read_only = !Travis::Features.owner_active?(:read_write_github_keys, repo.owner)
           if Travis::Features.user_active?(:use_vcs, current_user) || !current_user.github?
             remote_vcs_repository.upload_key(
@@ -61,6 +62,7 @@ module Travis
         end
 
         def delete_key
+          puts "DELETE KEY #{current_user.login} == #{current_user.github?}"
           if Travis::Features.user_active?(:use_vcs, current_user) || !current_user.github?
             remote_vcs_repository.delete_key(
               repository_id: repo.id,
