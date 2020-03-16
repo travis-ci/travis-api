@@ -44,7 +44,7 @@ module Travis::API::V3
     def by_slug
       owner_name, repo_name = slug.split('/')
       Models::Repository.where(
-        "(lower(vcs_slug) = ? "\
+        "(lower(repositories.vcs_slug) = ? "\
         "or (lower(repositories.owner_name) = ? and lower(repositories.name) = ?)) "\
         "and lower(repositories.vcs_type) = ? "\
         "and repositories.invalidated_at is null",
@@ -52,7 +52,7 @@ module Travis::API::V3
         owner_name.downcase,
         repo_name.downcase,
         provider.downcase + 'repository'
-      ).order("updated_at desc").first
+      ).order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc").first
     end
 
     def provider

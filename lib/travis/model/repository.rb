@@ -76,7 +76,7 @@ class Repository < Travis::Model
     without_invalidated.where(
       "(LOWER(repositories.owner_name) = ? AND LOWER(repositories.name) = ?) OR LOWER(vcs_slug) = ?",
       owner_name.downcase, repo_name.downcase, "#{slug.downcase}"
-    ).order('id DESC')
+    ).order('id DESC, owner_name ASC, name ASC, vcs_slug ASC')
   }
   scope :search, ->(query) {
     query = query.gsub('\\', '/')
