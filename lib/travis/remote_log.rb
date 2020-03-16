@@ -105,7 +105,7 @@ module Travis
           part_numbers: part_numbers
         ).map(&:as_json)
       else
-        ret['body'] = content
+        ret['body'] = archived_log_content || content
       end
 
       { 'log' => ret }
