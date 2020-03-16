@@ -94,7 +94,7 @@ class Travis::Api::App
         elsif resource.archived?
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
-          if accepts?('text/plain') || request.user_agent.to_s.start_with?('Travis')
+          if accepts?('text/plain') || accepts?('application/json')
             archived_log_path = resource.archived_url
 
             if params[:cors_hax]
@@ -105,17 +105,6 @@ class Travis::Api::App
             else
               redirect archived_log_path, 307
             end
-          elsif accepts?('application/json')
-            Travis.logger.info "serving json"
-            attach_log_token if job.try(:private?)
-            Travis.logger.info "archived_log_content=#{resource.archived_log_content}"
-            {
-              "log" => {
-                "id" => resource.id,
-                "job_id" => params[:job_id],
-                "body" => resource.archived_log_content
-              }
-            }.to_json
           else
             status 406
           end
