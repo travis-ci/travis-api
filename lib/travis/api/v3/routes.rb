@@ -27,11 +27,6 @@ module Travis::API::V3
       end
     end
 
-    resource :builds do
-      route '/builds'
-      get :for_current_user
-    end
-
     resource :jobs do
       route '/jobs'
       get :for_current_user
@@ -269,6 +264,11 @@ module Travis::API::V3
     resource :user do
       route '/user'
       get :current
+
+      resource :builds do
+        route '/builds'
+        get   :for_current_user
+      end
     end
 
     resource :user do
