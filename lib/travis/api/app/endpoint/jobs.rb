@@ -108,7 +108,7 @@ class Travis::Api::App
           elsif accepts?('application/json')
             Travis.logger.info "serving json"
             attach_log_token if job.try(:private?)
-            respond_with resource.archived_log_content.as_json
+            respond_with resource.as_json
           else
             status 406
           end
