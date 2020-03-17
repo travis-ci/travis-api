@@ -6,6 +6,7 @@ module Travis::API::V3
 
     def run!
       unfiltered = query.for_owner(find(:owner), user: access_control.user)
+      puts "owner: #{find(:owner).inspect} unfiltered: #{unfiltered.inspect}"
       result access_control.visible_repositories(unfiltered)
     end
   end
