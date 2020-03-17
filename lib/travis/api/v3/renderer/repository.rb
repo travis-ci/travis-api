@@ -51,7 +51,8 @@ module Travis::API::V3
     end
 
     def shared
-      user != access_control.user
+      return false unless user = access_control.user
+      true
     end
 
     def email_subscribed
