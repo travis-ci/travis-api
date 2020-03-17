@@ -36,7 +36,7 @@ module Travis::API::V3
 
     def repositories
       Models::Repository.where(
-        '((owner_type = ? AND owner_id = ?) OR id IN (?)) AND owner_name != ?'.freeze,
+        '((repository.owner_type = ? AND repository.owner_id = ?) OR repository.id IN (?)) AND repository.owner_name != ?'.freeze,
         'User'.freeze,
         id,
         shared_repositories_ids,
