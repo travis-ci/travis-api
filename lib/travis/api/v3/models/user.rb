@@ -44,9 +44,15 @@ module Travis::API::V3
       )
     end
 
+    def organizations_repositories_ids
+      @organizations_repositories_ids ||= organizations.map { |org| org.repositories.pluck(:id) }
+    end
+
+    def access_repositories_ids
+      @access_repositories_ids ||= permissions.pluck(:repository_id)
+    end
+
     def shared_repositories_ids
-      access_repositories_ids = permissions.pluck(:repository_id)
-      organizations_repositories_ids = organizations.map { |org| org.repositories.pluck(:id) }
       access_repositories_ids - organizations_repositories_ids
     end
 

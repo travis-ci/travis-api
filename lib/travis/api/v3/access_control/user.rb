@@ -19,10 +19,6 @@ module Travis::API::V3
       permission?(:admin, repository) ? user : super
     end
 
-    def organizations_repositories_ids
-      @organizations_repositories_ids ||= organizations.map { |org| org.repositories.pluck(:id) }
-    end
-
     def visible_repositories(list, repository_id = nil)
       if repository_id
         if private_access_repository_ids.include?(repository_id)

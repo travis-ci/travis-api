@@ -51,7 +51,7 @@ module Travis::API::V3
     end
 
     def shared
-      !access_control.user.organizations_repositories_ids.include?(id) \
+      access_control.user.shared_repositories_ids.include?(id) \
       && owner_name.downcase != access_control.user.login.downcase
     end
 
