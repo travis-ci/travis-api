@@ -45,7 +45,7 @@ module Travis::API::V3
     end
 
     def shared_repositories_ids
-      access_repositories_ids = Models::Permission.where(user_id: id, pull: true, push: true).pluck(:repository_id)
+      access_repositories_ids = permissions.pluck(:repository_id)
       organizations_repositories_ids = organizations.map { |org| org.repositories.pluck(:id) }
       access_repositories_ids - organizations_repositories_ids
     end

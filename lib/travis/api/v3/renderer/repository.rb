@@ -51,8 +51,8 @@ module Travis::API::V3
     end
 
     def shared
-      organizations_repositories_ids = access_control.user.organizations.map { |org| org.repositories.pluck(:id) }
-      !organizations_repositories_ids.include?(id) && owner_name.downcase != access_control.user.login.downcase
+      !access_control.user.organizations_repositories_ids.include?(id) \
+      && owner_name.downcase != access_control.user.login.downcase
     end
 
     def email_subscribed
