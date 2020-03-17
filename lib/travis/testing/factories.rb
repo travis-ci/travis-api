@@ -91,6 +91,9 @@ FactoryBot.define do
     event { 'build:started' }
   end
 
+  factory :permission do
+  end
+
   factory :sharedrepo_permission, class: Permission do
     user_id { User.find_by_login('svenfuchs').id }
     repository_id { Repository.find_by_name('sharedrepo').id }
