@@ -1,7 +1,8 @@
 module Scenario
   class << self
     def default
-      minimal, enginex = repositories :minimal, :enginex
+      minimal, enginex, sharedrepo = repositories :minimal, :enginex, :sharedrepo
+      sharedrepo_permission = permissions :sharedrepo_permission
 
       build :repository => minimal,
             :owner => minimal.owner,
@@ -95,6 +96,13 @@ module Scenario
         repo = FactoryBot.create(name)
         repo.create_key
         repo
+      }
+    end
+
+    def permissions(*names)
+      names.map { |name|
+        perm = FactoryBot.create(name)
+        perm
       }
     end
 
