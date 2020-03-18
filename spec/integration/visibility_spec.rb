@@ -6,6 +6,29 @@ describe 'visibilty', set_app: true do
   let(:response) { send(method, path, {}, { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2.1+json' }) }
   let(:status)   { response.status }
   let(:body)     { JSON.parse(response.body).deep_symbolize_keys }
+  let(:job_id)   { 42864 }
+  let(:archived_content) { 'hello world!'}
+  let(:xml_content) {
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+    <ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">
+    <Name>bucket</Name>
+    <Prefix/>
+    <Marker/>
+    <MaxKeys>1000</MaxKeys>
+    <IsTruncated>false</IsTruncated>
+      <Contents>
+          <Key>jobs/#{job_id}/log.txt</Key>
+          <LastModified>2009-10-12T17:50:30.000Z</LastModified>
+          <ETag>&quot;hgb9dede5f27731c9771645a39863328&quot;</ETag>
+          <Size>20308738</Size>
+          <StorageClass>STANDARD</StorageClass>
+          <Owner>
+              <ID>75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a</ID>
+              <DisplayName>mtd@amazon.com</DisplayName>
+          </Owner>
+      </Contents>
+    </ListBucketResult>"
+  }
 
   before { repo.update_attributes(private: false) }
   before { requests.update_all(private: true) }
@@ -14,6 +37,31 @@ describe 'visibilty', set_app: true do
   before { requests[0].update_attributes(private: false) }
   before { builds[0].update_attributes(private: false) }
   before { jobs[0].update_attributes(private: false) }
+  before :each do
+    stub_request(:get, %r(https://s3\.amazonaws\.com/archive\.travis-ci\.(org|com)/\?prefix=jobs/\d+/log.txt)).
+      to_return(status: 200, body: xml_content, headers: {})
+    stub_request(:get, %r(https://bucket\.s3\.amazonaws\.com/jobs/\d+/log.txt)).
+      to_return(status: 200, body: archived_content, headers: {})
+
+    Fog.mock!
+    storage = Fog::Storage.new({
+      aws_access_key_id: 'key',
+      aws_secret_access_key: 'secret',
+      provider: 'AWS'
+    })
+    bucket = storage.directories.create(key: 'archive.travis-ci.org')
+    file = bucket.files.create(
+      key: "jobs/#{job_id}/log.txt",
+      body: archived_content
+    )
+
+    allow_any_instance_of(Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
+  end
+
+  after do
+    Fog.unmock!
+    Fog::Mock.reset
+  end
 
   let(:public_request)  { requests[0] }
   let(:public_build)    { builds[0] }
