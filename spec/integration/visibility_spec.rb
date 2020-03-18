@@ -6,6 +6,8 @@ describe 'visibilty', set_app: true do
   let(:response) { send(method, path, {}, { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2.1+json' }) }
   let(:status)   { response.status }
   let(:body)     { JSON.parse(response.body).deep_symbolize_keys }
+  let(:job_id)   { 42864 }
+  let(:archived_content) { 'hello world!'}
 
   before { repo.update_attributes(private: false) }
   before { requests.update_all(private: true) }
@@ -14,6 +16,26 @@ describe 'visibilty', set_app: true do
   before { requests[0].update_attributes(private: false) }
   before { builds[0].update_attributes(private: false) }
   before { jobs[0].update_attributes(private: false) }
+  before :each do
+    Fog.mock!
+    storage = Fog::Storage.new({
+      aws_access_key_id: 'key',
+      aws_secret_access_key: 'secret',
+      provider: 'AWS'
+    })
+    bucket = storage.directories.create(key: 'archive.travis-ci.org')
+    file = bucket.files.create(
+      key: "jobs/#{job_id}/log.txt",
+      body: archived_content
+    )
+
+    allow_any_instance_of(Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
+  end
+
+  after do
+    Fog.unmock!
+    Fog::Mock.reset
+  end
 
   let(:public_request)  { requests[0] }
   let(:public_build)    { builds[0] }

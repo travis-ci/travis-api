@@ -6,6 +6,39 @@ describe 'Jobs', set_app: true do
   let(:job) { jobs.first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  let :log_from_api do
+    {
+      aggregated_at: Time.now,
+      archive_verified: true,
+      archived_at: Time.now,
+      archiving: false,
+      content: 'hello world. this is a really cool log',
+      created_at: Time.now,
+      id: 1,
+      job_id: job.id,
+      purged_at: nil,
+      removed_at: nil,
+      removed_by_id: nil,
+      updated_at: Time.now
+    }
+  end
+
+  let(:archived_log_url) { 'https://s3.amazonaws.com/STUFFS' } # bogus URL unused anywhere
+  let(:archived_content) { "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch" }
+
+  let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
+
+  before do
+    remote = double('remote')
+    allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
+    allow(remote).to receive(:find_by_job_id).and_return(Travis::RemoteLog.new(log_from_api))
+    allow(remote).to receive(:find_by_id).and_return(Travis::RemoteLog.new(log_from_api))
+    allow(remote).to receive(:fetch_archived_url).and_return(archived_log_url)
+    allow(remote).to receive(:fetch_archived_log_content).and_return(archived_content)
+    allow(remote).to receive(:write_content_for_job_id).and_return(remote)
+    allow(remote).to receive(:send).and_return(remote) # ignore attribute updates
+  end
+
   it '/jobs?queue=builds.common' do
     skip('querying with a queue does not appear to be used anymore')
     response = get '/jobs', { queue: 'builds.common' }, headers
@@ -38,11 +71,15 @@ describe 'Jobs', set_app: true do
   end
 
   context 'GET /jobs/:job_id/log.txt' do
-    it 'returns log for a job' do
-      stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
-        .to_return(status: 200, body: JSON.dump(content: 'the log'))
+    it 'returns redirects to archived log url' do
+      response = get("/jobs/#{job.id}/log.txt")
+      expect(response.status).to eq(307)
+      expect(response.location).to eq(archived_log_url)
+    end
+
+    it 'returns 406 (Unprocessable) if Accept header requests JSON' do
       response = get("/jobs/#{job.id}/log.txt", {}, headers)
-      expect(response).to deliver_as_txt('the log', version: 'v2')
+      expect(response.status).to eq(406)
     end
 
     context 'when log is archived' do
@@ -75,7 +112,7 @@ describe 'Jobs', set_app: true do
     end
 
     context 'when log is missing' do
-      it 'responds with an empty representation' do
+      it 'redirects to archived log url' do
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(status: 404, body: '')
         response = get(
@@ -83,10 +120,8 @@ describe 'Jobs', set_app: true do
           {},
           { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         )
-        expect(response.status).to eq(200)
-        expect(JSON.parse(response.body, symbolize_names: true)).to eq(
-          { log: { job_id: job.id, parts: [], :@type => 'Log' } }
-        )
+        expect(response.status).to eq(307)
+        expect(response.location).to eq(archived_log_url)
       end
     end
 
@@ -118,7 +153,7 @@ describe 'Jobs', set_app: true do
     end
 
     context 'with chunked log requested' do
-      it 'always responds with 406' do
+      it 'succeeds' do
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(
             status: 200,
@@ -134,7 +169,7 @@ describe 'Jobs', set_app: true do
           {},
           { 'HTTP_ACCEPT' => 'application/json; version=2; chunked=true' }
         )
-        expect(response.status).to eq(406)
+        expect(response.status).to eq(200)
       end
     end
   end
