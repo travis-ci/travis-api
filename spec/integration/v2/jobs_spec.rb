@@ -29,17 +29,6 @@ describe 'Jobs', set_app: true do
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
 
   before do
-    Fog.mock!
-    storage = Fog::Storage.new({
-      aws_access_key_id: 'key',
-      aws_secret_access_key: 'secret',
-      provider: 'AWS'
-    })
-    bucket = storage.directories.create(key: 'archive.travis-ci.org')
-    file = bucket.files.create(
-      key: "jobs/#{job.id}/log.txt",
-      body: archived_content
-    )
     remote = double('remote')
     allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
     allow(remote).to receive(:find_by_job_id).and_return(Travis::RemoteLog.new(log_from_api))
@@ -48,11 +37,6 @@ describe 'Jobs', set_app: true do
     allow(remote).to receive(:fetch_archived_log_content).and_return(archived_content)
     allow(remote).to receive(:write_content_for_job_id).and_return(remote)
     allow(remote).to receive(:send).and_return(remote) # ignore attribute updates
-  end
-
-  after do
-    Fog.unmock!
-    Fog::Mock.reset
   end
 
   it '/jobs?queue=builds.common' do

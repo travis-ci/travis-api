@@ -26,27 +26,11 @@ describe 'v2.1 jobs', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
 
   before do
-    Fog.mock!
-    storage = Fog::Storage.new({
-      aws_access_key_id: 'key',
-      aws_secret_access_key: 'secret',
-      provider: 'AWS'
-    })
-    bucket = storage.directories.create(key: 'archive.travis-ci.org')
-    file = bucket.files.create(
-      key: "jobs/#{job.id}/log.txt",
-      body: archived_content
-    )
     remote = double('remote')
     allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
     allow(remote).to receive(:find_by_job_id).and_return(Travis::RemoteLog.new(log_from_api))
     allow(remote).to receive(:find_by_id).and_return(Travis::RemoteLog.new(log_from_api))
     allow(remote).to receive(:fetch_archived_url).and_return('https://s3.amazonaws.com/STUFFS')
-  end
-
-  after do
-    Fog.unmock!
-    Fog::Mock.reset
   end
 
   before { Job.update_all(state: :started) }
