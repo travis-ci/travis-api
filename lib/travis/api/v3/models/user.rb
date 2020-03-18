@@ -35,12 +35,12 @@ module Travis::API::V3
     end
 
     def repositories
+      puts shared_repositories_ids.inspect
       Models::Repository.where(
-        '((repositories.owner_type = ? AND repositories.owner_id = ?) OR repositories.id IN (?)) AND repositories.owner_name != ?'.freeze,
+        '((repositories.owner_type = ? AND repositories.owner_id = ?) OR repositories.id IN (?))'.freeze,
         'User'.freeze,
         id,
-        shared_repositories_ids,
-        '[redacted]'.freeze
+        shared_repositories_ids
       )
     end
 
@@ -54,6 +54,7 @@ module Travis::API::V3
 
     def shared_repositories_ids
       access_repositories_ids - organizations_repositories_ids
+      [3]
     end
 
     def token

@@ -10,6 +10,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   before        { repo.update_attribute(:private, true)                             }
   before        { repo.update_attribute(:current_build, build)                             }
   after         { repo.update_attribute(:private, false)                            }
+  # before        { ActiveRecord::Base.logger = Logger.new(STDOUT) if defined?(ActiveRecord::Base) }
 
   describe "sorting by default_branch.last_build" do
     let!(:repo2) { Travis::API::V3::Models::Repository.create!(owner_name: 'svenfuchs', owner: repo.owner, name: 'second-repo', default_branch_name: 'other-branch') }

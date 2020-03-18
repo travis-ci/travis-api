@@ -83,6 +83,9 @@ FactoryBot.define do
     owner_name { 'sharedrepoowner' }
     owner_email { 'sharedrepo@owner.email.com' }
     owner { User.find_by_login('sharedrepoowner') || FactoryBot.create(:user, :login => 'sharedrepoowner', :name => 'Sharedrepo Owner') }
+    last_build_number { nil }
+    last_build_started_at { nil }
+    last_build_finished_at { nil }
   end
 
   factory :event do
