@@ -198,7 +198,6 @@ describe Travis::RemoteLog do
     now = double('now')
     allow(now).to receive(:utc).and_return(now)
     allow(now).to receive(:to_s).and_return('whenebber')
-    allow(now).to receive(:-).with(0).and_return(Time.now.to_i)
     allow(Time).to receive(:now).and_return(now)
 
     allow(subject).to receive(:removed_by).and_return(user)
