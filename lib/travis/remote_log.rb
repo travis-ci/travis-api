@@ -250,7 +250,7 @@ module Travis
       def fetch_archived_log_content(job_id)
         file = fetch_archived(job_id)
         return "" if file.nil?
-        file.body
+        file.body.force_encoding("UTF-8")
       end
 
       private def fetch_archived(job_id)
