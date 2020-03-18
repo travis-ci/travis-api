@@ -2,7 +2,7 @@ require 'json'
 require 'faraday'
 
 module Travis::API::V3
-  class Queries::RequestConfigs < Query
+  class Queries::RequestConfig < Query
     attr_reader :user, :repo
 
     def expand(user, repo)

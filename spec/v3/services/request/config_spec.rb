@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Request::Configs, set_app: true do
+describe Travis::API::V3::Services::Request::Config, set_app: true do
   let(:repo) { FactoryBot.create(:repository_without_last_build, owner_name: 'svenfuchs', name: 'minimal') }
   let(:request) { Travis::API::V3::Models::Request.last }
   let(:env_var) { { id: nil, name: 'ONE', value: Travis::Settings::EncryptedValue.new('one'), public: true, branch: 'foo', repository_id: repo.id } }
@@ -41,7 +41,7 @@ describe Travis::API::V3::Services::Request::Configs, set_app: true do
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
-    before { post("/v3/repo/#{repo.id}/request/configs", params, headers) }
+    before { post("/v3/repo/#{repo.id}/request/config", params, headers) }
 
     it { expect(status).to eq 200 }
 
