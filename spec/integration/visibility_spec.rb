@@ -8,27 +8,6 @@ describe 'visibilty', set_app: true do
   let(:body)     { JSON.parse(response.body).deep_symbolize_keys }
   let(:job_id)   { 42864 }
   let(:archived_content) { 'hello world!'}
-  let(:xml_content) {
-    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-    <ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">
-    <Name>bucket</Name>
-    <Prefix/>
-    <Marker/>
-    <MaxKeys>1000</MaxKeys>
-    <IsTruncated>false</IsTruncated>
-      <Contents>
-          <Key>jobs/#{job_id}/log.txt</Key>
-          <LastModified>2009-10-12T17:50:30.000Z</LastModified>
-          <ETag>&quot;hgb9dede5f27731c9771645a39863328&quot;</ETag>
-          <Size>20308738</Size>
-          <StorageClass>STANDARD</StorageClass>
-          <Owner>
-              <ID>75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a</ID>
-              <DisplayName>mtd@amazon.com</DisplayName>
-          </Owner>
-      </Contents>
-    </ListBucketResult>"
-  }
 
   before { repo.update_attributes(private: false) }
   before { requests.update_all(private: true) }
