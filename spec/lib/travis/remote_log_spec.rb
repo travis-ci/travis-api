@@ -2,11 +2,32 @@ require 'travis/remote_log'
 
 describe Travis::RemoteLog do
   subject { described_class.new(attrs) }
-  let(:attrs) { { id: 4, content: 'huh', job_id: 5 } }
+  let(:job_id) { 5 }
+  let(:attrs) { { id: 4, content: archived_content, job_id: job_id } }
+  let(:archived_content) { 'hello world' }
 
   before :each do
     described_class::Remote.instance_variable_set(:@clients, nil)
     described_class::Remote.instance_variable_set(:@archive_clients, nil)
+
+    Fog.mock!
+    storage = Fog::Storage.new({
+      aws_access_key_id: 'key',
+      aws_secret_access_key: 'secret',
+      provider: 'AWS'
+    })
+    bucket = storage.directories.create(key: 'archive.travis-ci.org')
+    file = bucket.files.create(
+      key: "jobs/#{job_id}/log.txt",
+      body: archived_content
+    )
+
+    allow_any_instance_of(Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
+  end
+
+  after do
+    Fog.unmock!
+    Fog::Mock.reset
   end
 
   it 'has a default client' do
