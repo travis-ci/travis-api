@@ -50,10 +50,6 @@ describe 'v2 jobs', auth_helpers: true, api_version: :v2, set_app: true do
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
 
   before do
-    stub_request(:get, log_url).to_return(status: 200, body: %({"job_id": #{job.id}, "content": "content"}))
-    stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{job.id}/log.txt").
-      to_return(status: 200, body: xml_content, headers: {})
-
     Fog.mock!
     storage = Fog::Storage.new({
       aws_access_key_id: 'key',

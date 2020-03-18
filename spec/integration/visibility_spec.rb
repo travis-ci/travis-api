@@ -38,11 +38,6 @@ describe 'visibilty', set_app: true do
   before { builds[0].update_attributes(private: false) }
   before { jobs[0].update_attributes(private: false) }
   before :each do
-    stub_request(:get, %r(https://s3\.amazonaws\.com/archive\.travis-ci\.(org|com)/\?prefix=jobs/\d+/log.txt)).
-      to_return(status: 200, body: xml_content, headers: {})
-    stub_request(:get, %r(https://bucket\.s3\.amazonaws\.com/jobs/\d+/log.txt)).
-      to_return(status: 200, body: archived_content, headers: {})
-
     Fog.mock!
     storage = Fog::Storage.new({
       aws_access_key_id: 'key',

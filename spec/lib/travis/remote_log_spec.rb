@@ -44,9 +44,6 @@ describe Travis::RemoteLog do
     )
 
     allow_any_instance_of(Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
-
-    stub_request(:get, %r[https://s3\.amazonaws\.com/archive\.travis-ci\.org/\?prefix=jobs/#{job_id}/log\.txt]).
-      to_return(status: 200, body: xml_content, headers: {})
   end
 
   after do
