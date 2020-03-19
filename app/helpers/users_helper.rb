@@ -1,6 +1,6 @@
 module UsersHelper
   def become_url(user)
-    "#{travis_config.become_endpoint}/#{user.login}"
+    "#{travis_config.become_endpoint}/id/#{user.id}"
   end
 
   def hidden(user, field)
