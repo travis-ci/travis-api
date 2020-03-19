@@ -40,7 +40,7 @@ module Travis::API::V3
         'User'.freeze,
         id,
         shared_repositories_ids
-      )
+      ).order('id ASC')
     end
 
     def organizations_repositories_ids

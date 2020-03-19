@@ -1,6 +1,7 @@
 describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   include Support::Formats
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+  let(:sharedrepo)  { Travis::API::V3::Models::Repository.where(owner_name: 'sharedrepoowner', name: 'sharedrepo').first }
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
 
@@ -10,7 +11,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   before        { repo.update_attribute(:private, true)                             }
   before        { repo.update_attribute(:current_build, build)                             }
   after         { repo.update_attribute(:private, false)                            }
-  # before        { ActiveRecord::Base.logger = Logger.new(STDOUT) if defined?(ActiveRecord::Base) }
+  before        { RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 1024*1024 }
 
   describe "sorting by default_branch.last_build" do
     let!(:repo2) { Travis::API::V3::Models::Repository.create!(owner_name: 'svenfuchs', owner: repo.owner, name: 'second-repo', default_branch_name: 'other-branch') }
@@ -34,14 +35,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   describe "private repository, private API, authenticated as user with access" do
     before  { get("/v3/owner/svenfuchs/repos", {}, headers) }
     example { expect(last_response).to be_ok }
-    example { expect(JSON.load(body)).to be == {
+    example { puts JSON.load(body); expect(JSON.load(body)).to be == {
       "@type"                => "repositories",
       "@href"                => "/v3/owner/svenfuchs/repos",
       "@representation"      => "standard",
       "@pagination"          => {
         "limit"              => 100,
         "offset"             => 0,
-        "count"              => 1,
+        "count"              => 2,
         "is_first"           => true,
         "is_last"            => true,
         "next"               => nil,
@@ -84,6 +85,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
+        "shared"             => false,
         "owner"              => {
           "@type"            => "user",
           "id"               => repo.owner_id,
@@ -99,7 +101,54 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "active_on_org"    => nil,
           "migration_status" => nil,
           "history_migration_status"  => nil
-        }]}}
+        },
+        {
+          "@type"              => "repository",
+          "@href"              => "/v3/repo/#{sharedrepo.id}",
+          "@representation"    => "standard",
+          "@permissions"       => {
+            "read"             => true,
+            "activate"         => true,
+            "deactivate"       => true,
+            "migrate"          => false,
+            "star"             => true,
+            "unstar"           => true,
+            "create_request"   => true,
+            "create_cron"      => true,
+            "create_env_var"   => true,
+            "create_key_pair"  => true,
+            "delete_key_pair"  => true,
+            "admin"            => false
+          },
+          "id"                 => sharedrepo.id,
+          "name"               => "sharedrepo",
+          "slug"               => "sharedrepoowner/sharedrepo",
+          "description"        => nil,
+          "github_id"          => sharedrepo.github_id,
+          "vcs_id"             => sharedrepo.vcs_id,
+          "vcs_type"           => sharedrepo.vcs_type,
+          "owner_name"         => "sharedrepoowner",
+          "vcs_name"           => "sharedrepo",
+          "github_language"    => nil,
+          "active"             => true,
+          "private"            => false,
+          "shared"             => true,
+          "owner"              => {
+            "@type"            => "user",
+            "id"               => sharedrepo.owner_id,
+            "login"            => "sharedrepoowner",
+            "@href"            => "/v3/user/#{sharedrepo.owner_id}" },
+          "default_branch"     => {
+            "@type"            => "branch",
+            "@href"            => "/v3/repo/#{sharedrepo.id}/branch/master",
+            "@representation"  => "minimal",
+            "name"             => "master"},
+            "starred"          => false,
+            "managed_by_installation"=>false,
+            "active_on_org"    => nil,
+            "migration_status" => nil,
+            "history_migration_status"  => nil
+          }]}}
   end
 
   describe "include: last_started_build" do
@@ -414,6 +463,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@representation"=>"minimal",
           "name"          => "master" },
         "starred"         => false,
+        "shared"          => false,
         "managed_by_installation"=>false,
         "active_on_org"   => nil,
         "migration_status" => nil,
