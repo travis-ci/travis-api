@@ -35,7 +35,6 @@ RSpec.shared_examples 'insufficient access to repo' do |permission|
         '@representation' => 'minimal',
         'id' => repo.id,
         'name' => repo.name,
-        'shared' => false,
         'slug' => repo.slug
       }
     )

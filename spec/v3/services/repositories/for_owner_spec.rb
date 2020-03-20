@@ -7,6 +7,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+
+  let(:token_collaborator)   { Travis::Api::App::AccessToken.create(user: Travis::API::V3::Models::User.find_by_login('johndoe'), app_id: 1) }
+  let(:headers_collaborator) {{ 'HTTP_AUTHORIZATION' => "token #{token_collaborator}"                        }}
   before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
   before        { repo.update_attribute(:private, true)                             }
   before        { repo.update_attribute(:current_build, build)                             }
@@ -42,7 +45,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
       "@pagination"          => {
         "limit"              => 100,
         "offset"             => 0,
-        "count"              => 2,
+        "count"              => 1,
         "is_first"           => true,
         "is_last"            => true,
         "next"               => nil,
@@ -101,54 +104,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "active_on_org"    => nil,
           "migration_status" => nil,
           "history_migration_status"  => nil
-        },
-        {
-          "@type"              => "repository",
-          "@href"              => "/v3/repo/#{sharedrepo.id}",
-          "@representation"    => "standard",
-          "@permissions"       => {
-            "read"             => true,
-            "activate"         => true,
-            "deactivate"       => true,
-            "migrate"          => false,
-            "star"             => true,
-            "unstar"           => true,
-            "create_request"   => true,
-            "create_cron"      => true,
-            "create_env_var"   => true,
-            "create_key_pair"  => true,
-            "delete_key_pair"  => true,
-            "admin"            => false
-          },
-          "id"                 => sharedrepo.id,
-          "name"               => "sharedrepo",
-          "slug"               => "sharedrepoowner/sharedrepo",
-          "description"        => nil,
-          "github_id"          => sharedrepo.github_id,
-          "vcs_id"             => sharedrepo.vcs_id,
-          "vcs_type"           => sharedrepo.vcs_type,
-          "owner_name"         => "sharedrepoowner",
-          "vcs_name"           => "sharedrepo",
-          "github_language"    => nil,
-          "active"             => true,
-          "private"            => false,
-          "shared"             => true,
-          "owner"              => {
-            "@type"            => "user",
-            "id"               => sharedrepo.owner_id,
-            "login"            => "sharedrepoowner",
-            "@href"            => "/v3/user/#{sharedrepo.owner_id}" },
-          "default_branch"     => {
-            "@type"            => "branch",
-            "@href"            => "/v3/repo/#{sharedrepo.id}/branch/master",
-            "@representation"  => "minimal",
-            "name"             => "master"},
-            "starred"          => false,
-            "managed_by_installation"=>false,
-            "active_on_org"    => nil,
-            "migration_status" => nil,
-            "history_migration_status"  => nil
-          }]}}
+        }]}}
   end
 
   describe "include: last_started_build" do
@@ -184,6 +140,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "github_language"    =>nil,
         "active"             =>true,
         "private"            =>true,
+        "shared"             =>false,
         "owner"              =>{
           "@type"            =>"user",
           "id"               =>1,
@@ -295,6 +252,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
+        "shared"             => false,
         "owner"              => {
           "@type"            => "user",
           "id"               => 1,
@@ -497,6 +455,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "github_language" => nil,
         "active"          => true,
         "private"         => false,
+        "shared"          => false,
         "owner"           => {
           "@type"         => "user",
           "id"            => 1,
@@ -512,5 +471,77 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "active_on_org"  =>nil,
           "migration_status" => nil,
           "history_migration_status" => nil}]}
+  end
+
+  describe "shared repository for collaborator, authenticated as user with access" do
+    before  { get("/v3/owner/johndoe/repos", {}, headers_collaborator) }
+    example { expect(last_response).to be_ok }
+    example { puts JSON.load(body); expect(JSON.load(body)).to be == {
+      "@type"                => "repositories",
+      "@href"                => "/v3/owner/johndoe/repos",
+      "@representation"      => "standard",
+      "@pagination"          => {
+        "limit"              => 100,
+        "offset"             => 0,
+        "count"              => 1,
+        "is_first"           => true,
+        "is_last"            => true,
+        "next"               => nil,
+        "prev"               => nil,
+        "first"              => {
+          "@href"            => "/v3/owner/johndoe/repos",
+          "offset"           => 0,
+          "limit"            => 100},
+          "last"             => {
+            "@href"          => "/v3/owner/johndoe/repos",
+            "offset"         => 0,
+            "limit"          => 100}},
+      "repositories"         => [{
+        "@type"              => "repository",
+        "@href"              => "/v3/repo/#{sharedrepo.id}",
+        "@representation"    => "standard",
+        "@permissions"       => {
+          "read"             => true,
+          "activate"         => true,
+          "deactivate"       => true,
+          "migrate"          => false,
+          "star"             => true,
+          "unstar"           => true,
+          "create_request"   => true,
+          "create_cron"      => true,
+          "create_env_var"   => true,
+          "create_key_pair"  => true,
+          "delete_key_pair"  => true,
+          "admin"            => false
+        },
+        "id"                 => sharedrepo.id,
+        "name"               => "sharedrepo",
+        "slug"               => "sharedrepoowner/sharedrepo",
+        "description"        => nil,
+        "github_id"          => sharedrepo.github_id,
+        "vcs_id"             => sharedrepo.vcs_id,
+        "vcs_type"           => sharedrepo.vcs_type,
+        "owner_name"         => "sharedrepoowner",
+        "vcs_name"           => "sharedrepo",
+        "github_language"    => nil,
+        "active"             => true,
+        "private"            => false,
+        "shared"             => true,
+        "owner"              => {
+          "@type"            => "user",
+          "id"               => sharedrepo.owner_id,
+          "login"            => "sharedrepoowner",
+          "@href"            => "/v3/user/#{sharedrepo.owner_id}" },
+        "default_branch"     => {
+          "@type"            => "branch",
+          "@href"            => "/v3/repo/#{sharedrepo.id}/branch/master",
+          "@representation"  => "minimal",
+          "name"             => "master"},
+          "starred"          => false,
+          "managed_by_installation"=>false,
+          "active_on_org"    => nil,
+          "migration_status" => nil,
+          "history_migration_status"  => nil
+        }]}}
   end
 end

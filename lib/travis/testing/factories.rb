@@ -98,7 +98,7 @@ FactoryBot.define do
   end
 
   factory :sharedrepo_permission, class: Permission do
-    user_id { User.find_by_login('svenfuchs').id }
+    user_id { (User.find_by_login('johndoe') || FactoryBot.create(:user_with_sharedrepo)).id }
     repository_id { Repository.find_by_name('sharedrepo').id }
     admin { false }
     push { true }
@@ -115,6 +115,14 @@ FactoryBot.define do
     name  { 'Sven Fuchs' }
     login { 'svenfuchs' }
     email { 'sven@fuchs.com' }
+    tokens { [Token.new] }
+    github_oauth_token { 'github_oauth_token' }
+  end
+
+  factory :user_with_sharedrepo, class: User do
+    name  { 'John Doe' }
+    login { 'johndoe' }
+    email { 'john@doe.internet' }
     tokens { [Token.new] }
     github_oauth_token { 'github_oauth_token' }
   end

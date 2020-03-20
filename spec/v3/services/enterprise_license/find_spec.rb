@@ -23,7 +23,7 @@ describe Travis::API::V3::Services::EnterpriseLicense::Find, set_app: true do
           "license_id" => "12345675ad",
           "license_type" => "trial",
           "seats" => 20,
-          "active_users" => 1,
+          "active_users" => 3,
           "expiration_time" => "2018-08-18T00:00:00Z"
         }
       }
