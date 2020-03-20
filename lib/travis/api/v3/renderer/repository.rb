@@ -51,7 +51,7 @@ module Travis::API::V3
     end
 
     def shared
-      owner_name.downcase != access_control.user.login.downcase \
+      return owner_name.downcase != access_control.user.login.downcase \
       && access_control.user.shared_repositories_ids.include?(id) if access_control.user && owner_name
       false
     end
