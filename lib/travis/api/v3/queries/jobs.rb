@@ -1,8 +1,8 @@
 module Travis::API::V3
   class Queries::Jobs < Query
     params :state, :created_by, :active, prefix: :job
-    sortable_by :id
-    default_sort "id:desc"
+    sortable_by :id, :state
+    default_sort "id:desc,state"
 
     ACTIVE_STATES = %w(created queued received started).freeze
 
