@@ -116,21 +116,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
         name: 'minimal',
         slug: 'svenfuchs/minimal'
       },
-      request: {
-        branch: 'master',
-        config: {},
-        id: Request.last.id,
-        message: nil,
-        repository: {
-          id: repo.id,
-          name: 'minimal',
-          owner_name: 'svenfuchs',
-          vcs_type: 'GithubRepository'
-        },
-        user: {
-          id: 1
-        }
-      }
+      request: payload
     }
   end
 
@@ -147,8 +133,10 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
       },
       id: request.id,
       message: nil,
-      branch: 'master',
-      config: {}
+      branch: nil,
+      sha: nil,
+      merge_mode: nil,
+      config: nil
     }
   end
 
@@ -211,6 +199,11 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
       it { expect(sidekiq_payload).to eq payload }
     end
 
+    describe 'setting merge mode' do
+      let(:params) { { merge_mode: 'replace' } }
+      it { expect(sidekiq_payload).to eq payload.merge(merge_mode: 'replace') }
+    end
+
     describe 'overriding config' do
       let(:params) { { config: { script: 'true' } } }
       it { expect(sidekiq_payload).to eq payload.merge(config: params[:config]) }
@@ -244,6 +237,26 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe 'overriding branch (with wrong type, has no effect)' do
       let(:params) { { '@type': 'repository', branch: 'it' } }
       it { expect(sidekiq_payload).to eq payload }
+    end
+
+    describe 'overriding sha' do
+      let(:params) { { sha: 'it' } }
+      it { expect(sidekiq_payload).to eq payload.merge(sha: params[:sha]) }
+    end
+
+    describe 'overriding sha (in request)' do
+      let(:params) { { request: { sha: 'it' } } }
+      it { expect(sidekiq_payload).to eq payload.merge(sha: params[:request][:sha]) }
+    end
+
+    describe 'overriding sha (with request prefix)' do
+      let(:params) { { 'request.sha': 'it' } }
+      it { expect(sidekiq_payload).to eq payload.merge(sha: params[:'request.sha']) }
+    end
+
+    describe 'overriding sha (with request type)' do
+      let(:params) { { '@type': 'request', sha: 'it' } }
+      it { expect(sidekiq_payload).to eq payload.merge(sha: params[:sha]) }
     end
 
     describe 'when the repository is inactive' do

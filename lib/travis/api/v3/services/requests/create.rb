@@ -5,7 +5,7 @@ module Travis::API::V3
     private_constant :TIME_FRAME, :LIMIT
 
     result_type :request
-    params "request", "user", :config, :message, :branch, :token
+    params "request", "user", :merge_mode, :config, :message, :branch, :sha, :token
 
     def run
       repository = check_login_and_find(:repository)
@@ -14,9 +14,9 @@ module Travis::API::V3
 
       raise RepositoryInactive, repository: repository unless repository.active?
 
-      user      = find(:user) if access_control.full_access? and params_for? 'user'.freeze
-      user    ||= access_control.user
-      max       = limit(repository)
+      user = find(:user) if access_control.full_access? and params_for? 'user'.freeze
+      user ||= access_control.user
+      max = limit(repository)
       remaining = remaining_requests(max, repository)
 
       raise RequestLimitReached, repository: repository, max_requests: max, per_seconds: TIME_FRAME.to_i if remaining == 0
