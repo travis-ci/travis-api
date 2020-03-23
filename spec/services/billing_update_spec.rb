@@ -14,7 +14,7 @@ RSpec.feature 'Update address' do
   describe '#update_address' do
     let(:billing_client_service) { Services::BillingClient.new }
 
-    it 'requests the update' do
+    it 'sends an update request to billing service' do
       stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
                             .with(:body => subscription_params)
                             .to_return(status: 204)
@@ -27,7 +27,7 @@ RSpec.feature 'Update address' do
   describe '#csv_import' do
     let(:billing_client_service) { Services::BillingClient.new }
 
-    it 'csv import' do
+    it 'sends a report request to the billing service' do
       stubbed_request = WebMock.stub_request(:get, "#{billing_url}/report?from=#{from}&to=#{to}")
                         .with(headers: { Authorization: 'Token token=' << auth_key , "User-Agent"=>"Faraday v0.9.2"})
                         .to_return(status: 200,

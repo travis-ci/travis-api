@@ -21,7 +21,7 @@ RSpec.describe Services::Report::InvoiceReport do
                          body: "Invoice Date,Product Type,Invoice Number,Status,Plan Name\n"+"2020-01-01,Hosted Monthly,4F92070-0035,paid,travis-ci-two-builds")
 
         end
-        it 'generate cvs file' do
+        it 'generates cvs file' do
           CSV.generate(headers: true) do |csv|
             invoice_report_service.csv_data.each do |itesm|
               csv << itesm

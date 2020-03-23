@@ -40,7 +40,7 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
     expect(stubbed_request).to have_been_made
   end
 
-  scenario 'Update VAT ID wrong' do
+  scenario 'Update VAT ID with invalid VAT ID' do
     stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
                            .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to" => 1.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE99999"})
                            .to_return(status: 422, body: '{"error":"Vat is not a valid German vat number"}')
