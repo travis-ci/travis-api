@@ -44,7 +44,7 @@ module Travis::API::V3
     end
 
     def organizations_repositories_ids
-      @organizations_repositories_ids ||= organizations.map { |org| org.repositories.pluck(:id) }
+      @organizations_repositories_ids ||= organizations.empty? ? [] : Models::Repository.where(owner_id: organizations.pluck(:id)).pluck(:id)
     end
 
     def access_repositories_ids
