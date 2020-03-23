@@ -5,6 +5,7 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
@@ -59,7 +60,7 @@ CREATE TYPE public.source_type AS ENUM (
     'stripe',
     'github',
     'unknown'
-    );
+);
 
 
 --
@@ -68,58 +69,58 @@ CREATE TYPE public.source_type AS ENUM (
 
 CREATE FUNCTION public.agg_all_repo_counts() RETURNS boolean
     LANGUAGE plpgsql
-AS $$
+    AS $$
 begin
-    with src as (
-        select cnt.repository_id
-        from repo_counts cnt
-        group by cnt.repository_id
-        having count(1) > 1
-    ),
-         del as (
-             delete from repo_counts cnt
-                 using src
-                 where cnt.repository_id = src.repository_id
-                 returning cnt.*
-         ),
-         agg as (
-             select
-                 del.repository_id,
-                 sum(del.requests)::integer as requests,
-                 sum(del.commits)::integer as commits,
-                 sum(del.branches)::integer as branches,
-                 sum(del.pull_requests)::integer as pull_requests,
-                 sum(del.tags)::integer as tags,
-                 sum(del.builds)::integer as builds,
-                 -- sum(del.stages)::integer as stages,
-                 sum(del.jobs)::integer as jobs
-             from del
-             group by del.repository_id
-         )
-    insert into repo_counts(
-        repository_id,
-        requests,
-        commits,
-        branches,
-        pull_requests,
-        tags,
-        builds,
-        -- stages,
-        jobs
-    )
+  with src as (
+    select cnt.repository_id
+    from repo_counts cnt
+    group by cnt.repository_id
+    having count(1) > 1
+  ),
+  del as (
+    delete from repo_counts cnt
+    using src
+    where cnt.repository_id = src.repository_id
+    returning cnt.*
+  ),
+  agg as (
     select
-        agg.repository_id,
-        agg.requests,
-        agg.commits,
-        agg.branches,
-        agg.pull_requests,
-        agg.tags,
-        agg.builds,
-        -- agg.stages,
-        agg.jobs
-    from agg;
+      del.repository_id,
+      sum(del.requests)::integer as requests,
+      sum(del.commits)::integer as commits,
+      sum(del.branches)::integer as branches,
+      sum(del.pull_requests)::integer as pull_requests,
+      sum(del.tags)::integer as tags,
+      sum(del.builds)::integer as builds,
+      -- sum(del.stages)::integer as stages,
+      sum(del.jobs)::integer as jobs
+    from del
+    group by del.repository_id
+  )
+  insert into repo_counts(
+    repository_id,
+    requests,
+    commits,
+    branches,
+    pull_requests,
+    tags,
+    builds,
+    -- stages,
+    jobs
+  )
+  select
+    agg.repository_id,
+    agg.requests,
+    agg.commits,
+    agg.branches,
+    agg.pull_requests,
+    agg.tags,
+    agg.builds,
+    -- agg.stages,
+    agg.jobs
+  from agg;
 
-    return true;
+  return true;
 end;
 $$;
 
@@ -130,60 +131,60 @@ $$;
 
 CREATE FUNCTION public.agg_repo_counts(_repo_id integer) RETURNS boolean
     LANGUAGE plpgsql
-AS $$
+    AS $$
 begin
-    with src as (
-        select cnt.repository_id
-        from repo_counts cnt
-        where cnt.repository_id = _repo_id
-        group by cnt.repository_id
-        having count(1) > 1
-    ),
-         del as (
-             delete from repo_counts cnt
-                 using src
-                 where cnt.repository_id = src.repository_id
-                 returning cnt.*
-         ),
-         agg as (
-             select
-                 del.repository_id,
-                 sum(del.requests)::integer as requests,
-                 sum(del.commits)::integer as commits,
-                 sum(del.branches)::integer as branches,
-                 sum(del.pull_requests)::integer as pull_requests,
-                 sum(del.tags)::integer as tags,
-                 sum(del.builds)::integer as builds,
-                 -- sum(del.stages)::integer as stages,
-                 sum(del.jobs)::integer as jobs
-             from del
-             group by del.repository_id
-         )
-    insert into repo_counts(
-        repository_id,
-        requests,
-        commits,
-        branches,
-        pull_requests,
-        tags,
-        builds,
-        -- stages,
-        jobs
-    )
+  with src as (
+    select cnt.repository_id
+    from repo_counts cnt
+    where cnt.repository_id = _repo_id
+    group by cnt.repository_id
+    having count(1) > 1
+  ),
+  del as (
+    delete from repo_counts cnt
+    using src
+    where cnt.repository_id = src.repository_id
+    returning cnt.*
+  ),
+  agg as (
     select
-        agg.repository_id,
-        agg.requests,
-        agg.commits,
-        agg.branches,
-        agg.pull_requests,
-        agg.tags,
-        agg.builds,
-        -- agg.stages,
-        agg.jobs
-    from agg
-    where agg.requests > 0 or agg.builds > 0 or agg.jobs > 0;
+      del.repository_id,
+      sum(del.requests)::integer as requests,
+      sum(del.commits)::integer as commits,
+      sum(del.branches)::integer as branches,
+      sum(del.pull_requests)::integer as pull_requests,
+      sum(del.tags)::integer as tags,
+      sum(del.builds)::integer as builds,
+      -- sum(del.stages)::integer as stages,
+      sum(del.jobs)::integer as jobs
+    from del
+    group by del.repository_id
+  )
+  insert into repo_counts(
+    repository_id,
+    requests,
+    commits,
+    branches,
+    pull_requests,
+    tags,
+    builds,
+    -- stages,
+    jobs
+  )
+  select
+    agg.repository_id,
+    agg.requests,
+    agg.commits,
+    agg.branches,
+    agg.pull_requests,
+    agg.tags,
+    agg.builds,
+    -- agg.stages,
+    agg.jobs
+  from agg
+  where agg.requests > 0 or agg.builds > 0 or agg.jobs > 0;
 
-    return true;
+  return true;
 end;
 $$;
 
@@ -194,21 +195,21 @@ $$;
 
 CREATE FUNCTION public.count_all_branches(_count integer, _start integer, _end integer) RETURNS boolean
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare max int;
 begin
-    select id + _count from branches order by id desc limit 1 into max;
+  select id + _count from branches order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting branches %', i;
-                insert into repo_counts(repository_id, branches, range)
-                select * from count_branches(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting branches %', i;
+      insert into repo_counts(repository_id, branches, range)
+      select * from count_branches(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -219,21 +220,21 @@ $$;
 
 CREATE FUNCTION public.count_all_builds(_count integer, _start integer, _end integer) RETURNS boolean
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare max int;
 begin
-    select id + _count from builds order by id desc limit 1 into max;
+  select id + _count from builds order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting builds %', i;
-                insert into repo_counts(repository_id, builds, range)
-                select * from count_builds(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting builds %', i;
+      insert into repo_counts(repository_id, builds, range)
+      select * from count_builds(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -244,21 +245,21 @@ $$;
 
 CREATE FUNCTION public.count_all_commits(_count integer, _start integer, _end integer) RETURNS boolean
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare max int;
 begin
-    select id + _count from commits order by id desc limit 1 into max;
+  select id + _count from commits order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting commits %', i;
-                insert into repo_counts(repository_id, commits, range)
-                select * from count_commits(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting commits %', i;
+      insert into repo_counts(repository_id, commits, range)
+      select * from count_commits(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -269,21 +270,21 @@ $$;
 
 CREATE FUNCTION public.count_all_jobs(_count integer, _start integer, _end integer) RETURNS boolean
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare max int;
 begin
-    select id + _count from jobs order by id desc limit 1 into max;
+  select id + _count from jobs order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting jobs %', i;
-                insert into repo_counts(repository_id, jobs, range)
-                select * from count_jobs(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting jobs %', i;
+      insert into repo_counts(repository_id, jobs, range)
+      select * from count_jobs(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -294,21 +295,21 @@ $$;
 
 CREATE FUNCTION public.count_all_pull_requests(_count integer, _start integer, _end integer) RETURNS boolean
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare max int;
 begin
-    select id + _count from pull_requests order by id desc limit 1 into max;
+  select id + _count from pull_requests order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting pull_requests %', i;
-                insert into repo_counts(repository_id, pull_requests, range)
-                select * from count_pull_requests(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting pull_requests %', i;
+      insert into repo_counts(repository_id, pull_requests, range)
+      select * from count_pull_requests(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -319,20 +320,20 @@ $$;
 
 CREATE FUNCTION public.count_all_requests(_count integer, _start integer, _end integer) RETURNS boolean
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare max int;
 begin
-    select id + _count from requests order by id desc limit 1 into max;
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting requests %', i;
-                insert into repo_counts(repository_id, requests, range)
-                select * from count_requests(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  select id + _count from requests order by id desc limit 1 into max;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting requests %', i;
+      insert into repo_counts(repository_id, requests, range)
+      select * from count_requests(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -343,21 +344,21 @@ $$;
 
 CREATE FUNCTION public.count_all_tags(_count integer, _start integer, _end integer) RETURNS boolean
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare max int;
 begin
-    select id + _count from tags order by id desc limit 1 into max;
+  select id + _count from tags order by id desc limit 1 into max;
 
-    for i in _start.._end by _count loop
-            if i > max then exit; end if;
-            begin
-                raise notice 'counting tags %', i;
-                insert into repo_counts(repository_id, tags, range)
-                select * from count_tags(i, i + _count - 1);
-            exception when unique_violation then end;
-        end loop;
+  for i in _start.._end by _count loop
+    if i > max then exit; end if;
+    begin
+      raise notice 'counting tags %', i;
+      insert into repo_counts(repository_id, tags, range)
+      select * from count_tags(i, i + _count - 1);
+    exception when unique_violation then end;
+  end loop;
 
-    return true;
+  return true;
 end
 $$;
 
@@ -368,21 +369,21 @@ $$;
 
 CREATE FUNCTION public.count_branches() RETURNS trigger
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, branches)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, branches)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -393,13 +394,13 @@ $$;
 
 CREATE FUNCTION public.count_branches(_start integer, _end integer) RETURNS TABLE(repository_id integer, branches bigint, range character varying)
     LANGUAGE plpgsql
-AS $$
+    AS $$
 begin
-    return query select r.id, count(t.id) as branches, ('branches' || ':' || _start || ':' || _end)::varchar as range
-                 from branches as t
-                          join repositories as r on t.repository_id = r.id
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by r.id;
+  return query select r.id, count(t.id) as branches, ('branches' || ':' || _start || ':' || _end)::varchar as range
+  from branches as t
+  join repositories as r on t.repository_id = r.id
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by r.id;
 end;
 $$;
 
@@ -410,21 +411,21 @@ $$;
 
 CREATE FUNCTION public.count_builds() RETURNS trigger
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, builds)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, builds)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -435,12 +436,12 @@ $$;
 
 CREATE FUNCTION public.count_builds(_start integer, _end integer) RETURNS TABLE(repository_id integer, builds bigint, range character varying)
     LANGUAGE plpgsql
-AS $$
+    AS $$
 begin
-    return query select t.repository_id, count(id) as builds, ('builds' || ':' || _start || ':' || _end)::varchar as range
-                 from builds as t
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by t.repository_id;
+  return query select t.repository_id, count(id) as builds, ('builds' || ':' || _start || ':' || _end)::varchar as range
+  from builds as t
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by t.repository_id;
 end;
 $$;
 
@@ -451,21 +452,21 @@ $$;
 
 CREATE FUNCTION public.count_commits() RETURNS trigger
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, commits)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, commits)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -476,13 +477,13 @@ $$;
 
 CREATE FUNCTION public.count_commits(_start integer, _end integer) RETURNS TABLE(repository_id integer, commits bigint, range character varying)
     LANGUAGE plpgsql
-AS $$
+    AS $$
 begin
-    return query select r.id, count(t.id) as commits, ('commits' || ':' || _start || ':' || _end)::varchar as range
-                 from commits as t
-                          join repositories as r on t.repository_id = r.id
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by r.id;
+  return query select r.id, count(t.id) as commits, ('commits' || ':' || _start || ':' || _end)::varchar as range
+  from commits as t
+  join repositories as r on t.repository_id = r.id
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by r.id;
 end;
 $$;
 
@@ -493,21 +494,21 @@ $$;
 
 CREATE FUNCTION public.count_jobs() RETURNS trigger
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, jobs)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, jobs)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -518,12 +519,12 @@ $$;
 
 CREATE FUNCTION public.count_jobs(_start integer, _end integer) RETURNS TABLE(repository_id integer, jobs bigint, range character varying)
     LANGUAGE plpgsql
-AS $$
+    AS $$
 begin
-    return query select t.repository_id, count(id) as jobs, ('jobs' || ':' || _start || ':' || _end)::varchar as range
-                 from jobs as t
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by t.repository_id;
+  return query select t.repository_id, count(id) as jobs, ('jobs' || ':' || _start || ':' || _end)::varchar as range
+  from jobs as t
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by t.repository_id;
 end;
 $$;
 
@@ -534,21 +535,21 @@ $$;
 
 CREATE FUNCTION public.count_pull_requests() RETURNS trigger
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, pull_requests)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, pull_requests)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -559,13 +560,13 @@ $$;
 
 CREATE FUNCTION public.count_pull_requests(_start integer, _end integer) RETURNS TABLE(repository_id integer, pull_requests bigint, range character varying)
     LANGUAGE plpgsql
-AS $$
+    AS $$
 begin
-    return query select r.id, count(t.id) as pull_requests, ('pull_requests' || ':' || _start || ':' || _end)::varchar as range
-                 from pull_requests as t
-                          join repositories as r on t.repository_id = r.id
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by r.id;
+  return query select r.id, count(t.id) as pull_requests, ('pull_requests' || ':' || _start || ':' || _end)::varchar as range
+  from pull_requests as t
+  join repositories as r on t.repository_id = r.id
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by r.id;
 end;
 $$;
 
@@ -576,21 +577,21 @@ $$;
 
 CREATE FUNCTION public.count_requests() RETURNS trigger
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null then
-        insert into repo_counts(repository_id, requests)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null then
+    insert into repo_counts(repository_id, requests)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -601,12 +602,12 @@ $$;
 
 CREATE FUNCTION public.count_requests(_start integer, _end integer) RETURNS TABLE(repository_id integer, requests bigint, range character varying)
     LANGUAGE plpgsql
-AS $$
+    AS $$
 begin
-    return query select t.repository_id, count(id) as requests, ('requests' || ':' || _start || ':' || _end)::varchar as range
-                 from requests as t
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by t.repository_id;
+  return query select t.repository_id, count(id) as requests, ('requests' || ':' || _start || ':' || _end)::varchar as range
+  from requests as t
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by t.repository_id;
 end;
 $$;
 
@@ -617,21 +618,21 @@ $$;
 
 CREATE FUNCTION public.count_tags() RETURNS trigger
     LANGUAGE plpgsql
-AS $$
+    AS $$
 declare
-    c text;
-    r record;
+  c text;
+  r record;
 begin
-    if tg_argv[0]::int > 0 then r := new; else r := old; end if;
-    if r.repository_id is not null is not null then
-        insert into repo_counts(repository_id, tags)
-        values(r.repository_id, tg_argv[0]::int);
-    end if;
-    return r;
+  if tg_argv[0]::int > 0 then r := new; else r := old; end if;
+  if r.repository_id is not null is not null then
+    insert into repo_counts(repository_id, tags)
+    values(r.repository_id, tg_argv[0]::int);
+  end if;
+  return r;
 exception when others then
-    get stacked diagnostics c = pg_exception_context;
-    raise warning '% context: %s', sqlerrm, c;
-    return r;
+  get stacked diagnostics c = pg_exception_context;
+  raise warning '% context: %s', sqlerrm, c;
+  return r;
 end;
 $$;
 
@@ -642,13 +643,13 @@ $$;
 
 CREATE FUNCTION public.count_tags(_start integer, _end integer) RETURNS TABLE(repository_id integer, tags bigint, range character varying)
     LANGUAGE plpgsql
-AS $$
+    AS $$
 begin
-    return query select r.id, count(t.id) as tags, ('tags' || ':' || _start || ':' || _end)::varchar as range
-                 from tags as t
-                          join repositories as r on t.repository_id = r.id
-                 where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
-                 group by r.id;
+  return query select r.id, count(t.id) as tags, ('tags' || ':' || _start || ':' || _end)::varchar as range
+  from tags as t
+  join repositories as r on t.repository_id = r.id
+  where t.id between _start and _end and t.created_at <= '2018-01-01 00:00:00' and t.repository_id is not null
+  group by r.id;
 end;
 $$;
 
@@ -659,13 +660,13 @@ $$;
 
 CREATE FUNCTION public.is_json(text) RETURNS boolean
     LANGUAGE plpgsql IMMUTABLE
-AS $_$
-BEGIN
+    AS $_$
+  BEGIN
     perform $1::json;
     return true;
-EXCEPTION WHEN invalid_text_representation THEN
+  EXCEPTION WHEN invalid_text_representation THEN
     return false;
-END
+  END
 $_$;
 
 
@@ -675,26 +676,26 @@ $_$;
 
 CREATE FUNCTION public.set_unique_number() RETURNS trigger
     LANGUAGE plpgsql
-AS $$
+    AS $$
 DECLARE
-    disable boolean;
+  disable boolean;
 BEGIN
-    disable := 'f';
-    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-        BEGIN
-            disable := current_setting('set_unique_number_on_builds.disable');
-        EXCEPTION
-            WHEN others THEN
-                set set_unique_number_on_builds.disable = 'f';
-        END;
+  disable := 'f';
+  IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+    BEGIN
+       disable := current_setting('set_unique_number_on_builds.disable');
+    EXCEPTION
+    WHEN others THEN
+      set set_unique_number_on_builds.disable = 'f';
+    END;
 
-        IF NOT disable THEN
-            IF NEW.unique_number IS NULL OR NEW.unique_number > 0 THEN
-                NEW.unique_number := NEW.number;
-            END IF;
-        END IF;
+    IF NOT disable THEN
+      IF NEW.unique_number IS NULL OR NEW.unique_number > 0 THEN
+        NEW.unique_number := NEW.number;
+      END IF;
     END IF;
-    RETURN NEW;
+  END IF;
+  RETURN NEW;
 END;
 $$;
 
@@ -705,15 +706,15 @@ $$;
 
 CREATE FUNCTION public.set_updated_at() RETURNS trigger
     LANGUAGE plpgsql
-AS $$
-BEGIN
-    IF TG_OP = 'INSERT' OR
-       (TG_OP = 'UPDATE' AND NEW.* IS DISTINCT FROM OLD.*) THEN
-        NEW.updated_at := statement_timestamp();
-    END IF;
-    RETURN NEW;
-END;
-$$;
+    AS $$
+      BEGIN
+        IF TG_OP = 'INSERT' OR
+             (TG_OP = 'UPDATE' AND NEW.* IS DISTINCT FROM OLD.*) THEN
+          NEW.updated_at := statement_timestamp();
+        END IF;
+        RETURN NEW;
+      END;
+      $$;
 
 
 --
@@ -722,71 +723,71 @@ $$;
 
 CREATE FUNCTION public.soft_delete_repo_data(r_id bigint) RETURNS void
     LANGUAGE plpgsql
-AS $$
+    AS $$
 DECLARE
-    request_raw_config_ids bigint[];
-    request_raw_configuration_ids bigint[];
-    request_yaml_config_ids bigint[];
-    request_config_ids bigint[];
-    tag_ids bigint[];
-    ssl_key_ids bigint[];
-    build_config_ids bigint[];
-    job_config_ids bigint[];
-    build_ids bigint[];
-    pull_request_ids bigint[];
-    commit_ids bigint[];
-    request_ids bigint[];
-    request_payload_ids bigint[];
-    stage_ids bigint[];
-    job_ids bigint[];
+  request_raw_config_ids bigint[];
+  request_raw_configuration_ids bigint[];
+  request_yaml_config_ids bigint[];
+  request_config_ids bigint[];
+  tag_ids bigint[];
+  ssl_key_ids bigint[];
+  build_config_ids bigint[];
+  job_config_ids bigint[];
+  build_ids bigint[];
+  pull_request_ids bigint[];
+  commit_ids bigint[];
+  request_ids bigint[];
+  request_payload_ids bigint[];
+  stage_ids bigint[];
+  job_ids bigint[];
 BEGIN
-    SELECT INTO job_ids array_agg(id) FROM jobs WHERE repository_id = r_id;
-    SELECT INTO stage_ids array_agg(id) FROM stages WHERE build_id IN (SELECT id FROM builds WHERE repository_id = r_id);
-    SELECT INTO request_payload_ids array_agg(id) FROM request_payloads WHERE request_id IN (SELECT id FROM requests WHERE repository_id = r_id);
-    SELECT INTO request_ids array_agg(id) FROM requests WHERE repository_id = r_id;
-    SELECT INTO commit_ids array_agg(id) FROM commits WHERE repository_id = r_id;
-    SELECT INTO pull_request_ids array_agg(id) FROM pull_requests WHERE repository_id = r_id;
-    SELECT INTO build_ids array_agg(id) FROM builds WHERE repository_id = r_id;
-    SELECT INTO job_config_ids array_agg(id) FROM job_configs WHERE repository_id = r_id;
-    SELECT INTO build_config_ids array_agg(id) FROM build_configs WHERE repository_id = r_id;
-    SELECT INTO ssl_key_ids array_agg(id) FROM ssl_keys WHERE repository_id = r_id;
-    SELECT INTO tag_ids array_agg(id) FROM tags WHERE repository_id = r_id;
-    SELECT INTO request_config_ids array_agg(id) FROM request_configs WHERE repository_id = r_id;
-    SELECT INTO request_yaml_config_ids array_agg(id) FROM request_yaml_configs WHERE repository_id = r_id;
-    SELECT INTO request_raw_configuration_ids array_agg(id) FROM request_raw_configurations WHERE request_id = ANY(request_ids);
-    SELECT INTO request_raw_config_ids array_agg(id) FROM request_raw_configs WHERE id IN (SELECT request_raw_config_id FROM request_raw_configurations WHERE request_id = ANY(request_ids));
+  SELECT INTO job_ids array_agg(id) FROM jobs WHERE repository_id = r_id;
+  SELECT INTO stage_ids array_agg(id) FROM stages WHERE build_id IN (SELECT id FROM builds WHERE repository_id = r_id);
+  SELECT INTO request_payload_ids array_agg(id) FROM request_payloads WHERE request_id IN (SELECT id FROM requests WHERE repository_id = r_id);
+  SELECT INTO request_ids array_agg(id) FROM requests WHERE repository_id = r_id;
+  SELECT INTO commit_ids array_agg(id) FROM commits WHERE repository_id = r_id;
+  SELECT INTO pull_request_ids array_agg(id) FROM pull_requests WHERE repository_id = r_id;
+  SELECT INTO build_ids array_agg(id) FROM builds WHERE repository_id = r_id;
+  SELECT INTO job_config_ids array_agg(id) FROM job_configs WHERE repository_id = r_id;
+  SELECT INTO build_config_ids array_agg(id) FROM build_configs WHERE repository_id = r_id;
+  SELECT INTO ssl_key_ids array_agg(id) FROM ssl_keys WHERE repository_id = r_id;
+  SELECT INTO tag_ids array_agg(id) FROM tags WHERE repository_id = r_id;
+  SELECT INTO request_config_ids array_agg(id) FROM request_configs WHERE repository_id = r_id;
+  SELECT INTO request_yaml_config_ids array_agg(id) FROM request_yaml_configs WHERE repository_id = r_id;
+  SELECT INTO request_raw_configuration_ids array_agg(id) FROM request_raw_configurations WHERE request_id = ANY(request_ids);
+  SELECT INTO request_raw_config_ids array_agg(id) FROM request_raw_configs WHERE id IN (SELECT request_raw_config_id FROM request_raw_configurations WHERE request_id = ANY(request_ids));
 
-    INSERT INTO deleted_jobs SELECT * FROM jobs WHERE id = ANY(job_ids);
-    INSERT INTO deleted_stages SELECT * FROM stages WHERE id = ANY(stage_ids);
-    INSERT INTO deleted_request_payloads SELECT * FROM request_payloads WHERE id = ANY(request_payload_ids);
-    INSERT INTO deleted_requests SELECT * FROM requests WHERE id = ANY(request_ids);
-    INSERT INTO deleted_commits SELECT * FROM commits WHERE id = ANY(commit_ids);
-    INSERT INTO deleted_pull_requests SELECT * FROM pull_requests WHERE id = ANY(pull_request_ids);
-    INSERT INTO deleted_builds SELECT * FROM builds WHERE id = ANY(build_ids);
-    INSERT INTO deleted_job_configs SELECT * FROM job_configs WHERE id = ANY(job_config_ids);
-    INSERT INTO deleted_build_configs SELECT * FROM build_configs WHERE id = ANY(build_config_ids);
-    INSERT INTO deleted_ssl_keys SELECT * FROM ssl_keys WHERE id = ANY(ssl_key_ids);
-    INSERT INTO deleted_tags SELECT * FROM tags WHERE id = ANY(tag_ids);
-    INSERT INTO deleted_request_configs SELECT * FROM request_configs WHERE id = ANY(request_config_ids);
-    INSERT INTO deleted_request_yaml_configs SELECT * FROM request_yaml_configs WHERE id = ANY(request_yaml_config_ids);
-    INSERT INTO deleted_request_raw_configurations SELECT * FROM request_raw_configurations WHERE id = ANY(request_raw_configuration_ids);
-    INSERT INTO deleted_request_raw_configs SELECT * FROM request_raw_configs WHERE id = ANY(request_raw_config_ids);
+  INSERT INTO deleted_jobs SELECT * FROM jobs WHERE id = ANY(job_ids);
+  INSERT INTO deleted_stages SELECT * FROM stages WHERE id = ANY(stage_ids);
+  INSERT INTO deleted_request_payloads SELECT * FROM request_payloads WHERE id = ANY(request_payload_ids);
+  INSERT INTO deleted_requests SELECT * FROM requests WHERE id = ANY(request_ids);
+  INSERT INTO deleted_commits SELECT * FROM commits WHERE id = ANY(commit_ids);
+  INSERT INTO deleted_pull_requests SELECT * FROM pull_requests WHERE id = ANY(pull_request_ids);
+  INSERT INTO deleted_builds SELECT * FROM builds WHERE id = ANY(build_ids);
+  INSERT INTO deleted_job_configs SELECT * FROM job_configs WHERE id = ANY(job_config_ids);
+  INSERT INTO deleted_build_configs SELECT * FROM build_configs WHERE id = ANY(build_config_ids);
+  INSERT INTO deleted_ssl_keys SELECT * FROM ssl_keys WHERE id = ANY(ssl_key_ids);
+  INSERT INTO deleted_tags SELECT * FROM tags WHERE id = ANY(tag_ids);
+  INSERT INTO deleted_request_configs SELECT * FROM request_configs WHERE id = ANY(request_config_ids);
+  INSERT INTO deleted_request_yaml_configs SELECT * FROM request_yaml_configs WHERE id = ANY(request_yaml_config_ids);
+  INSERT INTO deleted_request_raw_configurations SELECT * FROM request_raw_configurations WHERE id = ANY(request_raw_configuration_ids);
+  INSERT INTO deleted_request_raw_configs SELECT * FROM request_raw_configs WHERE id = ANY(request_raw_config_ids);
 
-    DELETE FROM jobs WHERE id = ANY(job_ids);
-    DELETE FROM stages WHERE id = ANY(stage_ids);
-    DELETE FROM request_payloads WHERE id = ANY(request_payload_ids);
-    DELETE FROM requests WHERE id = ANY(request_ids);
-    DELETE FROM commits WHERE id = ANY(commit_ids);
-    DELETE FROM pull_requests WHERE id = ANY(pull_request_ids);
-    DELETE FROM builds WHERE id = ANY(build_ids);
-    DELETE FROM job_configs WHERE id = ANY(job_config_ids);
-    DELETE FROM build_configs WHERE id = ANY(build_config_ids);
-    DELETE FROM ssl_keys WHERE id = ANY(ssl_key_ids);
-    DELETE FROM tags WHERE id = ANY(tag_ids);
-    DELETE FROM request_configs WHERE id = ANY(request_config_ids);
-    DELETE FROM request_yaml_configs WHERE id = ANY(request_yaml_config_ids);
-    DELETE FROM request_raw_configurations WHERE id = ANY(request_raw_configuration_ids);
-    DELETE FROM request_raw_configs WHERE id = ANY(request_raw_config_ids);
+  DELETE FROM jobs WHERE id = ANY(job_ids);
+  DELETE FROM stages WHERE id = ANY(stage_ids);
+  DELETE FROM request_payloads WHERE id = ANY(request_payload_ids);
+  DELETE FROM requests WHERE id = ANY(request_ids);
+  DELETE FROM commits WHERE id = ANY(commit_ids);
+  DELETE FROM pull_requests WHERE id = ANY(pull_request_ids);
+  DELETE FROM builds WHERE id = ANY(build_ids);
+  DELETE FROM job_configs WHERE id = ANY(job_config_ids);
+  DELETE FROM build_configs WHERE id = ANY(build_config_ids);
+  DELETE FROM ssl_keys WHERE id = ANY(ssl_key_ids);
+  DELETE FROM tags WHERE id = ANY(tag_ids);
+  DELETE FROM request_configs WHERE id = ANY(request_config_ids);
+  DELETE FROM request_yaml_configs WHERE id = ANY(request_yaml_config_ids);
+  DELETE FROM request_raw_configurations WHERE id = ANY(request_raw_configuration_ids);
+  DELETE FROM request_raw_configs WHERE id = ANY(request_raw_config_ids);
 END;
 $$;
 
@@ -800,14 +801,14 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE public.abuses (
-                               id integer NOT NULL,
-                               owner_type character varying,
-                               owner_id integer,
-                               request_id integer,
-                               level integer NOT NULL,
-                               reason character varying NOT NULL,
-                               created_at timestamp without time zone NOT NULL,
-                               updated_at timestamp without time zone NOT NULL
+    id integer NOT NULL,
+    owner_type character varying,
+    owner_id integer,
+    request_id integer,
+    level integer NOT NULL,
+    reason character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -835,10 +836,10 @@ ALTER SEQUENCE public.abuses_id_seq OWNED BY public.abuses.id;
 --
 
 CREATE TABLE public.ar_internal_metadata (
-                                             key character varying NOT NULL,
-                                             value character varying,
-                                             created_at timestamp without time zone NOT NULL,
-                                             updated_at timestamp without time zone NOT NULL
+    key character varying NOT NULL,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -847,14 +848,14 @@ CREATE TABLE public.ar_internal_metadata (
 --
 
 CREATE TABLE public.beta_features (
-                                      id integer NOT NULL,
-                                      name character varying,
-                                      description text,
-                                      feedback_url character varying,
-                                      staff_only boolean,
-                                      default_enabled boolean,
-                                      created_at timestamp without time zone,
-                                      updated_at timestamp without time zone
+    id integer NOT NULL,
+    name character varying,
+    description text,
+    feedback_url character varying,
+    staff_only boolean,
+    default_enabled boolean,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -882,12 +883,12 @@ ALTER SEQUENCE public.beta_features_id_seq OWNED BY public.beta_features.id;
 --
 
 CREATE TABLE public.beta_migration_requests (
-                                                id integer NOT NULL,
-                                                owner_id integer,
-                                                owner_name character varying,
-                                                owner_type character varying,
-                                                created_at timestamp without time zone,
-                                                accepted_at timestamp without time zone
+    id integer NOT NULL,
+    owner_id integer,
+    owner_name character varying,
+    owner_type character varying,
+    created_at timestamp without time zone,
+    accepted_at timestamp without time zone
 );
 
 
@@ -915,15 +916,15 @@ ALTER SEQUENCE public.beta_migration_requests_id_seq OWNED BY public.beta_migrat
 --
 
 CREATE TABLE public.branches (
-                                 id integer NOT NULL,
-                                 repository_id integer NOT NULL,
-                                 last_build_id integer,
-                                 name character varying NOT NULL,
-                                 exists_on_github boolean DEFAULT true NOT NULL,
-                                 created_at timestamp without time zone NOT NULL,
-                                 updated_at timestamp without time zone NOT NULL,
-                                 org_id integer,
-                                 com_id integer
+    id integer NOT NULL,
+    repository_id integer NOT NULL,
+    last_build_id integer,
+    name character varying NOT NULL,
+    exists_on_github boolean DEFAULT true NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -951,15 +952,15 @@ ALTER SEQUENCE public.branches_id_seq OWNED BY public.branches.id;
 --
 
 CREATE TABLE public.broadcasts (
-                                   id integer NOT NULL,
-                                   recipient_type character varying,
-                                   recipient_id integer,
-                                   kind character varying,
-                                   message character varying,
-                                   expired boolean,
-                                   created_at timestamp without time zone NOT NULL,
-                                   updated_at timestamp without time zone NOT NULL,
-                                   category character varying
+    id integer NOT NULL,
+    recipient_type character varying,
+    recipient_id integer,
+    kind character varying,
+    message character varying,
+    expired boolean,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    category character varying
 );
 
 
@@ -987,12 +988,12 @@ ALTER SEQUENCE public.broadcasts_id_seq OWNED BY public.broadcasts.id;
 --
 
 CREATE TABLE public.build_configs (
-                                      id integer NOT NULL,
-                                      repository_id integer NOT NULL,
-                                      key character varying NOT NULL,
-                                      config jsonb,
-                                      org_id bigint,
-                                      com_id bigint
+    id integer NOT NULL,
+    repository_id integer NOT NULL,
+    key character varying NOT NULL,
+    config jsonb,
+    org_id bigint,
+    com_id bigint
 );
 
 
@@ -1032,49 +1033,49 @@ CREATE SEQUENCE public.shared_builds_tasks_seq
 --
 
 CREATE TABLE public.builds (
-                               id bigint DEFAULT nextval('public.shared_builds_tasks_seq'::regclass) NOT NULL,
-                               repository_id integer,
-                               number character varying,
-                               started_at timestamp without time zone,
-                               finished_at timestamp without time zone,
-                               log text DEFAULT ''::text,
-                               message text,
-                               committed_at timestamp without time zone,
-                               committer_name character varying,
-                               committer_email character varying,
-                               author_name character varying,
-                               author_email character varying,
-                               created_at timestamp without time zone NOT NULL,
-                               updated_at timestamp without time zone NOT NULL,
-                               ref character varying,
-                               branch character varying,
-                               github_payload text,
-                               compare_url character varying,
-                               token character varying,
-                               commit_id integer,
-                               request_id integer,
-                               state character varying,
-                               duration integer,
-                               owner_type character varying,
-                               owner_id integer,
-                               event_type character varying,
-                               previous_state character varying,
-                               pull_request_title text,
-                               pull_request_number integer,
-                               canceled_at timestamp without time zone,
-                               cached_matrix_ids integer[],
-                               received_at timestamp without time zone,
-                               private boolean,
-                               pull_request_id integer,
-                               branch_id integer,
-                               tag_id integer,
-                               sender_type character varying,
-                               sender_id integer,
-                               org_id integer,
-                               com_id integer,
-                               config_id integer,
-                               restarted_at timestamp without time zone,
-                               unique_number integer
+    id bigint DEFAULT nextval('public.shared_builds_tasks_seq'::regclass) NOT NULL,
+    repository_id integer,
+    number character varying,
+    started_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    log text DEFAULT ''::text,
+    message text,
+    committed_at timestamp without time zone,
+    committer_name character varying,
+    committer_email character varying,
+    author_name character varying,
+    author_email character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    ref character varying,
+    branch character varying,
+    github_payload text,
+    compare_url character varying,
+    token character varying,
+    commit_id integer,
+    request_id integer,
+    state character varying,
+    duration integer,
+    owner_type character varying,
+    owner_id integer,
+    event_type character varying,
+    previous_state character varying,
+    pull_request_title text,
+    pull_request_number integer,
+    canceled_at timestamp without time zone,
+    cached_matrix_ids integer[],
+    received_at timestamp without time zone,
+    private boolean,
+    pull_request_id integer,
+    branch_id integer,
+    tag_id integer,
+    sender_type character varying,
+    sender_id integer,
+    org_id integer,
+    com_id integer,
+    config_id integer,
+    restarted_at timestamp without time zone,
+    unique_number integer
 );
 
 
@@ -1102,16 +1103,16 @@ ALTER SEQUENCE public.builds_id_seq OWNED BY public.builds.id;
 --
 
 CREATE TABLE public.cancellations (
-                                      id integer NOT NULL,
-                                      subscription_id integer NOT NULL,
-                                      user_id integer,
-                                      plan character varying NOT NULL,
-                                      subscription_start_date date NOT NULL,
-                                      cancellation_date date NOT NULL,
-                                      reason character varying,
-                                      reason_details text,
-                                      created_at timestamp without time zone,
-                                      updated_at timestamp without time zone
+    id integer NOT NULL,
+    subscription_id integer NOT NULL,
+    user_id integer,
+    plan character varying NOT NULL,
+    subscription_start_date date NOT NULL,
+    cancellation_date date NOT NULL,
+    reason character varying,
+    reason_details text,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -1139,24 +1140,24 @@ ALTER SEQUENCE public.cancellations_id_seq OWNED BY public.cancellations.id;
 --
 
 CREATE TABLE public.commits (
-                                id integer NOT NULL,
-                                repository_id integer,
-                                commit character varying,
-                                ref character varying,
-                                branch character varying,
-                                message text,
-                                compare_url character varying,
-                                committed_at timestamp without time zone,
-                                committer_name character varying,
-                                committer_email character varying,
-                                author_name character varying,
-                                author_email character varying,
-                                created_at timestamp without time zone NOT NULL,
-                                updated_at timestamp without time zone NOT NULL,
-                                branch_id integer,
-                                tag_id integer,
-                                org_id integer,
-                                com_id integer
+    id integer NOT NULL,
+    repository_id integer,
+    commit character varying,
+    ref character varying,
+    branch character varying,
+    message text,
+    compare_url character varying,
+    committed_at timestamp without time zone,
+    committer_name character varying,
+    committer_email character varying,
+    author_name character varying,
+    author_email character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    branch_id integer,
+    tag_id integer,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -1184,15 +1185,15 @@ ALTER SEQUENCE public.commits_id_seq OWNED BY public.commits.id;
 --
 
 CREATE TABLE public.coupons (
-                                id integer NOT NULL,
-                                percent_off integer,
-                                coupon_id character varying,
-                                redeem_by timestamp without time zone,
-                                amount_off integer,
-                                duration character varying,
-                                duration_in_months integer,
-                                max_redemptions integer,
-                                redemptions integer
+    id integer NOT NULL,
+    percent_off integer,
+    coupon_id character varying,
+    redeem_by timestamp without time zone,
+    amount_off integer,
+    duration character varying,
+    duration_in_months integer,
+    max_redemptions integer,
+    redemptions integer
 );
 
 
@@ -1220,17 +1221,17 @@ ALTER SEQUENCE public.coupons_id_seq OWNED BY public.coupons.id;
 --
 
 CREATE TABLE public.crons (
-                              id integer NOT NULL,
-                              branch_id integer,
-                              "interval" character varying NOT NULL,
-                              created_at timestamp without time zone NOT NULL,
-                              updated_at timestamp without time zone NOT NULL,
-                              next_run timestamp without time zone,
-                              last_run timestamp without time zone,
-                              dont_run_if_recent_build_exists boolean DEFAULT false,
-                              org_id integer,
-                              com_id integer,
-                              active boolean DEFAULT true
+    id integer NOT NULL,
+    branch_id integer,
+    "interval" character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    next_run timestamp without time zone,
+    last_run timestamp without time zone,
+    dont_run_if_recent_build_exists boolean DEFAULT false,
+    org_id integer,
+    com_id integer,
+    active boolean DEFAULT true
 );
 
 
@@ -1258,12 +1259,12 @@ ALTER SEQUENCE public.crons_id_seq OWNED BY public.crons.id;
 --
 
 CREATE TABLE public.deleted_build_configs (
-                                              id integer NOT NULL,
-                                              repository_id integer NOT NULL,
-                                              key character varying NOT NULL,
-                                              config jsonb,
-                                              org_id bigint,
-                                              com_id bigint
+    id integer NOT NULL,
+    repository_id integer NOT NULL,
+    key character varying NOT NULL,
+    config jsonb,
+    org_id bigint,
+    com_id bigint
 );
 
 
@@ -1272,49 +1273,49 @@ CREATE TABLE public.deleted_build_configs (
 --
 
 CREATE TABLE public.deleted_builds (
-                                       id bigint NOT NULL,
-                                       repository_id integer,
-                                       number character varying,
-                                       started_at timestamp without time zone,
-                                       finished_at timestamp without time zone,
-                                       log text,
-                                       message text,
-                                       committed_at timestamp without time zone,
-                                       committer_name character varying,
-                                       committer_email character varying,
-                                       author_name character varying,
-                                       author_email character varying,
-                                       created_at timestamp without time zone NOT NULL,
-                                       updated_at timestamp without time zone NOT NULL,
-                                       ref character varying,
-                                       branch character varying,
-                                       github_payload text,
-                                       compare_url character varying,
-                                       token character varying,
-                                       commit_id integer,
-                                       request_id integer,
-                                       state character varying,
-                                       duration integer,
-                                       owner_type character varying,
-                                       owner_id integer,
-                                       event_type character varying,
-                                       previous_state character varying,
-                                       pull_request_title text,
-                                       pull_request_number integer,
-                                       canceled_at timestamp without time zone,
-                                       cached_matrix_ids integer[],
-                                       received_at timestamp without time zone,
-                                       private boolean,
-                                       pull_request_id integer,
-                                       branch_id integer,
-                                       tag_id integer,
-                                       sender_type character varying,
-                                       sender_id integer,
-                                       org_id integer,
-                                       com_id integer,
-                                       config_id integer,
-                                       restarted_at timestamp without time zone,
-                                       unique_number integer
+    id bigint NOT NULL,
+    repository_id integer,
+    number character varying,
+    started_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    log text,
+    message text,
+    committed_at timestamp without time zone,
+    committer_name character varying,
+    committer_email character varying,
+    author_name character varying,
+    author_email character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    ref character varying,
+    branch character varying,
+    github_payload text,
+    compare_url character varying,
+    token character varying,
+    commit_id integer,
+    request_id integer,
+    state character varying,
+    duration integer,
+    owner_type character varying,
+    owner_id integer,
+    event_type character varying,
+    previous_state character varying,
+    pull_request_title text,
+    pull_request_number integer,
+    canceled_at timestamp without time zone,
+    cached_matrix_ids integer[],
+    received_at timestamp without time zone,
+    private boolean,
+    pull_request_id integer,
+    branch_id integer,
+    tag_id integer,
+    sender_type character varying,
+    sender_id integer,
+    org_id integer,
+    com_id integer,
+    config_id integer,
+    restarted_at timestamp without time zone,
+    unique_number integer
 );
 
 
@@ -1323,24 +1324,24 @@ CREATE TABLE public.deleted_builds (
 --
 
 CREATE TABLE public.deleted_commits (
-                                        id integer NOT NULL,
-                                        repository_id integer,
-                                        commit character varying,
-                                        ref character varying,
-                                        branch character varying,
-                                        message text,
-                                        compare_url character varying,
-                                        committed_at timestamp without time zone,
-                                        committer_name character varying,
-                                        committer_email character varying,
-                                        author_name character varying,
-                                        author_email character varying,
-                                        created_at timestamp without time zone NOT NULL,
-                                        updated_at timestamp without time zone NOT NULL,
-                                        branch_id integer,
-                                        tag_id integer,
-                                        org_id integer,
-                                        com_id integer
+    id integer NOT NULL,
+    repository_id integer,
+    commit character varying,
+    ref character varying,
+    branch character varying,
+    message text,
+    compare_url character varying,
+    committed_at timestamp without time zone,
+    committer_name character varying,
+    committer_email character varying,
+    author_name character varying,
+    author_email character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    branch_id integer,
+    tag_id integer,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -1349,12 +1350,12 @@ CREATE TABLE public.deleted_commits (
 --
 
 CREATE TABLE public.deleted_job_configs (
-                                            id integer NOT NULL,
-                                            repository_id integer NOT NULL,
-                                            key character varying NOT NULL,
-                                            config jsonb,
-                                            org_id bigint,
-                                            com_id bigint
+    id integer NOT NULL,
+    repository_id integer NOT NULL,
+    key character varying NOT NULL,
+    config jsonb,
+    org_id bigint,
+    com_id bigint
 );
 
 
@@ -1363,37 +1364,37 @@ CREATE TABLE public.deleted_job_configs (
 --
 
 CREATE TABLE public.deleted_jobs (
-                                     id bigint NOT NULL,
-                                     repository_id integer,
-                                     commit_id integer,
-                                     source_type character varying,
-                                     source_id integer,
-                                     queue character varying,
-                                     type character varying,
-                                     state character varying,
-                                     number character varying,
-                                     log text,
-                                     worker character varying,
-                                     started_at timestamp without time zone,
-                                     finished_at timestamp without time zone,
-                                     created_at timestamp without time zone NOT NULL,
-                                     updated_at timestamp without time zone NOT NULL,
-                                     tags text,
-                                     allow_failure boolean,
-                                     owner_type character varying,
-                                     owner_id integer,
-                                     result integer,
-                                     queued_at timestamp without time zone,
-                                     canceled_at timestamp without time zone,
-                                     received_at timestamp without time zone,
-                                     debug_options text,
-                                     private boolean,
-                                     stage_number character varying,
-                                     stage_id integer,
-                                     org_id integer,
-                                     com_id integer,
-                                     config_id integer,
-                                     restarted_at timestamp without time zone
+    id bigint NOT NULL,
+    repository_id integer,
+    commit_id integer,
+    source_type character varying,
+    source_id integer,
+    queue character varying,
+    type character varying,
+    state character varying,
+    number character varying,
+    log text,
+    worker character varying,
+    started_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    tags text,
+    allow_failure boolean,
+    owner_type character varying,
+    owner_id integer,
+    result integer,
+    queued_at timestamp without time zone,
+    canceled_at timestamp without time zone,
+    received_at timestamp without time zone,
+    debug_options text,
+    private boolean,
+    stage_number character varying,
+    stage_id integer,
+    org_id integer,
+    com_id integer,
+    config_id integer,
+    restarted_at timestamp without time zone
 );
 
 
@@ -1402,19 +1403,20 @@ CREATE TABLE public.deleted_jobs (
 --
 
 CREATE TABLE public.deleted_pull_requests (
-                                              id integer NOT NULL,
-                                              repository_id integer,
-                                              number integer,
-                                              title character varying,
-                                              state character varying,
-                                              head_repo_github_id integer,
-                                              head_repo_slug character varying,
-                                              head_ref character varying,
-                                              created_at timestamp without time zone,
-                                              updated_at timestamp without time zone,
-                                              org_id integer,
-                                              com_id integer,
-                                              mergeable_state character varying
+    id integer NOT NULL,
+    repository_id integer,
+    number integer,
+    title character varying,
+    state character varying,
+    head_repo_github_id integer,
+    head_repo_vcs_id character varying,
+    head_repo_slug character varying,
+    head_ref character varying,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    org_id integer,
+    com_id integer,
+    mergeable_state character varying
 );
 
 
@@ -1423,12 +1425,12 @@ CREATE TABLE public.deleted_pull_requests (
 --
 
 CREATE TABLE public.deleted_request_configs (
-                                                id integer NOT NULL,
-                                                repository_id integer NOT NULL,
-                                                key character varying NOT NULL,
-                                                config jsonb,
-                                                org_id bigint,
-                                                com_id bigint
+    id integer NOT NULL,
+    repository_id integer NOT NULL,
+    key character varying NOT NULL,
+    config jsonb,
+    org_id bigint,
+    com_id bigint
 );
 
 
@@ -1437,12 +1439,12 @@ CREATE TABLE public.deleted_request_configs (
 --
 
 CREATE TABLE public.deleted_request_payloads (
-                                                 id integer NOT NULL,
-                                                 request_id integer NOT NULL,
-                                                 payload text,
-                                                 archived boolean,
-                                                 created_at timestamp without time zone,
-                                                 org_id bigint
+    id integer NOT NULL,
+    request_id integer NOT NULL,
+    payload text,
+    archived boolean,
+    created_at timestamp without time zone,
+    org_id bigint
 );
 
 
@@ -1451,11 +1453,11 @@ CREATE TABLE public.deleted_request_payloads (
 --
 
 CREATE TABLE public.deleted_request_raw_configs (
-                                                    id integer NOT NULL,
-                                                    config text,
-                                                    repository_id integer,
-                                                    key character varying NOT NULL,
-                                                    org_id bigint
+    id integer NOT NULL,
+    config text,
+    repository_id integer,
+    key character varying NOT NULL,
+    org_id bigint
 );
 
 
@@ -1464,11 +1466,11 @@ CREATE TABLE public.deleted_request_raw_configs (
 --
 
 CREATE TABLE public.deleted_request_raw_configurations (
-                                                           id integer NOT NULL,
-                                                           request_id integer,
-                                                           request_raw_config_id integer,
-                                                           source character varying,
-                                                           org_id bigint
+    id integer NOT NULL,
+    request_id integer,
+    request_raw_config_id integer,
+    source character varying,
+    org_id bigint
 );
 
 
@@ -1477,12 +1479,12 @@ CREATE TABLE public.deleted_request_raw_configurations (
 --
 
 CREATE TABLE public.deleted_request_yaml_configs (
-                                                     id integer NOT NULL,
-                                                     yaml text,
-                                                     repository_id integer,
-                                                     key character varying NOT NULL,
-                                                     org_id bigint,
-                                                     com_id bigint
+    id integer NOT NULL,
+    yaml text,
+    repository_id integer,
+    key character varying NOT NULL,
+    org_id bigint,
+    com_id bigint
 );
 
 
@@ -1491,36 +1493,36 @@ CREATE TABLE public.deleted_request_yaml_configs (
 --
 
 CREATE TABLE public.deleted_requests (
-                                         id integer NOT NULL,
-                                         repository_id integer,
-                                         commit_id integer,
-                                         state character varying,
-                                         source character varying,
-                                         token character varying,
-                                         started_at timestamp without time zone,
-                                         finished_at timestamp without time zone,
-                                         created_at timestamp without time zone NOT NULL,
-                                         updated_at timestamp without time zone NOT NULL,
-                                         event_type character varying,
-                                         comments_url character varying,
-                                         base_commit character varying,
-                                         head_commit character varying,
-                                         owner_type character varying,
-                                         owner_id integer,
-                                         result character varying,
-                                         message character varying,
-                                         private boolean,
-                                         pull_request_id integer,
-                                         branch_id integer,
-                                         tag_id integer,
-                                         sender_type character varying,
-                                         sender_id integer,
-                                         org_id integer,
-                                         com_id integer,
-                                         config_id integer,
-                                         yaml_config_id integer,
-                                         github_guid text,
-                                         pull_request_mergeable character varying
+    id integer NOT NULL,
+    repository_id integer,
+    commit_id integer,
+    state character varying,
+    source character varying,
+    token character varying,
+    started_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    event_type character varying,
+    comments_url character varying,
+    base_commit character varying,
+    head_commit character varying,
+    owner_type character varying,
+    owner_id integer,
+    result character varying,
+    message character varying,
+    private boolean,
+    pull_request_id integer,
+    branch_id integer,
+    tag_id integer,
+    sender_type character varying,
+    sender_id integer,
+    org_id integer,
+    com_id integer,
+    config_id integer,
+    yaml_config_id integer,
+    github_guid text,
+    pull_request_mergeable character varying
 );
 
 
@@ -1529,14 +1531,14 @@ CREATE TABLE public.deleted_requests (
 --
 
 CREATE TABLE public.deleted_ssl_keys (
-                                         id integer NOT NULL,
-                                         repository_id integer,
-                                         public_key text,
-                                         private_key text,
-                                         created_at timestamp without time zone NOT NULL,
-                                         updated_at timestamp without time zone NOT NULL,
-                                         org_id integer,
-                                         com_id integer
+    id integer NOT NULL,
+    repository_id integer,
+    public_key text,
+    private_key text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -1545,15 +1547,15 @@ CREATE TABLE public.deleted_ssl_keys (
 --
 
 CREATE TABLE public.deleted_stages (
-                                       id integer NOT NULL,
-                                       build_id integer,
-                                       number integer,
-                                       name character varying,
-                                       state character varying,
-                                       started_at timestamp without time zone,
-                                       finished_at timestamp without time zone,
-                                       org_id integer,
-                                       com_id integer
+    id integer NOT NULL,
+    build_id integer,
+    number integer,
+    name character varying,
+    state character varying,
+    started_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -1562,15 +1564,15 @@ CREATE TABLE public.deleted_stages (
 --
 
 CREATE TABLE public.deleted_tags (
-                                     id integer NOT NULL,
-                                     repository_id integer,
-                                     name character varying,
-                                     last_build_id integer,
-                                     exists_on_github boolean,
-                                     created_at timestamp without time zone,
-                                     updated_at timestamp without time zone,
-                                     org_id integer,
-                                     com_id integer
+    id integer NOT NULL,
+    repository_id integer,
+    name character varying,
+    last_build_id integer,
+    exists_on_github boolean,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -1579,11 +1581,11 @@ CREATE TABLE public.deleted_tags (
 --
 
 CREATE TABLE public.email_unsubscribes (
-                                           id bigint NOT NULL,
-                                           user_id integer,
-                                           repository_id integer,
-                                           created_at timestamp without time zone,
-                                           updated_at timestamp without time zone
+    id bigint NOT NULL,
+    user_id integer,
+    repository_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -1611,11 +1613,11 @@ ALTER SEQUENCE public.email_unsubscribes_id_seq OWNED BY public.email_unsubscrib
 --
 
 CREATE TABLE public.emails (
-                               id integer NOT NULL,
-                               user_id integer,
-                               email character varying,
-                               created_at timestamp without time zone NOT NULL,
-                               updated_at timestamp without time zone NOT NULL
+    id integer NOT NULL,
+    user_id integer,
+    email character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -1671,16 +1673,16 @@ ALTER SEQUENCE public.gatekeeper_workers_id_seq OWNED BY public.gatekeeper_worke
 --
 
 CREATE TABLE public.installations (
-                                      id integer NOT NULL,
-                                      github_id integer,
-                                      permissions jsonb,
-                                      owner_type character varying,
-                                      owner_id integer,
-                                      added_by_id integer,
-                                      removed_by_id integer,
-                                      created_at timestamp without time zone,
-                                      updated_at timestamp without time zone,
-                                      removed_at timestamp without time zone
+    id integer NOT NULL,
+    github_id integer,
+    permissions jsonb,
+    owner_type character varying,
+    owner_id integer,
+    added_by_id integer,
+    removed_by_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    removed_at timestamp without time zone
 );
 
 
@@ -1708,14 +1710,14 @@ ALTER SEQUENCE public.installations_id_seq OWNED BY public.installations.id;
 --
 
 CREATE TABLE public.invoices (
-                                 id integer NOT NULL,
-                                 object text,
-                                 created_at timestamp without time zone,
-                                 updated_at timestamp without time zone,
-                                 subscription_id integer,
-                                 invoice_id character varying,
-                                 stripe_id character varying,
-                                 cc_last_digits character varying
+    id integer NOT NULL,
+    object text,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    subscription_id integer,
+    invoice_id character varying,
+    stripe_id character varying,
+    cc_last_digits character varying
 );
 
 
@@ -1743,12 +1745,12 @@ ALTER SEQUENCE public.invoices_id_seq OWNED BY public.invoices.id;
 --
 
 CREATE TABLE public.job_configs (
-                                    id integer NOT NULL,
-                                    repository_id integer NOT NULL,
-                                    key character varying NOT NULL,
-                                    config jsonb,
-                                    org_id bigint,
-                                    com_id bigint
+    id integer NOT NULL,
+    repository_id integer NOT NULL,
+    key character varying NOT NULL,
+    config jsonb,
+    org_id bigint,
+    com_id bigint
 );
 
 
@@ -1757,10 +1759,10 @@ CREATE TABLE public.job_configs (
 --
 
 CREATE MATERIALIZED VIEW public.job_configs_gpu AS
-SELECT job_configs.id
-FROM public.job_configs
-WHERE (public.is_json((job_configs.config ->> 'resources'::text)) AND ((((job_configs.config ->> 'resources'::text))::jsonb ->> 'gpu'::text) IS NOT NULL))
-    WITH NO DATA;
+ SELECT job_configs.id
+   FROM public.job_configs
+  WHERE (public.is_json((job_configs.config ->> 'resources'::text)) AND ((((job_configs.config ->> 'resources'::text))::jsonb ->> 'gpu'::text) IS NOT NULL))
+  WITH NO DATA;
 
 
 --
@@ -1787,16 +1789,16 @@ ALTER SEQUENCE public.job_configs_id_seq OWNED BY public.job_configs.id;
 --
 
 CREATE TABLE public.job_versions (
-                                     id integer NOT NULL,
-                                     job_id integer,
-                                     number integer,
-                                     state character varying,
-                                     created_at timestamp without time zone,
-                                     queued_at timestamp without time zone,
-                                     received_at timestamp without time zone,
-                                     started_at timestamp without time zone,
-                                     finished_at timestamp without time zone,
-                                     restarted_at timestamp without time zone
+    id integer NOT NULL,
+    job_id integer,
+    number integer,
+    state character varying,
+    created_at timestamp without time zone,
+    queued_at timestamp without time zone,
+    received_at timestamp without time zone,
+    started_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    restarted_at timestamp without time zone
 );
 
 
@@ -1824,37 +1826,37 @@ ALTER SEQUENCE public.job_versions_id_seq OWNED BY public.job_versions.id;
 --
 
 CREATE TABLE public.jobs (
-                             id bigint DEFAULT nextval('public.shared_builds_tasks_seq'::regclass) NOT NULL,
-                             repository_id integer,
-                             commit_id integer,
-                             source_type character varying,
-                             source_id integer,
-                             queue character varying,
-                             type character varying,
-                             state character varying,
-                             number character varying,
-                             log text DEFAULT ''::text,
-                             worker character varying,
-                             started_at timestamp without time zone,
-                             finished_at timestamp without time zone,
-                             created_at timestamp without time zone NOT NULL,
-                             updated_at timestamp without time zone NOT NULL,
-                             tags text,
-                             allow_failure boolean DEFAULT false,
-                             owner_type character varying,
-                             owner_id integer,
-                             result integer,
-                             queued_at timestamp without time zone,
-                             canceled_at timestamp without time zone,
-                             received_at timestamp without time zone,
-                             debug_options text,
-                             private boolean,
-                             stage_number character varying,
-                             stage_id integer,
-                             org_id integer,
-                             com_id integer,
-                             config_id integer,
-                             restarted_at timestamp without time zone
+    id bigint DEFAULT nextval('public.shared_builds_tasks_seq'::regclass) NOT NULL,
+    repository_id integer,
+    commit_id integer,
+    source_type character varying,
+    source_id integer,
+    queue character varying,
+    type character varying,
+    state character varying,
+    number character varying,
+    log text DEFAULT ''::text,
+    worker character varying,
+    started_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    tags text,
+    allow_failure boolean DEFAULT false,
+    owner_type character varying,
+    owner_id integer,
+    result integer,
+    queued_at timestamp without time zone,
+    canceled_at timestamp without time zone,
+    received_at timestamp without time zone,
+    debug_options text,
+    private boolean,
+    stage_number character varying,
+    stage_id integer,
+    org_id integer,
+    com_id integer,
+    config_id integer,
+    restarted_at timestamp without time zone
 );
 
 
@@ -1882,10 +1884,10 @@ ALTER SEQUENCE public.jobs_id_seq OWNED BY public.jobs.id;
 --
 
 CREATE TABLE public.memberships (
-                                    id integer NOT NULL,
-                                    organization_id integer,
-                                    user_id integer,
-                                    role character varying
+    id integer NOT NULL,
+    organization_id integer,
+    user_id integer,
+    role character varying
 );
 
 
@@ -1913,18 +1915,18 @@ ALTER SEQUENCE public.memberships_id_seq OWNED BY public.memberships.id;
 --
 
 CREATE TABLE public.messages (
-                                 id integer NOT NULL,
-                                 subject_id integer,
-                                 subject_type character varying,
-                                 level character varying,
-                                 key character varying,
-                                 code character varying,
-                                 args json,
-                                 created_at timestamp without time zone NOT NULL,
-                                 updated_at timestamp without time zone NOT NULL,
-                                 type character varying,
-                                 src character varying,
-                                 line integer
+    id integer NOT NULL,
+    subject_id integer,
+    subject_type character varying,
+    level character varying,
+    key character varying,
+    code character varying,
+    args json,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    type character varying,
+    src character varying,
+    line integer
 );
 
 
@@ -1952,26 +1954,26 @@ ALTER SEQUENCE public.messages_id_seq OWNED BY public.messages.id;
 --
 
 CREATE TABLE public.organizations (
-                                      id integer NOT NULL,
-                                      name character varying,
-                                      login character varying,
-                                      github_id integer,
-                                      created_at timestamp without time zone NOT NULL,
-                                      updated_at timestamp without time zone NOT NULL,
-                                      avatar_url character varying,
-                                      location character varying,
-                                      email character varying,
-                                      company character varying,
-                                      homepage character varying,
-                                      billing_admin_only boolean,
-                                      org_id integer,
-                                      com_id integer,
-                                      migrating boolean,
-                                      migrated_at timestamp without time zone,
-                                      preferences jsonb DEFAULT '{}'::jsonb,
-                                      beta_migration_request_id integer,
-                                      vcs_type character varying DEFAULT 'GithubOrganization'::character varying,
-                                      vcs_id character varying
+    id integer NOT NULL,
+    name character varying,
+    login character varying,
+    github_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    avatar_url character varying,
+    location character varying,
+    email character varying,
+    company character varying,
+    homepage character varying,
+    billing_admin_only boolean,
+    org_id integer,
+    com_id integer,
+    migrating boolean,
+    migrated_at timestamp without time zone,
+    preferences jsonb DEFAULT '{}'::jsonb,
+    beta_migration_request_id integer,
+    vcs_type character varying DEFAULT 'GithubOrganization'::character varying,
+    vcs_id character varying
 );
 
 
@@ -1999,12 +2001,12 @@ ALTER SEQUENCE public.organizations_id_seq OWNED BY public.organizations.id;
 --
 
 CREATE TABLE public.owner_groups (
-                                     id integer NOT NULL,
-                                     uuid character varying,
-                                     owner_type character varying,
-                                     owner_id integer,
-                                     created_at timestamp without time zone,
-                                     updated_at timestamp without time zone
+    id integer NOT NULL,
+    uuid character varying,
+    owner_type character varying,
+    owner_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -2032,14 +2034,14 @@ ALTER SEQUENCE public.owner_groups_id_seq OWNED BY public.owner_groups.id;
 --
 
 CREATE TABLE public.permissions (
-                                    id integer NOT NULL,
-                                    user_id integer,
-                                    repository_id integer,
-                                    admin boolean DEFAULT false,
-                                    push boolean DEFAULT false,
-                                    pull boolean DEFAULT false,
-                                    org_id integer,
-                                    com_id integer
+    id integer NOT NULL,
+    user_id integer,
+    repository_id integer,
+    admin boolean DEFAULT false,
+    push boolean DEFAULT false,
+    pull boolean DEFAULT false,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -2067,19 +2069,20 @@ ALTER SEQUENCE public.permissions_id_seq OWNED BY public.permissions.id;
 --
 
 CREATE TABLE public.pull_requests (
-                                      id integer NOT NULL,
-                                      repository_id integer,
-                                      number integer,
-                                      title character varying,
-                                      state character varying,
-                                      head_repo_github_id integer,
-                                      head_repo_slug character varying,
-                                      head_ref character varying,
-                                      created_at timestamp without time zone,
-                                      updated_at timestamp without time zone,
-                                      org_id integer,
-                                      com_id integer,
-                                      mergeable_state character varying
+    id integer NOT NULL,
+    repository_id integer,
+    number integer,
+    title character varying,
+    state character varying,
+    head_repo_github_id integer,
+    head_repo_vcs_id character varying,
+    head_repo_slug character varying,
+    head_ref character varying,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    org_id integer,
+    com_id integer,
+    mergeable_state character varying
 );
 
 
@@ -2107,8 +2110,8 @@ ALTER SEQUENCE public.pull_requests_id_seq OWNED BY public.pull_requests.id;
 --
 
 CREATE TABLE public.queueable_jobs (
-                                       id integer NOT NULL,
-                                       job_id integer
+    id integer NOT NULL,
+    job_id integer
 );
 
 
@@ -2136,16 +2139,16 @@ ALTER SEQUENCE public.queueable_jobs_id_seq OWNED BY public.queueable_jobs.id;
 --
 
 CREATE TABLE public.repo_counts (
-                                    repository_id integer NOT NULL,
-                                    requests integer,
-                                    commits integer,
-                                    branches integer,
-                                    pull_requests integer,
-                                    tags integer,
-                                    builds integer,
-                                    stages integer,
-                                    jobs integer,
-                                    range character varying
+    repository_id integer NOT NULL,
+    requests integer,
+    commits integer,
+    branches integer,
+    pull_requests integer,
+    tags integer,
+    builds integer,
+    stages integer,
+    jobs integer,
+    range character varying
 );
 
 
@@ -2154,41 +2157,42 @@ CREATE TABLE public.repo_counts (
 --
 
 CREATE TABLE public.repositories (
-                                     id integer NOT NULL,
-                                     name character varying,
-                                     url character varying,
-                                     created_at timestamp without time zone NOT NULL,
-                                     updated_at timestamp without time zone NOT NULL,
-                                     last_build_id integer,
-                                     last_build_number character varying,
-                                     last_build_started_at timestamp without time zone,
-                                     last_build_finished_at timestamp without time zone,
-                                     owner_name character varying,
-                                     owner_email text,
-                                     active boolean,
-                                     description text,
-                                     last_build_duration integer,
-                                     owner_type character varying,
-                                     owner_id integer,
-                                     private boolean DEFAULT false,
-                                     last_build_state character varying,
-                                     github_id integer,
-                                     default_branch character varying,
-                                     github_language character varying,
-                                     settings json,
-                                     next_build_number integer,
-                                     invalidated_at timestamp without time zone,
-                                     current_build_id bigint,
-                                     org_id integer,
-                                     com_id integer,
-                                     migrating boolean,
-                                     migrated_at timestamp without time zone,
-                                     active_on_org boolean,
-                                     managed_by_installation_at timestamp without time zone,
-                                     migration_status character varying,
-                                     history_migration_status character varying,
-                                     vcs_type character varying DEFAULT 'GithubRepository'::character varying,
-                                     vcs_id character varying
+    id integer NOT NULL,
+    name character varying,
+    url character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    last_build_id integer,
+    last_build_number character varying,
+    last_build_started_at timestamp without time zone,
+    last_build_finished_at timestamp without time zone,
+    owner_name character varying,
+    owner_email text,
+    active boolean,
+    description text,
+    last_build_duration integer,
+    owner_type character varying,
+    owner_id integer,
+    private boolean DEFAULT false,
+    last_build_state character varying,
+    github_id integer,
+    default_branch character varying,
+    github_language character varying,
+    settings json,
+    next_build_number integer,
+    invalidated_at timestamp without time zone,
+    current_build_id bigint,
+    org_id integer,
+    com_id integer,
+    migrating boolean,
+    migrated_at timestamp without time zone,
+    active_on_org boolean,
+    managed_by_installation_at timestamp without time zone,
+    migration_status character varying,
+    history_migration_status character varying,
+    vcs_type character varying DEFAULT 'GithubRepository'::character varying,
+    vcs_id character varying,
+    fork boolean
 );
 
 
@@ -2216,12 +2220,12 @@ ALTER SEQUENCE public.repositories_id_seq OWNED BY public.repositories.id;
 --
 
 CREATE TABLE public.request_configs (
-                                        id integer NOT NULL,
-                                        repository_id integer NOT NULL,
-                                        key character varying NOT NULL,
-                                        config jsonb,
-                                        org_id bigint,
-                                        com_id bigint
+    id integer NOT NULL,
+    repository_id integer NOT NULL,
+    key character varying NOT NULL,
+    config jsonb,
+    org_id bigint,
+    com_id bigint
 );
 
 
@@ -2249,12 +2253,12 @@ ALTER SEQUENCE public.request_configs_id_seq OWNED BY public.request_configs.id;
 --
 
 CREATE TABLE public.request_payloads (
-                                         id integer NOT NULL,
-                                         request_id integer NOT NULL,
-                                         payload text,
-                                         archived boolean DEFAULT false,
-                                         created_at timestamp without time zone,
-                                         org_id bigint
+    id integer NOT NULL,
+    request_id integer NOT NULL,
+    payload text,
+    archived boolean DEFAULT false,
+    created_at timestamp without time zone,
+    org_id bigint
 );
 
 
@@ -2282,11 +2286,11 @@ ALTER SEQUENCE public.request_payloads_id_seq OWNED BY public.request_payloads.i
 --
 
 CREATE TABLE public.request_raw_configs (
-                                            id integer NOT NULL,
-                                            config text,
-                                            repository_id integer,
-                                            key character varying NOT NULL,
-                                            org_id bigint
+    id integer NOT NULL,
+    config text,
+    repository_id integer,
+    key character varying NOT NULL,
+    org_id bigint
 );
 
 
@@ -2314,11 +2318,11 @@ ALTER SEQUENCE public.request_raw_configs_id_seq OWNED BY public.request_raw_con
 --
 
 CREATE TABLE public.request_raw_configurations (
-                                                   id integer NOT NULL,
-                                                   request_id integer,
-                                                   request_raw_config_id integer,
-                                                   source character varying,
-                                                   org_id bigint
+    id integer NOT NULL,
+    request_id integer,
+    request_raw_config_id integer,
+    source character varying,
+    org_id bigint
 );
 
 
@@ -2346,12 +2350,12 @@ ALTER SEQUENCE public.request_raw_configurations_id_seq OWNED BY public.request_
 --
 
 CREATE TABLE public.request_yaml_configs (
-                                             id integer NOT NULL,
-                                             yaml text,
-                                             repository_id integer,
-                                             key character varying NOT NULL,
-                                             org_id bigint,
-                                             com_id bigint
+    id integer NOT NULL,
+    yaml text,
+    repository_id integer,
+    key character varying NOT NULL,
+    org_id bigint,
+    com_id bigint
 );
 
 
@@ -2379,36 +2383,36 @@ ALTER SEQUENCE public.request_yaml_configs_id_seq OWNED BY public.request_yaml_c
 --
 
 CREATE TABLE public.requests (
-                                 id integer NOT NULL,
-                                 repository_id integer,
-                                 commit_id integer,
-                                 state character varying,
-                                 source character varying,
-                                 token character varying,
-                                 started_at timestamp without time zone,
-                                 finished_at timestamp without time zone,
-                                 created_at timestamp without time zone NOT NULL,
-                                 updated_at timestamp without time zone NOT NULL,
-                                 event_type character varying,
-                                 comments_url character varying,
-                                 base_commit character varying,
-                                 head_commit character varying,
-                                 owner_type character varying,
-                                 owner_id integer,
-                                 result character varying,
-                                 message character varying,
-                                 private boolean,
-                                 pull_request_id integer,
-                                 branch_id integer,
-                                 tag_id integer,
-                                 sender_type character varying,
-                                 sender_id integer,
-                                 org_id integer,
-                                 com_id integer,
-                                 config_id integer,
-                                 yaml_config_id integer,
-                                 github_guid text,
-                                 pull_request_mergeable character varying
+    id integer NOT NULL,
+    repository_id integer,
+    commit_id integer,
+    state character varying,
+    source character varying,
+    token character varying,
+    started_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    event_type character varying,
+    comments_url character varying,
+    base_commit character varying,
+    head_commit character varying,
+    owner_type character varying,
+    owner_id integer,
+    result character varying,
+    message character varying,
+    private boolean,
+    pull_request_id integer,
+    branch_id integer,
+    tag_id integer,
+    sender_type character varying,
+    sender_id integer,
+    org_id integer,
+    com_id integer,
+    config_id integer,
+    yaml_config_id integer,
+    github_guid text,
+    pull_request_mergeable character varying
 );
 
 
@@ -2445,14 +2449,14 @@ CREATE TABLE public.schema_migrations (
 --
 
 CREATE TABLE public.ssl_keys (
-                                 id integer NOT NULL,
-                                 repository_id integer,
-                                 public_key text,
-                                 private_key text,
-                                 created_at timestamp without time zone NOT NULL,
-                                 updated_at timestamp without time zone NOT NULL,
-                                 org_id integer,
-                                 com_id integer
+    id integer NOT NULL,
+    repository_id integer,
+    public_key text,
+    private_key text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -2480,15 +2484,15 @@ ALTER SEQUENCE public.ssl_keys_id_seq OWNED BY public.ssl_keys.id;
 --
 
 CREATE TABLE public.stages (
-                               id integer NOT NULL,
-                               build_id integer,
-                               number integer,
-                               name character varying,
-                               state character varying,
-                               started_at timestamp without time zone,
-                               finished_at timestamp without time zone,
-                               org_id integer,
-                               com_id integer
+    id integer NOT NULL,
+    build_id integer,
+    number integer,
+    name character varying,
+    state character varying,
+    started_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -2516,11 +2520,11 @@ ALTER SEQUENCE public.stages_id_seq OWNED BY public.stages.id;
 --
 
 CREATE TABLE public.stars (
-                              id integer NOT NULL,
-                              repository_id integer,
-                              user_id integer,
-                              created_at timestamp without time zone NOT NULL,
-                              updated_at timestamp without time zone NOT NULL
+    id integer NOT NULL,
+    repository_id integer,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -2548,13 +2552,13 @@ ALTER SEQUENCE public.stars_id_seq OWNED BY public.stars.id;
 --
 
 CREATE TABLE public.stripe_events (
-                                      id integer NOT NULL,
-                                      created_at timestamp without time zone,
-                                      updated_at timestamp without time zone,
-                                      event_object text,
-                                      event_type character varying,
-                                      date timestamp without time zone,
-                                      event_id character varying
+    id integer NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    event_object text,
+    event_type character varying,
+    date timestamp without time zone,
+    event_id character varying
 );
 
 
@@ -2582,36 +2586,36 @@ ALTER SEQUENCE public.stripe_events_id_seq OWNED BY public.stripe_events.id;
 --
 
 CREATE TABLE public.subscriptions (
-                                      id integer NOT NULL,
-                                      cc_token character varying,
-                                      valid_to timestamp without time zone,
-                                      owner_type character varying NOT NULL,
-                                      owner_id integer NOT NULL,
-                                      first_name character varying,
-                                      last_name character varying,
-                                      company character varying,
-                                      zip_code character varying,
-                                      address character varying,
-                                      address2 character varying,
-                                      city character varying,
-                                      state character varying,
-                                      country character varying,
-                                      vat_id character varying,
-                                      customer_id character varying,
-                                      created_at timestamp without time zone,
-                                      updated_at timestamp without time zone,
-                                      cc_owner character varying,
-                                      cc_last_digits character varying,
-                                      cc_expiration_date character varying,
-                                      billing_email character varying,
-                                      selected_plan character varying,
-                                      coupon character varying,
-                                      contact_id integer,
-                                      canceled_at timestamp without time zone,
-                                      canceled_by_id integer,
-                                      status character varying,
-                                      source public.source_type DEFAULT 'unknown'::public.source_type NOT NULL,
-                                      concurrency integer
+    id integer NOT NULL,
+    cc_token character varying,
+    valid_to timestamp without time zone,
+    owner_type character varying NOT NULL,
+    owner_id integer NOT NULL,
+    first_name character varying,
+    last_name character varying,
+    company character varying,
+    zip_code character varying,
+    address character varying,
+    address2 character varying,
+    city character varying,
+    state character varying,
+    country character varying,
+    vat_id character varying,
+    customer_id character varying,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    cc_owner character varying,
+    cc_last_digits character varying,
+    cc_expiration_date character varying,
+    billing_email character varying,
+    selected_plan character varying,
+    coupon character varying,
+    contact_id integer,
+    canceled_at timestamp without time zone,
+    canceled_by_id integer,
+    status character varying,
+    source public.source_type DEFAULT 'unknown'::public.source_type NOT NULL,
+    concurrency integer
 );
 
 
@@ -2639,15 +2643,15 @@ ALTER SEQUENCE public.subscriptions_id_seq OWNED BY public.subscriptions.id;
 --
 
 CREATE TABLE public.tags (
-                             id integer NOT NULL,
-                             repository_id integer,
-                             name character varying,
-                             last_build_id integer,
-                             exists_on_github boolean,
-                             created_at timestamp without time zone,
-                             updated_at timestamp without time zone,
-                             org_id integer,
-                             com_id integer
+    id integer NOT NULL,
+    repository_id integer,
+    name character varying,
+    last_build_id integer,
+    exists_on_github boolean,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    org_id integer,
+    com_id integer
 );
 
 
@@ -2675,11 +2679,11 @@ ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
 --
 
 CREATE TABLE public.tokens (
-                               id integer NOT NULL,
-                               user_id integer,
-                               token character varying,
-                               created_at timestamp without time zone NOT NULL,
-                               updated_at timestamp without time zone NOT NULL
+    id integer NOT NULL,
+    user_id integer,
+    token character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -2707,14 +2711,14 @@ ALTER SEQUENCE public.tokens_id_seq OWNED BY public.tokens.id;
 --
 
 CREATE TABLE public.trial_allowances (
-                                         id integer NOT NULL,
-                                         trial_id integer,
-                                         creator_id integer,
-                                         creator_type character varying,
-                                         builds_allowed integer,
-                                         builds_remaining integer,
-                                         created_at timestamp without time zone,
-                                         updated_at timestamp without time zone
+    id integer NOT NULL,
+    trial_id integer,
+    creator_id integer,
+    creator_type character varying,
+    builds_allowed integer,
+    builds_remaining integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -2742,13 +2746,13 @@ ALTER SEQUENCE public.trial_allowances_id_seq OWNED BY public.trial_allowances.i
 --
 
 CREATE TABLE public.trials (
-                               id integer NOT NULL,
-                               owner_type character varying,
-                               owner_id integer,
-                               chartmogul_customer_uuids text[] DEFAULT '{}'::text[],
-                               status character varying DEFAULT 'new'::character varying,
-                               created_at timestamp without time zone NOT NULL,
-                               updated_at timestamp without time zone NOT NULL
+    id integer NOT NULL,
+    owner_type character varying,
+    owner_id integer,
+    chartmogul_customer_uuids text[] DEFAULT '{}'::text[],
+    status character varying DEFAULT 'new'::character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -2776,11 +2780,11 @@ ALTER SEQUENCE public.trials_id_seq OWNED BY public.trials.id;
 --
 
 CREATE TABLE public.urls (
-                             id integer NOT NULL,
-                             url character varying,
-                             code character varying,
-                             created_at timestamp without time zone NOT NULL,
-                             updated_at timestamp without time zone NOT NULL
+    id integer NOT NULL,
+    url character varying,
+    code character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -2808,12 +2812,12 @@ ALTER SEQUENCE public.urls_id_seq OWNED BY public.urls.id;
 --
 
 CREATE TABLE public.user_beta_features (
-                                           id integer NOT NULL,
-                                           user_id integer,
-                                           beta_feature_id integer,
-                                           enabled boolean,
-                                           last_deactivated_at timestamp without time zone,
-                                           last_activated_at timestamp without time zone
+    id integer NOT NULL,
+    user_id integer,
+    beta_feature_id integer,
+    enabled boolean,
+    last_deactivated_at timestamp without time zone,
+    last_activated_at timestamp without time zone
 );
 
 
@@ -2841,33 +2845,33 @@ ALTER SEQUENCE public.user_beta_features_id_seq OWNED BY public.user_beta_featur
 --
 
 CREATE TABLE public.users (
-                              id integer NOT NULL,
-                              name character varying,
-                              login character varying,
-                              email character varying,
-                              created_at timestamp without time zone NOT NULL,
-                              updated_at timestamp without time zone NOT NULL,
-                              is_admin boolean DEFAULT false,
-                              github_id integer,
-                              github_oauth_token character varying,
-                              gravatar_id character varying,
-                              locale character varying,
-                              is_syncing boolean,
-                              synced_at timestamp without time zone,
-                              github_scopes text,
-                              education boolean,
-                              first_logged_in_at timestamp without time zone,
-                              avatar_url character varying,
-                              suspended boolean DEFAULT false,
-                              suspended_at timestamp without time zone,
-                              org_id integer,
-                              com_id integer,
-                              migrating boolean,
-                              migrated_at timestamp without time zone,
-                              redacted_at timestamp without time zone,
-                              preferences jsonb DEFAULT '{}'::jsonb,
-                              vcs_type character varying DEFAULT 'GithubUser'::character varying,
-                              vcs_id character varying
+    id integer NOT NULL,
+    name character varying,
+    login character varying,
+    email character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    is_admin boolean DEFAULT false,
+    github_id integer,
+    github_oauth_token character varying,
+    gravatar_id character varying,
+    locale character varying,
+    is_syncing boolean,
+    synced_at timestamp without time zone,
+    github_scopes text,
+    education boolean,
+    first_logged_in_at timestamp without time zone,
+    avatar_url character varying,
+    suspended boolean DEFAULT false,
+    suspended_at timestamp without time zone,
+    org_id integer,
+    com_id integer,
+    migrating boolean,
+    migrated_at timestamp without time zone,
+    redacted_at timestamp without time zone,
+    preferences jsonb DEFAULT '{}'::jsonb,
+    vcs_type character varying DEFAULT 'GithubUser'::character varying,
+    vcs_id character varying
 );
 
 
@@ -3746,7 +3750,7 @@ CREATE INDEX index_builds_on_repository_id ON public.builds USING btree (reposit
 -- Name: index_builds_on_repository_id_and_branch_and_event_type; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_builds_on_repository_id_and_branch_and_event_type ON public.builds USING btree (repository_id, branch, event_type) WHERE ((state)::text = ANY ((ARRAY['created'::character varying, 'queued'::character varying, 'received'::character varying])::text[]));
+CREATE INDEX index_builds_on_repository_id_and_branch_and_event_type ON public.builds USING btree (repository_id, branch, event_type) WHERE ((state)::text = ANY (ARRAY[('created'::character varying)::text, ('queued'::character varying)::text, ('received'::character varying)::text]));
 
 
 --
@@ -3788,7 +3792,7 @@ CREATE INDEX index_builds_on_repository_id_event_type_id ON public.builds USING 
 -- Name: index_builds_on_repository_id_where_state_not_finished; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_builds_on_repository_id_where_state_not_finished ON public.builds USING btree (repository_id) WHERE ((state)::text = ANY ((ARRAY['created'::character varying, 'queued'::character varying, 'received'::character varying, 'started'::character varying])::text[]));
+CREATE INDEX index_builds_on_repository_id_where_state_not_finished ON public.builds USING btree (repository_id) WHERE ((state)::text = ANY (ARRAY[('created'::character varying)::text, ('queued'::character varying)::text, ('received'::character varying)::text, ('started'::character varying)::text]));
 
 
 --
@@ -3915,6 +3919,13 @@ CREATE INDEX index_crons_on_next_run ON public.crons USING btree (next_run) WHER
 --
 
 CREATE UNIQUE INDEX index_crons_on_org_id ON public.crons USING btree (org_id);
+
+
+--
+-- Name: index_deleted_pull_requests_on_head_repo_vcs_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_deleted_pull_requests_on_head_repo_vcs_id ON public.deleted_pull_requests USING btree (head_repo_vcs_id);
 
 
 --
@@ -4047,7 +4058,7 @@ CREATE INDEX index_jobs_on_owner_id_and_owner_type_and_state ON public.jobs USIN
 -- Name: index_jobs_on_owner_where_state_running; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_jobs_on_owner_where_state_running ON public.jobs USING btree (owner_id, owner_type) WHERE ((state)::text = ANY ((ARRAY['queued'::character varying, 'received'::character varying, 'started'::character varying])::text[]));
+CREATE INDEX index_jobs_on_owner_where_state_running ON public.jobs USING btree (owner_id, owner_type) WHERE ((state)::text = ANY (ARRAY[('queued'::character varying)::text, ('received'::character varying)::text, ('started'::character varying)::text]));
 
 
 --
@@ -4061,7 +4072,7 @@ CREATE INDEX index_jobs_on_repository_id ON public.jobs USING btree (repository_
 -- Name: index_jobs_on_repository_id_where_state_running; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_jobs_on_repository_id_where_state_running ON public.jobs USING btree (repository_id) WHERE ((state)::text = ANY ((ARRAY['queued'::character varying, 'received'::character varying, 'started'::character varying])::text[]));
+CREATE INDEX index_jobs_on_repository_id_where_state_running ON public.jobs USING btree (repository_id) WHERE ((state)::text = ANY (ARRAY[('queued'::character varying)::text, ('received'::character varying)::text, ('started'::character varying)::text]));
 
 
 --
@@ -4226,6 +4237,13 @@ CREATE UNIQUE INDEX index_pull_requests_on_com_id ON public.pull_requests USING 
 
 
 --
+-- Name: index_pull_requests_on_head_repo_vcs_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pull_requests_on_head_repo_vcs_id ON public.pull_requests USING btree (head_repo_vcs_id);
+
+
+--
 -- Name: index_pull_requests_on_org_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4363,6 +4381,13 @@ CREATE INDEX index_repositories_on_updated_at ON public.repositories USING btree
 --
 
 CREATE INDEX index_repositories_on_vcs_id_and_vcs_type ON public.repositories USING btree (vcs_id, vcs_type);
+
+
+--
+-- Name: index_repositories_on_vcs_type_and_vcs_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_repositories_on_vcs_type_and_vcs_id ON public.repositories USING btree (vcs_type, vcs_id);
 
 
 --
@@ -4758,6 +4783,13 @@ CREATE INDEX index_users_on_vcs_id_and_vcs_type ON public.users USING btree (vcs
 
 
 --
+-- Name: index_users_on_vcs_type_and_vcs_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_vcs_type_and_vcs_id ON public.users USING btree (vcs_type, vcs_id);
+
+
+--
 -- Name: managed_repositories_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4810,98 +4842,98 @@ CREATE TRIGGER set_updated_at_on_jobs BEFORE INSERT OR UPDATE ON public.jobs FOR
 -- Name: branches trg_count_branch_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_branch_deleted AFTER DELETE ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_branches('-1');
+CREATE TRIGGER trg_count_branch_deleted AFTER DELETE ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_branches('-1');
 
 
 --
 -- Name: branches trg_count_branch_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_branch_inserted AFTER INSERT ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_branches('1');
+CREATE TRIGGER trg_count_branch_inserted AFTER INSERT ON public.branches FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_branches('1');
 
 
 --
 -- Name: builds trg_count_build_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_build_deleted AFTER DELETE ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_builds('-1');
+CREATE TRIGGER trg_count_build_deleted AFTER DELETE ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_builds('-1');
 
 
 --
 -- Name: builds trg_count_build_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_build_inserted AFTER INSERT ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_builds('1');
+CREATE TRIGGER trg_count_build_inserted AFTER INSERT ON public.builds FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_builds('1');
 
 
 --
 -- Name: commits trg_count_commit_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_commit_deleted AFTER DELETE ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_commits('-1');
+CREATE TRIGGER trg_count_commit_deleted AFTER DELETE ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_commits('-1');
 
 
 --
 -- Name: commits trg_count_commit_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_commit_inserted AFTER INSERT ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_commits('1');
+CREATE TRIGGER trg_count_commit_inserted AFTER INSERT ON public.commits FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_commits('1');
 
 
 --
 -- Name: jobs trg_count_job_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_job_deleted AFTER DELETE ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_jobs('-1');
+CREATE TRIGGER trg_count_job_deleted AFTER DELETE ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_jobs('-1');
 
 
 --
 -- Name: jobs trg_count_job_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_job_inserted AFTER INSERT ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_jobs('1');
+CREATE TRIGGER trg_count_job_inserted AFTER INSERT ON public.jobs FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_jobs('1');
 
 
 --
 -- Name: pull_requests trg_count_pull_request_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_pull_request_deleted AFTER DELETE ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_pull_requests('-1');
+CREATE TRIGGER trg_count_pull_request_deleted AFTER DELETE ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_pull_requests('-1');
 
 
 --
 -- Name: pull_requests trg_count_pull_request_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_pull_request_inserted AFTER INSERT ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_pull_requests('1');
+CREATE TRIGGER trg_count_pull_request_inserted AFTER INSERT ON public.pull_requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_pull_requests('1');
 
 
 --
 -- Name: requests trg_count_request_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_request_deleted AFTER DELETE ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_requests('-1');
+CREATE TRIGGER trg_count_request_deleted AFTER DELETE ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_requests('-1');
 
 
 --
 -- Name: requests trg_count_request_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_request_inserted AFTER INSERT ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_requests('1');
+CREATE TRIGGER trg_count_request_inserted AFTER INSERT ON public.requests FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_requests('1');
 
 
 --
 -- Name: tags trg_count_tag_deleted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_tag_deleted AFTER DELETE ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_tags('-1');
+CREATE TRIGGER trg_count_tag_deleted AFTER DELETE ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_tags('-1');
 
 
 --
 -- Name: tags trg_count_tag_inserted; Type: TRIGGER; Schema: public; Owner: -
 --
 
-CREATE TRIGGER trg_count_tag_inserted AFTER INSERT ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 00:00:00+00'::timestamp with time zone)) EXECUTE PROCEDURE public.count_tags('1');
+CREATE TRIGGER trg_count_tag_inserted AFTER INSERT ON public.tags FOR EACH ROW WHEN ((now() > '2018-01-01 05:00:00+05'::timestamp with time zone)) EXECUTE PROCEDURE public.count_tags('1');
 
 
 --
@@ -5528,6 +5560,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190913092543'),
 ('20190913092554'),
 ('20190913092565'),
-('20190920160300');
+('20190920160300'),
+('20191112000000'),
+('20191112172015'),
+('20191112172332'),
+('20191219091445'),
+('20191219091446');
 
 

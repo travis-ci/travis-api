@@ -28,6 +28,12 @@ Rails.application.routes.draw do
 
   # Backwards compability from admin v1
   get '/job/:id' => 'jobs#show'
+  resources :reports, only: [:index]  do
+    collection do
+      post 'download_csv'
+    end
+  end
+
   resources :jobs, only: [:show] do
     member do
       post 'cancel'

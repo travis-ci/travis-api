@@ -14,7 +14,7 @@ class SubscriptionsController < ApplicationController
       flash[:notice] = "Created a new subscription for #{describe(@subscription.owner)}"
       Services::AuditTrail::CreateSubscription.new(current_user, @subscription).call
     else
-      flash[:error]  = 'Could not create subscription.'
+      flash[:error] = 'Could not create subscription.'
     end
     redirect_to @subscription.owner
   end
@@ -25,12 +25,23 @@ class SubscriptionsController < ApplicationController
 
     changes = @subscription.changes
 
-    if changes.any? && @subscription.save
-      message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
-      flash[:notice] = message.sub(/./) {$&.upcase}
-      Services::AuditTrail::UpdateSubscription.new(current_user, message).call
+    if @subscription.valid?
+      if changes.any?
+
+        begin
+          Services::BillingUpdate.new(@subscription, subscription_params).call
+          message = "updated #{@subscription.owner.login}'s subscription: #{changes.map {|attr, change| "#{attr} changed from #{change.first} to #{change.last}"}.join(", ")}".gsub(/ \d{2}:\d{2}:\d{2} UTC/, "")
+          flash[:notice] = message.sub(/./) {$&.upcase}
+        rescue => e
+          flash[:error] = "#{e}"
+        end
+
+        Services::AuditTrail::UpdateSubscription.new(current_user, message).call
+      else
+        flash[:error] = 'No subscription changes were made.'
+      end
     else
-      flash[:error] = 'No subscription changes were made.'
+      flash[:error] = @subscription.errors.full_messages[0]
     end
 
     redirect_to controller: @subscription.owner.class.table_name, action: 'subscription', id: @subscription.owner

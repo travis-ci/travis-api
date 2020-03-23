@@ -1,0 +1,19 @@
+<h2 class="info-header">Report download</h2>
+<%= form_for :report, url: {controller: 'reports', action: 'download_csv', format: 'csv'}, html: {class: 'download-report'} do |f| %>
+  <p>
+    <%= f.label :from, "From: " %>
+    <%= f.text_field :from, class: 'datepicker', autocomplete: "off", required: true %>
+    <%= f.label :to, "To: " %>
+    <%= f.text_field :to, class: 'datepicker', autocomplete: "off", required: true %>
+  </p>
+  <p>
+    <%= f.label :type, "Report type  : "  %>
+    <%= f.label :type, "Invoice: "  %>
+    <%= f.radio_button :type, "invoice", required: 'required' %>&nbsp;&nbsp;
+    <%= f.label :type, "Refund: "%>
+    <%= f.radio_button :type, "refund", required: 'required' %>
+  </p>
+  <p>
+  <%= f.submit 'Download Report', class: 'button', id: 'download-report', data: { disable_with: 'loading...'}, onclick: "handleChanged('pending')" %>
+  </p>
+<% end %>

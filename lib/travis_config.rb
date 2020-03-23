@@ -24,5 +24,9 @@ class TravisConfig < Travis::Config
              }
            }
          },
-         yml_checker: { url: '' }
+         yml_checker: { url: '' },
+         billing: {
+          url: 'https://billing-fake.travis-ci.com',
+          auth_key: 'fake_auth_key'
+        }
 end
