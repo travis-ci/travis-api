@@ -269,6 +269,7 @@ module Travis::API::V3
     resource :user do
       route '/user'
       get :current
+      patch :update
     end
 
     resource :user do
