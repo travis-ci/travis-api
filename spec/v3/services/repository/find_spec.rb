@@ -85,6 +85,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "github_language"    => nil,
       "active"             => true,
       "private"            => opts[:private],
+      "shared"             => false,
       "owner"              => {
         "id"               => repo.owner_id,
         "login"            => "svenfuchs",

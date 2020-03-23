@@ -78,6 +78,16 @@ FactoryBot.define do
     owner { User.find_by_login('josevalim') || FactoryBot.create(:user, :login => 'josevalim') }
   end
 
+  factory :sharedrepo, :parent => :repository_without_last_build do
+    name { 'sharedrepo' }
+    owner_name { 'sharedrepoowner' }
+    owner_email { 'sharedrepo@owner.email.com' }
+    owner { User.find_by_login('sharedrepoowner') || FactoryBot.create(:user, :login => 'sharedrepoowner', :name => 'Sharedrepo Owner') }
+    last_build_number { nil }
+    last_build_started_at { nil }
+    last_build_finished_at { nil }
+  end
+
   factory :event do
     repository { Repository.first || FactoryBot.create(:repository) }
     source { Build.first || FactoryBot.create(:build) }
@@ -85,6 +95,14 @@ FactoryBot.define do
   end
 
   factory :permission do
+  end
+
+  factory :sharedrepo_permission, class: Permission do
+    user_id { (User.find_by_login('johndoe') || FactoryBot.create(:user_with_sharedrepo)).id }
+    repository_id { Repository.find_by_name('sharedrepo').id }
+    admin { false }
+    push { true }
+    pull { true }
   end
 
   factory :membership, class: Travis::API::V3::Models::Membership do
@@ -97,6 +115,14 @@ FactoryBot.define do
     name  { 'Sven Fuchs' }
     login { 'svenfuchs' }
     email { 'sven@fuchs.com' }
+    tokens { [Token.new] }
+    github_oauth_token { 'github_oauth_token' }
+  end
+
+  factory :user_with_sharedrepo, class: User do
+    name  { 'John Doe' }
+    login { 'johndoe' }
+    email { 'john@doe.internet' }
     tokens { [Token.new] }
     github_oauth_token { 'github_oauth_token' }
   end
