@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Request < Query
-    params  :id, :message, :branch, :config, :token, prefix: :request
+    params :id, :message, :branch, :sha, :merge_mode, :config, :token, prefix: :request
 
     def find
       raise WrongParams, 'missing request.id'.freeze unless id
@@ -19,9 +19,9 @@ module Travis::API::V3
 
     def schedule(repository, user)
       raise ServerError, 'repository does not have a provider id'.freeze unless repository.vcs_id || repository.github_id
-      raise WrongParams, 'missing user'.freeze                         unless user and user.id
+      raise WrongParams, 'missing user'.freeze unless user and user.id
 
-      record = create_request(repository)
+      request = create_request(repository)
 
       payload = {
         repository: {
@@ -30,11 +30,15 @@ module Travis::API::V3
           owner_name: repository.owner_name,
           name: repository.name ,
         },
-        user:       { id: user.id },
-        id:         record.id,
-        message:    message,
-        branch:     branch || repository.default_branch_name,
-        config:     config || {}
+        user: {
+          id: user.id
+        },
+        id: request.id,
+        message: message,
+        branch: branch,
+        sha: sha,
+        merge_mode: merge_mode,
+        config: config
       }
 
       ::Travis::API::Sidekiq.gatekeeper(
@@ -47,14 +51,14 @@ module Travis::API::V3
 
     private
 
-    def create_request(repository)
-      Models::Request.create!(
-        event_type: :api,
-        state:      :pending,
-        repository: repository,
-        owner:      repository.owner,
-        private:    repository.private
-      )
-    end
+      def create_request(repository)
+        Models::Request.create!(
+          event_type: :api,
+          state: :pending,
+          repository: repository,
+          owner: repository.owner,
+          private: repository.private
+        )
+      end
   end
 end
