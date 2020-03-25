@@ -60,7 +60,7 @@ module Travis::API::V3
           included << entry
           rendered
         end
-        result
+        return result
       rescue => e
         puts "List from rescue: #{list.inspect}"
         puts "Error message: #{e.message}"
