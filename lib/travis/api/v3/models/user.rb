@@ -35,7 +35,24 @@ module Travis::API::V3
     end
 
     def repositories
-      Models::Repository.where(owner_type: 'User', owner_id: id)
+      Models::Repository.where(
+        '((repositories.owner_type = ? AND repositories.owner_id = ?) OR repositories.id IN (?))'.freeze,
+        'User'.freeze,
+        id,
+        shared_repositories_ids
+      ).order('id ASC')
+    end
+
+    def organizations_repositories_ids
+      @organizations_repositories_ids ||= organizations.empty? ? [] : Models::Repository.where(owner_id: organizations.pluck(:id)).pluck(:id)
+    end
+
+    def access_repositories_ids
+      @access_repositories_ids ||= permissions.pluck(:repository_id)
+    end
+
+    def shared_repositories_ids
+      access_repositories_ids - organizations_repositories_ids
     end
 
     def token

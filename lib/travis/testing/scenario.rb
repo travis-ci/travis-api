@@ -1,7 +1,8 @@
 module Scenario
   class << self
     def default
-      minimal, enginex = repositories :minimal, :enginex
+      minimal, enginex, sharedrepo = repositories :minimal, :enginex, :sharedrepo
+      sharedrepo_permission = permissions :sharedrepo_permission
 
       build :repository => minimal,
             :owner => minimal.owner,
@@ -66,6 +67,26 @@ module Scenario
               { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
             ]
 
+      build :repository => sharedrepo,
+            :owner => sharedrepo.owner,
+            :number => 1,
+            :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
+            :state  => 'failed',
+            :started_at => '2010-11-12 12:00:00',
+            :finished_at => '2010-11-12 12:00:10',
+            :commit => {
+              :commit => '1a738d9d6f297c105ae2',
+              :ref => 'refs/heads/develop',
+              :branch => 'master',
+              :message => 'add Gemfile',
+              :committer_name => 'Sven Fuchs',
+              :committer_email => 'svenfuchs@artweb-design.de',
+              :committed_at => '2010-11-12 11:50:00',
+            },
+            :jobs => [
+              { :owner => sharedrepo.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+            ]
+
       build :repository => enginex,
             :owner => enginex.owner,
             :number => 1,
@@ -95,6 +116,13 @@ module Scenario
         repo = FactoryBot.create(name)
         repo.create_key
         repo
+      }
+    end
+
+    def permissions(*names)
+      names.map { |name|
+        perm = FactoryBot.create(name)
+        perm
       }
     end
 

@@ -5,7 +5,36 @@ describe 'v2 jobs', auth_helpers: true, api_version: :v2, set_app: true do
   let(:log)  { %({"job_id": #{job.id}, "content": "content"}) }
 
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/#{job.id}?by=job_id&source=api" }
-  before { stub_request(:get, log_url).to_return(status: 200, body: log) }
+
+  let :log_from_api do
+    {
+      aggregated_at: Time.now,
+      archive_verified: true,
+      archived_at: Time.now,
+      archiving: false,
+      content: 'hello world. this is a really cool log',
+      created_at: Time.now,
+      id: 1,
+      job_id: job.id,
+      purged_at: nil,
+      removed_at: nil,
+      removed_by_id: nil,
+      updated_at: Time.now
+    }
+  end
+
+  let(:archived_content) { "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch" }
+
+  let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
+
+  before do
+    remote = double('remote')
+    allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
+    allow(remote).to receive(:find_by_job_id).and_return(Travis::RemoteLog.new(log_from_api))
+    allow(remote).to receive(:find_by_id).and_return(Travis::RemoteLog.new(log_from_api))
+    allow(remote).to receive(:fetch_archived_url).and_return('https://s3.amazonaws.com/STUFFS')
+  end
+
   before { Job.update_all(state: :started) }
 
   # TODO

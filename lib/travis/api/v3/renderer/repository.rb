@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Renderer::Repository < ModelRenderer
     representation(:minimal,  :id, :name, :slug)
-    representation(:standard, :id, :name, :slug, :description, :github_id, :vcs_id, :vcs_type, :github_language, :active, :private, :owner, :owner_name, :vcs_name, :default_branch, :starred, :managed_by_installation, :active_on_org, :migration_status, :history_migration_status)
+    representation(:standard, :id, :name, :slug, :description, :github_id, :vcs_id, :vcs_type, :github_language, :active, :private, :owner, :owner_name, :vcs_name, :default_branch, :starred, :managed_by_installation, :active_on_org, :migration_status, :history_migration_status, :shared)
     representation(:experimental, :id, :name, :slug, :description, :vcs_id, :vcs_type, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build, :next_build_number)
     representation(:internal, :id, :name, :slug, :github_id, :vcs_id, :vcs_type, :active, :private, :owner, :default_branch, :private_key, :token, :user_settings)
     representation(:additional, :allow_migration)
@@ -48,6 +48,12 @@ module Travis::API::V3
     def starred
       return false unless user = access_control.user
       user.starred_repository_ids.include? id
+    end
+
+    def shared
+      return owner_name.downcase != access_control.user.login.downcase \
+      && access_control.user.shared_repositories_ids.include?(id) if access_control.user && owner_name
+      false
     end
 
     def email_subscribed

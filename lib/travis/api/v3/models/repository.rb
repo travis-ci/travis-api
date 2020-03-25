@@ -145,7 +145,7 @@ module Travis::API::V3
     end
 
     def private_key
-      key.private_key
+      key&.private_key
     end
 
     def token

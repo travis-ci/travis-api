@@ -5,7 +5,7 @@ describe Permission do
     end
 
     it 'returns matching permissions if two roles given as symbols' do
-      expect(Permission.by_roles([:admin, :pull]).size).to eq(2)
+      expect(Permission.by_roles([:admin, :pull]).size).to eq(3)
     end
 
     it 'returns a single permission if one role given' do
