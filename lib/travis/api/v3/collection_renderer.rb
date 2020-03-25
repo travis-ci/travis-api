@@ -62,8 +62,8 @@ module Travis::API::V3
         end
         return result
       rescue => e
-        puts "List from rescue: #{list.inspect}"
-        puts "Error message: #{e.message}"
+        puts "list_from_rescue: #{list.inspect}"
+        puts "error_message: #{e.message}"
       end
     end
 
