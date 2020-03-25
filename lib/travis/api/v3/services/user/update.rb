@@ -11,7 +11,7 @@ module Travis::API::V3
         user: access_control.user
       ).save
 
-      result(user)
+      result(access_control.user)
     end
   end
 end
