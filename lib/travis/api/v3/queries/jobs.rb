@@ -36,8 +36,7 @@ module Travis::API::V3
 
     def for_user(user)
       set_custom_timeout(host_timeout)
-      fragment = "SELECT repository_id FROM permissions where user_id = #{user.id}"
-      jobs = V3::Models::Job.where("EXISTS (#{fragment}) AND jobs.repository_id IN (#{fragment})")
+      jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_non_queued_job_ids_for_user_repositories(#{user.id}))")
 
       sort filter(jobs)
     end
