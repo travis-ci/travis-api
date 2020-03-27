@@ -2,7 +2,7 @@ require 'json'
 require 'faraday'
 
 module Travis::API::V3
-  class Queries::RequestConfig < Query
+  class Queries::RequestConfigs < Query
     attr_reader :user, :repo
 
     def expand(user, repo)
@@ -73,7 +73,7 @@ module Travis::API::V3
       end
 
       def params
-        only(super.deep_symbolize_keys, :ref, :config, :mode, :data)
+        only(super.deep_symbolize_keys, :ref, :configs, :data)
       end
 
       def only(hash, *keys)

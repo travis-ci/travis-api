@@ -74,7 +74,14 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
               "@type"=>"template",
               "request_method"=>"POST",
               "uri_template"=>"#{path}repo/{repository.id}/requests",
-              "accepted_params" => ["request.config", "request.message", "request.branch", "request.token"]
+              "accepted_params" => %w(
+                request.merge_mode
+                request.config
+                request.message
+                request.branch
+                request.sha
+                request.token
+              )
             )
           end
         end

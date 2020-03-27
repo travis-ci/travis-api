@@ -174,7 +174,7 @@ module Travis::API::V3
       resource :request do
         route '/request/{request.id}'
         get  :find
-        post :config
+        post :configs
 
         resource :messages do
           route '/messages'

@@ -17,6 +17,7 @@ require 'gh'
 require 'multi_json'
 require 'pry'
 require 'stackprof'
+require 'sidekiq/testing'
 require 'webmock/rspec'
 
 require 'active_record'
