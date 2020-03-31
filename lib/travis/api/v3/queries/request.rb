@@ -35,7 +35,7 @@ module Travis::API::V3
         },
         id: request.id,
         message: message,
-        branch: branch,
+        branch: branch || repository.default_branch.name,
         sha: sha,
         merge_mode: merge_mode,
         config: config
