@@ -126,8 +126,10 @@ These are the steps to do so:
 
 1. Set up the required deployment tokens, see [Builders Manual: Deployment ](https://builders.travis-ci.com/engineering/deployment/#How-to%E2%80%A6)
 2. Head over to [#deploys](https://travisci.slack.com/messages/C03J1T613) channel in Slack
-3. Deploy: `.deploy admin-v2 to staging`
-4. You can see the new version live at https://admin-v2-staging.travis-ci.com/
+3. Deploy: `.deploy admin-v2 to com-staging` (or `.deploy admin-v2 to org-staging`)
+4. You can see the new version live at:
+  * _com-staging_ : https://https://travis-pro-admin-v2-staging.herokuapp.com/
+  * _org-staging_ : https://travis-admin-v2-staging.herokuapp.com/
 
 
 You can also use Heroku directly from the command line:
