@@ -25,7 +25,7 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
 
   scenario 'Update VAT ID and billing email' do
     stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
-                           .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to" => 1.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE999999998"})
+                           .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to" => 1.weeks.from_now.to_date.strftime("%Y-%m-%d"), "vat_id"=>"DE999999998"})
                            .to_return(status: 204)
 
     visit "/users/#{user.id}/subscription"
@@ -42,7 +42,7 @@ RSpec.feature 'Update subscription information', js: true, type: :feature do
 
   scenario 'Update VAT ID with invalid VAT ID' do
     stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription.id}/address", auth_key: auth_key, user_id: user.id)
-                           .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to" => 1.weeks.from_now.to_date.strftime("%Y-%m-%e"), "vat_id"=>"DE99999"})
+                           .with(:body => {"billing_email"=>"contact@travis-ci.org", "valid_to" => 1.weeks.from_now.to_date.strftime("%Y-%m-%d"), "vat_id"=>"DE99999"})
                            .to_return(status: 422, body: '{"error":"Vat is not a valid German vat number"}')
 
     visit "/users/#{user.id}/subscription"
