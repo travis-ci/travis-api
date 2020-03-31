@@ -133,7 +133,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
       },
       id: request.id,
       message: nil,
-      branch: nil,
+      branch: 'master',
       sha: nil,
       merge_mode: nil,
       config: nil
