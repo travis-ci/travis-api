@@ -88,6 +88,7 @@ group :test do
   gem 'webmock'
   gem 'hashdiff'
   gem 'pry-byebug'
+  gem 'rack-test'
 end
 
 group :development do
@@ -95,4 +96,3 @@ group :development do
   gem 'rerun'
   gem 'rb-fsevent', '~> 0.9.1'
 end
-
