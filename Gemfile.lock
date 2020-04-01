@@ -21,9 +21,10 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/gh
-  revision: 38fb339510ff9ae67cb08c6df7698f4c393f5a44
+  revision: 48896d32e8f1f73a5c88b5fc422285030b7cd816
+  branch: ha-oauth-deprecation
   specs:
-    gh (0.15.1)
+    gh (0.15.2)
       addressable (~> 2.4)
       backports
       faraday (~> 0.8)
