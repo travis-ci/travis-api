@@ -21,7 +21,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/gh
-  revision: 48896d32e8f1f73a5c88b5fc422285030b7cd816
+  revision: 2bb5fe173a67f43de42e74315baaad7549363785
   branch: ha-oauth-deprecation
   specs:
     gh (0.15.2)
@@ -120,7 +120,7 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    backports (3.8.0)
+    backports (3.17.0)
     builder (3.2.4)
     bunny (2.9.2)
       amq-protocol (~> 2.3.0)
@@ -266,7 +266,7 @@ GEM
     minitest (5.14.0)
     mocha (1.11.2)
     msgpack (1.2.4)
-    multi_json (1.13.1)
+    multi_json (1.14.1)
     multipart-post (2.1.1)
     mustermann (1.0.0.beta2)
     nakayoshi_fork (0.0.3)
