@@ -77,6 +77,7 @@ gem 'hashr'
 gem 'pusher',            '~> 0.14.0'
 gem 'multi_json'
 gem 'closeio',           '~> 3.5'
+gem 'jemalloc'
 
 group :test do
   gem 'rspec'
