@@ -77,7 +77,7 @@ gem 'hashr'
 gem 'pusher',            '~> 0.14.0'
 gem 'multi_json'
 gem 'closeio',           '~> 3.5'
-gem 'jemalloc'
+gem 'jemalloc', git: 'https://github.com/travis-ci/jemalloc-rb'
 
 group :test do
   gem 'rspec'
