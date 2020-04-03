@@ -100,7 +100,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "active_on_org"      => nil,
       "managed_by_installation" => false,
       "migration_status"   => nil,
-      "history_migration_status" => nil
+      "history_migration_status" => nil,
+      "config_validation"  => false
     })}
   end
 
