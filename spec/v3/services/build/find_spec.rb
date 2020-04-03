@@ -326,6 +326,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   end
 
   describe 'including a request' do
+    before { build.request.messages.create(level: 'warn') }
     before { get("/v3/build/#{build.id}?include=build.request") }
 
     example { expect(last_response).to be_ok }
@@ -337,9 +338,10 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
         'id',
         'state',
         'result',
-        'message'
+        'message',
       )
     end
+    it { expect(parsed_body['request']['messages'][0]['level']).to eq 'warn' }
   end
 
   describe 'including created_by' do

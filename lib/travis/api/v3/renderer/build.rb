@@ -11,8 +11,7 @@ module Travis::API::V3
     end
 
     def request
-      # no filtering here, we assume that request.private == request.build.private
-      Renderer.render_model(model.request, mode: :minimal)
+      model.request
     end
 
     def jobs
