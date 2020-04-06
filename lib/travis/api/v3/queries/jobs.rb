@@ -13,8 +13,6 @@ module Travis::API::V3
     end
 
     def filter(relation)
-      relation = relation.where(state: ACTIVE_STATES) if bool(active)
-      relation = relation.where(state: list(state))   if state
       relation = for_owner(relation)                  if created_by
 
       relation = relation.includes(:build)
@@ -36,7 +34,7 @@ module Travis::API::V3
 
     def for_user(user)
       set_custom_timeout(host_timeout)
-      jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_non_queued_job_ids_for_user_repositories(#{user.id}))")
+      jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_job_ids_for_user_repositories_by_state(#{user.id}, #{states})")
 
       sort filter(jobs)
     end
@@ -46,6 +44,16 @@ module Travis::API::V3
                                           .group(:state)
                                           .count
       Models::JobsStats.new(stats, queue)
+    end
+
+    private
+
+    def states
+      s = []
+      s << ACTIVE_STATES if bool(active)
+      s << list(states) if state
+      return '' if states.empty?
+      states.flatten.uniq.join(',')
     end
   end
 end
