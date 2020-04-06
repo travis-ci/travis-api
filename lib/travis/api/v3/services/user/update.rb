@@ -18,7 +18,8 @@ module Travis::API::V3
     private
 
     def utm_data
-      json = JSON.parse(params["utm_params"]) rescue {}
+      json = params["utm_params"]
+      return {} unless json.is_a?(Hash)
       json.filter { |key| key.start_with?("utm_") }
     end
   end
