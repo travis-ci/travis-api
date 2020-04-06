@@ -34,7 +34,7 @@ module Travis::API::V3
 
     def for_user(user)
       set_custom_timeout(host_timeout)
-      jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_job_ids_for_user_repositories_by_state(#{user.id}, #{states})")
+      jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_job_ids_for_user_repositories_by_states(#{user.id}, '#{states}'))")
 
       sort filter(jobs)
     end
@@ -51,9 +51,9 @@ module Travis::API::V3
     def states
       s = []
       s << ACTIVE_STATES if bool(active)
-      s << list(states) if state
-      return '' if states.empty?
-      states.flatten.uniq.join(',')
+      s << list(s) if state
+      return '' if s.empty?
+      s.flatten.uniq.join(',')
     end
   end
 end
