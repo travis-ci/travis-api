@@ -2,6 +2,9 @@ language: ruby
 
 sudo: false
 
+import:
+  - travis-ci/build-configs:db-setup.yml
+
 rvm: 2.3.6
 
 script: "bundle exec rake knapsack:rspec"
