@@ -11,10 +11,6 @@ before_install:
   - sudo service postgresql start 11
 
 before_script:
-  - psql --version
-  - psql -c 'CREATE DATABASE travis_test;' -U travis
-  - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U travis
-  - curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/enterprise-2.2/db/main/structure.sql | psql -v ON_ERROR_STOP=1 travis_test
   - 'RAILS_ENV=test bundle exec rake db:create --trace'
 
 rvm: 2.3.6
