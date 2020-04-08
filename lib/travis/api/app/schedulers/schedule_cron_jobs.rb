@@ -16,7 +16,11 @@ class Travis::Api::App
           rescue Travis::Lock::Redis::LockError => e
             Travis.logger.error e.message
           end
-          sleep(Travis::API::V3::Models::Cron::SCHEDULER_INTERVAL)
+          interval = Travis::API::V3::Models::Cron::SCHEDULER_INTERVAL.to_i
+          if !!ENV['TRAVIS_CRON_RANDOM_INTERVAL']
+                interval += rand(ENV['TRAVIS_CRON_RANDOM_INTERVAL'].to_i)
+          end
+          sleep(interval)
         end
       end
 
