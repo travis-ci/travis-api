@@ -1,9 +1,21 @@
 language: ruby
 
-sudo: false
+before_install:
+  - sudo apt-get install -yq --no-install-suggests --no-install-recommends postgresql-common
+  - sudo service postgresql stop
+  - sudo apt install -yq --no-install-suggests --no-install-recommends postgresql-11 postgresql-client-11
+  - sed -e 's/^port.*/port = 5432/' /etc/postgresql/11/main/postgresql.conf > postgresql.conf
+  - sudo chown postgres postgresql.conf
+  - sudo mv postgresql.conf /etc/postgresql/11/main
+  - sudo cp /etc/postgresql/{10,11}/main/pg_hba.conf  
+  - sudo service postgresql start 11
 
-import:
-  - travis-ci/build-configs:db-setup.yml
+before_script:
+  - psql --version
+  - psql -c 'CREATE DATABASE travis_test;' -U travis
+  - psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U travis
+  - curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/enterprise-2.2/db/main/structure.sql | psql -v ON_ERROR_STOP=1 travis_test
+  - 'RAILS_ENV=test bundle exec rake db:create --trace'
 
 rvm: 2.3.6
 
@@ -26,6 +38,3 @@ addons:
 
 services:
   - redis-server
-
-before_script:
-  - 'RAILS_ENV=test bundle exec rake db:create --trace'
