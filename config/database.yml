@@ -6,7 +6,7 @@ defaults: &defaults
   username: <%= ENV['USER'] %>
   min_messages: warning
   variables:
-    statement_timeout: 5000
+    statement_timeout: 50000
 
 development:
   <<: *defaults
