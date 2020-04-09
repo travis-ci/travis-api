@@ -51,7 +51,7 @@ module Travis::API::V3
     def states
       s = []
       s << ACTIVE_STATES if bool(active)
-      s << list(s) if state
+      s << list(state) if state
       return '' if s.empty?
       s.flatten.uniq.join(',')
     end
