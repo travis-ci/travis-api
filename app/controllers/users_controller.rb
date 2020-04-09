@@ -97,7 +97,15 @@ class UsersController < ApplicationController
   end
 
   def repositories
-    @repositories = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name).paginate(page: params[:page], per_page: 20)
+    @repositories_all = @user.permitted_repositories.includes(:last_build).order("active DESC NULLS LAST", :last_build_id, :owner_name, :name) #.paginate(page: params[:page], per_page: 20)
+    @repositories = @repositories_all.where('permissions.admin')
+
+    @repositories_pull = @repositories_all.where('permissions.pull')
+    @repositories_push = @repositories_all.where('permissions.push')
+
+#removing repos with admin access
+    @repositories_pull = @repositories_pull.where.not('permissions.admin')
+    @repositories_push = @repositories_push.where.not('permissions.admin')
     render_either 'shared/repositories'
   end
 
