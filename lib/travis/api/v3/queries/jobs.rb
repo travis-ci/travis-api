@@ -34,7 +34,7 @@ module Travis::API::V3
 
     def for_user(user)
       set_custom_timeout(host_timeout)
-      jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_job_ids_for_user_repositories_by_states(#{user.id}, '#{states}'))")
+      jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_job_ids_for_user_repositories_by_states(#{user.id}, ?))", states)
 
       sort filter(jobs)
     end
