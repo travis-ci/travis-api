@@ -12,7 +12,7 @@ module Travis
       end
 
       def manage_repo_link
-        "#{BASE_URL}apps/travis-ci/installations/new/permissions?suggested_target_id=#{profile.installation.vcs_id}"
+        "#{BASE_URL}apps/travis-ci/installations/new/permissions?suggested_target_id=#{profile.vcs_id}"
       end
     end
   end
