@@ -41,10 +41,14 @@
 
   <dl class="simple-info">
     <dt class="info-label">Ref:</dt>
-    <dd><%= @request.payload['ref'] %></dd>
+    <dd><%= @request.payload.nil? || !@request.payload.include?('ref') ? 'n/a' :  @request.payload['ref'] %></dd>
 
     <dt class="info-label">Compare:</dt>
-    <dd><a href="<%= @request.payload['compare']%>">compare URL</a></dd>
+    <%if @request.payload.nil? || !@request.payload.include?('compare') %>
+      <dd>n/a</dd>
+    <%else%>
+      <dd><a href="<%= @request.payload['compare']%>">compare URL</a></dd>
+      <%end%>
   </dl>
 </section>
 <% end %>
