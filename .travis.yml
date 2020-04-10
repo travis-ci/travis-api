@@ -1,35 +1,6 @@
-language: ruby
-
-import:
-  - travis-ci/build-configs:db-setup.yml
-
-rvm: 2.6.5
-
-script: "bundle exec rake knapsack:rspec"
-
-env:
-  global:
-    - RUBY_GC_MALLOC_LIMIT=90000000
-    - RUBY_GC_HEAP_FREE_SLOTS=200000
-    - CI_NODE_TOTAL=3
-
-  matrix:
-    - CI_NODE_INDEX=0
-    - CI_NODE_INDEX=1
-    - CI_NODE_INDEX=2
-
-cache: bundler
+language: minimal
 
 services:
-  - redis-server
+    - docker
 
-before_install:
-  - 'gem update --system'
-
-jobs:
-  include:
-    - stage: ":ship: it to Quay.io"
-      install: echo skip
-      before_script: echo skip
-      script: make ship
-      if: type = cron OR commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true
+script: make ship
