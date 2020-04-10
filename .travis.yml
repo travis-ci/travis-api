@@ -1,6 +1,6 @@
 language: minimal
 
-before_script: docker pull ruby:2.5.1-slim
+before_script: docker pull ruby:2.6.5-slim
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
