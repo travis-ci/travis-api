@@ -12,14 +12,13 @@ RSpec.feature "Disable a Repository", js: true, type: :feature do
   scenario 'User disables a repository' do
     visit "/repositories/#{repository.id}"
 
-    WebMock.stub_request(:post, "https://api-fake.travis-ci.com/repo/#{repository.id}/disable").
-      with(headers: {'Authorization'=>'token', 'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
+    WebMock.stub_request(:post, "https://api-fake.travis-ci.com/repo/#{repository.id}/deactivate").
+      with(headers: {'Content-Type'=>'application/json', 'Travis-Api-Version'=>'3'}).
       to_return(status: 200, body: '', headers: {})
 
     within(:css, '.active-container') do
       find_button('Disable').trigger('click')
     end
-
     expect(page).to have_text("Disabled #{repository.slug}")
   end
 end

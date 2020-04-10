@@ -29,7 +29,7 @@ RSpec.feature 'Integrate VCS Repository', js: true, type: :feature do
       .with(headers: { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/json' })
       .to_return(status: 200, body: vcs_response, headers: {})
 
-    stub_request(:post, "#{url}/repo/#{repo.id}/disable")
+    stub_request(:post, "#{url}/repo/#{repo.id}/deactivate")
            .to_return(status: 200, body: '', headers: {})
 
     allow_any_instance_of(Services::Repository::Caches::FindAll).to receive(:call).and_return([])

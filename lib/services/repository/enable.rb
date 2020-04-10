@@ -16,8 +16,12 @@ module Services
       end
 
       def call
-        url = "/repo/#{repository.id}/enable"
-        post(url, access_token)
+        url = "/repo/#{repository.id}/activate"
+        post_internal(url, travis_config.v3.token)
+      end
+
+      def travis_config
+        tc ||= TravisConfig.load
       end
     end
   end

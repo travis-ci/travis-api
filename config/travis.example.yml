@@ -12,6 +12,8 @@ test:
   providers:
     github:
       base_url: https://github.com/
+  v3:
+    token: xxxxxxxxxxxx
   vcs:
     endpoint: https://api-fake.travis-ci.com
     token: fake-token
