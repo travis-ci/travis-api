@@ -14,6 +14,7 @@ class Travis::Api::App
             Travis::Lock.exclusive("enqueue_cron_jobs", options) do
               Travis.logger.warn "#{self.object_id}: has lock"
               Metriks.timer("api.v3.cron_scheduler.enqueue").time { enqueue }
+              Travis.logger.warn "#{self.object_id}: done, will release lock"
             end
           rescue Travis::Lock::Redis::LockError => e
             Travis.logger.warn "#{self.object_id}: failed to get lock"
@@ -23,7 +24,7 @@ class Travis::Api::App
           if !!ENV['TRAVIS_CRON_RANDOM_INTERVAL']
                 interval += rand(ENV['TRAVIS_CRON_RANDOM_INTERVAL'].to_i)
           end
-          Travis.logger.warn "#{self.object_id}: sleeping #{interval}"
+          Travis.logger.warn "#{self.object_id}: released lock, sleeping #{interval}"
           sleep(interval)
         end
       end
