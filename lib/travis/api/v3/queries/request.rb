@@ -40,7 +40,7 @@ module Travis::API::V3
         configs: request_configs,
         # BC, remove once everyone is on yml/configs, coordinate with Gatekeeper
         merge_mode: merge_mode,
-        config: config,
+        config: to_str(config),
       }
 
       ::Travis::API::Sidekiq.gatekeeper(
@@ -54,8 +54,14 @@ module Travis::API::V3
     private
 
       def request_configs
-        return configs if configs
-        [{ config: config, merge_mode: merge_mode }] if config
+        configs = self.configs
+        configs.each { |config| config['config'] = to_str(config['config']) } if configs
+        configs ||= [{ config: to_str(config), merge_mode: merge_mode }] if config
+        configs
+      end
+
+      def to_str(config)
+        config.is_a?(Hash) ? JSON.dump(config) : config
       end
 
       def create_request(repository)
