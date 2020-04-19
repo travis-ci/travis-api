@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Request < Query
-    params :id, :message, :branch, :sha, :merge_mode, :config, :token, prefix: :request
+    params :id, :message, :branch, :sha, :merge_mode, :config, :configs, :token, prefix: :request
 
     def find
       raise WrongParams, 'missing request.id'.freeze unless id
@@ -37,8 +37,10 @@ module Travis::API::V3
         message: message,
         branch: branch || repository.default_branch.name,
         sha: sha,
+        configs: request_configs,
+        # BC, remove once everyone is on yml/configs, coordinate with Gatekeeper
         merge_mode: merge_mode,
-        config: config
+        config: config,
       }
 
       ::Travis::API::Sidekiq.gatekeeper(
@@ -50,6 +52,11 @@ module Travis::API::V3
     end
 
     private
+
+      def request_configs
+        return configs if configs
+        [{ config: config, merge_mode: merge_mode }] if config
+      end
 
       def create_request(repository)
         Models::Request.create!(
