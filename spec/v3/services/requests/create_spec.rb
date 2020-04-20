@@ -136,7 +136,8 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
       branch: 'master',
       sha: nil,
       merge_mode: nil,
-      config: nil
+      config: nil,
+      configs: nil
     }
   end
 
@@ -206,7 +207,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
 
     describe 'overriding config' do
       let(:params) { { config: { script: 'true' } } }
-      it { expect(sidekiq_payload).to eq payload.merge(config: params[:config]) }
+      it { expect(sidekiq_payload).to eq payload.merge(config: '{"script":"true"}', configs: [config: '{"script":"true"}', merge_mode: nil]) }
     end
 
     describe 'overriding message' do
