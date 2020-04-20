@@ -116,7 +116,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
         name: 'minimal',
         slug: 'svenfuchs/minimal'
       },
-      request: payload
+      request: compact(payload)
     }
   end
 
@@ -139,6 +139,10 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
       config: nil,
       configs: nil
     }
+  end
+
+  def compact(hash)
+    hash.reject { |_, value| value.nil? }.to_h
   end
 
   describe 'not authenticated' do
@@ -207,7 +211,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
 
     describe 'overriding config' do
       let(:params) { { config: { script: 'true' } } }
-      it { expect(sidekiq_payload).to eq payload.merge(config: '{"script":"true"}', configs: [config: '{"script":"true"}', merge_mode: nil]) }
+      it { expect(sidekiq_payload).to eq payload.merge(config: '{"script":"true"}', configs: [config: '{"script":"true"}', mode: nil]) }
     end
 
     describe 'overriding message' do
