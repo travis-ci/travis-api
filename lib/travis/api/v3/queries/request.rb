@@ -42,22 +42,29 @@ module Travis::API::V3
         merge_mode: merge_mode,
         config: to_str(config),
       }
+      p [:payload, payload]
 
       ::Travis::API::Sidekiq.gatekeeper(
         type: 'api'.freeze,
         credentials: { token: token },
         payload: JSON.dump(payload)
       )
-      payload
+      compact(payload)
     end
 
     private
 
       def request_configs
         configs = self.configs
-        configs.each { |config| config['config'] = to_str(config['config']) } if configs
-        configs ||= [{ config: to_str(config), merge_mode: merge_mode }] if config
+        configs = configs.map { |config| normalize_config(config) } if configs
+        configs ||= [{ config: to_str(config), mode: merge_mode }] if config
         configs
+      end
+
+      def normalize_config(config)
+        config['config'] = to_str(config['config'])
+        config['mode'] = config.delete('merge_mode') if config['merge_mode']
+        config
       end
 
       def to_str(config)
@@ -72,6 +79,10 @@ module Travis::API::V3
           owner: repository.owner,
           private: repository.private
         )
+      end
+
+      def compact(hash)
+        hash.reject { |_, value| value.nil? }.to_h
       end
   end
 end

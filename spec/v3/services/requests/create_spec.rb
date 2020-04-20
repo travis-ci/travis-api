@@ -132,12 +132,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
         id: repo.owner.id
       },
       id: request.id,
-      message: nil,
       branch: 'master',
-      sha: nil,
-      merge_mode: nil,
-      config: nil,
-      configs: nil
     }
   end
 
