@@ -130,6 +130,10 @@ module Travis::API::V3
       Models::AdminSettings.new(settings).tap { |as| as.sync(self, :settings) }
     end
 
+    def config_validation
+      !!user_settings[:config_validation]
+    end
+
     def env_vars
       Models::EnvVars.new.tap do |ev|
         ev.load(settings.fetch('env_vars', []), repository_id: id)

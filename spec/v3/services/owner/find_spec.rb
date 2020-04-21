@@ -109,7 +109,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "managed_by_installation"=>false,
           "active_on_org"     => nil,
           "migration_status"  => nil,
-          "history_migration_status"  => nil
+          "history_migration_status"  => nil,
+          "config_validation" => false
         }]
       }}
     end
@@ -177,7 +178,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "managed_by_installation"=>false,
           "active_on_org"   => nil,
           "migration_status" => nil,
-          "history_migration_status"  => nil
+          "history_migration_status"  => nil,
+          "config_validation" => false
         }]
       }}
     end

@@ -149,3 +149,4 @@ Start with the find/get spec (for example: spec/v3/services/caches/find_spec.rb)
  Re-run the test at this point. Depending on what objects you are returning you may also need to add:
  - Add a model (either pulls from the DB or a wrapper for the class of the objects returned from another source (s3 for example), or that structures the result you will be passing back to the client)
  - Add a renderer (if needed to display your new model/object/collection).
+ 

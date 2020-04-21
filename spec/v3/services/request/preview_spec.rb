@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Request::Configs, set_app: true do
+describe Travis::API::V3::Services::Request::Preview, set_app: true do
   let(:repo) { FactoryBot.create(:repository_without_last_build, owner_name: 'svenfuchs', name: 'minimal') }
   let(:request) { Travis::API::V3::Models::Request.last }
   let(:env_var) { { id: nil, name: 'ONE', value: Travis::Settings::EncryptedValue.new('one'), public: true, branch: 'foo', repository_id: repo.id } }
@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::Request::Configs, set_app: true do
   end
 
   describe 'not authenticated' do
-    before { post("/v3/repo/#{repo.id}/request/configs") }
+    before { post("/v3/repo/#{repo.id}/request/preview") }
     it { expect(status).to eq 403 }
     it do
       expect(body).to eq(
@@ -47,7 +47,7 @@ describe Travis::API::V3::Services::Request::Configs, set_app: true do
 
     it do
       expect(body).to eq(
-        '@type': 'request_configs',
+        '@type': 'request_preview',
         '@representation': 'standard',
         raw_configs: [
           '@type': 'request_raw_configuration',
