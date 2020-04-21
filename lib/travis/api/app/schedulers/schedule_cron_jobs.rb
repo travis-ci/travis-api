@@ -46,8 +46,10 @@ class Travis::Api::App
 
         scheduled.each do |cron|
           begin
+            Travis.logger.warn "#{self.object_id}: scheduling cron #{cron.id}"
             cron.needs_new_build? ? cron.enqueue : cron.skip_and_schedule_next_build
           rescue => e
+            Travis.logger.warn "#{self.object_id}: failed to schedule cron #{cron.id}"
             Metriks.meter("api.v3.cron_scheduler.enqueue.error").mark
             Raven.capture_exception(e, tags: { 'cron_id' => cron.try(:id) })
             next
