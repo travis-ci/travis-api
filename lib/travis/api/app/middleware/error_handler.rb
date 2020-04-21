@@ -8,7 +8,7 @@ class Travis::Api::App
       def call(env)
         app.call(env)
       rescue Exception => e
-        raise if Travis.testing
+        raise
 
         body = "Sorry, we experienced an error.\n"
         if env['HTTP_X_REQUEST_ID']
