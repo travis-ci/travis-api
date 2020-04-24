@@ -40,6 +40,13 @@ describe Travis::Api::App::Endpoint::Authorization do
   end
 
   describe "GET /auth/handshake" do
+    before do
+      ENV['TRAVIS_SITE'] = 'org'
+    end
+    after do
+      ENV['TRAVIS_SITE'] = nil
+    end
+    
     describe 'evil hackers messing with the state' do
       it 'does not succeed if state cookie mismatches' do
         Travis.redis.sadd('github:states', 'github-state')

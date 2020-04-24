@@ -104,7 +104,7 @@ class Travis::Api::App
       #
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake/?:provider?' do
-        method = deployed_on_org? ? :handshake : :vcs_handshake
+        method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
 
         send(method) do |user, token, redirect_uri|
@@ -137,7 +137,7 @@ class Travis::Api::App
           end
         end
 
-        def deployed_on_org?
+        def org?
           ENV["TRAVIS_SITE"] == "org"
         end
 
