@@ -137,10 +137,6 @@ class Travis::Api::App
           end
         end
 
-        def org?
-          ENV["TRAVIS_SITE"] == "org"
-        end
-
         def serialize_user(user)
           rendered = Travis::Api::Serialize.data(user, version: :v2)
           rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
