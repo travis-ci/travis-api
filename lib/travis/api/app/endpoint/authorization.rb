@@ -104,7 +104,7 @@ class Travis::Api::App
       #
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake/?:provider?' do
-        method = Travis::Features.enabled_for_all?(:vcs_login) ? :vcs_handshake : :handshake
+        method = deployed_on_org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
 
         send(method) do |user, token, redirect_uri|
@@ -135,6 +135,10 @@ class Travis::Api::App
           unless user.first_logged_in_at
             user.update_attributes(first_logged_in_at: Time.now)
           end
+        end
+
+        def deployed_on_org?
+          ENV["TRAVIS_SITE"] == "org"
         end
 
         def serialize_user(user)
