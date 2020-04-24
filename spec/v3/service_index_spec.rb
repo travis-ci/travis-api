@@ -77,6 +77,7 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
               "accepted_params" => %w(
                 request.merge_mode
                 request.config
+                request.configs
                 request.message
                 request.branch
                 request.sha
