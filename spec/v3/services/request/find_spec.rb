@@ -40,9 +40,9 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
     let(:one) { request.raw_configs.build(key: '123', config: 'language: ruby') }
     let(:two) { request.raw_configs.build(key: '234', config: 'rvm: 2.5.1') }
 
-    before { request.raw_configurations.create!(raw_config: one, source: '.travis.yml') }
-    before { request.raw_configurations.create!(raw_config: two, source: 'other.yml') }
-    before { request.raw_configurations.create!(raw_config: one, source: '.travis.yml') } # accidental duplicate
+    before { request.raw_configurations.create!(raw_config: one, source: '.travis.yml', merge_mode: 'one') }
+    before { request.raw_configurations.create!(raw_config: two, source: 'other.yml', merge_mode: 'two') }
+    before { request.raw_configurations.create!(raw_config: one, source: '.travis.yml', merge_mode: 'one') } # accidental duplicate
 
     before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.raw_configs") }
 
@@ -55,13 +55,15 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
             '@type' => 'request_raw_configuration',
             '@representation' => 'standard',
             'config' => 'language: ruby',
-            'source' => '.travis.yml'
+            'source' => '.travis.yml',
+            'merge_mode' => 'one',
           },
           {
             '@type' => 'request_raw_configuration',
             '@representation' => 'standard',
             'config' => 'rvm: 2.5.1',
-            'source' => 'other.yml'
+            'source' => 'other.yml',
+            'merge_mode' => 'two',
           }
         ]
       )
