@@ -235,7 +235,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
   end
 
   describe "user" do
-    let(:user) { Travis::API::V3::Models::User.new(login: 'example-user', github_id: 5678, email: 'example@email.com') }
+    let(:user) { Travis::API::V3::Models::User.new(login: 'example-user', github_id: 5678) }
     before     { user.save!                      }
     after      { user.delete                     }
 
@@ -250,7 +250,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "id"             => user.id,
         "login"          => "example-user",
         "name"           => nil,
-        "email"          => "example@email.com",
+        "email"          => nil,
         "github_id"      => 5678,
         "vcs_id"         => user.vcs_id,
         "vcs_type"       => user.vcs_type,
@@ -275,7 +275,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "id"             => user.id,
         "login"          => "example-user",
         "name"           => nil,
-        "email"          => "example@email.com",
+        "email"          => nil,
         "github_id"      => 5678,
         "vcs_id"         => user.vcs_id,
         "vcs_type"       => user.vcs_type,
@@ -300,7 +300,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "id"               => user.id,
         "login"            => "example-user",
         "name"             => nil,
-        "email"            => "example@email.com",
+        "email"            => nil,
         "github_id"        => 5678,
         "vcs_id"           => user.vcs_id,
         "vcs_type"         => user.vcs_type,
