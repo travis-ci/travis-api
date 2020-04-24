@@ -129,6 +129,7 @@ describe Travis::Api::App::Endpoint::Authorization do
 
         cookie_jar['travis.state-github'] = state
         Travis.redis.sadd('github:states', state)
+        ENV['TRAVIS_SITE'] = nil
       end
 
       after do
