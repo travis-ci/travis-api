@@ -4,7 +4,7 @@ module Travis::API::V3
       def raw_configs
         Array(data[:raw_configs]).map do |attrs|
           raw_config = RequestRawConfig.new(config: attrs[:config])
-          RequestRawConfiguration.new(source: attrs[:source], raw_config: raw_config)
+          RequestRawConfiguration.new(source: attrs[:source], merge_mode: attrs[:mode], raw_config: raw_config)
         end
       end
 

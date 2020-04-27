@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Renderer::RequestRawConfiguration < ModelRenderer
-    representation(:minimal, :config, :source)
+    representation(:minimal, :config, :source, :merge_mode)
     representation(:standard, *representations[:minimal])
 
     def config
