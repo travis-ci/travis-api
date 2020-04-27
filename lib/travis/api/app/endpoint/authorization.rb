@@ -104,7 +104,7 @@ class Travis::Api::App
       #
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake/?:provider?' do
-        method = Travis::Features.enabled_for_all?(:vcs_login) ? :vcs_handshake : :handshake
+        method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
 
         send(method) do |user, token, redirect_uri|
