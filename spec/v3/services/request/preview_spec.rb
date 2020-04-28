@@ -8,7 +8,7 @@ describe Travis::API::V3::Services::Request::Preview, set_app: true do
 
   let(:configs) do
     {
-      raw_configs: [source: 'travis-ci/travis-yml:.travis.yml@ref', config: 'script: true'],
+      raw_configs: [source: 'travis-ci/travis-yml:.travis.yml@ref', config: 'script: true', mode: 'replace'],
       config: { script: ['true'] },
       matrix: [script: ['true']],
       messages: [type: :type, level: :info, key: :key, code: :code, args: { one: 'one' }, src: '.travis.yml', line: 1],
@@ -53,6 +53,7 @@ describe Travis::API::V3::Services::Request::Preview, set_app: true do
           '@type': 'request_raw_configuration',
           '@representation': 'minimal',
           source: 'travis-ci/travis-yml:.travis.yml@ref',
+          merge_mode: 'replace',
           config: 'script: true'
         ],
         request_config: {
