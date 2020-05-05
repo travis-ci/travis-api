@@ -15,6 +15,7 @@ class Job < ApplicationRecord
   belongs_to :build, foreign_key: 'source_id'
 
   scope :from_repositories, -> (repositories) { where(repository_id: repositories.pluck(:id)).includes(:repository, :build) }
+  scope :from_owner, -> (repositories ,owner_id) { where(owner_id: owner_id).includes(:repository, :build) }
   scope :not_finished,      -> { where(state: %w[started received queued created]).sort_by {|job|
                                    %w[started received queued created].index(job.state.to_s) } }
   scope :finished,          -> { where(state: %w[finished passed failed errored canceled]).order('id DESC') }

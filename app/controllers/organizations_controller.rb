@@ -69,7 +69,8 @@ class OrganizationsController < ApplicationController
   end
 
   def requests
-    @requests = Request.from_owner('Organization', params[:id])
+    repositories = @organization.repositories.where(invalidated_at: nil).order(:last_build_id, :name, :active)
+    @requests = Request.from_repositories(repositories)
                        .includes(builds: :repository)
                        .order('id DESC')
                        .paginate(page: params[:page], per_page: 20)
