@@ -42,19 +42,21 @@ http {
 		keepalive_timeout 5;
 
 		location / {
-			if ($request_method = 'OPTIONS') {
-				# mirroring https://github.com/travis-ci/travis-api/blob/master/lib/travis/api/app/cors.rb
-				# performing in nginx to short-circuit those requests and respond more quickly
+      <% if ENV['GATEWAY_ENABLED'] != 'true' %>
+        if ($request_method = 'OPTIONS') {
+          # mirroring https://github.com/travis-ci/travis-api/blob/master/lib/travis/api/app/cors.rb
+          # performing in nginx to short-circuit those requests and respond more quickly
 
-				add_header 'Access-Control-Allow-Origin' '*';
-				add_header 'Access-Control-Allow-Credentials' 'true';
-				add_header 'Access-Control-Expose-Headers' 'Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID';
-				add_header 'Access-Control-Allow-Methods' 'HEAD, GET, POST, PATCH, PUT, DELETE';
-				add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent, X-Client-Release, Travis-API-Version, Trace';
-				add_header 'Access-Control-Max-Age' 86400;
+          add_header 'Access-Control-Allow-Origin' '*';
+          add_header 'Access-Control-Allow-Credentials' 'true';
+          add_header 'Access-Control-Expose-Headers' 'Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID';
+          add_header 'Access-Control-Allow-Methods' 'HEAD, GET, POST, PATCH, PUT, DELETE';
+          add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent, X-Client-Release, Travis-API-Version, Trace';
+          add_header 'Access-Control-Max-Age' 86400;
 
-				return 204;
-			}
+          return 204;
+        }
+      <% end %>
 
 			if ($request_filename ~* log\.txt.*$) {
 				add_header 'X-Robots-Tag' 'noindex, noarchive, nosnippet';
