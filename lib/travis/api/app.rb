@@ -55,7 +55,7 @@ module Travis::Api
     autoload :Helpers,      'travis/api/app/helpers'
     autoload :Middleware,   'travis/api/app/middleware'
     autoload :Responders,   'travis/api/app/responders'
-    autoload :Cors,         'travis/api/app/cors' unless ENV['BEHIND_GATEWAY']
+    autoload :Cors,         'travis/api/app/cors' unless ENV['BEHIND_API_GATEWAY']
 
     Rack.autoload :SSL, 'rack/ssl'
 
@@ -111,7 +111,7 @@ module Travis::Api
           ::Marginalia.set('request_id', env['HTTP_X_REQUEST_ID'])
         end
 
-        if !ENV['BEHIND_GATEWAY']
+        if !ENV['BEHIND_API_GATEWAY']
           use Travis::Api::App::Cors
         end
 

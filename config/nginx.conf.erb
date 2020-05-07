@@ -42,7 +42,7 @@ http {
 		keepalive_timeout 5;
 
 		location / {
-      <% if ENV['GATEWAY_ENABLED'] != 'true' %>
+      <% if ENV['BEHIND_API_GATEWAY'] != 'true' %>
         if ($request_method = 'OPTIONS') {
           # mirroring https://github.com/travis-ci/travis-api/blob/master/lib/travis/api/app/cors.rb
           # performing in nginx to short-circuit those requests and respond more quickly
