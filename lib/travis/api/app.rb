@@ -55,7 +55,7 @@ module Travis::Api
     autoload :Helpers,      'travis/api/app/helpers'
     autoload :Middleware,   'travis/api/app/middleware'
     autoload :Responders,   'travis/api/app/responders'
-    autoload :Cors,         'travis/api/app/cors'
+    autoload :Cors,         'travis/api/app/cors' unless ENV['BEHIND_GATEWAY']
 
     Rack.autoload :SSL, 'rack/ssl'
 
