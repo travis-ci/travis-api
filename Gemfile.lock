@@ -61,9 +61,9 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-github_apps
-  revision: fb865ee510534006f15553f4ef3746c2610a4668
+  revision: c96dc9330849ff3e2ccd7c9d00005a1a96c1a4b6
   specs:
-    travis-github_apps (0.2.0)
+    travis-github_apps (0.2.1)
       activesupport (>= 3.2)
       faraday
       faraday_middleware
@@ -152,7 +152,7 @@ GEM
       activesupport (>= 4.2.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
-    faraday_middleware (0.12.2)
+    faraday_middleware (0.14.0)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.9.25)
     fog-aws (0.12.0)
@@ -237,7 +237,7 @@ GEM
     ice_nine (0.11.2)
     ipaddress (0.8.3)
     json (2.1.0)
-    jwt (2.1.0)
+    jwt (2.2.1)
     kgio (2.11.3)
     knapsack (1.14.0)
       rake
@@ -387,7 +387,7 @@ GEM
     tool (0.2.3)
     travis-rollout (0.0.2)
     trollop (2.1.2)
-    tzinfo (1.2.6)
+    tzinfo (1.2.7)
       thread_safe (~> 0.1)
     uber (0.0.15)
     unf (0.1.4)
