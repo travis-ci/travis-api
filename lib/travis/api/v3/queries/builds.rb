@@ -2,6 +2,7 @@ module Travis::API::V3
   class Queries::Builds < Query
     params :state, :event_type, :previous_state, :created_by, prefix: :build
     params :name, prefix: :branch, method_name: :branch_name
+    params :active, prefix: :repository, method_name: :repo_active
 
     sortable_by :id, :created_at, :started_at, :finished_at,
       number: "number::int %{order}"
@@ -25,6 +26,7 @@ module Travis::API::V3
       relation = relation.where(event_type:     list(event_type))             if event_type
       relation = relation.where('builds.branch IN (?)', list(branch_name))    if branch_name
       relation = for_owner(relation)                                          if created_by
+      relation = relation.where('repository.active = ?', repo_active)         if repo_active
 
       relation = relation.includes(:commit).includes(branch: :last_build).includes(:tag).includes(:repository)
       relation = relation.includes(branch: { last_build: :commit }) if includes? 'build.commit'.freeze
