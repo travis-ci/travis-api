@@ -174,6 +174,7 @@ module Travis::API::V3
       resource :request do
         route '/request/{request.id}'
         get  :find
+        hide(post :preview)
         post :preview
 
         resource :messages do
