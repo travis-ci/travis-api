@@ -36,7 +36,6 @@ jobs:
 
 deploy:
   - provider: script
-    skip_cleanup: true
     script: make ship
     on:
       branch: master
