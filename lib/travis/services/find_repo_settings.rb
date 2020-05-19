@@ -14,6 +14,7 @@ module Travis
       end
 
       def authorized?
+        puts "DEBUG_ME: current_user: #{current_user.inspect}, repo.id: #{repo.id}"
         current_user && current_user.permission?(:push, :repository_id => repo.id)
       end
 
