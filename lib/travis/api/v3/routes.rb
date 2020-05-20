@@ -83,6 +83,7 @@ module Travis::API::V3
       capture id: :digit
       route '/org/{organization.id}'
       get :find
+      patch :update_billing_permission, '/update_billing_permission'
 
       resource :preferences do
         route '/preferences'

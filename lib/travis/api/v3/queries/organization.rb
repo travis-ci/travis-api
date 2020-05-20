@@ -13,6 +13,12 @@ module Travis::API::V3
       raise WrongParams, 'missing organization.id or organization.login'.freeze
     end
 
+    def update_billing_permission(user_id)
+      data = params.dup.tap { |h| h.delete('organization.id') }
+      client = BillingClient.new(user_id)
+      client.update_organization_billing_permission(params['organization.id'], data)
+    end
+
     private
 
     def provider
