@@ -35,7 +35,7 @@ module Services
     def connection
       @connection ||= Faraday.new(url: billing_url) do |conn|
         conn.basic_auth '_', billing_auth_key
-        conn.headers['X-Travis-User-Id'] = @subscription.owner_id.to_s
+        conn.headers['X-Travis-User-Id'] = subscription_user_id
         conn.request :url_encoded
         conn.response :json, content_type: 'application/x-www-form-urlencoded'
         conn.adapter Faraday.default_adapter
@@ -59,6 +59,10 @@ module Services
 
     def travis_config
       TravisConfig.load
+    end
+
+    def subscription_user_id
+      (@subscription.owner_type == 'User') ? @subscription.owner.id.to_s : @subscription.owner.users.first.id.to_s
     end
   end
 end
