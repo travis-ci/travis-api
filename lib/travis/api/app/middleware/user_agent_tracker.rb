@@ -11,8 +11,14 @@ class Travis::Api::App
         "Opera", "Mozilla"
       ]
 
+      attr_reader :metrik_prefix
+
+      before do
+        @metrik_prefix = request.env['HTTP_TRAVIS_API_VERSION'] || 'api.v2'
+      end
+
       before(agent: /^$/) do
-        ::Metriks.meter("api.v2.user_agent.missing").mark
+        ::Metriks.meter("#{metrik_prefix}.user_agent.missing").mark
         halt(400, "error" => "missing User-Agent header") if Travis::Features.feature_active?(:require_user_agent)
       end
 
@@ -54,7 +60,7 @@ class Travis::Api::App
       end
 
       def mark(*keys)
-        key = "api.v2.user_agent." << keys.map { |k| k.to_s.downcase.gsub(/[^a-z0-9\-\.]+/, '_') }.join('.')
+        key = "#{metrik_prefix}.user_agent." << keys.map { |k| k.to_s.downcase.gsub(/[^a-z0-9\-\.]+/, '_') }.join('.')
         ::Metriks.meter(key).mark
       end
     end
