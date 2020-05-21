@@ -45,3 +45,4 @@ deploy:
     script: make ship
     on:
       branch: master
+      condition: CI_NODE_INDEX=0
