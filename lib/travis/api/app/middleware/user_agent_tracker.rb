@@ -25,7 +25,9 @@ class Travis::Api::App
       before(agent: /^.+$/) do
         agent = UserAgent.parse(request.user_agent)
         case agent.browser
-        when *WEB_BROWSERS                   then mark_browser(agent)
+        when *WEB_BROWSERS
+          # if X-User-Agent header is set, honor that instead
+          mark :browser, UserAgent.parse(env['HTTP_X_USER_AGENT'] || request.user_agent).browser
         when "curl", "Wget"                  then mark(:console, agent.browser)
         when "travis-api-wrapper"            then mark(:script, :node_js, agent.browser)
         when "TravisPy"                      then mark(:script, :python,  agent.browser)
@@ -33,15 +35,6 @@ class Travis::Api::App
         when "Faraday"                       then mark(:script, :ruby, :vanilla)
         when "Travis"                        then mark_travis(agent)
         else mark_unknown
-        end
-      end
-
-      def mark_browser(agent)
-        # allows a JavaScript Client to set X-User-Agent, for instance to "travis-web" in travis-web
-        if env['HTTP_X_USER_AGENT']
-          mark :browser, UserAgent.parse(env['HTTP_X_USER_AGENT']).browser
-        else
-          mark :browser, agent.browser
         end
       end
 
