@@ -33,7 +33,7 @@ describe Travis::Api::App::Middleware::UserAgentTracker do
     let(:agent) { "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.36 Safari/537.36" }
 
     specify 'without X-User-Agent' do
-      expect_meter("api.v2.user_agent.browser.unknown")
+      expect_meter("api.v2.user_agent.browser.chrome")
       get
     end
 
