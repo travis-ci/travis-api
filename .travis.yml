@@ -38,11 +38,4 @@ jobs:
       install: echo skip
       before_script: echo skip
       script: make ship
-      if: commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true
-
-deploy:
-  - provider: script
-    script: make ship
-    on:
-      branch: master
-      condition: CI_NODE_INDEX=0
+      if: commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true or branch = master
