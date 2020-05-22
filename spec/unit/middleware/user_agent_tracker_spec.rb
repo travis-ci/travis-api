@@ -3,6 +3,7 @@ describe Travis::Api::App::Middleware::UserAgentTracker do
     mock_app do
       use Travis::Api::App::Middleware::UserAgentTracker
       get('/') { 'ok' }
+      get('/uptime') { 'OK' }
     end
   end
 
@@ -10,9 +11,9 @@ describe Travis::Api::App::Middleware::UserAgentTracker do
     allow(Metriks).to receive(:meter).with(name).and_return(double("meter", mark: nil))
   end
 
-  def get(env = {})
+  def get(env = {}, path = '/')
     env['HTTP_USER_AGENT'] ||= agent if agent
-    super('/', {}, env)
+    super(path, {}, env)
   end
 
   context 'missing User-Agent' do
@@ -97,6 +98,14 @@ describe Travis::Api::App::Middleware::UserAgentTracker do
       expect_meter("api.v2.user_agent.cli.version.1.6.8")
       expect_meter("api.v2.user_agent.cli.command.whoami")
       get
+    end
+  end
+
+  context 'get /uptime' do
+    let(:agent) { 'Travis/1.6.8 (Mac OS X 10.9.2 like Darwin; Ruby 2.1.1p42; RubyGems 2.0.14) Faraday/0.8.9 Typhoeus/0.6.7' }
+    specify do
+      expect(Metriks).to_not receive(:meter)
+      get({}, '/uptime')
     end
   end
 end

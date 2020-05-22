@@ -11,6 +11,10 @@ class Travis::Api::App
         "Opera", "Mozilla"
       ]
 
+      PATHS_IGNORED = [
+        '/uptime'
+      ]
+
       attr_reader :metrik_prefix
 
       before do
@@ -22,11 +26,13 @@ class Travis::Api::App
       end
 
       before(agent: /^$/) do
+        return if PATHS_IGNORED.include?(request.path)
         ::Metriks.meter("#{metrik_prefix}.user_agent.missing").mark
         halt(400, "error" => "missing User-Agent header") if Travis::Features.feature_active?(:require_user_agent)
       end
 
       before(agent: /^.+$/) do
+        return if PATHS_IGNORED.include?(request.path)
         agent = UserAgent.parse(request.user_agent)
         case agent.browser
         when *WEB_BROWSERS
