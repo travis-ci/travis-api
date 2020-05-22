@@ -230,4 +230,18 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
       end
     end
   end
+
+  describe '#update_organization_billing_permission' do
+    let(:billing_admin_only) { { billing_admin_only: true } }
+    subject { billing.update_organization_billing_permission(organization.id, billing_admin_only) }
+
+    it 'requests the update' do
+      stubbed_request = stub_billing_request(:patch, "/organization/permission_update/#{organization.id}", auth_key: auth_key, user_id: user_id)
+                            .with(body: JSON.dump(billing_admin_only))
+                            .to_return(status: 204)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
 end
