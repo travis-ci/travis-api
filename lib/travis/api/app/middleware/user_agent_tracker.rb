@@ -14,7 +14,11 @@ class Travis::Api::App
       attr_reader :metrik_prefix
 
       before do
-        @metrik_prefix = request.env['HTTP_TRAVIS_API_VERSION'] || 'api.v2'
+        @metrik_prefix = if version = request.env['HTTP_TRAVIS_API_VERSION']
+          "api.v#{version}"
+        else
+          "api.v2"
+        end
       end
 
       before(agent: /^$/) do
