@@ -18,7 +18,7 @@ class Travis::Api::App
       attr_reader :metrik_prefix
 
       before do
-        @metrik_prefix = if version = request.env['HTTP_TRAVIS_API_VERSION']
+        @metrik_prefix = if version = request.env['HTTP_TRAVIS_API_VERSION'].to_s.match(/^\d+(\.\d+)*/)
           "api.v#{version}"
         else
           "api.v2"

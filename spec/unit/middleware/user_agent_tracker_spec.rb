@@ -90,6 +90,18 @@ describe Travis::Api::App::Middleware::UserAgentTracker do
       expect_meter("api.v2.user_agent.script.ruby.travis.version.1.6.8")
       get
     end
+
+    context 'Travis-API-Version header' do
+      specify "with Travis-API-Version: 3" do
+        expect_meter("api.v3.user_agent.script.ruby.travis.version.1.6.8")
+        get('HTTP_TRAVIS_API_VERSION' => '3')
+      end
+
+      specify "with Travis-API-Version: 1.7f" do
+        expect_meter("api.v1.7.user_agent.script.ruby.travis.version.1.6.8")
+        get('HTTP_TRAVIS_API_VERSION' => '1.7')
+      end
+    end
   end
 
   context 'Travis CLI' do
