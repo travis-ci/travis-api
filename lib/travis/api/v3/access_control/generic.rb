@@ -241,6 +241,10 @@ module Travis::API::V3
     @@method_for_cache       = Tool::ThreadLocal.new
 
     def permission_class(klass)
+      puts "DEBUG_ME: klass: #{klass}"
+      puts "DEBUG_ME: @@permission_class_cache[klass]: #{@@permission_class_cache[klass]}"
+      puts "DEBUG_ME: Permissions[normalize_type(klass), false]: #{Permissions[normalize_type(klass), false]}"
+      puts "DEBUG_ME: result: #{result}"
       result = @@permission_class_cache[klass] ||= Permissions[normalize_type(klass), false] || @@unknown_permission
       result unless result == @@unknown_permission
     end
