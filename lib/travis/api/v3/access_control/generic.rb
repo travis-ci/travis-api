@@ -244,8 +244,8 @@ module Travis::API::V3
       puts "DEBUG_ME: klass: #{klass.inspect}"
       puts "DEBUG_ME: @@permission_class_cache[klass]: #{@@permission_class_cache[klass].inspect}"
       puts "DEBUG_ME: Permissions[normalize_type(klass), false]: #{Permissions[normalize_type(klass), false].inspect}"
-      puts "DEBUG_ME: result: #{result.inspect}"
       result = @@permission_class_cache[klass] ||= Permissions[normalize_type(klass), false] || @@unknown_permission
+      puts "DEBUG_ME: result: #{result.inspect}"
       result unless result == @@unknown_permission
     end
 
