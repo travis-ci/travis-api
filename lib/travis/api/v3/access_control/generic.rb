@@ -85,6 +85,7 @@ module Travis::API::V3
     def permissions(object)
       puts "DEBUG_ME: object.class: #{object.class.inspect}"
       return unless factory = permission_class(object.class)
+      puts "DEBUG_ME: przeszlo"
       factory.new(self, object)
     end
 
