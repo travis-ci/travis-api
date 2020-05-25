@@ -61,6 +61,7 @@ module Travis::API::V3
       @github         = {}
       @env            = env
       @request_body   = @env['rack.input'.freeze]
+      puts "DEBUG_ME: @access_control: #{@access_control}"
     end
 
     def query(type = result_type)

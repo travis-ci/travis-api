@@ -4,6 +4,7 @@ module Travis::API::V3
     params :value, prefix: :setting
 
     def run!
+      puts "DEBUG_ME: jestem tu"
       repository = check_login_and_find(:repository)
       puts "DEBUG_ME: repository: #{repository.inspect}"
       user_setting = query.update(repository)
