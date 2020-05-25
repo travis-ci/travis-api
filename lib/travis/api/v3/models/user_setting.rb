@@ -1,8 +1,7 @@
 module Travis::API::V3
   class Models::UserSetting < Models::JsonPair
     def public?
-      # true
-      false
+      true
     end
 
     def repository_id
