@@ -51,8 +51,8 @@ module Travis::API::V3
     end
 
     def full_access_or_logged_in?
-      puts "DEBUG_ME: full_access?: #{full_access}"
-      puts "DEBUG_ME: logged_in?: #{logged_in}"
+      puts "DEBUG_ME: full_access?: #{full_access?}"
+      puts "DEBUG_ME: logged_in?: #{logged_in?}"
       full_access? || logged_in?
     end
 
