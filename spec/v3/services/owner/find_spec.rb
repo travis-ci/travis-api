@@ -153,7 +153,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "create_env_var"  => false,
             "create_key_pair" => false,
             "delete_key_pair" => false,
-            "admin"         => false
+            "admin"           => false,
+            "update_settings" =>false
           },
           "id"              => repo.id,
           "name"            => "example-repo",
