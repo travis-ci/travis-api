@@ -88,7 +88,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
       expect(JSON.load(body)).to eq(
         '@type' => 'error',
         'error_type' => 'insufficient_access',
-        'error_message' => 'operation requires write access to user_setting',
+        'error_message' => 'operation requires update_settings access to repository',
         'permission' => 'write',
         'resource_type' => 'user_setting',
         'user_setting' => {
