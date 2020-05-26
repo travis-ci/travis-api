@@ -89,7 +89,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
         '@type' => 'error',
         'error_type' => 'insufficient_access',
         'error_message' => 'operation requires update_settings access to repository',
-        'permission' => 'write',
+        'permission' => 'update_settings',
         'resource_type' => 'repository',
         'repository' => {
           '@type' => 'repository',

@@ -448,10 +448,11 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "star"          => false,
           "unstar"        => false,
           "create_cron"   => false,
-          "create_env_var"  => false,
-          "create_key_pair" => false,
-          "delete_key_pair"  => false,
-          "create_request"=> false
+          "create_env_var" => false,
+          "create_key_pair"=> false,
+          "delete_key_pair"=> false,
+          "create_request" => false,
+          "update_settings"=> false
         },
         "id"              => repo2.id,
         "name"            => "maximal",
@@ -524,7 +525,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_key_pair"  => true,
           "delete_key_pair"  => true,
           "admin"            => false,
-          "update_settings"  => false
+          "update_settings"  => true
         },
         "id"                 => sharedrepo.id,
         "name"               => "sharedrepo",
