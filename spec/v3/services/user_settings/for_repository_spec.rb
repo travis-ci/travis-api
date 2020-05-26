@@ -4,7 +4,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
-  before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, admin: true) }
+  before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, admin: false, update_settings: true) }
 
   describe 'not authenticated' do
     before { get("/v3/repo/#{repo.id}/settings") }
