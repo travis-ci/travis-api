@@ -41,6 +41,10 @@ module Travis::API::V3
     def create_request?
       write?
     end
+    
+    def update_settings?
+      write?
+    end
 
     def admin?
       access_control.adminable? object
