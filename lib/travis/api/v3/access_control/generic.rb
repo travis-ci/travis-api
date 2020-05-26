@@ -83,9 +83,7 @@ module Travis::API::V3
     end
 
     def permissions(object)
-      puts "DEBUG_ME: object.class: #{object.class.inspect}"
       return unless factory = permission_class(object.class)
-      puts "DEBUG_ME: przeszlo"
       factory.new(self, object)
     end
 
@@ -241,14 +239,7 @@ module Travis::API::V3
     @@method_for_cache       = Tool::ThreadLocal.new
 
     def permission_class(klass)
-      puts "DEBUG_ME: full_access? #{full_access?}"
-      puts "DEBUG_ME: klass: #{klass.inspect}"
-      puts "DEBUG_ME: @@permission_class_cache[klass]: #{@@permission_class_cache[klass].inspect}"
-      puts "DEBUG_ME: Permissions[normalize_type(klass), false]: #{Permissions[normalize_type(klass), false].inspect}"
-      puts "DEBUG_ME: Permissions: #{Permissions.inspect}"
-      puts "DEBUG_ME: normalize_type(klass): #{normalize_type(klass).inspect}"
       result = @@permission_class_cache[klass] ||= Permissions[normalize_type(klass), false] || @@unknown_permission
-      puts "DEBUG_ME: result: #{result.inspect}"
       result unless result == @@unknown_permission
     end
 

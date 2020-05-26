@@ -61,7 +61,6 @@ module Travis::API::V3
       @github         = {}
       @env            = env
       @request_body   = @env['rack.input'.freeze]
-      puts "DEBUG_ME: @access_control: #{@access_control}"
     end
 
     def query(type = result_type)
@@ -79,8 +78,6 @@ module Travis::API::V3
     end
 
     def check_login_and_find(*args)
-      puts "DEBUG_ME: access_control.full_access?: #{access_control.full_access?}"
-      puts "DEBUG_ME: access_control.logged_in?: #{access_control.logged_in?}"
       raise LoginRequired unless access_control.full_access_or_logged_in?
       find(*args) or raise NotFound
     end
@@ -134,8 +131,6 @@ module Travis::API::V3
 
     def check_force_auth
       if access_control.force_auth?
-        puts "DEBUG_ME: w orce_auth? access_control.logged_in?: #{access_control.logged_in?}"
-        puts "DEBUG_ME: w orce_auth? access_control.temp_access?: #{access_control.temp_access?}"
         raise LoginRequired unless access_control.logged_in? || access_control.temp_access?
       end
     end
