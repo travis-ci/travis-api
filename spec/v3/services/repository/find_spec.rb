@@ -19,7 +19,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_env_var"   => true,
         "create_key_pair"  => true,
         "delete_key_pair"  => true,
-        "admin"            => true
+        "admin"            => true,
+        "update_settings"  => true
       },
       full_access: {
         "read"             => true,
@@ -33,7 +34,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_env_var"   => true,
         "create_key_pair"  => true,
         "delete_key_pair"  => true,
-        "admin"            => false
+        "admin"            => false,
+        "update_settings"  => true
       },
       read_and_star: {
         "read"             => true,
@@ -47,7 +49,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_env_var"   => false,
         "create_key_pair"  => false,
         "delete_key_pair"  => false,
-        "admin"            => false
+        "admin"            => false,
+        "update_settings"  => false
       },
       read: {
         "read"             => true,
@@ -61,7 +64,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_env_var"   => false,
         "create_key_pair"  => false,
         "delete_key_pair"  => false,
-        "admin"            => false
+        "admin"            => false,
+        "update_settings"  => false
       }
     }
   end
