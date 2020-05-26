@@ -125,7 +125,7 @@ module Travis::API::V3
 
     def run
       check_force_auth
-      not_found unless result = run!
+      return not_found unless result = run!
       result = paginate(result) if self.class.paginate?
       check_deprecated_params(result) if params['include']
       apply_warnings(result)
@@ -134,6 +134,8 @@ module Travis::API::V3
 
     def check_force_auth
       if access_control.force_auth?
+        puts "DEBUG_ME: w orce_auth? access_control.logged_in?: #{access_control.logged_in?}"
+        puts "DEBUG_ME: w orce_auth? access_control.temp_access?: #{access_control.temp_access?}"
         raise LoginRequired unless access_control.logged_in? || access_control.temp_access?
       end
     end
