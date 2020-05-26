@@ -122,7 +122,7 @@ module Travis::API::V3
 
     def run
       check_force_auth
-      return not_found unless result = run!
+      not_found unless result = run!
       result = paginate(result) if self.class.paginate?
       check_deprecated_params(result) if params['include']
       apply_warnings(result)
