@@ -74,7 +74,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_env_var"   => false,
           "create_key_pair"  => false,
           "delete_key_pair"  => false,
-          "admin"            => false
+          "admin"            => false,
+          "update_settings"  => false
         },
         "id"                 => repo.id,
         "name"               => "minimal",
@@ -121,14 +122,16 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "admin"            =>false,
           "activate"         =>false,
           "deactivate"       =>false,
-          "migrate"          => false,
+          "migrate"          =>false,
           "star"             =>true,
           "unstar"           =>true,
           "create_cron"      =>false,
           "create_env_var"   =>false,
           "create_key_pair"  =>false,
           "delete_key_pair"  =>false,
-          "create_request"   =>false},
+          "create_request"   =>false,
+          "update_settings"  =>false
+        },
         "id"                 =>repo.id,
         "name"               =>"minimal",
         "slug"               =>"svenfuchs/minimal",
@@ -241,7 +244,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_env_var"   => false,
           "create_key_pair"  => false,
           "delete_key_pair"  => false,
-          "create_request"   => false},
+          "create_request"   => false,
+          "update_settings"  => false
+        },
         "id"                 => repo.id,
         "name"               => "minimal",
         "slug"               => "svenfuchs/minimal",
@@ -399,7 +404,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_env_var" => false,
           "create_key_pair"=> false,
           "delete_key_pair"=> false,
-          "create_request"=> false
+          "create_request" => false,
+          "update_settings"=> false
         },
         "id"              => 1,
         "name"            => "minimal",
@@ -517,7 +523,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "create_env_var"   => true,
           "create_key_pair"  => true,
           "delete_key_pair"  => true,
-          "admin"            => false
+          "admin"            => false,
+          "update_settings"  => false
         },
         "id"                 => sharedrepo.id,
         "name"               => "sharedrepo",

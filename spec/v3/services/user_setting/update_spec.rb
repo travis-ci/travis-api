@@ -90,13 +90,14 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
         'error_type' => 'insufficient_access',
         'error_message' => 'operation requires update_settings access to repository',
         'permission' => 'write',
-        'resource_type' => 'user_setting',
-        'user_setting' => {
-          '@type' => 'setting',
-          '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",
+        'resource_type' => 'repository',
+        'repository' => {
+          '@type' => 'repository',
+          '@href' => "/v3/repo/#{repo.id}",
           '@representation' => 'minimal',
-          'name' => 'build_pushes',
-          'value' => false
+          'id' => 1,
+          'name' => 'minimal',
+          'slug' => 'svenfuchs/minimal'
         }
       )
     end
