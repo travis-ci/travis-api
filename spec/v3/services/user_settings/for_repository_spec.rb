@@ -4,7 +4,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
-  before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, admin: true) }
+  before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true, admin: true) }
 
   describe 'not authenticated' do
     before { get("/v3/repo/#{repo.id}/settings") }
@@ -104,7 +104,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
         '@type' => 'setting',
         '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",
         '@representation' => 'standard',
-        '@permissions' => { 'read' => true, 'write' => false },
+        '@permissions' => { 'read' => true, 'write' => true },
         'name' => 'build_pushes',
         'value' => false
       )
