@@ -5,10 +5,14 @@ module Travis::API::V3
 
     def run!
       repository = check_login_and_find(:repository)
-      user_setting = query.update(repository)
       return repo_migrated if migrated?(repository)
-
+      
+      user_setting = query.find(repository)
+      require 'pry'; binding.pry
       access_control.permissions(user_setting).write!
+      
+      user_setting = query.update(repository)
+      
       result user_setting
     end
   end
