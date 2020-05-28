@@ -28,6 +28,11 @@ describe Travis::Api::App::Middleware::UserAgentTracker do
       allow(Travis::Features).to receive(:feature_active?).with(:require_user_agent).and_return(true)
       expect(get.status).to eq(400)
     end
+
+    specify do
+      expect(Metriks).to_not receive(:meter)
+      get({}, '/uptime')
+    end
   end
 
   context 'web browser' do
