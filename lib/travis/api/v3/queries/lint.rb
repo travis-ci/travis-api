@@ -7,7 +7,7 @@ module Travis::API::V3
 
     def lint(content)
       response = client.post([config: content, source: 'lint'])
-      handle_errors(response)
+      handle_errors(response, content)
       body = JSON.parse(response.body)
       body['full_messages']
     end
@@ -16,9 +16,9 @@ module Travis::API::V3
       Client.new(config)
     end
 
-    def handle_errors(response)
+    def handle_errors(response, content)
       case response.status
-      when 400 then raise Error, 'bad request'
+      when 400 then raise Error, "bad request: content=#{content}"
       when 500 then raise Error, 'travis-yml application error'
       end
     end
