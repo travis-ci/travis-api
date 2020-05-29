@@ -19,7 +19,7 @@ env:
 cache: bundler
 
 addons:
-  postgresql: 9.3
+  postgresql: 9.6
 
 services:
   - redis-server
