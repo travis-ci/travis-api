@@ -146,14 +146,14 @@ module Query
 
     def call
       puts "Querying active repos from year #{year}"
-      Repository.where("active = true AND date_part('year', created_at) = ?", year)
+      Repository.where("active = true AND invalidated_at is NULL AND date_part('year', created_at) = ?", year)
     end
   end
 
   class All
     def call
       puts "Querying all active repos"
-      Repository.where(active: true)
+      Repository.where("active = true AND invalidated_at is NULL")
     end
   end
 end

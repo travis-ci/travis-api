@@ -63,7 +63,7 @@ module Travis::API::V3
     end
 
     def service_hook(repo)
-      hooks(repo).detect { |h| h['name'] == 'travis' && h.dig('config', 'domain') == service_hook_url.host }
+      hooks(repo).detect { |h| h['name'] == 'travis' && h.dig('config', 'domain') == service_hook_url.to_s }
     end
 
     def webhook(repo)
