@@ -1,7 +1,7 @@
 describe Travis::API::V3::Services::Build::Priority, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
-  let(:payload) { { "id"=> "#{build.id}", "user_id" => 1, "source" => "api" } }
+  let(:payload) { { "id" => "#{build.id}", "user_id" => 1, "source" => "api" } }
 
   before do
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
