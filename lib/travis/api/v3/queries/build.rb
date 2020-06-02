@@ -5,7 +5,7 @@ module Travis::API::V3
   class Queries::Build < Query
     params :id
 
-    PRIORITY = { high: 5, normal: nil, low: -5 }
+    PRIORITY = { high: 5, low: -5, medium: nil }
 
     def find
       return Models::Build.find_by_id(id) if id
