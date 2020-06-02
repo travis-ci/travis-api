@@ -5,6 +5,8 @@ module Travis::API::V3
   class Queries::Build < Query
     params :id
 
+    PRIORITY = { high: 5, normal: nil, low: -5 }
+
     def find
       return Models::Build.find_by_id(id) if id
       raise WrongParams, 'missing build.id'.freeze
@@ -32,6 +34,13 @@ module Travis::API::V3
       else
         payload
       end
+    end
+
+    def priority(user)
+      raise NotFound, "Job not found" if find.jobs.blank?
+      build_job = find.jobs.find_by_commit_id(find.commit_id)
+      priority_status = build_job.update_column(:priority, PRIORITY[:high]) if build_job
+      raise UnprocessableEntity unless priority_status
     end
   end
 end
