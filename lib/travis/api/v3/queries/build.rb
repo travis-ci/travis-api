@@ -37,10 +37,8 @@ module Travis::API::V3
     end
 
     def priority(user)
-      raise NotFound, "Job not found" if find.jobs.blank?
-      build_job = find.jobs.find_by_commit_id(find.commit_id)
-      priority_status = build_job.update_column(:priority, PRIORITY[:high]) if build_job
-      raise UnprocessableEntity unless priority_status
+      raise NotFound, "Jobs are not found" if find.jobs.blank?
+      find.jobs.update_all(priority: PRIORITY[:high])
     end
   end
 end
