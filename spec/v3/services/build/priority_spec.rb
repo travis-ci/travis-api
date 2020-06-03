@@ -65,6 +65,7 @@ describe Travis::API::V3::Services::Build::Priority, set_app: true do
     end
 
     example { expect(build.jobs.first.priority).to eq priority[:high] }
+    example { expect(build.jobs.last.priority).to eq priority[:high] }
     example { expect(last_response.status).to be == 202 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",
