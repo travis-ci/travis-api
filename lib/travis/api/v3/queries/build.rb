@@ -36,7 +36,7 @@ module Travis::API::V3
       end
     end
 
-    def priority(user)
+    def priority
       raise NotFound, "Jobs are not found" if find.jobs.blank?
       find.jobs.update_all(priority: PRIORITY[:high])
     end
