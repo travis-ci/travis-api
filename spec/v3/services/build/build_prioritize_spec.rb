@@ -69,4 +69,25 @@ describe Travis::API::V3::Services::Build::BuildPrioritize, set_app: true do
       "build_priority_permission")
     }
   end
+
+  describe "existing build, no permissions and no priority" do
+    let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+    let(:headers) { { "HTTP_AUTHORIZATION" => "token #{token}" } }
+    before do
+      allow(Travis::Features).to receive(:owner_active?).and_return(false)
+      build.update_attributes(owner_id: owner.id, owner_type: 'Organization')
+      Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+      build.jobs.update_all(priority: priority[:low])
+      get("/v3/build/#{build.id}/build_prioritize", {}, headers)
+    end
+    example { expect(build.owner.build_priority?).to be_falsey }
+    example { expect(build.priority_high?).to be_falsey}
+    example { expect(last_response.status).to be == 200 }
+    example { expect(JSON.load(body).to_s).to include(
+      "@type",
+      "build",
+      "priority_status",
+      "build_priority_permission")
+    }
+  end
 end
