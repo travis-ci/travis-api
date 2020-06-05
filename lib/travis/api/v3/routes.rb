@@ -12,6 +12,7 @@ module Travis::API::V3
       capture id: :digit
       route '/build/{build.id}'
       get :find
+      get :build_prioritize, '/build_prioritize'
 
       post :cancel, '/cancel'
       post :restart, '/restart'

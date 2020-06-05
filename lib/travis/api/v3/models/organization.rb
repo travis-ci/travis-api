@@ -21,6 +21,10 @@ module Travis::API::V3
       Travis::Features.owner_active?(:educational_org, self)
     end
 
+    def build_priority?
+      Travis::Features.owner_active?(:build_priorities_org, self)
+    end
+
     alias members users
   end
 end
