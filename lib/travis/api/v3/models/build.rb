@@ -4,7 +4,7 @@ module Travis::API::V3
 
   class Models::Build < Model
 
-    PRIORITY = 5
+    PRIORITY_HIGH  = 5
 
     belongs_to :commit
     belongs_to :tag
@@ -92,8 +92,8 @@ module Travis::API::V3
       jobs.all?(&:log_complete)
     end
 
-    def priority?
-      jobs.where(priority: PRIORITY).present? ? true : false
+    def priority_high?
+      jobs.where(priority: PRIORITY_HIGH).present? ? true : false
     end
   end
 end

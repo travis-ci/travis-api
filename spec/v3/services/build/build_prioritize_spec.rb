@@ -2,6 +2,7 @@ describe Travis::API::V3::Services::Build::BuildPrioritize, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build) { repo.builds.first }
   let(:owner) { FactoryBot.create(:org) }
+  let(:priority) { { high: 5, low: -5, medium: nil } }
 
   before do
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
@@ -55,9 +56,11 @@ describe Travis::API::V3::Services::Build::BuildPrioritize, set_app: true do
       Travis::Features.activate_owner(:build_priorities_org, owner)
       build.update_attributes(owner_id: owner.id, owner_type: 'Organization')
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
+      build.jobs.update_all(priority: priority[:high])
       get("/v3/build/#{build.id}/build_prioritize", {}, headers)
     end
     example { expect(build.owner.build_priority?).to be_truthy }
+    example { expect(build.priority_high?).to be_truthy}
     example { expect(last_response.status).to be == 200 }
     example { expect(JSON.load(body).to_s).to include(
       "@type",
