@@ -23,6 +23,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "avatar_url"       => nil,
       "education"        => false,
       "allow_migration"  => false,
+      "allow_build_priorities" => false,
     }}
   end
 
@@ -52,6 +53,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "avatar_url"       => nil,
       "education"        => true,
       "allow_migration"  => true,
+      "allow_build_priorities" => true,
     }}
   end
 
