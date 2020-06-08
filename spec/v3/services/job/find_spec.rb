@@ -72,6 +72,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "pull_request_number" => build.pull_request_number,
         "pull_request_title"  => build.pull_request_title,
         "private"             => false,
+        "priority"            => false,
         "started_at"          => "2010-11-12T12:00:00Z",
         "finished_at"         => "2010-11-12T12:00:10Z"},
       "stage"                 => {
@@ -184,6 +185,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "pull_request_number" => build.pull_request_number,
         "pull_request_title"  => build.pull_request_title,
         "private"             => false,
+        "priority"            => false,
         "started_at"          => "2010-11-12T12:00:00Z",
         "finished_at"         => "2010-11-12T12:00:10Z"},
       "stage"                 => {
@@ -259,6 +261,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "pull_request_number" => build.pull_request_number,
         "pull_request_title"  => build.pull_request_title,
         "private"             => false,
+        "priority"            => false,
         "started_at"          => "2010-11-12T12:00:00Z",
         "finished_at"         => "2010-11-12T12:00:10Z"},
       "stage"                 => {
