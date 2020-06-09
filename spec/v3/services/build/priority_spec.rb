@@ -135,8 +135,6 @@ describe Travis::API::V3::Services::Build::Priority, set_app: true do
       }
     end
 
-    
-
     describe "received state" do
       before { build.update_attribute(:state, "received") }
       before { post("/v3/build/#{build.id}/priority", params, headers) }
@@ -160,8 +158,7 @@ describe Travis::API::V3::Services::Build::Priority, set_app: true do
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
     before do
       jobs.update_all(priority: nil)
-      build.update_attribute(:owner_type, "Organization")
-      build.update_attribute(:owner_id, org.id)
+      #repo.builds.update_all(owner_id: first.id)
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true)
       allow(Travis::Features).to receive(:owner_active?).with(:enqueue_to_hub, repo.owner).and_return(true)
     end
@@ -169,38 +166,6 @@ describe Travis::API::V3::Services::Build::Priority, set_app: true do
     describe "started state" do
       before { build.update_attribute(:state, "started") }
       before { post("/v3/build/#{build.id}/priority", params, headers) }
-      example { expect(last_response.status).to be == 202 }
-      example { expect(JSON.load(body).to_s).to include(
-        "@type",
-        "build",
-        "@href",
-        "@representation",
-        "minimal",
-        "id",
-        "priority")
-      }
-    end
-
-    describe "queued state" do
-      before { build.update_attribute(:state, "queued") }
-      before { post("/v3/build/#{build.id}/priority", params, headers) }
-
-      example { expect(last_response.status).to be == 202 }
-      example { expect(JSON.load(body).to_s).to include(
-        "@type",
-        "build",
-        "@href",
-        "@representation",
-        "minimal",
-        "id",
-        "priority")
-      }
-    end
-
-    describe "received state" do
-      before { build.update_attributes(state: "received", previous_state: "passed") }
-      before { post("/v3/build/#{build.id}/priority", params, headers) }
-
       example { expect(last_response.status).to be == 202 }
       example { expect(JSON.load(body).to_s).to include(
         "@type",
