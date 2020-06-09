@@ -13,9 +13,8 @@ module Travis::API::V3
       options          = Hash[args.map { |a| a.split(?=.freeze, 2) }]
       challenge        = ""
 
-
-
       if vcs_id = options[?u.freeze]
+        puts "AccessControl::Signature #{options}"
         return unless user = ::User.find_by(vcs_id: vcs_id) || ::User.find_by(github_id: vcs_id)
       end
 

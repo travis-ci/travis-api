@@ -4,8 +4,10 @@ module Travis::API::V3
     params :id, :login, :email, :github_id, :vcs_id, :vcs_type, :is_syncing
 
     def find
+      puts "Queries::User #{github_id} #{vcs_id} #{vcs_type}"
       return Models::User.find_by_id(id) if id
-      return Models::User.find_by(vcs_id: github_id) || Models::User.find_by(github_id: github_id) if github_id
+      return Models::User.find_by(vcs_id: vcs_id, vcs_type: vcs_type) if vcs_id && vcs_type
+      return Models::User.find_by(vcs_id: github_id, vcs_type: 'GithubUser') || Models::User.find_by(github_id: github_id) if github_id
       return Models::User.where(
         'lower(login) = ? and lower(vcs_type) = ?'.freeze,
         login.downcase,
