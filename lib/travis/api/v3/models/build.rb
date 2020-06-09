@@ -3,6 +3,9 @@ module Travis::API::V3
   end
 
   class Models::Build < Model
+
+    HIGH_PRIORITY = 5
+    
     belongs_to :commit
     belongs_to :tag
     belongs_to :pull_request
@@ -87,6 +90,10 @@ module Travis::API::V3
 
     def log_complete
       jobs.all?(&:log_complete)
+    end
+
+    def high_priority?
+      jobs.where(priority: HIGH_PRIORITY).present?
     end
   end
 end
