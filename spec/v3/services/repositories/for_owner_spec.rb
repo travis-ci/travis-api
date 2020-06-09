@@ -177,6 +177,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "started_at"     =>"2010-11-12T13:00:00Z",
           "finished_at"    =>nil,
           "private"        => false,
+          "priority"       => false,
           "repository"    =>{
             "@href"       =>"/v3/repo/#{repo.id}"},
           "branch"        =>{
@@ -291,6 +292,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil,
           "private"        => false,
+          "priority"       => false,
           "repository"     => {
             "@href"       => "/v3/repo/#{repo.id}"
           },

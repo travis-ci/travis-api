@@ -5,7 +5,7 @@ module Travis::API::V3
     include Renderer::AvatarURL
 
     representation(:minimal,    :id, :login, :vcs_type)
-    representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education, :allow_migration)
+    representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education, :allow_migration, :allow_build_priorities)
     representation(:additional, :repositories, :installation)
 
     def initialize(*)
@@ -27,6 +27,10 @@ module Travis::API::V3
 
     def allow_migration
       !!Travis::Features.owner_active?(:allow_migration, @model)
+    end
+
+    def allow_build_priorities
+      !!Travis::Features.owner_active?(:build_priorities_org, @model)
     end
   end
 end
