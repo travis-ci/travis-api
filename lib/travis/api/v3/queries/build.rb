@@ -39,7 +39,7 @@ module Travis::API::V3
     def priority(user)
       raise NotFound, "Jobs are not found" if find.jobs.blank?
       find.jobs.update_all(priority: PRIORITY[:high])
-      return if find.owner_type == "User"
+      return if find.owner_type != "Organization"
       if cancel_all == "true"
         builds = find.owner.running_builds.select { |build| !build.high_priority? }
         builds.each { |build| cancel(user, build.id) } if builds

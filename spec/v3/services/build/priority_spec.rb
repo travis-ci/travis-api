@@ -157,8 +157,7 @@ describe Travis::API::V3::Services::Build::Priority, set_app: true do
     let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
     before do
-      jobs.update_all(priority: nil)
-      #repo.builds.update_all(owner_id: first.id)
+      jobs.update_all(priority: priority[:low])
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true)
       allow(Travis::Features).to receive(:owner_active?).with(:enqueue_to_hub, repo.owner).and_return(true)
     end
