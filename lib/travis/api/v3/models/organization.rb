@@ -25,10 +25,6 @@ module Travis::API::V3
       Models::Build.where(owner_type: 'Organization', owner_id: id)
     end
 
-    def running_builds
-      builds.where.not(state: ['passed', 'failed', 'errored', 'cancelled'])
-    end
-
     alias members users
   end
 end

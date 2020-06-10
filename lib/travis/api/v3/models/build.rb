@@ -33,6 +33,8 @@ module Travis::API::V3
       primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
+    scope :running_builds, -> { where.not(state: ['passed', 'failed', 'errored', 'cancelled']) }
+
     def created_by
       return unless sender
       sender.becomes(created_by_class)

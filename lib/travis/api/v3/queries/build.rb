@@ -41,8 +41,8 @@ module Travis::API::V3
       find.jobs.update_all(priority: PRIORITY[:high])
       return if find.owner_type != "Organization"
       if bool(cancel_all)
-        builds = find.owner.running_builds.select { |build| !build.high_priority? }
-        builds.each { |build| cancel(user, build.id) } if builds
+        low_priority_builds = find.owner.builds.running_builds.select { |build| !build.high_priority? }
+        low_priority_builds.each { |build| cancel(user, build.id) } if low_priority_builds
       end
     end
   end
