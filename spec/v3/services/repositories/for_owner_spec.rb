@@ -165,7 +165,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@permissions"   =>{
             "read"         =>true,
             "cancel"       =>true,
-            "restart"      =>true},
+            "restart"      =>true,
+            "prioritize"   =>false},
           "id"             =>build.id,
           "number"         =>"#{build.number}",
           "state"          =>"configured",
@@ -279,7 +280,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@permissions"        => {
             "read"    => true,
             "cancel"  => true,
-            "restart" => true
+            "restart" => true,
+            "prioritize"=> false
           },
           "id"                  => build.id,
           "number"              => "#{build.number}",

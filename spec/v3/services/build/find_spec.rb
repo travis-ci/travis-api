@@ -5,6 +5,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   let(:stages) { build.stages }
   let(:jobs)   { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
+  let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org') }
 
   before do
     build.update_attributes(sender_id: repo.owner.id, sender_type: 'User')
@@ -42,7 +43,8 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "@permissions"        => {
         "read"              => true,
         "cancel"            => false,
-        "restart"           => false},
+        "restart"           => false,
+        "prioritize"        => false},
       "id"                  => build.id,
       "number"              => build.number,
       "state"               => build.state,
@@ -140,7 +142,8 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "@permissions"        => {
         "read"              => true,
         "cancel"            => true,
-        "restart"           => true},
+        "restart"           => true,
+        "prioritize"        => false},
       "id"                  => build.id,
       "number"              => build.number,
       "state"               => build.state,
@@ -230,7 +233,8 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
       "@permissions"        => {
         "read"              => true,
         "cancel"            => false,
-        "restart"           => false},
+        "restart"           => false,
+        "prioritize"        => false},
       "id"                  => build.id,
       "number"              => build.number,
       "state"               => build.state,

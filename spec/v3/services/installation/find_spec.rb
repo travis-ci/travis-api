@@ -56,7 +56,6 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "synced_at" => nil,
         "education" => nil,
         "allow_migration" => false,
-        "allow_build_priorities" => false,
         "recently_signed_up" => false,
         "secure_user_hash" => nil,
       }
