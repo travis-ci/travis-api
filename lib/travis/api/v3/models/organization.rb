@@ -26,7 +26,7 @@ module Travis::API::V3
     end
 
     def build_priorities_enabled?
-      !!Travis::Features.owner_active?(:build_priorities_org, self)
+      Travis::Features.owner_active?(:build_priorities_org, self)
     end
 
     alias members users
