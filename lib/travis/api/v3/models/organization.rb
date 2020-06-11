@@ -25,6 +25,10 @@ module Travis::API::V3
       Models::Build.where(owner_type: 'Organization', owner_id: id)
     end
 
+    def build_priorities_enabled?
+      Travis::Features.owner_active?(:build_priorities_org, self)
+    end
+
     alias members users
   end
 end

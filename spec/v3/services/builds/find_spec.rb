@@ -66,7 +66,8 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "@permissions"        => {
           "read"              => true,
           "cancel"            => false,
-          "restart"           => false },
+          "restart"           => false,
+          "prioritize"        => false },
         "id"                  => build.id,
         "number"              => "3",
         "state"               => "configured",
@@ -184,7 +185,8 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "@permissions"        => {
           "read"              => true,
           "cancel"            => false,
-          "restart"           => false },
+          "restart"           => false,
+          "prioritize"        => false},
         "id"                  => build.id,
         "number"              => "3",
         "state"               => "configured",
@@ -306,7 +308,8 @@ describe Travis::API::V3::Services::Builds::Find, set_app: true do
         "@permissions"        => {
           "read"              => true,
           "cancel"            => true,
-          "restart"           => true },
+          "restart"           => true,
+          "prioritize"        => false },
         "id"                  => build.id,
         "number"              => "3",
         "state"               => "configured",

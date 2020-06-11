@@ -9,5 +9,9 @@ module Travis::API::V3
     def restart?
       restartable?
     end
+
+    def prioritize?
+      write? && build_priorities?
+    end
   end
 end

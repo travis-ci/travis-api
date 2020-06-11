@@ -48,7 +48,8 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
         "@permissions"        => {
           "read"              => true,
           "cancel"            => false,
-          "restart"           => false },
+          "restart"           => false,
+          "prioritize"        => false },
         "id"                  => build.id,
         "number"              => "3",
         "state"               => "configured",

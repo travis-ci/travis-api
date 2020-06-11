@@ -59,7 +59,6 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
         "avatar_url"      => nil,
         "education"       => false,
         "allow_migration" => false,
-        "allow_build_priorities" => false,
       }]
     }}
   end
