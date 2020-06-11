@@ -49,7 +49,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "cancel"              => false,
         "restart"             => false,
         "debug"               => false,
-        "delete_log"          => false },
+        "delete_log"          => false,
+        "prioritize"          => false },
       "id"                    => job.id,
       "allow_failure"         => job.allow_failure,
       "number"                => job.number,
@@ -150,6 +151,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:delete_log?).and_return(true) }
+    before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:prioritize?).and_return(true) }
     before        { get("/v3/job/#{job.id}", {}, headers)                             }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
@@ -162,7 +164,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "cancel"              => true,
         "restart"             => true,
         "debug"               => false,
-        "delete_log"          => true },
+        "delete_log"          => true,
+        "prioritize"          => true },
       "id"                    => job.id,
       "allow_failure"         => job.allow_failure,
       "number"                => job.number,
@@ -238,7 +241,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "cancel"              => false,
         "restart"             => false,
         "debug"               => false,
-        "delete_log"          => false },
+        "delete_log"          => false,
+        "prioritize"          => false },
       "id"                    => job2.id,
       "allow_failure"         => job2.allow_failure,
       "number"                => job2.number,
