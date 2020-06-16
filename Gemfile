@@ -22,6 +22,7 @@ gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-co
 gem 'simple_states',   '1.0.2'
 
 gem 'active_model_serializers'
+gem 'activerecord'
 gem 'unicorn'
 gem 'sentry-raven'
 gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
