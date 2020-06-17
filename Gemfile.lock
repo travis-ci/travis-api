@@ -280,7 +280,7 @@ GEM
     rb-fsevent (0.9.8)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    redis (4.2.1)
+    redis (3.3.5)
     redis-namespace (1.7.0)
       redis (>= 3.0.4)
     redlock (1.2.0)
@@ -400,6 +400,7 @@ DEPENDENCIES
   rack-contrib
   rake (~> 0.9.2)
   rb-fsevent (~> 0.9.1)
+  redis (~> 3.0)
   redlock
   rerun
   rollout (~> 1.1.0)
