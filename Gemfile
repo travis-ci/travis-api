@@ -46,6 +46,7 @@ gem 'customerio'
 gem 'redlock'
 gem 'rake',              '~> 0.9.2'
 gem 'pusher',            '~> 0.14.0'
+gem 'rollout',           '~> 1.1.0'
 
 gem 'appsignal'
 gem 'libhoney'
