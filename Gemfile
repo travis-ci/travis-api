@@ -48,6 +48,7 @@ gem 'rake',              '~> 0.9.2'
 gem 'pusher',            '~> 0.14.0'
 gem 'rollout',           '~> 1.1.0'
 gem 'google-api-client', '~> 0.9.4'
+gem 'memcachier'
 
 gem 'appsignal'
 gem 'libhoney'
