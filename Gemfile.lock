@@ -241,8 +241,8 @@ GEM
       pusher-signature (~> 0.1.8)
     pusher-signature (0.1.8)
     rack (2.2.3)
-    rack-attack (5.0.0.beta1)
-      rack
+    rack-attack (5.4.2)
+      rack (>= 1.0, < 3)
     rack-contrib (2.2.0)
       rack (~> 2.0)
     rack-protection (2.0.8.1)
@@ -362,7 +362,7 @@ DEPENDENCIES
   netaddr
   pry
   pusher (~> 0.14.0)
-  rack-attack (= 5.0.0.beta1)
+  rack-attack (~> 5.0)
   rack-cache!
   rack-contrib
   rake (~> 0.9.2)
