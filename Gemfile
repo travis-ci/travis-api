@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.4.2'
+ruby '2.6.5'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
@@ -24,7 +24,7 @@ gem 'simple_states',   '1.0.2'
 gem 'active_model_serializers',  '0.9.5'
 gem 'activerecord',      '~> 4.2'
 gem 'unicorn'
-gem 'sentry-raven'
+gem 'sentry-raven',       '2.11.3'
 gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack-contrib'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
@@ -69,7 +69,7 @@ group :test do
   gem 'rspec',         '~> 2.13'
   gem 'rspec-its'
   gem 'factory_girl',  '~> 2.4.0'
-  gem 'mocha',         '~> 0.12'
+  gem 'mocha'
   gem 'database_cleaner', '~> 1.2.0'
   gem 'timecop',       '~> 0.8.0'
   gem 'webmock'

@@ -11,7 +11,7 @@ describe Travis::Config do
     end
 
     it 'returns endpoints if it is set' do
-      ENV['travis_config'] = YAML.dump('endpoints' => { 'ssh_key' => true })
+      config.endpoints.ssh_key = true
       config.endpoints.ssh_key.should be_truthy
     end
 
