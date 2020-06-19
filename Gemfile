@@ -17,6 +17,7 @@ gem 'travis-rollout',  '~> 0.0.2'
 gem 'mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
+gem 'stackdriver'
 
 gem 'simple_states',   '1.0.2'
 

@@ -8,6 +8,8 @@ $stdout.sync = true
 
 require 'travis/api/app'
 require 'core_ext/module/load_constants'
+require 'google/cloud/trace'
+use Google::Cloud::Trace::Middleware if ENV['APM_ENABLED']
 
 models = Travis::Model.constants.map(&:to_s)
 only   = [/^(ActiveRecord|ActiveModel|Travis|GH|#{models.join('|')})/]
