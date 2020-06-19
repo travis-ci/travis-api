@@ -55,6 +55,7 @@ gem 'fog-google',        '~> 0.4.2'
 gem 'composite_primary_keys', '~> 8.0'
 gem 'pg',                     '~> 0.21'
 gem 'redis',                  '~> 3.0'
+gem 'rack-ssl',               '~> 1.3', '>= 1.3.3'
 gem 'memcachier'
 
 gem 'appsignal'
