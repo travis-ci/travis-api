@@ -2,7 +2,7 @@ language: ruby
 
 sudo: false
 
-rvm: 2.3.6
+rvm: 2.4.2
 
 script: "bundle exec rake knapsack:rspec"
 env:
