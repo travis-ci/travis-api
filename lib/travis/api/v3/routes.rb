@@ -228,5 +228,11 @@ module Travis::API::V3
       route '/user'
       get :current
     end
+
+    resource :user do
+      route '/logout'
+      get :logout
+    end
+
   end
 end

@@ -2,7 +2,7 @@ require 'travis/api/v3/access_control/generic'
 
 module Travis::API::V3
   class AccessControl::User < AccessControl::Generic
-    attr_reader :user, :access_permissions
+    attr_reader :user, :access_permissions, :token
 
     def initialize(user)
       user                = Models::User.find(user.id) if user.is_a? ::User
