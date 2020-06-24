@@ -19,7 +19,7 @@ module Travis::API::V3
     end
 
     def prioritize?
-      write? && build_priorities?
+      build_priorities?
     end
   end
 end
