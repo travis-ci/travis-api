@@ -46,7 +46,7 @@ describe Build, 'matrix' do
         it 'returns true' do
           build = FactoryBot.create(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
           build.matrix[0].update_attributes(state: :passed)
-          build.matrix[1].update_attributes(state: :started, allow_failure: true)
+          build.matrix[1].update_attributes(state: :received, allow_failure: true)
 
           expect(build.matrix_finished?).to be true
         end
