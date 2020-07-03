@@ -8,9 +8,9 @@ rvm: 2.6.5
 script: "bundle exec rake knapsack:rspec"
 
 addons:
-  - snaps:
-    - name: docker
-      channel: latest/beta
+  snaps:
+  - name: docker
+    channel: latest/beta
 
 env:
   global:
