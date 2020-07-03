@@ -38,4 +38,4 @@ jobs:
       install: echo skip
       before_script: echo skip
       script: make ship
-      if: commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true or branch = master
+      if: (commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true or branch = master) and type != pull_request
