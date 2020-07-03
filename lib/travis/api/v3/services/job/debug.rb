@@ -6,9 +6,9 @@ module Travis::API::V3
 
     def run
       @job = check_login_and_find(:job)
-      raise WrongCredentials unless job.repository.debug_tools_enabled?
-
       access_control.permissions(job).debug!
+      raise DebugUnavailable unless job.repository.debug_tools_enabled?
+
       return repo_migrated if migrated?(job.repository)
 
       job.debug_options = debug_data
