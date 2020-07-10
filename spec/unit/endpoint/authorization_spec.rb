@@ -51,7 +51,7 @@ describe Travis::Api::App::Endpoint::Authorization do
       it 'does not succeed if state cookie mismatches' do
         Travis.redis.sadd('github:states', 'github-state')
         response = get '/auth/handshake?state=github-state&code=oauth-code'
-        expect(response.status).to eq(400)
+        expect(response.status).to eq(302)
         expect(response.body).to eq("state mismatch")
         Travis.redis.srem('github:states', 'github-state')
       end
