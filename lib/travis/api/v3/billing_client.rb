@@ -21,8 +21,19 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
+    def get_v2_subscription(id)
+      response = connection.get("/v2/subscriptions/#{id}")
+      handle_subscription_response(response)
+    end
+
     def get_invoices_for_subscription(id)
       connection.get("/subscriptions/#{id}/invoices").body.map do |invoice_data|
+        Travis::API::V3::Models::Invoice.new(invoice_data)
+      end
+    end
+
+    def get_invoices_for_v2_subscription(id)
+      connection.get("/v2/subscriptions/#{id}/invoices").body.map do |invoice_data|
         Travis::API::V3::Models::Invoice.new(invoice_data)
       end
     end
@@ -43,8 +54,18 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
+    def update_v2_address(subscription_id, address_data)
+      response = connection.patch("/v2/subscriptions/#{subscription_id}/address", address_data)
+      handle_subscription_response(response)
+    end
+
     def update_creditcard(subscription_id, creditcard_token)
       response = connection.patch("/subscriptions/#{subscription_id}/creditcard", token: creditcard_token)
+      handle_subscription_response(response)
+    end
+
+    def update_v2_creditcard(subscription_id, creditcard_token)
+      response = connection.patch("/v2/subscriptions/#{subscription_id}/creditcard", token: creditcard_token)
       handle_subscription_response(response)
     end
 
@@ -55,6 +76,11 @@ module Travis::API::V3
 
     def create_subscription(subscription_data)
       response = connection.post('/subscriptions', subscription_data)
+      handle_subscription_response(response)
+    end
+
+    def create_v2_subscription(subscription_data)
+      response = connection.post('/v2/subscriptions', subscription_data)
       handle_subscription_response(response)
     end
 
@@ -82,6 +108,11 @@ module Travis::API::V3
 
     def pay(id)
       response = connection.post("/subscriptions/#{id}/pay")
+      handle_subscription_response(response)
+    end
+
+    def pay_v2(id)
+      response = connection.post("/v2/subscriptions/#{id}/pay")
       handle_subscription_response(response)
     end
 

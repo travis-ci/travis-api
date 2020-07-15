@@ -60,6 +60,25 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#get_invoices_for_v2_subscription' do
+    subject { billing.get_invoices_for_v2_subscription(subscription_id) }
+
+    it 'returns a list of invoices' do
+      stub_billing_request(:get, "/v2/subscriptions/#{subscription_id}/invoices", auth_key: auth_key, user_id: user_id)
+        .to_return(body: JSON.dump([{'id' => invoice_id, 'created_at' => Time.now, 'url' => 'https://billing-test.travis-ci.com/invoices/111.pdf', amount_due: 999 }]))
+      expect(subject.first).to be_a(Travis::API::V3::Models::Invoice)
+      expect(subject.first.id).to eq(invoice_id)
+      expect(subject.first.amount_due).to eq(999)
+    end
+
+    it 'returns an empty list if there are no invoices' do
+      stub_billing_request(:get, "/v2/subscriptions/#{subscription_id}/invoices", auth_key: auth_key, user_id: user_id)
+        .to_return(body: JSON.dump([]))
+
+        expect(subject.size).to eq 0
+    end
+  end
+
   describe '#all' do
     subject { billing.all }
 
@@ -89,6 +108,20 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#update_v2_address' do
+    let(:address_data) { { 'address' => 'Rigaer Strasse' } }
+    subject { billing.update_v2_address(subscription_id, address_data) }
+
+    it 'requests the update' do
+      stubbed_request = stub_billing_request(:patch, "/v2/subscriptions/#{subscription_id}/address", auth_key: auth_key, user_id: user_id)
+        .with(body: JSON.dump(address_data))
+        .to_return(status: 204)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
   describe '#update_plan' do
     let(:plan_data) { { 'plan' => 'travis-ci-ten-builds' } }
     subject { billing.update_plan(subscription_id, plan_data) }
@@ -109,6 +142,20 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'requests the update' do
       stubbed_request = stub_billing_request(:patch, "/subscriptions/#{subscription_id}/creditcard", auth_key: auth_key, user_id: user_id)
+        .with(body: JSON.dump(token: creditcard_token))
+        .to_return(status: 204)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
+  describe '#update_v2_creditcard' do
+    let(:creditcard_token) { 'token' }
+    subject { billing.update_v2_creditcard(subscription_id, creditcard_token) }
+
+    it 'requests the update' do
+      stubbed_request = stub_billing_request(:patch, "/v2/subscriptions/#{subscription_id}/creditcard", auth_key: auth_key, user_id: user_id)
         .with(body: JSON.dump(token: creditcard_token))
         .to_return(status: 204)
 
@@ -156,11 +203,37 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#create_v2_subscription' do
+    let(:subscription_data) {{ 'address' => 'Rigaer' }}
+    subject { billing.create_v2_subscription(subscription_data) }
+
+    it 'requests the creation and returns the representation' do
+      stubbed_request = stub_billing_request(:post, "/v2/subscriptions", auth_key: auth_key, user_id: user_id)
+        .with(body: JSON.dump(subscription_data))
+        .to_return(status: 201, body: JSON.dump(billing_subscription_response_body('id' => 456, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
+
+      expect(subject.id).to eq(456)
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
   describe '#pay' do
     subject { billing.pay(subscription_id) }
 
     it 'requests to retry payment' do
       stubbed_request = stub_billing_request(:post, "/subscriptions/#{subscription_id}/pay", auth_key: auth_key, user_id: user_id)
+        .to_return(status: 200, body: JSON.dump(billing_subscription_response_body('id' => subscription_id, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
+  describe '#pay_v2' do
+    subject { billing.pay_v2(subscription_id) }
+
+    it 'requests to retry payment' do
+      stubbed_request = stub_billing_request(:post, "/v2/subscriptions/#{subscription_id}/pay", auth_key: auth_key, user_id: user_id)
         .to_return(status: 200, body: JSON.dump(billing_subscription_response_body('id' => subscription_id, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
 
       expect { subject }.to_not raise_error
