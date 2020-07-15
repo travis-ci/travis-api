@@ -43,6 +43,86 @@ module Support
       }.deep_merge(attributes)
     end
 
+    def billing_v2_subscription_response_body(attributes={})
+      {
+        "permissions" => { "read" => true, "write" => true },
+        "id" => 81,
+        "addons" => billing_addons_response_body,
+        "source" => "manual",
+        "status" => "",
+        "created_at" => "2017-11-28T00:09:59.502Z",
+        "billing_info" => {
+          "first_name" => "ana",
+          "last_name" => "rosas",
+          "company" => "",
+          "billing_email" => "a.rosas10@gmail.com",
+          "zip_code" => "28450",
+          "address" => "Luis Spota",
+          "address2" => "",
+          "city" => "Comala",
+          "state" => nil,
+          "country" => "Mexico",
+          "vat_id" => "123456"
+        },
+        "credit_card_info" => {
+          "card_owner" => "ana",
+          "last_digits" => "4242",
+          "expiration_date" => "9/2021"
+        },
+        "owner" => {
+          "type" => "Organization",
+          "id" => 43
+        }
+      }.deep_merge(attributes)
+    end
+
+    def billing_addons_response_body(attributes={})
+      {
+        "addons" => [
+          {
+            "id" => "1",
+            "plan_id" => "1",
+            "name" => "OSS Build Credits",
+            "addon_type" => "credit_public",
+            "created_at" => "2020-07-09T12:06:13.293Z",
+            "updated_at" => "2020-07-09T12:07:03.619Z",
+            "current_usage_id" => 1,
+            "current_usage" => {
+                "id" => 1,
+                "addon_id" => 1,
+                "addon_quantity" => 10000,
+                "addon_usage" => 0,
+                "purchase_date" => "2020-07-09T12:06:27.919Z",
+                "valid_to" => nil,
+                "status" => "active",
+                "created_at" => "2020-07-09T12:06:27.944Z",
+                "updated_at" => "2020-07-09T12:06:27.944Z"
+            }
+          },
+          {
+            "id" => 2,
+            "plan_id" => 1,
+            "name" => "Build Credits",
+            "addon_type" => "credit_private",
+            "created_at" => "2020-07-09T12:06:17.003Z",
+            "updated_at" => "2020-07-09T12:07:09.067Z",
+            "current_usage_id" => 2,
+            "current_usage" => {
+              "id" => 2,
+              "addon_id" => 2,
+              "addon_quantity" => 10000,
+              "addon_usage" => 0,
+              "purchase_date" => "2020-07-09T12:06:31.739Z",
+              "valid_to" => nil,
+              "status" => "active",
+              "created_at" => "2020-07-09T12:06:31.741Z",
+              "updated_at" => "2020-07-09T12:06:31.741Z"
+            }
+          }
+        ]
+      }.deep_merge(attributes)
+    end
+
     def billing_plan_response_body(attributes={})
       {
         "id" => "travis-ci-ten-builds",
