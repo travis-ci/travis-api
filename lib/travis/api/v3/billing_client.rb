@@ -16,13 +16,34 @@ module Travis::API::V3
       Travis::API::V3::Models::SubscriptionsCollection.new(subscriptions, permissions)
     end
 
+    def all_v2
+      data = connection.get('/v2/subscriptions').body
+      subscriptions = data.fetch('plans').map do |subscription_data|
+        Travis::API::V3::Models::V2Subscription.new(subscription_data)
+      end
+      permissions = data.fetch('permissions')
+
+      Travis::API::V3::Models::SubscriptionsCollection.new(subscriptions, permissions)
+    end
+
     def get_subscription(id)
       response = connection.get("/subscriptions/#{id}")
       handle_subscription_response(response)
     end
 
+    def get_v2_subscription(id)
+      response = connection.get("/v2/subscriptions/#{id}")
+      handle_v2_subscription_response(response)
+    end
+
     def get_invoices_for_subscription(id)
       connection.get("/subscriptions/#{id}/invoices").body.map do |invoice_data|
+        Travis::API::V3::Models::Invoice.new(invoice_data)
+      end
+    end
+
+    def get_invoices_for_v2_subscription(id)
+      connection.get("/v2/subscriptions/#{id}/invoices").body.map do |invoice_data|
         Travis::API::V3::Models::Invoice.new(invoice_data)
       end
     end
@@ -43,9 +64,19 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
+    def update_v2_address(subscription_id, address_data)
+      response = connection.patch("/v2/subscriptions/#{subscription_id}/address", address_data)
+      handle_v2_subscription_response(response)
+    end
+
     def update_creditcard(subscription_id, creditcard_token)
       response = connection.patch("/subscriptions/#{subscription_id}/creditcard", token: creditcard_token)
       handle_subscription_response(response)
+    end
+
+    def update_v2_creditcard(subscription_id, creditcard_token)
+      response = connection.patch("/v2/subscriptions/#{subscription_id}/creditcard", token: creditcard_token)
+      handle_v2_subscription_response(response)
     end
 
     def update_plan(subscription_id, plan_data)
@@ -56,6 +87,11 @@ module Travis::API::V3
     def create_subscription(subscription_data)
       response = connection.post('/subscriptions', subscription_data)
       handle_subscription_response(response)
+    end
+
+    def create_v2_subscription(subscription_data)
+      response = connection.post('/v2/subscriptions', subscription_data)
+      handle_v2_subscription_response(response)
     end
 
     def cancel_subscription(id, reason_data)
@@ -85,6 +121,11 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
+    def pay_v2(id)
+      response = connection.post("/v2/subscriptions/#{id}/pay")
+      handle_v2_subscription_response(response)
+    end
+
     def get_coupon(code)
       response = connection.get("/coupons/#{code}")
       handle_coupon_response(response)
@@ -99,6 +140,10 @@ module Travis::API::V3
 
     def handle_subscription_response(response)
       handle_errors_and_respond(response) { |r| Travis::API::V3::Models::Subscription.new(r) }
+    end
+
+    def handle_v2_subscription_response(response)
+      handle_errors_and_respond(response) { |r| Travis::API::V3::Models::V2Subscription.new(r) }
     end
 
     def handle_coupon_response(response)
