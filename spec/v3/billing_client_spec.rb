@@ -101,7 +101,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns the list of subscriptions' do
       stub_billing_request(:get, '/v2/subscriptions', auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump(subscriptions: [billing_v2_subscription_response_body('id' => subscription_id, 'owner' => { 'type' => 'Organization', 'id' => organization.id })], permissions: permissions))
+        .to_return(body: JSON.dump(plans: [billing_v2_subscription_response_body('id' => subscription_id, 'owner' => { 'type' => 'Organization', 'id' => organization.id })], permissions: permissions))
 
       expect(subject.subscriptions.size).to eq 1
       expect(subject.subscriptions.first.id).to eq(subscription_id)
