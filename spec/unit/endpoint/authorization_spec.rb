@@ -48,6 +48,11 @@ describe Travis::Api::App::Endpoint::Authorization do
     end
     
     describe 'evil hackers messing with the state' do
+      before do
+        WebMock.stub_request(:post, "https://foobar.com/access_token_path")
+          .to_return(status: 200, body: 'access_token=token&token_type=bearer')
+      end
+
       it 'does not succeed if state cookie mismatches' do
         Travis.redis.sadd('github:states', 'github-state')
         response = get '/auth/handshake?state=github-state&code=oauth-code'
