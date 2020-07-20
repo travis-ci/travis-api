@@ -268,7 +268,7 @@ class Travis::Api::App
 
         def handle_invalid_response
           clear_state_cookies
-          back_url = request.get_header('Referer') || Travis.config.host
+          back_url = headers['Referer'] || Travis.config.host
           response.redirect(back_url)
         end
 
