@@ -9,7 +9,7 @@ module Travis
         attr_accessor :redis, :ttl
 
         def initialize(options = {})
-          @redis = options[:redis] || ::Redis.connect(url: Travis.config.redis.url)
+          @redis = options[:redis] || Travis.redis
           @ttl   = options[:ttl]   || 10
         end
 
