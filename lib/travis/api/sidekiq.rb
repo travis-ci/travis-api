@@ -27,7 +27,8 @@ module Travis::API
       def gatekeeper_pool
         ::Sidekiq::RedisConnection.create(
           url: config.redis_gatekeeper.url,
-          namespace: config.sidekiq.namespace
+          namespace: config.sidekiq.namespace,
+          id: nil
         )
       end
 
