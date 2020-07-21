@@ -94,6 +94,11 @@ module Travis::API::V3
       handle_v2_subscription_response(response)
     end
 
+    def update_v2_subscription(subscription_id, plan_data)
+      response = connection.patch("/v2/subscriptions/#{subscription_id}/plan", plan_data)
+      handle_v2_subscription_response(response)
+    end
+
     def cancel_subscription(id, reason_data)
       response = connection.post("/subscriptions/#{id}/cancel", reason_data)
       handle_subscription_response(response)
