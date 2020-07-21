@@ -20,6 +20,7 @@ require 'gh'
 require 'raven'
 require 'raven/integrations/rack'
 require 'sidekiq'
+require 'connection_pool'
 require 'metriks/reporter/logger'
 require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
@@ -214,9 +215,23 @@ module Travis::Api
 
         setup_database_connections
 
-        if use_monitoring?
-          Sidekiq.configure_client do |config|
-            config.redis = Travis.config.redis.to_h.merge(size: 1, namespace: Travis.config.sidekiq.namespace)
+        Sidekiq.configure_client do |config|
+          options = Travis.config.redis.to_h
+          namespace = Travis.config.sidekiq.namespace
+
+          # share connection with Travis.redis to ensure
+          # that we only create one redis connection per
+          # unicorn worker.
+          #
+          # this is so that we do not run into redis
+          # connection limits.
+          config.redis = ConnectionPool.new(timeout: options[:pool_timeout] || 1, size: 1) do
+            client = Travis.redis
+            if namespace
+              require 'redis/namespace'
+              client = Redis::Namespace.new(namespace, :redis => client)
+            end
+            client
           end
         end
 

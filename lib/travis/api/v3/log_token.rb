@@ -14,7 +14,7 @@ module Travis::API::V3
     end
 
     def self.redis
-      Thread.current[:redis] ||= ::Redis.connect(url: Travis.config.redis.url)
+      Travis.redis
     end
 
     def initialize(job_id)
