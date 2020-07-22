@@ -75,5 +75,10 @@ module Travis::API::V3
       access_control.adminable? object
     end
 
+    def build_priorities?
+      return false if object.owner_type != 'Organization'
+      object.owner.build_priorities_enabled?
+    end
+
   end
 end
