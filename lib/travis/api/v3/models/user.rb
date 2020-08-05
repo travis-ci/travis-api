@@ -82,5 +82,10 @@ module Travis::API::V3
     def github?
       vcs_type == 'GithubUser'
     end
+
+    def create_initial_subscription
+      client = BillingClient.new(id)
+      client.create_initial_v2_subscription
+    end
   end
 end

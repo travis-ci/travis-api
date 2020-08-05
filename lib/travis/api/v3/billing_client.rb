@@ -89,6 +89,11 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
+    def create_initial_v2_subscription
+      response = connection.post('/v2/initial_subscription')
+      handle_v2_subscription_response(response)
+    end
+
     def create_v2_subscription(subscription_data)
       response = connection.post('/v2/subscriptions', subscription_data)
       handle_v2_subscription_response(response)

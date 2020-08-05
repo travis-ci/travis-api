@@ -339,6 +339,7 @@ class Travis::Api::App
           def ensure_token_is_available
             unless user.tokens.first
               user.create_a_token
+              user.create_initial_subscription
             end
           end
         end
