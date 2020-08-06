@@ -1,4 +1,4 @@
-describe Travis::Api::App::Endpoint::Authorization do
+describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
   include Travis::Testing::Stubs
 
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
@@ -26,8 +26,8 @@ describe Travis::Api::App::Endpoint::Authorization do
     }
     Travis.config.billing.url = billing_url
     Travis.config.billing.auth_key = billing_auth_key
-    stub_billing_request(:post, "/v2/initial_subscription", auth_key: billing_auth_key, user_id: user.id)
-      .to_return(status: 201, body: JSON.dump(billing_v2_subscription_response_body('id' => 456, 'owner' => { 'type' => 'User', 'id' => user.id })))
+    WebMock.stub_request(:post, 'http://billingfake.travis-ci.com/v2/initial_subscription')
+           .to_return(status: 200, body: JSON.dump(billing_v2_subscription_response_body('id' => 456, 'owner' => { 'type' => 'User', 'id' => user.id })))
   end
 
   after do
