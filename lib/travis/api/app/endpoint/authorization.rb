@@ -134,6 +134,7 @@ class Travis::Api::App
         def update_first_login(user)
           unless user.first_logged_in_at
             user.update_attributes(first_logged_in_at: Time.now)
+            user.create_initial_subscription
           end
         end
 
@@ -190,6 +191,7 @@ class Travis::Api::App
         # VCS HANDSHAKE START
 
         def remote_vcs_user
+          user.create_initial_subscription unless @remote_vcs_user
           @remote_vcs_user ||= Travis::RemoteVCS::User.new
         end
 
@@ -209,7 +211,7 @@ class Travis::Api::App
               redirect to(vcs_data['redirect_uri'])
               return
             end
-
+            update_first_login(user)
             yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload(params[:provider])
           else
             state = vcs_create_state(params[:origin] || params[:redirect_uri])
@@ -339,7 +341,6 @@ class Travis::Api::App
           def ensure_token_is_available
             unless user.tokens.first
               user.create_a_token
-              user.create_initial_subscription
             end
           end
         end
