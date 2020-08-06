@@ -191,7 +191,6 @@ class Travis::Api::App
         # VCS HANDSHAKE START
 
         def remote_vcs_user
-          user.create_initial_subscription unless @remote_vcs_user
           @remote_vcs_user ||= Travis::RemoteVCS::User.new
         end
 
