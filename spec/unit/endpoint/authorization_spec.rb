@@ -1,5 +1,8 @@
-describe Travis::Api::App::Endpoint::Authorization do
+describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
   include Travis::Testing::Stubs
+
+  let(:billing_url) { 'http://billingfake.travis-ci.com' }
+  let(:billing_auth_key) { 'secret' }
 
   before do
     add_endpoint '/info' do
@@ -21,6 +24,10 @@ describe Travis::Api::App::Endpoint::Authorization do
       scope: 'public_repo,user:email,new_scope',
       insufficient_access_redirect_url: 'https://travis-ci.org/insufficient_access'
     }
+    Travis.config.billing.url = billing_url
+    Travis.config.billing.auth_key = billing_auth_key
+    WebMock.stub_request(:post, 'http://billingfake.travis-ci.com/v2/initial_subscription')
+           .to_return(status: 200, body: JSON.dump(billing_v2_subscription_response_body('id' => 456, 'owner' => { 'type' => 'User', 'id' => user.id })))
   end
 
   after do

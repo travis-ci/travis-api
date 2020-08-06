@@ -134,6 +134,7 @@ class Travis::Api::App
         def update_first_login(user)
           unless user.first_logged_in_at
             user.update_attributes(first_logged_in_at: Time.now)
+            user.create_initial_subscription unless Travis.config.org?
           end
         end
 
@@ -209,7 +210,7 @@ class Travis::Api::App
               redirect to(vcs_data['redirect_uri'])
               return
             end
-
+            update_first_login(user)
             yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload(params[:provider])
           else
             state = vcs_create_state(params[:origin] || params[:redirect_uri])
