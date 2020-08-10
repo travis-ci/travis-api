@@ -12,3 +12,10 @@ before_script:
   - "createdb travis_test || true"
   - "curl -fs https://raw.githubusercontent.com/travis-ci/travis-migrations/master/db/main/structure.sql | psql travis_test"
 script: RAILS_ENV=test bundle exec rake spec
+jobs:
+  include:
+    - stage: ":ship: it to Quay.io"
+      install: echo skip
+      before_script: echo skip
+      script: make ship
+      if: commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true or branch = master
