@@ -1,22 +1,12 @@
 describe Travis::API::V3::Services::Organization::Find, set_app: true, billing_spec_helper: true do
   let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org') }
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
-  let(:billing_url) { 'http://billingfake.travis-ci.com' }
-  let(:billing_auth_key) { 'secret' }
 
-  before do
-    org.save!
-    Travis.config.billing.url = billing_url
-    Travis.config.billing.auth_key = billing_auth_key
-  end
-  after { org.delete }
+  before    { org.save!                              }
+  after     { org.delete                             }
 
   describe 'existing org, public api' do
     before  { Travis.config.public_mode = true }
-    before do
-      stub_billing_request(:get, "/usage/organizations/#{org.id}/allowance", auth_key: billing_auth_key, user_id: org.id)
-        .to_return(body: JSON.dump({ 'public_repos': 'true', 'private_repos': 'true', 'concurrency_limit': '666' }))
-    end
     before  { get("/v3/org/#{org.id}") }
     example { expect(last_response).to be_ok }
     example { expect(JSON.load(body)).to be == {
@@ -46,8 +36,6 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true, billing_s
       allow(Travis::Features).to receive(:owner_active?).and_return(true)
       allow(Travis::Features).to receive(:owner_active?).with(:educational_org, org).and_return(true)
       Travis.config.public_mode = false
-      stub_billing_request(:get, "/usage/organizations/#{org.id}/allowance", auth_key: billing_auth_key, user_id: user.id)
-        .to_return(body: JSON.dump({ 'public_repos': 'true', 'private_repos': 'true', 'concurrency_limit': '666' }))
     end
     before  { get("/v3/org/#{org.id}", {}, headers) }
     after   { Travis.config.public_mode = true }
