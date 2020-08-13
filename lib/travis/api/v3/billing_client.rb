@@ -6,6 +6,11 @@ module Travis::API::V3
       @user_id = user_id
     end
 
+    def allowance(owner_type, owner_id)
+      data = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/allowance").body
+      Travis::API::V3::Models::Allowance.new(data)
+    end
+
     def all
       data = connection.get('/subscriptions').body
       subscriptions = data.fetch('subscriptions').map do |subscription_data|
