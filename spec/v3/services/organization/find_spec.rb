@@ -19,7 +19,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true, billing_s
     end
     before  { get("/v3/org/#{org.id}") }
     example { expect(last_response).to be_ok }
-    example { binding.pry; expect(JSON.load(body)).to be == {
+    example { expect(JSON.load(body)).to be == {
       "@type"            => "organization",
       "@href"            => "/v3/org/#{org.id}",
       "@representation"  => "standard",
