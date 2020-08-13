@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Organization::Find, set_app: true, billing_spec_helper: true do
+describe Travis::API::V3::Services::Organization::Find, set_app: true do
   let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org') }
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
 
