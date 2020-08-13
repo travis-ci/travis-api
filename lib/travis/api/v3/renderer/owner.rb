@@ -31,8 +31,8 @@ module Travis::API::V3
     end
 
     def allowance
-      return true if Travis.config.org?
-      return false unless access_control.user
+      return BillingClient.default_allowance_response if Travis.config.org?
+      return BillingClient.default_allowance_response unless access_control.user
 
       client = BillingClient.new(access_control.user.id)
       client.allowance(owner_type, id)

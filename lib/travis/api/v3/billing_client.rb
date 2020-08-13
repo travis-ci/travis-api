@@ -7,8 +7,14 @@ module Travis::API::V3
     end
 
     def allowance(owner_type, owner_id)
-      data = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/allowance").body
-      Travis::API::V3::Models::Allowance.new(data)
+      response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/allowance")
+      return default_allowance_response unless response.status == 200
+
+      Travis::API::V3::Models::Allowance.new(2, response.body)
+    end
+
+    def self.default_allowance_response
+      Travis::API::V3::Models::Allowance.new(1, { "public_repos" => true, "private_repos" => false, "concurrency_limit" => 1 }.freeze)
     end
 
     def all
