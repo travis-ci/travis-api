@@ -19,7 +19,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true, billing_s
     end
     before  { get("/v3/org/#{org.id}") }
     example { expect(last_response).to be_ok }
-    example { expect(JSON.load(body)).to be == {
+    example { binding.pry; expect(JSON.load(body)).to be == {
       "@type"            => "organization",
       "@href"            => "/v3/org/#{org.id}",
       "@representation"  => "standard",
@@ -33,12 +33,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true, billing_s
       "avatar_url"       => nil,
       "education"        => false,
       "allow_migration"  => false,
-      "allowance" => {
-        "@type" => "allowance",
-        "@representation" => "minimal",
-        "public_repos"  => "true",
-        "private_repos" => "true"
-      }
+      "allowance"        => true
     }}
   end
 
@@ -70,12 +65,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true, billing_s
       "avatar_url"       => nil,
       "education"        => true,
       "allow_migration"  => true,
-      "allowance" => {
-        "@type" => "allowance",
-        "@representation" => "minimal",
-        "public_repos"  => "true",
-        "private_repos" => "true"
-      },
+      "allowance"        => true
     }}
   end
 
