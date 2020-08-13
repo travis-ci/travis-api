@@ -56,6 +56,14 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "synced_at" => nil,
         "education" => nil,
         "allow_migration" => false,
+        "allowance" => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "subscription_type" => 1,
+          "public_repos"      => true,
+          "private_repos"     => false,
+          "concurrency_limit" => 1
+        },
         "recently_signed_up" => false,
         "secure_user_hash" => nil,
       }

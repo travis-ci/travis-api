@@ -23,6 +23,14 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "avatar_url"       => nil,
       "education"        => false,
       "allow_migration"  => false,
+      "allowance"        => {
+        "@type"             => "allowance",
+        "@representation"   => "minimal",
+        "subscription_type" => 1,
+        "public_repos"      => true,
+        "private_repos"     => false,
+        "concurrency_limit" => 1
+      }
     }}
   end
 
@@ -52,6 +60,14 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "avatar_url"       => nil,
       "education"        => true,
       "allow_migration"  => true,
+      "allowance"        => {
+        "@type"             => "allowance",
+        "@representation"   => "minimal",
+        "subscription_type" => 1,
+        "public_repos"      => true,
+        "private_repos"     => false,
+        "concurrency_limit" => 1
+      }
     }}
   end
 

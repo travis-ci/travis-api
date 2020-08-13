@@ -1,7 +1,7 @@
 language: ruby
 
 import:
-  - travis-ci/build-configs:db-setup.yml@sb-remove-user-travis
+  - travis-ci/build-configs:db-setup.yml
 
 rvm: 2.6.5
 

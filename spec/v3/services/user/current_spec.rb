@@ -24,6 +24,14 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
       "synced_at"        => user.synced_at,
       "education"        => nil,
       "allow_migration"  => false,
+      "allowance"        => {
+        "@type"             => "allowance",
+        "@representation"   => "minimal",
+        "subscription_type" => 1,
+        "public_repos"      => true,
+        "private_repos"     => false,
+        "concurrency_limit" => 1
+      },
       "recently_signed_up"=>false,
       "secure_user_hash" => nil
     }}
