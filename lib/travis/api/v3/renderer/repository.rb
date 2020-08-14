@@ -75,7 +75,7 @@ module Travis::API::V3
       if included_owner? and owner_href
         { :@href => owner_href }
       else
-        result = { :@type => owner_type, :id => model.owner_id, :login => model.owner_name, :allowance => model.allowance }
+        result = { :@type => owner_type, :id => model.owner_id, :login => model.owner_name, :allowance => owner_allowance }
         result[:@href] = owner_href if owner_href
         result
       end
@@ -94,6 +94,10 @@ module Travis::API::V3
 
     def owner_type
       @owner_type ||= model.owner_type.downcase if model.owner_type
+    end
+
+    def owner_allowance
+      @_owner_allowance ||= model.owner.allowance if model.owner&.allowance
     end
 
     def managed_by_installation
