@@ -75,7 +75,7 @@ module Travis::API::V3
       if included_owner? and owner_href
         { :@href => owner_href }
       else
-        result = { :@type => owner_type, :id => model.owner_id, :login => model.owner_name }
+        result = { :@type => owner_type, :id => model.owner_id, :login => model.owner_name, :allowance => model.allowance }
         result[:@href] = owner_href if owner_href
         result
       end
