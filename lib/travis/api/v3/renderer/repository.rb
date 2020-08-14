@@ -97,7 +97,13 @@ module Travis::API::V3
     end
 
     def owner_allowance
-      @_owner_allowance ||= model.owner.allowance if model.owner&.allowance
+      @_owner_allowance ||= begin
+        return BillingClient.default_allowance_response if Travis.config.org?
+        return BillingClient.default_allowance_response unless access_control.user
+
+        client = BillingClient.new(access_control.user.id)
+        client.allowance(owner_type, model.owner_id)
+      end
     end
 
     def managed_by_installation
