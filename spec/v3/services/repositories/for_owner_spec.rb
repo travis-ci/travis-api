@@ -91,6 +91,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"             => false,
         "owner"              => {
           "@type"            => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "id"               => repo.owner_id,
           "login"            => "svenfuchs",
           "@href"            => "/v3/user/#{repo.owner_id}" },
@@ -144,6 +152,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"             =>false,
         "owner"              =>{
           "@type"            =>"user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "id"               =>1,
           "login"            =>"svenfuchs",
           "@href"            =>"/v3/user/1"},
@@ -257,6 +273,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"             => false,
         "owner"              => {
           "@type"            => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "id"               => 1,
           "login"            => "svenfuchs",
           "@href"            => "/v3/user/1"},
@@ -415,6 +439,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "private"         => true,
         "owner"           => {
           "@type"         => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "id"            => 1,
           "login"         => "svenfuchs",
           "@href"         => "/v3/user/1" },
@@ -462,6 +494,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"          => false,
         "owner"           => {
           "@type"         => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "id"            => 1,
           "login"         => "svenfuchs",
           "@href"         => "/v3/user/1" },
@@ -534,6 +574,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"             => true,
         "owner"              => {
           "@type"            => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "id"               => sharedrepo.owner_id,
           "login"            => "sharedrepoowner",
           "@href"            => "/v3/user/#{sharedrepo.owner_id}" },

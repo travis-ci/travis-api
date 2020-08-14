@@ -97,7 +97,7 @@ module Travis::API::V3
     end
 
     def owner_allowance
-      @_owner_allowance ||= begin
+      @owner_allowance ||= begin
         return BillingClient.default_allowance_response if Travis.config.org?
         return BillingClient.default_allowance_response unless access_control.user
 

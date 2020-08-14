@@ -45,6 +45,14 @@ describe Travis::API::V3::Services::Trials::All, set_app: true, billing_spec_hel
           'id' => 123,
           'owner' => {
             '@type' => 'user',
+            "allowance"   => {
+              "@representation"   => "minimal",
+              "@type"             => "allowance",
+              "concurrency_limit" => 1,
+              "private_repos"     => false,
+              "public_repos"      => true,
+              "subscription_type" => 1
+            },
             '@href' => "/v3/user/#{user.id}",
             '@representation' => 'minimal',
             'id' => user.id,

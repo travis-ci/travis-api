@@ -102,6 +102,14 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "committed_at"        => "2010-11-12T11:50:00Z"},
       "owner"                 => {
         "@type"               => owner_type.to_s.downcase,
+        "allowance"   => {
+          "@representation"   => "minimal",
+          "@type"             => "allowance",
+          "concurrency_limit" => 1,
+          "private_repos"     => false,
+          "public_repos"      => true,
+          "subscription_type" => 1
+        },
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,
@@ -214,6 +222,14 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "committed_at"        => "2010-11-12T11:50:00Z"},
       "owner"                 => {
         "@type"               => owner_type.to_s.downcase,
+        "allowance"   => {
+          "@representation"   => "minimal",
+          "@type"             => "allowance",
+          "concurrency_limit" => 1,
+          "private_repos"     => false,
+          "public_repos"      => true,
+          "subscription_type" => 1
+        },
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,
@@ -289,6 +305,14 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "committed_at"        => "2010-11-12T11:50:00Z"},
       "owner"                 => {
         "@type"               => owner_type.to_s.downcase,
+        "allowance"   => {
+          "@representation"   => "minimal",
+          "@type"             => "allowance",
+          "concurrency_limit" => 1,
+          "private_repos"     => false,
+          "public_repos"      => true,
+          "subscription_type" => 1
+        },
         "@href"               => "/v3/#{owner_href}/#{owner.id}",
         "@representation"     => "minimal",
         "id"                  => owner.id,
