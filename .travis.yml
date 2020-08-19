@@ -1,6 +1,10 @@
 language: ruby
 rvm: '2.5.5'
 cache: bundler
+dist: bionic
+env:
+  global:
+    - PATH=/snap/bin:$PATH
 addons:
   postgresql: 9.6
 services:
@@ -15,6 +19,10 @@ script: RAILS_ENV=test bundle exec rake spec
 jobs:
   include:
     - stage: ":ship: it to Quay.io"
+      addons:
+        snaps:
+        - name: docker
+          channel: latest/beta
       install: echo skip
       before_script: echo skip
       script: make ship

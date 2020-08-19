@@ -23,11 +23,39 @@ ifdef $$TRAVIS_PULL_REQUEST
 	TRAVIS_PULL_REQUEST := $$TRAVIS_PULL_REQUEST
 endif
 
+ifndef $$PLATFORM_TYPE
+	PLATFORM_TYPE ?= $$PLATFORM_TYPE
+endif
+
+ifndef $$RUBYENCODER_PROJECT_ID
+	RUBYENCODER_PROJECT_ID ?= $$RUBYENCODER_PROJECT_ID
+endif
+
+ifndef $$RUBYENCODER_PROJECT_KEY
+	RUBYENCODER_PROJECT_KEY ?= $$RUBYENCODER_PROJECT_KEY
+endif
+
+ifeq ($(PLATFORM_TYPE), enterprise)
+
+  ifeq ($(RUBYENCODER_PROJECT_ID),)
+	$(error RUBYENCODER_PROJECT_ID not set correctly.)
+  endif
+
+  ifeq ($(RUBYENCODER_PROJECT_KEY),)
+	$(error RUBYENCODER_PROJECT_KEY not set correctly.)
+  endif
+
+  BUILD_ARGUMENTS = --build-arg RUBYENCODER_PROJECT_ID="$(RUBYENCODER_PROJECT_ID)" --build-arg RUBYENCODER_PROJECT_KEY="$(RUBYENCODER_PROJECT_KEY)" --build-arg SSH_KEY="$$(cat ~/.ssh/id_rsa)"
+else
+  PLATFORM_TYPE = hosted
+  BUILD_ARGUMENTS =
+endif
+
 DOCKER ?= docker
 
 .PHONY: docker-build
 docker-build:
-	$(DOCKER) build -t $(DOCKER_DEST) .
+	DOCKER_BUILDKIT=1 $(DOCKER) build --progress=plain --build-arg PLATFORM_TYPE="$(PLATFORM_TYPE)" $(BUILD_ARGUMENTS) -t $(DOCKER_DEST) .
 
 .PHONY: docker-login
 docker-login:

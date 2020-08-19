@@ -14,7 +14,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-sso.git
-  revision: 93ad9decc66bd79641fbd576e2e8994787943989
+  revision: e381a1541918118ddde7347bfde9e4766a3688a6
   specs:
     travis-sso (0.0.1)
       multi_json
@@ -350,4 +350,4 @@ DEPENDENCIES
   will_paginate (~> 3.1.0)
 
 BUNDLED WITH
-   2.1.2
+   2.1.4
