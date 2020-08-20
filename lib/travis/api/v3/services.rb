@@ -36,6 +36,7 @@ module Travis::API::V3
     Organizations         = Module.new { extend Services }
     Owner                 = Module.new { extend Services }
     Plans                 = Module.new { extend Services }
+    V2Plans               = Module.new { extend Services }
     Preferences           = Module.new { extend Services }
     Preference            = Module.new { extend Services }
     Queues                = Module.new { extend Services }
@@ -47,6 +48,8 @@ module Travis::API::V3
     Stages                = Module.new { extend Services }
     Subscription          = Module.new { extend Services }
     Subscriptions         = Module.new { extend Services }
+    V2Subscription        = Module.new { extend Services }
+    V2Subscriptions       = Module.new { extend Services }
     Trials                = Module.new { extend Services }
     User                  = Module.new { extend Services }
     UserSetting           = Module.new { extend Services }

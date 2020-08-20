@@ -296,8 +296,25 @@ module Travis::API::V3
       post :create
     end
 
+    hidden_resource :v2_subscriptions do
+      route '/v2_subscriptions'
+      get :all
+      post :create
+    end
+
     hidden_resource :subscription do
       route '/subscription/{subscription.id}'
+      patch :update_address, '/address'
+      patch :update_creditcard, '/creditcard'
+      patch :update_plan, '/plan'
+      patch :resubscribe, '/resubscribe'
+      post :cancel, '/cancel'
+      post :pay, '/pay'
+      get :invoices, '/invoices'
+    end
+
+    hidden_resource :v2_subscription do
+      route '/v2_subscription/{subscription.id}'
       patch :update_address, '/address'
       patch :update_creditcard, '/creditcard'
       patch :update_plan, '/plan'
@@ -320,6 +337,13 @@ module Travis::API::V3
 
     hidden_resource :plans do
       route '/plans_for'
+      get :all, '/user'
+      get :all, '/organization/{organization.id}'
+
+    end
+
+    hidden_resource :v2_plans do
+      route '/v2_plans_for'
       get :all, '/user'
       get :all, '/organization/{organization.id}'
 

@@ -104,6 +104,18 @@ module Travis::API::V3
       handle_v2_subscription_response(response)
     end
 
+    def v2_plans_for_organization(organization_id)
+      connection.get("/v2/plans_for/organization/#{organization_id}").body.map do |plan_data|
+        Travis::API::V3::Models::V2PlanConfig.new(plan_data)
+      end
+    end
+
+    def v2_plans_for_user
+      connection.get("/v2/plans_for/user").body.map do |plan_data|
+        Travis::API::V3::Models::V2PlanConfig.new(plan_data)
+      end
+    end
+
     def cancel_subscription(id, reason_data)
       response = connection.post("/subscriptions/#{id}/cancel", reason_data)
       handle_subscription_response(response)
