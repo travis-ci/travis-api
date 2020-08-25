@@ -53,7 +53,7 @@ class OrganizationsController < ApplicationController
     @repositories = @organization.repositories
                                  .where(invalidated_at: nil)
                                  .order(:last_build_id, :name, :active)
-                                 .paginate(page: params[:page], per_page: 20)
+      #                           .paginate(page: params[:page], per_page: 20)
     render_either 'shared/repositories'
   end
 
