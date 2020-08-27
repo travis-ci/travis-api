@@ -14,10 +14,6 @@ module Travis::API::V3
       Renderer.render_model(model.plan, mode: :standard) unless model.plan.nil?
     end
 
-    def addons
-      Renderer.render_model(model.addons, mode: :standard) unless model.addons.nil?
-    end
-
     def payment_intent
       Renderer.render_model(model.payment_intent, mode: :standard) unless model.payment_intent.nil?
     end
