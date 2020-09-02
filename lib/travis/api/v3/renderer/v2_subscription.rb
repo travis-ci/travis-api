@@ -18,4 +18,12 @@ module Travis::API::V3
       Renderer.render_model(model.payment_intent, mode: :standard) unless model.payment_intent.nil?
     end
   end
+
+  class Renderer::V2BillingInfo < ModelRenderer
+    representation(:standard, :id, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code)
+  end
+
+  class Renderer::V2CreditCardInfo < ModelRenderer
+    representation(:standard, :id, :card_owner, :expiration_date, :last_digits)
+  end
 end
