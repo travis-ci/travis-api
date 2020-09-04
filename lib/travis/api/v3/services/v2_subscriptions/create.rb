@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Services::V2Subscriptions::Create < Service
-    result_type :subscription
+    result_type :v2_subscription
     params :plan, :coupon, :organization_id, :client_secret
     params :first_name, :last_name, :company, :address, :address2, :city, :country, :state, :vat_id, :zip_code, :billing_email, prefix: :billing_info
     params :token, prefix: :credit_card_info

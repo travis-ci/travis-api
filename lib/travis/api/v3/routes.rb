@@ -318,8 +318,6 @@ module Travis::API::V3
       patch :update_address, '/address'
       patch :update_creditcard, '/creditcard'
       patch :update_plan, '/plan'
-      patch :resubscribe, '/resubscribe'
-      post :cancel, '/cancel'
       post :pay, '/pay'
       get :invoices, '/invoices'
     end

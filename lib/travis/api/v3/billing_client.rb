@@ -111,7 +111,7 @@ module Travis::API::V3
     end
 
     def v2_plans_for_user
-      connection.get("/v2/plans_for/user").body.map do |plan_data|
+      connection.get('/v2/plans_for/user').body.map do |plan_data|
         Travis::API::V3::Models::V2PlanConfig.new(plan_data)
       end
     end
@@ -128,7 +128,7 @@ module Travis::API::V3
     end
 
     def plans_for_user
-      connection.get("/plans_for/user").body.map do |plan_data|
+      connection.get('/plans_for/user').body.map do |plan_data|
         Travis::API::V3::Models::Plan.new(plan_data)
       end
     end

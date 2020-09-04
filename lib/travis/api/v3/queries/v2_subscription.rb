@@ -6,12 +6,6 @@ module Travis::API::V3
       client.update_v2_address(params['subscription.id'], address_data)
     end
 
-    def cancel(user_id)
-      reason_data = params.dup.tap { |h| h.delete('subscription.id') }
-      client = BillingClient.new(user_id)
-      client.cancel_subscription(params['subscription.id'], reason_data)
-    end
-
     def update_creditcard(user_id)
       client = BillingClient.new(user_id)
       client.update_v2_creditcard(params['subscription.id'], params['token'])
@@ -23,24 +17,14 @@ module Travis::API::V3
       client.update_v2_subscription(params['subscription.id'], plan_data)
     end
 
-    def resubscribe(user_id)
-      client = BillingClient.new(user_id)
-      client.resubscribe(params['subscription.id'])
-    end
-
     def invoices(user_id)
       client = BillingClient.new(user_id)
-      client.get_invoices_for_subscription(params['subscription.id'])
-    end
-
-    def trial(user_id)
-      client = BillingClient.new(user_id)
-      client.get_trial_info_for_subscription(params['subscription.id'])
+      client.get_invoices_for_v2_subscription(params['subscription.id'])
     end
 
     def pay(user_id)
       client = BillingClient.new(user_id)
-      client.pay(params['subscription.id'])
+      client.pay_v2(params['subscription.id'])
     end
   end
 end
