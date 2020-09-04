@@ -6,8 +6,7 @@ module Travis::API::V3
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
-      plan_data = attributes.fetch('plan_config')
-      @plan = plan_data && Models::V2PlanConfig.new(plan_data)
+      @plan = attributes['plan_config'] && Models::V2PlanConfig.new(attributes['plan_config'])
       @permissions = Models::BillingPermissions.new(attributes.fetch('permissions'))
       @source = attributes.fetch('source')
       @billing_info = attributes['billing_info'] && Models::V2BillingInfo.new(@id, attributes['billing_info'])
@@ -15,7 +14,7 @@ module Travis::API::V3
       @payment_intent = attributes['payment_intent'] && Models::PaymentIntent.new(attributes['payment_intent'])
       @owner = fetch_owner(attributes.fetch('owner'))
       @client_secret = attributes.fetch('client_secret')
-      @addons = attributes.fetch('addons')
+      @addons = attributes['addons'].select { |addon| addon['current_usage']['status'] != 'expired' }.map { |addon| Models::V2Addon.new(addon) }
       @created_at = attributes.fetch('created_at')
     end
   end
