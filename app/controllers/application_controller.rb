@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   before_action :setup_cache_headers
 
   def otp_valid?
-    return true if travis_config.disable_otp? && !Rails.env.production?
+    return true if travis_config.disable_otp? && (!Rails.env.production? || travis_config.enterprise?)
 
     secret = Travis::DataStores.redis.get("admin-v2:otp:#{current_user.login}")
     return ROTP::TOTP.new(secret).verify(params[:otp])
