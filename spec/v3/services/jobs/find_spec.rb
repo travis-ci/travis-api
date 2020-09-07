@@ -92,6 +92,14 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "committed_at"        => "2010-11-12T12:55:00Z"},
         "owner"                 => {
           "@type"               => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
@@ -165,6 +173,14 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "committed_at"        => "2010-11-12T12:55:00Z"},
         "owner"                 => {
           "@type"               => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
@@ -238,6 +254,14 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "committed_at"        => "2010-11-12T12:55:00Z"},
         "owner"                 => {
           "@type"               => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
@@ -311,6 +335,14 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "committed_at"        => "2010-11-12T12:55:00Z"},
         "owner"                 => {
           "@type"               => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
@@ -402,6 +434,14 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "committed_at"        => "2010-11-12T12:55:00Z"},
         "owner"                 => {
           "@type"               => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
@@ -475,6 +515,14 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "committed_at"        => "2010-11-12T12:55:00Z"},
         "owner"                 => {
           "@type"               => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
@@ -548,6 +596,14 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "committed_at"        => "2010-11-12T12:55:00Z"},
         "owner"                 => {
           "@type"               => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
@@ -621,6 +677,14 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "committed_at"        => "2010-11-12T12:55:00Z"},
         "owner"                 => {
           "@type"               => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"               => "/v3/user/1",
           "@representation"     => "minimal",
           "id"                  => 1,
@@ -714,6 +778,14 @@ describe "jobs private repository, private API, authenticated as user with push 
           "committed_at"   =>"2010-11-12T12:55:00Z"},
         "owner"            =>{
           "@type"          => "user",
+          "allowance" => {
+            "@type"             => "allowance",
+            "@representation"   => "minimal",
+            "subscription_type" => 1,
+            "public_repos"      => true,
+            "private_repos"     => false,
+            "concurrency_limit" => 1
+          },
           "@href"          => "/v3/user/1",
           "@representation"=> "minimal",
           "id"             =>  1,
@@ -787,6 +859,14 @@ describe "jobs private repository, private API, authenticated as user with push 
           "committed_at"   =>"2010-11-12T12:55:00Z"},
         "owner"            =>{
           "@type"          => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"          => "/v3/user/1",
           "@representation"=> "minimal",
           "id"             =>  1,
@@ -860,6 +940,14 @@ describe "jobs private repository, private API, authenticated as user with push 
           "committed_at"   =>"2010-11-12T12:55:00Z"},
         "owner"            =>{
           "@type"          => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"          => "/v3/user/1",
           "@representation"=> "minimal",
           "id"             =>  1,
@@ -933,6 +1021,14 @@ describe "jobs private repository, private API, authenticated as user with push 
           "committed_at"   =>"2010-11-12T12:55:00Z"},
         "owner"            =>{
           "@type"          => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"          => "/v3/user/1",
           "@representation"=> "minimal",
           "id"             =>  1,

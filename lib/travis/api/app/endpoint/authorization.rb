@@ -210,8 +210,10 @@ class Travis::Api::App
               redirect to(vcs_data['redirect_uri'])
               return
             end
+
+            user = User.find(vcs_data['user']['id'])
             update_first_login(user)
-            yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload(params[:provider])
+            yield serialize_user(user), vcs_data['token'], payload(params[:provider])
           else
             state = vcs_create_state(params[:origin] || params[:redirect_uri])
 

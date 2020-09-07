@@ -66,6 +66,14 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "shared"             => false,
         "owner"              => {
           "@type"            => "user",
+          "allowance"   => {
+            "@representation"   => "minimal",
+            "@type"             => "allowance",
+            "concurrency_limit" => 1,
+            "private_repos"     => false,
+            "public_repos"      => true,
+            "subscription_type" => 1
+          },
           "@href"            => "/v3/user/#{repo.owner_id}",
           "id"               => repo.owner_id,
           "login"            => "svenfuchs" },

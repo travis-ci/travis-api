@@ -144,6 +144,14 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
           },
           'owner' => {
             '@type' => 'organization',
+            "allowance"   => {
+              "@representation"   => "minimal",
+              "@type"             => "allowance",
+              "concurrency_limit" => 1,
+              "private_repos"     => false,
+              "public_repos"      => true,
+              "subscription_type" => 1
+            },
             '@representation' => 'minimal',
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,

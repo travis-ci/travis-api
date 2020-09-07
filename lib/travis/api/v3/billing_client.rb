@@ -8,7 +8,7 @@ module Travis::API::V3
 
     def allowance(owner_type, owner_id)
       response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/allowance")
-      return default_allowance_response unless response.status == 200
+      return BillingClient.default_allowance_response unless response.status == 200
 
       Travis::API::V3::Models::Allowance.new(2, response.body)
     end
