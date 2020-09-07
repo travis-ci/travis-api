@@ -9,7 +9,6 @@ describe Travis::API::V3::Models::V2Subscription do
         'id' => 'pro_tier_plan',
         'name' => 'Pro Tier Plan',
         'private_repos' => true,
-        'addon_configs' => [],
         'starting_price' => 30000,
         'starting_users' => 10000,
         'private_credits' => 500000,
@@ -17,6 +16,7 @@ describe Travis::API::V3::Models::V2Subscription do
       },
       'addons' => [{
         'id' => 7,
+        'name' => 'OSS Build Credits',
         'plan_id' => 3,
         'addon_config_id' => 'oss_tier_credits',
         'type' => 'credit_public',

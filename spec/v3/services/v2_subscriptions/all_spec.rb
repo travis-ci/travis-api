@@ -28,29 +28,6 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
         'id': 'pro_tier_plan',
         'name': 'Pro Tier Plan',
         'private_repos': true,
-        'default_addons': [
-          {
-            'id': 'oss_tier_credits',
-            'name': 'Free 40 000 credits (renewed monthly)',
-            'price': 0,
-            'quantity': 40_000,
-            'type': 'credit_public'
-          },
-          {
-            'id': 'credits_500k',
-            'name': '500 000 credits (50k Linux build minutes)',
-            'price': 30_000,
-            'quantity': 500_000,
-            'type': 'credit_private'
-          },
-          {
-            'id': 'users_pro',
-            'name': 'Pro Tier user licenses',
-            'price': 0,
-            'quantity': 10_000,
-            'type': 'user_license'
-          }
-        ],
         'starting_price': 30_000,
         'starting_users': 10_000,
         'private_credits': 500_000,
@@ -79,29 +56,6 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
             'id' => 'pro_tier_plan',
             'name' => 'Pro Tier Plan',
             'private_repos' => true,
-            'default_addons' => [
-              {
-                'id' => 'oss_tier_credits',
-                'name' => 'Free 40 000 credits (renewed monthly)',
-                'price' => 0,
-                'quantity' => 40_000,
-                'type' => 'credit_public'
-              },
-              {
-                'id' => 'credits_500k',
-                'name' => '500 000 credits (50k Linux build minutes)',
-                'price' => 30_000,
-                'quantity' => 500_000,
-                'type' => 'credit_private'
-              },
-              {
-                'id' => 'users_pro',
-                'name' => 'Pro Tier user licenses',
-                'price' => 0,
-                'quantity' => 10_000,
-                'type' => 'user_license'
-              }
-            ],
             'starting_price' => 30_000,
             'starting_users' => 10_000,
             'private_credits' => 500_000,
@@ -109,44 +63,38 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
           },
           'addons' => [
             {
+              '@type' => 'v2_addon',
+              '@representation' => 'minimal',
               'id' => '1',
-              'plan_id' => '1',
               'name' => 'OSS Build Credits',
-              'addon_type' => 'credit_public',
-              'created_at' => '2020-07-09T12:06:13.293Z',
-              'updated_at' => '2020-07-09T12:07:03.619Z',
-              'current_usage_id' => 1,
+              'type' => 'credit_public',
               'current_usage' => {
+                '@type' => 'v2_addon_usage',
+                '@representation' => 'standard',
                 'id' => 1,
                 'addon_id' => 1,
-                'addon_quantity' => 10_000,
+                'addon_quantity' => 40_000,
                 'addon_usage' => 0,
-                'purchase_date' => '2020-07-09T12:06:27.919Z',
-                'valid_to' => nil,
-                'status' => 'active',
-                'created_at' => '2020-07-09T12:06:27.944Z',
-                'updated_at' => '2020-07-09T12:06:27.944Z'
+                'remaining' => 40_000,
+                'active' => true
               }
             },
             {
+              '@type' => 'v2_addon',
+              '@representation' => 'minimal',
               'id' => 2,
-              'plan_id' => 1,
               'name' => 'Build Credits',
-              'addon_type' => 'credit_private',
-              'created_at' => '2020-07-09T12:06:17.003Z',
-              'updated_at' => '2020-07-09T12:07:09.067Z',
-              'current_usage_id' => 2,
+              'type' => 'credit_private',
               'current_usage' =>
               {
+                '@type' => 'v2_addon_usage',
+                '@representation' => 'standard',
                 'id' => 2,
                 'addon_id' => 2,
                 'addon_quantity' => 10_000,
                 'addon_usage' => 0,
-                'purchase_date' => '2020-07-09T12:06:31.739Z',
-                'valid_to' => nil,
-                'status' => 'active',
-                'created_at' => '2020-07-09T12:06:31.741Z',
-                'updated_at' => '2020-07-09T12:06:31.741Z'
+                'remaining' => 10_000,
+                'active' => true
               }
             }
           ],

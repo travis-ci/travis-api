@@ -51,29 +51,6 @@ module Support
           "id" => "pro_tier_plan",
           "name" => "Pro Tier Plan",
           'private_repos' => true,
-          'addon_configs' => [
-            {
-              "id": "oss_tier_credits",
-              "name": "Free 40 000 credits (renewed monthly)",
-              "price": 0,
-              "quantity": 40000,
-              "type": "credit_public"
-            },
-            {
-              "id": "credits_500k",
-              "name": "500 000 credits (50k Linux build minutes)",
-              "price": 30000,
-              "quantity": 500000,
-              "type": "credit_private"
-            },
-            {
-              "id": "users_pro",
-              "name": "Pro Tier user licenses",
-              "price": 0,
-              "quantity": 10000,
-              "type": "user_license"
-            }
-          ],
           'starting_price' => 30000,
           'starting_users' => 10000,
           'private_credits' => 500000,
@@ -111,42 +88,28 @@ module Support
       [
         {
           "id" => "1",
-          "plan_id" => "1",
           "name" => "OSS Build Credits",
-          "addon_type" => "credit_public",
-          "created_at" => "2020-07-09T12:06:13.293Z",
-          "updated_at" => "2020-07-09T12:07:03.619Z",
-          "current_usage_id" => 1,
+          "type" => "credit_public",
           "current_usage" => {
               "id" => 1,
               "addon_id" => 1,
-              "addon_quantity" => 10000,
+              "addon_quantity" => 40000,
               "addon_usage" => 0,
-              "purchase_date" => "2020-07-09T12:06:27.919Z",
-              "valid_to" => nil,
-              "status" => "active",
-              "created_at" => "2020-07-09T12:06:27.944Z",
-              "updated_at" => "2020-07-09T12:06:27.944Z"
+              "remaining" => 40000,
+              "active" => true
           }
         },
         {
           "id" => 2,
-          "plan_id" => 1,
           "name" => "Build Credits",
-          "addon_type" => "credit_private",
-          "created_at" => "2020-07-09T12:06:17.003Z",
-          "updated_at" => "2020-07-09T12:07:09.067Z",
-          "current_usage_id" => 2,
+          "type" => "credit_private",
           "current_usage" => {
             "id" => 2,
             "addon_id" => 2,
             "addon_quantity" => 10000,
             "addon_usage" => 0,
-            "purchase_date" => "2020-07-09T12:06:31.739Z",
-            "valid_to" => nil,
-            "status" => "active",
-            "created_at" => "2020-07-09T12:06:31.741Z",
-            "updated_at" => "2020-07-09T12:06:31.741Z"
+            "remaining" => 10000,
+            "active" => true
           }
         }
       ]

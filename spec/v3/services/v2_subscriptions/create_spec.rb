@@ -67,29 +67,6 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               'id' => 'pro_tier_plan',
               'name' => 'Pro Tier Plan',
               'private_repos' => true,
-              'addon_configs' => [
-                {
-                  'id' => 'oss_tier_credits',
-                  'name' => 'Free 40 000 credits (renewed monthly)',
-                  'price' => 0,
-                  'quantity' => 40_000,
-                  'type' => 'credit_public'
-                },
-                {
-                  'id' => 'credits_500k',
-                  'name' => '500 000 credits (50k Linux build minutes)',
-                  'price' => 30_000,
-                  'quantity' => 500_000,
-                  'type' => 'credit_private'
-                },
-                {
-                  'id' => 'users_pro',
-                  'name' => 'Pro Tier user licenses',
-                  'price' => 0,
-                  'quantity' => 10_000,
-                  'type' => 'user_license'
-                }
-              ],
               'starting_price' => 30_000,
               'starting_users' => 10_000,
               'private_credits' => 500_000,
@@ -98,6 +75,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'addons' => [{
               'id': 7,
               'plan_id': 3,
+              "name": "OSS Build Credits",
               'addon_config_id': 'oss_tier_credits',
               'type': 'credit_public',
               'created_at': '2017-11-28T00:09:59.502Z',
@@ -154,56 +132,28 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'id' => 'pro_tier_plan',
             'name' => 'Pro Tier Plan',
             'private_repos' => true,
-            'default_addons' => [
-              {
-                'id' => 'oss_tier_credits',
-                'name' => 'Free 40 000 credits (renewed monthly)',
-                'price' => 0,
-                'quantity' => 40_000,
-                'type' => 'credit_public'
-              },
-              {
-                'id' => 'credits_500k',
-                'name' => '500 000 credits (50k Linux build minutes)',
-                'price' => 30_000,
-                'quantity' => 500_000,
-                'type' => 'credit_private'
-              },
-              {
-                'id' => 'users_pro',
-                'name' => 'Pro Tier user licenses',
-                'price' => 0,
-                'quantity' => 10_000,
-                'type' => 'user_license'
-              }
-            ],
             'starting_users' => 10_000,
             'starting_price' => 30_000,
             'private_credits' => 500_000,
             'public_credits' => 40_000
           },
           'addons' => [{
-            'id': 7,
-            'plan_id': 3,
-            'addon_config_id': 'oss_tier_credits',
-            'type': 'credit_public',
-            'created_at': '2017-11-28T00:09:59.502Z',
-            'updated_at': '2017-11-28T00:09:59.502Z',
-            'current_usage_id': 7,
-            'current_usage': {
-              'id': 7,
-              'addon_id': 7,
-              'addon_quantity': 40_000,
-              'addon_usage': 0,
-              'remaining': 40_000,
-              'purchase_date': '2017-11-28T00:09:59.502Z',
-              'valid_to': '2017-11-28T00:09:59.502Z',
-              'status': 'pending',
-              'active': false,
-              'created_at': '2017-11-28T00:09:59.502Z',
-              'updated_at': '2017-11-28T00:09:59.502Z'
+            '@type' => 'v2_addon',
+            '@representation' => 'minimal',
+            'id' => 7,
+            'name' => 'OSS Build Credits',
+            'type' => 'credit_public',
+            'current_usage' => {
+              '@type' => 'v2_addon_usage',
+              '@representation' => 'standard',
+              'id' => 7,
+              'addon_id' => 7,
+              'addon_quantity' => 40000,
+              'addon_usage' => 0,
+              'remaining' => 40000,
+              'active' => false
             }
-          }.deep_stringify_keys],
+          }],
           'client_secret' => 'client_secret',
           'source' => 'stripe',
           'billing_info' => {
