@@ -18,7 +18,7 @@ module Travis::API::V3
         :organization_id => params['organization_id'],
         :billing_info => billing_info_params,
         :credit_card_info => credit_card_info_params
-        )
+      )
     end
   end
 end
