@@ -101,7 +101,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns the list of subscriptions' do
       stub_billing_request(:get, '/v2/subscriptions', auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump(plans: [billing_v2_subscription_response_body('id' => subscription_id, 'owner' => { 'type' => 'Organization', 'id' => organization.id })], permissions: permissions))
+        .to_return(body: JSON.dump(plans: [billing_v2_subscription_response_body('id' => subscription_id, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })], permissions: permissions))
 
       expect(subject.subscriptions.size).to eq 1
       expect(subject.subscriptions.first.id).to eq(subscription_id)
@@ -225,7 +225,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     it 'requests the creation and returns the representation' do
       stubbed_request = stub_billing_request(:post, "/v2/subscriptions", auth_key: auth_key, user_id: user_id)
         .with(body: JSON.dump(subscription_data))
-        .to_return(status: 201, body: JSON.dump(billing_v2_subscription_response_body('id' => 456, 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
+        .to_return(status: 201, body: JSON.dump(billing_v2_subscription_response_body('id' => 456, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
 
       expect(subject.id).to eq(456)
       expect(stubbed_request).to have_been_made
@@ -263,7 +263,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'requests to retry payment' do
       stubbed_request = stub_billing_request(:post, "/v2/subscriptions/#{subscription_id}/pay", auth_key: auth_key, user_id: user_id)
-        .to_return(status: 200, body: JSON.dump(billing_v2_subscription_response_body('id' => subscription_id, 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
+        .to_return(status: 200, body: JSON.dump(billing_v2_subscription_response_body('id' => subscription_id, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
 
       expect { subject }.to_not raise_error
       expect(stubbed_request).to have_been_made

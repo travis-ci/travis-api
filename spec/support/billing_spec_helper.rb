@@ -47,9 +47,17 @@ module Support
       {
         "permissions" => { "read" => true, "write" => true },
         "id" => 81,
+        "plan_config" => {
+          "id" => "pro_tier_plan",
+          "name" => "Pro Tier Plan",
+          'private_repos' => true,
+          'starting_price' => 30000,
+          'starting_users' => 10000,
+          'private_credits' => 500000,
+          'public_credits' => 40000,
+        },
         "addons" => billing_addons_response_body,
-        "source" => "manual",
-        "status" => "",
+        "source" => "stripe",
         "created_at" => "2017-11-28T00:09:59.502Z",
         "billing_info" => {
           "first_name" => "ana",
@@ -76,51 +84,35 @@ module Support
       }.deep_merge(attributes)
     end
 
-    def billing_addons_response_body(attributes={})
-      {
-        "addons" => [
-          {
-            "id" => "1",
-            "plan_id" => "1",
-            "name" => "OSS Build Credits",
-            "addon_type" => "credit_public",
-            "created_at" => "2020-07-09T12:06:13.293Z",
-            "updated_at" => "2020-07-09T12:07:03.619Z",
-            "current_usage_id" => 1,
-            "current_usage" => {
-                "id" => 1,
-                "addon_id" => 1,
-                "addon_quantity" => 10000,
-                "addon_usage" => 0,
-                "purchase_date" => "2020-07-09T12:06:27.919Z",
-                "valid_to" => nil,
-                "status" => "active",
-                "created_at" => "2020-07-09T12:06:27.944Z",
-                "updated_at" => "2020-07-09T12:06:27.944Z"
-            }
-          },
-          {
-            "id" => 2,
-            "plan_id" => 1,
-            "name" => "Build Credits",
-            "addon_type" => "credit_private",
-            "created_at" => "2020-07-09T12:06:17.003Z",
-            "updated_at" => "2020-07-09T12:07:09.067Z",
-            "current_usage_id" => 2,
-            "current_usage" => {
-              "id" => 2,
-              "addon_id" => 2,
-              "addon_quantity" => 10000,
+    def billing_addons_response_body
+      [
+        {
+          "id" => "1",
+          "name" => "OSS Build Credits",
+          "type" => "credit_public",
+          "current_usage" => {
+              "id" => 1,
+              "addon_id" => 1,
+              "addon_quantity" => 40000,
               "addon_usage" => 0,
-              "purchase_date" => "2020-07-09T12:06:31.739Z",
-              "valid_to" => nil,
-              "status" => "active",
-              "created_at" => "2020-07-09T12:06:31.741Z",
-              "updated_at" => "2020-07-09T12:06:31.741Z"
-            }
+              "remaining" => 40000,
+              "active" => true
           }
-        ]
-      }.deep_merge(attributes)
+        },
+        {
+          "id" => 2,
+          "name" => "Build Credits",
+          "type" => "credit_private",
+          "current_usage" => {
+            "id" => 2,
+            "addon_id" => 2,
+            "addon_quantity" => 10000,
+            "addon_usage" => 0,
+            "remaining" => 10000,
+            "active" => true
+          }
+        }
+      ]
     end
 
     def billing_plan_response_body(attributes={})
