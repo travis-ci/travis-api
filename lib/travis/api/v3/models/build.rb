@@ -3,6 +3,9 @@ module Travis::API::V3
   end
 
   class Models::Build < Model
+
+    HIGH_PRIORITY = 5
+    
     belongs_to :commit
     belongs_to :tag
     belongs_to :pull_request
@@ -29,6 +32,8 @@ module Travis::API::V3
       foreign_key: [:repository_id, :name],
       primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
+
+    scope :running_builds, -> { where.not(state: ['passed', 'failed', 'errored', 'cancelled']) }
 
     def created_by
       return unless sender
@@ -87,6 +92,10 @@ module Travis::API::V3
 
     def log_complete
       jobs.all?(&:log_complete)
+    end
+
+    def high_priority?
+      jobs.where(priority: HIGH_PRIORITY).present?
     end
   end
 end

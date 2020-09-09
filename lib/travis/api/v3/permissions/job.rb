@@ -17,5 +17,9 @@ module Travis::API::V3
     def delete_log?
       write?
     end
+
+    def prioritize?
+      read? && build_priorities?
+    end
   end
 end
