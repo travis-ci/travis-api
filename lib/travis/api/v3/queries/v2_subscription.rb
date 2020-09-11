@@ -11,6 +11,12 @@ module Travis::API::V3
       client.update_v2_creditcard(params['subscription.id'], params['token'])
     end
 
+    def changetofree(user_id)
+      data = params.dup.tap { |h| h.delete('subscription.id') }
+      client = BillingClient.new(user_id)
+      client.changetofree_v2_subscription(params['subscription.id'], data)
+    end
+
     def update_plan(user_id)
       plan_data = params.dup.tap { |h| h.delete('subscription.id') }
       client = BillingClient.new(user_id)

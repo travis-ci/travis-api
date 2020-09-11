@@ -317,6 +317,7 @@ module Travis::API::V3
       route '/v2_subscription/{subscription.id}'
       patch :update_address, '/address'
       patch :update_creditcard, '/creditcard'
+      patch :changetofree, '/changetofree'
       patch :update_plan, '/plan'
       post :pay, '/pay'
       get :invoices, '/invoices'
@@ -337,7 +338,6 @@ module Travis::API::V3
       route '/plans_for'
       get :all, '/user'
       get :all, '/organization/{organization.id}'
-
     end
 
     hidden_resource :v2_plans do

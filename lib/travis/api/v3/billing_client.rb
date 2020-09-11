@@ -110,6 +110,11 @@ module Travis::API::V3
       handle_v2_subscription_response(response)
     end
 
+    def changetofree_v2_subscription(subscription_id, data)
+      response = connection.patch("/v2/subscriptions/#{subscription_id}/changetofree", data)
+      handle_v2_subscription_response(response)
+    end
+
     def update_v2_subscription(subscription_id, plan_data)
       response = connection.patch("/v2/subscriptions/#{subscription_id}/plan", plan_data)
       handle_v2_subscription_response(response)
