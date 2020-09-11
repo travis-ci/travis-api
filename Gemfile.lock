@@ -14,7 +14,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-sso.git
-  revision: e381a1541918118ddde7347bfde9e4766a3688a6
+  revision: 92c4c94dd0b43841efa843af3022124a3a06dc2a
   specs:
     travis-sso (0.0.1)
       multi_json
@@ -181,7 +181,7 @@ GEM
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.11.3)
-    multi_json (1.14.1)
+    multi_json (1.15.0)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-http-pipeline (1.0.1)
@@ -203,7 +203,7 @@ GEM
     pusher-client (0.6.2)
       json
       websocket (~> 1.0)
-    rack (2.0.7)
+    rack (2.2.3)
     rack-protection (1.5.3)
       rack
     rack-test (1.1.0)
@@ -236,7 +236,7 @@ GEM
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
     rollout (2.3.0)
-    rotp (3.3.0)
+    rotp (3.3.1)
     rspec-core (3.5.3)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
