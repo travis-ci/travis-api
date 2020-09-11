@@ -236,7 +236,7 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     ipaddress (0.8.3)
-    json (2.1.0)
+    json (2.3.1)
     jwt (2.2.1)
     kgio (2.11.3)
     knapsack (1.14.0)
