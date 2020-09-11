@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::Subscriptions < Query
     params :plan, :coupon, :organization_id, :client_secret
-    params :first_name, :last_name, :company, :address, :address2, :city, :country, :state, :vat_id, :zip_code, :billing_email, prefix: :billing_info
+    params :first_name, :last_name, :company, :address, :address2, :city, :country, :state, :vat_id, :zip_code, :billing_email, :has_local_registration, prefix: :billing_info
     params :token, prefix: :credit_card_info
 
     def all(user_id)
