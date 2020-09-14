@@ -55,6 +55,35 @@ module Support
           'starting_users' => 10000,
           'private_credits' => 500000,
           'public_credits' => 40000,
+          'addon_configs' => {
+            'free_tier_credits' => {
+              'name' => 'Free 10 000 credits (renewed monthly)',
+              'expires' => true,
+              'expires_in' => 1,
+              'renew_after_expiration' => true,
+              'price' => 0,
+              'price_id' => 'price_1234567890',
+              'price_type' => 'fixed',
+              'quantity' => 10_000,
+              'standalone' => false,
+              'type' => 'credit_private',
+              'available_for_plans' => '%w[free_tier_plan]'
+            },
+            'oss_tier_credits' => {
+              'name' => 'Free 40 000 credits (renewed monthly)',
+              'expires' => true,
+              'expires_in' => 1,
+              'renew_after_expiration' => true,
+              'price' => 0,
+              'price_id' => 'price_0987654321',
+              'price_type' => 'fixed',
+              'quantity' => 40_000,
+              'standalone' => false,
+              'type' => 'credit_public',
+              'private_repos' => false,
+              'available_for_plans' => '%w[free_tier_plan standard_tier_plan pro_tier_plan]'
+            }
+          }
         },
         "addons" => billing_addons_response_body,
         "source" => "stripe",
