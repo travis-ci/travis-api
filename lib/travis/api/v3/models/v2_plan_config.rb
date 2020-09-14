@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Models::V2PlanConfig
-    attr_reader :id, :name, :private_repos, :starting_price, :starting_users, :private_credits, :public_credits
+    attr_reader :id, :name, :private_repos, :starting_price, :starting_users, :private_credits, :public_credits,
+                :addon_configs
 
     def initialize(attrs)
       @id = attrs.fetch('id')
@@ -10,6 +11,7 @@ module Travis::API::V3
       @starting_users = attrs.fetch('starting_users')
       @private_credits = attrs.fetch('private_credits')
       @public_credits = attrs.fetch('public_credits')
+      @addon_configs = attrs.fetch('addon_configs')
     end
   end
 end
