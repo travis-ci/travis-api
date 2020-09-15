@@ -40,7 +40,7 @@ module Travis
             sidekiq:       { namespace: 'sidekiq', pool_size: 1 },
             smtp:          {},
             email:         {},
-            github:        { api_url: 'https://api.github.com', token: 'travisbot-token' },
+            github:        { api_url: 'https://api.github.com', token: 'travisbot-token', enterprise_legacy_oauth: true },
             async:         {},
             notifications: [], # TODO rename to event.handlers
             metrics:       { reporter: 'librato' },
