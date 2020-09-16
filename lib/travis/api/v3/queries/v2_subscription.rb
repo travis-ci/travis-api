@@ -23,6 +23,11 @@ module Travis::API::V3
       client.update_v2_subscription(params['subscription.id'], plan_data)
     end
 
+    def buy_addon(user_id)
+      client = BillingClient.new(user_id)
+      client.purchase_addon(params['subscription.id'], params['addon.id'])
+    end
+
     def invoices(user_id)
       client = BillingClient.new(user_id)
       client.get_invoices_for_v2_subscription(params['subscription.id'])

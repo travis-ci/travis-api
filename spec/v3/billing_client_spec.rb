@@ -260,6 +260,19 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#purchase_addon' do
+    let(:addon_config_id) { 'credits_500k' }
+    subject { billing.purchase_addon(subscription_id, addon_config_id) }
+
+    it 'requests the update' do
+      stubbed_request = stub_billing_request(:patch, "/v2/subscriptions/#{subscription_id}/addon", auth_key: auth_key, user_id: user_id)
+        .with(body: JSON.dump(addon: addon_config_id))
+        .to_return(status: 204)
+
+        expect { subject }.to_not raise_error
+    end
+  end
+
   describe '#pay' do
     subject { billing.pay(subscription_id) }
 

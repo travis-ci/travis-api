@@ -320,6 +320,7 @@ module Travis::API::V3
       patch :changetofree, '/changetofree'
       patch :update_plan, '/plan'
       post :pay, '/pay'
+      post :buy_addon, '/addon/{addon.id}'
       get :invoices, '/invoices'
     end
 
