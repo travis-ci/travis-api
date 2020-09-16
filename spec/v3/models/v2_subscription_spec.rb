@@ -13,6 +13,22 @@ describe Travis::API::V3::Models::V2Subscription do
         'starting_users' => 10000,
         'private_credits' => 500000,
         'public_credits' => 40000,
+        'available_standalone_addons' => [
+          {
+            'id' => 'credits_25k',
+            'name' => '25 000 credits (2,5k Linux build minutes)',
+            'price' => 1500,
+            'quantity' => 25000,
+            'type' => 'credit_private'
+          },
+          {
+            'id' => 'credits_500k',
+            'name' => '500 000 credits (50k Linux build minutes)',
+            'price' => 30000,
+            'quantity' => 500000,
+            'type' => 'credit_private'
+          }
+        ],
         'addon_configs' => {
           'free_tier_credits' => {
             'name' => 'Free 10 000 credits (renewed monthly)',
