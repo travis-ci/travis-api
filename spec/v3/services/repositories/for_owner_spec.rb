@@ -1,9 +1,11 @@
-describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
+describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billing_spec_helper: true do
   include Support::Formats
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:sharedrepo)  { Travis::API::V3::Models::Repository.where(owner_name: 'sharedrepoowner', name: 'sharedrepo').first }
   let(:build) { repo.builds.first }
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
+  let(:billing_url) { 'http://billingfake.travis-ci.com' }
+  let(:billing_auth_key) { 'secret' }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
@@ -91,14 +93,6 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"             => false,
         "owner"              => {
           "@type"            => "user",
-          "allowance"   => {
-            "@representation"   => "minimal",
-            "@type"             => "allowance",
-            "concurrency_limit" => 1,
-            "private_repos"     => false,
-            "public_repos"      => true,
-            "subscription_type" => 1
-          },
           "id"               => repo.owner_id,
           "login"            => "svenfuchs",
           "@href"            => "/v3/user/#{repo.owner_id}" },
@@ -152,14 +146,6 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"             =>false,
         "owner"              =>{
           "@type"            =>"user",
-          "allowance"   => {
-            "@representation"   => "minimal",
-            "@type"             => "allowance",
-            "concurrency_limit" => 1,
-            "private_repos"     => false,
-            "public_repos"      => true,
-            "subscription_type" => 1
-          },
           "id"               =>1,
           "login"            =>"svenfuchs",
           "@href"            =>"/v3/user/1"},
@@ -273,14 +259,6 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"             => false,
         "owner"              => {
           "@type"            => "user",
-          "allowance"   => {
-            "@representation"   => "minimal",
-            "@type"             => "allowance",
-            "concurrency_limit" => 1,
-            "private_repos"     => false,
-            "public_repos"      => true,
-            "subscription_type" => 1
-          },
           "id"               => 1,
           "login"            => "svenfuchs",
           "@href"            => "/v3/user/1"},
@@ -439,14 +417,6 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "private"         => true,
         "owner"           => {
           "@type"         => "user",
-          "allowance"   => {
-            "@representation"   => "minimal",
-            "@type"             => "allowance",
-            "concurrency_limit" => 1,
-            "private_repos"     => false,
-            "public_repos"      => true,
-            "subscription_type" => 1
-          },
           "id"            => 1,
           "login"         => "svenfuchs",
           "@href"         => "/v3/user/1" },
@@ -494,14 +464,6 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"          => false,
         "owner"           => {
           "@type"         => "user",
-          "allowance"   => {
-            "@representation"   => "minimal",
-            "@type"             => "allowance",
-            "concurrency_limit" => 1,
-            "private_repos"     => false,
-            "public_repos"      => true,
-            "subscription_type" => 1
-          },
           "id"            => 1,
           "login"         => "svenfuchs",
           "@href"         => "/v3/user/1" },
@@ -574,14 +536,6 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "shared"             => true,
         "owner"              => {
           "@type"            => "user",
-          "allowance"   => {
-            "@representation"   => "minimal",
-            "@type"             => "allowance",
-            "concurrency_limit" => 1,
-            "private_repos"     => false,
-            "public_repos"      => true,
-            "subscription_type" => 1
-          },
           "id"               => sharedrepo.owner_id,
           "login"            => "sharedrepoowner",
           "@href"            => "/v3/user/#{sharedrepo.owner_id}" },
@@ -597,5 +551,55 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "history_migration_status"  => nil,
           "config_validation" => false
         }]}}
+  end
+
+  describe "allowance, org" do
+    before  { get("/v3/owner/svenfuchs/allowance", {}, headers) }
+    example { expect(last_response).to be_ok }
+    example { expect(JSON.load(body)).to be == {
+      "@representation"   => "standard",
+      "@type"             => "allowance",
+      "concurrency_limit" => 1,
+      "private_repos"     => false,
+      "public_repos"      => true,
+      "subscription_type" => 1
+    }}
+  end
+
+  describe "allowance, com" do
+    before do
+      Travis.config.host = 'travis-ci.com'
+      Travis.config.billing.url = billing_url
+      Travis.config.billing.auth_key = billing_auth_key
+      stub_billing_request(:get, "/usage/users/1/allowance", auth_key: billing_auth_key, user_id: 1)
+        .to_return(body: JSON.dump({ 'public_repos': true, 'private_repos': true, 'concurrency_limit': 666 }))
+      get("/v3/owner/svenfuchs/allowance", {}, headers)
+    end
+    example { expect(last_response).to be_ok }
+    example { expect(JSON.load(body)).to be == {
+      "@representation"   => "standard",
+      "@type"             => "allowance",
+      "concurrency_limit" => 666,
+      "private_repos"     => true,
+      "public_repos"      => true,
+      "subscription_type" => 2
+    }}
+  end
+
+  describe "allowance with bad owner, com" do
+    before do
+      Travis.config.host = 'travis-ci.com'
+      Travis.config.billing.url = billing_url
+      Travis.config.billing.auth_key = billing_auth_key
+      get("/v3/owner/another/allowance", {}, headers)
+    end
+    example { expect(last_response.status).to eq(404) }
+    example do
+      expect(JSON.load(body)).to eq(
+        '@type' => 'error',
+        'error_type' => 'not_found',
+        'error_message' => 'resource not found (or insufficient access)'
+      )
+    end
   end
 end

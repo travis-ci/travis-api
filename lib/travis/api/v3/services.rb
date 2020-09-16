@@ -4,6 +4,7 @@ module Travis::API::V3
 
     Accounts              = Module.new { extend Services }
     Active                = Module.new { extend Services }
+    Allowance             = Module.new { extend Services }
     BetaFeature           = Module.new { extend Services }
     BetaFeatures          = Module.new { extend Services }
     BetaMigrationRequest  = Module.new { extend Services }

@@ -82,14 +82,6 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
       "permission"    => "sync",
       "user"          => {
         "@type"       => "user",
-        "allowance"   => {
-          "@representation"   => "minimal",
-          "@type"             => "allowance",
-          "concurrency_limit" => 1,
-          "private_repos"     => false,
-          "public_repos"      => true,
-          "subscription_type" => 1
-        },
         "@href"       => "/v3/user/#{user2.id}",
         "@representation"=> "minimal",
         "id"          => user2.id,

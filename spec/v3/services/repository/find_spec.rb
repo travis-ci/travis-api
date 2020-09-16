@@ -88,14 +88,6 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "shared"             => false,
       "owner"              => {
         "id"               => repo.owner_id,
-        "allowance"   => {
-          "@representation"   => "minimal",
-          "@type"             => "allowance",
-          "concurrency_limit" => 1,
-          "private_repos"     => false,
-          "public_repos"      => true,
-          "subscription_type" => 1
-        },
         "login"            => "svenfuchs",
         "@type"            => "user",
         "@href"            => "/v3/user/#{repo.owner_id}"},

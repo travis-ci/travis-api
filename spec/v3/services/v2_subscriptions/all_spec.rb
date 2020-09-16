@@ -163,15 +163,7 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
             '@representation' => 'minimal',
             'id' => organization.id,
             'vcs_type' => organization.vcs_type,
-            'login' => 'travis',
-            'allowance' => {
-              "@type" => "allowance",
-              "@representation" => "minimal",
-              "subscription_type" => 1,
-              "public_repos" => true,
-              "private_repos" => false,
-              "concurrency_limit" => 1
-            }
+            'login' => 'travis'
           },
           'billing_info' => {
             '@type' => 'v2_billing_info',
