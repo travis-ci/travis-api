@@ -115,6 +115,11 @@ module Travis::API::V3
         route '/active'
         get :for_owner
       end
+
+      resource :allowance do
+        route '/allowance'
+        get :for_owner
+      end
     end
 
     resource :repositories do
@@ -152,7 +157,7 @@ module Travis::API::V3
 
       resource :builds do
         route '/builds'
-        get  :find
+        get :find
       end
 
       resource :caches do

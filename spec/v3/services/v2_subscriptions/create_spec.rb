@@ -276,15 +276,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,
             'vcs_type' => organization.vcs_type,
-            'login' => 'travis',
-            'allowance' => {
-              "@type" => "allowance",
-              "@representation" => "minimal",
-              "subscription_type" => 1,
-              "public_repos" => true,
-              "private_repos" => false,
-              "concurrency_limit" => 1
-            }
+            'login' => 'travis'
           },
           'payment_intent' => nil,
         })

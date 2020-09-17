@@ -18,14 +18,6 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
       "github_id"        => installation.github_id,
       "owner"            => {
         "@type"=>"user",
-        "allowance"   => {
-          "@representation"   => "minimal",
-          "@type"             => "allowance",
-          "concurrency_limit" => 1,
-          "private_repos"     => false,
-          "public_repos"      => true,
-          "subscription_type" => 1
-        },
         "@href"=>"/v3/user/#{user.id}",
         "@representation"=>"minimal",
         "id"=>user.id,
@@ -63,15 +55,16 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "is_syncing" => nil,
         "synced_at" => nil,
         "education" => nil,
-        "allow_migration" => false,
-        "allowance" => {
-          "@type"             => "allowance",
+        "allowance"   => {
           "@representation"   => "minimal",
-          "subscription_type" => 1,
-          "public_repos"      => true,
+          "@type"             => "allowance",
+          "id"                => 1,
+          "concurrency_limit" => 1,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "public_repos"      => true,
+          "subscription_type" => 1
         },
+        "allow_migration" => false,
         "recently_signed_up" => false,
         "secure_user_hash" => nil,
       }

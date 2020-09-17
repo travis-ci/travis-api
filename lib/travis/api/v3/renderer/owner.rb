@@ -4,7 +4,7 @@ module Travis::API::V3
   class Renderer::Owner < ModelRenderer
     include Renderer::AvatarURL
 
-    representation(:minimal,    :id, :login, :vcs_type, :allowance)
+    representation(:minimal,    :id, :login, :vcs_type)
     representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education,
                    :allow_migration, :allowance)
     representation(:additional, :repositories, :installation)
@@ -31,8 +31,8 @@ module Travis::API::V3
     end
 
     def allowance
-      return BillingClient.default_allowance_response if Travis.config.org?
-      return BillingClient.default_allowance_response unless access_control.user
+      return BillingClient.default_allowance_response(id) if Travis.config.org?
+      return BillingClient.default_allowance_response(id) unless access_control.user
 
       client = BillingClient.new(access_control.user.id)
       client.allowance(owner_type, id)
