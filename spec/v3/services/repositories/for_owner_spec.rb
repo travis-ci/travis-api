@@ -560,6 +560,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
       "@representation"   => "standard",
       "@type"             => "allowance",
       "concurrency_limit" => 1,
+      "id"                => 0,
       "private_repos"     => false,
       "public_repos"      => true,
       "subscription_type" => 1
@@ -580,6 +581,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
       "@representation"   => "standard",
       "@type"             => "allowance",
       "concurrency_limit" => 666,
+      "id"                => 1,
       "private_repos"     => true,
       "public_repos"      => true,
       "subscription_type" => 2

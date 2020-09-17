@@ -62,6 +62,7 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
         "allowance" => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
+          "id"                => org.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,

@@ -27,6 +27,7 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
       "allowance"        => {
         "@type"             => "allowance",
         "@representation"   => "minimal",
+        "id"                => user.id,
         "subscription_type" => 1,
         "public_repos"      => true,
         "private_repos"     => false,

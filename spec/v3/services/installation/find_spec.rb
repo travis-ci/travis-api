@@ -58,6 +58,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "allowance"   => {
           "@representation"   => "minimal",
           "@type"             => "allowance",
+          "id"                => 1,
           "concurrency_limit" => 1,
           "private_repos"     => false,
           "public_repos"      => true,

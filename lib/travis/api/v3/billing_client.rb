@@ -10,11 +10,11 @@ module Travis::API::V3
       response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/allowance")
       return BillingClient.default_allowance_response unless response.status == 200
 
-      Travis::API::V3::Models::Allowance.new(2, response.body)
+      Travis::API::V3::Models::Allowance.new(2, owner_id, response.body)
     end
 
-    def self.default_allowance_response
-      Travis::API::V3::Models::Allowance.new(1, { "public_repos" => true, "private_repos" => false, "concurrency_limit" => 1 }.freeze)
+    def self.default_allowance_response(id = 0)
+      Travis::API::V3::Models::Allowance.new(1, id, { "public_repos" => true, "private_repos" => false, "concurrency_limit" => 1 }.freeze)
     end
 
     def all
