@@ -2,7 +2,7 @@ module Travis::API::V3
   class Models::V2Subscription
     include Models::Owner
 
-    attr_reader :id, :plan, :permissions, :source, :billing_info, :credit_card_info, :owner, :client_secret, :payment_intent, :addons, :created_at
+    attr_reader :id, :plan, :permissions, :source, :billing_info, :credit_card_info, :owner, :client_secret, :payment_intent, :addons, :available_standalone_addons, :created_at
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
