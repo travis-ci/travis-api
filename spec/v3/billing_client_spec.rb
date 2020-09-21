@@ -370,8 +370,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
         expect(subject.size).to eq 1
         expect(subject.first.id).to eq('plan-id')
-        expect(subject.first.addon_configs).to exist
-        expect(subject.first.available_standalone_addons).to exist
+        expect(subject.first.addon_configs.first.id).to eq('oss_tier_credits')
       end
     end
 
@@ -384,8 +383,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
         expect(subject.size).to eq 1
         expect(subject.first.id).to eq('plan-id')
-        expect(subject.first.addon_configs).to exist
-        expect(subject.first.available_standalone_addons).to exist
+        expect(subject.first.addon_configs.first.id).to eq('oss_tier_credits')
       end
     end
   end
@@ -395,7 +393,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns the list of user license usages for the subscription' do
       stub_request(:get, "#{billing_url}v2/subscriptions/#{subscription_id}/user_usage").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
-        .to_return(body: JSON.dump([[billing_addon_usage_response_body]]))
+        .to_return(body: JSON.dump([billing_addon_usage_response_body]))
 
       expect(subject.size).to eq 1
       expect(subject.addon_quantity).to eq 100
