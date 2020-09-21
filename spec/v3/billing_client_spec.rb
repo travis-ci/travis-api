@@ -362,7 +362,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
   describe '#v2_plans_for' do
     describe '#organization' do
-      subject { billing.plans_for_organization(organization.id) }
+      subject { billing.v2_plans_for_organization(organization.id) }
 
       it 'returns the list of v2 plans for an organization' do
         stub_request(:get, "#{billing_url}v2/plans_for/organization/#{organization.id}").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
@@ -376,7 +376,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
 
     describe '#user' do
-      subject { billing.plans_for_user }
+      subject { billing.v2_plans_for_user }
 
       it 'returns the list of v2 plans for an user' do
         stub_request(:get, "#{billing_url}v2/plans_for/user").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
@@ -394,7 +394,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     subject { billing.v2_subscription_user_usages(subscription_id)}
 
     it 'returns the list of user license usages for the subscription' do
-      stub_request(:get, "#{billing_url}v2/subscription/#{subscription_id}/user_usage").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
+      stub_request(:get, "#{billing_url}v2/subscriptions/#{subscription_id}/user_usage").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
         .to_return(body: JSON.dump([[billing_addon_usage_response_body]]))
 
       expect(subject.size).to eq 1
