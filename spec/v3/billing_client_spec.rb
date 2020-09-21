@@ -370,7 +370,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
         expect(subject.size).to eq 1
         expect(subject.first.id).to eq('plan-id')
-        expect(subject.first.addon_configs.first.id).to eq('oss_tier_credits')
+        expect(subject.first.addon_configs.first['id']).to eq('oss_tier_credits')
       end
     end
 
@@ -383,7 +383,7 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
         expect(subject.size).to eq 1
         expect(subject.first.id).to eq('plan-id')
-        expect(subject.first.addon_configs.first.id).to eq('oss_tier_credits')
+        expect(subject.first.addon_configs.first['id']).to eq('oss_tier_credits')
       end
     end
   end
@@ -396,8 +396,8 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
         .to_return(body: JSON.dump([billing_addon_usage_response_body]))
 
       expect(subject.size).to eq 1
-      expect(subject.addon_quantity).to eq 100
-      expect(subject.addon_usage).to eq 0
+      expect(subject.first.addon_quantity).to eq 100
+      expect(subject.first.addon_usage).to eq 0
     end
   end
 
