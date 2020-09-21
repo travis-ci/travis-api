@@ -126,7 +126,7 @@ module Travis::API::V3
     end
 
     def v2_subscription_user_usages(subscription_id)
-      connection.get("/v2/subscription/#{subscription_id}/user_usage").body.map do |usage_data|
+      connection.get("/v2/subscriptions/#{subscription_id}/user_usage").body.map do |usage_data|
         Travis::API::V3::Models::V2AddonUsage.new(usage_data)
       end
     end

@@ -360,6 +360,49 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
+  describe '#v2_plans_for' do
+    describe '#organization' do
+      subject { billing.plans_for_organization(organization.id) }
+
+      it 'returns the list of v2 plans for an organization' do
+        stub_request(:get, "#{billing_url}v2/plans_for/organization/#{organization.id}").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
+          .to_return(body: JSON.dump([billing_v2_plan_response_body('id' => 'plan-id')]))
+
+        expect(subject.size).to eq 1
+        expect(subject.first.id).to eq('plan-id')
+        expect(subject.first.addon_configs).to exist
+        expect(subject.first.available_standalone_addons).to exist
+      end
+    end
+
+    describe '#user' do
+      subject { billing.plans_for_user }
+
+      it 'returns the list of v2 plans for an user' do
+        stub_request(:get, "#{billing_url}v2/plans_for/user").with(basic_auth: ['_', auth_key], headers: { 'X-Travis-User-Id' => user_id })
+          .to_return(body: JSON.dump([billing_v2_plan_response_body('id' => 'plan-id')]))
+
+        expect(subject.size).to eq 1
+        expect(subject.first.id).to eq('plan-id')
+        expect(subject.first.addon_configs).to exist
+        expect(subject.first.available_standalone_addons).to exist
+      end
+    end
+  end
+
+  describe '#v2_subscription_user_usages' do
+    subject { billing.v2_subscription_user_usages(subscription_id)}
+
+    it 'returns the list of user license usages for the subscription' do
+      stub_request(:get, "#{billing_url}v2/subscription/#{subscription_id}/user_usage").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
+        .to_return(body: JSON.dump([[billing_addon_usage_response_body]]))
+
+      expect(subject.size).to eq 1
+      expect(subject.addon_quantity).to eq 100
+      expect(subject.addon_usage).to eq 0
+    end
+  end
+
   describe '#update_organization_billing_permission' do
     let(:billing_admin_only) { { billing_admin_only: true } }
     subject { billing.update_organization_billing_permission(organization.id, billing_admin_only) }
