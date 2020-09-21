@@ -28,6 +28,11 @@ module Travis::API::V3
       client.purchase_addon(params['subscription.id'], params['addon.id'])
     end
 
+    def user_usages(user_id)
+      client = BillingClient.new(user_id)
+      client.v2_subscription_user_usages(params['subscription.id'])
+    end
+
     def invoices(user_id)
       client = BillingClient.new(user_id)
       client.get_invoices_for_v2_subscription(params['subscription.id'])

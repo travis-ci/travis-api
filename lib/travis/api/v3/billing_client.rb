@@ -125,6 +125,12 @@ module Travis::API::V3
       handle_v2_subscription_response(response)
     end
 
+    def v2_subscription_user_usages(subscription_id)
+      connection.get("/v2/subscription/#{subscription_id}/user_usage").body.map do |usage_data|
+        Travis::API::V3::Models::V2AddonUsage.new(usage_data)
+      end
+    end
+
     def v2_plans_for_organization(organization_id)
       connection.get("/v2/plans_for/organization/#{organization_id}").body.map do |plan_data|
         Travis::API::V3::Models::V2PlanConfig.new(plan_data)
