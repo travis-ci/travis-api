@@ -160,6 +160,22 @@ module Support
       ]
     end
 
+    def billing_addon_usage_response_body(attributes = {})
+      {
+        'id' => 1,
+        'addon_id' => 1,
+        'addon_quantity' => 100,
+        'addon_usage' => 0,
+        'remaining' => 100,
+        'purchase_date' => '2020-09-14T11:25:02.612Z',
+        'valid_to' => '2020-10-14T11:25:02.612Z',
+        'status' => 'subscribed',
+        'active' => true,
+        'created_at' => '2020-09-14T11:25:02.614Z',
+        'updated_at' => '2020-09-14T11:25:02.614Z'
+      }.deep_merge(attributes)
+    end
+
     def billing_plan_response_body(attributes={})
       {
         "id" => "travis-ci-ten-builds",
@@ -168,6 +184,42 @@ module Support
         "annual" => false,
         "price" => 12500,
         "currency" => "USD"
+      }.deep_merge(attributes)
+    end
+
+    def billing_v2_plan_response_body(attributes = {})
+      {
+        'id' => 'free_tier_plan',
+        'name' => 'Free Tier Plan',
+        'private_repos' => true,
+        'addon_configs' => [
+          {
+            'id' => 'oss_tier_credits',
+            'name' => 'Free 40 000 credits (renewed monthly)',
+            'price' => 0,
+            'quantity' => 40_000,
+            'type' => 'credit_public'
+          },
+          {
+            'id' => 'free_tier_credits',
+            'name' => 'Free 10 000 credits (renewed monthly)',
+            'price' => 0,
+            'quantity' => 10_000,
+            'type' => 'credit_private'
+          },
+          {
+            'id' => 'users_free',
+            'name' => 'Unlimited users',
+            'price' => 0,
+            'quantity' => 999_999,
+            'type' => 'user_license'
+          }
+        ],
+        'starting_price' => 0,
+        'starting_users' => 999_999,
+        'private_credits' => 10_000,
+        'public_credits' => 40_000,
+        'available_standalone_addons' => []
       }.deep_merge(attributes)
     end
 
