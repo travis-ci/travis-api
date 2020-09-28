@@ -141,6 +141,7 @@ module Support
               "addon_quantity" => 40000,
               "addon_usage" => 0,
               "remaining" => 40000,
+              "status" => "subscribed",
               "active" => true
           }
         },
@@ -154,6 +155,7 @@ module Support
             "addon_quantity" => 10000,
             "addon_usage" => 0,
             "remaining" => 10000,
+            "status" => "subscribed",
             "active" => true
           }
         }

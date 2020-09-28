@@ -238,9 +238,10 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               '@representation' => 'standard',
               'id' => 7,
               'addon_id' => 7,
-              'addon_quantity' => 40000,
+              'addon_quantity' => 40_000,
               'addon_usage' => 0,
-              'remaining' => 40000,
+              'remaining' => 40_000,
+              'status' => 'pending',
               'active' => false
             }
           }],
