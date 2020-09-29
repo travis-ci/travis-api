@@ -1,7 +1,7 @@
 language: ruby
 
 import:
-  - travis-ci/build-configs:db-setup.yml
+  - travis-ci/build-configs:db-setup.yml@epic-pricing
 
 rvm: 2.6.5
 
