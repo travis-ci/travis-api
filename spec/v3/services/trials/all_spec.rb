@@ -49,7 +49,8 @@ describe Travis::API::V3::Services::Trials::All, set_app: true, billing_spec_hel
             '@representation' => 'minimal',
             'id' => user.id,
             'login' => 'svenfuchs',
-            'vcs_type' => 'GithubUser'
+            'vcs_type' => 'GithubUser',
+            'name' => user.name
           },
           'created_at' => created_at,
           'status' => 'started',

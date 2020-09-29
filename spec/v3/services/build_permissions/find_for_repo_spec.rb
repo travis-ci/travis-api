@@ -1,6 +1,6 @@
 describe Travis::API::V3::Services::BuildPermissions::FindForRepo, set_app: true do
   let(:repository) { FactoryBot.create(:repository) }
-  let(:user) { FactoryBot.create(:user, login: 'pavel-d') }
+  let(:user) { FactoryBot.create(:user, login: 'pavel-d', vcs_type: 'GithubUser') }
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) { { 'HTTP_AUTHORIZATION'  =>  "token #{token}" } }
 
@@ -29,7 +29,7 @@ describe Travis::API::V3::Services::BuildPermissions::FindForRepo, set_app: true
             "id" => user.id,
             "login" => user.login,
             "name" => user.name,
-            "vcs_type" => nil
+            "vcs_type" => 'GithubUser'
           },
           "permission" => true,
           "role" => nil

@@ -22,7 +22,8 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "@representation"=>"minimal",
         "id"=>user.id,
         "login"=>user.login,
-        "vcs_type" => user.vcs_type
+        "vcs_type" => user.vcs_type,
+        "name" => user.name
       }
     }}
   end
