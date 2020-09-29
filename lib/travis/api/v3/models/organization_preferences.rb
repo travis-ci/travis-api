@@ -4,6 +4,8 @@ module Travis::API::V3
   class Models::OrganizationPreferences < Models::JsonSlice
     child Models::Preference
 
+    attribute :consume_oss_credits, Boolean, default: true
+
     # whether to show insights about the organization's private repositories to
     # only admins, all members of the organization, or everybody (public) (note:
     # insights about public repositories are always public)
