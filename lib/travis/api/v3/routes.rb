@@ -328,6 +328,7 @@ module Travis::API::V3
       post :buy_addon, '/addon/{addon.id}'
       get :user_usages, '/user_usages'
       get :invoices, '/invoices'
+      get :executions, '/executions'
     end
 
     hidden_resource :trials do
