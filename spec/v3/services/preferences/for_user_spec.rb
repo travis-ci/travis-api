@@ -32,6 +32,12 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "@representation" => "standard",
             "name" => "private_insights_visibility",
             "value" => "private"
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/consume_oss_credits",
+            "@representation" => "standard",
+            "name" => "consume_oss_credits",
+            "value" => true
           }
         ]
       )
@@ -41,6 +47,7 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
   describe 'authenticated, user has prefs' do
     before do
       user.preferences.update(:build_emails, false)
+      user.preferences.update(:consume_oss_credits, false)
       user.preferences.update(:private_insights_visibility, 'public')
       get("/v3/preferences", {}, auth_headers)
     end
@@ -65,6 +72,12 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "@representation" => "standard",
             "name" => "private_insights_visibility",
             "value" => "public"
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/consume_oss_credits",
+            "@representation" => "standard",
+            "name" => "consume_oss_credits",
+            "value" => false
           }
         ]
       )
