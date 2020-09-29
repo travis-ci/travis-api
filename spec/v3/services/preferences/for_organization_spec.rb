@@ -47,16 +47,16 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
               "preferences" => [
                 {
                   "@type" => "preference",
-                  "@href" => "/v3/org/#{organization.id}/preference/private_insights_visibility",
-                  "@representation" => "standard",
-                  "name" => "private_insights_visibility",
-                  "value" => "admins"
-                }, {
-                  "@type" => "preference",
                   "@href" => "/v3/org/#{organization.id}/preference/consume_oss_credits",
                   "@representation" => "standard",
                   "name" => "consume_oss_credits",
                   "value" => true
+                }, {
+                  "@type" => "preference",
+                  "@href" => "/v3/org/#{organization.id}/preference/private_insights_visibility",
+                  "@representation" => "standard",
+                  "name" => "private_insights_visibility",
+                  "value" => "admins"
                 }
               ]
             )
@@ -77,16 +77,16 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
               "preferences" => [
                 {
                   "@type" => "preference",
-                  "@href" => "/v3/org/#{organization.id}/preference/private_insights_visibility",
-                  "@representation" => "standard",
-                  "name" => "private_insights_visibility",
-                  "value" => "members"
-                }, {
-                  "@type" => "preference",
                   "@href" => "/v3/org/#{organization.id}/preference/consume_oss_credits",
                   "@representation" => "standard",
                   "name" => "consume_oss_credits",
                   "value" => false
+                }, {
+                  "@type" => "preference",
+                  "@href" => "/v3/org/#{organization.id}/preference/private_insights_visibility",
+                  "@representation" => "standard",
+                  "name" => "private_insights_visibility",
+                  "value" => "members"
                 }
               ]
             )

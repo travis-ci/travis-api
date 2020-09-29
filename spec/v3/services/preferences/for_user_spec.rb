@@ -28,16 +28,16 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "value" => true
           }, {
             "@type" => "preference",
-            "@href" => "/v3/preference/private_insights_visibility",
-            "@representation" => "standard",
-            "name" => "private_insights_visibility",
-            "value" => "private"
-          }, {
-            "@type" => "preference",
             "@href" => "/v3/preference/consume_oss_credits",
             "@representation" => "standard",
             "name" => "consume_oss_credits",
             "value" => true
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/private_insights_visibility",
+            "@representation" => "standard",
+            "name" => "private_insights_visibility",
+            "value" => "private"
           }
         ]
       )
@@ -68,16 +68,16 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "value" => false
           }, {
             "@type" => "preference",
-            "@href" => "/v3/preference/private_insights_visibility",
-            "@representation" => "standard",
-            "name" => "private_insights_visibility",
-            "value" => "public"
-          }, {
-            "@type" => "preference",
             "@href" => "/v3/preference/consume_oss_credits",
             "@representation" => "standard",
             "name" => "consume_oss_credits",
             "value" => false
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/private_insights_visibility",
+            "@representation" => "standard",
+            "name" => "private_insights_visibility",
+            "value" => "public"
           }
         ]
       )
