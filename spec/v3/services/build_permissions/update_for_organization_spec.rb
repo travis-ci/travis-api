@@ -26,7 +26,7 @@ describe Travis::API::V3::Services::BuildPermissions::UpdateForOrganization, set
     context 'user is a member' do
       before { organization.memberships.create(user: user, role: 'member', build_permission: true) }
 
-      it 'updates build permissions' do
+      it 'returns access error' do
         patch("/v3/org/#{organization.id}/build_permissions", { user_ids: [user.id], permission: false }, headers)
 
         expect(last_response.status).to eq(403)

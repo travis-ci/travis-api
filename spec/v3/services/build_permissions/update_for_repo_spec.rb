@@ -32,7 +32,7 @@ describe Travis::API::V3::Services::BuildPermissions::UpdateForRepo, set_app: tr
         FactoryBot.create(:permission, user: user, repository: repository, build: true)
       end
 
-      it 'updates build permissions' do
+      it 'returns access error' do
         patch("/v3/repo/#{repository.id}/build_permissions", { user_ids: [user.id], permission: false }, headers)
         expect(last_response.status).to eq(403)
       end
