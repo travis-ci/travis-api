@@ -120,6 +120,11 @@ module Travis::API::V3
         route '/allowance'
         get :for_owner
       end
+
+      resource :executions do
+        route '/executions'
+        get :for_owner
+      end
     end
 
     resource :repositories do
@@ -328,7 +333,6 @@ module Travis::API::V3
       post :buy_addon, '/addon/{addon.id}'
       get :user_usages, '/user_usages'
       get :invoices, '/invoices'
-      get :executions, '/executions'
     end
 
     hidden_resource :trials do
