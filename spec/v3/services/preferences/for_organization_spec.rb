@@ -50,7 +50,7 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
                   "@href" => "/v3/org/#{organization.id}/preference/consume_oss_credits",
                   "@representation" => "standard",
                   "name" => "consume_oss_credits",
-                  "value" => true
+                  "value" => false
                 }, {
                   "@type" => "preference",
                   "@href" => "/v3/org/#{organization.id}/preference/private_insights_visibility",
@@ -66,7 +66,7 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
         describe 'some preference has been set' do
           before do
             organization.preferences.update(:private_insights_visibility, 'members')
-            organization.preferences.update(:consume_oss_credits, false)
+            organization.preferences.update(:consume_oss_credits, true)
           end
 
           it 'returns the set value merged with the defaults' do
@@ -80,7 +80,7 @@ describe Travis::API::V3::Services::Preferences::ForOrganization, set_app: true 
                   "@href" => "/v3/org/#{organization.id}/preference/consume_oss_credits",
                   "@representation" => "standard",
                   "name" => "consume_oss_credits",
-                  "value" => false
+                  "value" => true
                 }, {
                   "@type" => "preference",
                   "@href" => "/v3/org/#{organization.id}/preference/private_insights_visibility",
