@@ -1,19 +1,11 @@
 module Travis::API::V3
   class Queries::BuildPermissions < Query
     def find_for_repo(repository)
-      Models::Repository.find(repository.id).permissions.includes(:user).map do |permission|
-        value = permission.build.nil? ? true : permission.build
-
-        Models::BuildPermission.new(user: permission.user, permission: value, role: nil)
-      end
+      Models::Repository.find(repository.id).permissions.includes(:user)
     end
 
     def find_for_organization(organization)
-      Models::Membership.where(organization_id: organization.id).includes(:user).map do |membership|
-        value = membership.build_permission.nil? ? true : membership.build_permission
-
-        Models::BuildPermission.new(user: membership.user, permission: value, role: membership.role)
-      end
+      Models::Membership.where(organization_id: organization.id).includes(:user)
     end
 
     def update_for_organization(organization, user_ids, permission)

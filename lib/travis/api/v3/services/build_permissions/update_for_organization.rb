@@ -2,7 +2,7 @@ module Travis::API::V3
   class Services::BuildPermissions::UpdateForOrganization < Service
     params :user_ids, :permission
 
-    def run
+    def run!
       organization = check_login_and_find(:organization)
 
       raise LoginRequired unless access_control.adminable?(organization)

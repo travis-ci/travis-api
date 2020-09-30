@@ -2,7 +2,7 @@ module Travis::API::V3
   class Services::BuildPermissions::UpdateForRepo < Service
     params :user_ids, :permission
 
-    def run
+    def run!
       repository = check_login_and_find(:repository)
 
       raise LoginRequired unless access_control.admin_for(repository)
