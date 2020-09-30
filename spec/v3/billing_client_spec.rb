@@ -428,9 +428,9 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
       stub_request(:get, "#{billing_url}usage/#{owner_type.downcase}s/#{owner_id}/executions?page=#{page}&per_page=#{per_page}&from=#{from}&to=#{to}").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
         .to_return(body: JSON.dump([billing_executions_response_body]))
 
-      expect(subject.executions.first).to be_a(Travis::API::V3::Models::Execution)
-      expect(subject.executions.first.credits_consumed).to eq 5
-      expect(subject.executions.first.os).to eq 'linux'
+      expect(subject.first).to be_a(Travis::API::V3::Models::Execution)
+      expect(subject.first.credits_consumed).to eq 5
+      expect(subject.first.os).to eq 'linux'
     end
   end
 end

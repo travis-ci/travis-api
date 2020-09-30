@@ -19,9 +19,10 @@ module Travis::API::V3
 
     def executions(owner_type, owner_id, page, per_page, from, to)
       response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/executions?page=#{page}&per_page=#{per_page}&from=#{from}&to=#{to}")
-      response.body.map do |execution_data|
+      executions = response.body.map do |execution_data|
         Travis::API::V3::Models::Execution.new(execution_data)
       end
+      executions
     end
 
     def all
