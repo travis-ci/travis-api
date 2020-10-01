@@ -8,10 +8,10 @@ describe Travis::API::V3::Queries::BuildPermissions do
 
     before { repo.permissions.create(build: true, user: user) }
 
-    it 'returns build permissions for repo' do
+    it 'returns permissions for repo' do
       perms = subject.find_for_repo(repo)
 
-      expect(perms.first.permission).to eq(true)
+      expect(perms.first.build).to eq(true)
       expect(perms.first.user.id).to eq(user.id)
     end
   end
@@ -21,10 +21,10 @@ describe Travis::API::V3::Queries::BuildPermissions do
 
     before { organization.memberships.create(user: user, role: 'admin', build_permission: true) }
 
-    it 'returns build permissions for organization' do
+    it 'returns build memberships for organization' do
       perms = subject.find_for_organization(organization)
 
-      expect(perms.first.permission).to eq(true)
+      expect(perms.first.build_permission).to eq(true)
       expect(perms.first.user.id).to eq(user.id)
     end
   end
