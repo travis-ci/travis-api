@@ -106,6 +106,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login,
+        "name"                => owner.name,
         "vcs_type"            => owner.vcs_type
       }
     })}
@@ -218,6 +219,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login,
+        "name"                => owner.name,
         "vcs_type"            => owner.vcs_type
       }
     })}
@@ -293,6 +295,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login,
+        "name"                => owner.name,
         "vcs_type"            => owner.vcs_type
       },
       "config"                => {

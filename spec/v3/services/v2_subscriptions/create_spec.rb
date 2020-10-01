@@ -277,6 +277,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,
             'vcs_type' => organization.vcs_type,
+            'name' => organization.name,
             'login' => 'travis'
           },
           'payment_intent' => nil,

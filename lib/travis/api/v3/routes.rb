@@ -95,6 +95,12 @@ module Travis::API::V3
         get   :for_organization
         patch :update
       end
+
+      resource :build_permissions do
+        route '/build_permissions'
+        get :find_for_organization
+        patch :update_for_organization
+      end
     end
 
     resource :organizations do
@@ -148,6 +154,12 @@ module Travis::API::V3
           get  :for_branch
           post :create
         end
+      end
+
+      resource :build_permissions do
+        route '/build_permissions'
+        get :find_for_repo
+        patch :update_for_repo
       end
 
       resource :branches do

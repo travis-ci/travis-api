@@ -15,6 +15,7 @@ module Travis::API::V3
     Broadcasts            = Module.new { extend Services }
     Build                 = Module.new { extend Services }
     Builds                = Module.new { extend Services }
+    BuildPermissions      = Module.new { extend Services }
     Caches                = Module.new { extend Services }
     Coupons               = Module.new { extend Services }
     Cron                  = Module.new { extend Services }
