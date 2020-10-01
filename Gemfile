@@ -22,7 +22,7 @@ gem 'simple_states',   '1.0.2'
 
 gem 'active_model_serializers'
 gem 'unicorn'
-gem 'sentry-raven'
+gem 'sentry-raven', '~> 2.11.3'
 gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack', '>= 2.1.4'
 gem 'rack-contrib'

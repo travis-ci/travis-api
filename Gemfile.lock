@@ -361,7 +361,7 @@ GEM
     ruby2_keywords (0.0.2)
     ruby_dep (1.5.0)
     safe_yaml (1.0.5)
-    sentry-raven (2.13.0)
+    sentry-raven (2.11.3)
       faraday (>= 0.7.6, < 1.0)
     sidekiq (5.2.9)
       connection_pool (~> 2.2, >= 2.2.2)
@@ -481,7 +481,7 @@ DEPENDENCIES
   rspec
   rspec-its
   s3!
-  sentry-raven
+  sentry-raven (~> 2.11.3)
   sidekiq
   simple_states (= 1.0.2)
   simplecov
