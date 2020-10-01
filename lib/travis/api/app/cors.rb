@@ -12,7 +12,7 @@ class Travis::Api::App
       headers['Access-Control-Expose-Headers']    = "Content-Type, Cache-Control, Expires, Etag, Last-Modified, X-Request-ID"
     end
 
-    options // do
+    options '/' do
       # make sure to update nginx.conf.erb when you update this
       headers['Access-Control-Allow-Methods'] = "HEAD, GET, POST, PATCH, PUT, DELETE"
       headers['Access-Control-Allow-Headers'] = "Content-Type, Authorization, Accept, If-None-Match, If-Modified-Since, X-User-Agent, X-Client-Release, Travis-API-Version, Trace"
