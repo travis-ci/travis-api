@@ -44,7 +44,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
       puts parsed_body
       expect(parsed_body).to eql_json({
         '@type' => 'executions',
-        '@href' => '/v3/owner/travis-ci/executions?page=1&per_page=25&from=2020-07-30&to=2020-09-30',
+        '@href' => "/v3/owner/travis-ci/executions?page=1&per_page=25&from=#{from.to_s}&to=#{to.to_s}",
         '@representation' => 'standard',
         'executions' => [{
           '@type' => 'execution',
