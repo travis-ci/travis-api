@@ -17,6 +17,14 @@ module Travis::API::V3
       Travis::API::V3::Models::Allowance.new(1, id, { "public_repos" => true, "private_repos" => false, "concurrency_limit" => 1 }.freeze)
     end
 
+    def executions(owner_type, owner_id, page, per_page, from, to)
+      response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/executions?page=#{page}&per_page=#{per_page}&from=#{from}&to=#{to}")
+      executions = response.body.map do |execution_data|
+        Travis::API::V3::Models::Execution.new(execution_data)
+      end
+      executions
+    end
+
     def all
       data = connection.get('/subscriptions').body
       subscriptions = data.fetch('subscriptions').map do |subscription_data|

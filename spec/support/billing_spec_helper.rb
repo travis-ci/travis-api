@@ -250,5 +250,27 @@ module Support
         'builds_remaining' => 5
       }.deep_merge(attributes)
     end
+
+    def billing_executions_response_body(attributes = {})
+      {
+        'id' => 1,
+        'os' => 'linux',
+        'instance_size' => 'standard-2',
+        'arch' => 'amd64',
+        'virtualization_type' => 'vm',
+        'queue' => 'builds.gce-oss',
+        'job_id' => 123,
+        'repository_id' => 123,
+        'owner_id' => 1,
+        'owner_type' => 'User',
+        'plan_id' => 2,
+        'sender_id' => 1,
+        'credits_consumed' => 5,
+        'started_at' => Time.now,
+        'finished_at' => Time.now,
+        'created_at' => Time.now,
+        'updated_at' => Time.now
+      }.deep_merge(attributes)
+    end
   end
 end
