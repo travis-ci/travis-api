@@ -96,7 +96,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
           '@href' => "/v3/repo/#{repo.id}/setting/build_pushes",
           '@representation' => 'minimal',
           'name' => 'build_pushes',
-          'value' => false
+          'value' => true
         }
       )
     end

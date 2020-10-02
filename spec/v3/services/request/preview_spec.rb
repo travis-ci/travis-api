@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::Request::Configs, set_app: true do
+describe Travis::API::V3::Services::Request::Preview, set_app: true do
   let(:repo) { FactoryBot.create(:repository_without_last_build, owner_name: 'svenfuchs', name: 'minimal') }
   let(:request) { Travis::API::V3::Models::Request.last }
   let(:env_var) { { id: nil, name: 'ONE', value: Travis::Settings::EncryptedValue.new('one'), public: true, branch: 'foo', repository_id: repo.id } }
@@ -8,7 +8,7 @@ describe Travis::API::V3::Services::Request::Configs, set_app: true do
 
   let(:configs) do
     {
-      raw_configs: [source: 'travis-ci/travis-yml:.travis.yml@ref', config: 'script: true'],
+      raw_configs: [source: 'travis-ci/travis-yml:.travis.yml@ref', config: 'script: true', mode: 'replace'],
       config: { script: ['true'] },
       matrix: [script: ['true']],
       messages: [type: :type, level: :info, key: :key, code: :code, args: { one: 'one' }, src: '.travis.yml', line: 1],
@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::Request::Configs, set_app: true do
   end
 
   describe 'not authenticated' do
-    before { post("/v3/repo/#{repo.id}/request/configs") }
+    before { post("/v3/repo/#{repo.id}/request/preview") }
     it { expect(status).to eq 403 }
     it do
       expect(body).to eq(
@@ -47,12 +47,13 @@ describe Travis::API::V3::Services::Request::Configs, set_app: true do
 
     it do
       expect(body).to eq(
-        '@type': 'request_configs',
+        '@type': 'request_preview',
         '@representation': 'standard',
         raw_configs: [
           '@type': 'request_raw_configuration',
           '@representation': 'minimal',
           source: 'travis-ci/travis-yml:.travis.yml@ref',
+          merge_mode: 'replace',
           config: 'script: true'
         ],
         request_config: {

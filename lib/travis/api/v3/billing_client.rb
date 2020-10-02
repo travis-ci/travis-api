@@ -90,6 +90,11 @@ module Travis::API::V3
       handle_coupon_response(response)
     end
 
+    def update_organization_billing_permission(organization_id, billing_admin_only)
+      response = connection.patch("/organization/permission_update/#{organization_id}", billing_admin_only)
+      handle_subscription_response(response)
+    end
+
     private
 
     def handle_subscription_response(response)

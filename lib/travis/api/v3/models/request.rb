@@ -4,7 +4,7 @@ module Travis::API::V3
       def raw_configs
         Array(data[:raw_configs]).map do |attrs|
           raw_config = RequestRawConfig.new(config: attrs[:config])
-          RequestRawConfiguration.new(source: attrs[:source], raw_config: raw_config)
+          RequestRawConfiguration.new(source: attrs[:source], merge_mode: attrs[:mode], raw_config: raw_config)
         end
       end
 
@@ -55,7 +55,7 @@ module Travis::API::V3
       has_many   :builds
       serialize  :config
       serialize  :payload
-      has_many   :messages, as: :subject
+      has_many   :messages, -> { unscope(where: :subject_type).where(subject_type: 'Request') }, as: :subject
 
       def branch_name
         commit.branch_name if commit

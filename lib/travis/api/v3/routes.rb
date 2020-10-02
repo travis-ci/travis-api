@@ -15,6 +15,7 @@ module Travis::API::V3
 
       post :cancel, '/cancel'
       post :restart, '/restart'
+      post :priority, '/priority'
 
       resource :jobs do
         route '/jobs'
@@ -83,6 +84,7 @@ module Travis::API::V3
       capture id: :digit
       route '/org/{organization.id}'
       get :find
+      patch :update_billing_permission, '/update_billing_permission'
 
       resource :preferences do
         route '/preferences'
@@ -174,7 +176,8 @@ module Travis::API::V3
       resource :request do
         route '/request/{request.id}'
         get  :find
-        post :configs
+        hide(post :preview)
+        post :preview
 
         resource :messages do
           route '/messages'
@@ -269,6 +272,7 @@ module Travis::API::V3
     resource :user do
       route '/user'
       get :current
+      patch :update
     end
 
     resource :user do

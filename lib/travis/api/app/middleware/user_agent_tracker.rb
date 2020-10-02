@@ -11,15 +11,33 @@ class Travis::Api::App
         "Opera", "Mozilla"
       ]
 
+      PATHS_IGNORED = [
+        '/uptime'
+      ]
+
+      attr_reader :metrik_prefix
+
+      before do
+        @metrik_prefix = if version = request.env['HTTP_TRAVIS_API_VERSION'].to_s.match(/^\d+(\.\d+)*/)
+          "api.v#{version}"
+        else
+          "api.v2"
+        end
+      end
+
       before(agent: /^$/) do
-        ::Metriks.meter("api.v2.user_agent.missing").mark
+        return if PATHS_IGNORED.include?(request.path)
+        ::Metriks.meter("#{metrik_prefix}.user_agent.missing").mark
         halt(400, "error" => "missing User-Agent header") if Travis::Features.feature_active?(:require_user_agent)
       end
 
       before(agent: /^.+$/) do
+        return if PATHS_IGNORED.include?(request.path)
         agent = UserAgent.parse(request.user_agent)
         case agent.browser
-        when *WEB_BROWSERS                   then mark_browser
+        when *WEB_BROWSERS
+          # if X-User-Agent header is set, honor that instead
+          mark :browser, UserAgent.parse(env['HTTP_X_USER_AGENT'] || request.user_agent).browser
         when "curl", "Wget"                  then mark(:console, agent.browser)
         when "travis-api-wrapper"            then mark(:script, :node_js, agent.browser)
         when "TravisPy"                      then mark(:script, :python,  agent.browser)
@@ -28,12 +46,6 @@ class Travis::Api::App
         when "Travis"                        then mark_travis(agent)
         else mark_unknown
         end
-      end
-
-      def mark_browser
-        # allows a JavaScript Client to set X-User-Agent, for instance to "travis-web" in travis-web
-        x_agent = UserAgent.parse(env['HTTP_X_USER_AGENT'] || 'unknown').browser
-        mark(:browser, x_agent)
       end
 
       def mark_travis(agent)
@@ -54,7 +66,7 @@ class Travis::Api::App
       end
 
       def mark(*keys)
-        key = "api.v2.user_agent." << keys.map { |k| k.to_s.downcase.gsub(/[^a-z0-9\-\.]+/, '_') }.join('.')
+        key = "#{metrik_prefix}.user_agent." << keys.map { |k| k.to_s.downcase.gsub(/[^a-z0-9\-\.]+/, '_') }.join('.')
         ::Metriks.meter(key).mark
       end
     end

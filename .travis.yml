@@ -1,14 +1,20 @@
 language: ruby
 
 import:
-  - travis-ci/build-configs:db-setup.yml
+  - travis-ci/build-configs:db-setup.yml@bionic
 
 rvm: 2.6.5
 
 script: "bundle exec rake knapsack:rspec"
 
+addons:
+  - snaps:
+    - name: docker
+      channel: latest/beta
+
 env:
   global:
+    - PATH=/snap/bin:$PATH
     - RUBY_GC_MALLOC_LIMIT=90000000
     - RUBY_GC_HEAP_FREE_SLOTS=200000
     - CI_NODE_TOTAL=3
@@ -32,4 +38,4 @@ jobs:
       install: echo skip
       before_script: echo skip
       script: make ship
-      if: type = cron OR commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true
+      if: commit_message =~ /ship:docker/ OR env(SHIP_DOCKER) = true or branch = master

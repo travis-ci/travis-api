@@ -1,18 +1,19 @@
 module Travis::API::V3
   class Renderer::Build < ModelRenderer
-    representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at, :private)
+    representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at, :private, :priority)
     representation(:standard, *representations[:minimal], :repository, :branch, :tag, :commit, :jobs, :stages, :created_by, :updated_at)
     representation(:active, *representations[:standard])
 
     hidden_representations(:active)
+
+    HIGH_PRIORITY = 5
 
     def self.available_attributes
       super + ['request', 'log_complete']
     end
 
     def request
-      # no filtering here, we assume that request.private == request.build.private
-      Renderer.render_model(model.request, mode: :minimal)
+      model.request
     end
 
     def jobs
@@ -43,6 +44,10 @@ module Travis::API::V3
       if include_log_complete?
         return model.log_complete
       end
+    end
+
+    def priority
+      model.jobs.where(priority: HIGH_PRIORITY).present?
     end
 
     private def created_by_href(creator)

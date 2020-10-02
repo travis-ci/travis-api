@@ -32,6 +32,7 @@ describe Travis::API::V3::Services::Branch::Find, set_app: true do
         "event_type"     => "push",
         "previous_state" => "passed",
         "private"        => false,
+        "priority"       => false,
         "pull_request_number" => build.pull_request_number,
         "pull_request_title" => build.pull_request_title,
         "started_at"     => "2010-11-12T13:00:00Z",

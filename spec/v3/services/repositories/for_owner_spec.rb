@@ -38,7 +38,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
   describe "private repository, private API, authenticated as user with access" do
     before  { get("/v3/owner/svenfuchs/repos", {}, headers) }
     example { expect(last_response).to be_ok }
-    example { puts JSON.load(body); expect(JSON.load(body)).to be == {
+    example { expect(JSON.load(body)).to be == {
       "@type"                => "repositories",
       "@href"                => "/v3/owner/svenfuchs/repos",
       "@representation"      => "standard",
@@ -103,7 +103,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "managed_by_installation"=>false,
           "active_on_org"    => nil,
           "migration_status" => nil,
-          "history_migration_status"  => nil
+          "history_migration_status"  => nil,
+          "config_validation" => false
         }]}}
   end
 
@@ -156,6 +157,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "active_on_org"     => nil,
         "migration_status"  => nil,
         "history_migration_status"  => nil,
+        "config_validation" => false,
         "last_started_build"=>{
           "@type"          =>"build",
           "@href"          =>"/v3/build/#{build.id}",
@@ -163,7 +165,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@permissions"   =>{
             "read"         =>true,
             "cancel"       =>true,
-            "restart"      =>true},
+            "restart"      =>true,
+            "prioritize"   =>false},
           "id"             =>build.id,
           "number"         =>"#{build.number}",
           "state"          =>"configured",
@@ -175,6 +178,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "started_at"     =>"2010-11-12T13:00:00Z",
           "finished_at"    =>nil,
           "private"        => false,
+          "priority"       => false,
           "repository"    =>{
             "@href"       =>"/v3/repo/#{repo.id}"},
           "branch"        =>{
@@ -268,6 +272,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "active_on_org"    => nil,
         "migration_status" => nil,
         "history_migration_status"  => nil,
+        "config_validation" => false,
         "current_build" => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -275,7 +280,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "@permissions"        => {
             "read"    => true,
             "cancel"  => true,
-            "restart" => true
+            "restart" => true,
+            "prioritize"=> false
           },
           "id"                  => build.id,
           "number"              => "#{build.number}",
@@ -288,6 +294,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "started_at"     => "2010-11-12T13:00:00Z",
           "finished_at"    => nil,
           "private"        => false,
+          "priority"       => false,
           "repository"     => {
             "@href"       => "/v3/repo/#{repo.id}"
           },
@@ -425,7 +432,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
         "managed_by_installation"=>false,
         "active_on_org"   => nil,
         "migration_status" => nil,
-        "history_migration_status"  => nil}, {
+        "history_migration_status"  => nil,
+        "config_validation" => false}, {
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo2.id}",
         "@representation" => "standard",
@@ -470,13 +478,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "managed_by_installation"=>false,
           "active_on_org"  =>nil,
           "migration_status" => nil,
-          "history_migration_status" => nil}]}
+          "history_migration_status" => nil,
+          "config_validation" => false}]}
   end
 
   describe "shared repository for collaborator, authenticated as user with access" do
     before  { get("/v3/owner/johndoe/repos", {}, headers_collaborator) }
     example { expect(last_response).to be_ok }
-    example { puts JSON.load(body); expect(JSON.load(body)).to be == {
+    example { expect(JSON.load(body)).to be == {
       "@type"                => "repositories",
       "@href"                => "/v3/owner/johndoe/repos",
       "@representation"      => "standard",
@@ -541,7 +550,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true do
           "managed_by_installation"=>false,
           "active_on_org"    => nil,
           "migration_status" => nil,
-          "history_migration_status"  => nil
+          "history_migration_status"  => nil,
+          "config_validation" => false
         }]}}
   end
 end

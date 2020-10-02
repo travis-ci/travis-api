@@ -47,6 +47,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "id" => 1,
         "login" => user.login,
         "name" => user.name,
+        "email" => "sven@fuchs.com",
         "github_id" => nil,
         "vcs_id" => user.vcs_id,
         "vcs_type" => user.vcs_type,
