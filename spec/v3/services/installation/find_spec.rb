@@ -59,13 +59,13 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "allowance"   => {
           "@representation"   => "minimal",
           "@type"             => "allowance",
-          "id"                => 1,
           "concurrency_limit" => 1,
           "private_repos"     => false,
           "public_repos"      => true,
           "subscription_type" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => 1
         },
         "allow_migration" => false,
         "recently_signed_up" => false,

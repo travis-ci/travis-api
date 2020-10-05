@@ -14,7 +14,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
     Travis.config.billing.url = billing_url
     Travis.config.billing.auth_key = billing_auth_key
     stub_billing_request(:get, "/usage/users/#{user.id}/allowance", auth_key: billing_auth_key, user_id: user.id)
-      .to_return(body: JSON.dump({ 'public_repos': true, 'private_repos': true, 'concurrency_limit': 666 }))
+      .to_return(body: JSON.dump({ 'public_repos': true, 'private_repos': true, 'user_usage': true, 'pending_user_licenses': false, 'concurrency_limit': 666 }))
   end
 
   describe "authenticated as user with access" do
@@ -40,13 +40,13 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
       "allowance"        => {
         "@type"                 => "allowance",
         "@representation"       => "minimal",
-        "id"                    => user.id,
         "subscription_type"     => 2,
         "public_repos"          => true,
         "private_repos"         => true,
         "concurrency_limit"     => 666,
         "user_usage"            => true,
-        "pending_user_licenses" => false
+        "pending_user_licenses" => false,
+        "id"                    => user.id
       },
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,

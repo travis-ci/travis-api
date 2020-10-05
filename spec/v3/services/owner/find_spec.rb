@@ -26,13 +26,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"        => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => org.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => org.id
         }
       }}
     end
@@ -57,13 +57,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"        => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => org.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => org.id
         }
       }}
     end
@@ -93,13 +93,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"           => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => org.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => org.id
         },
         "repositories"        => [{
           "@type"             => "repository",
@@ -173,13 +173,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"         => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => org.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => org.id
         },
         "repositories"      => [{
           "@type"           => "repository",
@@ -248,13 +248,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"        => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => org.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => org.id
         }
       }}
     end
@@ -283,13 +283,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"      => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => org.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => org.id
         },
         "@warnings"      => [{
           "@type"        => "warning",
@@ -328,13 +328,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"      => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => user.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => user.id
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
@@ -364,13 +364,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"      => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => user.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => user.id
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
@@ -400,13 +400,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"        => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => user.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => user.id
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
@@ -440,13 +440,13 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "allowance"        => {
           "@type"             => "allowance",
           "@representation"   => "minimal",
-          "id"                => user.id,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
           "concurrency_limit" => 1,
-          "user_usage" => true,
-          "pending_user_licenses" => false
+          "user_usage" => false,
+          "pending_user_licenses" => false,
+          "id"                => user.id
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
