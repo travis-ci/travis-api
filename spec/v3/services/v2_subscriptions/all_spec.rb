@@ -150,6 +150,8 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
                 'addon_quantity' => 40_000,
                 'addon_usage' => 0,
                 'remaining' => 40_000,
+                'purchase_date' => '2017-11-28T00:09:59.502Z',
+                'valid_to' => '2017-12-28T00:09:59.502Z',
                 'active' => true
               }
             },
@@ -168,6 +170,8 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
                 'addon_quantity' => 10_000,
                 'addon_usage' => 0,
                 'remaining' => 10_000,
+                'purchase_date' => '2017-11-28T00:09:59.502Z',
+                'valid_to' => '',
                 'active' => true
               }
             }
