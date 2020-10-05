@@ -60,12 +60,12 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
           "@representation"   => "minimal",
           "@type"             => "allowance",
           "id"                => 1,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "concurrency_limit" => 1,
           "private_repos"     => false,
           "public_repos"      => true,
-          "subscription_type" => 1
+          "subscription_type" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         },
         "allow_migration" => false,
         "recently_signed_up" => false,

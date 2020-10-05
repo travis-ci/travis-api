@@ -27,12 +27,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,        
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         }
       }}
     end
@@ -58,12 +58,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         }
       }}
     end
@@ -94,12 +94,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         },
         "repositories"        => [{
           "@type"             => "repository",
@@ -174,12 +174,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         },
         "repositories"      => [{
           "@type"           => "repository",
@@ -249,12 +249,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         }
       }}
     end
@@ -284,12 +284,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         },
         "@warnings"      => [{
           "@type"        => "warning",
@@ -329,12 +329,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => user.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
@@ -365,12 +365,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => user.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
@@ -401,12 +401,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => user.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
@@ -441,12 +441,12 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => user.id,
-          "pending_user_licenses" => false,
-          "user_usage" => true,
           "subscription_type" => 1,
           "public_repos"      => true,
           "private_repos"     => false,
-          "concurrency_limit" => 1
+          "concurrency_limit" => 1,
+          "user_usage" => true,
+          "pending_user_licenses" => false
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
