@@ -60,6 +60,8 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
           "@representation"   => "minimal",
           "@type"             => "allowance",
           "id"                => 1,
+          "pending_user_licenses" => false,
+          "user_usage" => true,
           "concurrency_limit" => 1,
           "private_repos"     => false,
           "public_repos"      => true,

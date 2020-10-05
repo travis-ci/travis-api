@@ -38,13 +38,15 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
       "education"        => true,
       "allow_migration"  => false,
       "allowance"        => {
-        "@type"             => "allowance",
-        "@representation"   => "minimal",
-        "id"                => user.id,
-        "subscription_type" => 2,
-        "public_repos"      => true,
-        "private_repos"     => true,
-        "concurrency_limit" => 666
+        "@type"                 => "allowance",
+        "@representation"       => "minimal",
+        "id"                    => user.id,
+        "pending_user_licenses" => false,
+        "user_usage"            => true,
+        "subscription_type"     => 2,
+        "public_repos"          => true,
+        "private_repos"         => true,
+        "concurrency_limit"     => 666
       },
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
