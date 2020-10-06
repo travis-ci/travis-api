@@ -141,6 +141,8 @@ module Support
               "addon_quantity" => 40000,
               "addon_usage" => 0,
               "remaining" => 40000,
+              "purchase_date" => "2017-11-28T00:09:59.502Z",
+              "valid_to" => "2017-12-28T00:09:59.502Z",
               "active" => true
           }
         },
@@ -154,6 +156,8 @@ module Support
             "addon_quantity" => 10000,
             "addon_usage" => 0,
             "remaining" => 10000,
+            "purchase_date" => "2017-11-28T00:09:59.502Z",
+            "valid_to" => "",
             "active" => true
           }
         }
