@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Models::Allowance
-    attr_reader :subscription_type, :public_repos, :private_repos, :concurrency_limit, :id
+    attr_reader :subscription_type, :public_repos, :private_repos, :concurrency_limit, :user_usage, :pending_user_licenses, :id
 
     def initialize(subscription_type, owner_id, attributes = {})
       @subscription_type = subscription_type
@@ -8,6 +8,8 @@ module Travis::API::V3
       @public_repos = attributes.fetch('public_repos')
       @private_repos = attributes.fetch('private_repos')
       @concurrency_limit = attributes.fetch('concurrency_limit')
+      @user_usage = attributes.fetch('user_usage')
+      @pending_user_licenses = attributes.fetch('pending_user_licenses')
     end
   end
 end

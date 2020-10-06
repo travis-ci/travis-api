@@ -14,7 +14,13 @@ module Travis::API::V3
     end
 
     def self.default_allowance_response(id = 0)
-      Travis::API::V3::Models::Allowance.new(1, id, { "public_repos" => true, "private_repos" => false, "concurrency_limit" => 1 }.freeze)
+      Travis::API::V3::Models::Allowance.new(1, id, { 
+        "public_repos" => true,
+        "private_repos" => false,
+        "concurrency_limit" => 1,
+        "user_usage" => false,
+        "pending_user_licenses" => false
+      }.freeze)
     end
 
     def executions(owner_type, owner_id, page, per_page, from, to)
