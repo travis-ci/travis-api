@@ -28,6 +28,7 @@ module Travis::API::V3
     end
 
     def create_initial_subscription
+      Travis.logger.info("!!!!!!!!!!!!!!!!!create_initial_subscription in Organization model")
       client = BillingClient.new(id)
       client.create_initial_v2_subscription
     end
