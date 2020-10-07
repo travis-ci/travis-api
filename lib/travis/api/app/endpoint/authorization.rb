@@ -212,6 +212,7 @@ class Travis::Api::App
 
             user = User.find(vcs_data['user']['id'])
             update_first_login(user)
+            user.create_initial_subscription
             yield serialize_user(user), vcs_data['token'], payload(params[:provider])
           else
             state = vcs_create_state(params[:origin] || params[:redirect_uri])

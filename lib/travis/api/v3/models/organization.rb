@@ -8,8 +8,6 @@ module Travis::API::V3
 
     has_preferences Models::OrganizationPreferences
 
-    after_create :create_initial_subscription
-
     def repositories
       Models::Repository.where(owner_type: 'Organization', owner_id: id)
     end
@@ -24,14 +22,5 @@ module Travis::API::V3
     end
 
     alias members users
-
-    def create_initial_subscription
-      Travis.logger.info("after_create #{Travis.config.org?}")
-      return if Travis.config.org?
-
-      Travis.logger.info("!!!!!!!!!!!!!!!!!create_initial_subscription in Organization model")
-      client = BillingClient.new(id)
-      client.create_initial_v2_subscription
-    end
   end
 end
