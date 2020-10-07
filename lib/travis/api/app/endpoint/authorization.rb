@@ -132,6 +132,7 @@ class Travis::Api::App
 
         # update first login date if not set
         def update_first_login(user)
+          require 'pry'; binding.pry
           unless user.first_logged_in_at
             user.update_attributes(first_logged_in_at: Time.now)
             user.create_initial_subscription unless Travis.config.org?
