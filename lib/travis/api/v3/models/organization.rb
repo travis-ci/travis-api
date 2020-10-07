@@ -22,5 +22,14 @@ module Travis::API::V3
     end
 
     alias members users
+
+    after_save do
+      create_initial_subscription unless Travis.config.org?
+    end
+
+    def create_initial_subscription
+      client = BillingClient.new(id)
+      client.create_initial_v2_subscription
+    end
   end
 end
