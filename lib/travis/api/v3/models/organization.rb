@@ -24,12 +24,12 @@ module Travis::API::V3
     alias members users
 
     after_create do
-      Travis.logger.info("after_createafter_createafter_createafter_createafter_create")
+      Travis.logger.info("after_create")
       create_initial_subscription unless Travis.config.org?
     end
 
     after_save do
-      Travis.logger.info("after_saveafter_saveafter_saveafter_saveafter_saveafter_save")
+      Travis.logger.info("after_save")
     end
 
     def create_initial_subscription
