@@ -18,6 +18,8 @@ module Travis::API::V3
     serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
     scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 
+    after_create :create_initial_subscription
+
     NEW_USER_INDICATOR_LENGTH = 5
 
     def recently_signed_up
@@ -83,16 +85,9 @@ module Travis::API::V3
       vcs_type == 'GithubUser'
     end
 
-    after_create do
-      Travis.logger.info("after_create")
-      create_initial_subscription unless Travis.config.org?
-    end
-
-    after_save do
-      Travis.logger.info("after_save")
-    end
-
     def create_initial_subscription
+      return if Travis.config.org?
+
       Travis.logger.info("!!!!!!!!!!!!!!!!!create_initial_subscription in User model")
       client = BillingClient.new(id)
       client.create_initial_v2_subscription
