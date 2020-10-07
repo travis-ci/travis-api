@@ -83,7 +83,12 @@ module Travis::API::V3
       vcs_type == 'GithubUser'
     end
 
+    after_create do
+      Travis.logger.info("after_createafter_createafter_createafter_createafter_create")
+    end
+
     after_save do
+      Travis.logger.info("after_saveafter_saveafter_saveafter_saveafter_saveafter_save")
       create_initial_subscription unless Travis.config.org?
     end
 
