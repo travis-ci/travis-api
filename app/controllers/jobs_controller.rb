@@ -10,7 +10,7 @@ class JobsController < ApplicationController
       get_log = Services::Job::GetLog.new(@job).call
       parsed_body = JSON.parse get_log.body
       @log = parsed_body["content"]
-      @log_url = parsed_body["@raw_log_href"]
+      @log_url = Travis::Config.load.api_endpoint + parsed_body["@raw_log_href"]
     end
 
     @previous_job = @job.previous
