@@ -171,8 +171,14 @@ class User < Travis::Model
   end
 
   def create_initial_subscription
+    return if Travis.config.org?
+
     client = Travis::API::V3::BillingClient.new(id)
     client.create_initial_v2_subscription
+
+    organization_ids.each do |org_id|
+      Travis::API::V3::BillingClient.new(org_id).create_initial_v2_subscription
+    end
   end
 
   protected
