@@ -84,10 +84,8 @@ module Travis::API::V3
     end
 
     def create_initial_subscription
-      Travis.logger.info("after_create #{Travis.config.org?}")
       return if Travis.config.org?
 
-      Travis.logger.info("!!!!!!!!!!!!!!!!!create_initial_subscription in User model")
       client = BillingClient.new(id)
       client.create_initial_v2_subscription
     end

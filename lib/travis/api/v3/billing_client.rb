@@ -101,9 +101,7 @@ module Travis::API::V3
     end
 
     def create_initial_v2_subscription
-      Travis.logger.info('Initial subscription created!!!')
       response = connection.post('/v2/initial_subscription')
-      Travis.logger.info("response from billing-v2: #{response.inspect}")
       handle_v2_subscription_response(response)
     end
 
