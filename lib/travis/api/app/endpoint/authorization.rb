@@ -178,6 +178,7 @@ class Travis::Api::App
             token                  = generate_token(user: user, app_id: 0)
             payload                = params[:state].split(":::", 2)[1]
             update_first_login(user)
+            user.create_initial_subscription
             yield serialize_user(user), token, payload
           else
             values[:state]         = create_state
