@@ -49,7 +49,7 @@ describe Travis::Api::App::Endpoint::Authorization do
     
     describe 'evil hackers messing with the state' do
       before do
-        stub_request(:post, "https://foobar.com/access_token_path").
+        WebMock.stub_request(:post, "https://foobar.com/access_token_path").
          with(
            body: "{\"client_id\":\"client-id\",\"scope\":\"public_repo,user:email,new_scope\",\"redirect_uri\":\"http://example.org/auth/handshake\",\"state\":\"github-state\",\"code\":\"oauth-code\",\"client_secret\":\"client-secret\"}",
            headers: {
