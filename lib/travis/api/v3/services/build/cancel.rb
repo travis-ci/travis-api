@@ -5,7 +5,7 @@ module Travis::API::V3
       build = check_login_and_find(:build)
       access_control.permissions(build).cancel!
 
-      query.cancel(access_control.user)
+      query.cancel(access_control.user, build.id)
       accepted(build: build, state_change: :cancel)
     end
   end

@@ -22,8 +22,9 @@ gem 'simple_states',   '1.0.2'
 
 gem 'active_model_serializers'
 gem 'unicorn'
-gem 'sentry-raven'
+gem 'sentry-raven', '~> 2.11.3'
 gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
+gem 'rack', '>= 2.1.4'
 gem 'rack-contrib'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
 gem 'rack-attack', '~> 5.0'
@@ -88,6 +89,7 @@ group :test do
   gem 'webmock'
   gem 'hashdiff'
   gem 'pry-byebug'
+  gem 'rack-test'
 end
 
 group :development do
@@ -95,4 +97,3 @@ group :development do
   gem 'rerun'
   gem 'rb-fsevent', '~> 0.9.1'
 end
-

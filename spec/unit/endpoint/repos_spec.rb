@@ -3,8 +3,9 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
 
   context 'correctly capture params' do
     before do
-      described_class.get('/spec/match/:id')   { "id"   }
-      described_class.get('/spec/match/:name') { "name" }
+      described_class.get('/spec/match/((?<id>\d+)|(?<owner_name>[^\/]+))', mustermann_opts: { type: :regexp }) do
+        params[:id] ? "id" : "name"
+      end
     end
 
     it 'matches :id with digits' do

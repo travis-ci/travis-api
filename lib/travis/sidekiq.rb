@@ -10,7 +10,6 @@ Travis::Database.connect
 
 Travis::Async.enabled = true
 Travis::Amqp.config = Travis.config.amqp.to_h
-Travis::Metrics.setup
 Travis::Notification.setup
 
 Sidekiq.configure_server do |config|

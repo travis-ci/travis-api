@@ -52,21 +52,25 @@ class Travis::Api::App
         end
       end
 
-      # Gets the repository with the given id.
-      #
+      # Given a single string, consider two cases:
+      # 1. string consisting entirely of digits
       # ### Response
       #
       # json(:repository)
-      get '/:id' do
+      #
+      # 2. All other cases
+      # ### Response
+      #
+      # array of repositories owned by that owner
+      get '/((?<id>\d+)|(?<owner_name>[^\/]+))', mustermann_opts: { type: :regexp } do
         prefer_follower do
-          respond_with service(:find_repo, params)
-        end
-      end
-
-      # Retrieves repositories for a given owner.
-      get '/:owner_name' do
-        prefer_follower do
-          respond_with service(:find_repos, params).run
+          if params[:id]
+            params.delete :owner_name
+            respond_with service(:find_repo, params)
+          elsif params[:owner_name]
+            params.delete :id
+            respond_with service(:find_repos, params).run
+          end
         end
       end
 

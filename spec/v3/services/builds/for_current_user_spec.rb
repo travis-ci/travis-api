@@ -48,7 +48,8 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
         "@permissions"        => {
           "read"              => true,
           "cancel"            => false,
-          "restart"           => false },
+          "restart"           => false,
+          "prioritize"        => false },
         "id"                  => build.id,
         "number"              => "3",
         "state"               => "configured",
@@ -61,6 +62,7 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
         "finished_at"         => nil,
         "tag"                 => nil,
         "private"             => false,
+        "priority"            => false,
         "updated_at"          => json_format_time_with_ms(build.reload.updated_at),
         "stages"              => [{
            "@type"            => "stage",
