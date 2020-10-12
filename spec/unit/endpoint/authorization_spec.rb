@@ -67,7 +67,6 @@ describe Travis::Api::App::Endpoint::Authorization do
         Travis.redis.sadd('github:states', 'github-state')
         response = get '/auth/handshake?state=github-state&code=oauth-code'
         expect(response.status).to eq(401)
-        expect(response.body).to eq("state mismatch")
         Travis.redis.srem('github:states', 'github-state')
       end
     end
