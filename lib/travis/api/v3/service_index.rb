@@ -133,7 +133,7 @@ module Travis::API::V3
               :request_method => request_method,
               :uri_template => prefix + template
             }
-            action[:accepted_params] = factory.accepted_params if ['POST'.freeze, 'PATCH'.freeze].include? request_method
+            action[:accepted_params] = factory.accepted_params.uniq if ['POST'.freeze, 'PATCH'.freeze].include? request_method
             list << action
           end
 
