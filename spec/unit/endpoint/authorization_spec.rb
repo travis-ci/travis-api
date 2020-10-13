@@ -63,10 +63,10 @@ describe Travis::Api::App::Endpoint::Authorization do
           to_return(status: 200, body: "", headers: {})
       end
 
-      it 'does not succeed if state cookie mismatches' do
+      it 'does not succeed if state cookie mismatches (redirects)' do
         Travis.redis.sadd('github:states', 'github-state')
         response = get '/auth/handshake?state=github-state&code=oauth-code'
-        expect(response.status).to eq(401)
+        expect(response.status).to eq(302)
         Travis.redis.srem('github:states', 'github-state')
       end
     end
