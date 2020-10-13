@@ -167,6 +167,7 @@ class Travis::Api::App
             unless state_ok?(params[:state])
               log_with_request_id("[handshake] Handshake failed (state mismatch)")
               handle_invalid_response
+              return
             end
 
             endpoint.path          = config[:access_token_path]
@@ -197,6 +198,7 @@ class Travis::Api::App
           if params[:code]
             unless state_ok?(params[:state], params[:provider])
               handle_invalid_response
+              return
             end
 
             vcs_data = remote_vcs_user.authenticate(
@@ -269,7 +271,7 @@ class Travis::Api::App
         def handle_invalid_response
           clear_state_cookies
           back_url = headers['Referer'] || Travis.config.host
-          response.redirect(back_url)
+          redirect to(back_url)
         end
 
         def create_state
