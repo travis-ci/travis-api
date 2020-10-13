@@ -134,7 +134,6 @@ class Travis::Api::App
         def update_first_login(user)
           unless user.first_logged_in_at
             user.update_attributes(first_logged_in_at: Time.now)
-            user.create_initial_subscription unless Travis.config.org?
           end
         end
 
