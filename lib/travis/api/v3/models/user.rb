@@ -84,6 +84,8 @@ module Travis::API::V3
     end
 
     def create_initial_subscription
+      return if Travis.config.org?
+
       client = BillingClient.new(id)
       client.create_initial_v2_subscription
     end
