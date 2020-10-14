@@ -9,7 +9,7 @@ module Travis
     end
 
     def http_options
-      if Travis::Config.load.ssl.has_key?(:verify) && Travis::Config.load.ssl&.verify == false
+      if Travis::Config.load.ssl&.has_key?(:verify) && Travis::Config.load.ssl&.verify == false
         {url: endpoint, ssl: Travis::Config.load.ssl.to_h.merge(verify: false)}.compact
       else
         {url: endpoint}.compact
@@ -22,7 +22,7 @@ module Travis
     end
 
     def url_path(url)
-      url = URI.parse("#{Travis::Config.load.api_endpoint}/#{url}")
+      url = URI.parse("#{Travis::Config.load.api_endpoint}#{url}")
       url.path
     end
 
