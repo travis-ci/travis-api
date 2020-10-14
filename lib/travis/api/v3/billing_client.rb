@@ -231,10 +231,12 @@ module Travis::API::V3
     end
 
     def billing_url
+      Travis.logger.info("Travis.config.billing.url: #{Travis.config.billing.url}")
       Travis.config.billing.url || raise(ConfigurationError, 'No billing url configured')
     end
 
     def billing_auth_key
+      Travis.logger.info("Travis.config.billing.auth_key: #{Travis.config.billing.auth_key}")
       Travis.config.billing.auth_key || raise(ConfigurationError, 'No billing auth key configured')
     end
   end
