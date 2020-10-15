@@ -270,7 +270,7 @@ class Travis::Api::App
 
         def handle_invalid_response
           clear_state_cookies
-          redirect to(Travis.config.host)
+          redirect to("https://#{Travis.config.host}/")
         end
 
         def create_state
