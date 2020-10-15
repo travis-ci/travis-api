@@ -557,13 +557,15 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
     before  { get("/v3/owner/svenfuchs/allowance", {}, headers) }
     example { expect(last_response).to be_ok }
     example { expect(JSON.load(body)).to be == {
-      "@representation"   => "standard",
-      "@type"             => "allowance",
-      "concurrency_limit" => 1,
-      "id"                => 0,
-      "private_repos"     => false,
-      "public_repos"      => true,
-      "subscription_type" => 1
+      "@representation"       => "standard",
+      "@type"                 => "allowance",
+      "concurrency_limit"     => 1,
+      "private_repos"         => false,
+      "public_repos"          => true,
+      "subscription_type"     => 1,
+      "user_usage"            => false,
+      "pending_user_licenses" => false,
+      "id"                    => 0
     }}
   end
 
@@ -573,18 +575,20 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
       Travis.config.billing.url = billing_url
       Travis.config.billing.auth_key = billing_auth_key
       stub_billing_request(:get, "/usage/users/1/allowance", auth_key: billing_auth_key, user_id: 1)
-        .to_return(body: JSON.dump({ 'public_repos': true, 'private_repos': true, 'concurrency_limit': 666 }))
+        .to_return(body: JSON.dump({ 'public_repos': true, 'private_repos': true, 'user_usage': true, 'pending_user_licenses': false, 'concurrency_limit': 666 }))
       get("/v3/owner/svenfuchs/allowance", {}, headers)
     end
     example { expect(last_response).to be_ok }
     example { expect(JSON.load(body)).to be == {
-      "@representation"   => "standard",
-      "@type"             => "allowance",
-      "concurrency_limit" => 666,
-      "id"                => 1,
-      "private_repos"     => true,
-      "public_repos"      => true,
-      "subscription_type" => 2
+      "@representation"       => "standard",
+      "@type"                 => "allowance",
+      "concurrency_limit"     => 666,
+      "private_repos"         => true,
+      "public_repos"          => true,
+      "subscription_type"     => 2,
+      "user_usage"            => true,
+      "pending_user_licenses" => false,
+      "id"                    => 1
     }}
   end
 

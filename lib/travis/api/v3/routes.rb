@@ -126,6 +126,11 @@ module Travis::API::V3
         route '/allowance'
         get :for_owner
       end
+
+      resource :executions do
+        route '/executions'
+        get :for_owner
+      end
     end
 
     resource :repositories do

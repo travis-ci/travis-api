@@ -12,6 +12,12 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
   let(:subscription_id) { rand(999) }
   let(:invoice_id) { "TP#{rand(999)}" }
+  let(:page) { 1 }
+  let(:per_page) { 25 }
+  let(:from) { DateTime.now - 2.months }
+  let(:to) { DateTime.now }
+  let(:owner_id) { rand(999) }
+  let(:owner_type) { 'user' }
 
   describe '#get_subscription' do
     subject { billing.get_subscription(subscription_id) }
@@ -412,6 +418,19 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
       expect { subject }.to_not raise_error
       expect(stubbed_request).to have_been_made
+    end
+  end
+
+  describe '#update_organization_billing_permission' do
+    subject { billing.executions(owner_type, owner_id, page, per_page, from, to) }
+
+    it 'returns the list of executions for the subscription' do
+      stub_request(:get, "#{billing_url}usage/#{owner_type.downcase}s/#{owner_id}/executions?page=#{page}&per_page=#{per_page}&from=#{from}&to=#{to}").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
+        .to_return(body: JSON.dump([billing_executions_response_body]))
+
+      expect(subject.first).to be_a(Travis::API::V3::Models::Execution)
+      expect(subject.first.credits_consumed).to eq 5
+      expect(subject.first.os).to eq 'linux'
     end
   end
 end
