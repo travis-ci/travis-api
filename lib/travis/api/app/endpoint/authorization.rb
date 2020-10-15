@@ -106,7 +106,7 @@ class Travis::Api::App
       get '/handshake/?:provider?' do
         method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
-
+        Travis.logger.info("DEBUG DEBUG Travis.config.billing.url: #{Travis.config.billing.url}")
         send(method) do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
