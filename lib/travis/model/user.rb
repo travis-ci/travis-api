@@ -170,13 +170,6 @@ class User < Travis::Model
     vcs_type == 'GithubUser'
   end
 
-  def create_initial_subscription
-    return if Travis.config.org?
-
-    client = Travis::API::V3::BillingClient.new(id)
-    client.create_initial_v2_subscription
-  end
-
   protected
 
     def track_previous_changes
