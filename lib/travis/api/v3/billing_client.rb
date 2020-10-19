@@ -16,11 +16,12 @@ module Travis::API::V3
     end
 
     def authorize_build(repo, sender_id, jobs)
-      connection.post("/#{repo.owner.class.name.downcase.pluralize}/#{repo.owner.id}/authorize_build", { repository: { private: repo.private? }, sender_id: sender_id, jobs: jobs })
+      response = connection.post("/#{repo.owner.class.name.downcase.pluralize}/#{repo.owner.id}/authorize_build", { repository: { private: repo.private? }, sender_id: sender_id, jobs: jobs })
+      handle_errors_and_respond(response)
     end
 
     def self.default_allowance_response(id = 0)
-      Travis::API::V3::Models::Allowance.new(1, id, { 
+      Travis::API::V3::Models::Allowance.new(1, id, {
         "public_repos" => true,
         "private_repos" => false,
         "concurrency_limit" => 1,
