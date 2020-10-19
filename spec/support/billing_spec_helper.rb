@@ -47,9 +47,14 @@ module Support
       {
         "permissions" => { "read" => true, "write" => true },
         "id" => 81,
+        'status' => nil,
+        'valid_to' => nil,
+        'canceled_at' => nil,
         "plan_config" => {
-          "id" => "pro_tier_plan",
-          "name" => "Pro Tier Plan",
+          'id' => 'pro_tier_plan',
+          'name' => 'Pro Tier Plan',
+          'plan_type' => 'metered',
+          'concurrency_limit' => 20,
           'private_repos' => true,
           'starting_price' => 30000,
           'starting_users' => 10000,
@@ -194,6 +199,8 @@ module Support
         'id' => 'free_tier_plan',
         'name' => 'Free Tier Plan',
         'private_repos' => true,
+        'plan_type' => 'metered',
+        'concurrency_limit' => 20,
         'addon_configs' => [
           {
             'id' => 'oss_tier_credits',
