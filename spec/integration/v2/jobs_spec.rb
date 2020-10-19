@@ -39,6 +39,20 @@ describe 'Jobs', set_app: true do
     allow(remote).to receive(:send).and_return(remote) # ignore attribute updates
   end
 
+  before do
+    Travis.config.billing.url = 'http://localhost:9292/'
+    Travis.config.billing.auth_key = 'secret'
+
+    stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
+      body: MultiJson.dump(allowed: true, rejection_code: nil)
+    )
+  end
+
+  after do
+    Travis.config.billing.url = nil
+    Travis.config.billing.auth_key = nil
+  end
+
   it '/jobs?queue=builds.common' do
     skip('querying with a queue does not appear to be used anymore')
     response = get '/jobs', { queue: 'builds.common' }, headers
