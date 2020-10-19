@@ -4,7 +4,7 @@ module Travis
 
       class RestartModel
         attr_reader :current_user, :target
-        ABUSE_DETECTED = "abuse_detected"
+        ABUSE_DETECTED = 'abuse_detected'
 
         def initialize(current_user, params)
           @current_user = current_user
@@ -15,12 +15,14 @@ module Travis
         def push(event, payload)
           if current_user && target && accept?
             ::Sidekiq::Client.push(
-                  'queue'   => 'hub',
-                  'class'   => 'Travis::Hub::Sidekiq::Worker',
-                  'args'    => [event, payload]
-                )
+              'queue'   => 'hub',
+              'class'   => 'Travis::Hub::Sidekiq::Worker',
+              'args'    => [event, payload]
+            )
+
+            Result.new(value: payload)
           else
-            @cause_of_denial
+            Result.new(error: @cause_of_denial || 'restart failed')
           end
         end
 
@@ -39,7 +41,8 @@ module Travis
             client = Travis::API::V3::BillingClient.new(current_user.id)
             client.authorize_build(repository, current_user.id, jobs_attrs)
             true
-          rescue Travis::API::V3::InsufficientAccess
+          rescue Travis::API::V3::InsufficientAccess => e
+            @cause_of_denial = e.message
             false
           end
         end
@@ -71,23 +74,36 @@ module Travis
 
         private
 
-          def permission?
-            current_user && current_user.permission?(required_role, repository_id: target.repository_id) && !abusive?
+        def permission?
+          current_user && current_user.permission?(required_role, repository_id: target.repository_id) && !abusive?
+        end
+
+        def abusive?
+          abusive = Travis.redis.sismember("abuse:offenders", "#{@target.owner.class.name}:#{@target.owner_id}")
+          @cause_of_denial = ABUSE_DETECTED if abusive
+          abusive
+        end
+
+        def resetable?
+          target.resetable?
+        end
+
+        def required_role
+          Travis.config.roles.reset_model
+        end
+
+        class Result
+          attr_reader :error, :value
+
+          def initialize(value: nil, error: nil)
+            @value = value
+            @error = error
           end
 
-          def abusive?
-            abusive = Travis.redis.sismember("abuse:offenders", "#{@target.owner.class.name}:#{@target.owner_id}")
-            @cause_of_denial = ABUSE_DETECTED if abusive
-            abusive
+          def success?
+            !@error
           end
-
-          def resetable?
-            target.resetable?
-          end
-
-          def required_role
-            Travis.config.roles.reset_model
-          end
+        end
       end
     end
   end
