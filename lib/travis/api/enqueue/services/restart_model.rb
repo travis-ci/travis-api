@@ -25,13 +25,30 @@ module Travis
         end
 
         def accept?
-          current_user && permission? && resetable?
+          current_user && permission? && resetable? && billing?
+        end
+
+        def billing?
+          @_billing_ok ||= begin
+            jobs = target.is_a?(Job) ? [target] : target.jobs
+
+            jobs_attrs = jobs.map do |job|
+              job.config ? job.config.slice(:os) : {}
+            end
+
+            client = BillingClient.new(access_control.user.id)
+            client.authorize_build(repository, current_user.id, jobs_attrs)
+            true
+          rescue Travis::API::V3::InsufficientAccess => e
+            false
+          end
         end
 
         def messages
           messages = []
           messages << { notice: "The #{type} was successfully restarted." } if accept?
           messages << { error:  'You do not seem to have sufficient permissions.' } unless permission?
+          messages << { error:  'You do not have enough credits.' } unless billing?
           messages << { error:  "This #{type} currently can not be restarted." } unless resetable?
           messages
         end
