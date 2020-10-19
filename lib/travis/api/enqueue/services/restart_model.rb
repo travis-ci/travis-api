@@ -36,10 +36,10 @@ module Travis
               job.config ? job.config.slice(:os) : {}
             end
 
-            client = Travis::API::V3::BillingClient.new(access_control.user.id)
+            client = Travis::API::V3::BillingClient.new(current_user.id)
             client.authorize_build(repository, current_user.id, jobs_attrs)
             true
-          rescue Travis::API::V3::InsufficientAccess => e
+          rescue Travis::API::V3::InsufficientAccess
             false
           end
         end
