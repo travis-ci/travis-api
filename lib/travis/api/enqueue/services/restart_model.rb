@@ -30,13 +30,13 @@ module Travis
 
         def billing?
           @_billing_ok ||= begin
-            jobs = target.is_a?(Job) ? [target] : target.jobs
+            jobs = target.is_a?(Job) ? [target] : target.matrix
 
             jobs_attrs = jobs.map do |job|
               job.config ? job.config.slice(:os) : {}
             end
 
-            client = BillingClient.new(access_control.user.id)
+            client = Travis::API::V3::BillingClient.new(access_control.user.id)
             client.authorize_build(repository, current_user.id, jobs_attrs)
             true
           rescue Travis::API::V3::InsufficientAccess => e
