@@ -2,19 +2,26 @@ module Travis::API::V3
   class BillingClient
     class ConfigurationError < StandardError; end
 
+    ALLOWANCE_TIMEOUT = 1 # second
+
     def initialize(user_id)
       @user_id = user_id
     end
 
     def allowance(owner_type, owner_id)
-      response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/allowance")
+      response = connection(timeout: ALLOWANCE_TIMEOUT).get("/usage/#{owner_type.downcase}s/#{owner_id}/allowance")
       return BillingClient.default_allowance_response unless response.status == 200
 
       Travis::API::V3::Models::Allowance.new(2, owner_id, response.body)
     end
 
+    def authorize_build(repo, sender_id, jobs)
+      response = connection.post("/#{repo.owner.class.name.downcase.pluralize}/#{repo.owner.id}/authorize_build", { repository: { private: repo.private? }, sender_id: sender_id, jobs: jobs })
+      handle_errors_and_respond(response)
+    end
+
     def self.default_allowance_response(id = 0)
-      Travis::API::V3::Models::Allowance.new(1, id, { 
+      Travis::API::V3::Models::Allowance.new(1, id, {
         "public_repos" => true,
         "private_repos" => false,
         "concurrency_limit" => 1,
@@ -221,10 +228,12 @@ module Travis::API::V3
         true
       when 204
         true
-      when 404
-        raise Travis::API::V3::NotFound, response.body['error']
       when 400
         raise Travis::API::V3::ClientError, response.body['error']
+      when 403
+        raise Travis::API::V3::InsufficientAccess, response.body['rejection_code']
+      when 404
+        raise Travis::API::V3::NotFound, response.body['error']
       when 422
         raise Travis::API::V3::UnprocessableEntity, response.body['error']
       else
@@ -232,13 +241,15 @@ module Travis::API::V3
       end
     end
 
-    def connection
+    def connection(timeout: 10)
       @connection ||= Faraday.new(url: billing_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
         conn.basic_auth '_', billing_auth_key
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
         conn.headers['Content-Type'] = 'application/json'
         conn.request :json
         conn.response :json
+        conn.options[:open_timeout] = timeout
+        conn.options[:timeout] = timeout
         conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
         conn.adapter :net_http
       end

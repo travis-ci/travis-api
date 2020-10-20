@@ -5,6 +5,14 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
   let(:payload) { { 'id'=> "#{build.id}", 'user_id' => 1 } }
 
   before do
+    build.update(state: :passed)
+    Travis.config.billing.url = 'http://localhost:9292/'
+    Travis.config.billing.auth_key = 'secret'
+
+    stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
+      body: MultiJson.dump(allowed: true, rejection_code: nil)
+    )
+
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
     allow(Travis::Features).to receive(:owner_active?).with(:enqueue_to_hub, repo.owner).and_return(false)
     @original_sidekiq = Sidekiq::Client
@@ -13,6 +21,8 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
   end
 
   after do
+    Travis.config.billing.url = nil
+    Travis.config.billing.auth_key = nil
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = @original_sidekiq
   end
