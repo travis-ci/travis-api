@@ -267,7 +267,7 @@ module Support
         'virtualization_type' => 'vm',
         'queue' => 'builds.gce-oss',
         'job_id' => 123,
-        'repository_id' => 123,
+        'repository_id' => 1,
         'owner_id' => 1,
         'owner_type' => 'User',
         'plan_id' => 2,

@@ -2,6 +2,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
   let(:parsed_body) { JSON.load(last_response.body) }
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
+  let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   before do
     Travis.config.host = 'travis-ci.com'
@@ -41,7 +42,6 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
       get("/v3/owner/#{user.login}/executions?page=#{page}&per_page=#{per_page}&from=#{from.to_s}&to=#{to.to_s}", {}, headers)
 
       expect(last_response.status).to eq(200)
-      puts parsed_body
       expect(parsed_body).to eql_json({
         '@type' => 'executions',
         '@href' => "/v3/owner/travis-ci/executions?page=1&per_page=25&from=#{from.to_s}&to=#{to.to_s}",
@@ -56,7 +56,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
           'virtualization_type' => 'vm',
           'queue' => 'builds.gce-oss',
           'job_id' => 123,
-          'repository_id' => 123,
+          'repository_id' => repo.id,
           'owner_id' => 1,
           'owner_type' => 'User',
           'plan_id' => 2,
