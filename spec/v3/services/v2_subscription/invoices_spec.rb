@@ -25,10 +25,11 @@ describe Travis::API::V3::Services::V2Subscription::Invoices, set_app: true, bil
     let(:created_at) { '2018-04-17T18:30:32Z' }
     let(:url) { 'https://billing-test.travis-ci.com/invoices/111.pdf' }
     let(:amount_due) { 100 }
+    let(:status) { 'paid' }
     let(:subscription_id) { rand(999) }
     before do
       stub_billing_request(:get, "/v2/subscriptions/#{subscription_id}/invoices", auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump([{'id' => invoice_id, 'created_at' => created_at, 'url' => url, 'amount_due' => amount_due }]))
+        .to_return(status: 200, body: JSON.dump([{'id' => invoice_id, 'created_at' => created_at, 'url' => url, 'amount_due' => amount_due, 'status' => status }]))
     end
 
     it 'responds with list of subscriptions' do
@@ -45,7 +46,8 @@ describe Travis::API::V3::Services::V2Subscription::Invoices, set_app: true, bil
           'id' => invoice_id,
           'created_at' => created_at,
           'url' => url,
-          'amount_due' => amount_due
+          'amount_due' => amount_due,
+          'status' => status
         }]
       })
     end

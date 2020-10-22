@@ -79,11 +79,16 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
           '@type' => 'v2_subscription',
           '@representation' => 'standard',
           'id' => 1234,
+          'canceled_at' => nil,
+          'status' => nil,
+          'valid_to' => nil,
           'plan' => {
             '@type' => 'v2_plan_config',
             '@representation' => 'standard',
             'id' => 'pro_tier_plan',
             'name' => 'Pro Tier Plan',
+            'concurrency_limit' => 20,
+            'plan_type' => 'metered',
             'private_repos' => true,
             'starting_price' => 30_000,
             'starting_users' => 10_000,
@@ -152,6 +157,7 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
                 'remaining' => 40_000,
                 'purchase_date' => '2017-11-28T00:09:59.502Z',
                 'valid_to' => '2017-12-28T00:09:59.502Z',
+                'status' => 'subscribed',
                 'active' => true
               }
             },
@@ -172,6 +178,7 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
                 'remaining' => 10_000,
                 'purchase_date' => '2017-11-28T00:09:59.502Z',
                 'valid_to' => '',
+                'status' => 'subscribed',
                 'active' => true
               }
             }
@@ -183,7 +190,8 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
             '@representation' => 'minimal',
             'id' => organization.id,
             'vcs_type' => organization.vcs_type,
-            'login' => 'travis'
+            'login' => 'travis',
+            'name' => organization.name
           },
           'billing_info' => {
             '@type' => 'v2_billing_info',

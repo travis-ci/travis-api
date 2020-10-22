@@ -3,6 +3,20 @@ describe 'Builds', set_app: true do
   let(:build) { repo.builds.first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  before do
+    Travis.config.billing.url = 'http://localhost:9292/'
+    Travis.config.billing.auth_key = 'secret'
+
+    stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
+      body: MultiJson.dump(allowed: true, rejection_code: nil)
+    )
+  end
+
+  after do
+    Travis.config.billing.url = nil
+    Travis.config.billing.auth_key = nil
+  end
+
   it 'GET /builds?repository_id=1' do
     response = get '/builds', { repository_id: repo.id }, headers
     expect(response).to deliver_json_for(repo.builds.order('id DESC'), version: 'v2')

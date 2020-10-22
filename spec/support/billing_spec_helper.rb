@@ -47,9 +47,14 @@ module Support
       {
         "permissions" => { "read" => true, "write" => true },
         "id" => 81,
+        'status' => nil,
+        'valid_to' => nil,
+        'canceled_at' => nil,
         "plan_config" => {
-          "id" => "pro_tier_plan",
-          "name" => "Pro Tier Plan",
+          'id' => 'pro_tier_plan',
+          'name' => 'Pro Tier Plan',
+          'plan_type' => 'metered',
+          'concurrency_limit' => 20,
           'private_repos' => true,
           'starting_price' => 30000,
           'starting_users' => 10000,
@@ -143,6 +148,7 @@ module Support
               "remaining" => 40000,
               "purchase_date" => "2017-11-28T00:09:59.502Z",
               "valid_to" => "2017-12-28T00:09:59.502Z",
+              "status" => "subscribed",
               "active" => true
           }
         },
@@ -158,6 +164,7 @@ module Support
             "remaining" => 10000,
             "purchase_date" => "2017-11-28T00:09:59.502Z",
             "valid_to" => "",
+            "status" => "subscribed",
             "active" => true
           }
         }
@@ -196,6 +203,8 @@ module Support
         'id' => 'free_tier_plan',
         'name' => 'Free Tier Plan',
         'private_repos' => true,
+        'plan_type' => 'metered',
+        'concurrency_limit' => 20,
         'addon_configs' => [
           {
             'id' => 'oss_tier_credits',
@@ -250,6 +259,28 @@ module Support
         'created_at' => Time.now,
         'status' => 'started',
         'builds_remaining' => 5
+      }.deep_merge(attributes)
+    end
+
+    def billing_executions_response_body(attributes = {})
+      {
+        'id' => 1,
+        'os' => 'linux',
+        'instance_size' => 'standard-2',
+        'arch' => 'amd64',
+        'virtualization_type' => 'vm',
+        'queue' => 'builds.gce-oss',
+        'job_id' => 123,
+        'repository_id' => 123,
+        'owner_id' => 1,
+        'owner_type' => 'User',
+        'plan_id' => 2,
+        'sender_id' => 1,
+        'credits_consumed' => 5,
+        'started_at' => Time.now,
+        'finished_at' => Time.now,
+        'created_at' => Time.now,
+        'updated_at' => Time.now
       }.deep_merge(attributes)
     end
   end

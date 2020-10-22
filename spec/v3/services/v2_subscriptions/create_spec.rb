@@ -63,9 +63,14 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
           .to_return(status: 201, body: JSON.dump(billing_subscription_response_body(
             'id' => 1234,
             'owner' => { 'type' => 'Organization', 'id' => organization.id },
+            'canceled_at': nil,
+            'valid_to': nil,
+            'status': nil,
             'plan_config' => {
               'id' => 'pro_tier_plan',
               'name' => 'Pro Tier Plan',
+              'plan_type' => 'metered',
+              'concurrency_limit' => 20,
               'private_repos' => true,
               'starting_price' => 30_000,
               'starting_users' => 10_000,
@@ -162,7 +167,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             })))
       end
 
-      it 'Creates the subscription and responds with its representation' do
+      it 'creates the subscription and responds with its representation' do
         post('/v3/v2_subscriptions', JSON.dump(subscription_data), headers)
 
         expect(last_response.status).to eq(201)
@@ -171,6 +176,9 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
           '@representation' => 'standard',
           'id' => 1234,
           'created_at' => '2017-11-28T00:09:59.502Z',
+          'canceled_at' => nil,
+          'status' => nil,
+          'valid_to' => nil,
           'plan' => {
             '@type' => 'v2_plan_config',
             '@representation' => 'standard',
@@ -181,6 +189,8 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'starting_price' => 30_000,
             'private_credits' => 500_000,
             'public_credits' => 40_000,
+            'concurrency_limit' => 20,
+            'plan_type' => 'metered',
             'available_standalone_addons' => [
               {
                 'id' => 'credits_25k',
@@ -238,11 +248,13 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               '@representation' => 'standard',
               'id' => 7,
               'addon_id' => 7,
-              'addon_quantity' => 40000,
+              'addon_quantity' => 40_000,
               'addon_usage' => 0,
               'remaining' => 40000,
               'purchase_date' => '2017-11-28T00:09:59.502Z',
               'valid_to' => '2017-11-28T00:09:59.502Z',
+              'remaining' => 40_000,
+              'status' => 'pending',
               'active' => false
             }
           }],
@@ -278,6 +290,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,
             'vcs_type' => organization.vcs_type,
+            'name' => organization.name,
             'login' => 'travis'
           },
           'payment_intent' => nil,

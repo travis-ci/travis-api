@@ -9,14 +9,22 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
   before { ActiveRecord::Base.connection.execute("truncate requests cascade") }
 
   before do
+    Travis.config.billing.url = 'http://localhost:9292/'
+    Travis.config.billing.auth_key = 'secret'
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
     Travis::Features.activate_repository(:debug_tools, job.repository)
+
+    stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
+      body: MultiJson.dump(allowed: true, rejection_code: nil)
+    )
   end
 
   after do
+    Travis.config.billing.url = nil
+    Travis.config.billing.auth_key = nil
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = @original_sidekiq
   end

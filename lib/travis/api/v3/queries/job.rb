@@ -25,13 +25,7 @@ module Travis::API::V3
       service = Travis::Enqueue::Services::RestartModel.new(user, { job_id: id })
       payload = { id: id, user_id: user.id }
 
-      restart_status = service.push("job:restart", payload)
-
-      if restart_status == "abuse_detected"
-        restart_status
-      else
-        payload
-      end
+      service.push("job:restart", payload)
     end
   end
 end
