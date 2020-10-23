@@ -12,7 +12,7 @@ module Travis::API::V3
       raise NotFound unless owner
       raise InsufficientAccess unless access_control.visible?(owner)
 
-      results = query(:executions).for_owner(owner, access_control.user.id, 0, 'ALL',
+      results = query(:executions).for_owner(owner, access_control.user.id, 0, 0,
                                              params['from'], params['to'])
       result recuce_by_repo(results)
     end

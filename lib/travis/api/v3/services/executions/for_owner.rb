@@ -13,7 +13,7 @@ module Travis::API::V3
       raise InsufficientAccess unless access_control.visible?(owner)
 
       result query(:executions).for_owner(owner, access_control.user.id, params['page'] || 0,
-                                          params['per_page'] || 'ALL', params['from'], params['to'])
+                                          params['per_page'] || 0, params['from'], params['to'])
     end
   end
 end

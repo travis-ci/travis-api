@@ -36,7 +36,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
       stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=#{page}&per_page=#{per_page}&from=#{from.to_s}&to=#{to.to_s}")
         .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
         .to_return(body: JSON.dump([billing_executions_response_body]))
-      stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=0&per_page=ALL&from=#{from.to_s}&to=#{to.to_s}")
+      stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=0&per_page=0&from=#{from.to_s}&to=#{to.to_s}")
         .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
         .to_return(body: JSON.dump([billing_executions_response_body]))
     end
