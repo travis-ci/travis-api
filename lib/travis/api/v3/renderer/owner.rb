@@ -6,7 +6,7 @@ module Travis::API::V3
 
     representation(:minimal,    :id, :login, :name, :vcs_type)
     representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education,
-                   :allow_migration, :allowance)
+                   :allow_migration)
     representation(:additional, :repositories, :installation)
 
     def initialize(*)
@@ -28,14 +28,6 @@ module Travis::API::V3
 
     def allow_migration
       !!Travis::Features.owner_active?(:allow_migration, @model)
-    end
-
-    def allowance
-      return BillingClient.default_allowance_response(id) if Travis.config.org?
-      return BillingClient.default_allowance_response(id) unless access_control.user
-
-      client = BillingClient.new(access_control.user.id)
-      client.allowance(owner_type, id)
     end
 
     def owner_type
