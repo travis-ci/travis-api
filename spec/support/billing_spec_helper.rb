@@ -274,7 +274,7 @@ module Support
         'sender_id' => 1,
         'credits_consumed' => 5,
         'started_at' => Time.now,
-        'finished_at' => Time.now,
+        'finished_at' => Time.now + 10.minutes,
         'created_at' => Time.now,
         'updated_at' => Time.now
       }.deep_merge(attributes)

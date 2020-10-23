@@ -36,6 +36,9 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
       stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=#{page}&per_page=#{per_page}&from=#{from.to_s}&to=#{to.to_s}")
         .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
         .to_return(body: JSON.dump([billing_executions_response_body]))
+      stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=0&per_page=ALL&from=#{from.to_s}&to=#{to.to_s}")
+        .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
+        .to_return(body: JSON.dump([billing_executions_response_body]))
     end
 
     it 'responds with list of executions' do
@@ -63,11 +66,125 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
           'sender_id' => 1,
           'credits_consumed' => 5,
           'started_at' => Time.now.to_s,
-          'finished_at' => Time.now.to_s,
+          'finished_at' => (Time.now + 10.minutes).to_s,
           'created_at' => Time.now.to_s,
           'updated_at' => Time.now.to_s
         }]
       })
+    end
+
+    it 'responds with list of executions per repo' do
+      get("/v3/owner/#{user.login}/executions_per_repo?from=#{from.to_s}&to=#{to.to_s}", {}, headers)
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_body).to eql_json({
+        '@type' => 'executionsperepo',
+        '@href' => "/v3/owner/travis-ci/executions_per_repo?from=#{from.to_s}&to=#{to.to_s}",
+        '@representation' => 'standard',
+        'executionsperepo' =>
+        [
+          {
+            "repository_id"=>1,
+            "os"=>"linux",
+            "credits_consumed"=>5,
+            "minutes_consumed"=>10,
+            "repository"=>
+            {
+              "@type"=>"repository",
+              "@href"=>"/repo/1",
+              "@representation"=>"standard",
+              "@permissions"=>
+              {
+                "read"=>true,
+                "activate"=>false,
+                "deactivate"=>false,
+                "migrate"=>false,
+                "star"=>false,
+                "unstar"=>false,
+                "create_cron"=>false,
+                "create_env_var"=>false,
+                "create_key_pair"=>false,
+                "delete_key_pair"=>false,
+                "create_request"=>false,
+                "admin"=>false
+              },
+              "id"=>1,
+              "name"=>"minimal",
+              "slug"=>"svenfuchs/minimal",
+              "description"=>nil,
+              "github_id"=>1,
+              "vcs_id"=>nil,
+              "vcs_type"=>"GithubRepository",
+              "github_language"=>nil,
+              "active"=>true,
+              "private"=>false,
+              "owner"=>{"@type"=>"user", "id"=>1, "login"=>"svenfuchs", "@href"=>"/user/1"},
+              "owner_name"=>"svenfuchs",
+              "vcs_name"=>"minimal",
+              "default_branch"=>{"@type"=>"branch", "@href"=>"/repo/1/branch/master", "@representation"=>"minimal", "name"=>"master"},
+              "starred"=>false,
+              "managed_by_installation"=>false,
+              "active_on_org"=>nil,
+              "migration_status"=>nil,
+              "history_migration_status"=>nil,
+              "shared"=>false,
+              "config_validation"=>false
+            }
+          }
+        ]
+      })
+    end
+
+    it 'responds with list of executions per sender' do
+      get("/v3/owner/#{user.login}/executions_per_sender?from=#{from.to_s}&to=#{to.to_s}", {}, headers)
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_body).to eql_json({
+        '@type' => 'executionspesender',
+        '@href' => "/v3/owner/travis-ci/executions_per_sender?from=#{from.to_s}&to=#{to.to_s}",
+        '@representation' => 'standard',
+        'executionspesender' =>
+        [
+          {
+            "credits_consumed"=>5,
+            "minutes_consumed"=>10,
+            "sender_id"=>1,
+            "sender"=>
+            {
+              "@type"=>"user",
+              "@href"=>"/user/1",
+              "@representation"=>"standard",
+              "@permissions"=>{"read"=>true, "sync"=>false},
+              "id"=>1,
+              "login"=>"svenfuchs",
+              "name"=>"Sven Fuchs",
+              "github_id"=>nil,
+              "vcs_id"=>nil,
+              "vcs_type"=>"GithubUser",
+              "avatar_url"=>"https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
+              "education"=>nil,
+              "allow_migration"=>false,
+              "allowance"=>
+              {
+                "@type"=>"allowance",
+                "@representation"=>"minimal",
+                "subscription_type"=>1,
+                "public_repos"=>true,
+                "private_repos"=>false,
+                "concurrency_limit"=>1,
+                "user_usage"=>false,
+                "pending_user_licenses"=>false,
+                "id"=>1
+              },
+              "email"=>nil,
+              "is_syncing"=>nil,
+              "synced_at"=>nil,
+              "recently_signed_up"=>false,
+              "secure_user_hash"=>nil
+            }
+          }
+        ]}
+      )
     end
   end
 end
