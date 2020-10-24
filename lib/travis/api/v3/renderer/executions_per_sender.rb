@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Renderer::ExecutionsPerSender < CollectionRenderer
-    type           :executionspesender
-    collection_key :executionspesender
+    type           :executionspersender
+    collection_key :executionspersender
   end
 end

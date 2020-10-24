@@ -78,10 +78,10 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
 
       expect(last_response.status).to eq(200)
       expect(parsed_body).to eql_json({
-        '@type' => 'executionsperepo',
+        '@type' => 'executionsperrepo',
         '@href' => "/v3/owner/travis-ci/executions_per_repo?from=#{from.to_s}&to=#{to.to_s}",
         '@representation' => 'standard',
-        'executionsperepo' =>
+        'executionsperrepo' =>
         [
           {
             "repository_id"=>1,
@@ -140,10 +140,10 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
 
       expect(last_response.status).to eq(200)
       expect(parsed_body).to eql_json({
-        '@type' => 'executionspesender',
+        '@type' => 'executionspersender',
         '@href' => "/v3/owner/travis-ci/executions_per_sender?from=#{from.to_s}&to=#{to.to_s}",
         '@representation' => 'standard',
-        'executionspesender' =>
+        'executionspersender' =>
         [
           {
             "credits_consumed"=>5,
