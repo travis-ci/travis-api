@@ -106,7 +106,6 @@ class Travis::Api::App
       get '/handshake/?:provider?' do
         method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
-
         send(method) do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
@@ -134,7 +133,6 @@ class Travis::Api::App
         def update_first_login(user)
           unless user.first_logged_in_at
             user.update_attributes(first_logged_in_at: Time.now)
-            user.create_initial_subscription unless Travis.config.org?
           end
         end
 
