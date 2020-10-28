@@ -3,7 +3,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
-  
+
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
 
@@ -13,8 +13,6 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
     Travis.config.host = 'travis-ci.com'
     Travis.config.billing.url = billing_url
     Travis.config.billing.auth_key = billing_auth_key
-    stub_billing_request(:get, "/usage/users/#{user.id}/allowance", auth_key: billing_auth_key, user_id: user.id)
-      .to_return(body: JSON.dump({ 'public_repos': true, 'private_repos': true, 'user_usage': true, 'pending_user_licenses': false, 'concurrency_limit': 666 }))
   end
 
   describe "authenticated as user with access" do
