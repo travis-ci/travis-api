@@ -58,18 +58,7 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
         "vcs_type"        => org.vcs_type,
         "avatar_url"      => nil,
         "education"       => false,
-        "allow_migration" => false,
-        "allowance" => {
-          "@type"             => "allowance",
-          "@representation"   => "minimal",
-          "subscription_type" => 1,
-          "public_repos"      => true,
-          "private_repos"     => false,
-          "concurrency_limit" => 1,
-          "user_usage" => false,
-          "pending_user_licenses" => false,
-          "id"                => org.id
-        }
+        "allow_migration" => false
       }]
     }}
   end

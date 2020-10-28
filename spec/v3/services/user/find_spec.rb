@@ -37,17 +37,6 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
       "synced_at"        => user.synced_at,
       "education"        => true,
       "allow_migration"  => false,
-      "allowance"        => {
-        "@type"                 => "allowance",
-        "@representation"       => "minimal",
-        "subscription_type"     => 2,
-        "public_repos"          => true,
-        "private_repos"         => true,
-        "concurrency_limit"     => 666,
-        "user_usage"            => true,
-        "pending_user_licenses" => false,
-        "id"                    => user.id
-      },
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
     }}
