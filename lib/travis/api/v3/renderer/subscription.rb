@@ -24,7 +24,7 @@ module Travis::API::V3
   end
 
   class Renderer::BillingInfo < ModelRenderer
-    representation(:standard, :id, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code)
+    representation(:standard, :id, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code, :has_local_registration)
   end
 
   class Renderer::CreditCardInfo < ModelRenderer

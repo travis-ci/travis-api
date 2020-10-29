@@ -65,6 +65,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             'last_name' => 'rosas',
             'company' => '',
             'billing_email' => 'a.rosas10@gmail.com',
+            'has_local_registration' => nil,
             'zip_code' => '28450',
             'address' => 'Luis Spota',
             'address2' => '',

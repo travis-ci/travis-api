@@ -165,7 +165,8 @@ class Travis::Api::App
           if params[:code]
             unless state_ok?(params[:state])
               log_with_request_id("[handshake] Handshake failed (state mismatch)")
-              halt 400, 'state mismatch'
+              handle_invalid_response
+              return
             end
 
             endpoint.path          = config[:access_token_path]
@@ -195,7 +196,8 @@ class Travis::Api::App
         def vcs_handshake
           if params[:code]
             unless state_ok?(params[:state], params[:provider])
-              halt 400, 'state mismatch'
+              handle_invalid_response
+              return
             end
 
             vcs_data = remote_vcs_user.authenticate(
@@ -259,6 +261,18 @@ class Travis::Api::App
         end
 
         # VCS HANDSHAKE END
+
+        def clear_state_cookies
+          response.delete_cookie cookie_name(:github)
+          response.delete_cookie cookie_name(:gitlab)
+          response.delete_cookie cookie_name(:bitbucket)
+          response.delete_cookie cookie_name(:assembla)
+        end
+
+        def handle_invalid_response
+          clear_state_cookies
+          redirect to("https://#{Travis.config.host}/")
+        end
 
         def create_state
           state = SecureRandom.urlsafe_base64(16)

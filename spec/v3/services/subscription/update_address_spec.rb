@@ -28,7 +28,8 @@ describe Travis::API::V3::Services::Subscription::UpdateAddress, set_app: true, 
       'city' => 'Berlin',
       'country' => 'Germany',
       'zip_code' => '10001',
-      'billing_email' => 'travis@example.org'
+      'billing_email' => 'travis@example.org',
+      'has_local_registration' => nil
       } }
     let(:subscription_id) { rand(999) }
 
@@ -42,7 +43,8 @@ describe Travis::API::V3::Services::Subscription::UpdateAddress, set_app: true, 
             'city' => 'Berlin',
             'country' => 'Germany',
             'zip_code' => '10001',
-            'billing_email' => 'travis@example.org'
+            'billing_email' => 'travis@example.org',
+            'has_local_registration' => nil
           })
         .to_return(status: 204)
     end

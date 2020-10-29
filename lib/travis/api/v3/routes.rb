@@ -15,6 +15,7 @@ module Travis::API::V3
 
       post :cancel, '/cancel'
       post :restart, '/restart'
+      post :priority, '/priority'
 
       resource :jobs do
         route '/jobs'
