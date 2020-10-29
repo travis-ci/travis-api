@@ -2,7 +2,6 @@ language: ruby
 
 import:
   - travis-ci/build-configs:db-setup.yml@epic-pricing
-  - travis-ci/build-configs:db-setup.yml@bionic
 
 rvm: 2.6.5
 
