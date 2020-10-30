@@ -30,6 +30,10 @@ module Travis::API::V3
       }.freeze)
     end
 
+    def self.minimal_allowance_response(id = 0)
+      Travis::API::V3::Models::Allowance.new(2, id, {})
+    end
+
     def executions(owner_type, owner_id, page, per_page, from, to)
       response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/executions?page=#{page}&per_page=#{per_page}&from=#{from}&to=#{to}")
       executions = response.body.map do |execution_data|
