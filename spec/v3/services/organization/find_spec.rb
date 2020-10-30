@@ -26,12 +26,6 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "allowance"        => {
         "@type"             => "allowance",
         "@representation"   => "minimal",
-        "subscription_type" => 1,
-        "public_repos"      => true,
-        "private_repos"     => false,
-        "concurrency_limit" => 1,
-        "user_usage" => false,
-        "pending_user_licenses" => false,
         "id"                => org.id
       }
     }}
@@ -66,12 +60,6 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "allowance"        => {
         "@type"             => "allowance",
         "@representation"   => "minimal",
-        "subscription_type" => 1,
-        "public_repos"      => true,
-        "private_repos"     => false,
-        "concurrency_limit" => 1,
-        "user_usage" => false,
-        "pending_user_licenses" => false,
         "id"                => org.id
       }
     }}

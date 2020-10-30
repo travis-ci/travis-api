@@ -40,12 +40,6 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
       "allowance"        => {
         "@type"                 => "allowance",
         "@representation"       => "minimal",
-        "subscription_type"     => 2,
-        "public_repos"          => true,
-        "private_repos"         => true,
-        "concurrency_limit"     => 666,
-        "user_usage"            => true,
-        "pending_user_licenses" => false,
         "id"                    => user.id
       },
       "recently_signed_up"=>false,
