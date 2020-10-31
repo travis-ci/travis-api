@@ -106,7 +106,6 @@ class Travis::Api::App
       get '/handshake/?:provider?' do
         method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
-
         send(method) do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
@@ -212,7 +211,9 @@ class Travis::Api::App
               return
             end
 
-            yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload(params[:provider])
+            user = User.find(vcs_data['user']['id'])
+            update_first_login(user)
+            yield serialize_user(user), vcs_data['token'], payload(params[:provider])
           else
             state = vcs_create_state(params[:origin] || params[:redirect_uri])
 

@@ -8,11 +8,14 @@ module Travis::API::V3
       access_control.permissions(build).restart!
       build.clear_debug_options!
 
-      restart_status = query.restart(access_control.user)
-      if restart_status == "abuse_detected"
+      result = query.restart(access_control.user)
+
+      if result.success?
+        accepted(build: build, state_change: :restart)
+      elsif result.error == Travis::Enqueue::Services::RestartModel::ABUSE_DETECTED
         abuse_detected
       else
-        accepted(build: build, state_change: :restart)
+        insufficient_balance
       end
     end
   end

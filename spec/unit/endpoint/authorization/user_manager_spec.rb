@@ -1,4 +1,4 @@
-describe Travis::Api::App::Endpoint::Authorization::UserManager do
+describe Travis::Api::App::Endpoint::Authorization::UserManager, billing_spec_helper: true do
   let(:manager) { described_class.new(data, 'abc123') }
 
   before do
@@ -51,9 +51,15 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
     context 'with existing user' do
       let!(:user) { FactoryBot.create(:user, login: 'drogus', github_id: 456, github_oauth_token: token) }
       let(:token) { nil }
+      let(:billing_url) { 'http://billingfake.travis-ci.com' }
+      let(:billing_auth_key) { 'secret' }
 
       before do
         allow(manager).to receive(:education).and_return(false)
+        Travis.config.billing.url = billing_url
+        Travis.config.billing.auth_key = billing_auth_key
+        stubbed_request = stub_billing_request(:post, "/v2/initial_subscription", auth_key: billing_auth_key, user_id: user.id)
+                          .to_return(status: 201, body: JSON.dump(billing_v2_subscription_response_body('id' => 456, 'owner' => { 'type' => 'User', 'id' => user.id })))
       end
 
       context 'without any User#tokens record' do

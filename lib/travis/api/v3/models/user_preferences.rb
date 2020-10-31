@@ -6,6 +6,8 @@ module Travis::API::V3
 
     attribute :build_emails, Boolean, default: true
 
+    attribute :consume_oss_credits, Boolean, default: true
+
     # whether to show insights about the user's private repositories to
     # everybody or keep them only for the user (note: insights about public
     # repositories are always public)

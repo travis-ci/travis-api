@@ -86,7 +86,8 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
         "@representation"=> "minimal",
         "id"          => user2.id,
         'vcs_type'    => user2.vcs_type,
-        "login"       => "carlad"
+        "login"       => "carlad",
+        "name"        => user2.name
       }
     }}
   end

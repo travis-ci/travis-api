@@ -4,8 +4,9 @@ module Travis::API::V3
   class Renderer::Owner < ModelRenderer
     include Renderer::AvatarURL
 
-    representation(:minimal,    :id, :login, :vcs_type)
-    representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education, :allow_migration)
+    representation(:minimal,    :id, :login, :name, :vcs_type)
+    representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education,
+                   :allow_migration, :allowance)
     representation(:additional, :repositories, :installation)
 
     def initialize(*)
@@ -27,6 +28,17 @@ module Travis::API::V3
 
     def allow_migration
       !!Travis::Features.owner_active?(:allow_migration, @model)
+    end
+
+    def allowance
+      return BillingClient.default_allowance_response(id) if Travis.config.org?
+      return BillingClient.default_allowance_response(id) unless access_control.user
+      
+      BillingClient.minimal_allowance_response(id)
+    end
+
+    def owner_type
+      vcs_type.match(/User$/) ? 'User' : 'Organization'
     end
   end
 end

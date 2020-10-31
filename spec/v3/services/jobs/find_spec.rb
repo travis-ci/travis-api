@@ -98,7 +98,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@representation"     => "minimal",
           "id"                  => 1,
           "vcs_type"            => 'GithubUser',
-          "login"               => "svenfuchs"}},
+          "login"               => "svenfuchs",
+          "name"                => "Sven Fuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[1].id}",
         "@representation"       => "standard",
@@ -173,7 +174,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@representation"     => "minimal",
           "id"                  => 1,
           "vcs_type"            => 'GithubUser',
-          "login"               => "svenfuchs"}},
+          "login"               => "svenfuchs",
+          "name"                => "Sven Fuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[2].id}",
         "@representation"       => "standard",
@@ -248,7 +250,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@representation"     => "minimal",
           "id"                  => 1,
           "vcs_type"            => 'GithubUser',
-          "login"               => "svenfuchs"}},
+          "login"               => "svenfuchs",
+          "name"                => "Sven Fuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[3].id}",
         "@representation"       => "standard",
@@ -323,7 +326,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@representation"     => "minimal",
           "id"                  => 1,
           "vcs_type"            => 'GithubUser',
-          "login"               => "svenfuchs"}}
+          "login"               => "svenfuchs",
+          "name"                => "Sven Fuchs"}}
         ]
       })
     }
@@ -416,7 +420,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@representation"     => "minimal",
           "id"                  => 1,
           "vcs_type"            => 'GithubUser',
-          "login"               => "svenfuchs"}},
+          "login"               => "svenfuchs",
+          "name"                => "Sven Fuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[1].id}",
         "@representation"       => "standard",
@@ -491,7 +496,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@representation"     => "minimal",
           "id"                  => 1,
           "vcs_type"            => 'GithubUser',
-          "login"               => "svenfuchs"}},
+          "login"               => "svenfuchs",
+          "name"                => "Sven Fuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[2].id}",
         "@representation"       => "standard",
@@ -566,7 +572,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@representation"     => "minimal",
           "id"                  => 1,
           "vcs_type"            => 'GithubUser',
-          "login"               => "svenfuchs"}},
+          "login"               => "svenfuchs",
+          "name"                => "Sven Fuchs"}},
         {"@type"                => "job",
         "@href"                 => "/v3/job/#{jobs[3].id}",
         "@representation"       => "standard",
@@ -641,7 +648,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "@representation"     => "minimal",
           "id"                  => 1,
           "vcs_type"            => 'GithubUser',
-          "login"               => "svenfuchs"}}
+          "login"               => "svenfuchs",
+          "name"                => "Sven Fuchs"}}
         ]
       })
     }
@@ -737,7 +745,8 @@ describe "jobs private repository, private API, authenticated as user with push 
           "@representation"=> "minimal",
           "id"             =>  1,
           "vcs_type"       => 'GithubUser',
-          "login"          => "svenfuchs"}},
+          "login"          => "svenfuchs",
+          "name"           => "Sven Fuchs"}},
         {"@type"            => "job",
         "@href"            => "/v3/job/#{jobs[1].id}",
         "@representation"  => "standard",
@@ -812,7 +821,8 @@ describe "jobs private repository, private API, authenticated as user with push 
           "@representation"=> "minimal",
           "id"             =>  1,
           "vcs_type"       => 'GithubUser',
-          "login"          => "svenfuchs"}},
+          "login"          => "svenfuchs",
+          "name"           => "Sven Fuchs"}},
         {"@type"            => "job",
         "@href"            => "/v3/job/#{jobs[2].id}",
         "@representation"  => "standard",
@@ -887,7 +897,8 @@ describe "jobs private repository, private API, authenticated as user with push 
           "@representation"=> "minimal",
           "id"             =>  1,
           "vcs_type"       => 'GithubUser',
-          "login"          => "svenfuchs"}},
+          "login"          => "svenfuchs",
+          "name"           => "Sven Fuchs"}},
         {"@type"            => "job",
         "@href"            => "/v3/job/#{jobs[3].id}",
         "@representation"  => "standard",
@@ -962,7 +973,8 @@ describe "jobs private repository, private API, authenticated as user with push 
           "@representation"=> "minimal",
           "id"             =>  1,
           "vcs_type"       => 'GithubUser',
-          "login"          => "svenfuchs"}}
+          "login"          => "svenfuchs",
+          "name"           => "Sven Fuchs"}}
         ]
       })
     }

@@ -59,6 +59,11 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
         "avatar_url"      => nil,
         "education"       => false,
         "allow_migration" => false,
+        "allowance" => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        }
       }]
     }}
   end

@@ -23,6 +23,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        }
       }}
     end
 
@@ -43,6 +48,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        }
       }}
     end
 
@@ -68,6 +78,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"          => nil,
         "education"           => false,
         "allow_migration"     => false,
+        "allowance"           => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        },
         "repositories"        => [{
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -137,6 +152,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"        => nil,
         "education"         => false,
         "allow_migration"   => false,
+        "allowance"         => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        },
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
@@ -201,6 +221,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        }
       }}
     end
 
@@ -225,6 +250,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"     => nil,
         "education"      => false,
         "allow_migration"=> false,
+        "allowance"      => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        },
         "@warnings"      => [{
           "@type"        => "warning",
           "message"      => "query parameter organization.id not safelisted, ignored",
@@ -259,6 +289,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "synced_at"      => nil,
         "education"      => nil,
         "allow_migration"=> false,
+        "allowance"      => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => user.id
+        },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
       }}
@@ -284,6 +319,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "is_syncing"     => nil,
         "synced_at"      => nil,
         "allow_migration"=> false,
+        "allowance"      => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => user.id
+        },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
       }}
@@ -309,6 +349,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "is_syncing"       => nil,
         "synced_at"        => nil,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => user.id
+        },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
       }}
@@ -338,6 +383,11 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "is_syncing"       => nil,
         "synced_at"        => nil,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => user.id
+        },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
         "@warnings"        => [{

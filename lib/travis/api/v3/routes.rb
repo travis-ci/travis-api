@@ -96,6 +96,12 @@ module Travis::API::V3
         get   :for_organization
         patch :update
       end
+
+      resource :build_permissions do
+        route '/build_permissions'
+        get :find_for_organization
+        patch :update_for_organization
+      end
     end
 
     resource :organizations do
@@ -114,6 +120,16 @@ module Travis::API::V3
 
       resource :active do
         route '/active'
+        get :for_owner
+      end
+
+      resource :allowance do
+        route '/allowance'
+        get :for_owner
+      end
+
+      resource :executions do
+        route '/executions'
         get :for_owner
       end
     end
@@ -146,6 +162,12 @@ module Travis::API::V3
         end
       end
 
+      resource :build_permissions do
+        route '/build_permissions'
+        get :find_for_repo
+        patch :update_for_repo
+      end
+
       resource :branches do
         route '/branches'
         get :find
@@ -153,7 +175,7 @@ module Travis::API::V3
 
       resource :builds do
         route '/builds'
-        get  :find
+        get :find
       end
 
       resource :caches do
@@ -297,6 +319,12 @@ module Travis::API::V3
       post :create
     end
 
+    hidden_resource :v2_subscriptions do
+      route '/v2_subscriptions'
+      get :all
+      post :create
+    end
+
     hidden_resource :subscription do
       route '/subscription/{subscription.id}'
       patch :update_address, '/address'
@@ -305,6 +333,18 @@ module Travis::API::V3
       patch :resubscribe, '/resubscribe'
       post :cancel, '/cancel'
       post :pay, '/pay'
+      get :invoices, '/invoices'
+    end
+
+    hidden_resource :v2_subscription do
+      route '/v2_subscription/{subscription.id}'
+      patch :update_address, '/address'
+      patch :update_creditcard, '/creditcard'
+      patch :changetofree, '/changetofree'
+      patch :update_plan, '/plan'
+      post :pay, '/pay'
+      post :buy_addon, '/addon/{addon.id}'
+      get :user_usages, '/user_usages'
       get :invoices, '/invoices'
     end
 
@@ -321,6 +361,12 @@ module Travis::API::V3
 
     hidden_resource :plans do
       route '/plans_for'
+      get :all, '/user'
+      get :all, '/organization/{organization.id}'
+    end
+
+    hidden_resource :v2_plans do
+      route '/v2_plans_for'
       get :all, '/user'
       get :all, '/organization/{organization.id}'
 

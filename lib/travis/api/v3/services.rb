@@ -4,6 +4,7 @@ module Travis::API::V3
 
     Accounts              = Module.new { extend Services }
     Active                = Module.new { extend Services }
+    Allowance             = Module.new { extend Services }
     BetaFeature           = Module.new { extend Services }
     BetaFeatures          = Module.new { extend Services }
     BetaMigrationRequest  = Module.new { extend Services }
@@ -14,6 +15,7 @@ module Travis::API::V3
     Broadcasts            = Module.new { extend Services }
     Build                 = Module.new { extend Services }
     Builds                = Module.new { extend Services }
+    BuildPermissions      = Module.new { extend Services }
     Caches                = Module.new { extend Services }
     Coupons               = Module.new { extend Services }
     Cron                  = Module.new { extend Services }
@@ -22,6 +24,7 @@ module Travis::API::V3
     EnvVar                = Module.new { extend Services }
     EnvVars               = Module.new { extend Services }
     EnterpriseLicense     = Module.new { extend Services }
+    Executions            = Module.new { extend Services }
     Gdpr                  = Module.new { extend Services }
     Insights              = Module.new { extend Services }
     Installation          = Module.new { extend Services }
@@ -36,6 +39,7 @@ module Travis::API::V3
     Organizations         = Module.new { extend Services }
     Owner                 = Module.new { extend Services }
     Plans                 = Module.new { extend Services }
+    V2Plans               = Module.new { extend Services }
     Preferences           = Module.new { extend Services }
     Preference            = Module.new { extend Services }
     Queues                = Module.new { extend Services }
@@ -47,6 +51,8 @@ module Travis::API::V3
     Stages                = Module.new { extend Services }
     Subscription          = Module.new { extend Services }
     Subscriptions         = Module.new { extend Services }
+    V2Subscription        = Module.new { extend Services }
+    V2Subscriptions       = Module.new { extend Services }
     Trials                = Module.new { extend Services }
     User                  = Module.new { extend Services }
     UserSetting           = Module.new { extend Services }
