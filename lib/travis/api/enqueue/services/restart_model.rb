@@ -44,6 +44,9 @@ module Travis
           rescue Travis::API::V3::InsufficientAccess => e
             @cause_of_denial = e.message
             false
+          rescue Travis::API::V3::NotFound
+            # Owner is on a legacy plan
+            true
           end
         end
 

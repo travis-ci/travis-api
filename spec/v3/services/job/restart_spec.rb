@@ -219,6 +219,34 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
     end
 
+    context 'billing authorization' do
+      context 'billing service rejects the job' do
+        before do
+          stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
+            body: MultiJson.dump(allowed: false, rejection_code: :no_build_credits), status: 403
+          )
+        end
+
+        it 'does not restart the job' do
+          post("/v3/job/#{job.id}/restart", params, headers)
+          expect(last_response.status).to eq(403)
+        end
+      end
+
+      context 'billing service returns 404 (user is not on a new plan)' do
+        before do
+          stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
+            body: MultiJson.dump(error: 'Plan not found'), status: 404
+          )
+        end
+
+        it 'restarts the job' do
+          post("/v3/job/#{job.id}/restart", params, headers)
+          expect(last_response.status).to eq(202)
+        end
+      end
+    end
+
     describe "passed state" do
       include_examples 'clears debug_options'
 
