@@ -13,24 +13,33 @@
         <%= f.submit 'Sync users', class: 'button' %>
       <% end %>
     </div>
-    <ul>
-      <li class="inline-list member-item">
-        <p class="info-label">Name</p>
-        <p class="info-label">Role</p>
-      </li>
-      <% @members.each do |member| %>
-        <% if member %>
-          <li class="inline-list member-item">
-            <p>
-              <!-- TODO: Display a default avatar image if there isn't one defined -->
-              <%= image_tag(member.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if member.avatar_url %>
-              <%= link_to describe(member), member %>
-            </p>
-            <p><%= member.role %></p>
-          </li>
+    <%= form_tag update_member_permissions_organization_path(params[:id]) do %>
+      <ul>
+        <li class="inline-list member-item">
+          <p class="info-label">Name</p>
+          <p class="info-label">Role</p>
+          <p class="info-label">Can build</p>
+        </li>
+        <% @members.each do |member| %>
+          <% if member %>
+            <li class="inline-list member-item">
+              <p>
+                <!-- TODO: Display a default avatar image if there isn't one defined -->
+                <%= image_tag(member.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if member.avatar_url %>
+                <%= link_to describe(member), member %>
+              </p>
+              <p><%= member.role %></p>
+              <p>
+                <%= check_box_tag "allowed_users[]", member.id, member.build_permission %>
+              </p>
+            </li>
+          <% end %>
         <% end %>
-      <% end %>
-    </ul>
+      </ul>
+
+      <%= submit_tag 'Update', class: 'button' %>
+    <% end %>
+
+    <%= will_paginate @members, param_name: 'page', params: {controller: controller_name, action: 'members', id: params[:id], anchor: 'members'}, 'data-remote': true %>
   <% end %>
-  <%= will_paginate @members, param_name: 'page', params: {controller: controller_name, action: 'members', id: params[:id], anchor: 'members'}, 'data-remote': true %>
 </section>

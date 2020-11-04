@@ -28,7 +28,7 @@ class OrganizationsController < ApplicationController
 
   def subscription
     subscription = Subscription.find_by(owner_id: params[:id])
-    if subscription 
+    if subscription
       @subscription = SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
     end
     render_either 'shared/subscription'
@@ -43,7 +43,7 @@ class OrganizationsController < ApplicationController
   end
 
   def members
-    all_members = @organization.users.select('users.*, memberships.role as role')
+    all_members = @organization.users.select('users.*, memberships.role as role, memberships.build_permission as build_permission')
     @members = all_members.order(:name).paginate(page: params[:page], per_page: 25)
     @members_amount = "(#{all_members.length})" if all_members.present?
     render_either 'members'
@@ -55,6 +55,26 @@ class OrganizationsController < ApplicationController
                                  .order(:last_build_id, :name, :active)
       #                           .paginate(page: params[:page], per_page: 20)
     render_either 'shared/repositories'
+  end
+
+  def update_member_permissions
+    current_user_ids = @organization.memberships.pluck(:user_id)
+    allowed_user_ids = params[:allowed_users] || []
+    allowed_user_ids = allowed_user_ids.map(&:to_i) & current_user_ids if allowed_user_ids.present?
+    forbidden_user_ids = current_user_ids - allowed_user_ids
+
+    if allowed_user_ids.blank? && forbidden_user_ids.blank?
+      redirect_to @organization
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      @organization.memberships.where(user_id: allowed_user_ids).update_all(build_permission: true) if allowed_user_ids.present?
+      @organization.memberships.where(user_id: forbidden_user_ids).update_all(build_permission: false) if forbidden_user_ids.present?
+    end
+
+    flash[:notice] = 'Updated user permissions'
+    redirect_to @organization
   end
 
   def jobs
