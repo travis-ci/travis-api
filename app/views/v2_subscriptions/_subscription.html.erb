@@ -1,0 +1,88 @@
+<% current_page = params[:page] || 1 %>
+
+<section class='info-block v2-subscription-details'>
+  <h2 class='info-header'>Plan</h2>
+
+  <% if @subscription %>
+    <%= form_tag v2_update_subscription_path(@subscription.id), method: :patch do %>
+      <dl class='simple-info'>
+        <dt class='info-label'>Plan name:</dt>
+        <dd>
+          <%= @subscription.plan_name %>
+        </dd>
+        <dt class='info-label'>Coupon:</dt>
+        <dd>
+          <%= @subscription.coupon || 'No Coupon' %>
+        </dd>
+        <dt class='info-label'>Plan Source:</dt>
+        <dd>
+          <%= select_tag 'subscription[source]', options_for_select(@subscription.source_options, @subscription.source) %>
+        </dd>
+        <dt class='info-label'>Next renewal date:</dt>
+        <dd>
+          <%= @subscription.valid_to %>
+        </dd>
+        <dt class='info-label'>First purchase:</dt>
+        <dd>
+          <%= @subscription.created_at %>
+        </dd>
+        <dt class='info-label'>Owner:</dt>
+        <dd>
+          <%= link_to describe(@subscription.owner), @subscription.owner %>
+        </dd>
+        <dt class='info-label'>Billing E-mail:</dt>
+        <dd>
+          <%= text_field_tag 'subscription[billing_email]', @subscription.billing_email %>
+        </dd>
+        <dt class='info-label'>VAT ID:</dt>
+        <dd>
+          <%= text_field_tag 'subscription[vat_id]', @subscription.vat_id %>
+        </dd>
+        <% if @subscription.billing_address.present? %>
+          <% @subscription.billing_address.each do |field_name, field_value| %>
+            <dt class='info-label'>Address <%= field_name.humanize %>:</dt>
+            <dd>
+              <%= text_field_tag "subscription[#{field_name}]", field_value %>
+            </dd>
+          <% end %>
+        <% end %>
+        <dt class='info-label'>Concurrency limit:</dt>
+        <dd>
+          <%= text_field_tag 'subscription[concurrency_limit]', @subscription.concurrency_limit %>
+        </dd>
+      </dl>
+
+      <h2 class='info-header'>Credits</h2>
+
+      <% if @subscription.grouped_addons.present? %>
+        <% @subscription.grouped_addons.each do |addon_type, addons| %>
+          <h3><%= addon_type.humanize %></h3>
+
+          <% addons.each do |addon| %>
+            <%= render partial: 'v2_subscriptions/addon', locals: { addon: addon } %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <dl class='simple-info'>
+          None
+        </dl>
+      <% end %>
+
+      <dl class='simple-info'>
+        <dt class='info-label'>Change reason:</dt>
+        <dd>
+          <%= text_area_tag 'subscription[change_reason]', nil, placeholder: 'Please describe which items have been changed and why', rows: 5 %>
+        </dd>
+
+        <%= hidden_field_tag 'owner_id', @subscription.owner_id %>
+        <%= hidden_field_tag 'owner_type', @subscription.owner_type %>
+        <%= submit_tag 'Update' %>
+        <%= button_tag 'Reset changes', id: 'reset_changes_button' %>
+      </dl>
+    <% end %>
+
+    <%= render 'v2_subscriptions/plan_changes' %>
+  <% else %>
+    None.
+  <% end %>
+</section>
