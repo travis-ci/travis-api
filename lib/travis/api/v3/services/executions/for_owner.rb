@@ -12,8 +12,8 @@ module Travis::API::V3
       raise NotFound unless owner
       raise InsufficientAccess unless access_control.visible?(owner)
 
-      result query(:executions).for_owner(owner, access_control.user.id, params['page'], params['per_page'],
-                                          params['from'], params['to'])
+      result query(:executions).for_owner(owner, access_control.user.id, params['page'] || 0,
+                                          params['per_page'] || 0, params['from'], params['to'])
     end
   end
 end

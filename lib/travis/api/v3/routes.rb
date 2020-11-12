@@ -132,6 +132,16 @@ module Travis::API::V3
         route '/executions'
         get :for_owner
       end
+
+      resource :executions do
+        route '/executions_per_repo'
+        get :for_owner_per_repo
+      end
+
+      resource :executions do
+        route '/executions_per_sender'
+        get :for_owner_per_sender
+      end
     end
 
     resource :repositories do
