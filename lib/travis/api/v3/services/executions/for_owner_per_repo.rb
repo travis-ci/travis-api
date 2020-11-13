@@ -40,7 +40,7 @@ module Travis::API::V3
     end
 
     def calculate_minutes(start, finish)
-      return 0 if finish.to_s.empty?
+      return 0 if start.to_s.empty? || finish.to_s.empty?
 
       ((Time.parse(finish.to_s) - Time.parse(start.to_s)) / 60.to_f).ceil
     end
