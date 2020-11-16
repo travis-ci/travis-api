@@ -170,7 +170,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
                 "@representation"=>"minimal",
                 "id"=>1
               },
-              "email"=>nil,
+              "email"=>"sven@fuchs.com",
               "is_syncing"=>nil,
               "synced_at"=>nil,
               "recently_signed_up"=>false,
