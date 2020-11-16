@@ -100,7 +100,11 @@ Rails.application.routes.draw do
 
   get 'search', to: 'search#search'
 
-  resources :subscriptions,  only: [:create, :update]
+  resources :subscriptions, only: [:create, :update] do
+    member do
+      patch 'v2_update'
+    end
+  end
 
   # Backwards compability from admin v1
   get '/user/:id' => 'users#show'

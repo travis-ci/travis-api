@@ -1,7 +1,7 @@
-<dl class='simple-info addon-section'>
+<dl class='plan-info addon-section'>
   <dt class='info-label'>Name:</dt>
   <dd>
-    <%= select_tag "subscription[addons][#{addon.id}][config_id]", options_for_select(@subscription.addon_name_options(addon.type, addon.free?), addon.config_id) %>
+    <%= select_tag "subscription[addons][#{addon.id}][config_id]", options_for_select(@subscription.addon_name_options(addon.type, addon.free?), addon.config_id), class: 'plan-dropdown' %>
   </dd>
   <% if addon.user_license? %>
     <dt class='info-label'>Free:</dt>
@@ -11,7 +11,7 @@
   <% end %>
   <dt class='info-label'>Status:</dt>
   <dd>
-    <%= select_tag "subscription[addons][#{addon.id}][status]", options_for_select(@subscription.addon_status_options, addon.status) %>
+    <%= select_tag "subscription[addons][#{addon.id}][status]", options_for_select(@subscription.addon_status_options, addon.status), class: 'plan-dropdown' %>
   </dd>
   <dt class='info-label'>Quantity:</dt>
   <dd>

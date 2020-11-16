@@ -7,19 +7,19 @@
         <th>ID</th>
         <th>Date</th>
         <th>Author</th>
-        <th>Reason</th>
         <th>Changes</th>
+        <th>Reason</th>
       </tr>
     </thead>
 
     <tbody>
       <% @subscription.plan_changes.each do |plan_change| %>
-        <tr>
+        <tr class="change-reason-table">
           <td><%= plan_change.id %></td>
           <td><%= format_time(plan_change.created_at) %></td>
           <td><%= describe(plan_change.user) %></td>
-          <td><%= plan_change.change_reason %></td>
           <td><%= plan_change.human_changes.join("<br />").html_safe %></td>
+          <td class="change-reason-row"><%= plan_change.change_reason %></td>
         </tr>
       <% end %>
     </tbody>

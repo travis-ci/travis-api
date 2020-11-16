@@ -11,7 +11,7 @@ module Travis
           @name = attributes.fetch(:name)
           @price = attributes.fetch(:price)
           @type = attributes.fetch(:type)
-          @free = attributes.fetch(:free)
+          @free = @price.zero?
         end
 
         def free?

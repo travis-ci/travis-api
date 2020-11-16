@@ -5,7 +5,7 @@
 
   <% if @subscription %>
     <%= form_tag v2_update_subscription_path(@subscription.id), method: :patch do %>
-      <dl class='simple-info'>
+      <dl class='plan-info'>
         <dt class='info-label'>Plan name:</dt>
         <dd>
           <%= @subscription.plan_name %>
@@ -16,7 +16,7 @@
         </dd>
         <dt class='info-label'>Plan Source:</dt>
         <dd>
-          <%= select_tag 'subscription[source]', options_for_select(@subscription.source_options, @subscription.source) %>
+          <%= select_tag 'subscription[source]', options_for_select(@subscription.source_options, @subscription.source), class: 'plan-dropdown' %>
         </dd>
         <dt class='info-label'>Next renewal date:</dt>
         <dd>
@@ -40,7 +40,7 @@
         </dd>
         <% if @subscription.billing_address.present? %>
           <% @subscription.billing_address.each do |field_name, field_value| %>
-            <dt class='info-label'>Address <%= field_name.humanize %>:</dt>
+            <dt class='info-label'>Address <%= field_name.to_s.humanize %>:</dt>
             <dd>
               <%= text_field_tag "subscription[#{field_name}]", field_value %>
             </dd>
@@ -52,7 +52,7 @@
         </dd>
       </dl>
 
-      <h2 class='info-header'>Credits</h2>
+      <h2 class='info-header'>Addons</h2>
 
       <% if @subscription.grouped_addons.present? %>
         <% @subscription.grouped_addons.each do |addon_type, addons| %>
@@ -68,16 +68,19 @@
         </dl>
       <% end %>
 
-      <dl class='simple-info'>
+      <dl class='plan-info change-reason'>
         <dt class='info-label'>Change reason:</dt>
-        <dd>
-          <%= text_area_tag 'subscription[change_reason]', nil, placeholder: 'Please describe which items have been changed and why', rows: 5 %>
-        </dd>
+        <dt>
+          <%= text_area_tag 'subscription[change_reason]', nil, placeholder: 'Please describe which items have been changed and why', class: 'change-reason-textarea' %>
+        </dt>
 
         <%= hidden_field_tag 'owner_id', @subscription.owner_id %>
         <%= hidden_field_tag 'owner_type', @subscription.owner_type %>
-        <%= submit_tag 'Update' %>
-        <%= button_tag 'Reset changes', id: 'reset_changes_button' %>
+
+        <dt>
+          <%= submit_tag 'Update', class: 'button' %>
+          <%= button_tag 'Reset changes', id: 'reset_changes_button', class: 'button' %>
+        </dt>
       </dl>
     <% end %>
 

@@ -10,7 +10,7 @@ module Travis
           @id = attributes.fetch(:id)
           @name = attributes.fetch(:name)
           @type = attributes.fetch(:type)
-          @current_usage = V2AddonUsage.new(attributes.fetch(:current_usage))
+          @current_usage = attributes.fetch(:current_usage) && V2AddonUsage.new(attributes.fetch(:current_usage))
           @addon_config = addon_config
         end
 

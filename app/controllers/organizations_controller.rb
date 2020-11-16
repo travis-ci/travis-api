@@ -27,18 +27,26 @@ class OrganizationsController < ApplicationController
   end
 
   def subscription
-    subscription = Subscription.find_by(owner_id: params[:id])
-    if subscription 
-      @subscription = SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
+    v2_service = Services::Billing::V2Subscription.new(params[:id], 'Organization')
+    v2_subscription = v2_service.subscription
+    if v2_subscription
+      @subscription = Billing::V2SubscriptionPresenter.new(v2_subscription, params[:page], self)
+      render_either 'v2_subscriptions/subscription'
+    else
+      subscription = Subscription.find_by(owner_id: params[:id])
+      @subscription = subscription && SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
+      render_either 'shared/subscription'
     end
-    render_either 'shared/subscription'
   end
 
   def invoices
+    v2_service = Services::Billing::V2Subscription.new(params[:id], 'Organization')
+    @invoices = v2_service.invoices
+
     subscription = Subscription.find_by(owner_id: params[:id])
-    if subscription
-      @invoices = subscription.invoices.order('id DESC')
-    end
+    old_invoices = subscription && subscription.invoices.order('id DESC')
+
+    @invoices += old_invoices if old_invoices
     render_either 'shared/invoices'
   end
 

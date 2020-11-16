@@ -42,11 +42,11 @@ class UsersController < ApplicationController
         expires: 15.minutes.from_now,
       }
       Services::AuditTrail::DisplayToken.new(current_user, @user).call
-      redirect_to @user
     else
       flash[:error] = "One time password did not match, please try again."
-      redirect_to @user
     end
+
+    redirect_to @user
   end
 
   def hide_token
@@ -70,20 +70,32 @@ class UsersController < ApplicationController
       Services::AuditTrail::ResetTwoFa.new(current_user, @user).call
       flash[:notice] = "Secret for #{@user.login} has been reset."
     else
-      flash[:error] = "One time password did not match, please try again."
+      flash[:error] = 'One time password did not match, please try again.'
     end
     redirect_to admins_path
   end
 
   def subscription
-    subscription = Subscription.find_by(owner_id: params[:id])
-    @subscription = subscription && SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
-    render_either 'shared/subscription'
+    v2_service = Services::Billing::V2Subscription.new(params[:id], 'User')
+    v2_subscription = v2_service.subscription
+    if v2_subscription
+      @subscription = Billing::V2SubscriptionPresenter.new(v2_subscription, params[:page], self)
+      render_either 'v2_subscriptions/subscription'
+    else
+      subscription = Subscription.find_by(owner_id: params[:id])
+      @subscription = subscription && SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
+      render_either 'shared/subscription'
+    end
   end
 
   def invoices
+    v2_service = Services::Billing::V2Subscription.new(params[:id], 'User')
+    @invoices = v2_service.invoices
+
     subscription = Subscription.find_by(owner_id: params[:id])
-    @invoices = subscription && subscription.invoices.order('id DESC')
+    old_invoices = subscription && subscription.invoices.order('id DESC')
+
+    @invoices += old_invoices if old_invoices
     render_either 'shared/invoices'
   end
 
@@ -93,6 +105,11 @@ class UsersController < ApplicationController
     @organizations = @user.organizations
     @subscriptions = Subscription.where(owner_id: @organizations.map(&:id)).where('owner_type = ?', 'Organization').includes(:owner)
     @subscriptions_by_organization_id = @subscriptions.group_by { |s| s.owner.id }
+
+    v2_service = Services::Billing::V2Subscription.new(params[:id], 'User')
+    v2_subscriptions = v2_service.subscriptions.select { |sub| sub.owner_type == 'Organization' }.group_by(&:owner_id)
+    @subscriptions_by_organization_id.merge!(v2_subscriptions)
+
     render_either 'organizations'
   end
 

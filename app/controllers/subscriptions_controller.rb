@@ -47,9 +47,41 @@ class SubscriptionsController < ApplicationController
     redirect_to controller: @subscription.owner.class.table_name, action: 'subscription', id: @subscription.owner
   end
 
+  def v2_update
+    url = params[:owner_type] == 'User' ? subscription_user_path(params[:owner_id]) : subscription_organization_path(params[:owner_id])
+
+    if params[:subscription].blank? || params[:subscription][:change_reason].blank?
+      flash[:error] = 'Change reason cannot be blank.'
+      redirect_to url
+      return
+    end
+
+    permitted_params = v2_subscription_params
+    if permitted_params[:addons].present?
+      new_addons = permitted_params[:addons].permit!.to_h.each_with_object([]) do |(addon_id, addon_data), memo|
+        memo << addon_data.merge(id: addon_id)
+      end
+      permitted_params[:addons] = new_addons
+    end
+    permitted_params[:user_id] = current_user.id
+
+    error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).update_subscription(params[:id], permitted_params)
+    if error_message.blank?
+      flash[:notice] = 'Subscription successfully updated'
+    else
+      flash[:error] = "Subscription update failed: #{error_message.inspect}"
+    end
+
+    redirect_to url
+  end
+
   private
 
   def subscription_params
     params.require(:subscription).permit(:valid_to, :billing_email, :vat_id, :owner_type, :owner_id, :selected_plan)
+  end
+
+  def v2_subscription_params
+    params.require(:subscription).permit(:change_reason, :source, :billing_email, :vat_id, :zip_code, :address, :address2, :city, :state, :country, :concurrency_limit, addons: {})
   end
 end

@@ -19,8 +19,8 @@ module Billing
 
       if @plan_change.addon_changes.present?
         @plan_change.addon_changes.each do |addon_change|
-          addon_change['changes'].each do |field_name, field_values|
-            changes << field_name_change("addon with ID #{addon_change['id']}", field_name, field_values.first, field_values.last)
+          addon_change[:changes].each do |field_name, field_values|
+            changes << field_name_change("addon with ID #{addon_change[:id]}", field_name, field_values.first, field_values.last)
           end
         end
       end
