@@ -31,7 +31,7 @@ module Travis::API::V3
             credits_consumed: item.credits_consumed,
             minutes_consumed: minutes_consumed,
             sender_id: item.sender_id,
-            sender: Renderer.render_model(sender, mode: :standard)
+            sender: Renderer.render_model(sender, mode: :standard, show_email: true)
           }
         end
       end

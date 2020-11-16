@@ -6,11 +6,11 @@ module Travis::API::V3
     representation(:additional, :emails)
 
     def email
-      @model.email if current_user?
+      @model.email if show_emails?
     end
 
     def emails
-      current_user? ? @model.emails.map(&:email) : []
+      show_emails? ? @model.emails.map(&:email) : []
     end
 
     def secure_user_hash
@@ -19,6 +19,10 @@ module Travis::API::V3
     end
 
     private
+
+    def show_emails?
+      current_user? || options[:show_email] == true
+    end
 
     def current_user?
       access_control.class == Travis::API::V3::AccessControl::LegacyToken && access_control.user.id == @model.id
