@@ -1,11 +1,11 @@
 module Travis::API::V3
   class Queries::BuildPermissions < Query
     def find_for_repo(repository)
-      Models::Repository.find(repository.id).permissions.includes(:user)
+      Models::Repository.find(repository.id).permissions.joins(:user).includes(:user)
     end
 
     def find_for_organization(organization)
-      Models::Membership.where(organization_id: organization.id).includes(:user)
+      Models::Membership.where(organization_id: organization.id).joins(:user).includes(:user)
     end
 
     def update_for_organization(organization, user_ids, permission)
