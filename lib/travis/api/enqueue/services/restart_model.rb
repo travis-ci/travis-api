@@ -78,7 +78,15 @@ module Travis
         private
 
         def permission?
-          current_user && current_user.permission?(required_role, repository_id: target.repository_id) && !abusive?
+          current_user && current_user.permission?(required_role, repository_id: target.repository_id) && !abusive? && build_permission?
+        end
+
+        def build_permission?
+          # nil value is considered true
+          return false if repository.permissions.find_by(user_id: current_user.id).build == false
+          return false if repository.owner_type == 'Organization' && repository.owner.memberships.find_by(user_id: current_user.id)&.build_permission == false
+
+          true
         end
 
         def abusive?
