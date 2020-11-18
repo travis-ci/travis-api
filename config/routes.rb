@@ -54,6 +54,7 @@ Rails.application.routes.draw do
       post 'sync'
       post 'update_trial_builds'
       patch 'update_keep_netrc'
+      post 'update_member_permissions'
 
       get 'subscription'
       get 'invoices'
@@ -78,6 +79,7 @@ Rails.application.routes.draw do
       post 'set_hook_url'
       post 'settings', to: 'settings#update', as: :repository_settings
       post 'test_hook'
+      post 'update_user_permissions'
 
       get  'broadcasts'
       get  'builds'
