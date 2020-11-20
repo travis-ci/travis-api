@@ -47,6 +47,33 @@ class SubscriptionsController < ApplicationController
     redirect_to controller: @subscription.owner.class.table_name, action: 'subscription', id: @subscription.owner
   end
 
+  def v2_create
+    owner_id = params[:subscription][:owner_id]
+    owner_type = params[:subscription][:owner_type]
+    permitted_params = v2_create_subscription_params
+
+    permitted_params[:billing_info] = {
+      first_name: '',
+      last_name: '',
+      address: '',
+      city: '',
+      country: '',
+      zip_code: '',
+      billing_email: ''
+    }
+    permitted_params[:credit_card_info] = { token: '' }
+    permitted_params[:source] = permitted_params[:plan] == 'free_tier_plan' ? 'stripe' : 'manual'
+
+    error_message = Services::Billing::V2Subscription.new(owner_id, owner_type).create_subscription(permitted_params)
+    if error_message.blank?
+      flash[:notice] = 'Subscription successfully created'
+    else
+      flash[:error] = "Subscription create failed: #{error_message.inspect}"
+    end
+
+    redirect_to controller: params[:subscription][:owner_type].downcase.pluralize, action: 'subscription', id: params[:subscription][:owner_id]
+  end
+
   def v2_update
     url = params[:owner_type] == 'User' ? subscription_user_path(params[:owner_id]) : subscription_organization_path(params[:owner_id])
 
@@ -56,16 +83,22 @@ class SubscriptionsController < ApplicationController
       return
     end
 
-    permitted_params = v2_subscription_params
-    if permitted_params[:addons].present?
-      new_addons = permitted_params[:addons].permit!.to_h.each_with_object([]) do |(addon_id, addon_data), memo|
-        memo << addon_data.merge(id: addon_id)
+    if params.key?(:create_addon) && !params[:new_addon][:id].blank?
+      error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).create_addon(params[:id], params[:new_addon][:id])
+    else
+      permitted_params = v2_subscription_params
+      permitted_params[:plan_name] = params[:subscription][:plan_name] if params[:subscription][:plan_name] != params[:old_plan_name]
+      if permitted_params[:addons].present?
+        new_addons = permitted_params[:addons].permit!.to_h.each_with_object([]) do |(addon_id, addon_data), memo|
+          memo << addon_data.merge(id: addon_id)
+        end
+        permitted_params[:addons] = new_addons
       end
-      permitted_params[:addons] = new_addons
-    end
-    permitted_params[:user_id] = current_user.id
+      permitted_params[:user_id] = current_user.id
 
-    error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).update_subscription(params[:id], permitted_params)
+      error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).update_subscription(params[:id], permitted_params)
+    end
+
     if error_message.blank?
       flash[:notice] = 'Subscription successfully updated'
     else
@@ -79,6 +112,10 @@ class SubscriptionsController < ApplicationController
 
   def subscription_params
     params.require(:subscription).permit(:valid_to, :billing_email, :vat_id, :owner_type, :owner_id, :selected_plan)
+  end
+
+  def v2_create_subscription_params
+    params.require(:subscription).permit(:plan)
   end
 
   def v2_subscription_params

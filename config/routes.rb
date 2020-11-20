@@ -104,6 +104,8 @@ Rails.application.routes.draw do
 
   resources :subscriptions, only: [:create, :update] do
     member do
+      post 'v2_create'
+      post 'v2_create_addon'
       patch 'v2_update'
     end
   end

@@ -130,7 +130,7 @@ class RepositoriesController < ApplicationController
     end
 
     flash[:notice] = 'Updated user permissions'
-    redirect_to @repository
+    redirect_to users_repository_path(@repository)
   end
 
   def set_hook_url

@@ -38,16 +38,34 @@ module Travis
           unless attributes[:addons].empty?
             @addons = attributes.fetch(:addons).map do |addon_data|
               addon_config = addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] } || standalone_addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] }
-              addon_config = addon_config ? V2AddonConfig.new(addon_config) : V2AddonConfig.new({ id: addon_data[:addon_config_id], name: addon_data[:name], type: addon_data[:type], price: 0 })
+              next unless addon_config
 
-              V2Addon.new(addon_data, addon_config)
+              V2Addon.new(addon_data, V2AddonConfig.new(addon_config))
             end
+            @addons = @addons.compact
           end
+
           @changes = attributes.fetch(:plan_changes).map { |plan_change_data| V2PlanChange.new(plan_change_data) }
         end
 
         def active?
           true
+        end
+
+        def github?
+          @source == 'github'
+        end
+
+        def manual?
+          @source == 'manual'
+        end
+
+        def can_create_addons?
+          !@plan_config[:available_standalone_addons].empty?
+        end
+
+        def can_create_free_user_license?
+          @plan_config[:plan_type] == 'metered' && !@plan_config[:starting_price].zero? && @addons.select { |addon| addon.addon_config.id == 'users_free_for_paid_plans' }.empty?
         end
 
         def can_read?
@@ -60,6 +78,10 @@ module Travis
 
         def plan_name
           @plan_config[:name]
+        end
+
+        def plan_id
+          @plan_config[:id]
         end
 
         def supported_addons

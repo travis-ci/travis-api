@@ -82,7 +82,7 @@ class OrganizationsController < ApplicationController
     end
 
     flash[:notice] = 'Updated user permissions'
-    redirect_to @organization
+    redirect_to members_organization_path(@organization)
   end
 
   def jobs

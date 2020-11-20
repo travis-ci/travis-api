@@ -22,14 +22,29 @@ module Services
       end
     end
 
+    def create_v2_subscription(owner_id, attributes)
+      response = connection(owner_id).post('/v2/subscriptions', attributes)
+      handle_errors_and_respond(response)
+    end
+
     def update_v2_subscription(owner_id, id, attributes)
       response = connection(owner_id).patch("/v2/subscriptions/#{id}", attributes)
-      handle_errors_and_respond_json(response)
+      handle_errors_and_respond(response)
+    end
+
+    def create_v2_addon(owner_id, id, addon_config_id)
+      response = connection(owner_id).patch("/v2/subscriptions/#{id}/addon", { addon: addon_config_id })
+      handle_errors_and_respond(response)
     end
 
     def v2_invoices(owner_id, sub_id)
       response = connection_json(owner_id).get("/v2/subscriptions/#{sub_id}/invoices")
-      handle_errors_and_respond_json(response) { |r| r.map { |invoice_data| Travis::Models::Billing::Invoice.new(invoice_data) } }
+      handle_errors_and_respond(response) { |r| r.map { |invoice_data| Travis::Models::Billing::Invoice.new(invoice_data) } }
+    end
+
+    def v2_plans(owner_id)
+      response = connection_json(owner_id).get('/v2/plans_for/admin')
+      handle_errors_and_respond_json(response) { |r| r.map { |plan_data| Travis::Models::Billing::V2PlanConfig.new(plan_data) } }
     end
 
     private
