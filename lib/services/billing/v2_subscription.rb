@@ -6,7 +6,7 @@ module Services
       def initialize(owner_id, owner_type)
         @owner_id = owner_id
         @owner_type = owner_type
-        @search_by_owner_id = @owner_type == 'Organization' ? Organization.find_by(id: @owner_id).users.first.id.to_s : @owner_id
+        @search_by_owner_id = @owner_type == 'Organization' ? ::Organization.find_by(id: @owner_id).users.first.id.to_s : @owner_id
         @client = Services::BillingClient.new
       end
 

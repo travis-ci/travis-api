@@ -51,6 +51,9 @@ class SubscriptionsController < ApplicationController
     owner_id = params[:subscription][:owner_id]
     owner_type = params[:subscription][:owner_type]
     permitted_params = v2_create_subscription_params
+    if owner_type == 'Organization'
+      permitted_params[:organization_id] = owner_id
+    end
 
     permitted_params[:billing_info] = {
       first_name: '',
@@ -88,11 +91,13 @@ class SubscriptionsController < ApplicationController
     else
       permitted_params = v2_subscription_params
       permitted_params[:plan_name] = params[:subscription][:plan_name] if params[:subscription][:plan_name] != params[:old_plan_name]
-      if permitted_params[:addons].present?
+      if permitted_params[:addons].present? && !permitted_params[:plan_name]
         new_addons = permitted_params[:addons].permit!.to_h.each_with_object([]) do |(addon_id, addon_data), memo|
           memo << addon_data.merge(id: addon_id)
         end
         permitted_params[:addons] = new_addons
+      else
+        permitted_params.delete(:addons)
       end
       permitted_params[:user_id] = current_user.id
 
