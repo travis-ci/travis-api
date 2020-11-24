@@ -41,8 +41,8 @@ module Services
         @client.create_v2_subscription(@search_by_owner_id, attributes)
       end
 
-      def create_addon(id, addon_config_id)
-        @client.create_v2_addon(@search_by_owner_id, id, addon_config_id)
+      def create_addon(id, attributes)
+        @client.create_v2_addon(@search_by_owner_id, id, attributes)
 
         nil
       rescue => e

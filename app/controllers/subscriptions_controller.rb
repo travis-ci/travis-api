@@ -87,7 +87,9 @@ class SubscriptionsController < ApplicationController
     end
 
     if params.key?(:create_addon) && !params[:new_addon][:id].blank?
-      error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).create_addon(params[:id], params[:new_addon][:id])
+      error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).create_addon(params[:id], { addon: params[:new_addon][:id], user_id: current_user.id, change_reason: params[:subscription][:change_reason] })
+    elsif params.key?(:create_free_user_license)
+      error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).create_addon(params[:id], { addon: 'users_free_for_paid_plans', user_id: current_user.id, change_reason: params[:subscription][:change_reason] })
     else
       permitted_params = v2_subscription_params
       permitted_params[:plan_name] = params[:subscription][:plan_name] if params[:subscription][:plan_name] != params[:old_plan_name]

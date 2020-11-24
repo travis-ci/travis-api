@@ -83,7 +83,7 @@
             <dt class='info-label'>Create new addon:</dt>
             <dd>
               <%= select('new_addon', 'id', [], { include_blank: true }, { id: 'addon_dropdown', class: 'plan-dropdown' }) do %>
-                <% @subscription.plan_config[:available_standalone_addons].each do |c| -%>
+                <% @subscription.addable_addon_configs.each do |c| -%>
                   <%= content_tag(:option, c[:name], value: c[:id]) %>
                 <% end %>
               <% end %>

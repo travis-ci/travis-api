@@ -9,9 +9,10 @@ module Travis
           'manual',
           'github'
         ].freeze
+        FREE_USERS_FOR_PAID = 'users_free_for_paid_plans'
 
         attr_reader :id, :source, :coupon, :created_at, :valid_to, :owner_id, :owner_type, :owner, :billing_email,
-                    :billing_address, :vat_id, :changes, :concurrency_limit, :plan_config, :addons
+                    :billing_address, :vat_id, :changes, :concurrency_limit, :plan_config, :addons, :addable_addon_configs
 
         def initialize(attributes)
           attributes.deep_symbolize_keys!
@@ -34,12 +35,21 @@ module Travis
           end
 
           addon_configs = @plan_config.fetch(:addon_configs)
+          @addable_addon_configs = @plan_config.fetch(:available_standalone_addons).dup
+          @plan_config[:available_standalone_addons] << {
+            id: FREE_USERS_FOR_PAID,
+            name: 'Free users',
+            price: 0,
+            type: 'user_license',
+            free: true
+          }
           standalone_addon_configs = @plan_config.fetch(:available_standalone_addons)
           unless attributes[:addons].empty?
             @addons = attributes.fetch(:addons).map do |addon_data|
               addon_config = addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] } || standalone_addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] }
               next unless addon_config
 
+              @addable_addon_configs.reject! { |ac| ac[:id] == addon_config[:id] }
               V2Addon.new(addon_data, V2AddonConfig.new(addon_config))
             end
             @addons = @addons.compact
@@ -61,11 +71,11 @@ module Travis
         end
 
         def can_create_addons?
-          !@plan_config[:available_standalone_addons].empty?
+          !addable_addon_configs.empty?
         end
 
         def can_create_free_user_license?
-          @plan_config[:plan_type] == 'metered' && !@plan_config[:starting_price].zero? && @addons.select { |addon| addon.addon_config.id == 'users_free_for_paid_plans' }.empty?
+          @plan_config[:plan_type] == 'metered' && !@plan_config[:starting_price].zero? && @addons.select { |addon| addon.addon_config.id == FREE_USERS_FOR_PAID }.empty?
         end
 
         def can_read?

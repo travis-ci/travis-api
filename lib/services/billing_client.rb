@@ -32,8 +32,8 @@ module Services
       handle_errors_and_respond(response)
     end
 
-    def create_v2_addon(owner_id, id, addon_config_id)
-      response = connection(owner_id).patch("/v2/subscriptions/#{id}/addon", { addon: addon_config_id })
+    def create_v2_addon(owner_id, id, attributes)
+      response = connection(owner_id).patch("/v2/subscriptions/#{id}/addon", attributes)
       handle_errors_and_respond(response)
     end
 
@@ -83,6 +83,7 @@ module Services
       @connection ||= Faraday.new(url: billing_url) do |conn|
         conn.basic_auth '_', billing_auth_key
         conn.headers['X-Travis-User-Id'] = id
+        conn.headers['X-Travis-Source'] = 'admin'
         conn.request :url_encoded
         conn.response :json, content_type: 'application/x-www-form-urlencoded'
         conn.adapter Faraday.default_adapter
@@ -93,6 +94,7 @@ module Services
       @connection_json ||= Faraday.new(url: billing_url) do |conn|
         conn.basic_auth '_', billing_auth_key
         conn.headers['X-Travis-User-Id'] = owner_id
+        conn.headers['X-Travis-Source'] = 'admin'
         conn.headers['Content-Type'] = 'application/json'
         conn.request :json
         conn.response :json
