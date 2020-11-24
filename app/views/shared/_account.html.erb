@@ -53,7 +53,7 @@
           <%= f.hidden_field :owner_type, value: owner.class %>
           <%= f.hidden_field :owner_id, value: owner.id %>
           <%= f.select(:plan) do %>
-            <% [['Free Plan', 'free_tier_plan'], ['1 concurrent plan', 'one_concurrent_plan'], ['2 concurrent plan', 'two_concurrent_plan']].each do |c| -%>
+            <% owner.available_plans.each do |c| -%>
               <%= content_tag(:option, c.first, value: c.last) %>
             <% end %>
           <% end %>

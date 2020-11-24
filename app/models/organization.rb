@@ -22,4 +22,9 @@ class Organization < ApplicationRecord
     v2_subscription = v2_service.subscription
     v2_subscription || Subscription.find_by(owner_id: id)
   end
+
+  def available_plans
+    v2_service = Services::Billing::V2Subscription.new(id.to_s, 'Organization')
+    v2_service.plans.map { |plan_config| [plan_config.name, plan_config.id] }
+  end
 end
