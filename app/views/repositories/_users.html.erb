@@ -3,7 +3,7 @@
   <% if @users.empty? %>
     <p>No users.</p>
   <% else %>
-    <%= form_tag update_users_permissions_repository_path(params[:id]) do %>
+    <%= form_tag update_user_permissions_repository_path(params[:id]) do %>
       <ul>
         <li class="inline-list user-item">
           <p class="info-label">Name</p>

@@ -49,11 +49,11 @@
       </p>
 
       <% unless owner.subscription && owner.subscription.active? %>
-        <%= form_for :subscription, url: {controller: 'subscriptions', action: 'create'}, html: {class: 'create-subscription'} do |f| %>
+        <%= form_for :subscription, url: {controller: 'subscriptions', action: 'v2_create'}, html: {class: 'create-subscription'} do |f| %>
           <%= f.hidden_field :owner_type, value: owner.class %>
           <%= f.hidden_field :owner_id, value: owner.id %>
-          <%= f.select(:selected_plan) do %>
-            <% [['one build', 'travis-ci-one-build'], ['two builds', 'travis-ci-two-builds']].each do |c| -%>
+          <%= f.select(:plan) do %>
+            <% owner.available_plans.each do |c| -%>
               <%= content_tag(:option, c.first, value: c.last) %>
             <% end %>
           <% end %>

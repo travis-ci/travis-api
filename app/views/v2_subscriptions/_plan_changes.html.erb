@@ -1,0 +1,31 @@
+<h2 class='info-header'>Changelog</h2>
+
+<% if @subscription.plan_changes.present? %>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>Author</th>
+        <th>Changes</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @subscription.plan_changes.each do |plan_change| %>
+        <tr class="change-reason-table">
+          <td><%= plan_change.id %></td>
+          <td><%= format_time(plan_change.created_at) %></td>
+          <td><%= describe(plan_change.user) %></td>
+          <td><%= plan_change.human_changes.join("<br />").html_safe %></td>
+          <td class="change-reason-row"><%= plan_change.change_reason %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= will_paginate @subscription.plan_changes, param_name: 'page' %>
+<% else %>
+  None.
+<% end %>

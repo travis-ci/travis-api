@@ -18,7 +18,7 @@
   <%= link_to 'Broadcasts', broadcasts_user_path(@user),
   class: "#{active_tab(broadcasts_user_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <% unless travis_config.enterprise? %>
-    <%= link_to 'Subscription', subscription_user_path(@user),
+    <%= link_to 'Plan', subscription_user_path(@user),
     class: "#{active_tab(subscription_user_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
     <%= link_to 'Invoices', invoices_user_path(@user),
     class: "#{active_tab(invoices_user_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>

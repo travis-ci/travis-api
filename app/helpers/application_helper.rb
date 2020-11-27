@@ -95,6 +95,13 @@ module ApplicationHelper
     "#{input} #{format}"
   end
 
+  def format_time(time, with_time = true)
+    format_string = '%Y-%m-%d'
+    format_string << ' %H:%M:%S' if with_time
+
+    time.utc.strftime(format_string)
+  end
+
   def platform
     request.host.sub(/admin[\.-]/, '')
   end

@@ -10,7 +10,6 @@ class User < ApplicationRecord
   has_many :repositories,           as:      :owner
   has_many :permitted_repositories, through: :permissions, source: :repository
   has_many :broadcasts,             as:      :recipient
-  has_one  :subscription,           as:      :owner
   has_many :trials,                 as:      :owner
   has_one  :installation,           as:      :owner
 
@@ -25,7 +24,6 @@ class User < ApplicationRecord
   alias_attribute :vcs_scopes, :github_scopes
   alias_attribute :vcs_language, :github_language
 
-
   def has_2fa?
     Travis::DataStores.redis.get("admin-v2:otp:#{login}")
   end
@@ -37,6 +35,17 @@ class User < ApplicationRecord
 
   def latest_trial
     trials.underway.order(created_at: :desc).first
+  end
+
+  def subscription
+    v2_service = Services::Billing::V2Subscription.new(id.to_s, 'User')
+    v2_subscription = v2_service.subscription
+    v2_subscription || Subscription.find_by(owner_id: id)
+  end
+
+  def available_plans
+    v2_service = Services::Billing::V2Subscription.new(id.to_s, 'User')
+    v2_service.plans.map { |plan_config| [plan_config.name, plan_config.id] }
   end
 
   def enterprise_status
