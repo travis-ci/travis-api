@@ -36,13 +36,15 @@ module Travis
 
           addon_configs = @plan_config.fetch(:addon_configs)
           @addable_addon_configs = @plan_config.fetch(:available_standalone_addons).dup
-          @plan_config[:available_standalone_addons] << {
-            id: FREE_USERS_FOR_PAID,
-            name: 'Free users',
-            price: 0,
-            type: 'user_license',
-            free: true
-          }
+          unless hybrid?
+            @plan_config[:available_standalone_addons] << {
+              id: FREE_USERS_FOR_PAID,
+              name: 'Free users',
+              price: 0,
+              type: 'user_license',
+              free: true
+            }
+          end
           standalone_addon_configs = @plan_config.fetch(:available_standalone_addons)
           unless attributes[:addons].empty?
             @addons = attributes.fetch(:addons).map do |addon_data|
@@ -68,6 +70,10 @@ module Travis
 
         def manual?
           @source == 'manual'
+        end
+
+        def hybrid?
+          @plan_config[:plan_type] == 'hybrid'
         end
 
         def can_create_addons?

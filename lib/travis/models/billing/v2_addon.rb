@@ -30,6 +30,14 @@ module Travis
           @current_usage.active?
         end
 
+        def show_valid_to?
+          user_license? && !free?
+        end
+
+        def valid_to
+          @current_usage.valid_to
+        end
+
         def free?
           @addon_config.free?
         end

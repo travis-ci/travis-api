@@ -7,6 +7,10 @@ $(document).ready(function(){
 				$("#report_to").datepicker("option","minDate",
 					$("#report_from").datepicker("getDate"));
 			}
-    });
+	});
+	
+	$('.datepicker-no-max').datepicker({
+		dateFormat: 'yy-mm-dd'
+	});
   });
 })
