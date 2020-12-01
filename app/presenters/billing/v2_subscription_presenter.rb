@@ -14,6 +14,10 @@ module Billing
       Travis::Models::Billing::V2AddonUsage::STATUSES.map { |status| [ status.capitalize, status ] }
     end
 
+    def status_options
+      Travis::Models::Billing::V2Subscription::STATUSES.map { |status| [ status.capitalize, status ] }
+    end
+
     def addon_name_options(type, is_free)
       (@subscription.plan_config[:available_standalone_addons] + @subscription.plan_config[:addon_configs]).uniq.map { |addon_config| [ addon_config[:name], addon_config[:id] ] if addon_config[:type] == type && addon_config[:free] == is_free }.compact
     end

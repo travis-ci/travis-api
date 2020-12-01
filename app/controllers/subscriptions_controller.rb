@@ -128,6 +128,6 @@ class SubscriptionsController < ApplicationController
   end
 
   def v2_subscription_params
-    params.require(:subscription).permit(:change_reason, :source, :valid_to, :billing_email, :vat_id, :zip_code, :address, :address2, :city, :state, :country, :concurrency_limit, addons: {})
+    params.require(:subscription).permit(:change_reason, :source, :status, :valid_to, :billing_email, :vat_id, :zip_code, :address, :address2, :city, :state, :country, :concurrency_limit, addons: {})
   end
 end

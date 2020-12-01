@@ -9,10 +9,16 @@ module Travis
           'manual',
           'github'
         ].freeze
+        STATUSES = [
+          'subscribed',
+          'pending',
+          'expired'
+        ].freeze
         FREE_USERS_FOR_PAID = 'users_free_for_paid_plans'
 
         attr_reader :id, :source, :coupon, :created_at, :valid_to, :owner_id, :owner_type, :owner, :billing_email,
-                    :billing_address, :vat_id, :changes, :concurrency_limit, :plan_config, :addons, :addable_addon_configs
+                    :billing_address, :vat_id, :changes, :concurrency_limit, :status, :plan_config, :addons,
+                    :addable_addon_configs
 
         def initialize(attributes)
           attributes.deep_symbolize_keys!
@@ -23,6 +29,7 @@ module Travis
           @coupon = attributes.fetch(:coupon)
           @created_at = attributes.fetch(:created_at)
           @valid_to = attributes.fetch(:valid_to)
+          @status = attributes.fetch(:status)
           concurrency = attributes.fetch(:concurrency_limit)
           @concurrency_limit = concurrency || @plan_config.fetch(:concurrency_limit)
           @owner_id = attributes[:owner][:id]
