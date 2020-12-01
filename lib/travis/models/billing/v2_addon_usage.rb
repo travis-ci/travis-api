@@ -10,18 +10,18 @@ module Travis
           'expired'
         ].freeze
 
-        attr_reader :id, :quantity, :usage, :status
+        attr_reader :id, :quantity, :usage, :valid_to, :status
 
         def initialize(attributes)
           @id = attributes.fetch(:id)
           @quantity = attributes.fetch(:addon_quantity)
           @usage = attributes.fetch(:addon_usage)
           @status = attributes.fetch(:status)
-          @valid_to = attributes.fetch(:valid_to)
+          @valid_to = attributes.fetch(:valid_to) && Time.parse(attributes.fetch(:valid_to))
         end
 
         def active?
-          @status == 'subscribed' && (!@valid_to || Time.parse(@valid_to).future?)
+          @status == 'subscribed' && (!@valid_to || @valid_to.future?)
         end
       end
     end

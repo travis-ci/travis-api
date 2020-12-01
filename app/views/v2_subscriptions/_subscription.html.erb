@@ -25,7 +25,13 @@
         </dd>
         <dt class='info-label'>Next renewal date:</dt>
         <dd>
-          <%= @subscription.valid_to %>
+          <% if @subscription.hybrid? && @subscription.manual? %>
+            <time>
+              <%= text_field_tag 'subscription[valid_to]', @subscription.valid_to, class: "datepicker-no-max" %>
+            </time>
+          <% else %>
+            <%= @subscription.valid_to %>
+          <% end %>
         </dd>
         <dt class='info-label'>First purchase:</dt>
         <dd>
