@@ -42,7 +42,7 @@ module Travis
           end
 
           addon_configs = @plan_config.fetch(:addon_configs)
-          @addable_addon_configs = @plan_config.fetch(:addon_configs).dup
+          @addable_addon_configs = (@plan_config[:addon_configs] + @plan_config[:available_standalone_addons]).uniq
           @addable_addon_configs.reject! { |ac| ac[:type] == 'user_license' }
           unless hybrid?
             @plan_config[:available_standalone_addons] << {
