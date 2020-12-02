@@ -42,7 +42,8 @@ module Travis
           end
 
           addon_configs = @plan_config.fetch(:addon_configs)
-          @addable_addon_configs = @plan_config.fetch(:available_standalone_addons).dup
+          @addable_addon_configs = @plan_config.fetch(:addon_configs).dup
+          @addable_addon_configs.reject! { |ac| ac[:type] == 'user_license' }
           unless hybrid?
             @plan_config[:available_standalone_addons] << {
               id: FREE_USERS_FOR_PAID,
@@ -58,7 +59,6 @@ module Travis
               addon_config = addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] } || standalone_addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] }
               next unless addon_config
 
-              @addable_addon_configs.reject! { |ac| ac[:id] == addon_config[:id] }
               V2Addon.new(addon_data, V2AddonConfig.new(addon_config))
             end
             @addons = @addons.compact
