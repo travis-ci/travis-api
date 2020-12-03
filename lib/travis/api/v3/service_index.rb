@@ -23,7 +23,6 @@ module Travis::API::V3
       pusher_config = (Travis.config.pusher_ws || Travis.config.pusher.to_h || {}).to_hash.slice(:scheme, :host, :port, :path, :key, :secure, :private)
       {
         host:   Travis.config.client_domain || Travis.config.host,
-        github: V3::GitHub.client_config,
         pusher: pusher_config
       }
     end

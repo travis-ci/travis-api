@@ -55,7 +55,7 @@ module Travis
           last_build_state: :passed,
           last_build_duration: 60,
           github_language: 'ruby',
-          github_id: 549743,
+          vcs_id: 549743,
           builds_only_with_travis_yml?: false,
           settings: stub_settings,
           users_with_permission: [],
@@ -251,7 +251,7 @@ module Travis
       def stub_user(attributes = {})
         Stubs.stub 'user', attributes.reverse_merge(
           id: 1,
-          github_id: 1,
+          vcs_id: 1,
           organizations: [org],
           name: 'Sven Fuchs',
           login: 'svenfuchs',
@@ -264,7 +264,7 @@ module Travis
           is_syncing: false,
           synced_at: Time.now.utc - 3600,
           tokens: [double('token', token: 'token')],
-          github_scopes: Travis.config.oauth2.scopes.to_s.split(','),
+          github_scopes: Travis.config.oauth2.scope.to_s.split(','),
           created_at: Time.now.utc - 7200,
           first_logged_in_at: Time.now.utc - 5400,
           subscribed?: false,

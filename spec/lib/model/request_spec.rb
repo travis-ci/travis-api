@@ -6,22 +6,8 @@ describe Request do
   let(:pull_request) { nil }
 
   describe 'config_url' do
-    before :each do
-      GH.options.delete(:api_url)
-      GH.current = nil
-    end
-
-    after :each do
-      GH.set api_url: nil
-    end
-
     it 'returns the api url to the .travis.yml file on github' do
       expect(request.config_url).to eq('https://api.github.com/repos/travis-ci/travis-core/contents/.travis.yml?ref=12345678')
-    end
-
-    it 'returns the api url to the .travis.yml file on github with a gh endpoint given' do
-      GH.set api_url: 'http://localhost/api/v3'
-      expect(request.config_url).to eq('http://localhost/api/v3/repos/travis-ci/travis-core/contents/.travis.yml?ref=12345678')
     end
   end
 

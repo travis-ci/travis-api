@@ -3,6 +3,13 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
   let(:user2) { Travis::API::V3::Models::User.create(login: 'carlad', is_syncing: true) }
   let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].to_json) }
   let(:sidekiq_params)  { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
+  let!(:request) do
+    stub_request(:post, 'http://vcsfake.travis-ci.com/users/1/sync_data')
+      .to_return(
+        status: 200,
+        body: nil,
+      )
+  end
 
   before do
     user.update_attribute(:is_syncing, false)
@@ -10,6 +17,9 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
+    Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
+    Travis.config.vcs.token = 'vcs-token'
+
   end
 
   after do
@@ -60,10 +70,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
       "true")
     }
 
-    example { expect(sidekiq_payload).to be == ['sync_user', 'user_id' => 1] }
-
-    example { expect(Sidekiq::Client.last['queue']).to be == :sync                        }
-    example { expect(Sidekiq::Client.last['class']).to be == 'Travis::GithubSync::Worker' }
+    example { expect(request).to have_been_made }
   end
 
   describe "existing user, current user does not have sync access " do

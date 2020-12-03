@@ -9,26 +9,18 @@ module Travis::API::V3
       return repo_migrated if migrated?(repository)
 
       admin = access_control.admin_for(repository)
-      if Travis::Features.user_active?(:use_vcs, admin) || !admin.github?
-        remote_vcs_repository.set_hook(
-          repository_id: repository.id,
-          user_id: admin.id
-        )
-      else
-        github(admin).set_hook(repository, true)
-      end
+      remote_vcs_repository.set_hook(
+        repository_id: repository.id,
+        user_id: admin.id
+      )
       repository.update_attributes(active: true)
 
       if repository.private? || access_control.enterprise?
-        if Travis::Features.deactivate_owner(:use_vcs, admin) || !admin.github?
-          remote_vcs_repository.upload_key(
-            repository_id: repository.id,
-            user_id: admin.id,
-            read_only: !Travis::Features.owner_active?(:read_write_github_keys, repository.owner)
-          )
-        else
-          github(admin).upload_key(repository)
-        end
+        remote_vcs_repository.upload_key(
+          repository_id: repository.id,
+          user_id: admin.id,
+          read_only: !Travis::Features.owner_active?(:read_write_github_keys, repository.owner)
+        )
       end
 
       query.sync(access_control.user || access_control.admin_for(repository))

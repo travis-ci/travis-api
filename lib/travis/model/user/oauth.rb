@@ -3,7 +3,7 @@ class User
     class << self
       def find_or_create_by(payload)
         attrs = attributes_from(payload)
-        user = User.find_by_github_id(attrs['github_id'])
+        user = User.find_by_vcs_id(attrs['vcs_id'])
         user ? user.update_attributes(attrs) : user = User.create!(attrs)
         user
       end
@@ -13,6 +13,7 @@ class User
           'name'               => payload['info']['name'],
           'email'              => payload['info']['email'],
           'login'              => payload['info']['nickname'],
+          'vcs_id'             => payload['uid'],
           'github_id'          => payload['uid'].to_i,
           'github_oauth_token' => payload['credentials']['token'],
           'gravatar_id'        => payload['extra']['raw_info']['gravatar_id']

@@ -3,9 +3,17 @@ describe Travis::Api::App::Endpoint::Users, set_app: true do
   let(:access_token) { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
 
   before do
-    allow(User).to receive(:find_by_github_id).and_return(user)
+    allow(User).to receive(:find_by_vcs_id).and_return(user)
     allow(User).to receive(:find).and_return(user)
     allow(user).to receive(:github_scopes).and_return(['public_repo', 'user:email'])
+    Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
+    Travis.config.vcs.token = 'vcs-token'
+
+    WebMock.stub_request(:post, 'http://vcsfake.travis-ci.com/users/1/check_scopes')
+      .to_return(
+        status: 200,
+        body: nil,
+      )
   end
 
   it 'needs to be authenticated' do

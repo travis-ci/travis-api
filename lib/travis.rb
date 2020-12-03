@@ -42,7 +42,6 @@ module Travis
 
       Travis.logger.info("Setting up module Travis")
 
-      Github.setup
       Services.register
       Github::Services.register
     end
