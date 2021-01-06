@@ -81,7 +81,7 @@ class RepositoriesController < ApplicationController
 
   def builds
     @builds = @repository.builds.includes(:commit).order('id DESC').paginate(page: params[:page], per_page: 20)
-    render_either 'builds' 
+    render_either 'builds'
   end
 
   def caches
@@ -105,11 +105,32 @@ class RepositoriesController < ApplicationController
   end
 
   def users
+    @in_organization = @repository.owner_type == 'Organization'
     @users = @repository.users
-                 .select('users.*, permissions.admin as admin, permissions.push as push, permissions.pull as pull')
+                 .select('users.*, permissions.admin as admin, permissions.push as push, permissions.pull as pull, permissions.build as build')
                  .order(:name)
                  .paginate(page: params[:page], per_page: 25)
     render_either 'users'
+  end
+
+  def update_user_permissions
+    current_user_ids = @repository.users.pluck(:id)
+    allowed_user_ids = params[:allowed_users] || []
+    allowed_user_ids = allowed_user_ids.map(&:to_i) & current_user_ids if allowed_user_ids.present?
+    forbidden_user_ids = current_user_ids - allowed_user_ids
+
+    if allowed_user_ids.blank? && forbidden_user_ids.blank?
+      redirect_to @repository
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      @repository.permissions.where(user_id: allowed_user_ids).update_all(build: true) if allowed_user_ids.present?
+      @repository.permissions.where(user_id: forbidden_user_ids).update_all(build: false) if forbidden_user_ids.present?
+    end
+
+    flash[:notice] = 'Updated user permissions'
+    redirect_to users_repository_path(@repository)
   end
 
   def set_hook_url

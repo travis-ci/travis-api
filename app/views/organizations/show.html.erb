@@ -16,7 +16,7 @@
   <%= link_to 'Broadcasts', broadcasts_organization_path(@organization),
   class: "#{active_tab(broadcasts_organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <% unless travis_config.enterprise? %>
-    <%= link_to 'Subscription', subscription_organization_path(@organization),
+    <%= link_to 'Plan', subscription_organization_path(@organization),
     class: "#{active_tab(subscription_organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
     <%= link_to 'Invoices', invoices_organization_path(@organization),
     class: "#{active_tab(invoices_organization_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>

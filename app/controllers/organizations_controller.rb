@@ -27,23 +27,31 @@ class OrganizationsController < ApplicationController
   end
 
   def subscription
-    subscription = Subscription.find_by(owner_id: params[:id])
-    if subscription 
-      @subscription = SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
+    v2_service = Services::Billing::V2Subscription.new(params[:id], 'Organization')
+    v2_subscription = v2_service.subscription
+    if v2_subscription
+      @subscription = Billing::V2SubscriptionPresenter.new(v2_subscription, params[:page], self)
+      render_either 'v2_subscriptions/subscription'
+    else
+      subscription = Subscription.find_by(owner_id: params[:id])
+      @subscription = subscription && SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
+      render_either 'shared/subscription'
     end
-    render_either 'shared/subscription'
   end
 
   def invoices
+    v2_service = Services::Billing::V2Subscription.new(params[:id], 'Organization')
+    @invoices = v2_service.invoices
+
     subscription = Subscription.find_by(owner_id: params[:id])
-    if subscription
-      @invoices = subscription.invoices.order('id DESC')
-    end
+    old_invoices = subscription && subscription.invoices.order('id DESC')
+
+    @invoices += old_invoices if old_invoices
     render_either 'shared/invoices'
   end
 
   def members
-    all_members = @organization.users.select('users.*, memberships.role as role')
+    all_members = @organization.users.select('users.*, memberships.role as role, memberships.build_permission as build_permission')
     @members = all_members.order(:name).paginate(page: params[:page], per_page: 25)
     @members_amount = "(#{all_members.length})" if all_members.present?
     render_either 'members'
@@ -55,6 +63,26 @@ class OrganizationsController < ApplicationController
                                  .order(:last_build_id, :name, :active)
       #                           .paginate(page: params[:page], per_page: 20)
     render_either 'shared/repositories'
+  end
+
+  def update_member_permissions
+    current_user_ids = @organization.memberships.pluck(:user_id)
+    allowed_user_ids = params[:allowed_users] || []
+    allowed_user_ids = allowed_user_ids.map(&:to_i) & current_user_ids if allowed_user_ids.present?
+    forbidden_user_ids = current_user_ids - allowed_user_ids
+
+    if allowed_user_ids.blank? && forbidden_user_ids.blank?
+      redirect_to @organization
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      @organization.memberships.where(user_id: allowed_user_ids).update_all(build_permission: true) if allowed_user_ids.present?
+      @organization.memberships.where(user_id: forbidden_user_ids).update_all(build_permission: false) if forbidden_user_ids.present?
+    end
+
+    flash[:notice] = 'Updated user permissions'
+    redirect_to members_organization_path(@organization)
   end
 
   def jobs

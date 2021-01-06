@@ -1,0 +1,134 @@
+<% current_page = params[:page] || 1 %>
+
+<section class='info-block v2-subscription-details'>
+  <h2 class='info-header'>Plan</h2>
+
+  <% if @subscription %>
+    <%= form_tag v2_update_subscription_path(@subscription.id), method: :patch do %>
+      <dl class='plan-info'>
+        <dt class='info-label'>Plan name:</dt>
+        <dd>
+          <%= select_tag 'subscription[plan_name]', options_for_select(@subscription.plan_options, @subscription.plan_id), class: 'plan-dropdown' %>
+        </dd>
+        <dt class='info-label'>Coupon:</dt>
+        <dd>
+          <%= @subscription.coupon || 'No Coupon' %>
+        </dd>
+        <dt class='info-label'>Plan Source:</dt>
+        <dd>
+          <% if @subscription.github? %>
+            <%= @subscription.source %>
+            <b> - You are not allowed to edit vcs subscriptions</b>
+          <% else %>
+            <%= select_tag 'subscription[source]', options_for_select([['Stripe', 'stripe'], ['Manual', 'manual']], @subscription.source), class: 'plan-dropdown' %>
+          <% end %>
+        </dd>
+        <dt class='info-label'>Next renewal date:</dt>
+        <dd>
+          <% if @subscription.hybrid? && @subscription.manual? %>
+            <time>
+              <%= text_field_tag 'subscription[valid_to]', @subscription.valid_to, class: "datepicker-no-max" %>
+            </time>
+          <% else %>
+            <%= @subscription.valid_to %>
+          <% end %>
+        </dd>
+        <dt class='info-label'>First purchase:</dt>
+        <dd>
+          <%= @subscription.created_at %>
+        </dd>
+        <% if @subscription.hybrid? %>
+          <dt class='info-label'>Status:</dt>
+          <dd>
+            <%= select_tag "subscription[status]", options_for_select(@subscription.status_options, @subscription.status), class: 'plan-dropdown' %>
+          </dd>
+        <% end %>
+        <dt class='info-label'>Owner:</dt>
+        <dd>
+          <%= link_to describe(@subscription.owner), @subscription.owner %>
+        </dd>
+        <dt class='info-label'>Billing E-mail:</dt>
+        <dd>
+          <%= text_field_tag 'subscription[billing_email]', @subscription.billing_email %>
+        </dd>
+        <dt class='info-label'>VAT ID:</dt>
+        <dd>
+          <%= text_field_tag 'subscription[vat_id]', @subscription.vat_id %>
+        </dd>
+        <% if @subscription.billing_address.present? %>
+          <% @subscription.billing_address.each do |field_name, field_value| %>
+            <dt class='info-label'>Address <%= field_name.to_s.humanize %>:</dt>
+            <dd>
+              <%= text_field_tag "subscription[#{field_name}]", field_value %>
+            </dd>
+          <% end %>
+        <% end %>
+        <dt class='info-label'>Concurrency limit:</dt>
+        <dd>
+          <%= text_field_tag 'subscription[concurrency_limit]', @subscription.concurrency_limit %>
+        </dd>
+      </dl>
+
+      <h2 class='info-header'>Addons</h2>
+
+      <% if @subscription.grouped_addons.present? %>
+        <% @subscription.grouped_addons.each do |addon_type, addons| %>
+          <h3><%= addon_type.humanize %></h3>
+
+          <% addons.each do |addon| %>
+            <%= render partial: 'v2_subscriptions/addon', locals: { addon: addon } %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <dl class='simple-info'>
+          None
+        </dl>
+      <% end %>
+
+      <%= hidden_field_tag 'old_plan_name', @subscription.plan_config[:id] %>
+      <%= hidden_field_tag 'owner_id', @subscription.owner_id %>
+      <%= hidden_field_tag 'owner_type', @subscription.owner_type %>
+
+      <% if @subscription.can_create_addons? or @subscription.can_create_free_user_license? %>
+        <dl class='plan-info create-addon'>
+          <% if @subscription.can_create_addons? %>
+            <dt class='info-label'>Create new addon:</dt>
+            <dd>
+              <%= select('new_addon', 'id', [], { include_blank: true }, { id: 'addon_dropdown', class: 'plan-dropdown' }) do %>
+                <% @subscription.addable_addon_configs.each do |c| -%>
+                  <%= content_tag(:option, c[:name], value: c[:id]) %>
+                <% end %>
+              <% end %>
+              <%= button_tag 'Create', name: 'create_addon', class: 'button' %>
+            </dd>
+          <% end %>
+          <% if @subscription.can_create_free_user_license? %>
+            <dt class='info-label'>Create free user license:</dt>
+            <dd>
+              <%= button_tag 'Create', name: 'create_free_user_license', class: 'button' %>        
+            </dd>
+          <% end %>
+        </dl>
+      <% end %>
+
+      <dl class='plan-info change-reason'>
+        <dt class='info-label required'>Change reason:</dt>
+        <dt>
+          <%= text_area_tag 'subscription[change_reason]', nil, placeholder: 'Please describe which items have been changed and why', class: 'change-reason-textarea' %>
+        </dt>
+
+        <%= hidden_field_tag 'owner_id', @subscription.owner_id %>
+        <%= hidden_field_tag 'owner_type', @subscription.owner_type %>
+
+        <dt>
+          <%= submit_tag 'Update', class: 'button' unless @subscription.github? %>
+          <%= button_tag 'Reset changes', id: 'reset_changes_button', class: 'button' %>
+        </dt>
+      </dl>
+    <% end %>
+
+    <%= render 'v2_subscriptions/plan_changes' %>
+  <% else %>
+    None.
+  <% end %>
+</section>

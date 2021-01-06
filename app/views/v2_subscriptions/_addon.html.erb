@@ -1,0 +1,36 @@
+<dl class='plan-info addon-section'>
+  <dt class='info-label'>Name:</dt>
+  <dd>
+    <%= select_tag "subscription[addons][#{addon.id}][config_id]", options_for_select(@subscription.addon_name_options(addon.type, addon.free?), addon.config_id), class: 'plan-dropdown' %>
+  </dd>
+  <% if addon.user_license? %>
+    <dt class='info-label'>Free:</dt>
+    <dd>
+      <%= addon.free? ? 'Yes' : 'No' %>
+    </dd>
+  <% end %>
+  <dt class='info-label'>Status:</dt>
+  <dd>
+    <%= select_tag "subscription[addons][#{addon.id}][status]", options_for_select(@subscription.addon_status_options, addon.status), class: 'plan-dropdown' %>
+  </dd>
+  <dt class='info-label'>Quantity:</dt>
+  <dd>
+    <%= text_field_tag "subscription[addons][#{addon.id}][addon_quantity]", addon.quantity %>
+  </dd>
+  <dt class='info-label'>Usage:</dt>
+  <dd>
+    <%= addon.usage %> used
+  </dd>
+  <% if addon.show_valid_to? %>
+    <dt class='info-label'>Next renewal date:</dt>
+    <dd>
+      <% if @subscription.manual? %>
+        <time>
+          <%= text_field_tag "subscription[addons][#{addon.id}][valid_to]", format_time(addon.valid_to, false), class: "datepicker-no-max" %>
+        </time>
+      <% else %>
+          <%= format_time(addon.valid_to, false) %>
+      <% end %>
+    </dd>
+  <% end %>
+</dl>

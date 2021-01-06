@@ -3,30 +3,46 @@
   <% if @users.empty? %>
     <p>No users.</p>
   <% else %>
-    <ul>
-      <li class="inline-list user-item">
-        <p class="info-label">Name</p>
-        <p class="info-label">Permission</p>
-      </li>
-      <% @users.each do |user| %>
+    <%= form_tag update_user_permissions_repository_path(params[:id]) do %>
+      <ul>
         <li class="inline-list user-item">
-          <p>
-            <!-- TODO: Display a default avatar image if there isn't one defined -->
-            <%= image_tag(user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if user.avatar_url %>
-            <%= link_to describe(user), user %>
-          </p>
-          <% if user.admin %>
-            <p>admin</p>
-          <% elsif user.push %>
-            <p>push</p>
-          <% elsif user.pull %>
-            <p>pull</p>
-          <% else %>
-            <p>unknown</p>
+          <p class="info-label">Name</p>
+          <p class="info-label">Permission</p>
+          <% unless @in_organization %>
+            <p class="info-label">Can build</p>
           <% end %>
         </li>
+
+        <% @users.each do |user| %>
+          <li class="inline-list user-item">
+            <p>
+              <!-- TODO: Display a default avatar image if there isn't one defined -->
+              <%= image_tag(user.avatar_url, size: "20x20", alt: "Avatar", class: "avatar") if user.avatar_url %>
+              <%= link_to describe(user), user %>
+            </p>
+            <% if user.admin %>
+              <p>admin</p>
+            <% elsif user.push %>
+              <p>push</p>
+            <% elsif user.pull %>
+              <p>pull</p>
+            <% else %>
+              <p>unknown</p>
+            <% end %>
+            <% unless @in_organization %>
+              <p>
+                <%= check_box_tag "allowed_users[]", user.id, user.build %>
+              </p>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+
+      <% unless @in_organization %>
+        <%= submit_tag 'Update', class: 'button' %>
       <% end %>
-    </ul>
+    <% end %>
+
+    <%= will_paginate @users, param_name: 'page', params: {controller: controller_name, action: 'users', id: params[:id], anchor: 'users'}, 'data-remote': true %>
   <% end %>
-  <%= will_paginate @users, param_name: 'page', params: {controller: controller_name, action: 'users', id: params[:id], anchor: 'users'}, 'data-remote': true %>
 </section>
