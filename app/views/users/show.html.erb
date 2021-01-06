@@ -2,7 +2,7 @@
 
 <div id="tabs">
   <%= link_to 'User', user_path(@user),
-  class: "#{active_tab(user_path)} remote-tab-link", remote: true, data: { content: 'main-content' }, target: :_blank %>
+  class: "#{active_tab(user_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <% unless travis_config.enterprise? %>
   <%= link_to 'GDPR', gdpr_user_path(@user),
               class: "#{active_tab(gdpr_user_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>

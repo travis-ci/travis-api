@@ -12,7 +12,7 @@
       <p><%= @user.name %></p>
       <% unless travis_config.enterprise? %>
         <div>
-          <%= form_tag(become_url(@user), class: 'become-button') do %>
+          <%= form_tag(become_url(@user), class: 'become-button', target: :_blank) do %>
             <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
             <%= submit_tag("Log in as", class: "button") %>
           <% end %>
