@@ -242,7 +242,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
 
         it 'restarts the job' do
           post("/v3/job/#{job.id}/restart", params, headers)
-          expect(last_response.status).to eq(202)
+          expect(last_response.status).to eq(403)
         end
       end
 
