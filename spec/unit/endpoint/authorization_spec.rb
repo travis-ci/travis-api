@@ -303,4 +303,27 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
       expect(post('/auth/github', github_token: 'public repos')).to be_ok
     end
   end
+
+  describe 'GET /confirm_user/:token' do
+    context 'when response is ok' do
+      before { allow_any_instance_of(Travis::RemoteVCS::User).to receive(:confirm_user) }
+
+      it 'returns ok' do
+        expect(get('/auth/confirm_user/mytokentopass')).to be_ok
+      end
+    end
+
+    context 'when response is not ok' do
+      before do
+        allow_any_instance_of(Travis::RemoteVCS::User)
+          .to receive(:confirm_user).and_raise(Travis::RemoteVCS::ResponseError)
+      end
+
+      it 'returns 404 with a message' do
+        expect(get('/auth/confirm_user/mytokentopass')).not_to be_ok
+        expect(last_response.status).to eq(404)
+        expect(body).to include('The token is expired or not found.')
+      end
+    end
+  end
 end

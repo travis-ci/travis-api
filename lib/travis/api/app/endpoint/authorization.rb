@@ -127,6 +127,12 @@ class Travis::Api::App
         halt 401, 'could not resolve github token'
       end
 
+      get '/confirm_user/:token' do
+        Travis::RemoteVCS::User.new.confirm_user(token: params[:token])
+      rescue Travis::RemoteVCS::ResponseError
+        halt 404, 'The token is expired or not found.'
+      end
+
       private
 
         # update first login date if not set
