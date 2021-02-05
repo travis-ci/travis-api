@@ -5,6 +5,8 @@ module Travis
 
       if id = params[:repository_id] || params[:id]
         details = "with id=#{params[:repository_id] || params[:id]} "
+      elsif params[:github_id]
+        details = "with github_id=#{params[:github_id]} "
       elsif params[:vcs_id]
         details = "with vcs_id=#{params[:vcs_id]} "
       elsif params.key?(:slug)
