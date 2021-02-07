@@ -82,5 +82,9 @@ module Travis::API::V3
     def github?
       vcs_type == 'GithubUser'
     end
+
+    def ro_mode?
+      !!Travis::Features.owner_active?(:ro_mode, self)
+    end
   end
 end

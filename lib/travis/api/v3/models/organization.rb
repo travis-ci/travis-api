@@ -29,6 +29,10 @@ module Travis::API::V3
       Travis::Features.owner_active?(:build_priorities_org, self)
     end
 
+    def ro_mode?
+      !!Travis::Features.owner_active?(:ro_mode, self)
+    end
+
     alias members users
   end
 end

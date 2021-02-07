@@ -6,7 +6,7 @@ module Travis::API::V3
 
     representation(:minimal,    :id, :login, :name, :vcs_type)
     representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education,
-                   :allow_migration, :allowance)
+                   :allow_migration, :allowance, :ro_mode)
     representation(:additional, :repositories, :installation)
 
     def initialize(*)
@@ -26,6 +26,10 @@ module Travis::API::V3
       installation if installation and access_control.visible? installation
     end
 
+    def ro_mode
+      !!Travis::Features.owner_active?(:ro_mode, @model)
+    end
+
     def allow_migration
       !!Travis::Features.owner_active?(:allow_migration, @model)
     end
@@ -33,7 +37,7 @@ module Travis::API::V3
     def allowance
       return BillingClient.default_allowance_response(id) if Travis.config.org?
       return BillingClient.default_allowance_response(id) unless access_control.user
-      
+
       BillingClient.minimal_allowance_response(id)
     end
 
