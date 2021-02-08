@@ -174,7 +174,8 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "is_syncing"=>nil,
               "synced_at"=>nil,
               "recently_signed_up"=>false,
-              "secure_user_hash"=>nil
+              "secure_user_hash"=>nil,
+              "ro_mode" => false
             }
           }
         ]}
