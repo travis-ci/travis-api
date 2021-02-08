@@ -18,6 +18,10 @@ module Travis::API::V3
       OpenSSL::HMAC.hexdigest('sha256', hmac_secret_key, @model.id.to_s) if @model.id && hmac_secret_key
     end
 
+    def ro_mode
+      current_user? ? !!Travis::Features.owner_active?(:ro_mode, @model) : false
+    end
+
     private
 
     def show_emails?

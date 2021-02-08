@@ -6,7 +6,7 @@ module Travis::API::V3
 
     representation(:minimal,    :id, :login, :name, :vcs_type)
     representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education,
-                   :allow_migration, :allowance, :ro_mode)
+                   :allow_migration, :allowance)
     representation(:additional, :repositories, :installation)
 
     def initialize(*)
@@ -24,10 +24,6 @@ module Travis::API::V3
     def installation
       installation = model.installation
       installation if installation and access_control.visible? installation
-    end
-
-    def ro_mode
-      !!Travis::Features.owner_active?(:ro_mode, @model)
     end
 
     def allow_migration
