@@ -95,7 +95,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-      before { allow(Travis::Features).to receive(:owner_active?).with(:ro_mode, repo.owner).and_return(true) }
+      allow(Travis::Features).to receive(:owner_active?).with(:ro_mode, repo.owner).and_return(true)
       post("/v3/build/#{build.id}/restart", {}, headers)
     end
 
