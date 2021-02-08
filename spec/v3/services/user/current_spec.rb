@@ -30,7 +30,8 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
         "id"                    => user.id
       },
       "recently_signed_up"=>false,
-      "secure_user_hash" => nil
+      "secure_user_hash" => nil,
+      "ro_mode" => false
     }}
   end
 end
