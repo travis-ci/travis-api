@@ -11,7 +11,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
   before do
     ActiveRecord::Base.connection.execute("truncate requests cascade")
     ActiveRecord::Base.connection.execute("truncate repositories cascade")
-    allow(Travis::Features).to receive(:owner_active?).and_return(true)
+    allow(Travis::Features).to receive(:owner_active?).and_return(false)
   end
 
   after do
@@ -166,6 +166,14 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
 
     it { expect(last_response.status).to be == 403 }
     it { expect(body).to eq insufficient_access }
+  end
+
+  describe 'existing repository, owner in read-only mode' do
+    let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
+    before { allow(Travis::Features).to receive(:owner_active?).and_return(true) }
+    before { post("/v3/repo/#{repo.id}/requests", {}, headers) }
+
+    it { expect(last_response.status).to be == 404 }
   end
 
   describe 'private repository, no access' do
