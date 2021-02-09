@@ -29,7 +29,6 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
   end
 
   describe "authenticated as user with access, including installation.owner" do
-    before  { allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, user).and_return(true) }
     before  { get("/v3/installation/#{installation.github_id}?include=installation.owner", {}, headers) }
     example { expect(last_response).to be_ok          }
     example { expect(JSON.load(body)).to be ==        {
@@ -65,7 +64,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "allow_migration" => false,
         "recently_signed_up" => false,
         "secure_user_hash" => nil,
-        "ro_mode" => false
+        "ro_mode" => true
       }
     }}
   end
