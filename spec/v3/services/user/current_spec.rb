@@ -5,8 +5,8 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
 
   describe "authenticated as user with access" do
+    before  { allow(Travis::Features).to receive(:owner_active?).and_return(true) }
     before  { get("/v3/user", {}, headers)     }
-    before  { allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, user).and_return(true) }
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
       "@type"            => "user",

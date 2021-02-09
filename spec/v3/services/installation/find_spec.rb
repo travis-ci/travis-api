@@ -29,8 +29,8 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
   end
 
   describe "authenticated as user with access, including installation.owner" do
-    before  { get("/v3/installation/#{installation.github_id}?include=installation.owner", {}, headers) }
     before  { allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, user).and_return(true) }
+    before  { get("/v3/installation/#{installation.github_id}?include=installation.owner", {}, headers) }
     example { expect(last_response).to be_ok          }
     example { expect(JSON.load(body)).to be ==        {
       "@type"            => "installation",
