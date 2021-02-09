@@ -11,7 +11,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
   before do
     ActiveRecord::Base.connection.execute("truncate requests cascade")
     ActiveRecord::Base.connection.execute("truncate repositories cascade")
-    allow(Travis::Features).to receive(:owner_active?).and_return(false)
+    allow(Travis::Features).to receive(:owner_active?).and_return(true)
   end
 
   after do
