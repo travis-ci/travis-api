@@ -46,7 +46,12 @@ module Travis
             false
           rescue Travis::API::V3::NotFound
             # Owner is on a legacy plan
-            true
+            if subscription&.active?
+              true
+            else
+              @cause_of_denial = 'You do not seem to have active subscription.'
+              false
+            end
           end
         end
 
@@ -76,6 +81,10 @@ module Travis
         end
 
         private
+
+        def subscription
+          Subscription.where(owner: repository.owner)&.first
+        end
 
         def permission?
           current_user && current_user.permission?(required_role, repository_id: target.repository_id) && !abusive? && build_permission?
