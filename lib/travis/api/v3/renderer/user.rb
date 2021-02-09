@@ -19,7 +19,9 @@ module Travis::API::V3
     end
 
     def ro_mode
-      current_user? ? !!Travis::Features.owner_active?(:ro_mode, @model) : false
+      return false unless Travis.config.org?
+
+      current_user? ? !Travis::Features.owner_active?(:read_only_disabled, @model) : false
     end
 
     private

@@ -30,7 +30,9 @@ module Travis::API::V3
     end
 
     def ro_mode?
-      !!Travis::Features.owner_active?(:ro_mode, self)
+      return false unless Travis.config.org?
+
+      !Travis::Features.owner_active?(:read_only_disabled, self)
     end
 
     alias members users

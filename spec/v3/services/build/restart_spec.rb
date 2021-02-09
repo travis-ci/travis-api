@@ -15,7 +15,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
 
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
     allow(Travis::Features).to receive(:owner_active?).with(:enqueue_to_hub, repo.owner).and_return(false)
-    allow(Travis::Features).to receive(:owner_active?).with(:ro_mode, repo.owner).and_return(false)
+    allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, repo.owner).and_return(true)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
@@ -95,7 +95,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-      allow(Travis::Features).to receive(:owner_active?).with(:ro_mode, repo.owner).and_return(true)
+      allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, repo.owner).and_return(false)
       post("/v3/build/#{build.id}/restart", {}, headers)
     end
 
