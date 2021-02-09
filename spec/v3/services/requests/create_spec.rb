@@ -170,7 +170,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
 
   describe 'existing repository, owner in read-only mode' do
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
-    before { allow(Travis::Features).to receive(:owner_active?).and_return(true) }
+    before { allow(Travis::Features).to receive(:owner_active?).and_return(false) }
     before { post("/v3/repo/#{repo.id}/requests", {}, headers) }
 
     it { expect(last_response.status).to be == 404 }

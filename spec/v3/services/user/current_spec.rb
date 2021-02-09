@@ -4,8 +4,8 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
 
+
   describe "authenticated as user with access" do
-    before  { allow(Travis::Features).to receive(:owner_active?).and_return(true) }
     before  { get("/v3/user", {}, headers)     }
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {
@@ -32,7 +32,7 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
       },
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
-      "ro_mode" => false
+      "ro_mode" => true
     }}
   end
 end
