@@ -10,6 +10,7 @@ module Travis::API::V3
       job.update_attribute(:debug_options, nil)
       result = query.restart(access_control.user)
 
+      Travis.logger.info "Job:Restart Debug, in Job::Restart: result = #{result}"
       if result.success?
         accepted(job: job, state_change: :restart)
       elsif result.error == Travis::Enqueue::Services::RestartModel::ABUSE_DETECTED

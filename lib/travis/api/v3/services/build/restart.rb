@@ -10,6 +10,7 @@ module Travis::API::V3
 
       result = query.restart(access_control.user)
 
+      Travis.logger.info "Build:Restart Debug, restart: result = #{result}"
       if result.success?
         accepted(build: build, state_change: :restart)
       elsif result.error == Travis::Enqueue::Services::RestartModel::ABUSE_DETECTED

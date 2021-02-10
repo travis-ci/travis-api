@@ -42,9 +42,12 @@ module Travis
             client.authorize_build(repository, current_user.id, jobs_attrs)
             true
           rescue Travis::API::V3::InsufficientAccess => e
+            Travis.logger.info "Job:Restart Debug, InsufficientAccess:e in RestartModel = #{e}"
             @cause_of_denial = e.message
             false
           rescue Travis::API::V3::NotFound
+            Travis.logger.info "Job:Restart Debug, NotFound:e in RestartModel = #{e}"
+            Travis.logger.info "Job:Restart Debug, subscription id = #{subscription&.id} active?= #{subscription&.active?}"
             # Owner is on a legacy plan
             if subscription&.active?
               true
