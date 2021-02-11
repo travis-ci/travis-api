@@ -304,12 +304,12 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
     end
   end
 
-  describe 'GET /confirm_user/:token' do
+  describe 'POST /confirm_user' do
     context 'when response is ok' do
       before { allow_any_instance_of(Travis::RemoteVCS::User).to receive(:confirm_user) }
 
       it 'returns ok' do
-        expect(get('/auth/confirm_user/mytokentopass')).to be_ok
+        expect(post('/auth/confirm_user/mytokentopass')).to be_ok
       end
     end
 
@@ -320,10 +320,18 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
       end
 
       it 'returns 404 with a message' do
-        expect(get('/auth/confirm_user/mytokentopass')).not_to be_ok
+        expect(post('/auth/confirm_user/mytokentopass')).not_to be_ok
         expect(last_response.status).to eq(404)
         expect(body).to include('The token is expired or not found.')
       end
+    end
+  end
+
+  describe 'POST /request_confirmation' do
+    before { allow_any_instance_of(Travis::RemoteVCS::User).to receive(:request_confirmation) }
+
+    it 'returns ok' do
+      expect(post('/auth/confirm_user/mytokentopass')).to be_ok
     end
   end
 end

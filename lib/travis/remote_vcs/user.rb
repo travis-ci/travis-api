@@ -51,6 +51,13 @@ module Travis
           req.params['token'] = token
         end
       end
+
+      def request_confirmation(id:)
+        request(:post, __method__) do |req|
+          req.url 'users/request_confirmation'
+          req.params['id'] = id
+        end
+      end
     end
   end
 end
