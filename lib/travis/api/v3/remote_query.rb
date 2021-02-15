@@ -18,6 +18,13 @@ module Travis::API::V3
       storage_objects
     end
 
+    def get(key)
+      io = StringIO.new
+      gcs_connection.get_object(gcs_config[:bucket_name], key, download_dest: io)
+      io.rewind
+      io.read
+    end
+
     def remove(objects)
       objects.each do |object|
         raise SourceUnknown "#{object.source} is an unknown source." unless ['s3', 'gcs'].include? object.source
