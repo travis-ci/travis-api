@@ -296,6 +296,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode" => false
       }}
     end
 
@@ -326,6 +327,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode" => false
       }}
     end
 
@@ -356,6 +358,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode" => false
       }}
     end
 
@@ -390,6 +393,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode"          => false,
         "@warnings"        => [{
           "@type"          => "warning",
           "message"        => "query parameter user.id not safelisted, ignored",

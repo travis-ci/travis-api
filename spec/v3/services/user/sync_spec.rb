@@ -7,6 +7,8 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
   before do
     user.update_attribute(:is_syncing, false)
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
+    allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, user).and_return(true)
+    allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, user2).and_return(true)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
@@ -90,6 +92,17 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
         "name"        => user2.name
       }
     }}
+  end
+
+  describe "existing user, current user in read-only mode " do
+    let(:params)  {{}}
+    let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+    before { Travis::API::V3::Models::Permission.create(user: user) }
+    before { allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, user).and_return(false) }
+    before { post("/v3/user/#{user.id}/sync", params, headers) }
+
+    example { expect(last_response.status).to be == 404 }
   end
 
   describe "existing user, authorized, user already syncing " do
