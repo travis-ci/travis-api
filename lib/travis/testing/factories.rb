@@ -13,6 +13,11 @@ FactoryBot.define do
     private { false }
   end
 
+  factory :build_backup do
+    repository { Repository.first || FactoryBot.create(:repository_without_last_build) }
+    sequence(:file_name) { |n| "repository_builds_#{n}-#{n + 100}" }
+  end
+
   factory :commit do
     commit { '62aae5f70ceee39123ef' }
     branch { 'master' }

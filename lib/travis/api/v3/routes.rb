@@ -33,6 +33,17 @@ module Travis::API::V3
       get :for_current_user
     end
 
+    resource :build_backups do
+      route '/build_backups'
+      get :all
+    end
+
+    resource :build_backup do
+      route '/build_backup/{build_backup.id}'
+      get :find
+      get :find, '.txt'
+    end
+
     resource :jobs do
       route '/jobs'
       get :for_current_user
