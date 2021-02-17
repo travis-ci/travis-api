@@ -5,6 +5,7 @@ class Organization < Travis::Model
   has_many :memberships
   has_many :users, :through => :memberships
   has_many :repositories, :as => :owner
+  has_one :owner_group, as: :owner
 
   def education?
     Travis::Features.owner_active?(:educational_org, self)
