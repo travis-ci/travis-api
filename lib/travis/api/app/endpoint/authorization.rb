@@ -133,8 +133,9 @@ class Travis::Api::App
         halt 404, 'The token is expired or not found.'
       end
 
-      get '/request_confirmation/:id' do
-        Travis::RemoteVCS::User.new.request_confirmation(id: params[:id])
+      get '/request_confirmation/:session_token/:id' do
+        Travis::RemoteVCS::User
+          .new.request_confirmation(session_token: params[:session_token], id: params[:id])
       end
 
       private

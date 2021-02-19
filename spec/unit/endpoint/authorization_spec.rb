@@ -53,7 +53,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
     after do
       ENV['TRAVIS_SITE'] = nil
     end
-    
+
     describe 'evil hackers messing with the state' do
       before do
         WebMock.stub_request(:post, "https://foobar.com/access_token_path").
@@ -311,6 +311,13 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
       it 'returns ok' do
         expect(get('/auth/confirm_user/mytokentopass')).to be_ok
       end
+
+      it 'calls VCS service with proper params' do
+        expect_any_instance_of(Travis::RemoteVCS::User)
+          .to receive(:confirm_user).with(token: 'mytokentopass')
+
+        get('/auth/confirm_user/mytokentopass')
+      end
     end
 
     context 'when response is not ok' do
@@ -327,11 +334,18 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
     end
   end
 
-  describe 'GET /request_confirmation/:id' do
+  describe 'GET /request_confirmation/:session_token/:id' do
     before { allow_any_instance_of(Travis::RemoteVCS::User).to receive(:request_confirmation) }
 
     it 'returns ok' do
-      expect(get('/auth/request_confirmation/123')).to be_ok
+      expect(get('/auth/request_confirmation/asdcvxcv/123')).to be_ok
+    end
+
+    it 'calls VCS service with proper params' do
+      expect_any_instance_of(Travis::RemoteVCS::User)
+        .to receive(:request_confirmation).with(session_token: 'asdcvxcv', id: '123')
+
+      get('/auth/request_confirmation/asdcvxcv/123')
     end
   end
 end
