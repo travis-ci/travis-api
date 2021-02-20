@@ -20,7 +20,7 @@ module Travis::API::V3
 
     def get(key)
       io = StringIO.new
-      puts "gcs_config_3: #{config.inspect} #{gcs_config.inspect}"
+      puts "gcs_config_3: #{gcs_config.inspect}"
       gcs_connection.get_object(gcs_config[:bucket_name], key, download_dest: io)
       io.rewind
       io.read
