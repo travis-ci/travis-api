@@ -230,6 +230,15 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     end
 
     context 'billing authorization' do
+      before do
+        @old_host = Travis.config.host
+        Travis.config.host = 'travis-ci.com'
+      end
+
+      after do
+        Travis.config.host = @old_host
+      end
+
       context 'billing service authorizes the job' do
         before do
           stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
