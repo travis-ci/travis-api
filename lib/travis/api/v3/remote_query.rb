@@ -98,7 +98,7 @@ module Travis::API::V3
 
     def gcs_connection
       gcs = ::Google::Apis::StorageV1::StorageService.new
-      json_key_io = StringIO.new(gcs_config[:json_key].to_s)
+      json_key_io = StringIO.new(JSON.dump(gcs_config[:json_key]))
 
       gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
         json_key_io: json_key_io,
