@@ -23,6 +23,25 @@ describe Travis::API::V3::Services::BuildBackups::All, set_app: true do
       expect(last_response.status).to eq(200)
       expect(parsed_body).to eql_json({
         '@type' => 'build_backups',
+        '@pagination' => {
+          'limit' => 25,
+          'offset' => 0,
+          'count' => 1,
+          'is_first' => true,
+          'is_last' => true,
+          'next' => nil,
+          'prev' => nil,
+          'first' => {
+            '@href' => "/v3/build_backups?repository_id=#{repository.id}",
+            'offset' => 0,
+            'limit' => 25
+          },
+          'last' => {
+            '@href' => "/v3/build_backups?repository_id=#{repository.id}",
+            'offset' => 0,
+            'limit' => 25
+          }
+        },
         '@representation' => 'standard',
         '@href' => "/v3/build_backups?repository_id=#{repository.id}",
         'build_backups' => [{
