@@ -31,6 +31,8 @@ module Travis
         end
 
         def billing?
+          return true if Travis.config.org?
+
           @_billing_ok ||= begin
             jobs = target.is_a?(Job) ? [target] : target.matrix
 
