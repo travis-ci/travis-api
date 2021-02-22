@@ -20,7 +20,6 @@ module Travis::API::V3
 
     def get(key)
       io = StringIO.new
-      puts "gcs_config_3: #{gcs_config.inspect}"
       gcs_connection.get_object(gcs_config[:bucket_name], key, download_dest: io)
       io.rewind
       io.read
@@ -99,7 +98,7 @@ module Travis::API::V3
 
     def gcs_connection
       gcs = ::Google::Apis::StorageV1::StorageService.new
-      json_key_io = StringIO.new(gcs_config[:json_key])
+      json_key_io = StringIO.new(gcs_config[:json_key].to_s)
 
       gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
         json_key_io: json_key_io,
