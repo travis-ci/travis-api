@@ -45,8 +45,13 @@ module Travis
             @cause_of_denial = e.message
             false
           rescue Travis::API::V3::NotFound
-            # Owner is on a legacy plan
-            true
+            if subscription&.active? || owner_group_subscription?
+              # Owner is on a legacy plan or belongs to a group
+              true
+            else
+              @cause_of_denial = 'You do not seem to have active subscription.'
+              false
+            end
           end
         end
 
@@ -77,8 +82,32 @@ module Travis
 
         private
 
+        def subscription
+          Subscription.where(owner: repository.owner)&.first
+        end
+
+        def owner_group
+          repository&.owner&.owner_group
+        end
+
+        def owner_group_subscription?
+          return false if owner_group.blank?
+
+          group_owners = OwnerGroup.where(uuid: owner_group.uuid).map(&:owner)
+          active_subscriptions = Subscription.where(owner: group_owners).select(&:active?)
+          active_subscriptions.present?
+        end
+
         def permission?
-          current_user && current_user.permission?(required_role, repository_id: target.repository_id) && !abusive?
+          current_user && current_user.permission?(required_role, repository_id: target.repository_id) && !abusive? && build_permission?
+        end
+
+        def build_permission?
+          # nil value is considered true
+          return false if repository.permissions.find_by(user_id: current_user.id).build == false
+          return false if repository.owner_type == 'Organization' && repository.owner.memberships.find_by(user_id: current_user.id)&.build_permission == false
+
+          true
         end
 
         def abusive?

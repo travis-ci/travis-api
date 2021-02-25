@@ -10,6 +10,7 @@ class User < Travis::Model
   has_many :permissions, dependent: :destroy
   has_many :repositories, through: :permissions
   has_many :emails, dependent: :destroy
+  has_one :owner_group, as: :owner
 
   before_create :set_as_recent
   after_create :create_a_token
