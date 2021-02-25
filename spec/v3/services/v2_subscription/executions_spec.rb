@@ -113,7 +113,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "slug"=>"svenfuchs/minimal",
               "description"=>nil,
               "github_id"=>1,
-              "vcs_id"=>nil,
+              "vcs_id"=>'1',
               "vcs_type"=>"GithubRepository",
               "github_language"=>nil,
               "active"=>true,
