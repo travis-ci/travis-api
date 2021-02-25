@@ -118,6 +118,22 @@ describe Travis::Enqueue::Services::RestartModel do
         include_examples 'does not restart the job'
       end
 
+      context 'when customer belongs to a group' do
+        let(:uuid) { SecureRandom.uuid }
+        let!(:travis) { FactoryBot.create(:org, login: 'travis') }
+        let!(:john)  { FactoryBot.create(:user, login: 'john') }
+        let!(:doe)   { FactoryBot.create(:user, login: 'doe')  }
+        before do
+          repository.permissions.create(user: user, build: true)
+          FactoryBot.create(:valid_stripe_subs, owner: john)
+          OwnerGroup.create(uuid: uuid, owner: owner)
+          OwnerGroup.create(uuid: uuid, owner: john)
+          OwnerGroup.create(uuid: uuid, owner: doe)
+        end
+
+        include_examples 'restarts the job'
+      end
+
     end
   end
 end

@@ -1,6 +1,5 @@
 module Travis::API::V3
   class Services::BuildPermissions::FindForOrganization < Service
-    paginate
     result_type :build_permissions
 
     def run!

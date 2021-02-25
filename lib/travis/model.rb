@@ -18,6 +18,7 @@ module Travis
     require 'travis/model/job'
     require 'travis/model/membership'
     require 'travis/model/organization'
+    require 'travis/model/owner_group'
     require 'travis/model/permission'
     require 'travis/model/pull_request'
     require 'travis/model/repository'
