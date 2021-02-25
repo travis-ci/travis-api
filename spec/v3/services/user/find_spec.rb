@@ -3,7 +3,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
-  
+
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
 
@@ -44,6 +44,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
       },
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
+      "confirmed_at" => nil,
     }}
   end
 end
