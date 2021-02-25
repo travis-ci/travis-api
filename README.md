@@ -4,6 +4,8 @@
 
 https://api.travis-ci.org
 
+## WARNING!!!!!
+Master branch is designed for .com only. If you would like to deploy changes for .org please use org-only branch
 ## Requirements
 
 You will need the following packages to get travis-api to work:
