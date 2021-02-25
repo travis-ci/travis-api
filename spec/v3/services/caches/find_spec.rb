@@ -130,7 +130,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     <MaxKeys>1000</MaxKeys>
     <IsTruncated>false</IsTruncated>
       <Contents>
-          <Key>#{repo.github_id}/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz</Key>
+          <Key>#{repo.vcs_id}/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz</Key>
           <LastModified>2009-10-12T17:50:30.000Z</LastModified>
           <ETag>&quot;hgb9dede5f27731c9771645a39863328&quot;</ETag>
           <Size>20308738</Size>
@@ -141,7 +141,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
           </Owner>
       </Contents>
       <Contents>
-         <Key>#{repo.github_id}/master/cache-linux-precise-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz</Key>
+         <Key>#{repo.vcs_id}/master/cache-linux-precise-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz</Key>
            <LastModified>2009-10-12T17:50:30.000Z</LastModified>
            <ETag>&quot;1b2cf535f27731c974343645a3985328&quot;</ETag>
            <Size>64994</Size>
@@ -165,7 +165,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
     <MaxKeys>1000</MaxKeys>
     <IsTruncated>false</IsTruncated>
       <Contents>
-          <Key>#{repo.github_id}/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz</Key>
+          <Key>#{repo.vcs_id}/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz</Key>
           <LastModified>2009-10-12T17:50:30.000Z</LastModified>
           <ETag>&quot;hgb9dede5f27731c9771645a39863328&quot;</ETag>
           <Size>20308738</Size>

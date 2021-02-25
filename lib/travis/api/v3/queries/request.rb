@@ -18,14 +18,14 @@ module Travis::API::V3
     end
 
     def schedule(repository, user)
-      raise ServerError, 'repository does not have a provider id'.freeze unless repository.vcs_id || repository.github_id
+      raise ServerError, 'repository does not have a provider id'.freeze unless repository.vcs_id
       raise WrongParams, 'missing user'.freeze unless user and user.id
 
       request = create_request(repository)
 
       payload = {
         repository: {
-          id: repository.github_id || repository.vcs_id,
+          id: repository.vcs_id,
           vcs_type: repository.vcs_type,
           owner_name: repository.owner_name,
           name: repository.name ,

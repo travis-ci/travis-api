@@ -55,7 +55,7 @@ module Travis
             sidekiq:              { namespace: 'sidekiq', pool_size: 1 },
             smtp:                 {},
             email:                {},
-            github:               { api_url: 'https://api.github.com', token: 'travisbot-token' },
+            github:               { api_url: 'https://api.github.com' },
             github_apps:          { id: nil, private_pem: nil },
             async:                {},
             notifications:        [], # TODO rename to event.handlers

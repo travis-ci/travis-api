@@ -16,7 +16,7 @@ module Travis::API::V3
 
 
       if vcs_id = options[?u.freeze]
-        return unless user = ::User.find_by(vcs_id: vcs_id) || ::User.find_by(github_id: vcs_id)
+        return unless user = ::User.find_by(vcs_id: vcs_id)
       end
 
       if application = options[?a.freeze]

@@ -1,10 +1,10 @@
 module Travis::API::V3
   class Queries::Organization < Query
-    params :id, :login, :github_id, :provider
+    params :id, :login, :vcs_id, :provider
 
     def find
       return Models::Organization.find_by_id(id) if id
-      return Models::Organization.find_by(vcs_id: github_id) || Models::Organization.find_by(github_id: github_id) if github_id
+      return Models::Organization.find_by(vcs_id: vcs_id) if vcs_id
       return Models::Organization.where(
         'lower(login) = ? and lower(vcs_type) = ?'.freeze,
         login.downcase,

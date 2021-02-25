@@ -1,7 +1,7 @@
 describe Travis::API::V3::Services::Owner::Find, set_app: true do
 
   describe "organization" do
-    let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
+    let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234, vcs_id: 1234) }
 
     before    { org.save! }
     after     { org.delete                             }
@@ -105,7 +105,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "name"              => "example-repo",
           "slug"              => "example-org/example-repo",
           "description"       => nil,
-          "github_id"         => repo.github_id,
+          "github_id"         => repo.vcs_id,
           "vcs_id"            => repo.vcs_id,
           "vcs_type"          => repo.vcs_type,
           "owner_name"        => "example-org",
@@ -179,7 +179,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "name"            => "example-repo",
           "slug"            => "example-org/example-repo",
           "description"     => nil,
-          "github_id"       => repo.github_id,
+          "github_id"       => repo.vcs_id,
           "vcs_id"          => repo.vcs_id,
           "vcs_type"        => repo.vcs_type,
           "owner_name"      => "example-org",
@@ -265,7 +265,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
   end
 
   describe "user" do
-    let(:user) { Travis::API::V3::Models::User.new(login: 'example-user', github_id: 5678) }
+    let(:user) { Travis::API::V3::Models::User.new(login: 'example-user', github_id: 5678, vcs_id: 5678) }
     before     { user.save!                      }
     after      { user.delete                     }
 

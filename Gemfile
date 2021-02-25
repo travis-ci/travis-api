@@ -28,7 +28,6 @@ gem 'rack', '>= 2.1.4'
 gem 'rack-contrib'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
 gem 'rack-attack', '~> 5.0'
-gem 'gh', git: 'https://github.com/travis-ci/gh'
 gem 'bunny',           '~> 2.9.2'
 gem 'dalli'
 gem 'pry'
@@ -56,6 +55,7 @@ gem 'opencensus-stackdriver'
 
 gem 'faraday'
 gem 'faraday_middleware'
+gem 'net-http-persistent'
 
 gem 'knapsack'
 

@@ -3,10 +3,22 @@ describe 'Users', set_app: true do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
+  before do
+    Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
+    Travis.config.vcs.token = 'vcs-token'
+  end
+
   context 'GET /users/:id' do
     let(:repo1) { FactoryBot.create(:repository, owner: user) }
     let(:org) { FactoryBot.create(:org) }
     let(:repo2) { FactoryBot.create(:repository, owner: org) }
+    let!(:request) do
+      WebMock.stub_request(:post, 'http://vcsfake.travis-ci.com/users/1/check_scopes')
+        .to_return(
+          status: 200,
+          body: nil,
+        )
+    end
 
     before do
       user.permissions.create!(repository: repo1)

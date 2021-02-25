@@ -1,11 +1,10 @@
 module Travis::API::V3
   class Queries::User < Query
-    setup_sidekiq(:user_sync, queue: :sync, class_name: "Travis::GithubSync::Worker")
-    params :id, :login, :email, :github_id, :vcs_id, :vcs_type, :is_syncing
+    params :id, :login, :email, :vcs_id, :vcs_type, :is_syncing
 
     def find
       return Models::User.find_by_id(id) if id
-      return Models::User.find_by(vcs_id: github_id) || Models::User.find_by(github_id: github_id) if github_id
+      return Models::User.find_by(vcs_id: vcs_id) if vcs_id
       return Models::User.where(
         'lower(login) = ? and lower(vcs_type) = ?'.freeze,
         login.downcase,
@@ -25,14 +24,9 @@ module Travis::API::V3
 
     def sync(user)
       raise AlreadySyncing if user.is_syncing?
-      if Travis::Features.user_active?(:use_vcs, user) || !user.github?
-        Travis::RemoteVCS::User.new.sync(user_id: user.id)
-        user.reload
-      else
-        perform_async(:user_sync, :sync_user, user_id: user.id)
-        user.update_column(:is_syncing, true)
-        user
-      end
+
+      Travis::RemoteVCS::User.new.sync(user_id: user.id)
+      user.reload
     end
 
     private

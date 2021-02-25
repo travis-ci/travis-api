@@ -4,7 +4,7 @@ require 'auth/helpers/rack_test'
 RSpec.shared_context 'cache setup' do
   include Support::S3
   before { Travis.config.cache_options = { s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} } }
-  before { s3_bucket << "#{repo.github_id}/master/cache--example1.tbz" }
+  before { s3_bucket << "#{repo.vcs_id}/master/cache--example1.tbz" }
 end
 
 RSpec::Matchers.define :auth do |expected|

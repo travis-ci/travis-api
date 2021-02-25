@@ -1,5 +1,7 @@
 module Travis
   module API
+    GITHUB_EVENTS = %i(push pull_request issue_comment public member create delete repository)
+
     module V3
       V3 = self
 
