@@ -119,6 +119,17 @@ class Travis::Api::App
         erb(:container, locals: data)
       end
 
+      get '/confirm_user/:token' do
+        Travis::RemoteVCS::User.new.confirm_user(token: params[:token])
+      rescue Travis::RemoteVCS::ResponseError
+        halt 404, 'The token is expired or not found.'
+      end
+
+      get '/request_confirmation/:session_token/:id' do
+        Travis::RemoteVCS::User
+          .new.request_confirmation(session_token: params[:session_token], id: params[:id])
+      end
+
       error Faraday::Error::ClientError do
         halt 401, 'could not resolve github token'
       end
