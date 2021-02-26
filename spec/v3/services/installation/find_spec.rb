@@ -64,6 +64,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "allow_migration" => false,
         "recently_signed_up" => false,
         "secure_user_hash" => nil,
+        "confirmed_at" => nil,
       }
     }}
   end
