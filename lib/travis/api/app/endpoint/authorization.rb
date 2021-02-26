@@ -242,7 +242,7 @@ class Travis::Api::App
 
         def handle_invalid_response
           clear_state_cookies
-          redirect to("https://#{Travis.config.host}/")
+          redirect to("https://#{Travis.config.host}?wrongstate=true")
         end
 
         def state_ok?(state, provider = :github)
