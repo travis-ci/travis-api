@@ -39,7 +39,7 @@ module Travis::API::V3
 
       def repo_data
         {
-          github_id: repo.github_id,
+          vcs_id: repo.vcs_id,
           slug: repo.slug,
           token: repo_token,
           private: repo.private?,

@@ -23,9 +23,9 @@ describe Travis::Services::FindCaches do
 
     describe 'with caches' do
       before do
-        s3_bucket << "#{repo.github_id}/master/cache--example1.tbz"
-        s3_bucket << "#{repo.github_id}/other/cache--example2.tbz"
-        s3_bucket << "#{repo.github_id.succ}/master/cache--example3.tbz"
+        s3_bucket << "#{repo.vcs_id}/master/cache--example1.tbz"
+        s3_bucket << "#{repo.vcs_id}/other/cache--example2.tbz"
+        s3_bucket << "#{repo.vcs_id.succ}/master/cache--example3.tbz"
       end
 
       its(:size) { is_expected.to eq 2 }

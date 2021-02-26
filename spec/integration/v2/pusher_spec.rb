@@ -1,8 +1,8 @@
 describe Travis::Api::App::Endpoint::Pusher, set_app: true do
   let(:sven)    { FactoryBot.create(:user) }
   let(:rkh)     { FactoryBot.create(:user, login: 'rkh', name: 'Konstantin Haase') }
-  let(:travis)  { FactoryBot.create(:repository, github_id: 200) }
-  let(:sinatra) { FactoryBot.create(:repository, name: 'sinatra', owner_name: 'sinatra', github_id: 300) }
+  let(:travis)  { FactoryBot.create(:repository, vcs_id: 200) }
+  let(:sinatra) { FactoryBot.create(:repository, name: 'sinatra', owner_name: 'sinatra', vcs_id: 300) }
   let(:build)   { FactoryBot.create(:build, request: request) }
   let(:commit)  { FactoryBot.create(:commit) }
   let(:request) { FactoryBot.create(:request, owner: travis) }
