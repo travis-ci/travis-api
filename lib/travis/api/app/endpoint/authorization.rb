@@ -123,6 +123,21 @@ class Travis::Api::App
         halt 401, 'could not resolve github token'
       end
 
+      get '/confirm_user/:token' do
+        content_type :json
+        Travis::RemoteVCS::User.new.confirm_user(token: params[:token])
+        { status: 200 }.to_json
+      rescue Travis::RemoteVCS::ResponseError
+        halt 404, 'The token is expired or not found.'
+      end
+
+      get '/request_confirmation/:session_token/:id' do
+        content_type :json
+        Travis::RemoteVCS::User
+          .new.request_confirmation(session_token: params[:session_token], id: params[:id])
+        { status: 200 }.to_json
+      end
+
       private
 
         # update first login date if not set

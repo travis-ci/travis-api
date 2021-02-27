@@ -44,6 +44,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
       },
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
+      "confirmed_at" => nil,
     }}
   end
 end
