@@ -53,8 +53,10 @@
           <%= f.hidden_field :owner_type, value: owner.class %>
           <%= f.hidden_field :owner_id, value: owner.id %>
           <%= f.select(:plan) do %>
-            <% owner.available_plans.each do |c| -%>
-              <%= content_tag(:option, c.first, value: c.last) %>
+            <% if owner.available_plans.present?  %>
+              <% owner.available_plans.each do |c| -%>
+                <%= content_tag(:option, c.first, value: c.last) %>
+              <% end %>
             <% end %>
           <% end %>
           <%= f.submit 'Create Free', class: 'button', id: 'create-subscription' %>

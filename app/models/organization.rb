@@ -25,6 +25,6 @@ class Organization < ApplicationRecord
 
   def available_plans
     v2_service = Services::Billing::V2Subscription.new(id.to_s, 'Organization')
-    v2_service.plans.map { |plan_config| [plan_config.name, plan_config.id] }
+    v2_service.plans.present? ? v2_service.plans.map { |plan_config| [plan_config.name, plan_config.id] } : []
   end
 end
