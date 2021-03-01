@@ -98,7 +98,7 @@ describe Travis::API::V3::Services::Request::Preview, set_app: true do
       expect(WebMock).to have_requested(:post, %r(/configs)).with { |req|
         expect(parse(req.body)).to eq(
           repo: {
-            github_id: repo.github_id,
+            vcs_id: repo.vcs_id,
             slug: repo.slug,
             token: 'github_oauth_token',
             private: false,

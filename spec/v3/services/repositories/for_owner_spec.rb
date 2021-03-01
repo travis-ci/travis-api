@@ -17,6 +17,13 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   before        { repo.update_attribute(:current_build, build)                             }
   after         { repo.update_attribute(:private, false)                            }
   before        { RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 1024*1024 }
+  before do
+    stub_billing_request(:get, "/usage/users/1/allowance", auth_key: billing_auth_key, user_id: 1)
+        .to_return(body: JSON.dump({ 'public_repos': true, 'private_repos': true, 'user_usage': true, 'pending_user_licenses': false, 'concurrency_limit': 666 }))
+
+    Travis.config.billing.url = billing_url
+    Travis.config.billing.auth_key = billing_auth_key
+  end
 
   describe "sorting by default_branch.last_build" do
     let!(:repo2) { Travis::API::V3::Models::Repository.create!(owner_name: 'svenfuchs', owner: repo.owner, name: 'second-repo', default_branch_name: 'other-branch') }
@@ -82,7 +89,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "name"               => "minimal",
         "slug"               => "svenfuchs/minimal",
         "description"        => nil,
-        "github_id"          => repo.github_id,
+        "github_id"          => repo.vcs_id.to_i,
         "vcs_id"             => repo.vcs_id,
         "vcs_type"           => repo.vcs_type,
         "owner_name"         => "svenfuchs",
@@ -135,7 +142,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "name"               =>"minimal",
         "slug"               =>"svenfuchs/minimal",
         "description"        =>nil,
-        "github_id"          =>repo.github_id,
+        "github_id"          => repo.vcs_id.to_i,
         "vcs_id"             => repo.vcs_id,
         "vcs_type"           => repo.vcs_type,
         "owner_name"         => "svenfuchs",
@@ -250,7 +257,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "name"               => "minimal",
         "slug"               => "svenfuchs/minimal",
         "description"        => nil,
-        "github_id"          => repo.github_id,
+        "github_id"          => repo.vcs_id.to_i,
         "vcs_id"             => repo.vcs_id,
         "vcs_type"           => repo.vcs_type,
         "owner_name"         => "svenfuchs",
@@ -411,7 +418,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "name"            => "minimal",
         "slug"            => "svenfuchs/minimal",
         "description"     => nil,
-        "github_id"       => repo.github_id,
+        "github_id"       => repo.vcs_id.to_i,
         "vcs_id"          => repo.vcs_id,
         "vcs_type"        => repo.vcs_type,
         "owner_name"      => "svenfuchs",
@@ -457,7 +464,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "name"            => "maximal",
         "slug"            => "svenfuchs/maximal",
         "description"     => nil,
-        "github_id"       => repo2.github_id,
+        "github_id"       => repo2.vcs_id,
         "vcs_id"          => repo2.vcs_id,
         "vcs_type"        => repo2.vcs_type,
         "owner_name"      => "svenfuchs",
@@ -529,7 +536,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "name"               => "sharedrepo",
         "slug"               => "sharedrepoowner/sharedrepo",
         "description"        => nil,
-        "github_id"          => sharedrepo.github_id,
+        "github_id"          => sharedrepo.vcs_id.to_i,
         "vcs_id"             => sharedrepo.vcs_id,
         "vcs_type"           => sharedrepo.vcs_type,
         "owner_name"         => "sharedrepoowner",
@@ -557,29 +564,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         }]}}
   end
 
-  describe "allowance, org" do
-    before  { get("/v3/owner/svenfuchs/allowance", {}, headers) }
-    example { expect(last_response).to be_ok }
-    example { expect(JSON.load(body)).to be == {
-      "@representation"       => "standard",
-      "@type"                 => "allowance",
-      "concurrency_limit"     => 1,
-      "private_repos"         => false,
-      "public_repos"          => true,
-      "subscription_type"     => 1,
-      "user_usage"            => false,
-      "pending_user_licenses" => false,
-      "id"                    => 0
-    }}
-  end
-
   describe "allowance, com" do
     before do
       Travis.config.host = 'travis-ci.com'
-      Travis.config.billing.url = billing_url
-      Travis.config.billing.auth_key = billing_auth_key
-      stub_billing_request(:get, "/usage/users/1/allowance", auth_key: billing_auth_key, user_id: 1)
-        .to_return(body: JSON.dump({ 'public_repos': true, 'private_repos': true, 'user_usage': true, 'pending_user_licenses': false, 'concurrency_limit': 666 }))
       get("/v3/owner/svenfuchs/allowance", {}, headers)
     end
     example { expect(last_response).to be_ok }

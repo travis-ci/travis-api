@@ -124,7 +124,7 @@ module Travis
         end
 
         def prefix
-          prefix = "#{repo.vcs_id || repo.github_id}/"
+          prefix = "#{repo.vcs_id}/"
           prefix << branch << '/' if branch
           prefix
         end

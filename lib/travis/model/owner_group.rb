@@ -1,4 +1,3 @@
-require 'gh'
 require 'travis/model'
 
 class OwnerGroup < Travis::Model

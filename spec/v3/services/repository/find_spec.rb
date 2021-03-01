@@ -77,7 +77,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "name"               => "minimal",
       "slug"               => "svenfuchs/minimal",
       "description"        => nil,
-      "github_id"          => repo.github_id,
+      "github_id"          => repo.vcs_id.to_i,
       "vcs_id"             => repo.vcs_id,
       "vcs_type"           => repo.vcs_type,
       "owner_name"         => "svenfuchs",
@@ -143,7 +143,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         owner_id: 1,
         owner_type: "User",
         last_build_state: "passed",
-        github_id: 12345
+        vcs_id: 12345,
+        github_id: 12345,
       )
       get("/v3/repo/svenfuchs%2FMinimal")
     }
@@ -365,7 +366,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   describe "including full owner" do
     before  { get("/v3/repo/#{repo.id}?include=repository.owner") }
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body['owner']).to include("github_id", "is_syncing", "synced_at",
+    example { expect(parsed_body['owner']).to include("vcs_id", "github_id", "is_syncing", "synced_at",
       "@type" => "user",
       "id"    => repo.owner_id,
       "login" => "svenfuchs",
@@ -422,7 +423,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   describe "including full owner" do
     before  { get("/v3/repo/#{repo.id}?include=repository.owner") }
     example { expect(last_response).to be_ok }
-    example { expect(parsed_body['owner']).to include("github_id", "is_syncing", "synced_at")}
+    example { expect(parsed_body['owner']).to include("vcs_id", "github_id", "is_syncing", "synced_at")}
   end
 
   describe "when owner is missing" do

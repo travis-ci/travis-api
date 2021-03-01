@@ -123,7 +123,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
   let(:payload) do
     {
       repository: {
-        id: repo.github_id,
+        id: repo.vcs_id,
         vcs_type: repo.vcs_type,
         owner_name: 'svenfuchs',
         name: 'minimal'

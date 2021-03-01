@@ -525,6 +525,7 @@ GITHUB_OAUTH_DATA = {
   'name'               => 'John',
   'email'              => 'john@email.example.com',
   'login'              => 'john',
+  'vcs_id'             => '234423',
   'github_id'          => 234423,
   'github_oauth_token' => '1234567890abcdefg',
   'gravatar_id'        => '41193cdbffbf06be0cdf231b28c54b18'

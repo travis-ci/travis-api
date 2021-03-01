@@ -13,7 +13,7 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
       context "has admin permissions to the repo" do
         before { Travis::API::V3::Models::Permission.create(repository: repo, user: user, admin: true) }
         before do
-          stub_request(:post, "https://merge.localhost/api/repo/by_github_id/#{repo.github_id}/migrate")
+          stub_request(:post, "https://merge.localhost/api/repo/by_github_id/#{repo.vcs_id}/migrate")
         end
 
         it "makes a request to the merge app" do

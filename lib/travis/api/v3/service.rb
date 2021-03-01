@@ -67,10 +67,6 @@ module Travis::API::V3
       @queries[type] ||= Queries[type].new(params, result_type, service: self)
     end
 
-    def github(user = nil)
-      @github[user] ||= GitHub.new(user)
-    end
-
     def find(type = result_type, *args)
       not_found(true,  type) unless object = query(type).find(*args)
       not_found(false, type) unless access_control.visible? object

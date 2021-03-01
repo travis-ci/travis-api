@@ -102,7 +102,7 @@ class Request < Travis::Model
   end
 
   def config_url
-    GH.full_url("repos/#{repository.slug}/contents/.travis.yml?ref=#{commit.commit}").to_s
+    "#{Travis.config.github.api_url}/repos/#{repository.slug}/contents/.travis.yml?ref=#{commit.commit}"
   end
 
   def same_repo_pull_request?

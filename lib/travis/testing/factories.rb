@@ -81,7 +81,8 @@ FactoryBot.define do
     last_build_number { '2' }
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
-    sequence(:github_id) {|n| n }
+    sequence(:vcs_id) {|n| n }
+    github_id { |r| r.vcs_id }
     private { false }
   end
 

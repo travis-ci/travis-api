@@ -3,7 +3,6 @@ require 'travis/services/base'
 
 module Travis
   module API; end # Load-order issue
-  require 'travis/api/v3/github'
 
   module Github
     module Services
@@ -11,25 +10,17 @@ module Travis
         register :github_set_hook
 
         def run
-          if Travis::Features.user_active?(:use_vcs, current_user) || !current_user.github?
-            remote_vcs_repository.set_hook(
-              repository_id: repo.id,
-              user_id: current_user.id,
-              activate: active?
-            )
-          else
-            v3_github.set_hook(repo, active?)
-          end
+          remote_vcs_repository.set_hook(
+            repository_id: repo.id,
+            user_id: current_user.id,
+            activate: active?
+          )
         end
 
         private
 
         def active?
           params[:active]
-        end
-
-        def v3_github
-          @v3_github ||= Travis::API::V3::GitHub.new(current_user, current_user.github_oauth_token)
         end
 
         def repo

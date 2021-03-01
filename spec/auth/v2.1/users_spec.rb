@@ -1,6 +1,18 @@
 describe 'v2.1 users', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user) { User.first }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
+  let!(:request) do
+    WebMock.stub_request(:post, 'http://vcsfake.travis-ci.com/users/1/check_scopes')
+      .to_return(
+        status: 200,
+        body: nil,
+      )
+  end
+
+  before do
+    Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
+    Travis.config.vcs.token = 'vcs-token'
+  end
 
   # TODO put /users/
   # TODO put /users/:id ?

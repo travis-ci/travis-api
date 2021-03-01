@@ -49,8 +49,8 @@ describe Repository do
     describe 'by_params' do
       let(:minimal) { FactoryBot.create(:repository) }
 
-      it "should find a repository by it's github_id" do
-        expect(Repository.by_params(github_id: minimal.github_id).to_a.first).to eq(minimal)
+      it "should find a repository by its vcs_id" do
+        expect(Repository.by_params(vcs_id: minimal.vcs_id).to_a.first).to eq(minimal)
       end
 
       it "should find a repository by it's id" do

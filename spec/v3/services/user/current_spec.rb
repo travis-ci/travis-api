@@ -25,9 +25,9 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
       "education"        => nil,
       "allow_migration"  => false,
       "allowance"        => {
-        "@type"                 => "allowance",
-        "@representation"       => "minimal",
-        "id"                    => user.id
+        "@type"             => "allowance",
+        "@representation"   => "minimal",
+        "id"                => user.id,
       },
       "recently_signed_up"=>false,
       "secure_user_hash" => nil

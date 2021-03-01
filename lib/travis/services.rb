@@ -38,7 +38,6 @@ end
 
 require 'travis/services/base'
 require 'travis/services/delete_caches'
-require 'travis/services/find_admin'
 require 'travis/services/find_branch'
 require 'travis/services/find_branches'
 require 'travis/services/find_build'

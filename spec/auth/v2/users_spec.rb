@@ -2,6 +2,16 @@ describe 'v2 users', auth_helpers: true, api_version: :v2, set_app: true do
   let(:user) { User.first }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
+  before do
+    Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
+    Travis.config.vcs.token = 'vcs-token'
+    stub_request(:post, "http://vcsfake.travis-ci.com/users/#{user.id}/check_scopes")
+      .to_return(
+        status: 200,
+        body: nil,
+      )
+  end
+
   # TODO put /users/
   # TODO put /users/:id ?
   # TODO post /users/sync

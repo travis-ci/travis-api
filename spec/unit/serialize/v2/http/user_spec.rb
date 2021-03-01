@@ -22,8 +22,17 @@ describe Travis::Api::Serialize::V2::Http::User do
       'vcs_type'           => 'GithubUser'
     }
   }
+  let!(:request) do
+    WebMock.stub_request(:post, 'http://vcsfake.travis-ci.com/users/1/check_scopes')
+      .to_return(
+        status: 200,
+        body: nil,
+      )
+  end
 
   before do
+    Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
+    Travis.config.vcs.token = 'vcs-token'
     allow(user).to receive(:github_scopes).and_return(['public_repo', 'user:email'])
   end
 
