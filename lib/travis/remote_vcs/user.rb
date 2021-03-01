@@ -44,6 +44,21 @@ module Travis
           req.url "users/#{user_id}/check_scopes"
         end && true
       end
+
+      def confirm_user(token:)
+        request(:post, __method__) do |req|
+          req.url 'users/confirm'
+          req.params['token'] = token
+        end
+      end
+
+      def request_confirmation(session_token:, id:)
+        request(:post, __method__) do |req|
+          req.url 'users/request_confirmation'
+          req.params['session_token'] = session_token
+          req.params['id'] = id
+        end
+      end
     end
   end
 end
