@@ -52,10 +52,9 @@ module Travis
         end
       end
 
-      def request_confirmation(session_token:, id:)
+      def request_confirmation(id:)
         request(:post, __method__) do |req|
           req.url 'users/request_confirmation'
-          req.params['session_token'] = session_token
           req.params['id'] = id
         end
       end

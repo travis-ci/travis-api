@@ -135,10 +135,10 @@ class Travis::Api::App
         halt 404, 'The token is expired or not found.'
       end
 
-      get '/request_confirmation/:session_token/:id' do
+      get '/request_confirmation/:id' do
         content_type :json
         Travis::RemoteVCS::User
-          .new.request_confirmation(session_token: params[:session_token], id: params[:id])
+          .new.request_confirmation(id: current_user.id)
         { status: 200 }.to_json
       end
 
