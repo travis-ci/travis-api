@@ -3,6 +3,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
 
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
+  before { allow_any_instance_of(Travis::RemoteVCS::User).to receive(:check_scopes) }
 
   before do
     add_endpoint '/info' do
@@ -53,7 +54,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
     after do
       ENV['TRAVIS_SITE'] = nil
     end
-    
+
     describe 'evil hackers messing with the state' do
       before do
         WebMock.stub_request(:post, "https://foobar.com/access_token_path").
