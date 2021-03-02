@@ -30,8 +30,7 @@ describe 'Hooks', set_app: true do
 
     before(:each) do
       Travis.config.service_hook_url = 'notify.travis-ci.org'
-      stub_request(:get, "https://api.github.com/repositories/#{repo.github_id}/hooks?per_page=100").to_return(status: 200, body: '[]')
-      stub_request(:post, "https://api.github.com/repositories/#{repo.github_id}/hooks")
+      allow_any_instance_of(Travis::RemoteVCS::Repository).to receive(:set_hook)
     end
 
     it 'sets the hook' do
