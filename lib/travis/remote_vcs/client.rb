@@ -22,14 +22,14 @@ module Travis
         { ssl: Travis.config.ssl.to_h }
       end
 
-      def request(method, name)
+      def request(method, name, data_in_body = true)
         resp = connection.send(method) { |req| yield(req) }
-        Travis.logger.info "#{self.class.name} #{name} response status: #{resp.status}"
-        if resp.success?
-          resp.body.present? ? JSON.parse(resp.body)['data'] : true
-        else
-          raise ResponseError, "#{self.class.name} #{name} request unexpected response: #{resp.body} #{resp.status}"
-        end
+
+        raise ResponseError, "#{self.class.name} #{name} request unexpected response: #{resp.body} #{resp.status}" unless resp.success?
+        return true unless resp.body.present?
+
+        parsed_response = JSON.parse(resp.body)
+        data_in_body ? parsed_response['data'] : parsed_response
       end
     end
   end

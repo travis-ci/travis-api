@@ -43,12 +43,12 @@ module Travis
       end
 
       def show(repository_id:, admin_id: nil)
-        request(:get, __method__) do |req|
+        request(:get, __method__, false) do |req|
           req.url "repos/#{repository_id}"
           req.params['admin_id'] = admin_id
         end
       rescue ResponseError
-        []
+        nil
       end
     end
   end
