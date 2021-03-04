@@ -43,10 +43,7 @@ module Travis
               false
             end
           end
-        rescue Timeout::Error => error
-          handle_error(user, error)
-          false
-        rescue GH::Error => error
+        rescue error
           handle_error(user, error)
           false
         end
