@@ -21,14 +21,7 @@ module Travis::Api
         private
 
           def cache_control
-            if final?
-              mode = endpoint.public? ? :public : :private
-              endpoint.expires(31536000, mode) # 1 year
-            else
-              # FIXME: Chrome WTF?
-              endpoint.cache_control :no_cache
-            end
-
+            endpoint.cache_control :no_cache
             endpoint.etag cache_key if cache_key
           end
 
