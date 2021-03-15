@@ -73,4 +73,10 @@ RSpec.describe User, type: :model do
     specify { expect(inactive_user.enterprise_status).to eq 'Inactive' }
     specify { expect(suspended_user.enterprise_status).to match %r{Suspended on 1 January 2018 at \d{2}:\d{2}} }
   end
+
+  describe '#tokens' do
+    it 'responds to #tokens' do
+      build(:user).respond_to?(:tokens)
+    end
+  end
 end
