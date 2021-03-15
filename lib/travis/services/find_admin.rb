@@ -34,7 +34,7 @@ module Travis
 
         def validate(user)
           Timeout.timeout(2) do
-            data = Github.authenticated(user) { repository_data }
+            data = repository_data(user)
             if data['permissions'] && data['permissions']['admin']
               user
             else
@@ -43,10 +43,7 @@ module Travis
               false
             end
           end
-        rescue Timeout::Error => error
-          handle_error(user, error)
-          false
-        rescue GH::Error => error
+        rescue error
           handle_error(user, error)
           false
         end
@@ -56,7 +53,7 @@ module Travis
           case status
           when 401
             error "[github-admin] token for #{user.login} no longer valid"
-            user.update_attributes!(:github_oauth_token => "")
+            # user.update_attributes!(:github_oauth_token => "")
           when 404
             info "[github-admin] #{user.login} no longer has any access to #{repository.slug}"
             update(user, {})
@@ -66,10 +63,11 @@ module Travis
         end
 
         # TODO should this not be memoized?
-        def repository_data
-          data = GH["repos/#{repository.slug}"]
-          info "[github-admin] could not retrieve data for #{repository.slug}" unless data
-          data || { 'permissions' => {} }
+        def repository_data(user)
+          Travis::RemoteVCS::Repository.new.show(
+            repository_id: repository.id,
+            admin_id: user.id
+          )
         end
 
         def update(user, permissions)
