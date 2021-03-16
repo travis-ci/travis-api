@@ -140,7 +140,7 @@ class Travis::Api::App
         halt 403, 'access denied' unless current_user
         Travis::RemoteVCS::User
           .new.request_confirmation(id: current_user.id)
-        { status: 200, user: current_user.id, web_id: id }.to_json
+        { status: 200, user: current_user.id }.to_json
       end
 
       private
