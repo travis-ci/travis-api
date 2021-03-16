@@ -137,6 +137,7 @@ class Travis::Api::App
 
       get '/request_confirmation/:id' do
         content_type :json
+        halt 403, 'access denied' unless current_user
         Travis::RemoteVCS::User
           .new.request_confirmation(id: current_user.id)
         { status: 200 }.to_json
