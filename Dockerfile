@@ -5,6 +5,8 @@ LABEL maintainer Travis CI GmbH <support+travis-api-docker-images@travis-ci.com>
 # packages required for bundle install
 RUN ( \
    apt-get update ; \
+   # update to deb 10.8 
+   apt-get upgrade -y ; \
    apt-get install -y --no-install-recommends git make gcc g++ libpq-dev libjemalloc-dev \
    && rm -rf /var/lib/apt/lists/* \
 )
