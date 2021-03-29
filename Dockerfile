@@ -53,6 +53,7 @@ COPY /app /app
 
 RUN ( \
   bundle exec rake assets:precompile; \
+  mkdir -p tmp/pids/; \
 )
 
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
