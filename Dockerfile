@@ -2,7 +2,7 @@
 ARG PLATFORM_TYPE=hosted
 
 # Building the hosted base image
-FROM ruby:2.5.5-slim as builder-hosted
+FROM ruby:2.6.6-slim as builder-hosted
 RUN ( \
    apt-get update ; \
    apt-get install -y --no-install-recommends gettext-base git make g++ libpq-dev openssh-server \
