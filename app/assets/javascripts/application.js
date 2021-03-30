@@ -12,6 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require jquery-ui/datepicker
-//= require Chart
+//= require jquery-ui/widgets/datepicker
+//= require Chart.min
 //= require_tree .
