@@ -16,6 +16,8 @@ module Features
     feature:education:disabled
     feature:osx_alt_image:disabled
     feature:osx_alt_image:repositories
+    feature:read_only_disabled:users
+    feature:read_only_disabled:organizations
   ]
 
   # hidden if not enabled
