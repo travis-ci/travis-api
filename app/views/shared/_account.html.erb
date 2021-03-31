@@ -15,7 +15,7 @@
     <%if owner.class.to_s == 'User' %>
       <dd class="inline become">
         <time>
-          <%= owner.confirmed_at || 'Unconfirmed' %>
+          <%= owner.respond_to?(:confirmed_at) && owner.confirmed_at || 'Unconfirmed' %>
         </time>
         <div>
         <%= form_for :send_confirmation_email, url: {action: 'send_confirmation_email', controller: 'users'}, html: {class: 'job-boost inline'} do |f| %>
