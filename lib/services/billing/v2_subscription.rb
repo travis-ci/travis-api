@@ -11,7 +11,7 @@ module Services
       end
 
       def subscriptions
-        return unless travis_pro?
+        return [] unless travis_pro?
 
         @client.v2_subscriptions(@owner_id)
       end
@@ -25,14 +25,14 @@ module Services
       end
 
       def invoices
-        return unless travis_pro?
+        return [] unless travis_pro?
 
         sub = subscription
         sub ? @client.v2_invoices(@search_by_owner_id.to_i, sub.id) : [] if @search_by_owner_id.present?
       end
 
       def plans
-        return unless travis_pro?
+        return [] unless travis_pro?
 
         @client.v2_plans(@search_by_owner_id.to_s) if @search_by_owner_id.present?
       end
