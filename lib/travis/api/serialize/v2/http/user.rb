@@ -1,5 +1,4 @@
 require 'travis/api/serialize/formats'
-require 'travis/github/oauth'
 require 'travis/remote_vcs/user'
 require 'travis/remote_vcs/response_error'
 
