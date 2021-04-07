@@ -95,6 +95,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "@type"            => "user",
           "id"               => repo.owner_id,
           "login"            => "svenfuchs",
+          "ro_mode"          => true,
           "@href"            => "/v3/user/#{repo.owner_id}" },
         "default_branch"     => {
           "@type"            => "branch",
@@ -148,6 +149,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "@type"            =>"user",
           "id"               =>1,
           "login"            =>"svenfuchs",
+          "ro_mode"          => true,
           "@href"            =>"/v3/user/1"},
         "default_branch"     =>{
           "@type"            =>"branch",
@@ -263,6 +265,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "@type"            => "user",
           "id"               => 1,
           "login"            => "svenfuchs",
+          "ro_mode"          => true,
           "@href"            => "/v3/user/1"},
         "default_branch"     => {
           "@type"            => "branch",
@@ -423,6 +426,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "@type"         => "user",
           "id"            => 1,
           "login"         => "svenfuchs",
+          "ro_mode"       => true,
           "@href"         => "/v3/user/1" },
         "default_branch"  => {
           "@type"         => "branch",
@@ -470,6 +474,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "@type"         => "user",
           "id"            => 1,
           "login"         => "svenfuchs",
+          "ro_mode"       => true,
           "@href"         => "/v3/user/1" },
         "default_branch"  => {
           "@type"         => "branch",
@@ -541,6 +546,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "owner"              => {
           "@type"            => "user",
           "id"               => sharedrepo.owner_id,
+          "ro_mode"          => true,
           "login"            => "sharedrepoowner",
           "@href"            => "/v3/user/#{sharedrepo.owner_id}" },
         "default_branch"     => {

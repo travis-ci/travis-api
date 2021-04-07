@@ -4,9 +4,9 @@ module Travis::API::V3
   class Renderer::Owner < ModelRenderer
     include Renderer::AvatarURL
 
-    representation(:minimal,    :id, :login, :name, :vcs_type)
+    representation(:minimal,    :id, :login, :name, :vcs_type, :ro_mode)
     representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education,
-                   :allow_migration, :allowance)
+                   :allow_migration, :allowance, :ro_mode)
     representation(:additional, :repositories, :installation)
 
     def initialize(*)
@@ -39,6 +39,12 @@ module Travis::API::V3
 
     def owner_type
       vcs_type.match(/User$/) ? 'User' : 'Organization'
+    end
+
+    def ro_mode
+      return false unless Travis.config.org? && Travis.config.read_only?
+
+      !Travis::Features.owner_active?(:read_only_disabled, model)
     end
   end
 end

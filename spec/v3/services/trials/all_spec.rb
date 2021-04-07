@@ -50,7 +50,8 @@ describe Travis::API::V3::Services::Trials::All, set_app: true, billing_spec_hel
             'id' => user.id,
             'login' => 'svenfuchs',
             'vcs_type' => 'GithubUser',
-            'name' => user.name
+            'name' => user.name,
+            'ro_mode' => true
           },
           'created_at' => created_at,
           'status' => 'started',

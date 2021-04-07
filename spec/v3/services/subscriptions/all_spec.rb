@@ -100,7 +100,8 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             'id' => organization.id,
             'vcs_type' => organization.vcs_type,
             'login' => 'travis',
-            'name' => organization.name
+            'name' => organization.name,
+            'ro_mode' => true
           },
           'payment_intent' => nil
         }]

@@ -23,6 +23,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "id"=>user.id,
         "login"=>user.login,
         "vcs_type" => user.vcs_type,
+        "ro_mode" => true,
         "name" => user.name
       }
     }}

@@ -75,10 +75,16 @@ module Travis::API::V3
       if included_owner? and owner_href
         { :@href => owner_href }
       else
-        result = { :@type => owner_type, :id => model.owner_id, :login => model.owner_name }
+        result = { :@type => owner_type, :id => model.owner_id, :login => model.owner_name, :ro_mode => owner_ro_mode }
         result[:@href] = owner_href if owner_href
         result
       end
+    end
+
+    def owner_ro_mode
+      return false unless Travis.config.org? && Travis.config.read_only?
+
+      !Travis::Features.owner_active?(:read_only_disabled, model.owner)
     end
 
     def include_owner?

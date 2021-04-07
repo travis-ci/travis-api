@@ -29,7 +29,8 @@ describe Travis::API::V3::Services::BuildPermissions::FindForRepo, set_app: true
             "id" => user.id,
             "login" => user.login,
             "name" => user.name,
-            "vcs_type" => 'GithubUser'
+            "vcs_type" => 'GithubUser',
+            "ro_mode" => false
           },
           "permission" => true,
           "role" => nil
