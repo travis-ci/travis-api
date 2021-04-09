@@ -35,6 +35,8 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
         'billing_info.country' => 'Germany',
         'billing_info.zip_code' => '10001',
         'billing_info.billing_email' => 'travis@example.org',
+        'billing_info.state' => 'Alabama',
+        'billing_info.has_local_registration' => true,
         'credit_card_info.token' => 'token_from_stripe'
       }
     end
@@ -56,6 +58,8 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               'country' => 'Germany',
               'zip_code' => '10001',
               'billing_email' => 'travis@example.org',
+              'state' => 'Alabama',
+              'has_local_registration' => true
             },
             'credit_card_info' => {
               'token' => 'token_from_stripe'
@@ -161,6 +165,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               'vat_id' => nil,
               'zip_code' => '10001',
               'billing_email' => 'travis@example.org',
+              'has_local_registration' => true,
             },
             'credit_card_info' => {
               'card_owner' => 'Travis Schmidt',
@@ -276,7 +281,8 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'city' => 'Berlin',
             'state' => nil,
             'country' => 'Germany',
-            'vat_id' => nil
+            'vat_id' => nil,
+            'has_local_registration' => true,
           },
           'credit_card_info' => {
             'id' => 1234,
