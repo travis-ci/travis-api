@@ -10,6 +10,7 @@ describe Travis::Enqueue::Services::RestartModel do
   before do
     Travis.config.billing.url = 'http://localhost:9292/'
     Travis.config.billing.auth_key = 'secret'
+    ENV['TRAVIS_SITE'] = 'com'
   end
 
   after do

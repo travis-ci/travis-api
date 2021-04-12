@@ -31,6 +31,9 @@ module Travis
         end
 
         def billing?
+          # there is no billing for .org
+          return true if ENV["TRAVIS_SITE"] == 'org'
+
           @_billing_ok ||= begin
             jobs = target.is_a?(Job) ? [target] : target.matrix
 
