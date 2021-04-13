@@ -191,7 +191,8 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
             'id' => organization.id,
             'vcs_type' => organization.vcs_type,
             'login' => 'travis',
-            'name' => organization.name
+            'name' => organization.name,
+            'ro_mode' => true
           },
           'billing_info' => {
             '@type' => 'v2_billing_info',

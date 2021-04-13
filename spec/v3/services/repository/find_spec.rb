@@ -90,6 +90,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "id"               => repo.owner_id,
         "login"            => "svenfuchs",
         "@type"            => "user",
+        "ro_mode"          => true,
         "@href"            => "/v3/user/#{repo.owner_id}"},
       "default_branch"     => {
         "@type"            => "branch",

@@ -20,6 +20,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 1234,
         "vcs_id"           => org.vcs_id,
         "vcs_type"         => org.vcs_type,
+        "ro_mode"          => true,
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
@@ -45,6 +46,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 1234,
         "vcs_id"           => org.vcs_id,
         "vcs_type"         => org.vcs_type,
+        "ro_mode"          => true,
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
@@ -75,6 +77,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"           => 1234,
         "vcs_id"              => org.vcs_id,
         "vcs_type"            => org.vcs_type,
+        "ro_mode"             => true,
         "avatar_url"          => nil,
         "education"           => false,
         "allow_migration"     => false,
@@ -149,6 +152,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"         => 1234,
         "vcs_id"            => org.vcs_id,
         "vcs_type"          => org.vcs_type,
+        "ro_mode"           => true,
         "avatar_url"        => nil,
         "education"         => false,
         "allow_migration"   => false,
@@ -218,6 +222,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 1234,
         "vcs_id"           => org.vcs_id,
         "vcs_type"         => org.vcs_type,
+        "ro_mode"          => true,
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
@@ -247,6 +252,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"      => 1234,
         "vcs_id"         => org.vcs_id,
         "vcs_type"       => org.vcs_type,
+        "ro_mode"        => true,
         "avatar_url"     => nil,
         "education"      => false,
         "allow_migration"=> false,
@@ -296,6 +302,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode" => false,
         "confirmed_at" => nil,
       }}
     end
@@ -327,6 +334,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode" => false,
         "confirmed_at" => nil,
       }}
     end
@@ -358,6 +366,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode" => false,
         "confirmed_at" => nil,
       }}
     end
@@ -393,6 +402,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode"          => false,
         "confirmed_at" => nil,
         "@warnings"        => [{
           "@type"          => "warning",

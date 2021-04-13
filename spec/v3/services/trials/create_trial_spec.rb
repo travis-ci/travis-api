@@ -51,7 +51,8 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
               'id' => user.id,
               'vcs_type' => user.vcs_type,
               'login' => user.login,
-              'name' => user.name
+              'name' => user.name,
+              'ro_mode' => true
             },
             'created_at' => created_at,
             'status' => 'started',
@@ -72,7 +73,8 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
               'id' => organization.id,
               'vcs_type' => organization.vcs_type,
               'login' => organization.login,
-              'name' => organization.name
+              'name' => organization.name,
+              'ro_mode' => true
             },
             'created_at' => created_at,
             'status' => 'started',
@@ -102,7 +104,8 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
               'id' => user.id,
               'vcs_type' => user.vcs_type,
               'login' => user.login,
-              'name' => user.name
+              'name' => user.name,
+              'ro_mode' => true
             },
             'created_at' => created_at,
             'status' => 'started',
@@ -123,7 +126,8 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
               'id' => organization.id,
               'vcs_type' => organization.vcs_type,
               'login' => organization.login,
-              'name' => organization.name
+              'name' => organization.name,
+              'ro_mode' => true
             },
             'created_at' => created_at,
             'status' => 'started',

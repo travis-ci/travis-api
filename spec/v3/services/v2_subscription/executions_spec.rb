@@ -118,7 +118,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "github_language"=>nil,
               "active"=>true,
               "private"=>false,
-              "owner"=>{"@type"=>"user", "id"=>1, "login"=>"svenfuchs", "@href"=>"/user/1"},
+              "owner"=>{"@type"=>"user", "id"=>1, "login"=>"svenfuchs", "@href"=>"/user/1", "ro_mode"=>false},
               "owner_name"=>"svenfuchs",
               "vcs_name"=>"minimal",
               "default_branch"=>{"@type"=>"branch", "@href"=>"/repo/1/branch/master", "@representation"=>"minimal", "name"=>"master"},
@@ -175,6 +175,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "synced_at"=>nil,
               "recently_signed_up"=>false,
               "secure_user_hash"=>nil,
+              "ro_mode" => false,
               "confirmed_at" => nil,
             }
           }

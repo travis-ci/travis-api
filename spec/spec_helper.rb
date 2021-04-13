@@ -108,6 +108,7 @@ RSpec.configure do |c|
     DatabaseCleaner.start
     Redis.new(Travis.config.redis.to_h).flushall
     Travis.config.public_mode = true
+    Travis.config.read_only = true
     Travis.config.host = 'travis-ci.org'
     Travis.config.oauth2.scope = "user:email,public_repo"
   end

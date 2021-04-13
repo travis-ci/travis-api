@@ -3,6 +3,7 @@ module Travis::API::V3
 
     def run
       build = check_login_and_find(:build)
+      return not_found if build.owner.ro_mode?
       return repo_migrated if migrated?(build.repository)
 
       access_control.permissions(build).restart!

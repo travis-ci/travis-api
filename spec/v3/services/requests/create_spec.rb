@@ -168,6 +168,14 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     it { expect(body).to eq insufficient_access }
   end
 
+  describe 'existing repository, owner in read-only mode' do
+    let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
+    before { allow(Travis::Features).to receive(:owner_active?).and_return(false) }
+    before { post("/v3/repo/#{repo.id}/requests", {}, headers) }
+
+    it { expect(last_response.status).to be == 404 }
+  end
+
   describe 'private repository, no access' do
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
     before { repo.update_attribute(:private, true) }

@@ -16,6 +16,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
 
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
     allow(Travis::Features).to receive(:owner_active?).with(:enqueue_to_hub, repo.owner).and_return(false)
+    allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, repo.owner).and_return(true)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
@@ -69,6 +70,15 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
         "permission",
         "cancel")
       }
+    end
+
+    describe "existing repository, repo owner ro_mode" do
+      let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
+      let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+      before { allow(Travis::Features).to receive(:owner_active?).with(:read_only_disabled, repo.owner).and_return(false) }
+      before { post("/v3/job/#{job.id}/cancel", {}, headers) }
+
+      example { expect(last_response.status).to be == 404 }
     end
 
   describe "existing repo, repo owner is flagged abusive" do
@@ -220,6 +230,15 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     end
 
     context 'billing authorization' do
+      before do
+        @old_host = Travis.config.host
+        Travis.config.host = 'travis-ci.com'
+      end
+
+      after do
+        Travis.config.host = @old_host
+      end
+
       context 'billing service authorizes the job' do
         before do
           stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(

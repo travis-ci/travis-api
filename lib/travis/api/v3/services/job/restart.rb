@@ -3,6 +3,7 @@ module Travis::API::V3
 
     def run
       job = check_login_and_find(:job)
+      return not_found if job.owner.ro_mode?
 
       access_control.permissions(job).restart!
       return repo_migrated if migrated?(job.repository)
