@@ -389,7 +389,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
             'Authorization'=>'token notset',
             'Connection'=>'keep-alive',
             'Keep-Alive'=>'30',
-            'User-Agent'=>'Faraday v0.17.3'
+            'User-Agent'=>'Faraday v0.17.4'
              }).
            to_return(status: 200, body: "{}", headers: {})
       end
@@ -413,7 +413,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
             'Authorization'=>'token notset',
             'Connection'=>'keep-alive',
             'Keep-Alive'=>'30',
-            'User-Agent'=>'Faraday v0.17.3'
+            'User-Agent'=>'Faraday v0.17.4'
              }).
            to_return(status: 200, body: "{}", headers: {})
       end
