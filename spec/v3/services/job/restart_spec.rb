@@ -257,6 +257,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
           stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
             body: MultiJson.dump(error: 'Plan not found'), status: 404
           )
+          Travis.config.host = 'travis-ci.com'
         end
 
         it 'restarts the job' do
@@ -270,6 +271,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
           stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
             body: MultiJson.dump(allowed: false, rejection_code: :no_build_credits), status: 403
           )
+          Travis.config.host = 'travis-ci.com'
         end
 
         it 'does not restart the job' do

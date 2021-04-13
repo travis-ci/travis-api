@@ -31,6 +31,7 @@ module Travis
         end
 
         def billing?
+          # there is no billing for .org
           return true if Travis.config.org?
 
           @_billing_ok ||= begin
