@@ -12,6 +12,7 @@ module Travis
     require 'travis/model/branch'
     require 'travis/model/broadcast'
     require 'travis/model/build'
+    require 'travis/model/build_backup'
     require 'travis/model/commit'
     require 'travis/model/email'
     require 'travis/model/env_helpers'

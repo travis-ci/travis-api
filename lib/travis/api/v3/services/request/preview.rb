@@ -6,6 +6,7 @@ module Travis::API::V3
 
     def run
       repository = check_login_and_find(:repository)
+
       access_control.permissions(repository).create_request!
       user = access_control.user
       result query(:request_preview).expand(user, repo)

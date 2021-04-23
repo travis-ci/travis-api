@@ -23,6 +23,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "id"=>user.id,
         "login"=>user.login,
         "vcs_type" => user.vcs_type,
+        "ro_mode" => true,
         "name" => user.name
       }
     }}
@@ -64,6 +65,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "allow_migration" => false,
         "recently_signed_up" => false,
         "secure_user_hash" => nil,
+        "ro_mode" => true,
         "confirmed_at" => nil,
       }
     }}

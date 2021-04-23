@@ -68,6 +68,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "@type"            => "user",
           "@href"            => "/v3/user/#{repo.owner_id}",
           "id"               => repo.owner_id,
+          "ro_mode"          => true,
           "login"            => "svenfuchs" },
         "default_branch"     => {
           "@type"            => "branch",

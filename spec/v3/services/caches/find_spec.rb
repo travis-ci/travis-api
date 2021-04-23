@@ -211,6 +211,21 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
         "client_x509_cert_url" => "travis-cache-org-api-production"
       }),
     project_id: 'foo-bar-99515' }
+    Travis.config.cache_options.gcs = { bucket_name: 'travis-cache-production-org-gce',
+      json_key:
+        {
+          "type" => "service_account",
+          "project_id" => "123",
+          "private_key_id" => "123456",
+          "private_key" => TEST_PRIVATE_KEY,
+          "client_email" => "travis-cache-org-api-production",
+          "client_id" => "1234",
+          "auth_uri" => "https://accounts.google.com/o/oauth2/auth",
+          "token_uri" => "https://accounts.google.com/oauth2/v4/token",
+          "auth_provider_x509_cert_url" => "https://www.googleapis.com/oauth2/v1/certs",
+          "client_x509_cert_url" => "travis-cache-org-api-production"
+        },
+      project_id: 'foo-bar-99515' }
     example.run
     Travis.config.cache_options = {}
   end

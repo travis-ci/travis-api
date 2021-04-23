@@ -109,7 +109,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "id"                  => owner.id,
         "login"               => owner.login,
         "name"                => owner.name,
-        "vcs_type"            => owner.vcs_type
+        "vcs_type"            => owner.vcs_type,
+        "ro_mode"             => false
       }
     })}
   end
@@ -225,7 +226,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "id"                  => owner.id,
         "login"               => owner.login,
         "name"                => owner.name,
-        "vcs_type"            => owner.vcs_type
+        "vcs_type"            => owner.vcs_type,
+        "ro_mode"             => true
       }
     })}
   end
@@ -303,7 +305,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "id"                  => owner.id,
         "login"               => owner.login,
         "name"                => owner.name,
-        "vcs_type"            => owner.vcs_type
+        "vcs_type"            => owner.vcs_type,
+        "ro_mode"             => false
       },
       "config"                => {
         "language" => "shell",
