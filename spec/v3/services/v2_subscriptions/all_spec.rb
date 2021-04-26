@@ -208,7 +208,8 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
             'last_name' => 'rosas',
             'state' => nil,
             'vat_id' => '123456',
-            'zip_code' => '28450'
+            'zip_code' => '28450',
+            'has_local_registration' => false,
           },
           'credit_card_info' => {
             '@type' => 'v2_credit_card_info',

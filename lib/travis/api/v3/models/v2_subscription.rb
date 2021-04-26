@@ -24,7 +24,7 @@ module Travis::API::V3
   end
 
   class Models::V2BillingInfo
-    attr_reader :id, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code
+    attr_reader :id, :address, :address2, :billing_email, :city, :company, :country, :first_name, :last_name, :state, :vat_id, :zip_code, :has_local_registration
 
     def initialize(id, attrs)
       @id = id
@@ -39,6 +39,7 @@ module Travis::API::V3
       @state = attrs.fetch('state')
       @vat_id = attrs.fetch('vat_id')
       @zip_code = attrs.fetch('zip_code')
+      @has_local_registration = attrs.fetch('has_local_registration', false)
     end
   end
 

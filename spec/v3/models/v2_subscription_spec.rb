@@ -8,6 +8,20 @@ describe Travis::API::V3::Models::V2Subscription do
       'status' => nil,
       'valid_to' => nil,
       'canceled_at' => nil,
+      'billing_info' => {
+        'address' => 'Washington str.',
+        'address2' => '',
+        'billing_email' => 'john.doe@example.com',
+        'city' => 'Washington',
+        'company' => 'Travis CI',
+        'country' => 'United States of America',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'has_local_registration' => true,
+        'state' => 'Alabama',
+        'vat_id' => '',
+        'zip_code' => '2001',
+      },
       'plan_config' => {
         'id' => 'pro_tier_plan',
         'name' => 'Pro Tier Plan',
@@ -103,6 +117,8 @@ describe Travis::API::V3::Models::V2Subscription do
       expect(subject.permissions).to be_a(Travis::API::V3::Models::BillingPermissions)
       expect(subject.owner).to be_a(Travis::API::V3::Models::User)
       expect(subject.payment_intent).to be_a(Travis::API::V3::Models::PaymentIntent)
+      expect(subject.billing_info).to be_a(Travis::API::V3::Models::V2BillingInfo)
+      expect(subject.billing_info.has_local_registration).to be true
     end
   end
 end
