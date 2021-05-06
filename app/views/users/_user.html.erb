@@ -14,7 +14,7 @@
         <div>
           <%= form_tag(become_url(@user), class: 'become-button') do %>
             <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
-            <%= submit_tag("Log in as", class: "button", data: { disable_with: false}) %>
+            <%= submit_tag("Log in as", class: "button", data: { disable_with: false }) %>
           <% end %>
           <%= form_tag("#{become_url(@user)}?billing=true", class: 'billing-button') do %>
             <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
