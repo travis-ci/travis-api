@@ -40,6 +40,7 @@ module Travis
       JobUnfinished       = ClientError        .create('job still running, cannot remove log yet', status: 409)
       LogAlreadyRemoved   = ClientError        .create('log has already been removed', status: 409)
       LoginRequired       = ClientError        .create('login required', status: 403)
+      InstallationMissing = ClientError        .create('installation required', status: 403)
       MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
       PrivateRepoFeature  = ClientError        .create('this feature is only available on private repositories and for Travis CI Enterprise customers', status: 403)
