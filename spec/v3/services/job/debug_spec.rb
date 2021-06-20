@@ -86,8 +86,8 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
             example { expect(last_response.status).to be == 403 }
             example { expect(JSON.load(body)).to include(
               "@type"         => "error",
-              "error_message" => "access denied",
-              "error_type" => "wrong_credentials"
+              "error_message" => "debug mode not enabled",
+              "error_type" => "debug_unavailable"
             )}
           end
         end
