@@ -1,9 +1,10 @@
 module Travis::API::V3
   class Models::V2PlanConfig
     attr_reader :id, :name, :private_repos, :starting_price, :starting_users, :plan_type,
-                :private_credits, :public_credits, :addon_configs, :concurrency_limit, :available_standalone_addons
+                :private_credits, :public_credits, :addon_configs, :concurrency_limit, :available_standalone_addons, :auto_refill_enabled
 
     def initialize(attrs)
+      puts "plan config attrs: #{attrs.inspect}"
       @id = attrs.fetch('id')
       @name = attrs.fetch('name')
       @private_repos = attrs.fetch('private_repos')

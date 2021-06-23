@@ -1,5 +1,7 @@
 module Travis::API::V3
   class Queries::V2Subscription < Query
+    params :enabled
+
     def update_address(user_id)
       address_data = params.dup.tap { |h| h.delete('subscription.id') }
       client = BillingClient.new(user_id)
@@ -36,6 +38,18 @@ module Travis::API::V3
     def pay(user_id)
       client = BillingClient.new(user_id)
       client.pay_v2(params['subscription.id'])
+    end
+
+    def get_auto_refill(user_id)
+      client = BillingClient.new(user_id)
+      puts "sv2.get_auto_refill: #{enabled.inspect}, user: #{user_id}"
+      client.get_auto_refill(user_id)
+    end
+
+    def toggle_auto_refill(user_id)
+      client = BillingClient.new(user_id)
+      puts "sv2.create refill parm: #{enabled.inspect}, user: #{user_id}"
+      client.create_auto_refill(user_id, enabled)
     end
   end
 end

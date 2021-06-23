@@ -367,6 +367,8 @@ module Travis::API::V3
       post :buy_addon, '/addon/{addon.id}'
       get :user_usages, '/user_usages'
       get :invoices, '/invoices'
+      get :auto_refill, '/auto_refill'
+      patch :toggle_auto_refill,  '/auto_refill'
     end
 
     hidden_resource :trials do

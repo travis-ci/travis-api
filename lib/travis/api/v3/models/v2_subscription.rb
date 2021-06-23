@@ -3,9 +3,11 @@ module Travis::API::V3
     include Models::Owner
 
     attr_reader :id, :plan, :permissions, :source, :billing_info, :credit_card_info, :owner, :status, :valid_to, :canceled_at,
-                :client_secret, :payment_intent, :addons, :available_standalone_addons, :created_at
+                :client_secret, :payment_intent, :addons, :auto_refill, :available_standalone_addons, :created_at
 
     def initialize(attributes = {})
+
+      puts "v2 attributes: #{attributes['auto_refill_enabled']}"
       @id = attributes.fetch('id')
       @plan = attributes['plan_config'] && Models::V2PlanConfig.new(attributes['plan_config'])
       @permissions = Models::BillingPermissions.new(attributes.fetch('permissions'))
@@ -15,7 +17,20 @@ module Travis::API::V3
       @payment_intent = attributes['payment_intent'] && Models::PaymentIntent.new(attributes['payment_intent'])
       @owner = fetch_owner(attributes.fetch('owner'))
       @client_secret = attributes.fetch('client_secret')
-      @addons = attributes['addons'].select { |addon| addon['current_usage']['status'] != 'expired' }.map { |addon| Models::V2Addon.new(addon) }
+      @addons = attributes['addons'].select { |addon| addon['current_usage']['status'] != 'expired' if addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
+      refill = attributes['addons'].detect { |addon| addon['addon_config_id'] === 'auto_refill' } || {"enabled" => false};
+      default_refill = @plan.respond_to?('available_standalone_addons') ?
+        @plan.available_standalone_addons.detect { |addon| addon['id'] === 'auto_refill' } : []
+      
+      refill['enabled'] = attributes['auto_refill_enabled']
+      if default_refill
+        refill['refill_threshold'] = default_refill['refill_threshold'] unless refill.key?('refill_threshold')
+        refill['refill_amount'] = default_refill['refill_amount'] unless refill.key?('refill_amount')
+      end
+      puts "refill: #{refill.inspect}"
+      @auto_refill = Models::AutoRefill.new(refill)
+
+      puts "!!!!! autoRefill: #{@auto_refill}"
       @created_at = attributes.fetch('created_at')
       @status = attributes.fetch('status')
       @valid_to = attributes.fetch('valid_to')
