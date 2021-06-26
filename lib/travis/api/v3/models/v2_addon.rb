@@ -7,7 +7,7 @@ module Travis::API::V3
       @id = attrs.fetch('id')
       @name = attrs.fetch('name')
       @type = attrs.fetch('type')
-      @current_usage = attrs['current_usage'] && Models::V2AddonUsage.new(attrs['current_usage']) if attrs['current_usage']
+      @current_usage = attrs['current_usage'] && Models::V2AddonUsage.new(attrs['current_usage'])
     end
   end
 end

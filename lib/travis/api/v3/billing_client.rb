@@ -205,13 +205,13 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
-    def create_auto_refill(user_id, is_enabled)
-      response = connection.post('/auto_refill', { owner: {id: user_id, type: 'User'}, enabled: is_enabled})
+    def create_auto_refill(plan_id, is_enabled)
+      response = connection.post('/auto_refill', {plan: plan_id, enabled: is_enabled})
       handle_errors_and_respond(response)
     end
 
-    def get_auto_refill(user_id)
-      response = connection.get("/auto_refill?owner_id=#{user_id}")
+    def get_auto_refill(plan_id)
+      response = connection.get("/auto_refill?plan_id=#{plan_id}")
       handle_errors_and_respond(response) { |r| Travis::API::V3::Models::AutoRefill.new(r) }
     end
 
