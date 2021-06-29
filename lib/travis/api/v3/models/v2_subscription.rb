@@ -18,7 +18,7 @@ module Travis::API::V3
       @addons = attributes['addons'].select { |addon| addon['current_usage']['status'] != 'expired' if addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
       refill = attributes['addons'].detect { |addon| addon['addon_config_id'] === 'auto_refill' } || {"enabled" => false};
       default_refill = @plan.respond_to?('available_standalone_addons') ?
-        @plan.available_standalone_addons.detect { |addon| addon['id'] === 'auto_refill' } : []
+        @plan.available_standalone_addons.detect { |addon| addon['id'] === 'auto_refill' } : nil
       
       refill['enabled'] = attributes['auto_refill_enabled']
       if default_refill
