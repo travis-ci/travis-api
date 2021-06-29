@@ -42,13 +42,11 @@ module Travis::API::V3
 
     def get_auto_refill(user_id, plan_id)
       client = BillingClient.new(user_id)
-      puts "sv2.get_auto_refill: #{enabled.inspect}, user: #{user_id}"
       client.get_auto_refill(plan_id)
     end
 
     def toggle_auto_refill(user_id, plan_id)
       client = BillingClient.new(user_id)
-      puts "sv2.create refill parm: #{enabled.inspect}, user: #{user_id}"
       client.create_auto_refill(plan_id, enabled)
     end
   end

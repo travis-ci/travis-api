@@ -4,7 +4,6 @@ module Travis::API::V3
                 :private_credits, :public_credits, :addon_configs, :concurrency_limit, :available_standalone_addons, :auto_refill_enabled
 
     def initialize(attrs)
-      puts "plan config attrs: #{attrs.inspect}"
       @id = attrs.fetch('id')
       @name = attrs.fetch('name')
       @private_repos = attrs.fetch('private_repos')

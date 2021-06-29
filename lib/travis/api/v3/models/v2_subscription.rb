@@ -6,8 +6,6 @@ module Travis::API::V3
                 :client_secret, :payment_intent, :addons, :auto_refill, :available_standalone_addons, :created_at
 
     def initialize(attributes = {})
-
-      puts "v2 attributes: #{attributes['auto_refill_enabled']}"
       @id = attributes.fetch('id')
       @plan = attributes['plan_config'] && Models::V2PlanConfig.new(attributes['plan_config'])
       @permissions = Models::BillingPermissions.new(attributes.fetch('permissions'))
@@ -27,10 +25,7 @@ module Travis::API::V3
         refill['refill_threshold'] = default_refill['refill_threshold'] unless refill.key?('refill_threshold')
         refill['refill_amount'] = default_refill['refill_amount'] unless refill.key?('refill_amount')
       end
-      puts "refill: #{refill.inspect}"
       @auto_refill = Models::AutoRefill.new(refill)
-
-      puts "!!!!! autoRefill: #{@auto_refill}"
       @created_at = attributes.fetch('created_at')
       @status = attributes.fetch('status')
       @valid_to = attributes.fetch('valid_to')
