@@ -56,9 +56,18 @@ module Travis
           standalone_addon_configs = @plan_config.fetch(:available_standalone_addons)
           unless attributes[:addons].empty?
             @addons = attributes.fetch(:addons).map do |addon_data|
-              addon_config = addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] } || standalone_addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] }
+              if addon_data[:addon_config_id] == 'auto_refill'
+                addon_config = {
+                  id: addon_data[:addon_config_id],
+                  name: addon_data[:name],
+                  price: 0,
+                  type: addon_data[:type],
+                  free: false
+                }
+              else
+                addon_config = addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] } || standalone_addon_configs.detect { |config| config[:id] == addon_data[:addon_config_id] }
+              end
               next unless addon_config
-
               V2Addon.new(addon_data, V2AddonConfig.new(addon_config))
             end
             @addons = @addons.compact

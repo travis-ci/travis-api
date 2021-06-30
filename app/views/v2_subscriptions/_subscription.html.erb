@@ -72,12 +72,20 @@
       <h2 class='info-header'>Addons</h2>
 
       <% if @subscription.grouped_addons.present? %>
+        <% auto_refill_addon = nil %>
         <% @subscription.grouped_addons.each do |addon_type, addons| %>
           <h3><%= addon_type.humanize %></h3>
 
           <% addons.each do |addon| %>
-            <%= render partial: 'v2_subscriptions/addon', locals: { addon: addon } %>
+            <% if addon.addon_config.id != 'auto_refill' %>
+              <%= render partial: 'v2_subscriptions/addon', locals: { addon: addon } %>
+            <% else %>
+              <% auto_refill_addon = addon %>
+            <% end %>
           <% end %>
+        <% end %>
+        <% if auto_refill_addon %>
+          <%= render partial: 'v2_subscriptions/auto_refill_addon', locals: {addon: auto_refill_addon } %>
         <% end %>
       <% else %>
         <dl class='simple-info'>
