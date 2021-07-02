@@ -28,6 +28,7 @@ DOCKER ?= docker
 .PHONY: docker-build
 docker-build:
 	$(DOCKER) build -t $(DOCKER_DEST) .
+	$(DOCKER) run --rm -v /tmp:/root/.cache/ aquasec/trivy $(DOCKER_DEST)
 
 .PHONY: docker-login
 docker-login:
@@ -45,11 +46,8 @@ docker-push-branch:
 	$(DOCKER) tag $(DOCKER_DEST) $(QUAY_IMAGE):$(VERSION_VALUE)-$(BRANCH)
 	$(DOCKER) push $(QUAY_IMAGE):$(VERSION_VALUE)-$(BRANCH)
 
-.PHONY: trivy-scan
-	$(DOCKER) run --rm -v /tmp:/root/.cache/ aquasec/trivy $(DOCKER_DEST)
-
 .PHONY: ship
-ship: docker-build docker-login trivy-scan
+ship: docker-build docker-login
 
 ifeq ($(TRAVIS_BRANCH),master)
 ifeq ($(TRAVIS_PULL_REQUEST),false)
