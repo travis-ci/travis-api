@@ -7,10 +7,6 @@ rvm: 2.6.5
 
 script: "bundle exec rake knapsack:rspec"
 
-addons:
-  - snaps:
-    - name: docker
-      channel: latest/beta
 
 env:
   global:
@@ -35,6 +31,10 @@ before_install:
 jobs:
   include:
     - stage: ":ship: it to Quay.io"
+      addons:
+      - snaps:
+        - name: docker
+          channel: latest/stable
       install: echo skip
       before_script: echo skip
       script: make ship
