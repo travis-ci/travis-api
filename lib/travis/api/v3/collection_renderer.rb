@@ -52,14 +52,19 @@ module Travis::API::V3
     end
 
     def render
-      result                 = fields
-      included               = self.included.dup
-      result[collection_key] = list.map do |entry|
-        rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
-        included << entry
-        rendered
+      begin
+        result                 = fields
+        included               = self.included.dup
+        result[collection_key] = list.map do |entry|
+          rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
+          included << entry
+          rendered
+        end
+        return result
+      rescue => e
+        puts "list_from_rescue: #{list.inspect}"
+        puts "error_message: #{e.message}"
       end
-      result
     end
 
     def filtered_include
