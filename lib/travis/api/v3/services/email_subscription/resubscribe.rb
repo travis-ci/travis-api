@@ -5,7 +5,7 @@ module Travis::API::V3
       return repo_migrated if migrated?(repository)
 
       query.resubscribe(access_control.user, repository)
-      no_content
+      created
     end
   end
 end
