@@ -10,7 +10,7 @@ module Travis::API::V3
 
       key_pair = find(:key_pair, repository)
       access_control.permissions(repository).delete_key_pair!
-      query.delete(repository) and deleted
+      query.delete(repository) and no_content
     end
   end
 end

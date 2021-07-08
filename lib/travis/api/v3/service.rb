@@ -112,10 +112,6 @@ module Travis::API::V3
       Result::Head.new(meta_data)
     end
 
-    def deleted
-      head(status: 204)
-    end
-
     def no_content
       head(status: 204)
     end
