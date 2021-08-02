@@ -21,7 +21,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/gh
-  revision: 38fb339510ff9ae67cb08c6df7698f4c393f5a44
+  revision: 49d4ed2bda65892e1080111ca437bf52b47a5a4b
   specs:
     gh (0.15.1)
       addressable (~> 2.4)
