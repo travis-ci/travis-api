@@ -30,6 +30,10 @@ before_install:
 jobs:
   include:
     - stage: ":ship: it to Quay.io"
+      addons:
+      - snaps:
+        - name: docker
+          channel: latest/stable
       install: echo skip
       before_script: echo skip
       script: make ship
