@@ -7,7 +7,6 @@ rvm: 2.6.5
 
 script: "bundle exec rake knapsack:rspec"
 
-
 env:
   global:
     - PATH=/snap/bin:$PATH

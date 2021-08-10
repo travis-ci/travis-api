@@ -244,6 +244,13 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               }
             }
           },
+          'auto_refill' => {
+            '@type' => 'auto_refill',
+            '@representation' => 'minimal',
+            'enabled' => nil,
+            'threshold' => 25000,
+            'amount' => 10000
+          },
           'addons' => [{
             '@type' => 'v2_addon',
             '@representation' => 'minimal',
