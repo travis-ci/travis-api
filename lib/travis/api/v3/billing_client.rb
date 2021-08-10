@@ -215,6 +215,11 @@ module Travis::API::V3
       handle_errors_and_respond(response) { |r| Travis::API::V3::Models::AutoRefill.new(r) }
     end
 
+    def cancel_v2_subscription(id, reason_data)
+      response = connection.post("/v2/subscriptions/#{id}/cancel", reason_data)
+      handle_subscription_response(response)
+    end
+
     private
 
     def handle_subscription_response(response)

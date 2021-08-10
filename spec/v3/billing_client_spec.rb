@@ -433,4 +433,17 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
       expect(subject.first.os).to eq 'linux'
     end
   end
+
+  describe '#cancel_v2_subscription' do
+    let(:reason_data) { { 'reason' => 'Other', 'reason_details' => 'Cancellation details go here' } }
+    subject { billing.cancel_v2_subscription(subscription_id, reason_data) }
+
+    it 'requests the cancelation of a subscription' do
+      stubbed_request = stub_billing_request(:post, "/v2/subscriptions/#{subscription_id}/cancel", auth_key: auth_key, user_id: user_id)
+        .to_return(status: 204)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
 end
