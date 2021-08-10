@@ -22,7 +22,7 @@ jobs:
       addons:
         snaps:
         - name: docker
-          channel: latest/beta
+          channel: latest/stable
       install: echo skip
       before_script: echo skip
       script: make ship

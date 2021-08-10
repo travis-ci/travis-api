@@ -37,6 +37,11 @@ module Services
       handle_errors_and_respond(response)
     end
 
+    def update_auto_refill(owner_id, id, attributes)
+      response = connection(owner_id).patch("/auto_refill", attributes)
+      handle_errors_and_respond(response)
+    end
+
     def v2_invoices(owner_id, sub_id)
       response = connection_json(owner_id).get("/v2/subscriptions/#{sub_id}/invoices")
       handle_errors_and_respond(response) { |r| r.map { |invoice_data| Travis::Models::Billing::Invoice.new(invoice_data) } }

@@ -63,6 +63,16 @@ module Services
         e.message
       end
 
+      def update_auto_refill(id, attributes)
+        return unless travis_pro?
+
+        @client.update_auto_refill(@search_by_owner_id, id, attributes) if @search_by_owner_id.present?
+
+        nil
+      rescue => e
+        e.message
+      end
+
       def travis_pro?
         travis_config&.travis_pro
       end

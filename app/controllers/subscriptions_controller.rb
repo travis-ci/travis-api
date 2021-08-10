@@ -86,6 +86,9 @@ class SubscriptionsController < ApplicationController
       return
     end
 
+    if params.key?(:auto_refill) && !params[:auto_refill][:id].blank?
+      error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).update_auto_refill(params[:id], { id: params[:auto_refill][:id], threshold: params[:auto_refill][:threshold], amount: params[:auto_refill][:amount], change_reason: params[:subscription][:change_reason] })
+    end
     if params.key?(:create_addon) && !params[:new_addon][:id].blank?
       error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).create_addon(params[:id], { addon: params[:new_addon][:id], user_id: current_user.id, change_reason: params[:subscription][:change_reason] })
     elsif params.key?(:create_free_user_license)
@@ -104,7 +107,9 @@ class SubscriptionsController < ApplicationController
         permitted_params.delete(:addons)
       end
       permitted_params[:user_id] = current_user.id
-
+      if params[:subscription].key?(:auto_refill)
+        permitted_params[:auto_refill] = params[:subscription][:auto_refill].permit!.to_h
+      end
       error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).update_subscription(params[:id], permitted_params)
     end
 
