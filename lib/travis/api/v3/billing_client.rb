@@ -210,6 +210,11 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
+    def update_auto_refill(addon_id, threshold, amount)
+      response = connection.patch('/auto_refill', {id: addon_id, threshold: threshold, amount: amount})
+      handle_errors_and_respond(response)
+    end
+
     def get_auto_refill(plan_id)
       response = connection.get("/auto_refill?plan_id=#{plan_id}")
       handle_errors_and_respond(response) { |r| Travis::API::V3::Models::AutoRefill.new(r) }
