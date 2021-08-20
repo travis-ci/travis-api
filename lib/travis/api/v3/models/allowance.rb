@@ -5,6 +5,7 @@ module Travis::API::V3
     def initialize(subscription_type, owner_id, attributes = {})
       @subscription_type = subscription_type
       @id = owner_id
+      @subscription_type = 3 if !!attributes['no_plan']
       @public_repos = attributes.fetch('public_repos', nil)
       @private_repos = attributes.fetch('private_repos', nil)
       @concurrency_limit = attributes.fetch('concurrency_limit', nil)
