@@ -82,6 +82,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               'starting_users' => 10_000,
               'private_credits' => 500_000,
               'public_credits' => 40_000,
+              'annual' => false,
               'available_standalone_addons' => [
                 {
                   'id' => 'credits_25k',
