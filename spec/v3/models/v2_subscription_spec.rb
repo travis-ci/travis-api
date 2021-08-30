@@ -8,6 +8,7 @@ describe Travis::API::V3::Models::V2Subscription do
       'status' => nil,
       'valid_to' => nil,
       'canceled_at' => nil,
+      'scheduled_plan' => nil,
       'billing_info' => {
         'address' => 'Washington str.',
         'address2' => '',
@@ -32,6 +33,7 @@ describe Travis::API::V3::Models::V2Subscription do
         'starting_users' => 10000,
         'private_credits' => 500000,
         'public_credits' => 40000,
+        'annual' => false,
         'available_standalone_addons' => [
           {
             'id' => 'credits_25k',
@@ -86,6 +88,7 @@ describe Travis::API::V3::Models::V2Subscription do
         'type' => 'credit_public',
         'created_at' => Date.today.to_s,
         'updated_at' => Date.today.to_s,
+        'recurring' => false,
         'current_usage_id' => 7,
         'current_usage' => {
           'id' => 7,
