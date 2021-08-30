@@ -237,6 +237,7 @@ module Support
         'starting_users' => 999_999,
         'private_credits' => 10_000,
         'public_credits' => 40_000,
+        'annual' => false,
         'available_standalone_addons' => []
       }.deep_merge(attributes)
     end
