@@ -188,6 +188,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
           'canceled_at' => nil,
           'status' => nil,
           'valid_to' => nil,
+          'scheduled_plan' => nil,
           'plan' => {
             '@type' => 'v2_plan_config',
             '@representation' => 'standard',
@@ -200,6 +201,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'public_credits' => 40_000,
             'concurrency_limit' => 20,
             'plan_type' => 'metered',
+            'annual' => false,
             'available_standalone_addons' => [
               {
                 'id' => 'credits_25k',
@@ -259,6 +261,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'id' => 7,
             'name' => 'OSS Build Credits',
             'type' => 'credit_public',
+            'recurring' => nil,
             'current_usage' => {
               '@type' => 'v2_addon_usage',
               '@representation' => 'standard',
