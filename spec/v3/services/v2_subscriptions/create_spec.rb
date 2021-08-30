@@ -72,6 +72,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'canceled_at': nil,
             'valid_to': nil,
             'status': nil,
+            'scheduled_plan': nil,
             'plan_config' => {
               'id' => 'pro_tier_plan',
               'name' => 'Pro Tier Plan',
@@ -83,7 +84,6 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               'private_credits' => 500_000,
               'public_credits' => 40_000,
               'annual' => false,
-              'scheduled_plan' => '',
               'available_standalone_addons' => [
                 {
                   'id' => 'credits_25k',
