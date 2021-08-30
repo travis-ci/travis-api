@@ -51,6 +51,7 @@ module Support
         'status' => nil,
         'valid_to' => nil,
         'canceled_at' => nil,
+        "scheduled_plan" => nil,
         "plan_config" => {
           'id' => 'pro_tier_plan',
           'name' => 'Pro Tier Plan',
@@ -61,6 +62,7 @@ module Support
           'starting_users' => 10000,
           'private_credits' => 500000,
           'public_credits' => 40000,
+          'annual' => false,
           'available_standalone_addons' => [
             {
               'id' => 'credits_25k',
@@ -141,6 +143,7 @@ module Support
           "id" => "1",
           "name" => "OSS Build Credits",
           "type" => "credit_public",
+          "recurring" => false,
           "current_usage" => {
               "id" => 1,
               "addon_id" => 1,
@@ -157,6 +160,7 @@ module Support
           "id" => 2,
           "name" => "Build Credits",
           "type" => "credit_private",
+          "recurring" => false,
           "current_usage" => {
             "id" => 2,
             "addon_id" => 2,
