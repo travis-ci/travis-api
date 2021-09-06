@@ -42,6 +42,13 @@ module Travis::API::V3
       executions
     end
 
+    def calculate_credits(users, executions)
+      response = connection.post("/usage/credits_calculator", users: users, executions: executions)
+      response.body.map do |calculator_data|
+        Travis::API::V3::Models::CreditsResult.new(calculator_data)
+      end
+    end
+
     def all
       data = connection.get('/subscriptions').body
       subscriptions = data.fetch('subscriptions').map do |subscription_data|

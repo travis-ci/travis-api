@@ -242,6 +242,27 @@ module Support
       }.deep_merge(attributes)
     end
 
+    def billing_v2_credits_calculator_body
+      [
+        {
+          'users' => 3,
+          'minutes' => nil,
+          'os' => nil,
+          'instance_size' => nil,
+          'credits' => 25_000,
+          'price' => 1_500
+        },
+        {
+          'users' => nil,
+          'minutes' => 1000,
+          'os' => 'linux',
+          'instance_size' => '2x-large',
+          'credits' => 250_000,
+          'price' => 15_000
+        }
+      ]
+    end
+
     def billing_coupon_response_body(attributes = {})
       {
         "id" => "10_BUCKS_OFF",

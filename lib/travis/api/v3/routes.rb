@@ -155,6 +155,11 @@ module Travis::API::V3
       end
     end
 
+    resource :credits_calculator do
+      route '/credits_calculator'
+      post :calculator
+    end
+
     resource :repositories do
       route '/repos'
       get :for_current_user

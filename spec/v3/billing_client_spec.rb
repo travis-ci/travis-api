@@ -446,4 +446,28 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
       expect(stubbed_request).to have_been_made
     end
   end
+
+  describe '#calculate_credits' do
+    let(:users) { 3 }
+    let(:executions) do
+      [
+        {
+          minutes: '1000',
+          os: 'linux',
+          instance_size: '2x-large'
+        }
+      ]
+    end
+
+    subject { billing.calculate_credits(users, executions) }
+
+    it 'returns the results of the calculation' do
+      stub_request(:post, "#{billing_url}usage/credits_calculator").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
+        .to_return(body: JSON.dump(billing_v2_credits_calculator_body))
+
+      expect(subject.first).to be_a(Travis::API::V3::Models::CreditsResult)
+      expect(subject.first.users).to eq(3)
+      expect(subject.last.os).to eq('linux')
+    end
+  end
 end
