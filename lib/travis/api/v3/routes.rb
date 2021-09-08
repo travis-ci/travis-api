@@ -364,6 +364,7 @@ module Travis::API::V3
       patch :changetofree, '/changetofree'
       patch :update_plan, '/plan'
       post :pay, '/pay'
+      post :cancel, '/cancel'
       post :buy_addon, '/addon/{addon.id}'
       get :user_usages, '/user_usages'
       get :invoices, '/invoices'

@@ -49,5 +49,11 @@ module Travis::API::V3
       client = BillingClient.new(user_id)
       client.create_auto_refill(plan_id, enabled)
     end
+
+    def cancel(user_id)
+      reason_data = params.dup.tap { |h| h.delete('subscription.id') }
+      client = BillingClient.new(user_id)
+      client.cancel_v2_subscription(params['subscription.id'], reason_data)
+    end
   end
 end
