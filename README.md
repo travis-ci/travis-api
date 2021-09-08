@@ -42,14 +42,14 @@ Databases are set up with a Rake task that uses the database schemas (`structure
 You can override the `travis-migrations` branch that is being used by setting the environment variable `TRAVIS_MIGRATIONS_BRANCH`.
 
 
-To create and migrate the Databases:
+To create and migrate the databases:
 
 ```sh-session
 $ ENV=development bundle exec rake db:create
 $ ENV=test bundle exec rake db:create
 ```
 
-Please Note: The database names are configured using the environment variable ENV. If you are using a different configuration you will have to make your own adjustments. The default environment is `test`.
+Please note: the database names are configured using the environment variable ENV. If you are using a different configuration you will have to make your own adjustments. The default environment is `test`.
 
 
 ### Run tests
