@@ -370,6 +370,7 @@ module Travis::API::V3
       get :invoices, '/invoices'
       get :auto_refill, '/auto_refill'
       patch :toggle_auto_refill,  '/auto_refill'
+      patch :update_auto_refill, '/update_auto_refill'
     end
 
     hidden_resource :trials do

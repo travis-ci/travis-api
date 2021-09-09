@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::V2Subscription < Query
-    params :enabled
+    params :enabled, :threshold, :amount
 
     def update_address(user_id)
       address_data = params.dup.tap { |h| h.delete('subscription.id') }
@@ -54,6 +54,11 @@ module Travis::API::V3
       reason_data = params.dup.tap { |h| h.delete('subscription.id') }
       client = BillingClient.new(user_id)
       client.cancel_v2_subscription(params['subscription.id'], reason_data)
+    end
+
+    def update_auto_refill(user_id, addon_id)
+      client = BillingClient.new(user_id)
+      client.update_auto_refill(addon_id, threshold, amount)
     end
   end
 end
