@@ -263,6 +263,15 @@ module Support
       ]
     end
 
+    def billing_v2_credits_calculator_config_body
+      {
+        'users' => 10,
+        'minutes' => 1000,
+        'os' => 'linux',
+        'instance_size' => '2x-large'
+      }
+    end
+
     def billing_coupon_response_body(attributes = {})
       {
         "id" => "10_BUCKS_OFF",

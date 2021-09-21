@@ -158,6 +158,7 @@ module Travis::API::V3
     resource :credits_calculator do
       route '/credits_calculator'
       post :calculator
+      get :default_config
     end
 
     resource :repositories do

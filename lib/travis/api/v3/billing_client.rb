@@ -49,6 +49,12 @@ module Travis::API::V3
       end
     end
 
+    def credits_calculator_default_config
+      response = connection.get('/usage/credits_calculator/default_config')
+
+      Travis::API::V3::Models::CreditsCalculatorConfig.new(response.body)
+    end
+
     def all
       data = connection.get('/subscriptions').body
       subscriptions = data.fetch('subscriptions').map do |subscription_data|

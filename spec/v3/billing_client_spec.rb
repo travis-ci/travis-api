@@ -470,4 +470,17 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
       expect(subject.last.os).to eq('linux')
     end
   end
+
+  describe '#calculate_credits' do
+    subject { billing.credits_calculator_default_config }
+
+    it 'returns the results of the calculation' do
+      stub_request(:get, "#{billing_url}usage/credits_calculator/default_config").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
+        .to_return(body: JSON.dump(billing_v2_credits_calculator_config_body))
+
+      expect(subject).to be_a(Travis::API::V3::Models::CreditsCalculatorConfig)
+      expect(subject.users).to eq(10)
+      expect(subject.os).to eq('linux')
+    end
+  end
 end
