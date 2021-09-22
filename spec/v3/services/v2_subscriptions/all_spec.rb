@@ -96,6 +96,25 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
             'private_credits' => 500_000,
             'public_credits' => 40_000,
             'annual' => false,
+            'auto_refill_thresholds' => [10000, 50000, 100000],
+            'auto_refill_amounts' => [
+              {
+                'amount' => 25000,
+                'price' => 1500
+              },
+              {
+                'amount' => 100000,
+                'price' => 6000
+              },
+              {
+                'amount' => 200000,
+                'price' => 6000
+              },
+              {
+                'amount' => 400000,
+                'price' => 12000
+              }
+            ],
             'available_standalone_addons' => [
               {
                 'id' => 'credits_25k',

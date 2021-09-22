@@ -63,8 +63,8 @@ module Support
           'private_credits' => 500000,
           'public_credits' => 40000,
           'annual' => false,
-          'refill_thresholds' => [10000, 50000, 100000],
-          'refill_amounts' => [
+          'auto_refill_thresholds' => [10000, 50000, 100000],
+          'auto_refill_amounts' => [
             {
               'amount' => 25000,
               'price' => 1500
