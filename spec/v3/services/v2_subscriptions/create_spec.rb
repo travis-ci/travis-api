@@ -289,6 +289,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
           'auto_refill' => {
             '@type' => 'auto_refill',
             '@representation' => 'minimal',
+            'addon_id' => nil,
             'enabled' => nil,
             'threshold' => 25000,
             'amount' => 10000

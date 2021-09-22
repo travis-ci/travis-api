@@ -257,6 +257,25 @@ module Support
         'private_credits' => 10_000,
         'public_credits' => 40_000,
         'annual' => false,
+        'auto_refill_thresholds' => [10000, 50000, 100000],
+        'auto_refill_amounts' => [
+          {
+            'amount' => 25000,
+            'price' => 1500
+          },
+          {
+            'amount' => 100000,
+            'price' => 6000
+          },
+          {
+            'amount' => 200000,
+            'price' => 6000
+          },
+          {
+            'amount' => 400000,
+            'price' => 12000
+          }
+        ],
         'available_standalone_addons' => []
       }.deep_merge(attributes)
     end
