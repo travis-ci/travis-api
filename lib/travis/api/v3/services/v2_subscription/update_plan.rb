@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Services::V2Subscription::UpdatePlan < Service
-    params :plan
+    params :plan, :coupon
 
     def run!
       raise LoginRequired unless access_control.full_access_or_logged_in?
