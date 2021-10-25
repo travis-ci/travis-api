@@ -52,10 +52,11 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns a list of invoices' do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}/invoices", auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump([{'id' => invoice_id, 'created_at' => Time.now, 'url' => 'https://billing-test.travis-ci.com/invoices/111.pdf', amount_due: 999, status: 'paid' }]))
+        .to_return(body: JSON.dump([{'id' => invoice_id, 'created_at' => Time.now, 'url' => 'https://billing-test.travis-ci.com/invoices/111.pdf', amount_due: 999, status: 'paid', cc_last_digits: '4242' }]))
       expect(subject.first).to be_a(Travis::API::V3::Models::Invoice)
       expect(subject.first.id).to eq(invoice_id)
       expect(subject.first.amount_due).to eq(999)
+      expect(subject.first.cc_last_digits).to eq('4242')
     end
 
     it 'returns an empty list if there are no invoices' do
@@ -71,10 +72,11 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
 
     it 'returns a list of invoices' do
       stub_billing_request(:get, "/v2/subscriptions/#{subscription_id}/invoices", auth_key: auth_key, user_id: user_id)
-        .to_return(body: JSON.dump([{'id' => invoice_id, 'created_at' => Time.now, 'url' => 'https://billing-test.travis-ci.com/invoices/111.pdf', amount_due: 999, status: 'paid' }]))
+        .to_return(body: JSON.dump([{'id' => invoice_id, 'created_at' => Time.now, 'url' => 'https://billing-test.travis-ci.com/invoices/111.pdf', amount_due: 999, status: 'paid', cc_last_digits: '4242' }]))
       expect(subject.first).to be_a(Travis::API::V3::Models::Invoice)
       expect(subject.first.id).to eq(invoice_id)
       expect(subject.first.amount_due).to eq(999)
+      expect(subject.first.cc_last_digits).to eq('4242')
     end
 
     it 'returns an empty list if there are no invoices' do
