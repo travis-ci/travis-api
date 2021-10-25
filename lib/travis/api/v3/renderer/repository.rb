@@ -105,5 +105,9 @@ module Travis::API::V3
     def managed_by_installation
       model.managed_by_installation?
     end
+
+    def server_type
+      model.server_type || 'git'
+    end
   end
 end
