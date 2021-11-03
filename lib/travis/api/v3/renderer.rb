@@ -40,7 +40,7 @@ module Travis::API::V3
     end
 
     def render_model(model, type: model.class.name[/[^:]+$/].to_sym, mode: nil, **options)
-      Renderer[type].render(model, mode || :minimal, **options)
+      Renderer[type].render(model, mode || :minimal, **options) if type && Renderer[type]
     end
 
     def render_value(value, **options)
