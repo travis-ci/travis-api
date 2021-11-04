@@ -1,5 +1,4 @@
 language: ruby
-group: edge
 
 import:
   - travis-ci/build-configs:db-setup.yml
