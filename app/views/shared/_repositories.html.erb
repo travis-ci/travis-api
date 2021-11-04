@@ -41,6 +41,7 @@
       <ul>
         <li class="inline-list repository-item">
           <p class="info-label repo-name">Repository</p>
+          <p class="info-label repo-visibility">Visibility</p>
           <p class="info-label repo-active">Active?</p>
           <p class="info-label repo-build">Last Build</p>
         </li>
@@ -51,6 +52,11 @@
               <p class="repo-active">&#10004; enabled</p>
             <% else %>
               <p class="repo-active">&#10008; disabled</p>
+            <% end %>
+            <% if repo.private? %>
+              <p class="repo-visibility">private</p>
+            <% else %>
+              <p class="repo-visibility">public</p>
             <% end %>
             <% if repo.last_build_id %>
               <p class="repo-build">
