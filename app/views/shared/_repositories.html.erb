@@ -21,6 +21,11 @@
           <% else %>
             <p class="repo-active">&#10008; disabled</p>
           <% end %>
+          <% if repo.private? %>
+              <p class="repo-visibility">private</p>
+            <% else %>
+              <p class="repo-visibility">public</p>
+            <% end %>
           <% if repo.last_build_id %>
             <p class="repo-build">
               <%= link_to "build ##{repo.last_build_number}", repo.last_build %>
@@ -90,6 +95,11 @@
               <p class="repo-active">&#10004; enabled</p>
             <% else %>
               <p class="repo-active">&#10008; disabled</p>
+            <% end %>
+            <% if repo.private? %>
+              <p class="repo-visibility">private</p>
+            <% else %>
+              <p class="repo-visibility">public</p>
             <% end %>
             <% if repo.last_build_id %>
               <p class="repo-build">
