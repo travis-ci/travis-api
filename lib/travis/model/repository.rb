@@ -144,6 +144,10 @@ class Repository < Travis::Model
     builds.api_and_pushes_and_crons.last_build_on(state: [:passed, :failed, :errored, :canceled], branch: branch)
   end
 
+  def last_completed_cron_build(branch = nil)
+    builds.by_event_type(["cron"]).last_build_on(state: [:passed, :failed, :errored, :canceled], branch: branch)
+  end
+
   def last_builds_on(branch)
     builds.api_and_pushes_and_crons.last_builds_on(branch: branch)
   end
