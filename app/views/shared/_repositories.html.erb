@@ -23,9 +23,9 @@
           <% end %>
           <% if repo.private? %>
               <p class="repo-visibility">private</p>
-            <% else %>
+          <% else %>
               <p class="repo-visibility">public</p>
-            <% end %>
+          <% end %>
           <% if repo.last_build_id %>
             <p class="repo-build">
               <%= link_to "build ##{repo.last_build_number}", repo.last_build %>
