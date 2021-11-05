@@ -47,7 +47,7 @@ class Repository
       def state_from_database
         return unless repo
 
-        build = repo.last_completed_build(branch)
+        build = repo.by_event_type(["cron"]).last_build_on(state: [:passed, :failed, :errored, :canceled], branch: branch)
         if build
           cache.write(repo.id, build.branch, build) if cache_enabled?
           build.state.to_sym
