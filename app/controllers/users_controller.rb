@@ -218,6 +218,18 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def confirm_user
+    ::Services::User::ConfirmUser.new(@user).call
+    flash[:notice] = 'User confirmed.'
+    redirect_to @user
+  end
+
+  def send_confirmation_email
+    ::Services::User::SendConfirmationEmail.new(@user).call
+    flash[:notice] = 'Confirmation email sent.'
+    redirect_to @user
+  end
+
   private
 
   def get_user

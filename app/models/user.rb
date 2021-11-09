@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :permitted_repositories, through: :permissions, source: :repository
   has_many :broadcasts,             as:      :recipient
   has_many :trials,                 as:      :owner
+  has_many :tokens
   has_one  :installation,           as:      :owner
 
   serialize :github_oauth_token, Travis::EncryptedColumn.new

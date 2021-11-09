@@ -3,7 +3,13 @@ source 'https://rubygems.org'
 ruby '2.5.5' if ENV['DYNO']
 
 # Magic Makers
-gem 'rails', '~> 5.0'
+gem 'rails', '= 5.2.5'
+
+# for railties app_generator_test
+gem "bootsnap", ">= 1.1.0", require: false
+
+# Active Support.
+gem "listen", ">= 3.0.5", "< 3.2", require: false
 
 # CSS/JS Stuff
 gem 'chart-js-rails'
@@ -20,12 +26,11 @@ gem 'redis', '~> 3.0'
 gem 'redis-namespace'
 
 # API stuffs
-gem 'faraday', '~> 0.9.0'
+gem 'faraday', '~> 1.0'
 
 # Travis Gems
 gem 'travis',            github: 'travis-ci/travis.rb'
 gem 'travis-config',     github: 'travis-ci/travis-config'
-gem 'travis-migrations', github: 'travis-ci/travis-migrations', ref: '09dad753c986c344ae93c77b8f0110583020d'
 gem 'travis-sso',        github: 'travis-ci/travis-sso'
 gem 'travis-support',    github: 'travis-ci/travis-support'
 

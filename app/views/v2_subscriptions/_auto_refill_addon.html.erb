@@ -1,0 +1,15 @@
+<h3><%= addon.name.humanize %></h3>
+<dl class='plan-info addon-section'>
+
+  <%= hidden_field_tag 'auto_refill[id]', addon.id %>
+  <dt class='info-label'>Refill Amount</dt>
+  <dd>
+    <%= text_field_tag "auto_refill[amount]", addon.refill_amount %>
+  </dd>
+  </dt>
+  <dt class='info-label'>Refill Threshold</dt>
+  <dd>
+    <%= text_field_tag "auto_refill[threshold]", addon.refill_threshold %>
+  </dd>
+  </dt>
+</dl>

@@ -4,7 +4,7 @@ module Travis
   module Models
     module Billing
       class V2Addon
-        attr_reader :id, :name, :type, :addon_config
+        attr_reader :id, :name, :type, :addon_config, :refill_threshold, :refill_amount
 
         def initialize(attributes, addon_config)
           @id = attributes.fetch(:id)
@@ -12,22 +12,24 @@ module Travis
           @type = attributes.fetch(:type)
           @current_usage = attributes.fetch(:current_usage) && V2AddonUsage.new(attributes.fetch(:current_usage))
           @addon_config = addon_config
+          @refill_threshold = attributes.fetch(:refill_threshold)
+          @refill_amount = attributes.fetch(:refill_amount)
         end
 
         def status
-          @current_usage.status
+          @current_usage&.status
         end
 
         def quantity
-          @current_usage.quantity
+          @current_usage&.quantity
         end
 
         def usage
-          @current_usage.usage
+          @current_usage&.usage
         end
 
         def active?
-          @current_usage.active?
+          @current_usage&.active?
         end
 
         def show_valid_to?
@@ -35,7 +37,7 @@ module Travis
         end
 
         def valid_to
-          @current_usage.valid_to
+          @current_usage&.valid_to
         end
 
         def free?

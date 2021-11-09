@@ -20,3 +20,13 @@ config/database.yml
 
 # Ignore Redis dumps
 dump.rdb
+
+# node modules
+node_modules
+
+# assets
+public/assets
+
+# IDE
+.history
+.idea

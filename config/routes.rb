@@ -124,6 +124,8 @@ Rails.application.routes.draw do
       post 'update_trial_builds'
       post 'suspend'
       post 'unsuspend'
+      post 'send_confirmation_email'
+      post 'confirm_user'
       patch 'update_keep_netrc'
 
       get 'subscription'

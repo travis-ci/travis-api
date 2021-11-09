@@ -11,6 +11,22 @@
         <%= owner.created_at %>
       </time>
     </dd>
+    <dt class="info-label">Account confirmation</dt>
+    <%if owner.class.to_s == 'User' %>
+      <dd class="inline become">
+        <time>
+          <%= owner.respond_to?(:confirmed_at) && owner.confirmed_at || 'Unconfirmed' %>
+        </time>
+        <div>
+        <%= form_for :send_confirmation_email, url: {action: 'send_confirmation_email', controller: 'users'}, html: {class: 'job-boost inline'} do |f| %>
+          <%= f.submit 'Send confirmation email', class: 'button', id: 'send-confirmation-email' %>
+        <% end %>
+        <%= form_for :confirm_user, url: {action: 'confirm_user', controller: 'users'}, html: {class: 'job-boost inline'} do |f| %>
+          <%= f.submit 'Confirm', class: 'button', id: 'confirm-user' %>
+        <% end %>
+        </div>
+      </dd>
+    <% end %>
 
     <% trial_builds_remaining = 0 %>
     <% trial_builds_allowed = 0 %>
@@ -53,8 +69,10 @@
           <%= f.hidden_field :owner_type, value: owner.class %>
           <%= f.hidden_field :owner_id, value: owner.id %>
           <%= f.select(:plan) do %>
-            <% owner.available_plans.each do |c| -%>
-              <%= content_tag(:option, c.first, value: c.last) %>
+            <% if owner.available_plans.present?  %>
+              <% owner.available_plans.each do |c| -%>
+                <%= content_tag(:option, c.first, value: c.last) %>
+              <% end %>
             <% end %>
           <% end %>
           <%= f.submit 'Create Free', class: 'button', id: 'create-subscription' %>
