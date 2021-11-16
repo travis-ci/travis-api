@@ -103,6 +103,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
                   'price' => 12000
                 }
               ],
+              'trial_plan': false,
               'available_standalone_addons' => [
                 {
                   'id' => 'credits_25k',
@@ -240,6 +241,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
                 'price' => 12000
               }
             ],
+            'trial_plan' => false,
             'available_standalone_addons' => [
               {
                 'id' => 'credits_25k',
@@ -308,7 +310,6 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               'addon_id' => 7,
               'addon_quantity' => 40_000,
               'addon_usage' => 0,
-              'remaining' => 40000,
               'purchase_date' => '2017-11-28T00:09:59.502Z',
               'valid_to' => '2017-11-28T00:09:59.502Z',
               'remaining' => 40_000,

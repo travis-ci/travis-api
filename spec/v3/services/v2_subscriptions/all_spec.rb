@@ -32,6 +32,7 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
         'starting_users': 10_000,
         'private_credits': 500_000,
         'public_credits': 40_000,
+        'trial_plan': false,
         'addon_configs' => {
           'free_tier_credits' => {
             'name' => 'Free 10 000 credits (renewed monthly)',
@@ -115,6 +116,7 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
                 'price' => 12000
               }
             ],
+            'trial_plan' => false,
             'available_standalone_addons' => [
               {
                 'id' => 'credits_25k',
