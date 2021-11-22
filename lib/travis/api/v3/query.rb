@@ -240,6 +240,7 @@ module Travis::API::V3
     end
 
     def set_custom_timeout(timeout_in_seconds)
+      puts "SETTING custom timeout: #{timeout_in_seconds.inspect}"
       ActiveRecord::Base.connection.execute "SET statement_timeout = '#{timeout_in_seconds}s';"
     end
 
