@@ -22,10 +22,10 @@ module Travis::API::V3
       repositories = Travis::API::V3::Models::Repository.where(id: results.map(&:repository_id)).index_by(&:id)
       
       results.map do |execution|
-        execution[:sender_login] = senders[execution[:sender_id]]&.login || 'Unknown Sender'
-        repo = repositories[execution[:repository_id]]
-        execution[:repo_slug] = repo&.slug || 'Unknown Repository'
-        execution[:repo_owner_name] = repo&.owner_name || 'Unknown Repository Owner'
+        execution.sender_login = senders[execution.sender_id]&.login || 'Unknown Sender'
+        repo = repositories[execution.repository_id]
+        execution.repo_slug = repo&.slug || 'Unknown Repository'
+        execution.repo_owner_name = repo&.owner_name || 'Unknown Repository Owner'
 
         execution
       end
