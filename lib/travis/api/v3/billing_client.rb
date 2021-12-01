@@ -3,6 +3,7 @@ module Travis::API::V3
     class ConfigurationError < StandardError; end
 
     ALLOWANCE_TIMEOUT = 1 # second
+    EXECUTIONS_TIMEOUT = 20 # seconds
 
     def initialize(user_id)
       @user_id = user_id
@@ -35,7 +36,7 @@ module Travis::API::V3
     end
 
     def executions(owner_type, owner_id, page, per_page, from, to)
-      response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/executions?page=#{page}&per_page=#{per_page}&from=#{from}&to=#{to}")
+      response = connection(timeout: EXECUTIONS_TIMEOUT).get("/usage/#{owner_type.downcase}s/#{owner_id}/executions?page=#{page}&per_page=#{per_page}&from=#{from}&to=#{to}")
       executions = response.body.map do |execution_data|
         Travis::API::V3::Models::Execution.new(execution_data)
       end
