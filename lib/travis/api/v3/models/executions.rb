@@ -26,5 +26,17 @@ module Travis::API::V3
       @repo_slug = nil
       @repo_owner_name = nil
     end
+
+    def sender_login=(sender_login)
+      @sender_login = sender_login
+    end
+
+    def repo_slug=(repo_slug)
+      @repo_slug = repo_slug
+    end
+
+    def repo_owner_name=(repo_owner_name)
+      @repo_owner_name = repo_owner_name
+    end
   end
 end
