@@ -27,7 +27,7 @@ GH::TokenCheck.class_eval do
     end
 
     def is_legacy?
-      Travis.config.github.enterprise_legacy_oauth
+      false
     end
 
 end
