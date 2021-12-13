@@ -351,6 +351,7 @@ module Support
         'plan_id' => 2,
         'sender_id' => 1,
         'credits_consumed' => 5,
+        'user_license_credits_consumed' => 4,
         'started_at' => Time.now,
         'finished_at' => Time.now + 10.minutes,
         'created_at' => Time.now,
