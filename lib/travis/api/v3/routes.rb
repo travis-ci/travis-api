@@ -418,5 +418,16 @@ module Travis::API::V3
       route '/leads'
       post :create
     end
+
+    resource :artifacts do
+      route '/artifacts'
+
+      resource :artifacts_config, as: :config do
+        route '/config'
+
+        post :create, '/create'
+        post :update, '/update'
+      end
+    end
   end
 end
