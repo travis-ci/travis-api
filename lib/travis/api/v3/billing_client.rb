@@ -43,6 +43,19 @@ module Travis::API::V3
       executions
     end
 
+    def calculate_credits(users, executions)
+      response = connection.post("/usage/credits_calculator", users: users, executions: executions)
+      response.body.map do |calculator_data|
+        Travis::API::V3::Models::CreditsResult.new(calculator_data)
+      end
+    end
+
+    def credits_calculator_default_config
+      response = connection.get('/usage/credits_calculator/default_config')
+
+      Travis::API::V3::Models::CreditsCalculatorConfig.new(response.body)
+    end
+
     def all
       data = connection.get('/subscriptions').body
       subscriptions = data.fetch('subscriptions').map do |subscription_data|
@@ -211,9 +224,19 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
+    def update_auto_refill(addon_id, threshold, amount)
+      response = connection.patch('/auto_refill', {id: addon_id, threshold: threshold, amount: amount})
+      handle_errors_and_respond(response)
+    end
+
     def get_auto_refill(plan_id)
       response = connection.get("/auto_refill?plan_id=#{plan_id}")
       handle_errors_and_respond(response) { |r| Travis::API::V3::Models::AutoRefill.new(r) }
+    end
+
+    def cancel_v2_subscription(id, reason_data)
+      response = connection.post("/v2/subscriptions/#{id}/cancel", reason_data)
+      handle_subscription_response(response)
     end
 
     private

@@ -433,4 +433,54 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
       expect(subject.first.os).to eq 'linux'
     end
   end
+
+  describe '#cancel_v2_subscription' do
+    let(:reason_data) { { 'reason' => 'Other', 'reason_details' => 'Cancellation details go here' } }
+    subject { billing.cancel_v2_subscription(subscription_id, reason_data) }
+
+    it 'requests the cancelation of a subscription' do
+      stubbed_request = stub_billing_request(:post, "/v2/subscriptions/#{subscription_id}/cancel", auth_key: auth_key, user_id: user_id)
+        .to_return(status: 204)
+
+      expect { subject }.to_not raise_error
+      expect(stubbed_request).to have_been_made
+    end
+  end
+
+  describe '#calculate_credits' do
+    let(:users) { 3 }
+    let(:executions) do
+      [
+        {
+          minutes: '1000',
+          os: 'linux',
+          instance_size: '2x-large'
+        }
+      ]
+    end
+
+    subject { billing.calculate_credits(users, executions) }
+
+    it 'returns the results of the calculation' do
+      stub_request(:post, "#{billing_url}usage/credits_calculator").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
+        .to_return(body: JSON.dump(billing_v2_credits_calculator_body))
+
+      expect(subject.first).to be_a(Travis::API::V3::Models::CreditsResult)
+      expect(subject.first.users).to eq(3)
+      expect(subject.last.os).to eq('linux')
+    end
+  end
+
+  describe '#calculate_credits' do
+    subject { billing.credits_calculator_default_config }
+
+    it 'returns the results of the calculation' do
+      stub_request(:get, "#{billing_url}usage/credits_calculator/default_config").with(basic_auth: ['_', auth_key],  headers: { 'X-Travis-User-Id' => user_id })
+        .to_return(body: JSON.dump(billing_v2_credits_calculator_config_body))
+
+      expect(subject).to be_a(Travis::API::V3::Models::CreditsCalculatorConfig)
+      expect(subject.users).to eq(10)
+      expect(subject.os).to eq('linux')
+    end
+  end
 end
