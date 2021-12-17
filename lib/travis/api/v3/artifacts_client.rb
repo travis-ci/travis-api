@@ -24,10 +24,31 @@ module Travis::API::V3
       end
     end
 
+    def image_logs(image_name)
+      response = connection.get("/api/#{image_name}/logs")
+
+      handle_errors_and_respond(response) do |body|
+        body
+      end
+    end
+
+    def image_info(image_name)
+      response = connection.get("/api/#{image_name}/info")
+
+      handle_errors_and_respond(response) do |body|
+        body
+      end
+    end
+
+    def delete_image(image_name)
+      response = connection.delete("/api/#{image_name}", config: config, imageName: image_name)
+
+      handle_errors_and_respond(response)
+    end
+
     private
 
     def handle_errors_and_respond(response)
-      pp response.body
       case response.status
       when 200, 201
         yield(response.body.transform_keys { |key| key.to_s.underscore }) if block_given?
