@@ -155,6 +155,12 @@ module Travis::API::V3
       end
     end
 
+    resource :credits_calculator do
+      route '/credits_calculator'
+      post :calculator
+      get :default_config
+    end
+
     resource :repositories do
       route '/repos'
       get :for_current_user
@@ -364,11 +370,13 @@ module Travis::API::V3
       patch :changetofree, '/changetofree'
       patch :update_plan, '/plan'
       post :pay, '/pay'
+      post :cancel, '/cancel'
       post :buy_addon, '/addon/{addon.id}'
       get :user_usages, '/user_usages'
       get :invoices, '/invoices'
       get :auto_refill, '/auto_refill'
       patch :toggle_auto_refill,  '/auto_refill'
+      patch :update_auto_refill, '/update_auto_refill'
     end
 
     hidden_resource :trials do
