@@ -426,5 +426,57 @@ module Travis::API::V3
       route '/leads'
       post :create
     end
+
+    resource :insights_notifications do
+      route '/insights_notifications'
+      get :all
+      patch :toggle_snooze, '/toggle_snooze'
+    end
+
+    resource :insights_plugin do
+      route '/insights_plugin/{plugin_id}'
+      get :get_scan_logs, '/get_scan_logs'
+    end
+
+    resource :insights_plugins do
+      route '/insights_plugins'
+      get :all
+      get :generate_key, '/generate_key'
+      post :create
+      post :authenticate_key, '/authenticate_key'
+      patch :toggle_active, '/toggle_active'
+      delete :delete_many, '/delete_many'
+      get :template_plugin_tests, '/template_plugin_tests'
+    end
+
+    resource :insights_probe do
+      route '/insights_probe/{probe_id}'
+      patch :update
+    end
+
+    resource :insights_probes do
+      route '/insights_probes'
+      get :all
+      post :create
+      patch :toggle_active, '/toggle_active'
+      delete :delete_many, '/delete_many'
+    end
+
+    resource :insights_sandbox do
+      route '/insights_sandbox'
+      post :plugins, '/plugins'
+      post :plugin_data, '/plugin_data'
+      post :run_query, '/run_query'
+    end
+
+    resource :insights_public_key do
+      route '/insights_public_key'
+      get :latest
+    end
+
+    resource :insights_tags do
+      route '/insights_tags'
+      get :search_tags
+    end
   end
 end
