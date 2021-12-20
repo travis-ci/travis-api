@@ -45,6 +45,7 @@ module Travis
             closeio:              { key: 'key' },
             gdpr:                 {},
             insights:             { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' },
+            new_insights:         { insights_url: 'http://insights:3000', insights_auth_token: '660e632d4f3bfc6398ba5f6376be986d9ab18d6ee3723cdea8fbfe80c224dad8' },
             database:             { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             fallback_logs_api:    { url: fallback_logs_api_auth_url, token: fallback_logs_api_auth_token },
             logs_api:             { url: logs_api_url, token: logs_api_auth_token },
@@ -88,7 +89,7 @@ module Travis
             force_authentication: false,
             yml:                  { url: 'https://yml.travis-ci.org', token: 'secret', auth_key: 'abc123' },
             read_only:            ENV['READ_ONLY'] || false,
-            vcs: {}
+            vcs:                  {}
 
     default :_access => [:key]
 
