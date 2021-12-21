@@ -57,13 +57,13 @@ module Travis::API::V3
       when 204
         true
       when 400
-        raise Travis::API::V3::ClientError, response.body.fetch('errors', []).join("\n")
+        raise Travis::API::V3::ClientError, response.body.fetch('errors', response.body.fetch('Errors', [])).join("\n")
       when 403
         raise Travis::API::V3::InsufficientAccess, response.body['rejection_code']
       when 404
-        raise Travis::API::V3::NotFound, response.body.fetch('errors', []).join("\n")
+        raise Travis::API::V3::NotFound, response.body.fetch('errors', response.body.fetch('Errors', [])).join("\n")
       when 422
-        raise Travis::API::V3::UnprocessableEntity, response.body.fetch('errors', []).join("\n")
+        raise Travis::API::V3::UnprocessableEntity, response.body.fetch('errors', response.body.fetch('Errors', [])).join("\n")
       else
         raise Travis::API::V3::ServerError, 'Artifacts API failed'
       end
