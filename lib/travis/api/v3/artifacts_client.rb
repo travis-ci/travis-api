@@ -46,6 +46,14 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
+    def image_build_status(image_name)
+      response = connection.get("/api/#{image_name}/build_status")
+
+      handle_errors_and_respond(response) do |body|
+        body
+      end
+    end
+
     private
 
     def handle_errors_and_respond(response)

@@ -434,6 +434,7 @@ module Travis::API::V3
 
         get :logs, '/logs'
         get :info, '/info'
+        get :build_status, '/build_status'
         delete :delete
       end
     end

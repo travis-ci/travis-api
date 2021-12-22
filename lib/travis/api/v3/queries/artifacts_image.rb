@@ -13,6 +13,10 @@ module Travis::API::V3
     def delete(user_id)
       artifacts_client(user_id).delete_image(params['image_name'])
     end
+    
+    def build_status(user_id)
+      artifacts_client(user_id).image_build_status(params['image_name'])
+    end
 
     def artifacts_client(user_id)
       @_artifacts_client ||= ArtifactsClient.new(user_id)
