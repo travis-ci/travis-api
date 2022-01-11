@@ -90,6 +90,8 @@ class Repository::Settings < Travis::Settings
   attribute :api_builds_rate_limit, Integer
   attribute :auto_cancel_pushes, Boolean, default: lambda { |s, _| s.auto_cancel_default? }
   attribute :auto_cancel_pull_requests, Boolean, default: lambda { |s, _| s.auto_cancel_default? }
+  attribute :share_encrypted_env_with_forks, Boolean, default: false
+  attribute :share_ssh_keys_with_forks, Boolean, default: true
 
   validates :maximum_number_of_builds, numericality: true
 

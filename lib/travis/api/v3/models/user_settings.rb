@@ -8,6 +8,8 @@ module Travis::API::V3
     attribute :maximum_number_of_builds, Integer, default: 0
     attribute :auto_cancel_pushes, Boolean, default: lambda { |us, _| us.auto_cancel_default? }
     attribute :auto_cancel_pull_requests, Boolean, default: lambda { |us, _| us.auto_cancel_default? }
+    attribute :share_encrypted_env_with_forks, Boolean, default: false
+    attribute :share_ssh_keys_with_forks, Boolean, default: lambda { |us, _| us.share_ssh_keys_with_forks? }
 
     def repository_id
       parent && parent.id
@@ -15,6 +17,12 @@ module Travis::API::V3
 
     def auto_cancel_default?
       ENV.fetch('AUTO_CANCEL_DEFAULT', 'false') == 'true'
+    end
+
+     def share_ssh_keys_with_forks?
+       return false unless ENV['IBM_REPO_SWITCHES_DATE']
+
+       parent&.created_at <= Date.parse(ENV['IBM_REPO_SWITCHES_DATE'])
     end
   end
 end
