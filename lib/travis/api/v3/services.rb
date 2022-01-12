@@ -22,6 +22,7 @@ module Travis::API::V3
     BuildPermissions      = Module.new { extend Services }
     Caches                = Module.new { extend Services }
     Coupons               = Module.new { extend Services }
+    CreditsCalculator     = Module.new { extend Services }
     Cron                  = Module.new { extend Services }
     Crons                 = Module.new { extend Services }
     EmailSubscription     = Module.new { extend Services }
