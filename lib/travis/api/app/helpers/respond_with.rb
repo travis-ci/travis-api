@@ -16,6 +16,8 @@ class Travis::Api::App
       }
 
       def respond_with(resource, options = {})
+        halt 403, 'access denied' unless token_proper?(options[:acceptable_tokens])
+
         result = respond(resource, options)
 
         if result && response.content_type =~ /application\/json/
@@ -32,6 +34,19 @@ class Travis::Api::App
       end
 
       private
+        # def acceptable_tokens(responder)
+        #   case(responder)
+        #   when :atom
+        #   else
+        # end
+
+        def token_proper?(acceptable_tokens)
+          return true unless params[:token] # it means that ScopeCheck granted access basing on other proper token
+
+          acceptable_tokens ||= [:default]
+          token = Token.find_by_token(params[:token])
+          acceptable_tokens.include?(token.try(:type))
+        end
 
         def respond(resource, options)
           resource = apply_service_responder(resource, options)

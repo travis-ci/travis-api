@@ -15,6 +15,7 @@ class User < Travis::Model
 
   before_create :set_as_recent
   after_create :create_a_token
+  after_create :create_svg_token
   before_save :track_previous_changes
 
   serialize :github_scopes
@@ -40,7 +41,11 @@ class User < Travis::Model
   end
 
   def token
-    tokens.first.try(:token)
+    tokens.find { |t| t.try(:type) == :default}.try(:token)
+  end
+
+  def svg_token
+    tokens.find { |t| t.try(:type) == :svg}.try(:token)
   end
 
   def to_json
@@ -162,8 +167,16 @@ class User < Travis::Model
     github_oauth_token ? super.gsub(github_oauth_token, '[REDACTED]') : super
   end
 
-  def create_a_token
-    self.tokens.create!
+  def create_a_token(type = :default)
+    token = self.tokens.create!
+    if type == :svg
+      token.token = "svg-#{token.token}"
+      token.save!
+    end
+  end
+
+  def create_svg_token
+    create_a_token(:svg)
   end
 
   protected

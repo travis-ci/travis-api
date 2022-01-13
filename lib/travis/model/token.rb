@@ -15,6 +15,14 @@ class Token < Travis::Model
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 
+  def type
+    if self.token =~ /svg-/
+      :svg
+    else
+      :default
+    end
+  end
+
   protected
 
     def generate_token
