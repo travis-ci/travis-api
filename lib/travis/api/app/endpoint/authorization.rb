@@ -100,7 +100,10 @@ class Travis::Api::App
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake' do
         handshake do |user, token, redirect_uri|
-
+          puts '**** ! handshake ! ****'
+          puts user.class
+          puts user
+          puts '****'
           if target_ok? redirect_uri
             content_type :html
             data = { user: user, token: token, uri: redirect_uri }
@@ -142,7 +145,8 @@ class Travis::Api::App
 
         def serialize_user(user)
           rendered = Travis::Api::Serialize.data(user, version: :v2)
-          rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
+          #rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
+          rendered['user'].merge('token' => 'funnyfaketoken')
         end
 
         def oauth_endpoint

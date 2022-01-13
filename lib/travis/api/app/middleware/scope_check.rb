@@ -7,7 +7,12 @@ class Travis::Api::App
       before do
         next unless token
         access_token = AccessToken.find_by_token(token)
-        halt 403, 'access denied' unless access_token
+        puts '@@@ ScopeCheck before @@@'
+        puts token
+        puts 'tokens in db:'
+        puts Token.all.map(&:token)
+        
+        halt 403, 'access denied -3-' unless access_token
         env['travis.access_token'] = access_token
       end
 
@@ -19,6 +24,16 @@ class Travis::Api::App
       end
 
       def token
+        puts 'parmas[:token]'
+        puts params[:token]
+        puts '@token:'
+        puts @token
+        puts 'header_token:'
+        puts header_token
+        puts 'query_token:'
+        puts query_token
+        puts 'travis_token:'
+        puts travis_token
         return @token if instance_variable_defined?(:@token)
         @token = header_token || query_token || travis_token
       end

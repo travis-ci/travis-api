@@ -16,6 +16,11 @@ class Travis::Api::App
       }
 
       def respond_with(resource, options = {})
+        puts '###---###'
+        puts params[:token]
+        puts params['token']
+        puts '--'
+        puts params
         result = respond(resource, options)
 
         if result && response.content_type =~ /application\/json/
@@ -41,10 +46,15 @@ class Travis::Api::App
           acceptable_formats.find do |accept|
             responders.find do |const|
               responder = const.new(self, resource, options.dup.merge(accept: accept))
+              puts '%!%! responder'
+              puts responder if responder.apply?
+              puts '%!%!'
               response = responder.apply if responder.apply?
             end
           end
-
+          puts '%!%! response'
+          puts response
+          puts '%!%!'
           response || (resource ? error(406) : error(404))
         end
 

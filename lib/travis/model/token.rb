@@ -15,6 +15,9 @@ class Token < Travis::Model
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 
+  def self.abc
+    puts '!-------------------------------------------------------------!' 
+  end
   protected
 
     def generate_token

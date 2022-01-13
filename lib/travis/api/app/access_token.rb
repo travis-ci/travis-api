@@ -11,6 +11,7 @@ class Travis::Api::App
     end
 
     def self.for_travis_token(travis_token, options = {})
+      Token.abc
       travis_token = Token.find_by_token(travis_token) unless travis_token.respond_to? :user
       new(scope: :travis_token, app_id: 1, user: travis_token.user).tap(&:save) if travis_token
     end

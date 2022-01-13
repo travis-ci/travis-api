@@ -14,6 +14,9 @@ module Travis::Api::App::Responders
     end
 
     def filename
+      puts '!!!--------------------------------------------------------------------------------------------!!!'
+      #puts caller
+      #puts '!!!'
       "#{root}/public/images/result/#{result}.svg"
     end
   end

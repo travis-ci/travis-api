@@ -11,7 +11,7 @@ class Travis::Api::App
       before { authenticate_by_mode! }
 
       get '/' do
-        halt 403, 'access denied' unless current_user
+        halt 403, 'access denied -2-' unless current_user
         respond_with current_user if Travis.redis.del("t:#{params[:access_token]}") == 1
       end
     end

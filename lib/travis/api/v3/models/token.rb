@@ -5,6 +5,10 @@ module Travis::API::V3
     serialize         :token, Travis::Settings::EncryptedColumn.new(disable: true)
     before_validation :generate_token, on: :create
 
+    def abc
+      puts '--------------druga-----------------------'
+    end
+
     protected
 
     def generate_token

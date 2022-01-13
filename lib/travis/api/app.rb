@@ -37,6 +37,21 @@ require 'travis/api/v3'
 require 'travis/api/app/error_handling'
 require 'travis/api/sidekiq'
 
+module Rack
+  class Snoop
+    def initialize(app)
+      puts '##@@ initialize'
+      @app = app
+    end
+
+    def call(env)
+      status, headers, body = @app.call(env)
+      puts '@#@#@#-------------------------@#@#@#'
+      [status, headers, body]
+    end
+  end
+end
+
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
 #
@@ -86,6 +101,7 @@ module Travis::Api
     attr_accessor :app
 
     def initialize
+      #Travis.config.middleware.insert_before(ActionDispatch::ShowExceptions, Rack::Snoop)
       @app = Rack::Builder.app do
         # if stackprof = ENV['STACKPROF']
         #   require 'stackprof'
@@ -94,7 +110,6 @@ module Travis::Api
         #   Travis.logger.info "Setting up profiler: #{mode}"
         #   use StackProf::Middleware, enabled: true, save_every: 1, mode: mode
         # end
-
         use Rack::Config do |env|
           env['metriks.request.start'] ||= Time.now.utc
 

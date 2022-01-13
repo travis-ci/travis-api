@@ -48,7 +48,7 @@ module Travis
       RequestLimitReached = ClientError        .create('request limit reached for resource', status: 429)
       SourceUnknown       = NotFound           .create('source unknown', status: 400)
       UnprocessableEntity = ClientError        .create('request unable to be processed due to semantic errors', status: 422)
-      WrongCredentials    = ClientError        .create('access denied',  status: 403)
+      WrongCredentials    = ClientError        .create('access denied -1-',  status: 403)
       WrongParams         = ClientError        .create('wrong parameters')
     end
   end
