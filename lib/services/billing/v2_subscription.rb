@@ -19,9 +19,7 @@ module Services
       def subscription
         return unless travis_pro?
 
-        subscriptions = @client.v2_subscriptions(@search_by_owner_id) if @search_by_owner_id.present?
-
-        subscriptions.select { |subscription| subscription.owner_id == @owner_id.to_i && subscription.owner_type == @owner_type }.first  if @search_by_owner_id.present?
+        @client.v2_subscription(@owner_type, @owner_id)
       end
 
       def invoices

@@ -22,6 +22,13 @@ module Services
       end
     end
 
+    def v2_subscription(owner_type, owner_id)
+      response = connection_json(0).get('/v2/#{owner_type}/#{owner_id}/get_plan')
+      handle_errors_and_respond_json(response) do |r|
+        Travis::Models::Billing::V2Subscription.new(r.symbolize_keys)
+      end
+    end
+
     def create_v2_subscription(owner_id, attributes)
       response = connection(owner_id).post('/v2/subscriptions', attributes)
       handle_errors_and_respond(response)
