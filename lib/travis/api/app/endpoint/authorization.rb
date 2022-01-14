@@ -142,7 +142,8 @@ class Travis::Api::App
 
         def serialize_user(user)
           rendered = Travis::Api::Serialize.data(user, version: :v2)
-          rendered['user'].merge('token' => user.tokens.first.try(:token).to_s)
+          rendered['user'].merge('token' => user.default_tokens.first.try(:token).to_s)
+          rendered['user'].merge('svg_token' => user.svg_token.try(:token).to_s)
         end
 
         def oauth_endpoint
