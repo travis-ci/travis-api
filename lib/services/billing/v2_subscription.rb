@@ -32,13 +32,13 @@ module Services
       def plans
         return [] unless travis_pro?
 
-        @client.v2_plans(@search_by_owner_id.to_s) if @search_by_owner_id.present?
+        @client.v2_plans(@owner_id.to_s)
       end
 
       def update_subscription(id, attributes)
         return unless travis_pro?
 
-        @client.update_v2_subscription(@search_by_owner_id, id, attributes) if @search_by_owner_id.present?
+        @client.update_v2_subscription(id, attributes)
 
         nil
       rescue => e

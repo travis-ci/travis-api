@@ -36,8 +36,8 @@ module Services
       handle_errors_and_respond(response)
     end
 
-    def update_v2_subscription(owner_id, id, attributes)
-      response = connection(owner_id).patch("/v2/subscriptions/#{id}", attributes)
+    def update_v2_subscription(id, attributes)
+      response = connection('0').patch("/v2/subscriptions/#{id}", attributes)
       handle_errors_and_respond(response)
     end
 
