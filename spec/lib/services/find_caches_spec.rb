@@ -73,6 +73,11 @@ describe Travis::Services::FindCaches do
     context 'with GCS configuration' do
       let(:cache_options) { { gcs: { bucket_name: '', json_key: { type: 'service_account', project_id: 'test-project-id' } } } }
       its(:size) { is_expected.to eq 0 }
+
+      context 'when configuration is a String' do
+        let(:cache_options) { { gcs: { bucket_name: '', json_key: JSON.dump(type: 'service_account', project_id: 'test-project-id') } } }
+        its(:size) { is_expected.to eq 0 }
+      end
     end
   end
 end
