@@ -3,7 +3,7 @@ module Travis::API::V3
     class ConfigurationError < StandardError; end
 
     ALLOWANCE_TIMEOUT = 1 # second
-    EXECUTIONS_TIMEOUT = 20 # seconds
+    EXECUTIONS_TIMEOUT = 60 # seconds
 
     def initialize(user_id)
       @user_id = user_id
