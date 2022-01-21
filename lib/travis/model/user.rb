@@ -177,6 +177,7 @@ class User < Travis::Model
       token.token = "svg-#{token.token}"
       token.save!
     end
+    token
   end
 
   def create_svg_token
