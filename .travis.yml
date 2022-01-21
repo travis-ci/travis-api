@@ -18,6 +18,8 @@ before_script:
 script: RAILS_ENV=test bundle exec rake spec
 jobs:
   include:
+    - stage: "testing"
+      script: RAILS_ENV=test bundle exec rake spec
     - stage: ":ship: it to Quay.io"
       addons:
         snaps:

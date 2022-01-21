@@ -19,9 +19,7 @@ module Services
       def subscription
         return unless travis_pro?
 
-        subscriptions = @client.v2_subscriptions(@search_by_owner_id) if @search_by_owner_id.present?
-
-        subscriptions.select { |subscription| subscription.owner_id == @owner_id.to_i && subscription.owner_type == @owner_type }.first  if @search_by_owner_id.present?
+        @client.v2_subscription(@owner_type, @owner_id)
       end
 
       def invoices
@@ -34,13 +32,13 @@ module Services
       def plans
         return [] unless travis_pro?
 
-        @client.v2_plans(@search_by_owner_id.to_s) if @search_by_owner_id.present?
+        @client.v2_plans(@owner_id.to_s)
       end
 
       def update_subscription(id, attributes)
         return unless travis_pro?
 
-        @client.update_v2_subscription(@search_by_owner_id, id, attributes) if @search_by_owner_id.present?
+        @client.update_v2_subscription(id, attributes)
 
         nil
       rescue => e
