@@ -45,7 +45,8 @@ class User < Travis::Model
   end
 
   def svg_token
-    tokens.find { |t| t.try(:type) == :svg}.try(:token) || create_svg_token
+    token = tokens.find { |t| t.try(:type) == :svg} || create_svg_token
+    token.try(:token)
   end
 
   def default_tokens
