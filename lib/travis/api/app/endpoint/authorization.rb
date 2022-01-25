@@ -147,6 +147,8 @@ class Travis::Api::App
           puts '-------1----------'
           puts user.svg_token
           puts '-------x2----------'
+          puts user.svg_token.try(:token).to_s
+          puts '-------x3----------'
           puts rendered['user']
           rendered['user']
         end
