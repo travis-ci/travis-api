@@ -41,6 +41,7 @@ class User < Travis::Model
   end
 
   def token
+    puts '---token in user.rb---'
     tokens.find { |t| t.try(:type) == :default}.try(:token)
   end
 
