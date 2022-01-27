@@ -34,29 +34,7 @@ class Travis::Api::App
       end
 
       private
-        def acceptable_tokens(responder)
-          puts '---acceptable_tokens---'
-          puts responder.class
-          case(responder)
-          when Travis::Api::App::Responders::Badge then [:svg]
-          else [:default]
-          end
-        end
-
-        def token_proper?(responder)
-          return true unless params[:token] # it means that ScopeCheck granted access basing on other proper token
-
-          acceptable = acceptable_tokens(responder)
-          puts '---'
-          puts acceptable
-          token = Token.find_by_token(params[:token])
-          puts token
-          puts token.try(:type)
-          acceptable.include?(token.try(:type))
-        end
-
         def respond(resource, options)
-          puts '---respond---'
           resource = apply_service_responder(resource, options)
           response = nil
           responders = responders_for(options)
@@ -65,16 +43,28 @@ class Travis::Api::App
             responders.find do |const|
               responder = const.new(self, resource, options.dup.merge(accept: accept))
               if responder.apply?
-                if token_proper?(responder)
-                  response = responder.apply
-                else
-                  halt 403, 'access denied'
-                end
+                response = responder.apply
+                halt 403, 'access denied' unless token_proper?(responder)
               end
             end
           end
 
           response || (resource ? error(406) : error(404))
+        end
+
+        def token_proper?(responder)
+          return true unless params[:token] # it means that ScopeCheck granted access basing on other proper token
+
+          acceptable = acceptable_tokens(responder)
+          token = Token.find_by_token(params[:token])
+          acceptable.include?(token.try(:type))
+        end
+
+        def acceptable_tokens(responder)
+          case(responder)
+          when Travis::Api::App::Responders::Badge then [:svg]
+          else [:default]
+          end
         end
 
         def prettify_result?

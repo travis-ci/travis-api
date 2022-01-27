@@ -144,12 +144,6 @@ class Travis::Api::App
           rendered = Travis::Api::Serialize.data(user, version: :v2)
           rendered['user'].merge!('token' => user.default_tokens.first.try(:token).to_s)
           rendered['user'].merge!('svg_token' => user.svg_token.to_s)
-          puts '-------1----------'
-          puts user.svg_token
-          puts '-------x2----------'
-          puts rendered['user']
-          puts '-------x3----------'
-          puts Token.all.map(&:token)
           rendered['user']
         end
 
