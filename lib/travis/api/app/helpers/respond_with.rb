@@ -55,6 +55,10 @@ class Travis::Api::App
 
           acceptable = acceptable_tokens(responder)
           token = Token.find_by_token(params[:token])
+          puts '--'
+          puts token
+          puts '--'
+          puts acceptable
           acceptable.include?(token.try(:type))
         end
 
