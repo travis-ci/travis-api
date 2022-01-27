@@ -16,7 +16,7 @@ class Travis::Api::App
       }
 
       def respond_with(resource, options = {})
-        halt 403, 'access denied' unless token_proper?(options[:acceptable_tokens])
+        # halt 403, 'access denied' unless token_proper?(options[:acceptable_tokens])
 
         result = respond(resource, options)
 
@@ -34,18 +34,19 @@ class Travis::Api::App
       end
 
       private
-        # def acceptable_tokens(responder)
-        #   case(responder)
-        #   when :atom
-        #   else
-        # end
+        def acceptable_tokens(responder)
+          case(responder.class)
+          when Responders::Badge then [:svg]
+          else [:default]
+          end
+        end
 
-        def token_proper?(acceptable_tokens)
+        def token_proper?(responder)
           return true unless params[:token] # it means that ScopeCheck granted access basing on other proper token
 
-          acceptable_tokens ||= [:default]
+          acceptable = acceptable_tokens(responder)
           token = Token.find_by_token(params[:token])
-          acceptable_tokens.include?(token.try(:type))
+          acceptable.include?(token.try(:type))
         end
 
         def respond(resource, options)
@@ -56,7 +57,13 @@ class Travis::Api::App
           acceptable_formats.find do |accept|
             responders.find do |const|
               responder = const.new(self, resource, options.dup.merge(accept: accept))
-              response = responder.apply if responder.apply?
+              if responder.apply?
+                if token_proper?(responder)
+                  response = responder.apply
+                else
+                  halt 403, 'access denied'
+                end
+              end
             end
           end
 
