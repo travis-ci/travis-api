@@ -41,8 +41,13 @@ class Travis::Api::App
             responders.find do |const|
               responder = const.new(self, resource, options.dup.merge(accept: accept))
               if responder.apply?
-                response = responder.apply
-                halt 403, 'access denied' unless token_proper?(responder)
+                # response = responder.apply
+                # halt 403, 'access denied' unless token_proper?(responder)
+                if token_proper?(responder)
+                  response = responder.apply
+                else
+                  halt 403, 'access denied'
+                end
               end
             end
           end
@@ -55,10 +60,6 @@ class Travis::Api::App
 
           acceptable = acceptable_tokens(responder)
           token = Token.find_by_token(params[:token])
-          puts '--'
-          puts token
-          puts '--'
-          puts acceptable
           acceptable.include?(token.try(:type))
         end
 
