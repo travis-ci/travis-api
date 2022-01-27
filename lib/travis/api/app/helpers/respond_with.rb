@@ -47,7 +47,11 @@ class Travis::Api::App
           return true unless params[:token] # it means that ScopeCheck granted access basing on other proper token
 
           acceptable = acceptable_tokens(responder)
+          puts '---'
+          puts acceptable
           token = Token.find_by_token(params[:token])
+          puts token
+          puts token.try(:type)
           acceptable.include?(token.try(:type))
         end
 
