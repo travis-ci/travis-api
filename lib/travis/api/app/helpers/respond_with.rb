@@ -37,7 +37,7 @@ class Travis::Api::App
         def acceptable_tokens(responder)
           puts '---acceptable_tokens---'
           puts responder.class
-          case(responder.class)
+          case(responder)
           when Travis::Api::App::Responders::Badge then [:svg]
           else [:default]
           end
