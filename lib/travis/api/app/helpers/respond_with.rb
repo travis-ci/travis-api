@@ -16,8 +16,6 @@ class Travis::Api::App
       }
 
       def respond_with(resource, options = {})
-        # halt 403, 'access denied' unless token_proper?(options[:acceptable_tokens])
-
         result = respond(resource, options)
 
         if result && response.content_type =~ /application\/json/
