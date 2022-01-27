@@ -35,6 +35,8 @@ class Travis::Api::App
 
       private
         def acceptable_tokens(responder)
+          puts '---acceptable_tokens---'
+          puts responder.class
           case(responder.class)
           when Responders::Badge then [:svg]
           else [:default]
@@ -50,6 +52,7 @@ class Travis::Api::App
         end
 
         def respond(resource, options)
+          puts '---respond---'
           resource = apply_service_responder(resource, options)
           response = nil
           responders = responders_for(options)
