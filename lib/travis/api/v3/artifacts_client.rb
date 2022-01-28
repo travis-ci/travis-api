@@ -41,7 +41,7 @@ module Travis::API::V3
     end
 
     def delete_image(image_name)
-      response = connection.delete("/api/#{image_name}", config: config, imageName: image_name)
+      response = connection.delete("/api/#{image_name}")
 
       handle_errors_and_respond(response)
     end
