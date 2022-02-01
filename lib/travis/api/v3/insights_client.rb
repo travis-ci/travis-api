@@ -85,7 +85,7 @@ module Travis::API::V3
 
     def authenticate_key(params)
       response = connection.post('/user_plugins/authenticate_key', params)
-
+      
       handle_errors_and_respond(response) do |body|
         body
       end
