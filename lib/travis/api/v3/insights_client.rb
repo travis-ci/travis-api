@@ -85,7 +85,7 @@ module Travis::API::V3
 
     def authenticate_key(params)
       response = connection.post('/user_plugins/authenticate_key', params)
-
+      
       handle_errors_and_respond(response) do |body|
         body
       end
@@ -203,6 +203,20 @@ module Travis::API::V3
         tags = body.map do |tag|
           Travis::API::V3::Models::InsightsTag.new(tag)
         end
+      end
+    end
+
+    def insights_spotlight_summary(time_start, time_end, repo_id, build_status)
+      query_string = query_string_from_params(
+        time_start: time_start,
+        time_end: time_end,
+        repo_id: repo_id,
+        build_status: build_status
+      )
+      response = connection.get("/api/v3/insights/spotlight?#{query_string}")
+
+      handle_errors_and_respond(response) do |body|
+        body
       end
     end
 
