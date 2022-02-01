@@ -37,6 +37,7 @@ module Travis::API::V3
     InsightsProbes        = Module.new { extend Services }
     InsightsPublicKey     = Module.new { extend Services }
     InsightsSandbox       = Module.new { extend Services }
+    InsightsSpotlightSummary = Module.new { extend Services }
     InsightsTags          = Module.new { extend Services }
     Installation          = Module.new { extend Services }
     Job                   = Module.new { extend Services }
