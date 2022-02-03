@@ -25,7 +25,7 @@ module Travis::API::V3
     end
 
     def image_logs(image_name)
-      response = connection.get("/api/#{image_name}/logs")
+      response = connection.get("/api/#{CGI.escape(image_name)}/logs")
 
       handle_errors_and_respond(response) do |body|
         body
@@ -33,7 +33,7 @@ module Travis::API::V3
     end
 
     def image_info(image_name)
-      response = connection.get("/api/#{image_name}/info")
+      response = connection.get("/api/#{CGI.escape(image_name)}/info")
 
       handle_errors_and_respond(response) do |body|
         body
@@ -41,13 +41,13 @@ module Travis::API::V3
     end
 
     def delete_image(image_name)
-      response = connection.delete("/api/#{image_name}")
+      response = connection.delete("/api/#{CGI.escape(image_name)}")
 
       handle_errors_and_respond(response)
     end
 
     def image_build_status(image_name)
-      response = connection.get("/api/#{image_name}/build_status")
+      response = connection.get("/api/#{CGI.escape(image_name)}/build_status")
 
       handle_errors_and_respond(response) do |body|
         body
