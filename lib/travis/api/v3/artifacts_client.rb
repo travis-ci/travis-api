@@ -44,6 +44,8 @@ module Travis::API::V3
       response = connection.delete("/api/#{CGI.escape(image_name)}")
 
       handle_errors_and_respond(response)
+
+      true
     end
 
     def image_build_status(image_name)
