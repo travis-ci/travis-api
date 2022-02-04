@@ -79,13 +79,13 @@ describe 'v2.1 status', auth_helpers: true, api_version: :'v2.1', set_app: true 
       it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.png' }
     end
 
-    describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept image/svg+xml' do
+    describe 'GET /repos/%{repo.slug}?token=%{user.svg_token} Accept image/svg+xml' do
       let(:accept) { 'image/svg+xml' }
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.svg' }
     end
 
-    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.svg_token}' do
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.svg' }
     end
@@ -184,13 +184,13 @@ describe 'v2.1 status', auth_helpers: true, api_version: :'v2.1', set_app: true 
       it(:without_permission) { should auth status: 200, type: :img, file: 'passing.png' }
     end
 
-    describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept image/svg+xml' do
+    describe 'GET /repos/%{repo.slug}?token=%{user.svg_token} Accept image/svg+xml' do
       let(:accept) { 'image/svg+xml' }
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'passing.svg' }
     end
 
-    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.svg_token}' do
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'passing.svg' }
     end
@@ -289,13 +289,13 @@ describe 'v2.1 status', auth_helpers: true, api_version: :'v2.1', set_app: true 
       it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.png' }
     end
 
-    describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept image/svg+xml' do
+    describe 'GET /repos/%{repo.slug}?token=%{user.svg_token} Accept image/svg+xml' do
       let(:accept) { 'image/svg+xml' }
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.svg' }
     end
 
-    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.svg_token}' do
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.svg' }
     end
@@ -400,13 +400,13 @@ describe 'v2.1 status', auth_helpers: true, api_version: :'v2.1', set_app: true 
       it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.png' }
     end
 
-    describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept image/svg+xml' do
+    describe 'GET /repos/%{repo.slug}?token=%{user.svg_token} Accept image/svg+xml' do
       let(:accept) { 'image/svg+xml' }
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.svg' }
     end
 
-    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.svg_token}' do
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'unknown.svg' }
     end
@@ -505,13 +505,13 @@ describe 'v2.1 status', auth_helpers: true, api_version: :'v2.1', set_app: true 
       it(:without_permission) { should auth status: 200, type: :img, file: 'passing.png' }
     end
 
-    describe 'GET /repos/%{repo.slug}?token=%{user.token} Accept image/svg+xml' do
+    describe 'GET /repos/%{repo.slug}?token=%{user.svg_token} Accept image/svg+xml' do
       let(:accept) { 'image/svg+xml' }
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'passing.svg' }
     end
 
-    describe 'GET /repos/%{repo.slug}.svg?token=%{user.token}' do
+    describe 'GET /repos/%{repo.slug}.svg?token=%{user.svg_token}' do
       it(:with_permission)    { should auth status: 200, type: :img, file: 'passing.svg' }
       it(:without_permission) { should auth status: 200, type: :img, file: 'passing.svg' }
     end

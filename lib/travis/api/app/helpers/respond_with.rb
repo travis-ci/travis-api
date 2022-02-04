@@ -32,7 +32,6 @@ class Travis::Api::App
       end
 
       private
-
         def respond(resource, options)
           resource = apply_service_responder(resource, options)
           response = nil
@@ -41,11 +40,32 @@ class Travis::Api::App
           acceptable_formats.find do |accept|
             responders.find do |const|
               responder = const.new(self, resource, options.dup.merge(accept: accept))
-              response = responder.apply if responder.apply?
+              if responder.apply?
+                if token_proper?(responder)
+                  response = responder.apply
+                else
+                  halt 403, 'access denied'
+                end
+              end
             end
           end
 
           response || (resource ? error(406) : error(404))
+        end
+
+        def token_proper?(responder)
+          return true unless params[:token] # it means that ScopeCheck granted access basing on other proper token
+
+          acceptable = acceptable_tokens(responder)
+          token = Token.find_by_token(params[:token])
+          acceptable.include?(token.try(:purpose_symbol))
+        end
+
+        def acceptable_tokens(responder)
+          case(responder)
+          when Travis::Api::App::Responders::Badge then [:svg]
+          else [:default]
+          end
         end
 
         def prettify_result?
