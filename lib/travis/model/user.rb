@@ -41,16 +41,16 @@ class User < Travis::Model
   end
 
   def token
-    tokens.find { |t| t.try(:type) == :default}.try(:token)
+    tokens.find { |t| t.try(:type_symbol) == :default}.try(:token)
   end
 
   def svg_token
-    token = tokens.find { |t| t.try(:type) == :svg} || create_svg_token
+    token = tokens.find { |t| t.try(:type_symbol) == :svg} || create_svg_token
     token.try(:token)
   end
 
   def default_tokens
-    self.tokens.select { |token| token.try(:type) == :default }
+    self.tokens.select { |token| token.try(:type_symbol) == :default }
   end
 
   def to_json
@@ -174,10 +174,8 @@ class User < Travis::Model
 
   def create_a_token(type = :default)
     token = self.tokens.create!
-    if type == :svg
-      token.token = "svg-#{token.token}"
-      token.save!
-    end
+    token.type = type.to_s
+    token.save!
     token
   end
 

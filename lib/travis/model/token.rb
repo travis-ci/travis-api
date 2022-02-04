@@ -15,12 +15,8 @@ class Token < Travis::Model
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 
-  def type
-    if self.token =~ /svg-/
-      :svg
-    else
-      :default
-    end
+  def type_symbol
+    type.to_sym
   end
 
   protected
