@@ -15,8 +15,8 @@ class Token < Travis::Model
 
   serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 
-  def type_symbol
-    type.try(:to_sym) || :default
+  def purpose_symbol
+    purpose.try(:to_sym) || :default
   end
 
   protected

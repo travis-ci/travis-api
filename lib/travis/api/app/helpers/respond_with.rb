@@ -58,7 +58,7 @@ class Travis::Api::App
 
           acceptable = acceptable_tokens(responder)
           token = Token.find_by_token(params[:token])
-          acceptable.include?(token.try(:type_symbol))
+          acceptable.include?(token.try(:purpose_symbol))
         end
 
         def acceptable_tokens(responder)
