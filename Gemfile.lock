@@ -21,10 +21,11 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/gh
-  revision: 66449dc14db5eee0a24a4dbcb85e52dd5b63513f
+  revision: 482ccbc8159c73fd5e651476692c6ea3d9f416a8
+  branch: tcie30-0_15_1
   specs:
-    gh (0.15.2)
-      addressable (~> 2.4)
+    gh (0.15.1)
+      addressable (~> 2.4.0)
       backports
       faraday (~> 0.8)
       multi_json (~> 1.0)
