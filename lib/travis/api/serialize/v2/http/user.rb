@@ -54,7 +54,7 @@ module Travis
               end
 
             def check_scopes
-              # return Github::Oauth.correct_scopes?(user) if user.github?
+              return Github::Oauth.correct_scopes?(user) if user.github?
 
               ::Travis::RemoteVCS::User.new.check_scopes(user_id: user.id)
             rescue ::Travis::RemoteVCS::ResponseError
