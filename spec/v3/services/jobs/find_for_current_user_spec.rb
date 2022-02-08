@@ -37,7 +37,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
 
     context "with active jobs" do
       before do
-        build1.matrix.first.update_attributes(state: 'started')
+        build1.matrix.first.update(state: 'started')
       end
 
       it "returns only active jobs when active=true is passed" do

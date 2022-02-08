@@ -56,7 +56,7 @@ module Travis
           case status
           when 401
             error "[github-admin] token for #{user.login} no longer valid"
-            user.update_attributes!(:github_oauth_token => "")
+            user.update!(:github_oauth_token => "")
           when 404
             info "[github-admin] #{user.login} no longer has any access to #{repository.slug}"
             update(user, {})
@@ -73,7 +73,7 @@ module Travis
         end
 
         def update(user, permissions)
-          user.update_attributes!(:permissions => permissions)
+          user.update!(:permissions => permissions)
         end
 
         def raise_admin_missing

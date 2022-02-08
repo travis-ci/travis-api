@@ -1,6 +1,6 @@
 require 'pusher'
 require 'travis/support'
-require 'travis/support/database'
+#require 'travis/support/database'
 require 'travis/errors'
 
 module Travis
@@ -25,6 +25,7 @@ module Travis
   require 'travis/github'
   require 'travis/notification'
   require 'travis/services'
+  require 'sinatra/scope'
 
   class UnknownRepository < StandardError; end
   class GithubApiError    < StandardError; end

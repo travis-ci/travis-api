@@ -16,7 +16,7 @@ module Travis::API::V3
       else
         github(admin).set_hook(repository, activate)
       end
-      repository.update_attributes(active: activate)
+      repository.update(active: activate)
 
       result repository
     end

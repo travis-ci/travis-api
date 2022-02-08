@@ -23,7 +23,7 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
         end
 
         context "when repo is migrating" do
-          before { repo.update_attributes(migration_status: "migrating") }
+          before { repo.update(migration_status: "migrating") }
           before { post("/v3/repo/#{repo.id}/migrate", {}, headers) }
 
           example { expect(last_response.status).to be == 403 }
@@ -35,7 +35,7 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
         end
 
         context "when repo has been migrated" do
-          before { repo.update_attributes(migration_status: "migrated") }
+          before { repo.update(migration_status: "migrated") }
           before { post("/v3/repo/#{repo.id}/migrate", {}, headers) }
 
           example { expect(last_response.status).to be == 403 }

@@ -8,11 +8,11 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org') }
 
   before do
-    build.update_attributes(sender_id: repo.owner.id, sender_type: 'User')
+    build.update(sender_id: repo.owner.id, sender_type: 'User')
     test   = build.stages.create(number: 1, name: 'test')
     deploy = build.stages.create(number: 2, name: 'deploy')
-    build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
-    build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+    build.jobs[0, 2].each { |job| job.update!(stage: test) }
+    build.jobs[2, 2].each { |job| job.update!(stage: deploy) }
     build.reload
   end
 

@@ -24,7 +24,7 @@ module Travis::API::V3
     alias last_started_build current_build
 
     after_initialize do
-      update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
+      update! default_branch_name: 'master'.freeze unless default_branch_name
     end
 
     def migrating?

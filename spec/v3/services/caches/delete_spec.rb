@@ -245,7 +245,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   context do
     describe "repo migrating" do
-      before  { repo.update_attributes(migration_status: "migrating") }
+      before  { repo.update(migration_status: "migrating") }
       before  { delete("/v3/repo/#{repo.id}/caches", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -257,7 +257,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     end
 
     describe "repo migrating" do
-      before  { repo.update_attributes(migration_status: "migrated") }
+      before  { repo.update(migration_status: "migrated") }
       before  { delete("/v3/repo/#{repo.id}/caches", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }

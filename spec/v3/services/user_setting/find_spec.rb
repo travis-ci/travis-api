@@ -14,7 +14,7 @@ describe Travis::API::V3::Services::UserSetting::Find, set_app: true do
     let(:other_token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 1) }
 
     before do
-      repo.update_attributes(private: true)
+      repo.update(private: true)
       get("/v3/repo/#{repo.id}/setting/build_pushes", {}, { 'HTTP_AUTHORIZATION' => "token #{other_token}" })
     end
 
@@ -61,7 +61,7 @@ describe Travis::API::V3::Services::UserSetting::Find, set_app: true do
 
   describe 'authenticated, existing repo, setting found' do
     before do
-      repo.update_attributes(settings: { 'build_pushes' => false })
+      repo.update(settings: { 'build_pushes' => false })
       get("/v3/repo/#{repo.id}/setting/build_pushes", {}, auth_headers)
     end
 

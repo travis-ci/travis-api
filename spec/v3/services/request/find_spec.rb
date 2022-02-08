@@ -30,7 +30,7 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
   end
 
   describe "include config" do
-    before { request.update_attributes!(config: { language: :ruby }) }
+    before { request.update!(config: { language: :ruby }) }
     before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.config") }
     subject { JSON.load(body)['config'] }
     it { should eq 'language' => 'ruby' }
@@ -73,7 +73,7 @@ describe Travis::API::V3::Services::Request::Find, set_app: true do
   describe "include yaml config" do
     subject { JSON.load(body)['yaml_config'] }
     let(:yaml_config) { Travis::API::V3::Models::RequestYamlConfig.new(key: '123', yaml: 'rvm: 2.5.1') }
-    before { request.update_attributes!(yaml_config: yaml_config) }
+    before { request.update!(yaml_config: yaml_config) }
     before { get("/v3/repo/#{repo.id}/request/#{request.id}?include=request.yaml_config") }
 
     it { should eq 'rvm: 2.5.1' }

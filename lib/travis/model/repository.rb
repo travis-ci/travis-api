@@ -54,7 +54,8 @@ class Repository < Travis::Model
     end
   }
   scope :timeline, -> {
-    active.order('last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC')
+    s = 'last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC'
+    active.order(Arel.sql(s))
   }
   scope :with_builds, -> {
     where(arel_table[:last_build_id].not_eq(nil))

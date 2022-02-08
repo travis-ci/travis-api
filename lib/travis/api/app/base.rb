@@ -8,8 +8,12 @@ class Travis::Api::App
   # Superclass for any endpoint and middleware.
   # Pulls in relevant helpers and extensions.
   class Base < Sinatra::Base
+    register Travis::Api::App::Extensions::Scoping
     register Extensions::SmartConstants
     register Mustermann
+
+    # include Sinatra::Scope
+    # extend Sinatra::Scope
 
     error NotImplementedError do
       content_type :txt

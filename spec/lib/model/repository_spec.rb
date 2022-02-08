@@ -7,8 +7,8 @@ describe Repository do
     let(:build2) { FactoryBot.create(:build, repository: repo, finished_at: Time.now, state: :failed) }
 
     before do
-      build1.update_attributes(branch: 'master')
-      build2.update_attributes(branch: 'development')
+      build1.update(branch: 'master')
+      build2.update(branch: 'development')
     end
 
     it 'returns last completed build' do

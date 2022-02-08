@@ -109,7 +109,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
     end
  
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before {
         patch("/v3/repo/#{repo.id}/setting/build_pushes", new_params, json_headers.merge(auth_headers))
       }
@@ -123,7 +123,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before {
         patch("/v3/repo/#{repo.id}/setting/build_pushes", new_params, json_headers.merge(auth_headers))
       }

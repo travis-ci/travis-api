@@ -26,7 +26,7 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
       after { Travis.config.public_mode = false }
 
       describe 'for a private repo' do
-        before { job.update_attributes!(private: true) }
+        before { job.update!(private: true) }
 
         it 'does not authorize a channel for a job that belongs to a repository that i do not have permissions on' do
           post '/pusher/auth', { channels: ["private-job-1"], socket_id: '123.456' }, headers
@@ -38,7 +38,7 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
       describe 'for a public repo (org)' do
         before { Travis.config.host = 'travis-ci.org' }
         before { Travis.config.public_mode = false }
-        before { job.update_attributes!(private: false) }
+        before { job.update!(private: false) }
 
         it 'authorizes a channel for a job that belongs to a repository that i do not have permissions on' do
           Permission.delete_all
@@ -51,7 +51,7 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
       describe 'for a public repo (public mode)' do
         before { Travis.config.host = 'travis-ci.com' }
         before { Travis.config.public_mode = true }
-        before { job.update_attributes!(private: false) }
+        before { job.update!(private: false) }
 
         it 'authorizes a channel for a job that belongs to a repository that i do not have permissions on' do
           Permission.delete_all
@@ -64,7 +64,7 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
       describe 'for a public repo (private mode)' do
         before { Travis.config.host = 'enterprise.travis-ci.com' }
         before { Travis.config.public_mode = false }
-        before { job.update_attributes!(private: false) }
+        before { job.update!(private: false) }
 
         it 'does not authorize a channel for a job that belongs to a repository that i do not have permissions on' do
           Permission.delete_all
@@ -111,7 +111,7 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
       after { Travis.config.public_mode = false }
 
       describe 'for a private repo' do
-        before { job.update_attributes!(private: true) }
+        before { job.update!(private: true) }
 
         it 'authorizes a channel for a job that belongs to a repository that i have permissions on' do
           post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
@@ -129,7 +129,7 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
       describe 'for a public repo (org)' do
         before { Travis.config.host = 'travis-ci.org' }
         before { Travis.config.public_mode = false }
-        before { job.update_attributes!(private: false) }
+        before { job.update!(private: false) }
 
         it 'authorizes a channel for a job that belongs to a repository that i have permissions on' do
           post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
@@ -148,7 +148,7 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
       describe 'for a public repo (public mode)' do
         before { Travis.config.host = 'travis-ci.com' }
         before { Travis.config.public_mode = true }
-        before { job.update_attributes!(private: false) }
+        before { job.update!(private: false) }
 
         it 'authorizes a channel for a job that belongs to a repository that i have permissions on' do
           post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers
@@ -167,7 +167,7 @@ describe Travis::Api::App::Endpoint::Pusher, set_app: true do
       describe 'for a public repo (private mode)' do
         before { Travis.config.host = 'enterprise.travis-ci.com' }
         before { Travis.config.public_mode = false }
-        before { job.update_attributes!(private: false) }
+        before { job.update!(private: false) }
 
         it 'authorizes a channel for a job that belongs to a repository that i have permissions on' do
           post '/pusher/auth', { channels: ["private-job-#{job.id}"], socket_id: '123.456' }, headers

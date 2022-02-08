@@ -49,25 +49,25 @@ describe Repository::StatusImage do
     end
 
     it 'returns :failing if the status of the last finished build is failed' do
-      build.update_attributes(state: :failed)
+      build.update(state: :failed)
       image = described_class.new(repo, nil)
       expect(image.result).to eq(:failing)
     end
 
     it 'returns :error if the status of the last finished build is errored' do
-      build.update_attributes(state: :errored)
+      build.update(state: :errored)
       image = described_class.new(repo, nil)
       expect(image.result).to eq(:error)
     end
 
     it 'returns :canceled if the status of the last finished build is canceled' do
-      build.update_attributes(state: 'canceled')
+      build.update(state: 'canceled')
       image = described_class.new(repo, nil)
       expect(image.result).to eq(:canceled)
     end
 
     it 'returns :unknown if the status of the last finished build is unknown' do
-      build.update_attributes(state: :created)
+      build.update(state: :created)
       image = described_class.new(repo, nil)
       expect(image.result).to eq(:unknown)
     end
@@ -75,25 +75,25 @@ describe Repository::StatusImage do
 
   describe 'given a branch' do
     it 'returns :passed if the last build on that branch has passed' do
-      build.update_attributes(state: :passed, branch: 'master')
+      build.update(state: :passed, branch: 'master')
       image = described_class.new(repo, 'master')
       expect(image.result).to eq(:passing)
     end
 
     it 'returns :failed if the last build on that branch has failed' do
-      build.update_attributes(state: :failed, branch: 'develop')
+      build.update(state: :failed, branch: 'develop')
       image = described_class.new(repo, 'develop')
       expect(image.result).to eq(:failing)
     end
 
     it 'returns :error if the last build on that branch has errored' do
-      build.update_attributes(state: :errored, branch: 'develop')
+      build.update(state: :errored, branch: 'develop')
       image = described_class.new(repo, 'develop')
       expect(image.result).to eq(:error)
     end
 
     it 'returns :canceled if the last build on that branch was canceled' do
-      build.update_attributes(state: :canceled, branch: 'develop')
+      build.update(state: :canceled, branch: 'develop')
       image = described_class.new(repo, 'develop')
       expect(image.result).to eq(:canceled)
     end

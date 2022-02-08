@@ -30,6 +30,7 @@ require 'securerandom'
 require 'fog/aws'
 require 'rbtrace'
 
+
 module Travis::Api
 end
 
@@ -39,6 +40,7 @@ require 'travis/api/serialize/v2'
 require 'travis/api/v3'
 require 'travis/api/app/error_handling'
 require 'travis/api/sidekiq'
+require 'travis/support/database'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -77,10 +79,6 @@ module Travis::Api
       FileUtils.touch('/tmp/app-initialized') if ENV['DYNO'] # Heroku
     end
 
-    def self.new(options = {})
-      setup(options)
-      super()
-    end
 
     def self.deploy_sha
       @deploy_sha ||= ENV['HEROKU_SLUG_COMMIT'] || SecureRandom.hex(5)
@@ -88,7 +86,8 @@ module Travis::Api
 
     attr_accessor :app
 
-    def initialize
+    def initialize(options = {})
+      self.class.setup(options)
       @app = Rack::Builder.app do
         # if stackprof = ENV['STACKPROF']
         #   require 'stackprof'
@@ -137,8 +136,6 @@ module Travis::Api
         end
 
         use Rack::SSL if Endpoint.production? && !ENV['DOCKER']
-        use ActiveRecord::ConnectionAdapters::ConnectionManagement
-        use ActiveRecord::QueryCache
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
@@ -178,15 +175,15 @@ module Travis::Api
         end
 
         Endpoint.subclasses.each do |e|
-          next if e == SettingsEndpoint # TODO: add something like abstract? method to check if
-                                        # class should be registered
-          map(e.prefix) { run(e.new) }
+          next if e == SettingsEndpoint # TODO: add something like abstract? method to check if class should be registered
+          map(e.prefix) { run e }
         end
       end
     end
 
     # Rack protocol
     def call(env)
+      #app.after { ActiveRecord::Base.clear_active_connections! }
       app.call(env)
     rescue
       if Endpoint.production?
