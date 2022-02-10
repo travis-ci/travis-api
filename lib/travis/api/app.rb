@@ -10,6 +10,7 @@ require 'rack'
 require 'rack/protection'
 require 'rack/contrib/config'
 require 'rack/contrib/jsonp'
+require 'rack/contrib/json_body_parser'
 require 'rack/contrib/post_body_content_type_parser'
 require 'dalli'
 require 'memcachier'
@@ -145,7 +146,7 @@ module Travis::Api
         end
 
         use Rack::Deflater
-        use Rack::PostBodyContentTypeParser
+        use Rack::JSONBodyParser
         use Rack::JSONP
 
         use Rack::Config do |env|
