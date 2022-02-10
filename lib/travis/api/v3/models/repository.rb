@@ -16,9 +16,7 @@ module Travis::API::V3
     belongs_to :current_build, class_name: 'Travis::API::V3::Models::Build'.freeze
 
     has_one :key, class_name: 'Travis::API::V3::Models::SslKey'.freeze
-    has_one :default_branch,
-      foreign_key: [:repository_id, :name],
-      primary_key: [:id,  :default_branch],
+    has_one :default_branch, -> { joins('inner join repositories on branches.repository_id = repositories.id and branches.name = repositories.default_branch') },
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
     alias last_started_build current_build

@@ -19,7 +19,7 @@ module Travis
         end
       end
 
-      class ArraySerializer < ActiveModel::ArraySerializer
+      class ArraySerializer < ActiveModel::Serializer::CollectionSerializer
         def data
           as_json
         end
