@@ -1,3 +1,5 @@
+require 'json'
+
 module Travis::API::V3
   class Models::UserSettings < Models::JsonSlice
     child Models::UserSetting
@@ -15,6 +17,7 @@ module Travis::API::V3
 
     def initialize(repo, data)
       @repo = repo
+      data = data.is_a?(String) ? JSON.parse(data) : data
       super(data)
     end
 
