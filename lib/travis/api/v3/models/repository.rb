@@ -16,13 +16,8 @@ module Travis::API::V3
     belongs_to :current_build, class_name: 'Travis::API::V3::Models::Build'.freeze
 
     has_one :key, class_name: 'Travis::API::V3::Models::SslKey'.freeze
-
-    def default_branch
-      Travis::API::V3::Models::Branch
-        .all
-        .joins("inner join repositories on branches.repository_id = repositories.id and branches.name = '#{default_branch_name}'")
-        .first || branch(default_branch_name, create_without_build: true)
-    end
+    has_one :default_branch, -> { joins('inner join repositories on branches.repository_id = repositories.id and branches.name = repositories.default_branch') },
+      class_name:  'Travis::API::V3::Models::Branch'.freeze
 
     alias last_started_build current_build
 
@@ -57,6 +52,10 @@ module Travis::API::V3
 
     def default_branch_name=(value)
       write_attribute(:default_branch, value)
+    end
+
+    def default_branch
+      super || branch(default_branch_name, create_without_build: true)
     end
 
     # Creates a branch object on the fly if it doesn't exist.
