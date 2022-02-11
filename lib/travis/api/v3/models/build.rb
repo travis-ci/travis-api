@@ -28,8 +28,10 @@ module Travis::API::V3
       foreign_key: :source_id,
       class_name:  'Travis::API::V3::Models::Job'.freeze
 
-    has_one :branch, -> { joins('inner join builds on builds.repository_id = tags.repository_id and build.branch = branch.name') },
-      class_name:  'Travis::API::V3::Models::Branch'.freeze
+    def branch
+      Travis::API::V3::Models::Branch
+        .all.joins("inner join builds on #{repository_id} = branches.repository_id and '#{attributes['branch']}' = branches.name").first
+    end
 
     scope :running_builds, -> { where.not(state: ['passed', 'failed', 'errored', 'cancelled']) }
 

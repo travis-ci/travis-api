@@ -5,8 +5,10 @@ module Travis::API::V3
     belongs_to :tag
     has_many   :builds
 
-    has_one :branch, -> { joins('inner join commits on branches.repository_id = commits.repository_id and commits.branch = branches.name') },
-      class_name:  'Travis::API::V3::Models::Branch'.freeze
+    def branch
+      Travis::API::V3::Models::Branch
+        .all.joins("inner join commits on #{repository_id} = branches.repository_id and '#{attributes['branch']}' = branches.name").first
+    end
 
     def branch_name
       read_attribute(:branch)
