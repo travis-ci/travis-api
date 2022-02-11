@@ -16,7 +16,9 @@ module Travis::API::V3
     belongs_to :current_build, class_name: 'Travis::API::V3::Models::Build'.freeze
 
     has_one :key, class_name: 'Travis::API::V3::Models::SslKey'.freeze
-    has_one :default_branch, -> { joins('inner join repositories on branches.repository_id = repositories.id and branches.name = repositories.default_branch') },
+    has_one :default_branch,
+      foreign_key: [:repository_id, :name],
+      primary_key: [:id,  :default_branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
     alias last_started_build current_build
@@ -85,19 +87,19 @@ module Travis::API::V3
         new_branch = true
       end
 
-      branch = branches.where(name: name).first
+      branch = branches.includes(:builds).where(name: name).first
       return branch unless new_branch
       return nil    unless create_without_build or branch.builds.any?
-      branch.last_build = branch.builds.order("number::int desc").first
+      branch.last_build = branch.builds.to_a.sort_by(&:id).reverse.first
       branch.save!
       branch
     end
 
     def legacy_find_or_create_branch(name, create_without_build: false)
-      return nil    unless branch = branches.where(name: name).first_or_initialize
+      return nil    unless branch = branches.includes(:builds).where(name: name).first_or_initialize
       return branch unless branch.new_record?
       return nil    unless create_without_build or branch.builds.any?
-      branch.last_build = branch.builds.order("number::int desc").first
+      branch.last_build = branch.builds.to_a.sort_by(&:id).reverse.first
       branch.save!
       branch
     rescue ActiveRecord::RecordNotUnique
@@ -117,7 +119,9 @@ module Travis::API::V3
     end
 
     def settings
-      JSON.parse(super || '{}')
+      settings_ = super
+      return settings_ if settings_.is_a?(Hash)
+      JSON.parse(settings_ || '{}')
     end
 
     def user_settings

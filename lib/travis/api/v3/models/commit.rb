@@ -5,7 +5,9 @@ module Travis::API::V3
     belongs_to :tag
     has_many   :builds
 
-    has_one :branch, -> { joins('inner join commits on branches.repository_id = commits.repository_id and commits.branch = branches.name') },
+    has_one :branch,
+      foreign_key: [:repository_id, :name],
+      primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
     def branch_name

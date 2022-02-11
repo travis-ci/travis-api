@@ -28,7 +28,9 @@ module Travis::API::V3
       foreign_key: :source_id,
       class_name:  'Travis::API::V3::Models::Job'.freeze
 
-    has_one :branch, -> { joins('inner join builds on builds.repository_id = tags.repository_id and build.branch = branch.name') },
+    has_one :branch,
+      foreign_key: [:repository_id, :name],
+      primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
     scope :running_builds, -> { where.not(state: ['passed', 'failed', 'errored', 'cancelled']) }

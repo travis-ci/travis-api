@@ -7,7 +7,7 @@ module Travis::API::V3
       @sync = -> do
         previous = @parent[@attr] || {}
         previous = previous.is_a?(String) ? JSON.parse(previous) : previous
-        @parent[@attr] = previous.merge(to_h).to_json
+        @parent[@attr] = previous.merge(to_h)
         @parent.save!
       end
     end

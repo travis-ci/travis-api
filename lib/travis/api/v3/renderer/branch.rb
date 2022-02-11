@@ -6,7 +6,8 @@ module Travis::API::V3
 
     def recent_builds
       return unless include_recent_builds?
-      access_control.visible_builds(model.builds.limit(10))
+      builds = model.class.includes(:builds_with_limit).where(id: model.id).first.builds_with_limit
+      access_control.visible_builds(builds)
     end
 
     def include_recent_builds?

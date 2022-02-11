@@ -59,6 +59,7 @@ gem 'faraday_middleware'
 gem 'knapsack'
 
 gem 'pg',                     '~> 0.21'
+gem 'composite_primary_keys', '~> 12.0.10'
 gem 'redcarpet',              '>= 3.2.3'
 gem 'rack-ssl',               '~> 1.3', '>= 1.3.3'
 gem 'memcachier'
