@@ -10,7 +10,6 @@ class Travis::Api::App
   class Base < Sinatra::Base
     register Travis::Api::App::Extensions::Scoping
     register Extensions::SmartConstants
-    register Mustermann
 
     error NotImplementedError do
       content_type :txt

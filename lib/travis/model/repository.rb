@@ -37,7 +37,7 @@ class Repository < Travis::Model
   delegate :public_key, to: :key
 
   scope :by_params, ->(params) {
-    if id = params[:repository_id] || params[:id]
+    if (id = params[:repository_id] || params[:id])
       where(id: id)
     elsif params[:github_id]
       where('vcs_id = :id OR github_id = :id_i', id: params[:github_id].to_s, id_i: params[:github_id].to_i)

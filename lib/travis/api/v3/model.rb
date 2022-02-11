@@ -8,5 +8,6 @@ module Travis::API::V3
     def self.===(other)
       super or (self == Model and other.class.module_parent == Models)
     end
+
   end
 end

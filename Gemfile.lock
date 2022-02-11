@@ -534,7 +534,6 @@ DEPENDENCIES
   mime-types
   mocha
   multi_json
-  mustermann
   nakayoshi_fork
   opencensus
   opencensus-stackdriver

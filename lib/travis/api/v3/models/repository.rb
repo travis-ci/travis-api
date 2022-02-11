@@ -117,7 +117,7 @@ module Travis::API::V3
     end
 
     def settings
-      super || {}
+      JSON.parse(super || '{}')
     end
 
     def user_settings

@@ -14,7 +14,6 @@ gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
 gem 'travis-github_apps', git: 'https://github.com/travis-ci/travis-github_apps'
 gem 'travis-rollout',  '~> 0.0.2'
 
-gem 'mustermann'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
 

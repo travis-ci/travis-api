@@ -58,13 +58,21 @@ class Travis::Api::App
       #
       # json(:repository)
       get '/:id' do
-        prefer_follower do
-          respond_with service(:find_repo, params)
+        if params[:id][/\d+/] # new version of Mustermann does not match
+          prefer_follower do
+            respond_with service(:find_repo, params)
+          end
+        else
+          owner_endpoint(params)
         end
       end
 
       # Retrieves repositories for a given owner.
       get '/:owner_name' do
+        owner_endpoint(params)
+      end
+
+      def owner_endpoint(params)
         prefer_follower do
           respond_with service(:find_repos, params).run
         end
