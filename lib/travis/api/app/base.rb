@@ -12,9 +12,6 @@ class Travis::Api::App
     register Extensions::SmartConstants
     register Mustermann
 
-    # include Sinatra::Scope
-    # extend Sinatra::Scope
-
     error NotImplementedError do
       content_type :txt
       status 501

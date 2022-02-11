@@ -6,11 +6,11 @@ module Travis::API::V3
 
     # TODO: I couldn't make the framework generate the URL so I'm hardcoding it :_(
     def href
-      case model.module_parent
+      case model.parent
       when Models::User
         "/v3/preference/#{name}"
       when Models::Organization
-        "/v3/org/#{model.module_parent.id}/preference/#{name}"
+        "/v3/org/#{model.parent.id}/preference/#{name}"
         # or maybe `super` ??
       end
     end
