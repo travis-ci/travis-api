@@ -4,7 +4,7 @@ module Travis::API::V3
     params :name, prefix: :branch, method_name: :branch_name
 
     sortable_by :id, :created_at, :started_at, :finished_at,
-      number: "number::int %{order}"
+      number: "id %{order}"
     default_sort "number:desc,id:desc"
 
     def find(repository)

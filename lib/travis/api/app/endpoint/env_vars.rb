@@ -28,6 +28,25 @@ class Travis::Api::App
         end
       end
 
+
+
+      def respond_with(resource, options = {})
+        result = respond(resource, options)
+
+        parent_key = 'env_var'
+
+        if result.is_a?(Hash)
+          if !result.key?(:message) && !result.key?(:errors)
+            result = result[parent_key.to_s] || result[parent_key.to_sym] ? result : { "#{parent_key}" => result }.symbolize_keys
+          end
+        else
+          parent_key = 'env_vars' if result.is_a?(Enumerable)
+          result = { "#{parent_key}" => result }.symbolize_keys
+        end
+
+        halt result || 404
+      end
+
     end
   end
 end

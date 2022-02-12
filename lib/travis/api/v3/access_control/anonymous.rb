@@ -21,7 +21,7 @@ module Travis::API::V3
 
     def visible_objects(list, repository_id, factory)
       return factory.none unless unrestricted_api?
-      list.model.all.where(id: list.pluck(:id), private: false)
+      list.where(private: false)
     end
   end
 end
