@@ -90,7 +90,7 @@ module Travis::API::V3
       branch = branches.includes(:builds).where(name: name).first
       return branch unless new_branch
       return nil    unless create_without_build or branch.builds.any?
-      branch.last_build = branch.builds.to_a.sort_by(&:id).reverse.first
+      branch.last_build = branch.builds.order("number::int desc").first
       branch.save!
       branch
     end
@@ -99,7 +99,7 @@ module Travis::API::V3
       return nil    unless branch = branches.includes(:builds).where(name: name).first_or_initialize
       return branch unless branch.new_record?
       return nil    unless create_without_build or branch.builds.any?
-      branch.last_build = branch.builds.to_a.sort_by(&:id).reverse.first
+      branch.last_build = branch.builds.order("number::int desc").first
       branch.save!
       branch
     rescue ActiveRecord::RecordNotUnique

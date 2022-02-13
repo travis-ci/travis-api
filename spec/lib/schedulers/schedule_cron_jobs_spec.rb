@@ -1,4 +1,4 @@
-require "sentry-raven"
+require "sentry-ruby"
 require "travis/api/app/schedulers/schedule_cron_jobs"
 
 describe "ScheduleCronJobs" do

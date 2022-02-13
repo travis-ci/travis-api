@@ -1,4 +1,4 @@
-require 'sentry-raven'
+require 'sentry-ruby'
 
 describe 'Exception', set_app: true do
   class FixRaven < Struct.new(:app)

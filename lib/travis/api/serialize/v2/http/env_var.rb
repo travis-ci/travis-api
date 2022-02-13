@@ -15,7 +15,7 @@ module Travis
             def serializable_hash(adapter_options = nil)
               hash = super(adapter_options)
               hash.delete :value unless object.public?
-              hash
+              {'env_var' => hash }
             end
           end
         end
