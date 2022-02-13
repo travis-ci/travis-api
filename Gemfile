@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.6.5'
+ruby '2.7.5'
 
 gem 's3',              git: 'https://github.com/travis-ci/s3'
 
@@ -21,7 +21,7 @@ gem 'simple_states',   '1.0.2'
 
 gem 'active_model_serializers'
 gem 'unicorn'
-gem 'sentry-raven'
+gem 'sentry-ruby'
 gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack-contrib', '= 2.3.0'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
@@ -40,7 +40,7 @@ gem "ipaddress", "~> 0.8.3"
 gem 'nakayoshi_fork'
 gem 'sidekiq'
 gem 'redis-namespace'
-gem 'marginalia', git: 'https://github.com/travis-ci/marginalia'
+gem 'marginalia', path: '../marginalia'
 
 gem 'rbtrace'
 gem 'memory_profiler'
@@ -58,8 +58,8 @@ gem 'faraday_middleware'
 
 gem 'knapsack'
 
-gem 'pg',                     '~> 0.21'
-gem 'composite_primary_keys', '~> 12.0.10'
+gem 'pg',                     '~> 1.3'
+gem 'composite_primary_keys', '~> 13.0.3'
 gem 'redcarpet',              '>= 3.2.3'
 gem 'rack-ssl',               '~> 1.3', '>= 1.3.3'
 gem 'memcachier'
@@ -68,7 +68,7 @@ gem 'tool'
 gem 'google-api-client', '~> 0.9.4'
 gem 'fog-aws',           '~> 0.12.0'
 gem 'fog-google',        '~> 0.4.2'
-gem 'activerecord',      '~> 6.0.4.4'
+gem 'activerecord',      '~> 6.1.4.4'
 gem 'rollout',           '~> 1.1.0'
 gem 'coder',             '~> 0.4.0'
 gem 'virtus',            '~> 1.0.0'
