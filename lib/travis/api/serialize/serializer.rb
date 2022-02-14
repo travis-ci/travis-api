@@ -1,5 +1,4 @@
 require 'active_model_serializers'
-
 # This hideousness courtesy of http://stackoverflow.com/a/8339255
 module ActiveSupport::JSON::Encoding
   def self.escape(string)
@@ -15,26 +14,17 @@ module Travis
     module Serialize
       class ObjectSerializer < ActiveModel::Serializer
         def data
-          if self.root
-            { "#{self.root}" => as_json }.as_json
-          else
-            as_json
-          end
+          as_json
         end
       end
 
-      class ArraySerializer < ActiveModel::Serializer::CollectionSerializer
+      class ArraySerializer < ActiveModel::ArraySerializer
         def data
-          if self.root
-            { "#{self.root}" => as_json }.as_json
-          else
-            as_json
-          end
+          as_json
         end
 
         def initialize(resource, options)
           options[:each_serializer] ||= V2::Http.const_get(options[:root].to_s.singularize.camelize)
-          options[:serializer] = options[:each_serializer]
           super(resource, options)
         end
       end

@@ -9,14 +9,14 @@ class Travis::Api::App
       Thread.new do
         loop do
           begin
-            Sentry.send_event queue.pop
+            Raven.send_event queue.pop
           rescue Exception => e
             puts e.message, e.backtrace
           end
         end
       end
 
-      Sentry.init do |config|
+      Raven.configure do |config|
         config.async = lambda { |event| queue << event if queue.num_waiting < 100 }
         config.dsn = Travis.config.sentry.dsn
       end

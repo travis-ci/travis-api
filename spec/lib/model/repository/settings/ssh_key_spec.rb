@@ -38,7 +38,8 @@ tFns8eTxHpZOYOftxpX91vS3tzKCKgkdPhnYBDrvFFWnGgRLXFpb
     ssh_key.value = 'foo'
     expect(ssh_key).not_to be_valid
 
-    expect(ssh_key.errors[:value]).to eq([:not_a_private_key])
+
+    expect(ssh_key.errors[:value].to_s).to match('not_a_private_key')
   end
 
   it 'allows only private key' do
@@ -46,14 +47,14 @@ tFns8eTxHpZOYOftxpX91vS3tzKCKgkdPhnYBDrvFFWnGgRLXFpb
     ssh_key = described_class.new(value: public_key)
 
     expect(ssh_key).not_to be_valid
-    expect(ssh_key.errors[:value]).to eq([:not_a_private_key])
+    expect(ssh_key.errors[:value].to_s).to match('not_a_private_key')
   end
 
   it 'does not check key if a value is nil' do
     ssh_key = described_class.new({})
 
     expect(ssh_key).not_to be_valid
-    expect(ssh_key.errors[:value]).to eq([:blank])
+    expect(ssh_key.errors[:value].to_s).to match('blank')
   end
 
   describe 'with a passphrase' do
@@ -96,7 +97,7 @@ zkrhrvtsjexdwYje7xjngPXrZ9USh13CoYNlduTlWB72m+wN8W7zyCLn1Zl/grTI
 
       expect(ssh_key).not_to be_valid
 
-      expect(ssh_key.errors[:value]).to eq([:key_with_a_passphrase])
+      expect(ssh_key.errors[:value].to_s).to match('key_with_a_passphrase')
     end
   end
 end

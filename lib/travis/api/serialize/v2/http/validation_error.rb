@@ -30,9 +30,11 @@ module Travis
             end
 
             def code(error_code)
-              case error_code
-              when :blank
+              case error_code.to_s
+              when /blank/
                 'missing_field'
+              when /is not a number/
+                'not_a_number'
               else
                 error_code.to_s
               end

@@ -19,9 +19,9 @@ gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-co
 
 gem 'simple_states',   '1.0.2'
 
-gem 'active_model_serializers'
+gem 'active_model_serializers', "~> 0.9.8"
 gem 'unicorn'
-gem 'sentry-ruby'
+gem 'sentry-raven'
 gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack-contrib', '= 2.3.0'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
