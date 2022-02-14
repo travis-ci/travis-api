@@ -33,8 +33,8 @@ class Travis::Api::App
         end
 
         def result
+          p ||= {}
           if builder
-            p = params
             p[:root] = options[:root] if options[:root]
             p[:root] = options[:type] if options[:type] && !p[:root]
             builder_instance = builder.new(resource, p)

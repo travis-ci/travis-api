@@ -15,13 +15,21 @@ module Travis
     module Serialize
       class ObjectSerializer < ActiveModel::Serializer
         def data
-          as_json
+          if self.root
+            { "#{self.root}" => as_json }.as_json
+          else
+            as_json
+          end
         end
       end
 
       class ArraySerializer < ActiveModel::Serializer::CollectionSerializer
         def data
-          as_json
+          if self.root
+            { "#{self.root}" => as_json }.as_json
+          else
+            as_json
+          end
         end
 
         def initialize(resource, options)

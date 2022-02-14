@@ -6,14 +6,19 @@ module Travis
           class ValidationError
             attr_reader :resource
 
-            def initialize(resource, options = {})
+            def initialize(resource, _options = {})
               @resource = resource
+              current_class_name = resource.class.name
+              resource.class.define_singleton_method(:name) do
+                current_class_name || 'ValidationError'
+              end
             end
 
             def data
               response = {
                 message: 'Validation failed'
               }
+
               resource.errors.to_hash.each do |name, errors|
                 response['errors'] ||= []
                 errors.each do |error_code|
