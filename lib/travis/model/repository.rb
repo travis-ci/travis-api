@@ -182,7 +182,12 @@ class Repository < Travis::Model
 
   def settings
     @settings ||= begin
-      instance = Repository::Settings.load(super, repository_id: id)
+      instance = Repository::Settings.new(repository_id: id)
+      json = JSON.parse(super) if super.is_a?(String)
+      instance.load json
+#      instance = Repository::Settings.load(p, repository_id: id)
+
+      puts "SETTINGS2: #{instance.inspect}"
       instance.on_save do
         self.settings = instance.to_json
         self.save!
