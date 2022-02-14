@@ -6,7 +6,7 @@ gem 's3',              git: 'https://github.com/travis-ci/s3'
 
 gem 'mime-types'
 
-gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support'
+gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support', ref: '4dda53ffa96b804db22c261551256caa18c4a2cc'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config', branch: 'fix-docker-redis-url'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'

@@ -100,7 +100,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 77f8dad236002e6103cfdb796308e1a11d8d441e
+  revision: 4dda53ffa96b804db22c261551256caa18c4a2cc
+  ref: 4dda53ffa96b804db22c261551256caa18c4a2cc
   specs:
     travis-support (0.0.1)
 
@@ -180,7 +181,7 @@ GEM
     connection_pool (2.2.5)
     crack (0.4.5)
       rexml
-    dalli (3.2.0)
+    dalli (3.2.1)
     database_cleaner (2.0.1)
       database_cleaner-active_record (~> 2.0.0)
     database_cleaner-active_record (2.0.1)
@@ -304,7 +305,7 @@ GEM
       ffi-compiler (>= 1.0, < 2.0)
     httpclient (2.8.3)
     hurley (0.2)
-    i18n (1.9.1)
+    i18n (1.10.0)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     ipaddress (0.8.3)
