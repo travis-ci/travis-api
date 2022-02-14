@@ -22,8 +22,8 @@ describe "ScheduleCronJobs" do
       Timecop.travel(scheduler_interval.from_now)
 
       allow_any_instance_of(Travis::API::V3::Models::Cron).to receive(:branch).and_raise(error)
-      expect(Raven).to receive(:capture_exception).with(error, tags: {'cron_id' => cron1.id })
-      expect(Raven).to receive(:capture_exception).with(error, tags: {'cron_id' => cron2.id })
+      expect(Sentry).to receive(:capture_exception).with(error, tags: {'cron_id' => cron1.id })
+      expect(Sentry).to receive(:capture_exception).with(error, tags: {'cron_id' => cron2.id })
 
       subject
 
@@ -39,7 +39,7 @@ describe "ScheduleCronJobs" do
 
       expect_any_instance_of(Travis::API::V3::Models::Cron).to receive(:enqueue).and_raise(error)
 
-      expect(Raven).to receive(:capture_exception).with(error, tags: {'cron_id' => cron1.id })
+      expect(Sentry).to receive(:capture_exception).with(error, tags: {'cron_id' => cron1.id })
 
       subject
 

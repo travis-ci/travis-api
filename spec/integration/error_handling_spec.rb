@@ -16,16 +16,16 @@ describe 'Exception', set_app: true do
   end
 
   before do
-    Raven.configure do |config|
+    Sentry.init do |config|
       config.silence_ready = true
     end
 
-    set_app Raven::Rack.new(FixRaven.new(app))
+    set_app Sentry::Rack.new(FixRaven.new(app))
     Travis.config.sentry.dsn = 'https://fake:token@app.getsentry.com/12345'
     Travis::Api::App.setup_monitoring
     Travis.testing = false
 
-    allow(Raven).to receive(:send_event)
+    allow(Sentry).to receive(:send_event)
   end
 
   after do
@@ -49,7 +49,7 @@ describe 'Exception', set_app: true do
   it 'enqueues error into a thread' do
     error = TestError.new('Konstantin broke all the thingz!')
     allow_any_instance_of(Travis::Api::App::Endpoint::Repos).to receive(:service).and_raise(error)
-    expect(Raven).to receive(:send_event).with(
+    expect(Sentry).to receive(:send_event).with(
       satisfy { |event| event['logentry']['message'] == "#{error.class}: #{error.message}" }
     )
     res = get '/repos/1'
@@ -68,7 +68,7 @@ describe 'Exception', set_app: true do
   it 'returns request_id in body' do
     error = TestError.new('Konstantin broke all the thingz!')
     allow_any_instance_of(Travis::Api::App::Endpoint::Repos).to receive(:service).and_raise(error)
-    allow(Raven).to receive(:send_event)
+    allow(Sentry).to receive(:send_event)
     res = get '/repos/1', nil, 'HTTP_X_REQUEST_ID' => '235dd08f-10d5-4fcc-9a4d-6b8e6a24f975'
     expect(res.status).to eq(500)
     expect(res.body).to eq("Sorry, we experienced an error.\n\nrequest_id:235dd08f-10d5-4fcc-9a4d-6b8e6a24f975\n")

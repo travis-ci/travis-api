@@ -27,8 +27,16 @@ module Travis::API::V3
 
     def handle_errors(key_pair)
       value = key_pair.errors[:value]
-      raise UnprocessableEntity if value.include?(:invalid_pem)
-      raise WrongParams         if value.include?(:missing_attr)
+      if value.is_a?(Array)
+        return value.each { |v| check_error(v) }
+      end
+      check_error(value)
+    end
+
+    def check_error(value)
+      value = value.to_s
+      raise UnprocessableEntity if value[/invalid_pem/]
+      raise WrongParams if value[/missing_attr/]
     end
   end
 end
