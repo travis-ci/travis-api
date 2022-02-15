@@ -101,7 +101,7 @@ class Repository::Settings < Travis::Settings
   attribute :auto_cancel_pull_requests, Boolean, default: lambda { |s, _| s.auto_cancel_default? }
   attribute :allow_config_imports, Boolean, default: false
   attribute :share_encrypted_env_with_forks, Boolean, default: false
-  attribute :share_ssh_keys_with_forks, Boolean, default: lambda { |s, _| s.share_ssh_keys_with_forks? }
+  attribute :share_ssh_keys_with_forks, Boolean, default: nil
 
   validates :maximum_number_of_builds, numericality: true
 
@@ -147,17 +147,15 @@ class Repository::Settings < Travis::Settings
     additional_attributes[:repository_id] || @repository_id
   end
 
-  def share_ssh_keys_with_forks?
-    return false unless ENV['IBM_REPO_SWITCHES_DATE']
-    repo = Repository.find(repository_id) if repository_id
-    return false unless repo
+  def handle_ssh_share(id)
+    puts "HANDLE SSH SHARE: #{id}"
+    puts "sharecurrent: #{share_ssh_keys_with_forks.inspect}"
+    if self.share_ssh_keys_with_forks.nil?
+       repo = Repository.find(id)
+       self.share_ssh_keys_with_forks = repo.created_at <= Date.parse(ENV['IBM_REPO_SWITCHES_DATE']) if repo
 
-    repo&.created_at <= Date.parse(ENV['IBM_REPO_SWITCHES_DATE'])
-  end
-
-  def initialize(*args)
-    @repository_id = args[0][:repository_id] if args && args[0]
-    super *args
+    puts "sharecurrent: #{share_ssh_keys_with_forks.inspect}"
+    end
   end
 end
 
