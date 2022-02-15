@@ -344,10 +344,5 @@ module Travis::API::V3
       route '/queues/{queue.name}'
       get :stats, '/stats'
     end
-
-    hidden_resource :leads do
-      route '/leads'
-      post :create
-    end
   end
 end

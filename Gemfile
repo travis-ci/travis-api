@@ -17,7 +17,7 @@ gem 'travis-rollout',  '~> 0.0.2'
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
 
-gem 'simple_states',   '1.1.0.rc11'
+gem 'simple_states', git: 'https://github.com/svenfuchs/simple_states', ref: '645d79768bfe6fc189e2c1637ec296289c6a9ca3'
 
 gem 'active_model_serializers', "~> 0.9.8"
 gem 'unicorn'
@@ -76,7 +76,6 @@ gem 'redis',             '~> 3.0'
 gem 'hashr'
 gem 'pusher',            '~> 0.14.0'
 gem 'multi_json'
-gem 'closeio',           '~> 3.5'
 gem 'addressable',       '~> 2.8.0'
 gem 'rack',              '~> 2.2.3'
 gem 'os',                '~> 1.1.4'
