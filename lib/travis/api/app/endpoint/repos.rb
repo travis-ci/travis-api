@@ -58,13 +58,12 @@ class Travis::Api::App
       #
       # json(:repository)
       get '/:id' do
-        puts "call me maybe"
-        if params[:id][/\d+/]
+        if params[:id][/\A\d+\z/]
           prefer_follower do
             respond_with service(:find_repo, params)
           end
         else
-          owner_endpoint(params)
+          owner_endpoint(params.merge('owner_name' => params.delete('id')))
         end
       end
 
