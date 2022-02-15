@@ -23,16 +23,12 @@ WORKDIR /app
 COPY Gemfile      /app
 COPY Gemfile.lock /app
 
-RUN gem install bundler -v '2.1.4'
+RUN gem install bundler -v '2.3.6'
 RUN bundle config set without 'development test'
 RUN bundler install --verbose --retry=3
 RUN gem install --user-install executable-hooks
 
 COPY . /app
-RUN bundle config unset frozen
-RUN cd /usr/local/bundle/bundler/gems/s3-386361c1b0ed && bundle update
-RUN cd /usr/local/bundle/bundler/gems/travis-lock-b418401c79e0 && sed "s/'activerecord'/'activerecord','~>4.2'/g" Gemfile -i && bundle update activerecord && bundle update redlock
-RUN cd /usr/local/bundle/bundler/gems/travis-settings-debef595a6a5 && echo "gem 'activesupport','~> 5.2'" >> Gemfile && bundle update activemodel
 
 RUN bundle config set frozen true
 CMD ./script/server-buildpacks
