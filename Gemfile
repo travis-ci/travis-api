@@ -2,8 +2,6 @@ source 'https://rubygems.org'
 
 ruby '2.7.5'
 
-gem 's3',              git: 'https://github.com/travis-ci/s3'
-
 gem 'mime-types'
 
 gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support', ref: '4dda53ffa96b804db22c261551256caa18c4a2cc'
@@ -16,7 +14,6 @@ gem 'travis-rollout',  '~> 0.0.2'
 
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
-
 gem 'simple_states', git: 'https://github.com/svenfuchs/simple_states', ref: '645d79768bfe6fc189e2c1637ec296289c6a9ca3'
 
 gem 'active_model_serializers', "~> 0.9.8"
@@ -68,7 +65,7 @@ gem 'tool'
 gem 'google-api-client', '~> 0.9.4'
 gem 'fog-aws',           '~> 0.12.0'
 gem 'fog-google',        '~> 0.4.2'
-gem 'activerecord',      '~> 6.1.4.4'
+gem 'activerecord',      '~> 6.1.4.5'
 gem 'rollout',           '~> 1.1.0'
 gem 'coder',             '~> 0.4.0'
 gem 'virtus',            '~> 1.0.0'
