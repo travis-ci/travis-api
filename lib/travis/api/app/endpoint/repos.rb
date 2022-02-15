@@ -58,7 +58,8 @@ class Travis::Api::App
       #
       # json(:repository)
       get '/:id' do
-        if params[:id][/\d+/] # new version of Mustermann does not match
+        puts "call me maybe"
+        if params[:id][/\d+/]
           prefer_follower do
             respond_with service(:find_repo, params)
           end
