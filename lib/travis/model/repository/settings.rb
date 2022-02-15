@@ -91,7 +91,7 @@ class Repository::Settings < Travis::Settings
   attribute :auto_cancel_pushes, Boolean, default: lambda { |s, _| s.auto_cancel_default? }
   attribute :auto_cancel_pull_requests, Boolean, default: lambda { |s, _| s.auto_cancel_default? }
   attribute :share_encrypted_env_with_forks, Boolean, default: false
-  attribute :share_ssh_keys_with_forks, Boolean, default: true
+  attribute :share_ssh_keys_with_forks, Boolean, default: nil
 
   validates :maximum_number_of_builds, numericality: true
 
@@ -137,6 +137,14 @@ class Repository::Settings < Travis::Settings
   def repository_id
     additional_attributes[:repository_id]
   end
+
+  def handle_ssh_share(id)
+    if self.share_ssh_keys_with_forks.nil?
+       repo = Repository.find(id)
+       self.share_ssh_keys_with_forks = repo.created_at <= Date.parse(ENV['IBM_REPO_SWITCHES_DATE']) if repo
+    end
+  end
+
 end
 
 class Repository::DefaultSettings < Repository::Settings
