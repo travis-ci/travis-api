@@ -183,10 +183,7 @@ class Repository < Travis::Model
   def settings
     @settings ||= begin
       instance = Repository::Settings.load(super, repository_id: id)
-
       instance.handle_ssh_share(id)
-
-      puts "SETTING2.3: #{instance.inspect}"
       instance.on_save do
         self.settings = instance.to_json
         self.save!

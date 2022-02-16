@@ -152,13 +152,10 @@ class Repository::Settings < Travis::Settings
   end
 
   def handle_ssh_share(id)
-    puts "HANDLE SSH SHARE: #{id}"
-    puts "sharecurrent: #{share_ssh_keys_with_forks.inspect}"
     if self.share_ssh_keys_with_forks.nil?
        repo = Repository.find(id)
        self.share_ssh_keys_with_forks = repo.created_at <= Date.parse(ENV['IBM_REPO_SWITCHES_DATE']) if repo
 
-    puts "sharecurrent: #{share_ssh_keys_with_forks.inspect}"
     end
   end
 end
