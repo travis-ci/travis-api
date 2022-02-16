@@ -1,4 +1,3 @@
-require 's3'
 require 'travis/services/base'
 require 'google/apis/storage_v1'
 

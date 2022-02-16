@@ -1,4 +1,3 @@
-require 's3'
 require 'fog/aws'
 
 module Support
