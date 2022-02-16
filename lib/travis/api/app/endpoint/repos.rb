@@ -58,7 +58,7 @@ class Travis::Api::App
       #
       # json(:repository)
       get '/:id' do
-        if params[:id][/\A\d+\z/]
+        if params[:id] =~ /\A\d+\z/
           prefer_follower do
             respond_with service(:find_repo, params)
           end
