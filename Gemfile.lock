@@ -20,60 +20,36 @@ GIT
       rack (>= 0.4)
 
 GIT
-<<<<<<< HEAD
-<<<<<<< HEAD
   remote: https://github.com/travis-ci/gh
-<<<<<<< HEAD
-  revision: 482ccbc8159c73fd5e651476692c6ea3d9f416a8
-  branch: tcie30-0_15_1
-  specs:
-    gh (0.15.1)
-      addressable (~> 2.4.0)
-      backports
-      faraday (~> 0.8)
-=======
-  revision: c2257a41610bb8dc1e3b46fefea66261b05af4aa
+  revision: 490fbc2a663613f98a19060de7b128eb07014b2f
+  branch: 6.1
   specs:
     gh (0.18.0)
-      activesupport (>= 5, < 6.1)
-      addressable (~> 2.4)
+      activesupport (>= 5, < 6.2)
+      addressable (~> 2.8)
       faraday (~> 1.0)
       faraday_middleware (~> 1.0)
->>>>>>> 9c0d2d8c (Rspec are loading & some deprecation fixes)
       multi_json (~> 1.0)
       net-http-persistent (~> 2.9)
       net-http-pipeline
 
 GIT
   remote: https://github.com/travis-ci/marginalia
-  revision: 46bbe301640efb5ea81828cb7deeaf874516de78
+  revision: 7f74ee15d34be5009b5c82734d5b6fd601ab25f6
+  branch: 6.1
   specs:
-    marginalia (1.5.0)
-      pg (~> 0.21)
+    marginalia (1.6.0)
+      pg (~> 1.3)
 
 GIT
-=======
->>>>>>> 09873944 (ruby, ar upgrade && annoying bug fix for composite keys)
-=======
-  remote: https://github.com/svenfuchs/simple_states
-  revision: 645d79768bfe6fc189e2c1637ec296289c6a9ca3
-  ref: 645d79768bfe6fc189e2c1637ec296289c6a9ca3
+  remote: https://github.com/travis-ci/simple_states
+  revision: 68e3087763e5e345c0949268169cb0f74a54ef6a
+  branch: 6.1
   specs:
     simple_states (1.0.2)
-      activesupport
+      activesupport (~> 6.1.4.5)
 
 GIT
-<<<<<<< HEAD
->>>>>>> 283ce2a4 (problems with simple states)
-  remote: https://github.com/travis-ci/s3
-  revision: 386361c1b0ede19cde0ddaf86e41a16308575f5d
-  specs:
-    s3 (0.3.21)
-      proxies (~> 0.2.0)
-
-GIT
-=======
->>>>>>> 489a97ab (removing s3 step 1)
   remote: https://github.com/travis-ci/travis-amqp
   revision: 3966b3651adfd1c544f53d49d5986ac16cd9c4bc
   specs:
@@ -99,8 +75,9 @@ GIT
       redis
 
 GIT
-  remote: https://github.com/travis-ci/travis-lock
-  revision: faf5eef9f607505921d821e6cdf829583d630063
+  remote: https://github.com/travis-ci/travis-lock/
+  revision: 1dbed2874330d5d24c1dcdb9143ecf9a5eb041a9
+  branch: 6.1
   specs:
     travis-lock (0.1.1)
 
@@ -119,24 +96,6 @@ GIT
   specs:
     travis-support (0.0.1)
 
-PATH
-  remote: ../gh
-  specs:
-    gh (0.18.0)
-      activesupport (>= 5, < 6.2)
-      addressable (~> 2.4)
-      faraday (~> 1.0)
-      faraday_middleware (~> 1.0)
-      multi_json (~> 1.0)
-      net-http-persistent (~> 2.9)
-      net-http-pipeline
-
-PATH
-  remote: ../marginalia
-  specs:
-    marginalia (1.6.0)
-      pg (~> 1.3)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -150,25 +109,13 @@ GEM
       activesupport (= 6.1.4.6)
     activesupport (6.1.4.6)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-<<<<<<< HEAD
-      i18n (>= 0.7, < 2)
-      minitest (~> 5.1)
-      tzinfo (~> 1.1)
-<<<<<<< HEAD
-    addressable (2.4.0)
-    aggregate (0.2.2)
-=======
-      zeitwerk (~> 2.2, >= 2.2.2)
-=======
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
->>>>>>> 09873944 (ruby, ar upgrade && annoying bug fix for composite keys)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     aggregate (0.2.3)
->>>>>>> 9c0d2d8c (Rspec are loading & some deprecation fixes)
     allocation_tracer (0.6.3)
     amq-protocol (2.3.2)
     atomic (1.1.101)
@@ -344,22 +291,10 @@ GEM
       hitimes (~> 1.1)
     mime-types (3.4.1)
       mime-types-data (~> 3.2015)
-<<<<<<< HEAD
-    mime-types-data (3.2016.0521)
-    mini_portile2 (2.5.3)
-    minitest (5.14.4)
-    mocha (1.11.2)
-    msgpack (1.4.2)
-=======
     mime-types-data (3.2022.0105)
     minitest (5.15.0)
     mocha (1.13.0)
-<<<<<<< HEAD
-    msgpack (1.4.4)
->>>>>>> 9c0d2d8c (Rspec are loading & some deprecation fixes)
-=======
     msgpack (1.4.5)
->>>>>>> eb68a1fe (Further gems update)
     multi_json (1.15.0)
     multipart-post (2.1.1)
     mustermann (1.1.1)
@@ -379,19 +314,6 @@ GEM
     optimist (3.0.1)
     os (1.1.4)
     pg (1.3.2)
-<<<<<<< HEAD
-    proxies (0.2.3)
-<<<<<<< HEAD
-    pry (0.10.4)
-      coderay (~> 1.1.0)
-      method_source (~> 0.8.1)
-      slop (~> 3.4)
-    pry-byebug (3.6.0)
-      byebug (~> 10.0)
-      pry (~> 0.10)
-=======
-=======
->>>>>>> 489a97ab (removing s3 step 1)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -399,7 +321,6 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.13.0)
     public_suffix (4.0.6)
->>>>>>> 9c0d2d8c (Rspec are loading & some deprecation fixes)
     pusher (0.14.6)
       httpclient (~> 2.5)
       multi_json (~> 1.0)
@@ -411,7 +332,7 @@ GEM
       rack (>= 1.0, < 3)
     rack-contrib (2.3.0)
       rack (~> 2.0)
-    rack-protection (2.1.0)
+    rack-protection (2.2.0)
       rack
     rack-ssl (1.4.1)
       rack
@@ -475,16 +396,16 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
-    sinatra (2.1.0)
+    sinatra (2.2.0)
       mustermann (~> 1.0)
       rack (~> 2.2)
-      rack-protection (= 2.1.0)
+      rack-protection (= 2.2.0)
       tilt (~> 2.0)
-    sinatra-contrib (2.1.0)
+    sinatra-contrib (2.2.0)
       multi_json
       mustermann (~> 1.0)
-      rack-protection (= 2.1.0)
-      sinatra (= 2.1.0)
+      rack-protection (= 2.2.0)
+      sinatra (= 2.2.0)
       tilt (~> 2.0)
     stackprof (0.2.17)
     thread_safe (0.3.6)

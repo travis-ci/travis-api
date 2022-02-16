@@ -8,13 +8,13 @@ gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support', ref: 
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config', branch: 'fix-docker-redis-url'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
-gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock'
+gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock/', branch: '6.1'
 gem 'travis-github_apps', git: 'https://github.com/travis-ci/travis-github_apps'
 gem 'travis-rollout',  '~> 0.0.2'
 
 gem 'sinatra'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
-gem 'simple_states', git: 'https://github.com/svenfuchs/simple_states', ref: '645d79768bfe6fc189e2c1637ec296289c6a9ca3'
+gem 'simple_states', git: 'https://github.com/travis-ci/simple_states', branch: '6.1'
 
 gem 'active_model_serializers', "~> 0.9.8"
 gem 'unicorn'
@@ -23,7 +23,7 @@ gem 'yard-sinatra',    git: 'https://github.com/rkh/yard-sinatra'
 gem 'rack-contrib', '= 2.3.0'
 gem 'rack-cache',      git: 'https://github.com/rtomayko/rack-cache'
 gem 'rack-attack', '~> 5.0'
-gem 'gh', git: 'https://github.com/travis-ci/gh', branch: 'tcie30-0_15_1'
+gem 'gh', git: 'https://github.com/travis-ci/gh', branch: '6.1'
 gem 'bunny',           '~> 2.9.2'
 gem 'dalli'
 gem 'pry'
@@ -37,7 +37,7 @@ gem "ipaddress", "~> 0.8.3"
 gem 'nakayoshi_fork'
 gem 'sidekiq'
 gem 'redis-namespace'
-gem 'marginalia', path: '../marginalia'
+gem 'marginalia', git: 'https://github.com/travis-ci/marginalia', branch: '6.1'
 
 gem 'rbtrace'
 gem 'memory_profiler'
