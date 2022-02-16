@@ -348,7 +348,7 @@ GEM
       msgpack (>= 0.4.3)
       optimist (>= 3.0.0)
     redcarpet (3.5.1)
-    redis (3.3.5)
+    redis (4.2.5)
     redis-namespace (1.8.1)
       redis (>= 3.0.4)
     redlock (1.2.2)
@@ -380,11 +380,10 @@ GEM
     ruby_dep (1.5.0)
     sentry-raven (3.1.2)
       faraday (>= 1.0)
-    sidekiq (5.2.9)
-      connection_pool (~> 2.2, >= 2.2.2)
+    sidekiq (6.4.1)
+      connection_pool (>= 2.2.2)
       rack (~> 2.0)
-      rack-protection (>= 1.5.0)
-      redis (>= 3.3.5, < 4.2)
+      redis (>= 4.2.0)
     signet (0.16.0)
       addressable (~> 2.8)
       faraday (>= 0.17.3, < 2.0)
@@ -491,7 +490,7 @@ DEPENDENCIES
   rb-fsevent (~> 0.9.1)
   rbtrace
   redcarpet (>= 3.2.3)
-  redis (~> 3.0)
+  redis (~> 4.2.0)
   redis-namespace
   redlock (~> 1.2.2)
   rerun
@@ -499,7 +498,7 @@ DEPENDENCIES
   rspec
   rspec-its
   sentry-raven
-  sidekiq
+  sidekiq (~> 6.4.0)
   simple_states!
   simplecov
   sinatra
