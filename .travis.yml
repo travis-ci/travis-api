@@ -4,7 +4,7 @@ group: edge
 import:
   - travis-ci/build-configs:db-setup.yml@bionic
 
-rvm: 2.6.5
+rvm: 2.7.5
 
 script: "bundle exec rake knapsack:rspec"
 

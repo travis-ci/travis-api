@@ -1,5 +1,15 @@
 # frozen_string_literal: true
 
+EXPECTED_AR_VERSION = '6.1.4.6'.freeze
+ACTUAL_AR_VERSION = "#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}.#{ActiveRecord::VERSION::TINY}.#{ActiveRecord::VERSION::PRE}"
+
+if EXPECTED_AR_VERSION != ACTUAL_AR_VERSION
+  raise 'The version of ActiveRecord has been changed.
+         Patch "&& !table.has_column?(key)" (line 98) introduced in this file might not be needed
+         or needs to be applied to changed version of ActiveRecord::PredicateBuilder.
+         You can check need by commented the code in this file running all specs.'
+end
+
 module ActiveRecord
   class PredicateBuilder # :nodoc:
     require "active_record/relation/predicate_builder/array_handler"
