@@ -153,8 +153,10 @@ class Repository::Settings < Travis::Settings
 
   def handle_ssh_share(id)
     if self.share_ssh_keys_with_forks.nil?
-       repo = Repository.find(id)
-       self.share_ssh_keys_with_forks = repo.created_at <= Date.parse(ENV['IBM_REPO_SWITCHES_DATE']) if repo
+      return false unless ENV['IBM_REPO_SWITCHES_DATE']
+
+      repo = Repository.find(id)
+      self.share_ssh_keys_with_forks = repo.created_at <= Date.parse(ENV['IBM_REPO_SWITCHES_DATE']) if repo
 
     end
   end
