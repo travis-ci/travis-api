@@ -144,7 +144,7 @@ class Repository::Settings < Travis::Settings
   end
 
   def repository_id
-    additional_attributes[:repository_id] || @repository_id
+    additional_attributes[:repository_id]
   end
 
   def repository
