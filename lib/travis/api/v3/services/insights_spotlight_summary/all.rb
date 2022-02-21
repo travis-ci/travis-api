@@ -9,4 +9,3 @@ module Travis::API::V3
       end
     end
   end
-  
