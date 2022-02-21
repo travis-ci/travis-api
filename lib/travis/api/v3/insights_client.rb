@@ -75,6 +75,14 @@ module Travis::API::V3
       end
     end
 
+    def run_scan
+      response = connection.get('/user_plugins/run_scan')
+
+      handle_errors_and_respond(response) do |body|
+        Travis::API::V3::Models::InsightsCollection.new([], 0)
+      end
+    end
+
     def generate_key(plugin_name, plugin_type)
       response = connection.get('/user_plugins/generate_key', name: plugin_name, plugin_type: plugin_type)
 
@@ -85,7 +93,7 @@ module Travis::API::V3
 
     def authenticate_key(params)
       response = connection.post('/user_plugins/authenticate_key', params)
-      
+
       handle_errors_and_respond(response) do |body|
         body
       end
@@ -231,13 +239,13 @@ module Travis::API::V3
       when 204
         true
       when 400
-        raise Travis::API::V3::ClientError, response.body.fetch('error', '')
+        raise Travis::API::V3::ClientError, response.body&.fetch('error', '')
       when 403
-        raise Travis::API::V3::InsufficientAccess, response.body['rejection_code']
+        raise Travis::API::V3::InsufficientAccess, response.body&.fetch('rejection_code', '')
       when 404
-        raise Travis::API::V3::NotFound, response.body.fetch('error', '')
+        raise Travis::API::V3::NotFound, response.body&.fetch('error', '')
       when 422
-        raise Travis::API::V3::UnprocessableEntity, response.body.fetch('error', '')
+        raise Travis::API::V3::UnprocessableEntity, response.body&.fetch('error', '')
       else
         raise Travis::API::V3::ServerError, 'Insights API failed'
       end

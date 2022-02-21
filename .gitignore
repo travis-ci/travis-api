@@ -11,11 +11,32 @@ logs/
 log/
 
 .yardoc
-.coverage
 *.env
 .ruby-gemset
-
-#IDEs
-.idea
-
 .history
+
+
+.byebug_history
+
+# Ignore Rubocop files
+.rubocop-*
+
+# Ignore coverage reports
+coverage/
+.coverage/
+
+# Ignore editor specific configs
+/.idea
+/.vscode
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.generators
+.rakeTasks
+
+# System Files
+.DS_Store
+Thumbs.db

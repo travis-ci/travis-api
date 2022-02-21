@@ -447,6 +447,7 @@ module Travis::API::V3
       patch :toggle_active, '/toggle_active'
       delete :delete_many, '/delete_many'
       get :template_plugin_tests, '/template_plugin_tests'
+      get :run_scan, '/run_scan'
     end
 
     resource :insights_probe do

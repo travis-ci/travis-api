@@ -25,6 +25,10 @@ module Travis::API::V3
       insights_client(user_id).delete_many_plugins(params['ids'])
     end
 
+    def run_scan(user_id)
+      insights_client(user_id).run_scan
+    end
+
     def generate_key(user_id)
       insights_client(user_id).generate_key(params['plugin_name'], params['plugin_type'])
     end
