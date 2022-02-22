@@ -154,7 +154,7 @@ module Travis
         def fetch_gcs(cache_objects, options)
           config = cache_options[:gcs]
           storage     = ::Google::Apis::StorageV1::StorageService.new
-          json_key_io = StringIO.new(config.to_h[:json_key])
+          json_key_io = StringIO.new(JSON.dump(config.to_h[:json_key]))
           bucket_name = config[:bucket_name]
 
           storage.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
