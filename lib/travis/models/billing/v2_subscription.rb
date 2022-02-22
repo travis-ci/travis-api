@@ -42,10 +42,10 @@ module Travis
           end
 
           addon_configs = @plan_config.fetch(:addon_configs)
-          @addable_addon_configs = (@plan_config[:addon_configs] + @plan_config[:available_standalone_addons]).uniq
+          @addable_addon_configs = (@plan_config[:addon_configs] + @plan_config[:all_available_addons]).uniq
           @addable_addon_configs.reject! { |ac| ac[:type] == 'user_license' }
           unless hybrid?
-            @plan_config[:available_standalone_addons] << {
+            @plan_config[:all_available_addons] << {
               id: FREE_USERS_FOR_PAID,
               name: 'Free users',
               price: 0,
@@ -53,7 +53,7 @@ module Travis
               free: true
             }
           end
-          standalone_addon_configs = @plan_config.fetch(:available_standalone_addons)
+          standalone_addon_configs = @plan_config.fetch(:all_available_addons)
           unless attributes[:addons].empty?
             @addons = attributes.fetch(:addons).map do |addon_data|
               if addon_data[:addon_config_id] == 'auto_refill'

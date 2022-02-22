@@ -19,7 +19,7 @@ module Billing
     end
 
     def addon_name_options(type, is_free)
-      (@subscription.plan_config[:available_standalone_addons] + @subscription.plan_config[:addon_configs]).uniq.map { |addon_config| [ addon_config[:name], addon_config[:id] ] if addon_config[:type] == type && addon_config[:free] == is_free }.compact
+      (@subscription.plan_config[:all_available_addons] + @subscription.plan_config[:addon_configs]).uniq.map { |addon_config| [ addon_config[:name], addon_config[:id] ] if addon_config[:type] == type && addon_config[:free] == is_free }.compact
     end
 
     def plan_options
