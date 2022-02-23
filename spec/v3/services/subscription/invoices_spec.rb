@@ -27,9 +27,10 @@ describe Travis::API::V3::Services::Subscription::Invoices, set_app: true, billi
     let(:amount_due) { 100 }
     let(:status) { 'paid' }
     let(:subscription_id) { rand(999) }
+    let(:cc_last_digits) { '4242' }
     before do
       stub_billing_request(:get, "/subscriptions/#{subscription_id}/invoices", auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump([{'id' => invoice_id, 'created_at' => created_at, 'url' => url, 'amount_due' => amount_due, 'status' => status }]))
+        .to_return(status: 200, body: JSON.dump([{'id' => invoice_id, 'created_at' => created_at, 'url' => url, 'amount_due' => amount_due, 'status' => status, 'cc_last_digits' => cc_last_digits }]))
     end
 
     it 'responds with list of subscriptions' do
@@ -47,7 +48,8 @@ describe Travis::API::V3::Services::Subscription::Invoices, set_app: true, billi
           'created_at' => created_at,
           'url' => url,
           'amount_due' => amount_due,
-          'status' => status
+          'status' => status,
+          'cc_last_digits' => cc_last_digits
         }]
       })
     end

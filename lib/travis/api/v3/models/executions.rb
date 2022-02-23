@@ -2,7 +2,7 @@ module Travis::API::V3
   class Models::Execution
     attr_reader :id, :os, :instance_size, :arch, :virtualization_type, :queue, :job_id, :repository_id, :owner_id,
                 :owner_type, :plan_id, :sender_id, :credits_consumed, :user_license_credits_consumed, :started_at,
-                :finished_at, :created_at, :updated_at
+                :finished_at, :created_at, :updated_at, :sender_login, :repo_slug, :repo_owner_name
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
@@ -23,6 +23,21 @@ module Travis::API::V3
       @finished_at = attributes.fetch('finished_at')
       @created_at = attributes.fetch('created_at')
       @updated_at = attributes.fetch('updated_at')
+      @sender_login = nil
+      @repo_slug = nil
+      @repo_owner_name = nil
+    end
+
+    def sender_login=(sender_login)
+      @sender_login = sender_login
+    end
+
+    def repo_slug=(repo_slug)
+      @repo_slug = repo_slug
+    end
+
+    def repo_owner_name=(repo_owner_name)
+      @repo_owner_name = repo_owner_name
     end
   end
 end

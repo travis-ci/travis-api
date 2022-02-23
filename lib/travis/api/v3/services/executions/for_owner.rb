@@ -12,8 +12,23 @@ module Travis::API::V3
       raise NotFound unless owner
       raise InsufficientAccess unless access_control.visible?(owner)
 
-      result query(:executions).for_owner(owner, access_control.user.id, params['page'] || 0,
+      results = query(:executions).for_owner(owner, access_control.user.id, params['page'] || 0,
                                           params['per_page'] || 0, params['from'], params['to'])
+      result presented_results(results)
+    end
+
+    def presented_results(results)
+      senders = Travis::API::V3::Models::User.where(id: results.map(&:sender_id)).index_by(&:id)
+      repositories = Travis::API::V3::Models::Repository.where(id: results.map(&:repository_id)).index_by(&:id)
+      
+      results.map do |execution|
+        execution.sender_login = senders[execution.sender_id]&.login || 'Unknown Sender'
+        repo = repositories[execution.repository_id]
+        execution.repo_slug = repo&.slug || 'Unknown Repository'
+        execution.repo_owner_name = repo&.owner_name || 'Unknown Repository Owner'
+
+        execution
+      end
     end
   end
 end
