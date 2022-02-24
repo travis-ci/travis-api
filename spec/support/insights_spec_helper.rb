@@ -295,5 +295,25 @@ module Support
         ]
       }
     end
+
+    def insights_spotlight_summaries_response
+      {
+        "@type": "insights_spotlight_summary",
+        "data": [
+            {
+                "id": 1,
+                "user_id": 123,
+                "repo_id": "1223",
+                "build_status": "complete",
+                "repo_name": "myrepo",
+                "builds": 4,
+                "duration": 47,
+                "credits": 23,
+                "user_license_credits_consumed": 20,
+                "time": "2021-11-08T12:13:14.000Z"
+            }
+        ]
+      }
+    end
   end
 end
