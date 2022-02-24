@@ -296,9 +296,9 @@ module Support
       }
     end
 
-    def insights_spotlight_summaries_response
+    def spotlight_summaries_response
       {
-        "@type": "insights_spotlight_summary",
+        "@type": "spotlight_summary",
         "data": [
             {
                 "id": 1,

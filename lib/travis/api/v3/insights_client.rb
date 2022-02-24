@@ -214,7 +214,7 @@ module Travis::API::V3
       end
     end
 
-    def insights_spotlight_summary(time_start, time_end, repo_id, build_status)
+    def spotlight_summary(time_start, time_end, repo_id, build_status)
       query_string = query_string_from_params(
         time_start: time_start,
         time_end: time_end,

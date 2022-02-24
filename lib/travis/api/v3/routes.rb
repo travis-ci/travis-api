@@ -481,8 +481,8 @@ module Travis::API::V3
       get :search_tags
     end
 
-    resource :insights_spotlight_summary do
-      route '/insights_spotlight_summary'
+    resource :spotlight_summary do
+      route '/spotlight_summary'
       get :all
     end
   end

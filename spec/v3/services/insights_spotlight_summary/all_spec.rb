@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::InsightsSpotlightSummary::All, set_app: true, insights_spec_helper: true do
+describe Travis::API::V3::Services::SpotlightSummary::All, set_app: true, insights_spec_helper: true do
   let(:parsed_body) { JSON.load(last_response.body) }
   let(:insights_url) { 'http://insightsfake.travis-ci.com' }
   let(:insights_auth_key) { 'secret' }
@@ -12,7 +12,7 @@ describe Travis::API::V3::Services::InsightsSpotlightSummary::All, set_app: true
 
   context 'unauthenticated' do
     it 'responds 403' do
-      get("/v3/insights_spotlight_summary?time_start=#{time_start}&time_end=#{time_end}")
+      get("/v3/spotlight_summary?time_start=#{time_start}&time_end=#{time_end}")
 
       expect(last_response.status).to eq(403)
     end
@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::InsightsSpotlightSummary::All, set_app: true
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     let(:expected_json) do
       {
-        "@type": "insights_spotlight_summary",
+        "@type": "spotlight_summary",
         "data": [
             {
                 "id": 1,
@@ -43,12 +43,12 @@ describe Travis::API::V3::Services::InsightsSpotlightSummary::All, set_app: true
     end
 
     before do
-      stub_insights_request(:get, '/insights_spotlight_summary', query:"time_start=#{time_start}&time_end=#{time_end}", auth_key: insights_auth_key, user_id: user.id)
-        .to_return(body: JSON.dump(insights_spotlight_summaries_response))
+      stub_insights_request(:get, '/spotlight_summary', query:"time_start=#{time_start}&time_end=#{time_end}", auth_key: insights_auth_key, user_id: user.id)
+        .to_return(body: JSON.dump(spotlight_summaries_response))
     end
 
     it 'responds with spotlight summary' do
-      get("/v3/insights_spotlight_summary?time_start=#{time_start}&time_end=#{time_end}", {}, headers)
+      get("/v3/spotlight_summary?time_start=#{time_start}&time_end=#{time_end}", {}, headers)
       expect(last_response.status).to eq(200)
       expect(parsed_body).to eql_json(expected_json)
     end
