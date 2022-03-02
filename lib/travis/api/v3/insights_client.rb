@@ -223,9 +223,7 @@ module Travis::API::V3
       )
       response = connection.get("/insights/spotlight?#{query_string}")
 
-      handle_errors_and_respond(response) do |body|
-        body
-      end
+      handle_errors_and_respond(response) do |body| body end
     end
 
     private

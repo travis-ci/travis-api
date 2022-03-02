@@ -26,18 +26,18 @@ describe Travis::API::V3::Services::SpotlightSummary::All, set_app: true, insigh
       {
         "@type": "spotlight_summary",
         "data": [
-            {
-                "id": 1,
-                "user_id": 123,
-                "repo_id": "1223",
-                "build_status": "complete",
-                "repo_name": "myrepo",
-                "builds": 4,
-                "duration": 47,
-                "credits": 23,
-                "user_license_credits_consumed": 20,
-                "time": "2021-11-08T12:13:14.000Z"
-            }
+          {
+            "id": 1,
+            "user_id": 123,
+            "repo_id": "1223",
+            "build_status": "complete",
+            "repo_name": "myrepo",
+            "builds": 4,
+            "duration": 47,
+            "credits": 23,
+            "license_credits": 20,
+            "time": "2021-11-08T12:13:14.000Z"
+          }
         ]
       }
     end
