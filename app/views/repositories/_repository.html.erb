@@ -152,6 +152,7 @@
     <%= form_for :settings, url: {controller: "settings", action: "update"}, html: {class: "inline-list"} do |f| %>
   <div>
     <% Settings::BINARY.each do |key| %>
+      <% next if key == 'share_ssh_keys_with_forks' && !@repository.private? %>
       <p>
         <%= f.check_box key, checked: @settings.send(key) %>
         <%= f.label key %>

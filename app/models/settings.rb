@@ -4,7 +4,7 @@ class Settings
 
   validates_inclusion_of :api_build_rate_limit, in: 0..200, message: "API builds rate limit can't execeed 200"
 
-  BINARY = %w[auto_cancel_pushes auto_cancel_pull_requests builds_only_with_travis_yml build_pushes build_pull_requests]
+  BINARY = %w[auto_cancel_pushes auto_cancel_pull_requests builds_only_with_travis_yml build_pushes build_pull_requests share_encrypted_env_with_forks share_ssh_keys_with_forks]
   INTEGER = %w[maximum_number_of_builds timeout_hard_limit timeout_log_silence api_build_rate_limit]
 
   attr_reader :attributes
@@ -31,6 +31,8 @@ class Settings
       "maximum_number_of_builds" => 0,
       "auto_cancel_pushes" => false,
       "auto_cancel_pull_requests" => false,
+      "share_encrypted_env_with_forks" => false,
+      "share_ssh_keys_with_forks" => true,
       "timeout_hard_limit" => 0,
       "timeout_log_silence" => 0,
       "api_build_rate_limit" => 0

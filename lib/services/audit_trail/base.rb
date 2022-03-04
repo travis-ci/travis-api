@@ -12,7 +12,7 @@ module Services
       end
 
       def call
-        return if Rails.env.development?
+        # return if Rails.env.development?
         redis.lpush("admin-v2:logs", log)
         redis.ltrim("admin-v2:logs", 0, 100)
       end

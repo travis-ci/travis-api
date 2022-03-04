@@ -9,6 +9,7 @@ class SettingsController < ApplicationController
       settings.attributes.except(*not_in_api).each do |setting_name, setting_value|
         if current_settings.attributes[setting_name] != setting_value
           response = Services::Settings::Update.new(@repository, setting_name, setting_value).call
+          Services::AuditTrail::UpdateRepositorySetting.new(current_user, @repository, setting_name, current_settings.attributes[setting_name], setting_value, params[:reason]).call
           if response.success?
             flash[:notice] = "Updated settings for #{@repository.slug}"
           else
