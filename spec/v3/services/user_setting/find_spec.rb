@@ -99,4 +99,62 @@ describe Travis::API::V3::Services::UserSetting::Find, set_app: true do
       )
     end
   end
+
+  describe 'authenticated, existing repo, default share_encrypted_env_with_forks setting' do
+    before do
+      get("/v3/repo/#{repo.id}/setting/share_encrypted_env_with_forks", {}, auth_headers)
+    end
+
+    example { expect(last_response.status).to eq(200) }
+    example do
+      expect(JSON.load(body)).to eq(
+        '@type' => 'setting',
+        '@representation' => 'standard',
+        '@permissions' => { 'read' => true, 'write' => false },
+        '@href' => "/v3/repo/#{repo.id}/setting/share_encrypted_env_with_forks",
+        'name' => 'share_encrypted_env_with_forks',
+        'value' => false
+      )
+    end
+  end
+
+  describe 'authenticated, existing repo, default share_ssh_keys_with_forks setting' do
+    let(:created_at) { Date.parse('2021-09-01') }
+
+    before do
+      ENV['IBM_REPO_SWITCHES_DATE'] = '2021-10-01'
+      repo.update(created_at: created_at)
+      get("/v3/repo/#{repo.id}/setting/share_ssh_keys_with_forks", {}, auth_headers)
+    end
+
+    after { ENV['IBM_REPO_SWITCHES_DATE'] = nil }
+
+    example { expect(last_response.status).to eq(200) }
+    example do
+      expect(JSON.load(body)).to eq(
+        '@type' => 'setting',
+        '@representation' => 'standard',
+        '@permissions' => { 'read' => true, 'write' => false },
+        '@href' => "/v3/repo/#{repo.id}/setting/share_ssh_keys_with_forks",
+        'name' => 'share_ssh_keys_with_forks',
+        'value' => true
+      )
+    end
+
+    context 'when repo is new' do
+      let(:created_at) { Date.parse('2021-11-01') }
+
+      example { expect(last_response.status).to eq(200) }
+      example do
+        expect(JSON.load(body)).to eq(
+          '@type' => 'setting',
+          '@representation' => 'standard',
+          '@permissions' => { 'read' => true, 'write' => false },
+          '@href' => "/v3/repo/#{repo.id}/setting/share_ssh_keys_with_forks",
+          'name' => 'share_ssh_keys_with_forks',
+          'value' => false
+        )
+      end
+    end
+  end
 end
