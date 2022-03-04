@@ -136,6 +136,7 @@ module Travis::Api
         end
 
         use Rack::SSL if Endpoint.production? && !ENV['DOCKER']
+        use ConnectionManagement
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
@@ -286,5 +287,24 @@ module Travis::Api
       def self.setup_endpoints
         Base.subclasses.each(&:setup)
       end
+  end
+
+  class ConnectionManagement
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      testing = ENV['RACK_ENV'] == 'test'
+
+      status, headers, body = @app.call(env)
+      proxy = ::Rack::BodyProxy.new(body) do
+        ActiveRecord::Base.clear_active_connections! unless testing
+      end
+      [status, headers, proxy]
+    rescue Exception
+      ActiveRecord::Base.clear_active_connections! unless testing
+      raise
+    end
   end
 end
