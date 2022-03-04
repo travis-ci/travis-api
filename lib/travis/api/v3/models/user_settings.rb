@@ -37,6 +37,8 @@ module Travis::API::V3
     end
 
     def share_ssh_keys_with_forks?
+      return false unless ENV['IBM_REPO_SWITCHES_DATE']
+
       repo.created_at <= Date.parse(ENV['IBM_REPO_SWITCHES_DATE'])
     end
 
