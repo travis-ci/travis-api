@@ -221,7 +221,7 @@ module Travis::API::V3
         repo_id: repo_id,
         build_status: build_status
       )
-      response = connection.get("/insights/spotlight?#{query_string}")
+      response = connection.get("/spotlight_summary?#{query_string}")
 
       handle_errors_and_respond(response) do |body| body end
     end
