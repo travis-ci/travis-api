@@ -18,10 +18,10 @@ module Travis::API::V3
 
     attribute :insights_time_zone, String, default: ''
 
-    attribute :insights_date_format, String, default: 'DD/MM/YYYY'
-    validates :insights_date_format, inclusion: { in: %w{DD/MM/YYYY MM/DD/YYYY YYYY/MM/DD}, message: "'%{value}' is not allowed" }
+    attribute :insights_date_format, String, default: ''
+    validates :insights_date_format, inclusion: { in: %w{DD/MM/YYYY MM/DD/YYYY YYYY/MM/DD}, message: "'%{value}' is not allowed" }, allow_blank: true
 
-    attribute :insights_time_format, String, default: 'HH:mm:ss'
-    validates :insights_time_format, inclusion: { in: ['h:mm:ss A', 'HH:mm:ss'], message: "'%{value}' is not allowed" }
+    attribute :insights_time_format, String, default: ''
+    validates :insights_time_format, inclusion: { in: ['h:mm:ss A', 'HH:mm:ss'], message: "'%{value}' is not allowed" }, allow_blank: true
   end
 end
