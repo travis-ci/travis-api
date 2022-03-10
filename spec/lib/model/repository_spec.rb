@@ -358,21 +358,6 @@ describe Repository do
       expect(repo.settings.build_pushes?).to be true
     end
 
-    it "allows to set nil for settings" do
-      repo.settings = nil
-      expect(repo.settings.to_hash).to eq(Repository::Settings.new.to_hash)
-    end
-
-    it "allows to set settings as JSON string" do
-      repo.settings = '{"maximum_number_of_builds": 44}'
-      expect(repo.settings.to_hash).to eq(Repository::Settings.new(maximum_number_of_builds: 44).to_hash)
-    end
-
-    it "allows to set settings as a Hash" do
-      repo.settings = { maximum_number_of_builds: 44}
-      expect(repo.settings.to_hash).to eq(Repository::Settings.new(maximum_number_of_builds: 44).to_hash)
-    end
-
     it 'updates settings in the DB' do
       repo.settings = {'build_pushes' => false}
       repo.save
