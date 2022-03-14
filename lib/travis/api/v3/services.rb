@@ -38,6 +38,8 @@ module Travis::API::V3
     InsightsPublicKey     = Module.new { extend Services }
     InsightsSandbox       = Module.new { extend Services }
     InsightsTags          = Module.new { extend Services }
+    SpotlightSummary      = Module.new { extend Services }
+    SpotlightSummaryRepos = Module.new { extend Services }
     Installation          = Module.new { extend Services }
     Job                   = Module.new { extend Services }
     Jobs                  = Module.new { extend Services }

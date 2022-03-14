@@ -214,6 +214,30 @@ module Travis::API::V3
       end
     end
 
+    def spotlight_summary(time_start, time_end, repo_id, build_status)
+      query_string = query_string_from_params(
+        time_start: time_start,
+        time_end: time_end,
+        repo_id: repo_id,
+        build_status: build_status
+      )
+      response = connection.get("/spotlight_summary?#{query_string}")
+
+      handle_errors_and_respond(response) do |body|
+        body
+      end
+    end
+
+    def spotlight_summary_repos
+      response = connection.get('/spotlight_summary/repos')
+
+      handle_errors_and_respond(response) do |body|
+        body.map do |tag|
+          Travis::API::V3::Models::SpotlightSummaryRepo.new(tag)
+        end
+      end
+    end
+
     private
 
     def handle_errors_and_respond(response)
