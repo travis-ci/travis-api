@@ -22,25 +22,6 @@ describe Travis::API::V3::Services::SpotlightSummary::All, set_app: true, insigh
     let(:user) { FactoryBot.create(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
-    let(:expected_json) do
-      {
-        "@type": "spotlight_summary",
-        "data": [
-          {
-            "id": 1,
-            "user_id": 123,
-            "repo_id": 1223,
-            "build_status": 'complete',
-            "repo_name": 'myrepo',
-            "builds": 4,
-            "duration": 47,
-            "credits": 23,
-            "license_credits": 20,
-            "time": '2022-02-08'
-          }
-        ]
-      }
-    end
 
     before do
       stub_insights_request(:get, '/spotlight_summary', query: "time_start=#{time_start}&time_end=#{time_end}", auth_key: insights_auth_key, user_id: user.id)
