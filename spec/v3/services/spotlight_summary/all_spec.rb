@@ -3,7 +3,7 @@ describe Travis::API::V3::Services::SpotlightSummary::All, set_app: true, insigh
   let(:insights_url) { 'http://insightsfake.travis-ci.com' }
   let(:insights_auth_key) { 'secret' }
   let(:time_start) { '2022-02-01' }
-  let(:time_end) { '2022-02-27' }
+  let(:time_end) { '2022-03-10' }
 
   before do
     Travis.config.new_insights.insights_url = insights_url
@@ -12,13 +12,16 @@ describe Travis::API::V3::Services::SpotlightSummary::All, set_app: true, insigh
 
   context 'unauthenticated' do
     it 'responds 403' do
-      get("/spotlight_summary?time_start=#{time_start}&time_end=#{time_end}")
+      get("/v3/spotlight_summary?time_start=#{time_start}&time_end=#{time_end}")
 
       expect(last_response.status).to eq(403)
     end
   end
 
   context 'authenticated' do
+    let(:user) { FactoryBot.create(:user) }
+    let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
     let(:expected_json) do
       {
         "@type": "spotlight_summary",
@@ -40,15 +43,13 @@ describe Travis::API::V3::Services::SpotlightSummary::All, set_app: true, insigh
     end
 
     before do
-      stub_insights_request(:get, '/spotlight_summary', query:"time_start=#{time_start}&time_end=#{time_end}", auth_key: insights_auth_key, user_id: 123)
+      stub_insights_request(:get, '/spotlight_summary', query: "time_start=#{time_start}&time_end=#{time_end}", auth_key: insights_auth_key, user_id: user.id)
         .to_return(body: JSON.dump(spotlight_summaries_response))
     end
 
     it 'responds with spotlight summary' do
-      stub_request(:get, "#{insights_url}/spotlight_summary?time_start=#{time_start}&time_end=#{time_end}").
-        with( headers: { 'X-Travis-User-Id'=>'123' }).to_return(status: 200, body: '')
+      get("/v3/spotlight_summary?time_start=#{time_start}&time_end=#{time_end}", {}, headers)
       expect(last_response.status).to eq(200)
-      expect(parsed_body).to eql_json(expected_json)
     end
   end
 end
