@@ -49,6 +49,8 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
             { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes",          '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'auto_cancel_pushes',          'value' => false },
             { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests",   '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'auto_cancel_pull_requests',   'value' => false },
             { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/config_validation",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'config_validation',           'value' => false },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/share_encrypted_env_with_forks",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'share_encrypted_env_with_forks',           'value' => false },
+            { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/share_ssh_keys_with_forks",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'share_ssh_keys_with_forks',           'value' => false },
           ]
         )
       end
@@ -86,6 +88,8 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
           { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pushes",          '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'auto_cancel_pushes',          'value' => false },
           { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/auto_cancel_pull_requests",   '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'auto_cancel_pull_requests',   'value' => false },
           { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/config_validation",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'config_validation',           'value' => false },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/share_encrypted_env_with_forks",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'share_encrypted_env_with_forks',           'value' => false },
+          { '@type' => 'setting', '@href' => "/v3/repo/#{repo.id}/setting/share_ssh_keys_with_forks",           '@representation' => 'standard', '@permissions' => { 'read' => true, 'write' => true }, 'name' => 'share_ssh_keys_with_forks',           'value' => false },
         ]
       )
     end

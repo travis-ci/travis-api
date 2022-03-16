@@ -12,6 +12,8 @@ module Travis::API::V3
     attribute :auto_cancel_pull_requests, Boolean, default: lambda { |us, _| us.auto_cancel_default? }
     attribute :allow_config_imports, Boolean, default: false
     attribute :config_validation, Boolean, default: lambda { |us, _| us.config_validation? }
+    attribute :share_encrypted_env_with_forks, Boolean, default: false
+    attribute :share_ssh_keys_with_forks, Boolean, default: lambda { |us, _| us.share_ssh_keys_with_forks? }
 
     attr_reader :repo
 
@@ -35,6 +37,12 @@ module Travis::API::V3
     def config_validation?
       return false if ENV['RACK_ENV'] == 'test'
       new_repo? || old_repo?
+    end
+
+    def share_ssh_keys_with_forks?
+      return false unless ENV['IBM_REPO_SWITCHES_DATE']
+
+      repo.created_at <= Date.parse(ENV['IBM_REPO_SWITCHES_DATE'])
     end
 
     def new_repo?
