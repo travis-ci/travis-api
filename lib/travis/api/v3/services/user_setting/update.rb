@@ -8,9 +8,9 @@ module Travis::API::V3
       return repo_migrated if migrated?(repository)
       
       user_setting = query.find(repository)
-      access_control.permissions(user_setting).write!
+      access_control.permissions(user_setting).write! if user_setting
       
-      user_setting = query.update(repository)      
+      user_setting = query.update(repository)
       result user_setting
     end
   end
