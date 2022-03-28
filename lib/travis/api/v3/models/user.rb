@@ -15,6 +15,14 @@ module Travis::API::V3
 
     has_preferences Models::UserPreferences
 
+    after_initialize do
+      ensure_preferences
+    end
+
+    before_save do
+      ensure_preferences
+    end
+
     serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
     scope :with_github_token, -> { where('github_oauth_token IS NOT NULL')}
 
@@ -81,6 +89,10 @@ module Travis::API::V3
 
     def github?
       vcs_type == 'GithubUser'
+    end
+
+    def ensure_preferences
+      self.preferences = self['preferences'].is_a?(String) ? JSON.parse(self['preferences']) : self['preferences']
     end
   end
 end

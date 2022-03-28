@@ -24,7 +24,12 @@ module Travis::API::V3
     alias last_started_build current_build
 
     after_initialize do
+      ensure_settings
       update! default_branch_name: 'master'.freeze unless default_branch_name
+    end
+
+    before_save do
+      ensure_settings
     end
 
     def migrating?
@@ -119,9 +124,7 @@ module Travis::API::V3
     end
 
     def settings
-      settings_ = super
-      return settings_ if settings_.is_a?(Hash)
-      JSON.parse(settings_ || '{}')
+      super || {}
     end
 
     def user_settings
@@ -199,6 +202,10 @@ module Travis::API::V3
 
     def allow_migration?
       Travis::Features.owner_active?(:allow_migration, self.owner)
+    end
+
+    def ensure_settings
+      self.settings = self['settings'].is_a?(String) ? JSON.parse(self['settings']) : self['settings']
     end
   end
 end
