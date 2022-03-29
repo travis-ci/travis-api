@@ -93,6 +93,10 @@ module Travis
           @plan_config[:plan_type] == 'hybrid'
         end
 
+        def recurring?
+          addon_configs[:recurring] == true
+        end
+
         def can_create_addons?
           !addable_addon_configs.empty?
         end
