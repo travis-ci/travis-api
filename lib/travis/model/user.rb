@@ -21,6 +21,10 @@ class User < Travis::Model
 
   serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
 
+  before_save do
+    ensure_preferences
+  end
+
   class << self
     def with_permissions(permissions)
       where(:permissions => permissions).includes(:permissions)
@@ -168,6 +172,11 @@ class User < Travis::Model
 
   def github?
     vcs_type == 'GithubUser'
+  end
+
+  def ensure_preferences
+    return if attributes['preferences'].nil?
+    self.preferences = self['preferences'].is_a?(String) ? JSON.parse(self['preferences']) : self['preferences']
   end
 
   protected

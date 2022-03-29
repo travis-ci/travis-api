@@ -30,6 +30,14 @@ class Repository < Travis::Model
   validates :name,       presence: true
   validates :owner_name, presence: true
 
+  after_initialize do
+    ensure_settings
+  end
+
+  before_save do
+    ensure_settings
+  end
+
   # before_create do
   #   build_key
   # end
@@ -194,11 +202,8 @@ class Repository < Travis::Model
   end
 
   def settings=(value)
-    if value.is_a?(String) || value.nil?
-      super(value)
-    else
-      super(value.to_json)
-    end
+    value = value.is_a?(String) ? JSON.parse(value) : value
+    super(value)
   end
 
   def users_with_permission(permission)
@@ -228,5 +233,10 @@ class Repository < Travis::Model
 
   def github?
     vcs_type == 'GithubRepository'
+  end
+
+  def ensure_settings
+    return if attributes['settings'].nil?
+    self.settings = self['settings'].is_a?(String) ? JSON.parse(self['settings']) : self['settings']
   end
 end

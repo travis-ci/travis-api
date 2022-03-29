@@ -38,6 +38,7 @@ module Travis::API::V3
     end
 
     def ensure_preferences
+      return if attributes['preferences'].nil?
       self.preferences = self['preferences'].is_a?(String) ? JSON.parse(self['preferences']) : self['preferences']
     end
 
