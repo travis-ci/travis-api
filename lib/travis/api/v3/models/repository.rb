@@ -207,5 +207,18 @@ module Travis::API::V3
     def ensure_settings
       self.settings = self['settings'].is_a?(String) ? JSON.parse(self['settings']) : self['settings']
     end
+
+    def settings=(settings_)
+      write_attribute(:settings, settings_.is_a?(String) ? JSON.parse(settings_) : settings_)
+    end
+
+    def update(attributes = {})
+      if attributes['settings']
+        attributes['settings'] = attributes['settings'].is_a?(String) ? JSON.parse(attributes['settings']) : attributes['settings']
+      elsif attributes[:settings]
+        attributes[:settings] = attributes[:settings].is_a?(String) ? JSON.parse(attributes[:settings]) : attributes[:settings]
+      end
+      super(attributes)
+    end
   end
 end
