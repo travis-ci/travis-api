@@ -51,6 +51,7 @@ module Support
         'status' => nil,
         'valid_to' => nil,
         'canceled_at' => nil,
+        "scheduled_plan" => nil,
         "plan_config" => {
           'id' => 'pro_tier_plan',
           'name' => 'Pro Tier Plan',
@@ -61,6 +62,26 @@ module Support
           'starting_users' => 10000,
           'private_credits' => 500000,
           'public_credits' => 40000,
+          'annual' => false,
+          'auto_refill_thresholds' => [10000, 50000, 100000],
+          'auto_refill_amounts' => [
+            {
+              'amount' => 25000,
+              'price' => 1500
+            },
+            {
+              'amount' => 100000,
+              'price' => 6000
+            },
+            {
+              'amount' => 200000,
+              'price' => 6000
+            },
+            {
+              'amount' => 400000,
+              'price' => 12000
+            }
+          ],
           'available_standalone_addons' => [
             {
               'id' => 'credits_25k',
@@ -141,6 +162,7 @@ module Support
           "id" => "1",
           "name" => "OSS Build Credits",
           "type" => "credit_public",
+          "recurring" => false,
           "current_usage" => {
               "id" => 1,
               "addon_id" => 1,
@@ -157,6 +179,7 @@ module Support
           "id" => 2,
           "name" => "Build Credits",
           "type" => "credit_private",
+          "recurring" => false,
           "current_usage" => {
             "id" => 2,
             "addon_id" => 2,
@@ -233,8 +256,58 @@ module Support
         'starting_users' => 999_999,
         'private_credits' => 10_000,
         'public_credits' => 40_000,
+        'annual' => false,
+        'auto_refill_thresholds' => [10000, 50000, 100000],
+        'auto_refill_amounts' => [
+          {
+            'amount' => 25000,
+            'price' => 1500
+          },
+          {
+            'amount' => 100000,
+            'price' => 6000
+          },
+          {
+            'amount' => 200000,
+            'price' => 6000
+          },
+          {
+            'amount' => 400000,
+            'price' => 12000
+          }
+        ],
         'available_standalone_addons' => []
       }.deep_merge(attributes)
+    end
+
+    def billing_v2_credits_calculator_body
+      [
+        {
+          'users' => 3,
+          'minutes' => nil,
+          'os' => nil,
+          'instance_size' => nil,
+          'credits' => 25_000,
+          'price' => 1_500
+        },
+        {
+          'users' => nil,
+          'minutes' => 1000,
+          'os' => 'linux',
+          'instance_size' => '2x-large',
+          'credits' => 250_000,
+          'price' => 15_000
+        }
+      ]
+    end
+
+    def billing_v2_credits_calculator_config_body
+      {
+        'users' => 10,
+        'minutes' => 1000,
+        'os' => 'linux',
+        'instance_size' => '2x-large'
+      }
     end
 
     def billing_coupon_response_body(attributes = {})
@@ -278,6 +351,7 @@ module Support
         'plan_id' => 2,
         'sender_id' => 1,
         'credits_consumed' => 5,
+        'user_license_credits_consumed' => 4,
         'started_at' => Time.now,
         'finished_at' => Time.now + 10.minutes,
         'created_at' => Time.now,

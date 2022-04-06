@@ -65,10 +65,14 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
           'plan_id' => 2,
           'sender_id' => 1,
           'credits_consumed' => 5,
+          'user_license_credits_consumed' => 4,
           'started_at' => Time.now.to_s,
           'finished_at' => (Time.now + 10.minutes).to_s,
           'created_at' => Time.now.to_s,
-          'updated_at' => Time.now.to_s
+          'updated_at' => Time.now.to_s,
+          'repo_owner_name' => "svenfuchs",
+          'repo_slug' => "svenfuchs/minimal",
+          'sender_login' => "svenfuchs"
         }]
       })
     end

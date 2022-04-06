@@ -63,7 +63,7 @@ describe Repository::Settings do
 
   describe 'timeouts' do
     MAX = {
-      off: { hard_limit: 50, log_silence: 10 },
+      off: { hard_limit: 180, log_silence: 60 },
       on:  { hard_limit: 180, log_silence: 60 }
     }
 
