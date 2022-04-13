@@ -90,6 +90,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
+        "server_type"        => 'git',
         "shared"             => false,
         "owner"              => {
           "@type"            => "user",
@@ -144,6 +145,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "github_language"    =>nil,
         "active"             =>true,
         "private"            =>true,
+        "server_type"        => 'git',
         "shared"             =>false,
         "owner"              =>{
           "@type"            =>"user",
@@ -260,6 +262,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
+        "server_type"        => 'git',
         "shared"             => false,
         "owner"              => {
           "@type"            => "user",
@@ -422,6 +425,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "github_language" => nil,
         "active"          => true,
         "private"         => true,
+        "server_type"     => 'git',
         "owner"           => {
           "@type"         => "user",
           "id"            => 1,
@@ -469,6 +473,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "github_language" => nil,
         "active"          => true,
         "private"         => false,
+        "server_type"     => 'git',
         "shared"          => false,
         "owner"           => {
           "@type"         => "user",
@@ -542,6 +547,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "github_language"    => nil,
         "active"             => true,
         "private"            => false,
+        "server_type"        => 'git',
         "shared"             => true,
         "owner"              => {
           "@type"            => "user",

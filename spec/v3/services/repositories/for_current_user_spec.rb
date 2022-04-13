@@ -63,6 +63,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
+        "server_type"        => 'git',
         "shared"             => false,
         "owner"              => {
           "@type"            => "user",
