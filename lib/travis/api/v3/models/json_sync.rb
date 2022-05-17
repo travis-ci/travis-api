@@ -6,7 +6,7 @@ module Travis::API::V3
       @parent, @attr = parent, attr
       @sync = -> do
         previous = @parent[@attr] || {}
-        @parent[@attr] = previous.merge(to_h).to_json
+        @parent[@attr] = previous.merge(to_h)
         @parent.save!
       end
     end

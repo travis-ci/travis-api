@@ -27,9 +27,9 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
 
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
-    job.update_attributes!(stage: stage)
-    job2.update_attributes!(config: config, stage: stage)
-    # for some reason update_attributes! doesn't update updated_at
+    job.update!(stage: stage)
+    job2.update!(config: config, stage: stage)
+    # for some reason update! doesn't update updated_at
     # and it doesn't play well with out triggers (as triggers will update
     # updated_at and instance variable in tests will have a different value)
     job.reload
@@ -324,7 +324,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
           'Authorization'=>'token notset',
           'Connection'=>'keep-alive',
           'Keep-Alive'=>'30',
-          'User-Agent'=>'Faraday v0.17.4'
+          'User-Agent'=>'Faraday v1.9.3'
            }).
          to_return(status: 200, body: "{}", headers: {})
     end
@@ -346,7 +346,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
           'Authorization'=>'token notset',
           'Connection'=>'keep-alive',
           'Keep-Alive'=>'30',
-          'User-Agent'=>'Faraday v0.17.4'
+          'User-Agent'=>'Faraday v1.9.3'
            }).
          to_return(status: 200, body: "{}", headers: {})
 

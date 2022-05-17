@@ -1,4 +1,5 @@
 require 'travis/support/metrics'
+require 'travis/support'
 
 module Travis
   module Event

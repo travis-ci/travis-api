@@ -1,3 +1,5 @@
+require 'json'
+
 module Travis::API::V3
   class Models::UserSettings < Models::JsonSlice
     child Models::UserSetting

@@ -65,7 +65,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   end
 
   describe "missing log, authenticated" do
-    before { job3.update_attributes(finished_at: Time.now, state: "passed")}
+    before { job3.update(finished_at: Time.now, state: "passed")}
 
     example do
       stub_request(
@@ -83,7 +83,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
   end
 
   describe "sucessfully delete log" do
-    before { job.update_attributes(finished_at: Time.now, state: "passed")}
+    before { job.update(finished_at: Time.now, state: "passed")}
     let(:remote_log_response) {
       JSON.dump(job_id: job.id,
       log_parts: [

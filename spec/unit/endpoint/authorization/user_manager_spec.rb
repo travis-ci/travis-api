@@ -43,7 +43,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
       attributes = { login: 'drogus', github_id: 456, education: false, vcs_id: 456 }.stringify_keys
 
-      expect(user).to receive(:update_attributes).with(attributes)
+      expect(user).to receive(:update).with(attributes)
 
       expect(manager.fetch).to eq(user)
     end
@@ -70,7 +70,7 @@ describe Travis::Api::App::Endpoint::Authorization::UserManager do
 
       it 'updates user data' do
         attributes = { login: 'drogus', github_id: 456, github_oauth_token: 'abc123', education: false, vcs_id: 456 }.stringify_keys
-        expect_any_instance_of(User).to receive(:update_attributes).with(attributes)
+        expect_any_instance_of(User).to receive(:update).with(attributes)
         expect(manager.fetch).to eq(user)
       end
     end

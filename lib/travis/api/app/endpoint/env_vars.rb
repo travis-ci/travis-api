@@ -27,7 +27,6 @@ class Travis::Api::App
           respond_with(record, type: :validation_error, version: :v2)
         end
       end
-
     end
   end
 end

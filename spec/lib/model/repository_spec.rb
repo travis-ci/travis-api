@@ -7,8 +7,8 @@ describe Repository do
     let(:build2) { FactoryBot.create(:build, repository: repo, finished_at: Time.now, state: :failed) }
 
     before do
-      build1.update_attributes(branch: 'master')
-      build2.update_attributes(branch: 'development')
+      build1.update(branch: 'master')
+      build2.update(branch: 'development')
     end
 
     it 'returns last completed build' do
@@ -258,7 +258,7 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        expect(repo.last_build('master').id).to eq(@build.id)
+        expect(repo.reload.last_build.id).to eq(@build.id)
       end
     end
 
@@ -268,7 +268,7 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        expect(repo.last_build('master').id).to eq(@build.id)
+        expect(repo.reload.last_build.id).to eq(@build.id)
       end
     end
   end
@@ -418,6 +418,22 @@ describe Repository do
       expect(repo.users_with_permission(:admin)).to include(user_with_permission)
       expect(repo.users_with_permission(:admin)).not_to include(user_wrong_repo)
       expect(repo.users_with_permission(:admin)).not_to include(user_wrong_permission)
+    end
+  end
+
+  describe '#settings' do
+    let(:repo)   { FactoryBot.create(:repository, name: 'foobarbaz') }
+
+    it 'ensures settings are always a hash' do
+      repo.settings = {'build_pushes' => false}.to_json
+      repo.save
+
+      expect(repo.reload.attributes['settings']).to be_a(Hash)
+
+      repo.settings = {'build_pushes' => false}
+      repo.save
+
+      expect(repo.reload.attributes['settings']).to be_a(Hash)
     end
   end
 end

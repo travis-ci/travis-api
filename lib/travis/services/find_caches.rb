@@ -1,4 +1,3 @@
-require 's3'
 require 'travis/services/base'
 require 'google/apis/storage_v1'
 
@@ -142,12 +141,18 @@ module Travis
         end
 
         def fetch_s3(cache_objects, options)
-          config = cache_options[:s3]
-          svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
-          bucket = svc.buckets.find(config.to_h[:bucket_name])
+          config = cache_options[:s3].to_h
+
+          svc = Fog::Storage.new(
+            aws_access_key_id: config[:access_key_id],
+            aws_secret_access_key: config[:secret_access_key],
+            provider: 'AWS',
+            instrumentor: ActiveSupport::Notifications,
+            connection_options: { instrumentor: ActiveSupport::Notifications })
+          bucket = svc.directories.get(config[:bucket_name], options)
 
           if bucket
-             bucket.objects(options).each { |object| cache_objects << S3Wrapper.new(repo, object) }
+            bucket.files.each { |object| cache_objects << S3Wrapper.new(repo, object) }
           end
         end
 

@@ -7,9 +7,7 @@ class Travis::Api::App
         halt 401 if private_mode? && !org? && !authenticated?
       end
 
-      set :pattern, capture: { id: /\d+/ }
-
-      get '/:id/cc', scope: [:public, :travis_token] do
+      get Mustermann.new('/:id/cc', capture: { id: /\d+/ }), scope: [:public, :travis_token] do
         respond_with service(:find_repo, params.merge(schema: 'cc')), responder: :xml
       end
 
@@ -33,8 +31,6 @@ class Travis::Api::App
     class Repos < Endpoint
       before { authenticate_by_mode! }
 
-      set :pattern, capture: { id: /\d+/ }
-
       # Endpoint for getting all repositories.
       #
       # You can filter the repositories by adding parameters to the request. For example, you can get all repositories
@@ -57,10 +53,10 @@ class Travis::Api::App
       # ### Response
       #
       # json(:repository)
-      get '/:id' do
-        prefer_follower do
-          respond_with service(:find_repo, params)
-        end
+      get Mustermann.new('/:id', capture: { id: /\d+/ }) do
+          prefer_follower do
+            respond_with service(:find_repo, params)
+          end
       end
 
       # Retrieves repositories for a given owner.

@@ -32,7 +32,7 @@ describe Travis::Services::UpdateJob do
     let(:event) { :receive }
 
     before :each do
-      job.repository.update_attributes(last_build_state: :passed)
+      job.repository.update(last_build_state: :passed)
     end
 
     context 'when job is canceled' do
@@ -82,7 +82,7 @@ describe Travis::Services::UpdateJob do
     let(:event) { :start }
 
     before :each do
-      job.repository.update_attributes(last_build_state: :passed)
+      job.repository.update(last_build_state: :passed)
     end
 
     context 'when job is canceled' do
@@ -136,7 +136,7 @@ describe Travis::Services::UpdateJob do
     let(:event) { :finish }
 
     before :each do
-      job.repository.update_attributes(last_build_state: :started)
+      job.repository.update(last_build_state: :started)
     end
 
     context 'when job is canceled' do
@@ -201,7 +201,7 @@ describe Travis::Services::UpdateJob do
     let(:event) { :reset }
 
     before :each do
-      job.repository.update_attributes(last_build_state: :passed)
+      job.repository.update(last_build_state: :passed)
     end
 
     it 'sets the job state to created' do

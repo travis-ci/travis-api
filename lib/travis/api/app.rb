@@ -10,6 +10,7 @@ require 'rack'
 require 'rack/protection'
 require 'rack/contrib/config'
 require 'rack/contrib/jsonp'
+require 'rack/contrib/json_body_parser'
 require 'rack/contrib/post_body_content_type_parser'
 require 'dalli'
 require 'memcachier'
@@ -39,6 +40,7 @@ require 'travis/api/serialize/v2'
 require 'travis/api/v3'
 require 'travis/api/app/error_handling'
 require 'travis/api/sidekiq'
+require 'travis/support/database'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -77,10 +79,6 @@ module Travis::Api
       FileUtils.touch('/tmp/app-initialized') if ENV['DYNO'] # Heroku
     end
 
-    def self.new(options = {})
-      setup(options)
-      super()
-    end
 
     def self.deploy_sha
       @deploy_sha ||= ENV['HEROKU_SLUG_COMMIT'] || SecureRandom.hex(5)
@@ -88,7 +86,8 @@ module Travis::Api
 
     attr_accessor :app
 
-    def initialize
+    def initialize(options = {})
+      self.class.setup(options)
       @app = Rack::Builder.app do
         # if stackprof = ENV['STACKPROF']
         #   require 'stackprof'
@@ -118,7 +117,7 @@ module Travis::Api
         if Travis::Api::App.use_monitoring?
           use Rack::Config do |env|
             if env['HTTP_X_REQUEST_ID']
-              Raven.tags_context(request_id: env['HTTP_X_REQUEST_ID'])
+              Raven.set_tags(request_id: env['HTTP_X_REQUEST_ID'])
             end
           end
           use Raven::Rack
@@ -137,8 +136,7 @@ module Travis::Api
         end
 
         use Rack::SSL if Endpoint.production? && !ENV['DOCKER']
-        use ActiveRecord::ConnectionAdapters::ConnectionManagement
-        use ActiveRecord::QueryCache
+        use ConnectionManagement
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
@@ -148,7 +146,7 @@ module Travis::Api
         end
 
         use Rack::Deflater
-        use Rack::PostBodyContentTypeParser
+        use Rack::JSONBodyParser
         use Rack::JSONP
 
         use Rack::Config do |env|
@@ -178,15 +176,15 @@ module Travis::Api
         end
 
         Endpoint.subclasses.each do |e|
-          next if e == SettingsEndpoint # TODO: add something like abstract? method to check if
-                                        # class should be registered
-          map(e.prefix) { run(e.new) }
+          next if e == SettingsEndpoint # TODO: add something like abstract? method to check if class should be registered
+          map(e.prefix) { run e }
         end
       end
     end
 
     # Rack protocol
     def call(env)
+      #app.after { ActiveRecord::Base.clear_active_connections! }
       app.call(env)
     rescue
       if Endpoint.production?
@@ -289,5 +287,24 @@ module Travis::Api
       def self.setup_endpoints
         Base.subclasses.each(&:setup)
       end
+  end
+
+  class ConnectionManagement
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      testing = ENV['RACK_ENV'] == 'test'
+
+      status, headers, body = @app.call(env)
+      proxy = ::Rack::BodyProxy.new(body) do
+        ActiveRecord::Base.clear_active_connections! unless testing
+      end
+      [status, headers, proxy]
+    rescue Exception
+      ActiveRecord::Base.clear_active_connections! unless testing
+      raise
+    end
   end
 end

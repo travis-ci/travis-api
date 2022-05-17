@@ -68,6 +68,9 @@ FactoryBot.define do
     end
   end
 
+  factory :v3_repository, class: Travis::API::V3::Models::Repository do
+  end
+
   factory :minimal, :parent => :repository_without_last_build do
   end
 

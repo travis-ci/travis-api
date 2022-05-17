@@ -98,8 +98,8 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     let(:headers) { {} }
 
     describe 'when repo is public' do
-      before { repo.update_attributes(private: false) }
-      before { s3log.job.update_attributes(private: false) }
+      before { repo.update(private: false) }
+      before { s3log.job.update(private: false) }
 
       it 'returns the log' do
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
@@ -130,8 +130,8 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     end
 
     describe 'when repo is private' do
-      before { repo.update_attributes(private: true) }
-      before { s3log.job.update_attributes(private: true) }
+      before { repo.update(private: true) }
+      before { s3log.job.update(private: true) }
 
       it 'returns the text version of the log with log token supplied' do
         get("/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_AUTHORIZATION' => "token #{token}", 'HTTP_TRAVIS_API_VERSION' => '3'))

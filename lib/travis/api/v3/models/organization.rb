@@ -8,6 +8,14 @@ module Travis::API::V3
 
     has_preferences Models::OrganizationPreferences
 
+    after_initialize do
+      ensure_preferences
+    end
+
+    before_save do
+      ensure_preferences
+    end
+
     def repositories
       Models::Repository.where(owner_type: 'Organization', owner_id: id)
     end
@@ -27,6 +35,11 @@ module Travis::API::V3
 
     def build_priorities_enabled?
       Travis::Features.owner_active?(:build_priorities_org, self)
+    end
+
+    def ensure_preferences
+      return if attributes['preferences'].nil?
+      self.preferences = self['preferences'].is_a?(String) ? JSON.parse(self['preferences']) : self['preferences']
     end
 
     alias members users

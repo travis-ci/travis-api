@@ -30,6 +30,14 @@ class Repository < Travis::Model
   validates :name,       presence: true
   validates :owner_name, presence: true
 
+  after_initialize do
+    ensure_settings
+  end
+
+  before_save do
+    ensure_settings
+  end
+
   # before_create do
   #   build_key
   # end
@@ -37,7 +45,7 @@ class Repository < Travis::Model
   delegate :public_key, to: :key
 
   scope :by_params, ->(params) {
-    if id = params[:repository_id] || params[:id]
+    if (id = params[:repository_id] || params[:id])
       where(id: id)
     elsif params[:github_id]
       where('vcs_id = :id OR github_id = :id_i', id: params[:github_id].to_s, id_i: params[:github_id].to_i)
@@ -54,7 +62,8 @@ class Repository < Travis::Model
     end
   }
   scope :timeline, -> {
-    active.order('last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC')
+    s = 'last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC'
+    active.order(Arel.sql(s))
   }
   scope :with_builds, -> {
     where(arel_table[:last_build_id].not_eq(nil))
@@ -193,11 +202,8 @@ class Repository < Travis::Model
   end
 
   def settings=(value)
-    if value.is_a?(String) || value.nil?
-      super(value)
-    else
-      super(value.to_json)
-    end
+    value = value.is_a?(String) ? JSON.parse(value) : value
+    super(value)
   end
 
   def users_with_permission(permission)
@@ -227,5 +233,10 @@ class Repository < Travis::Model
 
   def github?
     vcs_type == 'GithubRepository'
+  end
+
+  def ensure_settings
+    return if attributes['settings'].nil?
+    self.settings = self['settings'].is_a?(String) ? JSON.parse(self['settings']) : self['settings']
   end
 end

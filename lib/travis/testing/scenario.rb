@@ -133,13 +133,13 @@ module Scenario
 
       build  = FactoryBot.create(:build, attributes.merge(:commit => commit))
       build.matrix.each_with_index do |job, ix|
-        job.update_attributes!(jobs[ix] || {})
+        job.update!(jobs[ix] || {})
       end
 
       if build.finished?
         keys = %w(id number state finished_at started_at)
         attributes = keys.inject({}) { |result, key| result.merge(:"last_build_#{key}" => build.send(key)) }
-        build.repository.update_attributes!(attributes)
+        build.repository.update!(attributes)
       end
     end
   end

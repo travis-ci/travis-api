@@ -38,7 +38,7 @@ module Travis::API::V3
 
         def client
           @client ||= Faraday.new(config[:url], ssl: ssl) do |client|
-            client.basic_auth 'admin', config[:auth_key]
+            client.request(:basic_auth, 'admin', config[:auth_key])
             client.headers['Accept'] = 'application/json'
             client.adapter :net_http
           end

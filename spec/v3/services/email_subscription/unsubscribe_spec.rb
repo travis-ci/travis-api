@@ -51,7 +51,7 @@ describe Travis::API::V3::Services::EmailSubscription::Unsubscribe, set_app: tru
 
   context do
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { delete("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -63,7 +63,7 @@ describe Travis::API::V3::Services::EmailSubscription::Unsubscribe, set_app: tru
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { delete("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }

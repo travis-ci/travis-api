@@ -9,13 +9,13 @@ describe 'visibilty', set_app: true do
   let(:job_id)   { 42864 }
   let(:archived_content) { 'hello world!'}
 
-  before { repo.update_attributes(private: false) }
+  before { repo.update(private: false) }
   before { requests.update_all(private: true) }
   before { builds.update_all(private: true) }
   before { jobs.update_all(private: true) }
-  before { requests[0].update_attributes(private: false) }
-  before { builds[0].update_attributes(private: false) }
-  before { jobs[0].update_attributes(private: false) }
+  before { requests[0].update(private: false) }
+  before { builds[0].update(private: false) }
+  before { jobs[0].update(private: false) }
   before :each do
     Fog.mock!
     storage = Fog::Storage.new({
@@ -178,17 +178,17 @@ describe 'visibilty', set_app: true do
   end
 
   describe 'GET /repos/%{repo.id}' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
     it { expect(status).to eq 404 }
   end
 
   describe 'GET /repos/%{repo.id}/caches' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
     it { expect(status).to eq 404 }
   end
 
   describe 'GET /repos/%{repo.slug}' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
     it { expect(status).to eq 404 }
   end
 

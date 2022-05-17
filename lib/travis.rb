@@ -1,6 +1,6 @@
 require 'pusher'
 require 'travis/support'
-require 'travis/support/database'
+#require 'travis/support/database'
 require 'travis/errors'
 
 module Travis
@@ -45,6 +45,7 @@ module Travis
       Github.setup
       Services.register
       Github::Services.register
+      require 'patches/active_record/predicate_builder'
     end
 
     def redis

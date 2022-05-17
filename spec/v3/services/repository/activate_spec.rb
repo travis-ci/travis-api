@@ -3,7 +3,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   before do
-    repo.update_attributes!(active: false)
+    repo.update!(active: false)
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
@@ -267,7 +267,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true, pull: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/activate", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -279,7 +279,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/activate", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }

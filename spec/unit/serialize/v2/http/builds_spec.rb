@@ -79,7 +79,13 @@ describe Travis::Api::Serialize::V2::Http::Builds, 'using Travis::Services::Buil
     3.times { FactoryBot.create(:build, :repository => repo) }
   end
 
-  it 'queries' do
-    expect { data }.to issue_queries(12)
+  # checking actual data not how ActiveRecord behaves underneath :| It can be changed on every version
+
+  it 'builds field' do
+    expect(data['builds'].size).to eq(3)
+  end
+
+  it 'commits field' do
+    expect(data['commits'].size).to eq(3)
   end
 end

@@ -6,6 +6,14 @@ class Organization < Travis::Model
   has_many :users, :through => :memberships
   has_many :repositories, :as => :owner
 
+  after_initialize do
+    ensure_preferences
+  end
+
+  before_save do
+    ensure_preferences
+  end
+
   def education?
     Travis::Features.owner_active?(:educational_org, self)
   end
@@ -19,6 +27,11 @@ class Organization < Travis::Model
     return @subscription if instance_variable_defined?(:@subscription)
     records = Subscription.where(owner_id: id, owner_type: "Organization")
     @subscription = records.where(status: 'subscribed').last || records.last
+  end
+
+  def ensure_preferences
+    return if attributes['preferences'].nil?
+    self.preferences = self['preferences'].is_a?(String) ? JSON.parse(self['preferences']) : self['preferences']
   end
 end
 

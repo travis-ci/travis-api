@@ -21,7 +21,6 @@ require 'sidekiq/testing'
 require 'webmock/rspec'
 
 require 'active_record'
-ActiveRecord::Base.raise_in_transactional_callbacks = true
 
 require 'travis/api/app'
 require 'travis/testing'

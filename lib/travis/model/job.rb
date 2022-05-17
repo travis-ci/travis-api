@@ -65,7 +65,7 @@ class Job < Travis::Model
   belongs_to :commit
   belongs_to :source, polymorphic: true, autosave: true
   belongs_to :owner, polymorphic: true
-  belongs_to :config, foreign_key: :config_id, class_name: JobConfig
+  belongs_to :config, foreign_key: :config_id, class_name: 'JobConfig'
 
   validates :repository_id, :commit_id, :source_id, :source_type, :owner_id, :owner_type, presence: true
 
