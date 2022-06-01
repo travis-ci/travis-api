@@ -37,12 +37,10 @@
         <dd>
           <%= @subscription.created_at %>
         </dd>
-        <% if @subscription.hybrid? %>
-          <dt class='info-label'>Status:</dt>
-          <dd>
-            <%= select_tag "subscription[status]", options_for_select(@subscription.status_options, @subscription.status), class: 'plan-dropdown' %>
-          </dd>
-        <% end %>
+        <dt class='info-label'>Status:</dt>
+        <dd>
+          <%= select_tag "subscription[status]", options_for_select(@subscription.status_options, @subscription.status), class: 'plan-dropdown' %>
+        </dd>
         <dt class='info-label'>Owner:</dt>
         <dd>
           <%= link_to describe(@subscription.owner), @subscription.owner %>
