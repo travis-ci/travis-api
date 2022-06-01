@@ -18,7 +18,7 @@ module Travis
 
         attr_reader :id, :source, :coupon, :created_at, :valid_to, :owner_id, :owner_type, :owner, :billing_email,
                     :billing_address, :vat_id, :changes, :concurrency_limit, :status, :plan_config, :addons,
-                    :addable_addon_configs
+                    :addable_addon_configs, :auto_refill_enabled
 
         def initialize(attributes)
           attributes.deep_symbolize_keys!
@@ -74,6 +74,7 @@ module Travis
           end
 
           @changes = attributes.fetch(:plan_changes).map { |plan_change_data| V2PlanChange.new(plan_change_data) }
+          @auto_refill_enabled = attributes.fetch(:auto_refill_enabled, false)
         end
 
         def active?

@@ -2,6 +2,10 @@
 <dl class='plan-info addon-section'>
 
   <%= hidden_field_tag 'auto_refill[id]', addon.id %>
+  <dt class='info-label'>Refill Enabled</dt>
+  <dd>
+    <%= check_box_tag "auto_refill[enabled]", '1', auto_refill_enabled %>
+  </dd>
   <dt class='info-label'>Refill Amount</dt>
   <dd>
     <%= text_field_tag "auto_refill[amount]", addon.refill_amount %>
