@@ -96,6 +96,8 @@ module ApplicationHelper
   end
 
   def format_time(time, with_time = true)
+    return 'Invalid date' unless time
+
     format_string = '%Y-%m-%d'
     format_string << ' %H:%M:%S' if with_time
 
