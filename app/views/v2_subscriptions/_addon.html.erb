@@ -21,16 +21,10 @@
   <dd>
     <%= addon.usage %> used
   </dd>
-  <% if addon.show_valid_to? %>
-    <dt class='info-label'>Next renewal date:</dt>
-    <dd>
-      <% if @subscription.manual? %>
-        <time>
-          <%= text_field_tag "subscription[addons][#{addon.id}][valid_to]", format_time(addon.valid_to, false), class: "datepicker-no-max" %>
-        </time>
-      <% else %>
-          <%= format_time(addon.valid_to, false) %>
-      <% end %>
-    </dd>
-  <% end %>
+  <dt class='info-label'>Next renewal date:</dt>
+  <dd>
+    <time>
+      <%= text_field_tag "subscription[addons][#{addon.id}][valid_to]", format_time(addon.valid_to, false), class: "datepicker-no-max" %>
+    </time>
+  </dd>
 </dl>
