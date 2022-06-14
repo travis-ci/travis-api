@@ -34,7 +34,14 @@ module Travis::API::V3
 
     def for_user(user)
       set_custom_timeout(host_timeout)
-      jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_job_ids_for_user_repositories_by_states(#{user.id}, ?))", states)
+      if ENV['TCIE_BETA_MOST_RECENT_JOBS_LW'] == 'true'
+        puts "USING LW JOBS!!\n\n"
+        jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_job_ids_for_user_repositories_by_states_lw(#{user.id}, ?))", states)
+      else
+        puts "USING REGULAR JOBS!!!\n\n"
+        jobs = V3::Models::Job.where("jobs.id in (select id from most_recent_job_ids_for_user_repositories_by_states(#{user.id}, ?))", states)
+      end
+      puts jobs.inspect
 
       sort filter(jobs)
     end
