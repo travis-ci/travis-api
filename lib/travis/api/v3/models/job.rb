@@ -1,4 +1,5 @@
 require 'travis/config/defaults'
+require 'travis/api/v3/models/user'
 
 module Travis::API::V3
   class Models::JobConfig < Model
