@@ -14,6 +14,7 @@ module Travis::API::V3
     belongs_to :stage
     belongs_to :owner, polymorphic: true
     belongs_to :config, foreign_key: :config_id, class_name: Models::JobConfig
+    belongs_to :restarter, foreign_key: :restarted_by, polymorphic: true, class_name: Models::User
     serialize :config
     serialize :debug_options
 
