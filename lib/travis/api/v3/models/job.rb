@@ -68,7 +68,7 @@ module Travis::API::V3
     end
 
     def restarter
-      @restarter ||= Travis::API::V3::Models::User.find(restarted_by)
+      @restarter ||= Travis::API::V3::Models::User.find(restarted_by) if restarted_by
     end
 
     private def enterprise?
