@@ -29,7 +29,7 @@ methods = Travis::Console.instance_methods - Object.instance_methods
 
 if $stdin.tty?
   require 'pry'
-  console.pry(quiet: true, prompt: Pry::SIMPLE_PROMPT)
+  console.pry(quiet: true, prompt: Pry::Prompt[:simple])
 else
   console.instance_eval $stdin.read
 end
