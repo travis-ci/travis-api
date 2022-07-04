@@ -90,7 +90,7 @@ module Travis
         end
 
         def hybrid?
-          @plan_config[:plan_type] == 'hybrid'
+          @plan_config[:plan_type] == 'hybrid' || @plan_config[:plan_type] == 'hybrid annual'
         end
 
         def recurring?
