@@ -12,7 +12,11 @@ module Travis
         STATUSES = [
           'subscribed',
           'pending',
-          'expired'
+          'expired',
+          'canceled',
+          'incomplete',
+          'incomplete_expired',
+          'past_due'
         ].freeze
         FREE_USERS_FOR_PAID = 'users_free_for_paid_plans'
 
