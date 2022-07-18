@@ -87,7 +87,8 @@ class SubscriptionsController < ApplicationController
     end
 
     if params.key?(:auto_refill) && !params[:auto_refill][:id].blank?
-      error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).update_auto_refill(params[:id], { id: params[:auto_refill][:id], threshold: params[:auto_refill][:threshold], amount: params[:auto_refill][:amount], change_reason: params[:subscription][:change_reason] })
+      enabled = params[:auto_refill][:enabled].present?
+      error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).update_auto_refill(params[:id], { id: params[:auto_refill][:id], enabled: enabled, threshold: params[:auto_refill][:threshold], amount: params[:auto_refill][:amount], change_reason: params[:subscription][:change_reason] })
     end
     if params.key?(:create_addon) && !params[:new_addon][:id].blank?
       error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).create_addon(params[:id], { addon: params[:new_addon][:id], user_id: current_user.id, change_reason: params[:subscription][:change_reason] })
