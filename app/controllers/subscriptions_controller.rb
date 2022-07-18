@@ -96,11 +96,9 @@ class SubscriptionsController < ApplicationController
       error_message = Services::Billing::V2Subscription.new(params[:owner_id], params[:owner_type]).create_addon(params[:id], { addon: 'users_free_for_paid_plans', user_id: current_user.id, change_reason: params[:subscription][:change_reason] })
     else
       permitted_params = v2_subscription_params
-      permitted_params.delete(:valid_to) if permitted_params[:source] != 'manual'
       permitted_params[:plan_name] = params[:subscription][:plan_name] if params[:subscription][:plan_name] != params[:old_plan_name]
       if permitted_params[:addons].present? && !permitted_params[:plan_name]
         new_addons = permitted_params[:addons].permit!.to_h.each_with_object([]) do |(addon_id, addon_data), memo|
-          addon_data.delete(:valid_to) if permitted_params[:source] != 'manual'
           memo << addon_data.merge(id: addon_id)
         end
         permitted_params[:addons] = new_addons
