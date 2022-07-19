@@ -22,7 +22,7 @@ module Travis
 
         attr_reader :id, :source, :coupon, :created_at, :valid_to, :owner_id, :owner_type, :owner, :billing_email,
                     :billing_address, :vat_id, :changes, :concurrency_limit, :status, :plan_config, :addons,
-                    :addable_addon_configs, :auto_refill_enabled
+                    :addon_configs, :addable_addon_configs, :auto_refill_enabled
 
         def initialize(attributes)
           attributes.deep_symbolize_keys!
@@ -45,7 +45,7 @@ module Travis
             @billing_address = attributes[:billing_info].slice(:zip_code, :address, :address2, :city, :state, :country)
           end
 
-          addon_configs = @plan_config.fetch(:addon_configs)
+          @addon_configs = @plan_config.fetch(:addon_configs)
           @addable_addon_configs = (@plan_config[:addon_configs] + @plan_config[:all_available_addons]).uniq
           @addable_addon_configs.reject! { |ac| ac[:type] == 'user_license' }
           unless hybrid?
@@ -94,7 +94,11 @@ module Travis
         end
 
         def hybrid?
-          @plan_config[:plan_type] == 'hybrid'
+          @plan_config[:plan_type] == 'hybrid' || @plan_config[:plan_type] == 'hybrid annual'
+        end
+
+        def recurring?
+          @addon_configs.any? { |addon_config| addon_config[:recurring] }
         end
 
         def can_create_addons?
