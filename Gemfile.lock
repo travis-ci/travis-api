@@ -65,7 +65,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-github_apps
-  revision: c96dc9330849ff3e2ccd7c9d00005a1a96c1a4b6
+  revision: 296843980230194dc0b44fa7244e49ca071d83bf
+  branch: ga-ext_access
   specs:
     travis-github_apps (0.2.1)
       activesupport (>= 3.2)

@@ -9,7 +9,7 @@ gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp'
 gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config', branch: 'fix-docker-redis-url'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings'
 gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock/', branch: '6.1'
-gem 'travis-github_apps', git: 'https://github.com/travis-ci/travis-github_apps'
+gem 'travis-github_apps', git: 'https://github.com/travis-ci/travis-github_apps', branch: 'ga-ext_access'
 gem 'travis-rollout',  '~> 0.0.2'
 
 gem 'sinatra'
