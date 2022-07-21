@@ -4,11 +4,11 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:user)        { FactoryBot.create(:user) }
   let(:repo)        { FactoryBot.create(:repository, owner_name: user.login, name: 'minimal', owner: user)}
   let(:build)       { FactoryBot.create(:build, repository: repo) }
-  let(:job)         { Travis::API::V3::Models::Job.create(build: build) }
-  let(:job2)        { Travis::API::V3::Models::Job.create(build: build)}
-  let(:job3)        { Travis::API::V3::Models::Job.create(build: build)}
-  let(:s3job)       { Travis::API::V3::Models::Job.create(build: build, repository: repo) }
-  let(:s3job2)       { Travis::API::V3::Models::Job.create(build: build) }
+  let(:job)         { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days) }
+  let(:job2)        { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days)}
+  let(:job3)        { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days)}
+  let(:s3job)       { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 10.days) }
+  let(:s3job2)       { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days) }
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:parsed_body) { JSON.load(body) }

@@ -16,6 +16,10 @@ module Travis::API::V3
     attribute :job_log_access_based_limit, Boolean, default: lambda { |s, _| s.job_log_access_permissions[:access_based_limit] }
     attribute :job_log_access_older_than_days, Integer, default: lambda { |s, _| s.job_log_access_permissions[:older_than_days] }
 
+    validates :job_log_access_older_than_days, numericality: true
+
+    validate :job_log_access_older_than_days_restriction
+
     attr_reader :repo
 
     def initialize(repo, data)
@@ -63,6 +67,13 @@ module Travis::API::V3
 
     def job_log_access_permissions
       Travis.config.to_h.fetch(:job_log_access_permissions) { {} }
+    end
+
+    def job_log_access_older_than_days_restriction
+      if job_log_access_older_than_days.to_i > job_log_access_permissions[:max_days_value] ||
+        job_log_access_older_than_days.to_i < job_log_access_permissions[:min_days_value]
+        errors.add(:job_log_access_older_than_days, "is outside the bounds")
+      end
     end
   end
 end
