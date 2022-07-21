@@ -101,12 +101,19 @@ class Repository::Settings < Travis::Settings
   attribute :allow_config_imports, Boolean, default: false
   attribute :share_encrypted_env_with_forks, Boolean, default: false
   attribute :share_ssh_keys_with_forks, Boolean, default: nil
+  attribute :job_log_time_based_limit, Boolean, default: lambda { |s, _| s.job_log_access_permissions[:time_based_limit] }
+  attribute :job_log_access_based_limit, Boolean, default: lambda { |s, _| s.job_log_access_permissions[:access_based_limit] }
+  attribute :job_log_access_older_than_days, Integer, default: lambda { |s, _| s.job_log_access_permissions[:older_than_days] }
 
   validates :maximum_number_of_builds, numericality: true
 
   validate :api_builds_rate_limit_restriction
 
   validates_with TimeoutsValidator
+
+  def job_log_access_permissions
+    Travis.config.to_h.fetch(:job_log_access_permissions) { {} }
+  end
 
   def auto_cancel_default?
     ENV.fetch('AUTO_CANCEL_DEFAULT', 'false') == 'true'

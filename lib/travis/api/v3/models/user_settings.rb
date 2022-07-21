@@ -12,6 +12,9 @@ module Travis::API::V3
     attribute :config_validation, Boolean, default: lambda { |us, _| us.config_validation? }
     attribute :share_encrypted_env_with_forks, Boolean, default: false
     attribute :share_ssh_keys_with_forks, Boolean, default: lambda { |us, _| us.share_ssh_keys_with_forks? }
+    attribute :job_log_time_based_limit, Boolean, default: lambda { |s, _| s.job_log_access_permissions[:time_based_limit] }
+    attribute :job_log_access_based_limit, Boolean, default: lambda { |s, _| s.job_log_access_permissions[:access_based_limit] }
+    attribute :job_log_access_older_than_days, Integer, default: lambda { |s, _| s.job_log_access_permissions[:older_than_days] }
 
     attr_reader :repo
 
@@ -56,6 +59,10 @@ module Travis::API::V3
 
     def days_since_jan_15
       Date.today.mjd - JAN_15.mjd + 1
+    end
+
+    def job_log_access_permissions
+      Travis.config.to_h.fetch(:job_log_access_permissions) { {} }
     end
   end
 end

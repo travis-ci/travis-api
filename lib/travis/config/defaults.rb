@@ -88,7 +88,8 @@ module Travis
             force_authentication: false,
             yml:                  { url: 'https://yml.travis-ci.org', token: 'secret', auth_key: 'abc123' },
             read_only:            ENV['READ_ONLY'] || false,
-            vcs: {}
+            vcs: {},
+            job_log_access_permissions: { time_based_limit: false, access_based_limit: false, older_than_days: 365, max_days_value: 730, min_days_value: 30 }
 
     default :_access => [:key]
 
