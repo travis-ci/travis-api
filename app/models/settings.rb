@@ -35,7 +35,10 @@ class Settings
       "share_ssh_keys_with_forks" => true,
       "timeout_hard_limit" => 0,
       "timeout_log_silence" => 0,
-      "api_build_rate_limit" => 0
+      "api_build_rate_limit" => 0,
+      "job_log_time_based_limit" => false,
+      "job_log_access_based_limit" => false,
+      "job_log_access_older_than_days" => 365
     }
   end
 
