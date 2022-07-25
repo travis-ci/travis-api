@@ -8,6 +8,10 @@ class Travis::Api::App
       get '/:id' do |id|
         resource = service(:find_log, id: params[:id]).run
         job = resource ? Job.find(resource.job_id) : nil
+        repo_can_write = !!job.repository.users.where(id: current_user.id, permissions: { push: true }).first
+
+        raise LogExpired if !job.repository.user_settings.job_log_time_based_limit && job.started_at < Time.now - job.repository.user_settings.job_log_access_older_than_days.days
+        raise LogAccessDenied if job.repository.user_settings.job_log_access_based_limit && !repo_can_write
 
         if !resource || ((job.try(:private?) || !allow_public?) && !has_permission?(job))
           halt 404
