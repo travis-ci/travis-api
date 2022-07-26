@@ -11,7 +11,7 @@ class Travis::Api::App
         repo = Travis::API::V3::Models::Repository.find(job.repository.id)
         repo_can_write = !!repo.users.where(id: current_user.id, permissions: { push: true }).first
 
-        raise LogExpired if !repo.user_settings.job_log_time_based_limit && job.started_at < Time.now - repo.user_settings.job_log_access_older_than_days.days
+        raise LogExpired if repo.user_settings.job_log_time_based_limit && job.started_at < Time.now - repo.user_settings.job_log_access_older_than_days.days
         raise LogAccessDenied if repo.user_settings.job_log_access_based_limit && !repo_can_write
 
         if !resource || ((job.try(:private?) || !allow_public?) && !has_permission?(job))
