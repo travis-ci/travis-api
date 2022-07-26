@@ -83,7 +83,9 @@ module Travis::API::V3
     private
 
     def save_audit
-      Travis::API::V3::Models::Audit.create!(owner: self.user, change_source: self.change_source, source: self.repo, source_changes: { settings: self.changes })
+      if self.change_source
+        Travis::API::V3::Models::Audit.create!(owner: self.user, change_source: self.change_source, source: self.repo, source_changes: { settings: self.changes })
+      end
     end
   end
 end
