@@ -13,6 +13,8 @@
   class: "#{active_tab(caches_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
   <%= link_to 'Broadcasts', broadcasts_repository_path(@repository),
   class: "#{active_tab(broadcasts_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
+  <%= link_to 'Changelog', changelog_repository_path(@repository),
+  class: "#{active_tab(changelog_repository_path)} remote-tab-link", remote: true, data: { content: 'main-content' } %>
 </div>
 
 <section id="main-content">
