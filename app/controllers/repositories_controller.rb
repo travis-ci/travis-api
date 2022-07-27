@@ -115,7 +115,7 @@ class RepositoriesController < ApplicationController
 
   def changelog
     @changelog = ::Audit.where(source: @repository)
-    render_either 'repositories/changelog', locals: { recipient: @repository }
+    render_either 'repositories/changelog'
   end
 
   def update_user_permissions
