@@ -85,10 +85,9 @@ describe 'Jobs', set_app: true do
   end
 
   context 'GET /jobs/:job_id/log.txt' do
-    it 'returns redirects to archived log url' do
+    it 'returns the log' do
       response = get("/jobs/#{job.id}/log.txt")
-      expect(response.status).to eq(307)
-      expect(response.location).to eq(archived_log_url)
+      expect(response.status).to eq(200)
     end
 
     it 'returns 406 (Unprocessable) if Accept header requests JSON' do
