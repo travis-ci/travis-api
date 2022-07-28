@@ -93,16 +93,7 @@ class Travis::Api::App
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain')
-            archived_log_path = resource.archived_url
-
-            if params[:cors_hax]
-              status 204
-              headers['Access-Control-Expose-Headers'] = 'Location'
-              headers['Location'] = archived_log_path
-              attach_log_token if job.try(:private?)
-            else
-              redirect archived_log_path, 307
-            end
+            respond_with resource.archived_log_content
           elsif accepts?('application/json')
             attach_log_token if job.try(:private?)
             respond_with resource.as_json
