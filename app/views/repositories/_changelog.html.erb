@@ -17,7 +17,7 @@
           <td><%= change.id %></td>
           <td><%= format_time(change.created_at) %></td>
           <td><%= describe(change.owner) %></td>
-          <td><%= change.human_changes.html_safe %></td>
+          <td><%= change.human_changes.gsub('\n', '<br />').html_safe %></td>
         </tr>
       <% end %>
     </tbody>
