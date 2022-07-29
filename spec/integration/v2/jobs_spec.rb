@@ -124,7 +124,7 @@ describe 'Jobs', set_app: true do
     end
 
     context 'when log is missing' do
-      it 'redirects to archived log url' do
+      it 'returns the log retrieved from s3' do
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(status: 404, body: '')
         response = get(
@@ -132,8 +132,7 @@ describe 'Jobs', set_app: true do
           {},
           { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         )
-        expect(response.status).to eq(307)
-        expect(response.location).to eq(archived_log_url)
+        expect(response.status).to eq(200)
       end
     end
 
