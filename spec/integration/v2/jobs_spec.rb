@@ -136,33 +136,6 @@ describe 'Jobs', set_app: true do
       end
     end
 
-    context 'with cors_hax param' do
-      it 'renders No Content response with location of the archived log' do
-        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
-          .to_return(
-            status: 200,
-            body: JSON.dump(
-              content: nil,
-              aggregated_at: Time.now,
-              archived_at: Time.now,
-              archive_verified: true
-            )
-          )
-        allow_any_instance_of(Travis::RemoteLog).to receive(:archived_url).and_return(
-          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
-        )
-        response = get(
-          "/jobs/#{job.id}/log.txt?cors_hax=true",
-          {},
-          { 'HTTP_ACCEPT' => 'text/plain; version=2' }
-        )
-        expect(response.status).to eq 204
-        expect(response.headers['Location']).to eq(
-          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
-        )
-      end
-    end
-
     context 'with chunked log requested' do
       it 'succeeds' do
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
