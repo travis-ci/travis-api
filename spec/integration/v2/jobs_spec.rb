@@ -96,13 +96,14 @@ describe 'Jobs', set_app: true do
     end
 
     context 'when log is archived' do
-      it 'redirects to archive' do
+      it 'returns the log' do
         remote = double('remote')
         remote_log = double('remote log')
         expect(remote_log).to receive(:archived?).and_return(true)
         allow(remote_log).to receive(:removed_at).and_return(nil)
+        allow(remote_log).to receive(:archived_log_content).and_return(archived_content)
         allow(remote).to receive(:find_by_job_id).and_return(remote_log)
-        expect(remote_log).to receive(:archived_url).and_return("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
+        allow(remote).to receive(:fetch_archived_log_content).and_return(archived_content)
         expect(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(
@@ -118,9 +119,7 @@ describe 'Jobs', set_app: true do
           {},
           { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         )
-        expect(response).to redirect_to(
-          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
-        )
+        expect(response.status).to eq(200)
       end
     end
 
