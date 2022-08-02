@@ -1,16 +1,14 @@
 module Travis::API::V3
   class Queries::Log < RemoteQuery
-    def find_by_job_id(repo_can_write, job_id)
-      find repo_can_write, Models::Job.find(job_id)
+    def find_by_job_id(job_id)
+      find Models::Job.find(job_id)
     end
 
-    def find(repo_can_write, job)
+    def find(job)
       @job = job
-      raise LogExpired if !job.repository.user_settings.job_log_time_based_limit && job.started_at < Time.now - job.repository.user_settings.job_log_access_older_than_days.days
-      raise LogAccessDenied if job.repository.user_settings.job_log_access_based_limit && !repo_can_write
-
       remote_log = Travis::RemoteLog::Remote.new(platform: platform).find_by_job_id(platform_job_id)
       raise EntityMissing, 'log not found'.freeze if remote_log.nil?
+
       log = Travis::API::V3::Models::Log.new(remote_log: remote_log, job: job)
       # if the log has been archived, go to s3
       if log.archived?

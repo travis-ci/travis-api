@@ -4,11 +4,12 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:user)        { FactoryBot.create(:user) }
   let(:repo)        { FactoryBot.create(:repository, owner_name: user.login, name: 'minimal', owner: user)}
   let(:build)       { FactoryBot.create(:build, repository: repo) }
-  let(:job)         { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days) }
-  let(:job2)        { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days)}
-  let(:job3)        { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days)}
+  let(:perm)        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true)}
+  let(:job)         { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days, repository: repo) }
+  let(:job2)        { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days, repository: repo)}
+  let(:job3)        { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days, repository: repo)}
   let(:s3job)       { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 10.days) }
-  let(:s3job2)       { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days) }
+  let(:s3job2)       { Travis::API::V3::Models::Job.create(build: build, started_at: Time.now - 10.days, repository: repo) }
   let(:token)       { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers)     { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:parsed_body) { JSON.load(body) }
@@ -211,6 +212,365 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
         s3log.attributes.merge!(archived_at: Time.now, archive_verified: true)
         get("/v3/job/#{s3log.job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'fun/times'))
         expect(last_response.headers).to include('Content-Type' => 'application/json')
+      end
+    end
+
+    context 'with authentication and new settings' do
+      context 'when public repo' do
+        before { repo.update_attributes(private: false) }
+
+        context 'when access to old logs is not allowed and write/push setting is off' do
+          before do
+            user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
+            user_settings.user = user
+            user_settings.change_source = 'travis-api'
+            user_settings.update(:job_log_time_based_limit, true)
+            user_settings.update(:job_log_access_based_limit, false)
+          end
+
+          context 'unauthenticated user' do
+            it 'returns the log' do
+              get("/v3/job/#{s3job.id}/log", {}, { 'HTTP_ACCEPT' => 'text/plain' })
+              expect(last_response.headers).to include('Content-Type' => 'text/plain')
+              expect(body).to eq(archived_content)
+            end
+
+            context 'old log' do
+              let(:s3job) { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 1000.days) }
+  
+              it 'does not return log' do
+                get("/v3/job/#{s3job.id}/log", {},  { 'HTTP_ACCEPT' => 'text/plain' })
+                expect(parsed_body).to eq({
+                  '@type'=>'error',
+                  'error_type'=>'log_expired',
+                  'error_message'=>"We're sorry, but this data is not available anymore. Please check the repository settings in Travis CI."
+                })
+              end
+            end
+          end
+        end
+
+        context 'when access to old logs is not allowed and write/push setting is on' do
+          before do
+            user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
+            user_settings.user = user
+            user_settings.change_source = 'travis-api'
+            user_settings.update(:job_log_time_based_limit, true)
+            user_settings.update(:job_log_access_based_limit, true)
+          end
+
+          context 'unauthenticated user' do
+            it 'does not return log' do
+              get("/v3/job/#{s3job.id}/log", {},  { 'HTTP_ACCEPT' => 'text/plain' })
+              expect(parsed_body).to eq({
+                '@type'=>'error',
+                'error_type'=>'log_access_denied',
+                'error_message'=>"We're sorry, but this data is not available. Please check the repository settings in Travis CI."
+              })
+            end
+          end
+
+          context 'authenticated user read' do
+            before { perm.update!(push: false) }
+
+            it 'does not return log' do
+              get("/v3/job/#{s3job.id}/log", {},  headers.merge('HTTP_ACCEPT' => 'text/plain'))
+              expect(parsed_body).to eq({
+                '@type'=>'error',
+                'error_type'=>'log_access_denied',
+                'error_message'=>"We're sorry, but this data is not available. Please check the repository settings in Travis CI."
+              })
+            end
+          end
+
+          context 'authenticated user write' do
+            before { perm.update!(push: true) }
+
+            it 'returns the log' do
+              get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+              expect(last_response.headers).to include('Content-Type' => 'text/plain')
+              expect(body).to eq(archived_content)
+            end
+
+            context 'old log' do
+              let(:s3job) { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 1000.days) }
+  
+              it 'does not return log' do
+                get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+                expect(parsed_body).to eq({
+                  '@type'=>'error',
+                  'error_type'=>'not_found',
+                  'error_type'=>'log_expired',
+                  'error_message'=>"We're sorry, but this data is not available anymore. Please check the repository settings in Travis CI."
+                })
+              end
+            end
+          end
+        end
+
+        context 'when access to old logs is allowed and write/push setting is on' do
+          before do
+            user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
+            user_settings.user = user
+            user_settings.change_source = 'travis-api'
+            user_settings.update(:job_log_time_based_limit, false)
+            user_settings.update(:job_log_access_based_limit, true)
+          end
+
+          context 'unauthenticated user' do
+            it 'does not return log' do
+              get("/v3/job/#{s3job.id}/log", {},  { 'HTTP_ACCEPT' => 'text/plain' })
+              expect(parsed_body).to eq({
+                '@type'=>'error',
+                'error_type'=>'log_access_denied',
+                'error_message'=>"We're sorry, but this data is not available. Please check the repository settings in Travis CI."
+              })
+            end
+          end
+
+          context 'authenticated user read' do
+            before { perm.update!(push: false) }
+
+            it 'does not return log' do
+              get("/v3/job/#{s3job.id}/log", {},  headers.merge('HTTP_ACCEPT' => 'text/plain'))
+              expect(parsed_body).to eq({
+                '@type'=>'error',
+                'error_type'=>'log_access_denied',
+                'error_message'=>"We're sorry, but this data is not available. Please check the repository settings in Travis CI."
+              })
+            end
+          end
+
+          context 'authenticated user write' do
+            before { perm.update!(push: true) }
+
+            it 'returns the log' do
+              get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+              expect(last_response.headers).to include('Content-Type' => 'text/plain')
+              expect(body).to eq(archived_content)
+            end
+
+            context 'old log' do
+              let(:s3job) { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 1000.days) }
+  
+              it 'returns the log' do
+                get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+                expect(last_response.headers).to include('Content-Type' => 'text/plain')
+                expect(body).to eq(archived_content)
+              end
+            end
+          end
+        end
+
+        context 'when access to old logs is allowed and write/push setting is off' do
+          before do
+            user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
+            user_settings.user = user
+            user_settings.change_source = 'travis-api'
+            user_settings.update(:job_log_time_based_limit, false)
+            user_settings.update(:job_log_access_based_limit, false)
+          end
+
+          context 'unauthenticated user' do
+            it 'returns the log' do
+              get("/v3/job/#{s3job.id}/log", {}, { 'HTTP_ACCEPT' => 'text/plain' })
+              expect(last_response.headers).to include('Content-Type' => 'text/plain')
+              expect(body).to eq(archived_content)
+            end
+
+            context 'old log' do
+              let(:s3job) { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 1000.days) }
+  
+              it 'returns the log' do
+                get("/v3/job/#{s3job.id}/log", {}, { 'HTTP_ACCEPT' => 'text/plain' })
+                expect(last_response.headers).to include('Content-Type' => 'text/plain')
+                expect(body).to eq(archived_content)
+              end
+            end
+          end
+        end
+      end
+
+      context 'when private repo' do
+        before { repo.update_attributes(private: true) }
+
+        context 'when access to old logs is not allowed and write/push setting is off' do
+          before do
+            user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
+            user_settings.user = user
+            user_settings.change_source = 'travis-api'
+            user_settings.update(:job_log_time_based_limit, true)
+            user_settings.update(:job_log_access_based_limit, false)
+          end
+
+          context 'unauthenticated user' do
+            it 'does not return log' do
+              get("/v3/job/#{s3job.id}/log", {},  { 'HTTP_ACCEPT' => 'text/plain' })
+              expect(parsed_body).to eq({
+                '@type'=>'error',
+                'error_type'=>'not_found',
+                'error_message'=>'log not found (or insufficient access)',
+                'resource_type'=>'log'
+              })
+            end
+
+            context 'old log' do
+              let(:s3job) { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 1000.days) }
+  
+              it 'does not return log' do
+                get("/v3/job/#{s3job.id}/log", {},  { 'HTTP_ACCEPT' => 'text/plain' })
+                expect(parsed_body).to eq({
+                  '@type'=>'error',
+                  'error_type'=>'not_found',
+                  'error_message'=>'log not found (or insufficient access)',
+                  'resource_type'=>'log'
+                })
+              end
+            end
+          end
+        end
+
+        context 'when access to old logs is not allowed and write/push setting is on' do
+          before do
+            user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
+            user_settings.user = user
+            user_settings.change_source = 'travis-api'
+            user_settings.update(:job_log_time_based_limit, true)
+            user_settings.update(:job_log_access_based_limit, true)
+          end
+
+          context 'unauthenticated user' do
+            it 'does not return log' do
+              get("/v3/job/#{s3job.id}/log", {},  { 'HTTP_ACCEPT' => 'text/plain' })
+              expect(parsed_body).to eq({
+                '@type'=>'error',
+                'error_type'=>'not_found',
+                'error_message'=>'log not found (or insufficient access)',
+                'resource_type'=>'log'
+              })
+            end
+          end
+
+          context 'authenticated user read' do
+            before { perm.update!(push: false) }
+
+            it 'does not return log' do
+              get("/v3/job/#{s3job.id}/log", {},  headers.merge('HTTP_ACCEPT' => 'text/plain'))
+              expect(parsed_body).to eq({
+                '@type'=>'error',
+                'error_type'=>'log_access_denied',
+                'error_message'=>"We're sorry, but this data is not available. Please check the repository settings in Travis CI."
+              })
+            end
+          end
+
+          context 'authenticated user write' do
+            before { perm.update!(push: true) }
+
+            it 'returns the log' do
+              get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+              expect(last_response.headers).to include('Content-Type' => 'text/plain')
+              expect(body).to eq(archived_content)
+            end
+
+            context 'old log' do
+              let(:s3job) { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 1000.days) }
+  
+              it 'does not return log' do
+                get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+                expect(parsed_body).to eq({
+                  '@type'=>'error',
+                  'error_type'=>'not_found',
+                  'error_type'=>'log_expired',
+                  'error_message'=>"We're sorry, but this data is not available anymore. Please check the repository settings in Travis CI."
+                })
+              end
+            end
+          end
+        end
+
+        context 'when access to old logs is allowed and write/push setting is on' do
+          before do
+            user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
+            user_settings.user = user
+            user_settings.change_source = 'travis-api'
+            user_settings.update(:job_log_time_based_limit, false)
+            user_settings.update(:job_log_access_based_limit, true)
+          end
+
+          context 'unauthenticated user' do
+            it 'does not return log' do
+              get("/v3/job/#{s3job.id}/log", {},  { 'HTTP_ACCEPT' => 'text/plain' })
+              expect(parsed_body).to eq({
+                '@type'=>'error',
+                'error_type'=>'not_found',
+                'error_message'=>'log not found (or insufficient access)',
+                'resource_type'=>'log'
+              })
+            end
+          end
+
+          context 'authenticated user read' do
+            before { perm.update!(push: false) }
+
+            it 'does not return log' do
+              get("/v3/job/#{s3job.id}/log", {},  headers.merge('HTTP_ACCEPT' => 'text/plain'))
+              expect(parsed_body).to eq({
+                '@type'=>'error',
+                'error_type'=>'log_access_denied',
+                'error_message'=>"We're sorry, but this data is not available. Please check the repository settings in Travis CI."
+              })
+            end
+          end
+
+          context 'authenticated user write' do
+            before { perm.update!(push: true) }
+
+            it 'returns the log' do
+              get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+              expect(last_response.headers).to include('Content-Type' => 'text/plain')
+              expect(body).to eq(archived_content)
+            end
+
+            context 'old log' do
+              let(:s3job) { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 1000.days) }
+  
+              it 'returns the log' do
+                get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+                expect(last_response.headers).to include('Content-Type' => 'text/plain')
+                expect(body).to eq(archived_content)
+              end
+            end
+          end
+        end
+
+        context 'when access to old logs is allowed and write/push setting is off' do
+          before do
+            user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
+            user_settings.user = user
+            user_settings.change_source = 'travis-api'
+            user_settings.update(:job_log_time_based_limit, false)
+            user_settings.update(:job_log_access_based_limit, false)
+          end
+
+          context 'authenticated user' do
+            it 'returns the log' do
+              get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+              expect(last_response.headers).to include('Content-Type' => 'text/plain')
+              expect(body).to eq(archived_content)
+            end
+
+            context 'old log' do
+              let(:s3job) { Travis::API::V3::Models::Job.create(build: build, repository: repo, started_at: Time.now - 1000.days) }
+  
+              it 'returns the log' do
+                get("/v3/job/#{s3job.id}/log", {}, headers.merge('HTTP_ACCEPT' => 'text/plain'))
+                expect(last_response.headers).to include('Content-Type' => 'text/plain')
+                expect(body).to eq(archived_content)
+              end
+            end
+          end
+        end
       end
     end
   end

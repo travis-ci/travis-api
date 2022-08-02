@@ -20,7 +20,11 @@ module Travis::API::V3
 
     validate :job_log_access_older_than_days_restriction
 
+    set_callback :after_save, :after, :save_audit
+
     attr_reader :repo
+
+    attr_accessor :user, :change_source
 
     def initialize(repo, data)
       @repo = repo
@@ -73,6 +77,14 @@ module Travis::API::V3
       if job_log_access_older_than_days.to_i > job_log_access_permissions[:max_days_value] ||
         job_log_access_older_than_days.to_i < job_log_access_permissions[:min_days_value]
         errors.add(:job_log_access_older_than_days, "is outside the bounds")
+      end
+    end
+
+    private
+
+    def save_audit
+      if self.change_source
+        Travis::API::V3::Models::Audit.create!(owner: self.user, change_source: self.change_source, source: self.repo, source_changes: { settings: self.changes })
       end
     end
   end
