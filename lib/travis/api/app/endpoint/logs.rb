@@ -25,7 +25,6 @@ class Travis::Api::App
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain')
-            Travis.logger.info('[LOGS] Retrieving archived log content')
             respond_with resource.archived_log_content
           elsif accepts?('application/json')
             respond_with resource.as_json
