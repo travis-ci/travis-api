@@ -93,6 +93,7 @@ class Travis::Api::App
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain')
+            Travis.logger.info('[JOBS] Retrieving archived log content')
             respond_with resource.archived_log_content
           elsif accepts?('application/json')
             attach_log_token if job.try(:private?)
