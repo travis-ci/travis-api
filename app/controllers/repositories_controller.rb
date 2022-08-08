@@ -114,7 +114,7 @@ class RepositoriesController < ApplicationController
   end
 
   def changelog
-    @changelog = ::Audit.where(source: @repository)
+    @changelog = ::Audit.where(source: @repository).order('id DESC')
     render_either 'repositories/changelog'
   end
 
