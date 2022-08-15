@@ -13,13 +13,16 @@ module Travis
           'subscribed',
           'pending',
           'expired',
-          'canceled'
+          'canceled',
+          'incomplete',
+          'incomplete_expired',
+          'past_due'
         ].freeze
         FREE_USERS_FOR_PAID = 'users_free_for_paid_plans'
 
         attr_reader :id, :source, :coupon, :created_at, :valid_to, :owner_id, :owner_type, :owner, :billing_email,
                     :billing_address, :vat_id, :changes, :concurrency_limit, :status, :plan_config, :addons,
-                    :addon_configs, :addable_addon_configs
+                    :addon_configs, :addable_addon_configs, :auto_refill_enabled
 
         def initialize(attributes)
           attributes.deep_symbolize_keys!
@@ -75,6 +78,7 @@ module Travis
           end
 
           @changes = attributes.fetch(:plan_changes).map { |plan_change_data| V2PlanChange.new(plan_change_data) }
+          @auto_refill_enabled = attributes.fetch(:auto_refill_enabled, false)
         end
 
         def active?
