@@ -25,7 +25,7 @@ module Travis::API::V3
       raise BuildAlreadyRunning if %w(received queued started).include? find.state
 
       service = Travis::Enqueue::Services::RestartModel.new(user, { build_id: id })
-      payload = { id: id, user_id: user.id }
+      payload = { id: id, user_id: user.id, restarted_by: user.id }
 
       service.push("build:restart", payload)
     end
