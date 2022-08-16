@@ -60,7 +60,7 @@ class Travis::Api::App
           status 400
           false
         else
-          payload = { id: params[:id], user_id: current_user.id }
+          payload = { id: params[:id], user_id: current_user.id, restarted_by: current_user.id }
           service.push("build:restart", payload)
           status 202
           true
