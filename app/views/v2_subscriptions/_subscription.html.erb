@@ -25,24 +25,18 @@
         </dd>
         <dt class='info-label'>Next renewal date:</dt>
         <dd>
-          <% if @subscription.hybrid? && @subscription.manual? %>
-            <time>
-              <%= text_field_tag 'subscription[valid_to]', @subscription.valid_to, class: "datepicker-no-max" %>
-            </time>
-          <% else %>
-            <%= @subscription.valid_to %>
-          <% end %>
+          <time>
+            <%= text_field_tag 'subscription[valid_to]', @subscription.valid_to, class: "datepicker-no-max" %>
+          </time>
         </dd>
         <dt class='info-label'>First purchase:</dt>
         <dd>
           <%= @subscription.created_at %>
         </dd>
-        <% if @subscription.hybrid? %>
-          <dt class='info-label'>Status:</dt>
-          <dd>
-            <%= select_tag "subscription[status]", options_for_select(@subscription.status_options, @subscription.status), class: 'plan-dropdown' %>
-          </dd>
-        <% end %>
+        <dt class='info-label'>Status:</dt>
+        <dd>
+          <%= select_tag "subscription[status]", options_for_select(@subscription.status_options, @subscription.status), class: 'plan-dropdown' %>
+        </dd>
         <dt class='info-label'>Owner:</dt>
         <dd>
           <%= link_to describe(@subscription.owner), @subscription.owner %>
@@ -84,8 +78,8 @@
             <% end %>
           <% end %>
         <% end %>
-        <% if auto_refill_addon %>
-          <%= render partial: 'v2_subscriptions/auto_refill_addon', locals: {addon: auto_refill_addon } %>
+        <% if auto_refill_addon && !@subscription.manual? %>
+          <%= render partial: 'v2_subscriptions/auto_refill_addon', locals: { addon: auto_refill_addon, auto_refill_enabled: @subscription.auto_refill_enabled } %>
         <% end %>
       <% else %>
         <dl class='simple-info'>

@@ -16,6 +16,18 @@ document.addEventListener('DOMContentLoaded', function(){
   }).on('ajax:success', function(e, response, status, xhr) {
     window.history.pushState({ href: this.href, content: this.dataset.content }, null, this.href);
     $('#' + this.dataset.content).html(response);
+    $('.datepicker').datepicker({
+			dateFormat: 'yy-mm-dd',
+			maxDate: '0',
+			onSelect: function(dateText, inst){
+				$("#report_to").datepicker("option","minDate",
+					$("#report_from").datepicker("getDate"));
+			}
+	  });
+	
+	  $('.datepicker-no-max').datepicker({
+		  dateFormat: 'yy-mm-dd'
+	  });
   });
 
   // Hightlight active tab and remove highlight from unactive tab
