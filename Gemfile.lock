@@ -43,11 +43,11 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/simple_states
-  revision: 68e3087763e5e345c0949268169cb0f74a54ef6a
+  revision: b7dffc715181e54313784b315f6b7df795d01db4
   branch: 6.1
   specs:
     simple_states (1.0.2)
-      activesupport (~> 6.1.4.5)
+      activesupport (~> 6.1.6.1)
 
 GIT
   remote: https://github.com/travis-ci/travis-amqp
@@ -103,12 +103,12 @@ GEM
     active_model_serializers (0.9.8)
       activemodel (>= 3.2)
       concurrent-ruby (~> 1.0)
-    activemodel (6.1.4.6)
-      activesupport (= 6.1.4.6)
-    activerecord (6.1.4.6)
-      activemodel (= 6.1.4.6)
-      activesupport (= 6.1.4.6)
-    activesupport (6.1.4.6)
+    activemodel (6.1.6.1)
+      activesupport (= 6.1.6.1)
+    activerecord (6.1.6.1)
+      activemodel (= 6.1.6.1)
+      activesupport (= 6.1.6.1)
+    activesupport (6.1.6.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -294,7 +294,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2022.0105)
     mini_portile2 (2.8.0)
-    minitest (5.16.2)
+    minitest (5.16.3)
     mocha (1.13.0)
     msgpack (1.4.5)
     multi_json (1.15.0)
@@ -444,7 +444,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers (~> 0.9.8)
-  activerecord (~> 6.1.4.5)
+  activerecord (~> 6.1.6.1)
   addressable (~> 2.8.0)
   allocation_tracer
   bunny (~> 2.9.2)
