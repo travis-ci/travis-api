@@ -43,11 +43,11 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/simple_states
-  revision: 68e3087763e5e345c0949268169cb0f74a54ef6a
+  revision: b7dffc715181e54313784b315f6b7df795d01db4
   branch: 6.1
   specs:
     simple_states (1.0.2)
-      activesupport (~> 6.1.4.5)
+      activesupport (~> 6.1.6.1)
 
 GIT
   remote: https://github.com/travis-ci/travis-amqp
@@ -65,7 +65,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-github_apps
-  revision: c96dc9330849ff3e2ccd7c9d00005a1a96c1a4b6
+  revision: 929dadf0b4f60ca4240d52a11fc032917ff3f83a
+  branch: ga-ext_access
   specs:
     travis-github_apps (0.2.1)
       activesupport (>= 3.2)
@@ -102,12 +103,12 @@ GEM
     active_model_serializers (0.9.8)
       activemodel (>= 3.2)
       concurrent-ruby (~> 1.0)
-    activemodel (6.1.4.6)
-      activesupport (= 6.1.4.6)
-    activerecord (6.1.4.6)
-      activemodel (= 6.1.4.6)
-      activesupport (= 6.1.4.6)
-    activesupport (6.1.4.6)
+    activemodel (6.1.6.1)
+      activesupport (= 6.1.6.1)
+    activerecord (6.1.6.1)
+      activemodel (= 6.1.6.1)
+      activesupport (= 6.1.6.1)
+    activesupport (6.1.6.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -134,7 +135,7 @@ GEM
       descendants_tracker (~> 0.0.1)
     composite_primary_keys (13.0.3)
       activerecord (~> 6.1.0)
-    concurrent-ruby (1.1.9)
+    concurrent-ruby (1.1.10)
     connection_pool (2.2.5)
     crack (0.4.5)
       rexml
@@ -155,7 +156,7 @@ GEM
     excon (0.91.0)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
-    faraday (1.9.3)
+    faraday (1.10.0)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -171,8 +172,8 @@ GEM
     faraday-em_synchrony (1.0.0)
     faraday-excon (1.1.0)
     faraday-httpclient (1.0.1)
-    faraday-multipart (1.0.3)
-      multipart-post (>= 1.2, < 3)
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
     faraday-net_http (1.0.1)
     faraday-net_http_persistent (1.2.0)
     faraday-patron (1.0.0)
@@ -262,11 +263,11 @@ GEM
       ffi-compiler (>= 1.0, < 2.0)
     httpclient (2.8.3)
     hurley (0.2)
-    i18n (1.10.0)
+    i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     ipaddress (0.8.3)
-    jwt (2.3.0)
+    jwt (2.4.1)
     kgio (2.11.4)
     knapsack (4.0.0)
       rake
@@ -293,11 +294,11 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2022.0105)
     mini_portile2 (2.8.0)
-    minitest (5.15.0)
+    minitest (5.16.3)
     mocha (1.13.0)
     msgpack (1.4.5)
     multi_json (1.15.0)
-    multipart-post (2.1.1)
+    multipart-post (2.2.3)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     nakayoshi_fork (0.0.4)
@@ -414,7 +415,7 @@ GEM
     timecop (0.9.4)
     tool (0.2.3)
     travis-rollout (0.0.2)
-    tzinfo (2.0.4)
+    tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     uber (0.0.15)
     unf (0.1.4)
@@ -436,14 +437,14 @@ GEM
     webrick (1.7.0)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.5.4)
+    zeitwerk (2.6.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   active_model_serializers (~> 0.9.8)
-  activerecord (~> 6.1.4.5)
+  activerecord (~> 6.1.6.1)
   addressable (~> 2.8.0)
   allocation_tracer
   bunny (~> 2.9.2)
