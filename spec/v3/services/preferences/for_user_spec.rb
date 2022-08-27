@@ -38,6 +38,30 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "@representation" => "standard",
             "name" => "private_insights_visibility",
             "value" => "private"
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/insights_scan_notifications",
+            "@representation" => "standard",
+            "name" => "insights_scan_notifications",
+            "value" => true
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/insights_time_zone",
+            "@representation" => "standard",
+            "name" => "insights_time_zone",
+            "value" => ""
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/insights_date_format",
+            "@representation" => "standard",
+            "name" => "insights_date_format",
+            "value" => "DD/MM/YYYY"
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/insights_time_format",
+            "@representation" => "standard",
+            "name" => "insights_time_format",
+            "value" => "HH:mm:ss"
           }
         ]
       )
@@ -49,6 +73,10 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
       user.preferences.update(:build_emails, false)
       user.preferences.update(:consume_oss_credits, false)
       user.preferences.update(:private_insights_visibility, 'public')
+      user.preferences.update(:insights_scan_notifications, false)
+      user.preferences.update(:insights_time_zone, '(GMT-12:00) Etc/GMT+12')
+      user.preferences.update(:insights_date_format, 'YYYY/MM/DD')
+      user.preferences.update(:insights_time_format, 'h:mm:ss A')
       get("/v3/preferences", {}, auth_headers)
     end
 
@@ -78,6 +106,30 @@ describe Travis::API::V3::Services::Preferences::ForUser, set_app: true do
             "@representation" => "standard",
             "name" => "private_insights_visibility",
             "value" => "public"
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/insights_scan_notifications",
+            "@representation" => "standard",
+            "name" => "insights_scan_notifications",
+            "value" => false
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/insights_time_zone",
+            "@representation" => "standard",
+            "name" => "insights_time_zone",
+            "value" => "(GMT-12:00) Etc/GMT+12"
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/insights_date_format",
+            "@representation" => "standard",
+            "name" => "insights_date_format",
+            "value" => "YYYY/MM/DD"
+          }, {
+            "@type" => "preference",
+            "@href" => "/v3/preference/insights_time_format",
+            "@representation" => "standard",
+            "name" => "insights_time_format",
+            "value" => "h:mm:ss A"
           }
         ]
       )
