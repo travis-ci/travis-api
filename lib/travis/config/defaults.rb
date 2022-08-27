@@ -88,7 +88,8 @@ module Travis
             force_authentication: false,
             yml:                  { url: 'https://yml.travis-ci.org', token: 'secret', auth_key: 'abc123' },
             read_only:            ENV['READ_ONLY'] || false,
-            vcs: {}
+            vcs: {},
+            artifacts:            { url: 'http://artifacts:5001', auth_key: 'VALIDTOKEN' }
 
     default :_access => [:key]
 

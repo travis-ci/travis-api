@@ -426,5 +426,25 @@ module Travis::API::V3
       route '/leads'
       post :create
     end
+
+    hidden_resource :artifacts do
+      route '/artifacts'
+
+      hidden_resource :artifacts_config, as: :config do
+        route '/config'
+
+        post :create, '/create'
+        post :update, '/update'
+      end
+
+      hidden_resource :artifacts_image do
+        route '/{image_name}'
+
+        get :logs, '/logs'
+        get :info, '/info'
+        get :build_status, '/build_status'
+        delete :delete
+      end
+    end
   end
 end
