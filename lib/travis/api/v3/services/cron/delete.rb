@@ -6,7 +6,7 @@ module Travis::API::V3
 
       access_control.permissions(cron).delete!
       cron.destroy
-      deleted
+      no_content
     end
   end
 end
