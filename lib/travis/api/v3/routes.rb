@@ -311,6 +311,16 @@ module Travis::API::V3
       end
     end
 
+    hidden_resource :custom_keys do
+      route '/custom_keys'
+      post   :create
+    end
+
+    hidden_resource :custom_key do
+      route '/custom_key/{id}'
+      delete   :delete
+    end
+
     hidden_resource :beta_migration_requests do
       route '/beta_migration_requests'
 

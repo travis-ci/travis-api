@@ -23,6 +23,8 @@ module Travis::API::V3
     CreditsCalculator     = Module.new { extend Services }
     Cron                  = Module.new { extend Services }
     Crons                 = Module.new { extend Services }
+    CustomKey             = Module.new { extend Services }
+    CustomKeys            = Module.new { extend Services }
     EmailSubscription     = Module.new { extend Services }
     EnvVar                = Module.new { extend Services }
     EnvVars               = Module.new { extend Services }
