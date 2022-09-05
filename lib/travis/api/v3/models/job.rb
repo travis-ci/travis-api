@@ -1,4 +1,5 @@
 require 'travis/config/defaults'
+require 'travis/api/v3/models/user'
 
 module Travis::API::V3
   class Models::JobConfig < Model
@@ -64,6 +65,10 @@ module Travis::API::V3
 
     def migrated?
       !!org_id
+    end
+
+    def restarter
+      @restarter ||= Travis::API::V3::Models::User.find(restarted_by) if restarted_by
     end
 
     private def enterprise?
