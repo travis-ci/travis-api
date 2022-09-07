@@ -16,12 +16,12 @@ module Travis::API::V3
 
     def call(env)
       ::Metriks.meter("api.v3.total_requests").mark
+      metrics = @metrics_processor.create
 
       return service_index(env) if env['PATH_INFO'.freeze] == ?/.freeze
 
       process_txt_extension!(env)
 
-      metrics         = @metrics_processor.create
       access_control  = AccessControl.new(env)
       env_params      = params(env)
       factory, params = routes.factory_for(env['REQUEST_METHOD'.freeze], env['PATH_INFO'.freeze])
