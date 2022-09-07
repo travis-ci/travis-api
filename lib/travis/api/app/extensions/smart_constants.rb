@@ -15,7 +15,7 @@ class Travis::Api::App
       end
 
       def register(*list, &block)
-         super(*resolve_constants(list, Extensions), &block)
+        super(*resolve_constants(list, Extensions), &block)
       end
 
       private
