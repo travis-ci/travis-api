@@ -36,6 +36,6 @@ class SettingsController < ApplicationController
   private
 
   def settings_params
-    params.require(:settings).permit(*Settings::BINARY, *Settings::INTEGER)
+    params.require(:settings).permit(*Settings::FIELDS.keys)
   end
 end
