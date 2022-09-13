@@ -21,10 +21,11 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/gh
-  revision: 38fb339510ff9ae67cb08c6df7698f4c393f5a44
+  revision: 482ccbc8159c73fd5e651476692c6ea3d9f416a8
+  branch: tcie30-0_15_1
   specs:
     gh (0.15.1)
-      addressable (~> 2.4)
+      addressable (~> 2.4.0)
       backports
       faraday (~> 0.8)
       multi_json (~> 1.0)
@@ -102,8 +103,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    addressable (2.5.2)
-      public_suffix (>= 2.0.2, < 4.0)
+    addressable (2.4.0)
     aggregate (0.2.2)
     allocation_tracer (0.6.3)
     amq-protocol (2.3.0)
@@ -114,7 +114,7 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    backports (3.8.0)
+    backports (3.23.0)
     builder (3.2.3)
     bunny (2.9.2)
       amq-protocol (~> 2.3.0)
@@ -145,7 +145,7 @@ GEM
     excon (0.60.0)
     factory_girl (2.4.2)
       activesupport
-    faraday (0.15.3)
+    faraday (0.17.5)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
@@ -262,8 +262,8 @@ GEM
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     msgpack (1.2.4)
-    multi_json (1.13.1)
-    multipart-post (2.0.0)
+    multi_json (1.15.0)
+    multipart-post (2.2.3)
     mustermann (1.0.0.beta2)
     nakayoshi_fork (0.0.3)
     net-http-persistent (2.9.4)
@@ -285,7 +285,6 @@ GEM
     pry-byebug (3.6.0)
       byebug (~> 10.0)
       pry (~> 0.10)
-    public_suffix (3.0.3)
     pusher (0.14.6)
       httpclient (~> 2.5)
       multi_json (~> 1.0)

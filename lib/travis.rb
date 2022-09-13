@@ -25,6 +25,7 @@ module Travis
   require 'travis/github'
   require 'travis/notification'
   require 'travis/services'
+  require 'patches/gh/token_check'
 
   class UnknownRepository < StandardError; end
   class GithubApiError    < StandardError; end
