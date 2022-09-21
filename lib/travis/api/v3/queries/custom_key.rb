@@ -1,16 +1,16 @@
 module Travis::API::V3
   class Queries::CustomKey < Query
     def create(params)
-      raise UnprocessableEntity unless Travis::API::V3::Models::CustomKey.where(name: params['name'], owner_id: params['owner_id'], owner_type: params['owner_type']).count.zero?
+      raise UnprocessableEntity, 'Key with this identifier already exists.' unless Travis::API::V3::Models::CustomKey.where(name: params['name'], owner_id: params['owner_id'], owner_type: params['owner_type']).count.zero?
 
       if params['owner_type'] == 'User'
         org_ids = User.find(params['owner_id']).organizations.map(&:id)
 
-        raise UnprocessableEntity unless Travis::API::V3::Models::CustomKey.where(name: params['name'], owner_id: org_ids, owner_type: 'Organization').count.zero?
+        raise UnprocessableEntity, 'Key with this identifier already exists in one of your organizations.' unless Travis::API::V3::Models::CustomKey.where(name: params['name'], owner_id: org_ids, owner_type: 'Organization').count.zero?
       elsif params['owner_type'] == 'Organization'
-        user_ids = Membership.where(organization_id: params['owner_id']).map(&:id)
+        user_ids = Membership.where(organization_id: params['owner_id']).map(&:user_id)
 
-        raise UnprocessableEntity unless Travis::API::V3::Models::CustomKey.where(name: params['name'], owner_id: user_ids, owner_type: 'User').count.zero?
+        raise UnprocessableEntity, 'Key with this identifier already exists for your user.' unless Travis::API::V3::Models::CustomKey.where(name: params['name'], owner_id: user_ids, owner_type: 'User').count.zero?
       end
 
       key = Travis::API::V3::Models::CustomKey.new.save_key!(
@@ -34,7 +34,7 @@ module Travis::API::V3
 
     def handle_errors(key)
       private_key = key.errors[:private_key]
-      raise UnprocessableEntity if private_key.include?('invalid_pem')
+      raise UnprocessableEntity, 'This key is not a private key.' if private_key.include?('invalid_pem')
       raise WrongParams         if private_key.include?('missing_attr')
     end
   end
