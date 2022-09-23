@@ -44,6 +44,9 @@ module Travis::API::V3
         source: key,
         source_changes: {
           action: 'delete',
+          name: key.name,
+          owner_type: key.owner_type,
+          owner_id: key.owner_id,
           fingerprint: key.fingerprint
         }
       )
