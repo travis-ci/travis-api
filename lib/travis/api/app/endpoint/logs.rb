@@ -9,6 +9,14 @@ class Travis::Api::App
         resource = service(:find_log, id: params[:id]).run
         job = resource ? Job.find(resource.job_id) : nil
 
+        halt 404 unless job
+
+        repo = Travis::API::V3::Models::Repository.find(job.repository.id)
+        repo_can_write = current_user ? !!repo.users.where(id: current_user.id, permissions: { push: true }).first : false
+
+        raise LogExpired if repo.user_settings.job_log_time_based_limit && job.started_at && job.started_at < Time.now - repo.user_settings.job_log_access_older_than_days.days
+        raise LogAccessDenied if repo.user_settings.job_log_access_based_limit && !repo_can_write
+
         if !resource || ((job.try(:private?) || !allow_public?) && !has_permission?(job))
           halt 404
         elsif resource.removed_at && accepts?('application/json')
@@ -17,7 +25,7 @@ class Travis::Api::App
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain')
-            redirect resource.archived_url, 307
+            respond_with resource.archived_log_content
           elsif accepts?('application/json')
             respond_with resource.as_json
           else
