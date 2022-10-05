@@ -10,6 +10,7 @@ class SettingsController < ApplicationController
         if current_settings.attributes[setting_name] != setting_value
           response = Services::Settings::Update.new(@repository, setting_name, setting_value).call
           Services::AuditTrail::UpdateRepositorySetting.new(current_user, @repository, setting_name, current_settings.attributes[setting_name], setting_value, params[:reason]).call
+          ::Audit.create!(owner: current_user, change_source: 'admin-v2', source: @repository, source_changes: { settings: { :"#{setting_name}" => { before: current_settings.attributes[setting_name], after: setting_value } } })
           if response.success?
             flash[:notice] = "Updated settings for #{@repository.slug}"
           else
@@ -35,6 +36,6 @@ class SettingsController < ApplicationController
   private
 
   def settings_params
-    params.require(:settings).permit(*Settings::BINARY, *Settings::INTEGER)
+    params.require(:settings).permit(*Settings::FIELDS.keys)
   end
 end

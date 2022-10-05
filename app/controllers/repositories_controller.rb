@@ -113,6 +113,11 @@ class RepositoriesController < ApplicationController
     render_either 'users'
   end
 
+  def changelog
+    @changelog = ::Audit.where(source: @repository).order('id DESC')
+    render_either 'repositories/changelog'
+  end
+
   def update_user_permissions
     current_user_ids = @repository.users.pluck(:id)
     allowed_user_ids = params[:allowed_users] || []

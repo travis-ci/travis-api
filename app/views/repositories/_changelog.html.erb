@@ -1,0 +1,29 @@
+<h2 class='info-header'>Changelog</h2>
+
+<% unless @changelog.empty? %>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>Author</th>
+        <th>Change Source</th>
+        <th>Changes</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @changelog.each do |change| %>
+        <tr class="change-reason-table">
+          <td><%= change.id %></td>
+          <td><%= format_time(change.created_at) %></td>
+          <td><%= describe(change.owner) %></td>
+          <td><%= change.change_source %></td>
+          <td><%= change.human_changes.gsub("\n", '<br />').html_safe %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  None.
+<% end %>

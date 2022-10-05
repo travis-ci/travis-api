@@ -151,18 +151,15 @@
   <h2 class="info-header">Settings</h2>
     <%= form_for :settings, url: {controller: "settings", action: "update"}, html: {class: "inline-list"} do |f| %>
   <div>
-    <% Settings::BINARY.each do |key| %>
+    <% Settings::FIELDS.each do |key, value| %>
       <% next if key == 'share_ssh_keys_with_forks' && !@repository.private? %>
       <p>
-        <%= f.check_box key, checked: @settings.send(key) %>
-        <%= f.label key %>
-      </p>
-    <% end %>
-
-    <% Settings::INTEGER.each do |key| %>
-      <p>
-        <%= f.text_field key, value: @settings.send(key) %>
-        <%= f.label key %>
+        <% if value[:type] == :BINARY %>
+          <%= f.check_box key, checked: @settings.send(key) %>
+        <% else %>
+          <%= f.text_field key, value: @settings.send(key) %>
+        <% end %>
+        <%= f.label value[:description] || key %>
       </p>
     <% end %>
     </div>

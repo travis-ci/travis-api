@@ -86,6 +86,7 @@ Rails.application.routes.draw do
       get  'caches'
       get  'requests'
       get  'users'
+      get  'changelog'
     end
 
     resource :trace, only: [], module: :repositories do
