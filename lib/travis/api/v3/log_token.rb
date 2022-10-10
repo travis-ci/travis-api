@@ -3,15 +3,16 @@ module Travis::API::V3
     attr_accessor :job_id, :repo_can_write
 
     def self.find(token)
-      values = redis.smembers("l:#{token}")
-      new(values[0].to_i, !!values[1])
+      key = "l:#{token}"
+      new(redis.hget(key, :job_id).to_i, !!redis.hget(key, :repo_can_write))
     end
 
     def self.create(job, user_id)
       repo_can_write = !!job.repository.users.where(id: user_id, permissions: { push: true }).first
 
       token = SecureRandom.urlsafe_base64(16)
-      redis.sadd("l:#{token}", [job.id, repo_can_write])
+      redis.hset("l:#{token}", :job_id, job_id)
+      redis.hset("l:#{token}", :repo_can_write, repo_can_write)
       redis.expire("l:#{token}", 1.day)
       token
     end
