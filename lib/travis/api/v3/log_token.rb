@@ -11,7 +11,7 @@ module Travis::API::V3
       repo_can_write = !!job.repository.users.where(id: user_id, permissions: { push: true }).first
 
       token = SecureRandom.urlsafe_base64(16)
-      redis.hset("l:#{token}", :job_id, job_id)
+      redis.hset("l:#{token}", :job_id, job.id)
       redis.hset("l:#{token}", :repo_can_write, repo_can_write)
       redis.expire("l:#{token}", 1.day)
       token
