@@ -82,6 +82,9 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
     remote = double('remote')
     allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
     allow(remote).to receive(:find_by_job_id).and_return(Travis::RemoteLog.new(log_from_api))
+    repository = Travis::API::V3::Models::Repository.find(repo.id)
+    repository.user_settings.update(:job_log_time_based_limit, true)
+    repository.save!
   end
   after do
     Fog.unmock!
