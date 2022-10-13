@@ -10,7 +10,11 @@
       <% @logs.each do |log| %>
         <li>
           <b><%= log.delete('time') %></b> |
-          <%= link_to log.delete('admin_login'), user_path(log.delete('admin_id')) %> |
+          <% admin_id = log.delete('admin_id') %>
+          <% admin_login = log.delete('admin_login') || admin_id %>
+          <% if admin_id.present? %>
+            <%= link_to admin_login, user_path(admin_id) %> |
+          <% end %>
           <%= log.delete('message') %> |
           <%= log.map { |k, v| '%s=%s' % [k, v] }.join ' ' %>
         </li>

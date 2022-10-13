@@ -6,7 +6,7 @@ class AuditTrailController < ApplicationController
   private
 
   def fmt(log)
-    Logfmt.parse(log)
+    log.starts_with?('<') ? { 'message' => log } : Logfmt.parse(log)
   end
 
   def redis
