@@ -25,7 +25,7 @@ module Travis::API::V3
       if raw_log_href !~ /^\/v3/
         raw_log_href = "/v3#{raw_log_href}"
       end
-      if enterprise? || model.repository_private?
+      if enterprise? || model.repository_private? || model.repository.user_settings.job_log_access_based_limit
         token = LogToken.create(model.job, access_control&.user&.id)
         raw_log_href += "?log.token=#{token}"
       end
