@@ -5,7 +5,7 @@ module Travis::API::V3
   class AccessControl::LogToken < AccessControl::Generic
     auth_type('log.token')
 
-    attr_accessor :token
+    attr_accessor :token, :repo_can_write
 
     def self.for_request(type, token, env)
       new(token)
@@ -13,6 +13,7 @@ module Travis::API::V3
 
     def initialize(token)
       self.token = token
+      self.repo_can_write = Travis::API::V3::LogToken.find(token).repo_can_write
     end
 
     def temp_access?

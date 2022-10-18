@@ -27,6 +27,10 @@ module Travis::API::V3::Models
       job.repository.private?
     end
 
+    def repository
+      @repository ||= Travis::API::V3::Models::Repository.find(job.repository.id)
+    end
+
     private
 
     def archived_log_part

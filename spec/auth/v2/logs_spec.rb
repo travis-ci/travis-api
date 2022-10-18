@@ -32,6 +32,9 @@ describe 'v2 logs', auth_helpers: true, api_version: :v2, set_app: true do
     allow(remote).to receive(:find_by_job_id).and_return(Travis::RemoteLog.new(log_from_api))
     allow(remote).to receive(:find_by_id).and_return(Travis::RemoteLog.new(log_from_api))
     allow(remote).to receive(:fetch_archived_log_content).and_return(archived_content)
+    repository = Travis::API::V3::Models::Repository.find(repo.id)
+    repository.user_settings.update(:job_log_time_based_limit, true)
+    repository.save!
   end
 
   describe 'in public mode, with a private repo', mode: :public, repo: :private do

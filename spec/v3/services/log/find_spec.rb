@@ -224,7 +224,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
             user_settings.user = user
             user_settings.change_source = 'travis-api'
-            user_settings.update(:job_log_time_based_limit, true)
+            user_settings.update(:job_log_time_based_limit, false)
             user_settings.update(:job_log_access_based_limit, false)
           end
 
@@ -255,7 +255,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
             user_settings.user = user
             user_settings.change_source = 'travis-api'
-            user_settings.update(:job_log_time_based_limit, true)
+            user_settings.update(:job_log_time_based_limit, false)
             user_settings.update(:job_log_access_based_limit, true)
           end
 
@@ -313,7 +313,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
             user_settings.user = user
             user_settings.change_source = 'travis-api'
-            user_settings.update(:job_log_time_based_limit, false)
+            user_settings.update(:job_log_time_based_limit, true)
             user_settings.update(:job_log_access_based_limit, true)
           end
 
@@ -367,7 +367,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
             user_settings.user = user
             user_settings.change_source = 'travis-api'
-            user_settings.update(:job_log_time_based_limit, false)
+            user_settings.update(:job_log_time_based_limit, true)
             user_settings.update(:job_log_access_based_limit, false)
           end
 
@@ -399,7 +399,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
             user_settings.user = user
             user_settings.change_source = 'travis-api'
-            user_settings.update(:job_log_time_based_limit, true)
+            user_settings.update(:job_log_time_based_limit, false)
             user_settings.update(:job_log_access_based_limit, false)
           end
 
@@ -435,7 +435,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
             user_settings.user = user
             user_settings.change_source = 'travis-api'
-            user_settings.update(:job_log_time_based_limit, true)
+            user_settings.update(:job_log_time_based_limit, false)
             user_settings.update(:job_log_access_based_limit, true)
           end
 
@@ -494,7 +494,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
             user_settings.user = user
             user_settings.change_source = 'travis-api'
-            user_settings.update(:job_log_time_based_limit, false)
+            user_settings.update(:job_log_time_based_limit, true)
             user_settings.update(:job_log_access_based_limit, true)
           end
 
@@ -549,7 +549,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             user_settings = Travis::API::V3::Models::Repository.find(repo.id).user_settings
             user_settings.user = user
             user_settings.change_source = 'travis-api'
-            user_settings.update(:job_log_time_based_limit, false)
+            user_settings.update(:job_log_time_based_limit, true)
             user_settings.update(:job_log_access_based_limit, false)
           end
 
