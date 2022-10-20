@@ -79,6 +79,7 @@ module Travis
             services:             { find_requests: { max_limit: 100, default_limit: 25 } },
             settings:             { timeouts: { defaults: { hard_limit: 50, log_silence: 10 }, maximums: { hard_limit: 180, log_silence: 60 } },
                                     rate_limit: { defaults: { api_builds: 10 }, maximums: { api_builds: 200 } } },
+            scanner:              { url: 'http://scanner:3000', auth_token: 'VALIDTOKEN' },
             endpoints:            {},
             oauth2:               {},
             webhook:              { public_key: nil },
