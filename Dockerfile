@@ -18,8 +18,7 @@ RUN ( \
    apt-get upgrade -y ; \
    apt-get install -y --no-install-recommends git make gcc g++ libpq-dev libjemalloc-dev \
    && rm -rf /var/lib/apt/lists/*; \
-   gem unsinstall bundler --all; \
-   gem install bundler -v '2.3.34'; \
+   gem update --system; \
    bundle config set without 'development test'; \
    bundler install --verbose --retry=3; \
    bundle config set frozen true; \
