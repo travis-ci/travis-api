@@ -1,9 +1,9 @@
 module Travis::API::V3
   class Renderer::Repository < ModelRenderer
     representation(:minimal,  :id, :name, :slug)
-    representation(:standard, :id, :name, :slug, :description, :github_id, :vcs_id, :vcs_type, :github_language, :active, :private, :owner, :owner_name, :vcs_name, :default_branch, :starred, :managed_by_installation, :active_on_org, :migration_status, :history_migration_status, :shared, :config_validation)
-    representation(:experimental, :id, :name, :slug, :description, :vcs_id, :vcs_type, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build, :next_build_number)
-    representation(:internal, :id, :name, :slug, :github_id, :vcs_id, :vcs_type, :active, :private, :owner, :default_branch, :private_key, :token, :user_settings)
+    representation(:standard, :id, :name, :slug, :description, :github_id, :vcs_id, :vcs_type, :github_language, :active, :private, :owner, :owner_name, :vcs_name, :default_branch, :starred, :managed_by_installation, :active_on_org, :migration_status, :history_migration_status, :shared, :config_validation, :server_type)
+    representation(:experimental, :id, :name, :slug, :description, :vcs_id, :vcs_type, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build, :next_build_number, :server_type)
+    representation(:internal, :id, :name, :slug, :github_id, :vcs_id, :vcs_type, :active, :private, :owner, :default_branch, :private_key, :token, :user_settings, :server_type)
     representation(:additional, :allow_migration)
 
     hidden_representations(:experimental, :internal)
@@ -75,10 +75,16 @@ module Travis::API::V3
       if included_owner? and owner_href
         { :@href => owner_href }
       else
-        result = { :@type => owner_type, :id => model.owner_id, :login => model.owner_name }
+        result = { :@type => owner_type, :id => model.owner_id, :login => model.owner_name, :ro_mode => owner_ro_mode }
         result[:@href] = owner_href if owner_href
         result
       end
+    end
+
+    def owner_ro_mode
+      return false unless Travis.config.org? && Travis.config.read_only?
+
+      !Travis::Features.owner_active?(:read_only_disabled, model.owner)
     end
 
     def include_owner?
@@ -98,6 +104,10 @@ module Travis::API::V3
 
     def managed_by_installation
       model.managed_by_installation?
+    end
+
+    def server_type
+      model.server_type || 'git'
     end
   end
 end

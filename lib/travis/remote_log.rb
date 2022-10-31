@@ -224,14 +224,15 @@ module Travis
     end
 
     class ArchiveClient
-      def initialize(access_key_id: nil, secret_access_key: nil, bucket_name: nil)
+      def initialize(access_key_id: nil, secret_access_key: nil, bucket_name: nil, region: nil)
         @bucket_name = bucket_name
         @s3 = Fog::Storage.new(
           aws_access_key_id: access_key_id,
           aws_secret_access_key: secret_access_key,
           provider: 'AWS',
           instrumentor: ActiveSupport::Notifications,
-          connection_options: { instrumentor: ActiveSupport::Notifications }
+          connection_options: { instrumentor: ActiveSupport::Notifications },
+          region: region
         )
       end
 
@@ -318,7 +319,8 @@ module Travis
         ArchiveClient.new(
           access_key_id: archive_s3_config[:access_key_id],
           secret_access_key: archive_s3_config[:secret_access_key],
-          bucket_name: archive_s3_bucket
+          bucket_name: archive_s3_config[:bucket] || archive_s3_bucket,
+          region: archive_s3_config[:region] || 'us-east-2'
         )
       end
 

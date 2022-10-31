@@ -110,7 +110,9 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login,
-        "vcs_type"            => owner.vcs_type
+        "name"                => owner.name,
+        "vcs_type"            => owner.vcs_type,
+        "ro_mode"             => false
       }
     })}
   end
@@ -139,7 +141,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   end
 
   describe "fetching job on private repository, private API, with a log.token" do
-    let(:log_token) { Travis::API::V3::LogToken.create(job).to_s }
+    let(:log_token) { Travis::API::V3::LogToken.create(job, owner.id).to_s }
     before        { repo.update_attribute(:private, true)                   }
     before        { get("/v3/job/#{job.id}?log.token=#{log_token}", {}, {}) }
     after         { repo.update_attribute(:private, false)                  }
@@ -227,7 +229,9 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login,
-        "vcs_type"            => owner.vcs_type
+        "name"                => owner.name,
+        "vcs_type"            => owner.vcs_type,
+        "ro_mode"             => true
       }
     })}
   end
@@ -306,7 +310,9 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "@representation"     => "minimal",
         "id"                  => owner.id,
         "login"               => owner.login,
-        "vcs_type"            => owner.vcs_type
+        "name"                => owner.name,
+        "vcs_type"            => owner.vcs_type,
+        "ro_mode"             => false
       },
       "config"                => {
         "language" => "shell",
@@ -323,7 +329,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
 
   describe 'including log_complete on hosted' do
     before do
-      stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{job.id}?by=job_id&source=api").
+      stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api").
          with(  headers: {
           'Accept'=>'*/*',
           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
@@ -345,7 +351,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
 
   describe 'including log_complete on enterprise' do
     before do
-      stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{job2.id}?by=job_id&source=api").
+      stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job2.id}?by=job_id&source=api").
          with(  headers: {
           'Accept'=>'*/*',
           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',

@@ -109,6 +109,10 @@ class Repository::Settings < Travis::Settings
 
   validates_with TimeoutsValidator
 
+  def job_log_access_permissions
+    Travis.config.to_h.fetch(:job_log_access_permissions) { {} }
+  end
+
   def auto_cancel_default?
     ENV.fetch('AUTO_CANCEL_DEFAULT', 'false') == 'true'
   end

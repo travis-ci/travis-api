@@ -3,6 +3,20 @@ describe 'v1 builds', auth_helpers: true, api_version: :v1, set_app: true do
   let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }
 
+  before do
+    Travis.config.billing.url = 'http://localhost:9292/'
+    Travis.config.billing.auth_key = 'secret'
+
+    stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
+      body: MultiJson.dump(allowed: true, rejection_code: nil)
+    )
+  end
+
+  after do
+    Travis.config.billing.url = nil
+    Travis.config.billing.auth_key = nil
+  end
+
   describe 'in public mode, with a private repo', mode: :public, repo: :private do
     describe 'GET /builds' do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }

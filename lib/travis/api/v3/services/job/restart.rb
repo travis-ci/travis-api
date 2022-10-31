@@ -3,17 +3,20 @@ module Travis::API::V3
 
     def run
       job = check_login_and_find(:job)
+      return not_found if job.owner.ro_mode?
 
       access_control.permissions(job).restart!
       return repo_migrated if migrated?(job.repository)
 
       job.update_attribute(:debug_options, nil)
-      restart_status = query.restart(access_control.user)
+      result = query.restart(access_control.user)
 
-      if restart_status == "abuse_detected"
+      if result.success?
+        accepted(job: job, state_change: :restart)
+      elsif result.error == Travis::Enqueue::Services::RestartModel::ABUSE_DETECTED
         abuse_detected
       else
-        accepted(job: job, state_change: :restart)
+        insufficient_balance
       end
     end
   end

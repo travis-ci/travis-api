@@ -65,6 +65,7 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             'last_name' => 'rosas',
             'company' => '',
             'billing_email' => 'a.rosas10@gmail.com',
+            'has_local_registration' => nil,
             'zip_code' => '28450',
             'address' => 'Luis Spota',
             'address2' => '',
@@ -98,7 +99,9 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
             '@href' => "/v3/org/#{organization.id}",
             'id' => organization.id,
             'vcs_type' => organization.vcs_type,
-            'login' => 'travis'
+            'login' => 'travis',
+            'name' => organization.name,
+            'ro_mode' => true
           },
           'payment_intent' => nil
         }]

@@ -39,6 +39,20 @@ describe 'Jobs', set_app: true do
     allow(remote).to receive(:send).and_return(remote) # ignore attribute updates
   end
 
+  before do
+    Travis.config.billing.url = 'http://localhost:9292/'
+    Travis.config.billing.auth_key = 'secret'
+
+    stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
+      body: MultiJson.dump(allowed: true, rejection_code: nil)
+    )
+  end
+
+  after do
+    Travis.config.billing.url = nil
+    Travis.config.billing.auth_key = nil
+  end
+
   it '/jobs?queue=builds.common' do
     skip('querying with a queue does not appear to be used anymore')
     response = get '/jobs', { queue: 'builds.common' }, headers
@@ -71,10 +85,9 @@ describe 'Jobs', set_app: true do
   end
 
   context 'GET /jobs/:job_id/log.txt' do
-    it 'returns redirects to archived log url' do
+    it 'returns the log' do
       response = get("/jobs/#{job.id}/log.txt")
-      expect(response.status).to eq(307)
-      expect(response.location).to eq(archived_log_url)
+      expect(response.status).to eq(200)
     end
 
     it 'returns 406 (Unprocessable) if Accept header requests JSON' do
@@ -83,13 +96,14 @@ describe 'Jobs', set_app: true do
     end
 
     context 'when log is archived' do
-      it 'redirects to archive' do
+      it 'returns the log' do
         remote = double('remote')
         remote_log = double('remote log')
         expect(remote_log).to receive(:archived?).and_return(true)
         allow(remote_log).to receive(:removed_at).and_return(nil)
+        allow(remote_log).to receive(:archived_log_content).and_return(archived_content)
         allow(remote).to receive(:find_by_job_id).and_return(remote_log)
-        expect(remote_log).to receive(:archived_url).and_return("https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt")
+        allow(remote).to receive(:fetch_archived_log_content).and_return(archived_content)
         expect(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(
@@ -105,14 +119,12 @@ describe 'Jobs', set_app: true do
           {},
           { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         )
-        expect(response).to redirect_to(
-          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
-        )
+        expect(response.status).to eq(200)
       end
     end
 
     context 'when log is missing' do
-      it 'redirects to archived log url' do
+      it 'returns the log retrieved from s3' do
         stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
           .to_return(status: 404, body: '')
         response = get(
@@ -120,35 +132,7 @@ describe 'Jobs', set_app: true do
           {},
           { 'HTTP_ACCEPT' => 'text/plain; version=2' }
         )
-        expect(response.status).to eq(307)
-        expect(response.location).to eq(archived_log_url)
-      end
-    end
-
-    context 'with cors_hax param' do
-      it 'renders No Content response with location of the archived log' do
-        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api")
-          .to_return(
-            status: 200,
-            body: JSON.dump(
-              content: nil,
-              aggregated_at: Time.now,
-              archived_at: Time.now,
-              archive_verified: true
-            )
-          )
-        allow_any_instance_of(Travis::RemoteLog).to receive(:archived_url).and_return(
-          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
-        )
-        response = get(
-          "/jobs/#{job.id}/log.txt?cors_hax=true",
-          {},
-          { 'HTTP_ACCEPT' => 'text/plain; version=2' }
-        )
-        expect(response.status).to eq 204
-        expect(response.headers['Location']).to eq(
-          "https://s3.amazonaws.com/archive.travis-ci.org/jobs/#{job.id}/log.txt"
-        )
+        expect(response.status).to eq(200)
       end
     end
 

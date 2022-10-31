@@ -22,7 +22,9 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "@representation"=>"minimal",
         "id"=>user.id,
         "login"=>user.login,
-        "vcs_type" => user.vcs_type
+        "vcs_type" => user.vcs_type,
+        "ro_mode" => true,
+        "name" => user.name
       }
     }}
   end
@@ -55,9 +57,16 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "is_syncing" => nil,
         "synced_at" => nil,
         "education" => nil,
+        "allowance"   => {
+          "@representation"   => "minimal",
+          "@type"             => "allowance",
+          "id"                => 1
+        },
         "allow_migration" => false,
         "recently_signed_up" => false,
         "secure_user_hash" => nil,
+        "ro_mode" => true,
+        "confirmed_at" => nil,
       }
     }}
   end

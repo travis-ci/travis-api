@@ -20,9 +20,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 1234,
         "vcs_id"           => org.vcs_id,
         "vcs_type"         => org.vcs_type,
+        "ro_mode"          => true,
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        }
       }}
     end
 
@@ -40,9 +46,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 1234,
         "vcs_id"           => org.vcs_id,
         "vcs_type"         => org.vcs_type,
+        "ro_mode"          => true,
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        }
       }}
     end
 
@@ -65,9 +77,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"           => 1234,
         "vcs_id"              => org.vcs_id,
         "vcs_type"            => org.vcs_type,
+        "ro_mode"             => true,
         "avatar_url"          => nil,
         "education"           => false,
         "allow_migration"     => false,
+        "allowance"           => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        },
         "repositories"        => [{
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -98,6 +116,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "github_language"   => nil,
           "active"            => false,
           "private"           => false,
+          "server_type"       => 'git',
           "shared"            => false,
           "owner"             => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"    => {
@@ -134,9 +153,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"         => 1234,
         "vcs_id"            => org.vcs_id,
         "vcs_type"          => org.vcs_type,
+        "ro_mode"           => true,
         "avatar_url"        => nil,
         "education"         => false,
         "allow_migration"   => false,
+        "allowance"         => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        },
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
@@ -167,6 +192,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "github_language" => nil,
           "active"          => false,
           "private"         => false,
+          "server_type"     => 'git',
           "shared"          => false,
           "owner"           => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"  => {
@@ -198,9 +224,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 1234,
         "vcs_id"           => org.vcs_id,
         "vcs_type"         => org.vcs_type,
+        "ro_mode"          => true,
         "avatar_url"       => nil,
         "education"        => false,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        }
       }}
     end
 
@@ -222,9 +254,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"      => 1234,
         "vcs_id"         => org.vcs_id,
         "vcs_type"       => org.vcs_type,
+        "ro_mode"        => true,
         "avatar_url"     => nil,
         "education"      => false,
         "allow_migration"=> false,
+        "allowance"      => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => org.id
+        },
         "@warnings"      => [{
           "@type"        => "warning",
           "message"      => "query parameter organization.id not safelisted, ignored",
@@ -259,8 +297,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "synced_at"      => nil,
         "education"      => nil,
         "allow_migration"=> false,
+        "allowance"      => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => user.id
+        },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode" => false,
+        "confirmed_at" => nil,
       }}
     end
 
@@ -284,8 +329,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "is_syncing"     => nil,
         "synced_at"      => nil,
         "allow_migration"=> false,
+        "allowance"      => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => user.id
+        },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode" => false,
+        "confirmed_at" => nil,
       }}
     end
 
@@ -309,8 +361,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "is_syncing"       => nil,
         "synced_at"        => nil,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => user.id
+        },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode" => false,
+        "confirmed_at" => nil,
       }}
     end
 
@@ -338,8 +397,15 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "is_syncing"       => nil,
         "synced_at"        => nil,
         "allow_migration"  => false,
+        "allowance"        => {
+          "@type"             => "allowance",
+          "@representation"   => "minimal",
+          "id"                => user.id
+        },
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "ro_mode"          => false,
+        "confirmed_at" => nil,
         "@warnings"        => [{
           "@type"          => "warning",
           "message"        => "query parameter user.id not safelisted, ignored",

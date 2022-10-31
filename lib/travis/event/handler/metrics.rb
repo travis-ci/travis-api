@@ -41,7 +41,11 @@ module Travis
 
           def meter(events, started_at, finished_at)
             events.each do |event|
-              Travis::Metrics.meter(event, started_at: started_at, finished_at: finished_at)
+              if finished_at
+                Metriks.timer(event).update(finished_at - started_at)
+              else
+                Metriks.timer(event).mark
+              end
             end
           end
       end

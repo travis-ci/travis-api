@@ -16,6 +16,11 @@ describe 'visibilty', set_app: true do
   before { requests[0].update(private: false) }
   before { builds[0].update(private: false) }
   before { jobs[0].update(private: false) }
+ before do
+    repository = Travis::API::V3::Models::Repository.find(repo.id)
+    repository.user_settings.update(:job_log_time_based_limit, true)
+    repository.save!
+  end
   before :each do
     Fog.mock!
     storage = Fog::Storage.new({

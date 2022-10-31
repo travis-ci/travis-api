@@ -13,6 +13,11 @@ FactoryBot.define do
     private { false }
   end
 
+  factory :build_backup do
+    repository { Repository.first || FactoryBot.create(:repository_without_last_build) }
+    sequence(:file_name) { |n| "repository_builds_#{n}-#{n + 100}" }
+  end
+
   factory :commit do
     commit { '62aae5f70ceee39123ef' }
     branch { 'master' }
@@ -23,6 +28,29 @@ FactoryBot.define do
     author_name { 'Sven Fuchs' }
     author_email { 'svenfuchs@artweb-design.de' }
     compare_url { 'https://github.com/svenfuchs/minimal/compare/master...develop' }
+  end
+
+  factory :subscription do
+    association :owner, factory: :user
+    valid_to { Time.now.utc + 1.week }
+    customer_id { 'cus_123' }
+    billing_email { 'shairyar@travis-ci.org' }
+    cc_last_digits { 111 }
+    status { 'subscribed'}
+    source { 'stripe' }
+    cc_token { 'token_123' }
+    selected_plan { 'travis-ci-one-build' }
+    country { 'Germany' }
+
+    factory :valid_stripe_subs do
+      status { 'subscribed' }
+      source { 'stripe' }
+    end
+
+    factory :canceled_stripe_subs do
+      status { 'canceled' }
+      source { 'stripe' }
+    end
   end
 
   factory :test, :class => 'Job::Test', aliases: [:job] do

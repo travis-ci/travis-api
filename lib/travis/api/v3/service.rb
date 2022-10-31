@@ -192,6 +192,10 @@ module Travis::API::V3
       rejected(Error.new(message, status: 403))
     end
 
+    def insufficient_balance(message = 'Builds have been temporarily disabled for private repositories due to a insufficient credit balance')
+      rejected(Error.new(message, status: 403))
+    end
+
     def not_implemented
       raise NotImplemented
     end

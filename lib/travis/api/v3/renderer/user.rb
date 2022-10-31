@@ -2,15 +2,15 @@ require 'travis/api/v3/renderer/owner'
 
 module Travis::API::V3
   class Renderer::User < Renderer::Owner
-    representation(:standard, :email, :is_syncing, :synced_at, :recently_signed_up, :secure_user_hash)
+    representation(:standard, :email, :is_syncing, :synced_at, :recently_signed_up, :secure_user_hash, :ro_mode, :confirmed_at)
     representation(:additional, :emails)
 
     def email
-      @model.email if current_user?
+      @model.email if show_emails?
     end
 
     def emails
-      current_user? ? @model.emails.map(&:email) : []
+      show_emails? ? @model.emails.map(&:email) : []
     end
 
     def secure_user_hash
@@ -18,7 +18,17 @@ module Travis::API::V3
       OpenSSL::HMAC.hexdigest('sha256', hmac_secret_key, @model.id.to_s) if @model.id && hmac_secret_key
     end
 
+    def ro_mode
+      return false unless Travis.config.org? && Travis.config.read_only?
+
+      current_user? ? !Travis::Features.owner_active?(:read_only_disabled, @model) : false
+    end
+
     private
+
+    def show_emails?
+      current_user? || options[:show_email] == true
+    end
 
     def current_user?
       access_control.class == Travis::API::V3::AccessControl::LegacyToken && access_control.user.id == @model.id

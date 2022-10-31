@@ -63,11 +63,13 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
         "github_language"    => nil,
         "active"             => true,
         "private"            => true,
+        "server_type"        => 'git',
         "shared"             => false,
         "owner"              => {
           "@type"            => "user",
           "@href"            => "/v3/user/#{repo.owner_id}",
           "id"               => repo.owner_id,
+          "ro_mode"          => true,
           "login"            => "svenfuchs" },
         "default_branch"     => {
           "@type"            => "branch",
