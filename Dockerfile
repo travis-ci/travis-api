@@ -16,13 +16,13 @@ COPY Gemfile*      /app/
 RUN ( \
    apt-get update ; \
    apt-get upgrade -y ; \
-   apt-get install -y --no-install-recommends git make gcc g++ libpq-dev libjemalloc-dev \
+   apt-get install -y --no-install-recommends git make gcc g++ libpq-dev libjemalloc-dev xz-utils \
    && rm -rf /var/lib/apt/lists/*; \
    gem update --system; \
    bundle config set without 'development test'; \
    bundler install --verbose --retry=3; \
    bundle config set frozen true; \
-   apt-get remove -y gcc g++ make git perl && apt-get -y autoremove; \
+   apt-get remove -y gcc g++ make git perl xz-utils && apt-get -y autoremove; \
    bundle clean && rm -rf /app/vendor/bundle/ruby/2.7.0/cache/*; \
    for i in `find /app/vendor/ -name \*.o -o -name \*.c -o -name \*.h`; do rm -f $i; done; \
 )
