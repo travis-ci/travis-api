@@ -32,7 +32,7 @@ describe 'v2 jobs', auth_helpers: true, api_version: :v2, set_app: true do
     allow(Travis::RemoteLog::Remote).to receive(:new).and_return(remote)
     allow(remote).to receive(:find_by_job_id).and_return(Travis::RemoteLog.new(log_from_api))
     allow(remote).to receive(:find_by_id).and_return(Travis::RemoteLog.new(log_from_api))
-    allow(remote).to receive(:fetch_archived_url).and_return('https://s3.amazonaws.com/STUFFS')
+    allow(remote).to receive(:fetch_archived_log_content).and_return(archived_content)
   end
 
   before { Job.update_all(state: :started) }
@@ -58,7 +58,7 @@ describe 'v2 jobs', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /jobs/%{job.id}/log' do
-      it(:with_permission)    { should auth status: [200, 307], type: :json, empty: false }
+      it(:with_permission)    { should auth status: 200, type: [:json, :text], empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
@@ -81,8 +81,8 @@ describe 'v2 jobs', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /jobs/%{job.id}/log' do
-      it(:with_permission)    { should auth status: [200, 307], type: :json, empty: false }
-      it(:without_permission) { should auth status: [200, 307], type: :json, empty: false }
+      it(:with_permission)    { should auth status: 200, type: [:json, :text], empty: false }
+      it(:without_permission) { should auth status: 200, type: [:json, :text], empty: false }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
     end
@@ -104,7 +104,7 @@ describe 'v2 jobs', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /jobs/%{job.id}/log' do
-      it(:with_permission)    { should auth status: [200, 307], type: [:json, :text], empty: false }
+      it(:with_permission)    { should auth status: 200, type: [:json, :text], empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
@@ -133,7 +133,7 @@ describe 'v2 jobs', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /jobs/%{job.id}/log' do
-      it(:with_permission)    { should auth status: [200, 307], type: :json, empty: false }
+      it(:with_permission)    { should auth status: 200, type: [:json, :text], empty: false }
       it(:without_permission) { should auth status: 404 }
       it(:invalid_token)      { should auth status: 403 }
       it(:unauthenticated)    { should auth status: 401 }
@@ -156,10 +156,10 @@ describe 'v2 jobs', auth_helpers: true, api_version: :v2, set_app: true do
     end
 
     describe 'GET /jobs/%{job.id}/log' do
-      it(:with_permission)    { should auth status: [200, 307], type: :json, empty: false }
-      it(:without_permission) { should auth status: [200, 307], type: :json, empty: false }
+      it(:with_permission)    { should auth status: 200, type: [:json, :text], empty: false }
+      it(:without_permission) { should auth status: 200, type: [:json, :text], empty: false }
       it(:invalid_token)      { should auth status: 403 }
-      it(:unauthenticated)    { should auth status: [200, 307], type: :json, empty: false }
+      it(:unauthenticated)    { should auth status: 200, type: [:json, :text], empty: false }
     end
   end
 end

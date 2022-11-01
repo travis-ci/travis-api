@@ -58,6 +58,11 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
     example 'does not clobber other things in the settings hash' do
       expect(repo.reload.settings['env_vars']).to eq(['something'])
     end
+    example 'audit is created' do
+      expect(Travis::API::V3::Models::Audit.last.source_id).to eq(repo.id)
+      expect(Travis::API::V3::Models::Audit.last.source_type).to eq('Repository')
+      expect(Travis::API::V3::Models::Audit.last.source_changes).to eq({"settings"=>{"build_pushes"=>{"after"=>false, "before"=>true}}})      
+    end
   end
 
   describe 'authenticated, existing repo, old params' do
