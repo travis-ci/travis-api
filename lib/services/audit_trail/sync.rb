@@ -8,7 +8,7 @@ module Services
       end
 
       def args
-        { user_login: Array(user).join(',') }
+        { user_login: user.is_a?(User) ? user.login : Array(user).join(',') }
       end
     end
   end
