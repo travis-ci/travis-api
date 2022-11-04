@@ -3,6 +3,9 @@ module Travis::API::V3
     params :repository_id, :offset, :limit
 
     def all
+      # Reset the scan status on viewing the reports
+      Repository.find(repository_id).update!(scan_failed_at: nil)
+
       page = (offset.to_i / limit.to_i) + 1
       scanner_client(repository_id).scan_results(
         page.to_s,
