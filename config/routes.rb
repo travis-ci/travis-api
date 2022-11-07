@@ -127,6 +127,7 @@ Rails.application.routes.draw do
       post 'unsuspend'
       post 'send_confirmation_email'
       post 'confirm_user'
+      post 'become_as_audit'
       patch 'update_keep_netrc'
 
       get 'subscription'

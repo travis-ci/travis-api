@@ -230,6 +230,11 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+  def become_as_audit
+    Services::AuditTrail::BecomeAs.new(current_user, @user.login).call
+    head :ok
+  end
+
   private
 
   def get_user
