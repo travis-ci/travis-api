@@ -76,7 +76,7 @@ module Services
       when 204
         true
       else
-        raise JSON.parse(response.body)['error']
+        raise response.body.is_a?(Hash) ? response.body['error'] : JSON.parse(response.body)['error']
       end
     end
 
