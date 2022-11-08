@@ -162,7 +162,7 @@ class UsersController < ApplicationController
 
     if response.success?
       flash[:notice] = "Triggered sync with VCS."
-      Services::AuditTrail::Sync.new(current_user, @user).call
+      Services::AuditTrail::Sync.new(current_user, [@user.login]).call
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end
