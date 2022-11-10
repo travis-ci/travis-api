@@ -6,13 +6,19 @@ module Travis::API::V3
       repository.env_vars
     end
 
-    def create(repository)
-      env_var = repository.env_vars.create(env_var_params)
+    def create(repository, from_admin = false)
+      env_vars = repository.env_vars
+      env_vars.user = repository.user_settings.user
+      env_vars.change_source = 'travis-api' unless from_admin
+      env_var = env_vars.create(env_var_params)
+
       unless env_var.valid?
         repository.env_vars.destroy(env_var.id)
         handle_errors(env_var)
       end
+
       repository.save!
+
       env_var
     end
 
