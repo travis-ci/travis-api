@@ -8,7 +8,9 @@ module Travis::API::V3
 
       env_var = find(:env_var, repository)
       access_control.permissions(env_var).write!
-      result query.update(env_var)
+      app_id = Travis::Api::App::AccessToken.find_by_token(access_control.token).app_id
+
+      result query.update(env_var, app_id == 2)
     end
   end
 end
