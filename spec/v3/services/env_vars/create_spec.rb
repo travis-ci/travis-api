@@ -66,6 +66,11 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
       )
     end
     example { expect(repo.reload.env_vars.count).to eq(0) }
+    example 'audit is created' do
+      expect(Travis::API::V3::Models::Audit.last.source_id).to eq(repo.id)
+      expect(Travis::API::V3::Models::Audit.last.source_type).to eq('Repository')
+      expect(Travis::API::V3::Models::Audit.last.source_changes).to eq({"settings"=>{"env_vars"=>{"created"=> "{\"name\"=>\"FOO\", \"value\"=>\"bar\", \"public\"=>false}"}}}) 
+    end
   end
 
   describe 'authenticated, existing repo, env var already exists' do
