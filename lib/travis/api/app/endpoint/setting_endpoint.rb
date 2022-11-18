@@ -55,11 +55,10 @@ class Travis::Api::App
 
       record.update(JSON.parse(request.body.read)[singular_name])
       if record.valid?
-        @changes = { :"env_vars" => { created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} " } }
+        @changes = { :"env_vars" => { created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} " } } if is_env_var?
 
         repo_settings.save
-        run_callbacks :after_save
-        @changes = {}
+        run_callbacks :after_save if is_env_var?
 
         respond_with(record, type: singular_name, version: :v2)
       else
@@ -73,11 +72,10 @@ class Travis::Api::App
 
       record = collection.create(JSON.parse(request.body.read)[singular_name])
       if record.valid?
-        @changes = { :"env_vars" => { created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} " } }
+        @changes = { :"env_vars" => { created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} " } } if is_env_var?
 
         repo_settings.save
-        run_callbacks :after_save
-        @changes = {}
+        run_callbacks :after_save if is_env_var?
 
         respond_with(record, type: singular_name, version: :v2)
       else
@@ -90,11 +88,10 @@ class Travis::Api::App
       disallow_migrating!(repo)
 
       record = collection.destroy(params[:id]) || record_not_found
-      @changes = { :"env_vars" => { destroyed: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} " } }
+      @changes = { :"env_vars" => { destroyed: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} " } } if is_env_var?
 
       repo_settings.save
-      run_callbacks :after_save
-      @changes = {}
+      run_callbacks :after_save if is_env_var?
 
       respond_with(record, type: singular_name, version: :v2)
     end
@@ -131,11 +128,16 @@ class Travis::Api::App
       @changes
     end
 
+    def is_env_var?
+      singular_name == 'env_var'
+    end
+
     private
 
     def save_audit
       change_source = access_token.app_id == 2 ? 'admin-v2' : 'travis-api'
       Travis::API::V3::Models::Audit.create!(owner: current_user, change_source: change_source, source: @repo, source_changes: { settings: self.changes })
+      @changes = {}
     end
   end
 end
