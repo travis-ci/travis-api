@@ -16,10 +16,9 @@ module Travis::API::V3
     end
 
     def create(attributes)
-      @changes = { :"env_vars" => { created: "#{attributes}" } }
+      @changes = { :"env_vars" => { created: "#{attributes.except("value")}" } }
       env_var = super(attributes).tap { sync! }
       run_callbacks :after_save
-      @changes = {}
       env_var
     end
 
@@ -30,10 +29,9 @@ module Travis::API::V3
 
     def destroy(id)
       env_var = find(id)
-      @changes = { :"env_vars" => { deleted: "#{env_var.attributes}" } }
+      @changes = { :"env_vars" => { deleted: "#{env_var.attributes.delete("value")}" } }
       deleted_env_var = super(id).tap { sync! }
       run_callbacks :after_save
-      @changes = {}
       deleted_env_var
     end
 
@@ -50,6 +48,7 @@ module Travis::API::V3
     def save_audit
       if self.change_source
         Travis::API::V3::Models::Audit.create!(owner: self.user, change_source: self.change_source, source: self.repository, source_changes: { settings: self.changes })
+        @changes = {}
       end
     end
   end

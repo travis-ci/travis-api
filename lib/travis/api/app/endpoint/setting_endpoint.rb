@@ -72,7 +72,7 @@ class Travis::Api::App
 
       record = collection.create(JSON.parse(request.body.read)[singular_name])
       if record.valid?
-        @changes = { :"env_vars" => { created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} " } } if is_env_var?
+        @changes = { :"env_vars" => { created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'}" } } if is_env_var?
 
         repo_settings.save
         run_callbacks :after_save if is_env_var?
