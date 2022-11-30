@@ -141,7 +141,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   end
 
   describe "fetching job on private repository, private API, with a log.token" do
-    let(:log_token) { Travis::API::V3::LogToken.create(job).to_s }
+    let(:log_token) { Travis::API::V3::LogToken.create(job, owner.id).to_s }
     before        { repo.update_attribute(:private, true)                   }
     before        { get("/v3/job/#{job.id}?log.token=#{log_token}", {}, {}) }
     after         { repo.update_attribute(:private, false)                  }
