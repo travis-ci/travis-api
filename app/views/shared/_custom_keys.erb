@@ -1,0 +1,33 @@
+<% if owner.custom_keys.present? %>
+  <table>
+    <thead>
+      <tr class="custom-keys-table-header">
+        <th>Name</th>
+        <th>Fingerprint</th>
+        <th>Added on</th>
+        <th>Added by</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% owner.custom_keys.each do |key| %>
+        <tr class="custom-keys-table">
+          <td><%= key.name %></td>
+          <td><%= key.fingerprint %></td>
+          <td><%= format_time(key.created_at) %></td>
+          <% unless key.added_by.nil? %>
+          <td><%= link_to key.added_by_login, user_path(key.added_by) %></td>
+          <% else %>
+          <td>None</td>
+          <% end %>
+          <td><a class="custom-key-copy-button" href="#" data-public-key="<%= key.public_key %>">Copy public key</a></td>
+          <td><%= link_to 'Delete', delete_custom_key_path(key), :method => :post, :data => { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  None.
+<% end %>

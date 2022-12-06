@@ -51,6 +51,14 @@
   </dl>
 </section>
 
+<section class="info-block">
+  <h2 class="info-header">SSH Keys for build jobs</h2>
+
+  <dl class="simple-info">
+    <%= render partial: 'shared/custom_keys', locals: { owner: @organization } %>
+  </dl>
+</section>
+
 <% unless travis_config.enterprise? %>
   <%= render partial: 'shared/account', locals: {owner: @organization} %>
 <% end %>

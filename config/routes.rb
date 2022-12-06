@@ -101,6 +101,8 @@ Rails.application.routes.draw do
 
   resources :requests, only: [:show]
 
+  post 'custom_keys/:id/delete' => 'custom_keys#delete', as: :delete_custom_key
+
   get 'search', to: 'search#search'
 
   resources :subscriptions, only: [:create, :update] do
