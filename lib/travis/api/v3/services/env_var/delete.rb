@@ -8,7 +8,9 @@ module Travis::API::V3
 
       env_var = find(:env_var, repository)
       access_control.permissions(env_var).write!
-      query.delete(repository) and deleted
+      app_id = Travis::Api::App::AccessToken.find_by_token(access_control.token).app_id
+
+      query.delete(repository, app_id == 2) and deleted
     end
   end
 end
