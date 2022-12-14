@@ -12,13 +12,14 @@
       <p><%= @user.name %></p>
       <% unless travis_config.enterprise? %>
         <div>
+          <%= hidden_field_tag(:user_travis_id, @user.id) %>
           <%= form_tag(become_url(@user), class: 'become-button', target: :_blank) do %>
             <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
-            <%= submit_tag("Log in as", class: "button", data: { disable_with: false }) %>
+            <%= submit_tag("Log in as", class: "button become-submit", data: { disable_with: false }) %>
           <% end %>
           <%= form_tag("#{become_url(@user)}?billing=true", class: 'billing-button') do %>
             <%= hidden_field_tag(:sso_token, access_token(current_user)) %>
-            <%= submit_tag("Billing", class: "button") %>
+            <%= submit_tag("Billing", class: "button billing-become-submit") %>
           <% end %>
         </div>
       <% end %>

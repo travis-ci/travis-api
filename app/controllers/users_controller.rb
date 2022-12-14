@@ -162,7 +162,7 @@ class UsersController < ApplicationController
 
     if response.success?
       flash[:notice] = "Triggered sync with VCS."
-      Services::AuditTrail::Sync.new(current_user, @user).call
+      Services::AuditTrail::Sync.new(current_user, [@user.login]).call
     else
       flash[:error] = "Error: #{response.headers[:status]}"
     end
@@ -228,6 +228,11 @@ class UsersController < ApplicationController
     ::Services::User::SendConfirmationEmail.new(@user).call
     flash[:notice] = 'Confirmation email sent.'
     redirect_to @user
+  end
+
+  def become_as_audit
+    Services::AuditTrail::BecomeAs.new(current_user, @user.login).call
+    head :ok
   end
 
   private
