@@ -31,6 +31,8 @@ module Travis
   class AdminMissing      < StandardError; end
   class RepositoryMissing < StandardError; end
   class LogAlreadyRemoved < StandardError; end
+  class LogExpired        < StandardError; end
+  class LogAccessDenied   < StandardError; end
   class AuthorizationDenied < StandardError; end
   class JobUnfinished     < StandardError; end
 

@@ -1,5 +1,9 @@
-describe Travis::Api::App::Endpoint::Authorization do
+describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
   include Travis::Testing::Stubs
+
+  let(:billing_url) { 'http://billingfake.travis-ci.com' }
+  let(:billing_auth_key) { 'secret' }
+  before { allow_any_instance_of(Travis::RemoteVCS::User).to receive(:check_scopes) }
 
   before do
     add_endpoint '/info' do
@@ -21,6 +25,10 @@ describe Travis::Api::App::Endpoint::Authorization do
       scope: 'public_repo,user:email,new_scope',
       insufficient_access_redirect_url: 'https://travis-ci.org/insufficient_access'
     }
+    Travis.config.billing.url = billing_url
+    Travis.config.billing.auth_key = billing_auth_key
+    WebMock.stub_request(:post, 'http://billingfake.travis-ci.com/v2/initial_subscription')
+           .to_return(status: 200, body: JSON.dump(billing_v2_subscription_response_body('id' => 456, 'owner' => { 'type' => 'User', 'id' => user.id })))
   end
 
   after do
@@ -48,11 +56,25 @@ describe Travis::Api::App::Endpoint::Authorization do
     end
 
     describe 'evil hackers messing with the state' do
-      it 'does not succeed if state cookie mismatches' do
+      before do
+        WebMock.stub_request(:post, "https://foobar.com/access_token_path").
+          with(
+            body: "{\"client_id\":\"client-id\",\"scope\":\"public_repo,user:email,new_scope\",\"redirect_uri\":\"http://example.org/auth/handshake\",\"state\":\"github-state\",\"code\":\"oauth-code\",\"client_secret\":\"client-secret\"}",
+            headers: {
+              'Accept' => '*/*',
+              'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+              'Connection' => 'keep-alive',
+              'Content-Type' => 'application/json',
+              'Keep-Alive' => '30',
+              'User-Agent' => 'Faraday v0.17.3'
+            }).
+          to_return(status: 200, body: "", headers: {})
+      end
+
+      it 'does not succeed if state cookie mismatches (redirects)' do
         Travis.redis.sadd('github:states', 'github-state')
         response = get '/auth/handshake?state=github-state&code=oauth-code'
-        expect(response.status).to eq(400)
-        expect(response.body).to eq("state mismatch")
+        expect(response.status).to eq(302)
         Travis.redis.srem('github:states', 'github-state')
       end
     end
@@ -280,6 +302,55 @@ describe Travis::Api::App::Endpoint::Authorization do
     it 'syncs the user' do
       expect(Travis).to receive(:run_service).with(:sync_user, instance_of(User))
       expect(post('/auth/github', github_token: 'public repos')).to be_ok
+    end
+  end
+
+  describe 'GET /confirm_user/:token' do
+    context 'when response is ok' do
+      before { allow_any_instance_of(Travis::RemoteVCS::User).to receive(:confirm_user) }
+
+      it 'returns ok' do
+        expect(get('/auth/confirm_user/mytokentopass')).to be_ok
+      end
+
+      it 'calls VCS service with proper params' do
+        expect_any_instance_of(Travis::RemoteVCS::User)
+          .to receive(:confirm_user).with(token: 'mytokentopass')
+
+        get('/auth/confirm_user/mytokentopass')
+      end
+    end
+
+    context 'when response is not ok' do
+      before do
+        allow_any_instance_of(Travis::RemoteVCS::User)
+          .to receive(:confirm_user).and_raise(Travis::RemoteVCS::ResponseError)
+      end
+
+      it 'returns 404 with a message' do
+        expect(get('/auth/confirm_user/mytokentopass')).not_to be_ok
+        expect(last_response.status).to eq(404)
+        expect(body).to include('The token is expired or not found.')
+      end
+    end
+  end
+
+  describe 'GET /request_confirmation/:session_token/:id' do
+    let(:current_user) { double(:user, id: 123) }
+    before do
+      allow_any_instance_of(described_class).to receive(:current_user).and_return(current_user)
+      allow_any_instance_of(Travis::RemoteVCS::User).to receive(:request_confirmation)
+    end
+
+    it 'returns ok' do
+      expect(get('/auth/request_confirmation/123')).to be_ok
+    end
+
+    it 'calls VCS service with proper params' do
+      expect_any_instance_of(Travis::RemoteVCS::User)
+        .to receive(:request_confirmation).with(id: 123)
+
+      get('/auth/request_confirmation/123')
     end
   end
 end

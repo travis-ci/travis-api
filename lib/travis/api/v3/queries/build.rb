@@ -27,13 +27,7 @@ module Travis::API::V3
       service = Travis::Enqueue::Services::RestartModel.new(user, { build_id: id })
       payload = { id: id, user_id: user.id, restarted_by: user.id }
 
-      restart_status = service.push("build:restart", payload)
-
-      if restart_status == "abuse_detected"
-        restart_status
-      else
-        payload
-      end
+      service.push("build:restart", payload)
     end
 
     def prioritize_and_cancel(user)

@@ -106,7 +106,6 @@ class Travis::Api::App
       get '/handshake/?:provider?' do
         method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
-
         send(method) do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
@@ -126,6 +125,21 @@ class Travis::Api::App
 
       error Faraday::ClientError do
         halt 401, 'could not resolve github token'
+      end
+
+      get '/confirm_user/:token' do
+        content_type :json
+        Travis::RemoteVCS::User.new.confirm_user(token: params[:token])
+        { status: 200 }.to_json
+      rescue Travis::RemoteVCS::ResponseError
+        halt 404, 'The token is expired or not found.'
+      end
+
+      get '/request_confirmation/:id' do
+        content_type :json
+        Travis::RemoteVCS::User
+          .new.request_confirmation(id: current_user.id)
+        { status: 200 }.to_json
       end
 
       private
@@ -166,7 +180,8 @@ class Travis::Api::App
           if params[:code]
             unless state_ok?(params[:state])
               log_with_request_id("[handshake] Handshake failed (state mismatch)")
-              halt 400, 'state mismatch'
+              handle_invalid_response
+              return
             end
 
             endpoint.path          = config[:access_token_path]
@@ -196,7 +211,8 @@ class Travis::Api::App
         def vcs_handshake
           if params[:code]
             unless state_ok?(params[:state], params[:provider])
-              halt 400, 'state mismatch'
+              handle_invalid_response
+              return
             end
 
             vcs_data = remote_vcs_user.authenticate(
@@ -210,7 +226,9 @@ class Travis::Api::App
               return
             end
 
-            yield serialize_user(User.find(vcs_data['user']['id'])), vcs_data['token'], payload(params[:provider])
+            user = User.find(vcs_data['user']['id'])
+            update_first_login(user)
+            yield serialize_user(user), vcs_data['token'], payload(params[:provider])
           else
             state = vcs_create_state(params[:origin] || params[:redirect_uri])
 
@@ -258,6 +276,18 @@ class Travis::Api::App
         end
 
         # VCS HANDSHAKE END
+
+        def clear_state_cookies
+          response.delete_cookie cookie_name(:github)
+          response.delete_cookie cookie_name(:gitlab)
+          response.delete_cookie cookie_name(:bitbucket)
+          response.delete_cookie cookie_name(:assembla)
+        end
+
+        def handle_invalid_response
+          clear_state_cookies
+          redirect to("https://#{Travis.config.host}/")
+        end
 
         def create_state
           state = SecureRandom.urlsafe_base64(16)

@@ -144,7 +144,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     Travis.config.cache_options.s3 = { access_key_id: 'key', secret_access_key: 'secret', bucket_name: s3_bucket_name }
     Travis.config.cache_options.gcs = { bucket_name: 'travis-cache-production-org-gce',
     json_key:
-      JSON.generate({
+      {
         "type" => "service_account",
         "project_id" => "123",
         "private_key_id" => "123456",
@@ -155,7 +155,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
         "token_uri" => "https://accounts.google.com/oauth2/v3/token",
         "auth_provider_x509_cert_url" => "https://www.googleapis.com/oauth2/v1/certs",
         "client_x509_cert_url" => "travis-cache-org-api-production"
-      }),
+      },
     project_id: 'foo-bar-99515' }
     example.run
     Travis.config.cache_options = {}

@@ -9,10 +9,6 @@ describe Travis::Services::FindAdmin do
     end
 
     describe 'given a user has admin access to a repository (as seen by github)' do
-      before :each do
-        allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => true })
-      end
-
       it 'returns that user' do
         expect(result).to eq(user)
       end
@@ -20,7 +16,6 @@ describe Travis::Services::FindAdmin do
 
     describe 'given a user does not have access to a repository' do
       before :each do
-        allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => false })
         allow(user).to receive(:update!)
       end
 
@@ -74,7 +69,6 @@ describe Travis::Services::FindAdmin::Instrument do
   before :each do
     Travis::Notification.publishers.replace([publisher])
     allow(User).to receive(:with_permissions).with(repository_id: repository.id, admin: true).and_return [user]
-    allow(GH).to receive(:[]).with("repos/#{repository.slug}").and_return('permissions' => { 'admin' => true })
     service.run
   end
 
@@ -82,7 +76,7 @@ describe Travis::Services::FindAdmin::Instrument do
     expect(event).to publish_instrumentation_event(
       event: 'travis.services.find_admin.run:completed',
       message: 'Travis::Services::FindAdmin#run:completed for svenfuchs/minimal: svenfuchs',
-      result: user,
+      result: user
     )
   end
 end

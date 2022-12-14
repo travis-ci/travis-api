@@ -1,4 +1,5 @@
 require 'active_model_serializers'
+
 # This hideousness courtesy of http://stackoverflow.com/a/8339255
 module ActiveSupport::JSON::Encoding
   def self.escape(string)

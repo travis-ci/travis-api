@@ -2,6 +2,8 @@ describe 'v2 users', auth_helpers: true, api_version: :v2, set_app: true do
   let(:user) { User.first }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
+  before { allow_any_instance_of(Travis::RemoteVCS::User).to receive(:check_scopes) }
+
   # TODO put /users/
   # TODO put /users/:id ?
   # TODO post /users/sync

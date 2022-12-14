@@ -23,6 +23,12 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "avatar_url"       => nil,
       "education"        => false,
       "allow_migration"  => false,
+      "ro_mode"          => true,
+      "allowance"        => {
+        "@type"             => "allowance",
+        "@representation"   => "minimal",
+        "id"                => org.id
+      }
     }}
   end
 
@@ -52,6 +58,12 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "avatar_url"       => nil,
       "education"        => true,
       "allow_migration"  => true,
+      "ro_mode"          => false,
+      "allowance"        => {
+        "@type"             => "allowance",
+        "@representation"   => "minimal",
+        "id"                => org.id
+      }
     }}
   end
 

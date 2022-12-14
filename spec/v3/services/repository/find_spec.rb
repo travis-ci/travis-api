@@ -85,11 +85,13 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "github_language"    => nil,
       "active"             => true,
       "private"            => opts[:private],
+      "server_type"        => 'git',
       "shared"             => false,
       "owner"              => {
         "id"               => repo.owner_id,
         "login"            => "svenfuchs",
         "@type"            => "user",
+        "ro_mode"          => true,
         "@href"            => "/v3/user/#{repo.owner_id}"},
       "default_branch"     => {
         "@type"            => "branch",
@@ -143,7 +145,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         owner_id: 1,
         owner_type: "User",
         last_build_state: "passed",
-        github_id: 12345
+        github_id: 12345,
+        server_type: 'git'
       )
       get("/v3/repo/svenfuchs%2FMinimal")
     }

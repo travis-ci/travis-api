@@ -34,6 +34,8 @@ module Travis
               user.nil? ?
                 where('builds.private <> ?', true) :
                 where('builds.private <> ? OR builds.repository_id IN (?)', true, user.repository_ids)
+            elsif self == ::BuildBackup
+              user.nil? ? where('1=0') : where('build_backups.repository_id IN (?)', user.repository_ids)
             elsif self == ::Job
               user.nil? ?
                 where('jobs.private <> ?', true) :
@@ -60,6 +62,8 @@ module Travis
               return user.repository_ids.include?(repository_id) ?
                 where('true') :
                 where('builds.private <> ?', true)
+            elsif self == ::BuildBackup
+              user.repository_ids.include?(repository_id) ? where('true') : where('false')
             elsif self == ::Job
               return user.repository_ids.include?(repository_id) ?
                 where('true') :
@@ -80,6 +84,8 @@ module Travis
               where('requests.repository_id IN (?)', user.repository_ids)
             elsif self == ::Build
               where('builds.repository_id IN (?)', user.repository_ids)
+            elsif self == ::BuildBackup
+              where('build_backups.repository_id IN (?)', user.repository_ids)
             elsif self == ::Job
               where('jobs.repository_id IN (?)', user.repository_ids)
             else

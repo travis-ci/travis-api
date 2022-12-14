@@ -8,6 +8,20 @@ describe 'Requests', set_app: true do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
+  before do
+    Travis.config.billing.url = 'http://localhost:9292/'
+    Travis.config.billing.auth_key = 'secret'
+
+    stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
+      body: MultiJson.dump(allowed: true, rejection_code: nil)
+    )
+  end
+
+  after do
+    Travis.config.billing.url = nil
+    Travis.config.billing.auth_key = nil
+  end
+
   describe 'GET /requests' do
     it 'fetches requests' do
       response = get '/requests', { repository_id: repo.id }, headers

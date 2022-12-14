@@ -3,6 +3,8 @@ module Travis::API::V3
 
     def run
       build = check_login_and_find(:build)
+      return not_found if build.owner.ro_mode?
+
       access_control.permissions(build).cancel!
 
       query.cancel(access_control.user, build.id)

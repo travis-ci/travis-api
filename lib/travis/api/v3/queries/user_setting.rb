@@ -6,8 +6,11 @@ module Travis::API::V3
       repository.user_settings.read(_name)
     end
 
-    def update(repository)
-      repository.user_settings.update(_name, _value)
+    def update(repository, user, from_admin)
+      user_settings = repository.user_settings
+      user_settings.user = user
+      user_settings.change_source = 'travis-api' unless from_admin
+      user_settings.update(_name, _value)
     end
 
     private

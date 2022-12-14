@@ -7,17 +7,12 @@ module Travis::API::V3
 
       admin = access_control.admin_for(repository)
 
-      if Travis::Features.user_active?(:use_vcs, admin) || !admin.github?
-        remote_vcs_repository.set_hook(
-          repository_id: repository.id,
-          user_id: admin.id,
-          activate: activate
-        )
-      else
-        github(admin).set_hook(repository, activate)
-      end
+      remote_vcs_repository.set_hook(
+        repository_id: repository.id,
+        user_id: admin.id,
+        activate: activate
+      )
       repository.update(active: activate)
-
       result repository
     end
 

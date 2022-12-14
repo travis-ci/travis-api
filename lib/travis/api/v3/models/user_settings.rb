@@ -14,8 +14,19 @@ module Travis::API::V3
     attribute :config_validation, Boolean, default: lambda { |us, _| us.config_validation? }
     attribute :share_encrypted_env_with_forks, Boolean, default: false
     attribute :share_ssh_keys_with_forks, Boolean, default: lambda { |us, _| us.share_ssh_keys_with_forks? }
+    attribute :job_log_time_based_limit, Boolean, default: lambda { |s, _| s.job_log_access_permissions[:time_based_limit] }
+    attribute :job_log_access_based_limit, Boolean, default: lambda { |s, _| s.job_log_access_permissions[:access_based_limit] }
+    attribute :job_log_access_older_than_days, Integer, default: lambda { |s, _| s.job_log_access_permissions[:older_than_days] }
+
+    validates :job_log_access_older_than_days, numericality: true
+
+    validate :job_log_access_older_than_days_restriction
+
+    set_callback :after_save, :after, :save_audit
 
     attr_reader :repo
+
+    attr_accessor :user, :change_source
 
     def initialize(repo, data)
       @repo = repo
@@ -58,6 +69,25 @@ module Travis::API::V3
 
     def days_since_jan_15
       Date.today.mjd - JAN_15.mjd + 1
+    end
+
+    def job_log_access_permissions
+      Travis.config.to_h.fetch(:job_log_access_permissions) { {} }
+    end
+
+    def job_log_access_older_than_days_restriction
+      if job_log_access_older_than_days.to_i > job_log_access_permissions[:max_days_value] ||
+        job_log_access_older_than_days.to_i < job_log_access_permissions[:min_days_value]
+        errors.add(:job_log_access_older_than_days, "is outside the bounds")
+      end
+    end
+
+    private
+
+    def save_audit
+      if self.change_source
+        Travis::API::V3::Models::Audit.create!(owner: self.user, change_source: self.change_source, source: self.repo, source_changes: { settings: self.changes })
+      end
     end
   end
 end
