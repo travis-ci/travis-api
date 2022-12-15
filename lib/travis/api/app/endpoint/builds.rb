@@ -42,7 +42,7 @@ class Travis::Api::App
           status 422
           respond_with json
         else
-          payload = { id: params[:id], user_id: current_user.id, source: 'api' }
+          payload = { id: params[:id], user_id: current_user.id, source: 'api', reason: 'Build Cancelled manually by User' }
 
           service.push("build:cancel", payload)
 
