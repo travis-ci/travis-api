@@ -42,6 +42,10 @@ module Travis::API::V3
       write?
     end
 
+    def check_scan_results?
+      write?
+    end
+
     def admin?
       access_control.adminable? object
     end
