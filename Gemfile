@@ -12,7 +12,7 @@ gem 'travis-lock',     git: 'https://github.com/travis-ci/travis-lock/', branch:
 gem 'travis-github_apps', git: 'https://github.com/travis-ci/travis-github_apps', branch: 'ga-ext_access'
 gem 'travis-rollout',  '~> 0.0.2'
 
-gem 'sinatra'
+gem 'sinatra', '~> 2'
 gem 'sinatra-contrib', require: nil #git: 'https://github.com/sinatra/sinatra-contrib', require: nil
 gem 'simple_states', git: 'https://github.com/travis-ci/simple_states', branch: '6.1'
 
