@@ -31,6 +31,7 @@ require 'travis/testing/matchers'
 require 'auth/helpers'
 require 'support/active_record'
 require 'support/billing_spec_helper'
+require 'support/scanner_spec_helper'
 require 'support/env'
 require 'support/formats'
 require 'support/gcs'
@@ -79,6 +80,7 @@ RSpec.configure do |c|
   c.include Support::Env
   c.include Support::AuthHelpers, auth_helpers: true
   c.include Support::BillingSpecHelper, billing_spec_helper: true
+  c.include Support::ScannerSpecHelper, scanner_spec_helper: true
   c.include Support::GdprSpecHelper, gdpr_spec_helper: true
 
   # for auth tests against staging, how the hell does this work, if at all

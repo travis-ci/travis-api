@@ -105,6 +105,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "create_env_var"  => false,
             "create_key_pair" => false,
             "delete_key_pair" => false,
+            "check_scan_results" => false,
             "admin"           => false
           },
           "id"                => repo.id,
@@ -121,6 +122,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "private"           => false,
           "server_type"       => 'git',
           "shared"            => false,
+          "scan_failed_at"    => nil,
           "owner"             => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"    => {
             "@type"           => "branch",
@@ -182,6 +184,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
             "create_env_var"  => false,
             "create_key_pair" => false,
             "delete_key_pair" => false,
+            "check_scan_results" => false,
             "admin"         => false
           },
           "id"              => repo.id,
@@ -198,6 +201,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "private"         => false,
           "server_type"     => 'git',
           "shared"          => false,
+          "scan_failed_at"  => nil,
           "owner"           => { "@href"=> "/v3/org/#{org.id}" },
           "default_branch"  => {
             "@type"         => "branch",

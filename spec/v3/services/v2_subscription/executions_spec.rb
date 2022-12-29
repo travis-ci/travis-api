@@ -110,6 +110,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
                 "create_key_pair"=>false,
                 "delete_key_pair"=>false,
                 "create_request"=>false,
+                "check_scan_results"=>false,
                 "admin"=>false
               },
               "id"=>1,
@@ -132,6 +133,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "active_on_org"=>nil,
               "migration_status"=>nil,
               "history_migration_status"=>nil,
+              "scan_failed_at"=>nil,
               "shared"=>false,
               "config_validation"=>false
             }
