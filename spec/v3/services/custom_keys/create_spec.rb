@@ -26,10 +26,9 @@ describe Travis::API::V3::Services::CustomKeys::Create, set_app: true do
 
   describe "creating custom key" do
     before  { post('/v3/custom_keys', options, headers) }
-    example { expect(parsed_body).to eql_json({
+    example { expect(parsed_body.except("id")).to eql_json({
       "@type" => "custom_key",
       "@representation" => "standard",
-      "id" => 1,
       "name" => "TEST_KEY",
       "description" => "",
       "public_key" =>

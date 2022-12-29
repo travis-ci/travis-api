@@ -42,6 +42,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
         "@representation"       => "minimal",
         "id"                    => user.id
       },
+      "custom_keys" => [],
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
       "ro_mode" => false,
