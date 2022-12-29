@@ -399,7 +399,7 @@ GEM
     timecop (0.9.1)
     tool (0.2.3)
     travis-rollout (0.0.2)
-    tzinfo (1.2.7)
+    tzinfo (1.2.10)
       thread_safe (~> 0.1)
     uber (0.0.15)
     unf (0.1.4)
