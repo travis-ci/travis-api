@@ -64,7 +64,8 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id
-        }
+        },
+        "custom_keys"     => []
       }]
     }}
   end
