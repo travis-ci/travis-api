@@ -28,7 +28,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id
-        }
+        },
+        "custom_keys"      => []
       }}
     end
 
@@ -54,7 +55,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id
-        }
+        },
+        "custom_keys"      => []
       }}
     end
 
@@ -86,6 +88,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "minimal",
           "id"                => org.id
         },
+        "custom_keys"         => [],
         "repositories"        => [{
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -232,7 +235,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@type"             => "allowance",
           "@representation"   => "minimal",
           "id"                => org.id
-        }
+        },
+        "custom_keys"      => []
       }}
     end
 
@@ -263,6 +267,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "minimal",
           "id"                => org.id
         },
+        "custom_keys"    => [],
         "@warnings"      => [{
           "@type"        => "warning",
           "message"      => "query parameter organization.id not safelisted, ignored",
@@ -302,6 +307,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "minimal",
           "id"                => user.id
         },
+        "custom_keys"    => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
         "ro_mode" => false,
@@ -334,6 +340,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "minimal",
           "id"                => user.id
         },
+        "custom_keys"    => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
         "ro_mode" => false,
@@ -366,6 +373,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "minimal",
           "id"                => user.id
         },
+        "custom_keys"      => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
         "ro_mode" => false,
@@ -402,6 +410,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "minimal",
           "id"                => user.id
         },
+        "custom_keys"      => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
         "ro_mode"          => false,

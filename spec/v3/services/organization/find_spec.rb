@@ -28,7 +28,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
         "@type"             => "allowance",
         "@representation"   => "minimal",
         "id"                => org.id
-      }
+      },
+      "custom_keys"      => [],
     }}
   end
 
@@ -63,7 +64,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
         "@type"             => "allowance",
         "@representation"   => "minimal",
         "id"                => org.id
-      }
+      },
+      "custom_keys"      => [],
     }}
   end
 
