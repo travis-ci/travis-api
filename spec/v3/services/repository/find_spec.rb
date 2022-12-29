@@ -19,6 +19,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_env_var"   => true,
         "create_key_pair"  => true,
         "delete_key_pair"  => true,
+        "check_scan_results" => true,
         "admin"            => true
       },
       full_access: {
@@ -33,6 +34,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_env_var"   => true,
         "create_key_pair"  => true,
         "delete_key_pair"  => true,
+        "check_scan_results" => true,
         "admin"            => false
       },
       read_and_star: {
@@ -47,6 +49,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_env_var"   => false,
         "create_key_pair"  => false,
         "delete_key_pair"  => false,
+        "check_scan_results" => false,
         "admin"            => false
       },
       read: {
@@ -61,6 +64,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
         "create_env_var"   => false,
         "create_key_pair"  => false,
         "delete_key_pair"  => false,
+        "check_scan_results" => false,
         "admin"            => false
       }
     }
@@ -87,6 +91,7 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "private"            => opts[:private],
       "server_type"        => 'git',
       "shared"             => false,
+      "scan_failed_at"     => nil,
       "owner"              => {
         "id"               => repo.owner_id,
         "login"            => "svenfuchs",

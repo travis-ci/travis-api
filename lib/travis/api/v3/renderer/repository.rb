@@ -1,9 +1,9 @@
 module Travis::API::V3
   class Renderer::Repository < ModelRenderer
     representation(:minimal,  :id, :name, :slug)
-    representation(:standard, :id, :name, :slug, :description, :github_id, :vcs_id, :vcs_type, :github_language, :active, :private, :owner, :owner_name, :vcs_name, :default_branch, :starred, :managed_by_installation, :active_on_org, :migration_status, :history_migration_status, :shared, :config_validation, :server_type)
-    representation(:experimental, :id, :name, :slug, :description, :vcs_id, :vcs_type, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build, :next_build_number, :server_type)
-    representation(:internal, :id, :name, :slug, :github_id, :vcs_id, :vcs_type, :active, :private, :owner, :default_branch, :private_key, :token, :user_settings, :server_type)
+    representation(:standard, :id, :name, :slug, :description, :github_id, :vcs_id, :vcs_type, :github_language, :active, :private, :owner, :owner_name, :vcs_name, :default_branch, :starred, :managed_by_installation, :active_on_org, :migration_status, :history_migration_status, :shared, :config_validation, :server_type, :scan_failed_at)
+    representation(:experimental, :id, :name, :slug, :description, :vcs_id, :vcs_type, :github_id, :github_language, :active, :private, :owner, :default_branch, :starred, :current_build, :last_started_build, :next_build_number, :server_type, :scan_failed_at)
+    representation(:internal, :id, :name, :slug, :github_id, :vcs_id, :vcs_type, :active, :private, :owner, :default_branch, :private_key, :token, :user_settings, :server_type, :scan_failed_at)
     representation(:additional, :allow_migration)
 
     hidden_representations(:experimental, :internal)

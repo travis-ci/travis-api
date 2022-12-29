@@ -39,6 +39,8 @@ module Travis::API::V3
     Leads                 = Module.new { extend Services }
     Lint                  = Module.new { extend Services }
     Log                   = Module.new { extend Services }
+    ScanResult            = Module.new { extend Services }
+    ScanResults           = Module.new { extend Services }
     Messages              = Module.new { extend Services }
     Organization          = Module.new { extend Services }
     Organizations         = Module.new { extend Services }
