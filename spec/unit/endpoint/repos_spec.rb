@@ -48,4 +48,39 @@ describe Travis::Api::App::Endpoint::Repos, set_app: true do
       end
     end
   end
+  
+  describe 'builds endpoint' do
+    let(:user) { FactoryBot.create(:user) }
+    let(:repo) { FactoryBot.create(:repository, private: false, owner_name: 'user', name: 'repo') }
+
+    before { user.permissions.create(repository_id: repo.id, push: false) }
+
+    context 'when user is authorizing with token' do
+      context 'and token is not a RSS one' do
+        let(:token) { user.tokens.asset.first }
+
+        context 'and user has a RSS token' do
+          it 'responds with 401' do
+            expect(get("/repo_status/#{repo.owner_name}/#{repo.name}/builds.atom?token=#{token.token}", {}, {}).status).to eq(401)
+          end
+        end
+
+        context 'and user does not have a RSS token' do
+          before { user.tokens.rss.delete_all }
+
+          it 'responds with 200' do
+            expect(get("/repo_status/#{repo.owner_name}/#{repo.name}/builds.atom?token=#{token.token}", {}, {}).status).to eq(200)
+          end
+        end
+      end
+      
+      context 'and token is a RSS one' do
+        let(:token) { user.tokens.rss.first }
+
+        it 'responds with 200' do
+          expect(get("/repo_status/#{repo.owner_name}/#{repo.name}/builds.atom?token=#{token.token}", {}, {}).status).to eq(200)
+        end
+      end
+    end
+  end
 end
