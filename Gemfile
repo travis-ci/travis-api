@@ -31,7 +31,6 @@ gem 'http', '~> 4'
 gem 'metriks',         '0.9.9.6'
 gem 'metriks-librato_metrics', git: 'https://github.com/eric/metriks-librato_metrics'
 gem 'librato-metrics'
-gem 'simplecov'
 gem 'stackprof'
 gem "ipaddress", "~> 0.8.3"
 gem 'nakayoshi_fork'
@@ -89,6 +88,7 @@ group :test do
   gem 'hashdiff'
   gem 'pry-byebug'
   gem 'rack-test'
+  gem 'simplecov'
 end
 
 group :development do
