@@ -77,17 +77,18 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-lock/
-  revision: 1dbed2874330d5d24c1dcdb9143ecf9a5eb041a9
+  revision: e5d38061f92a133488aeca9078c8ba2b11659377
   branch: 6.1
   specs:
     travis-lock (0.1.1)
 
 GIT
   remote: https://github.com/travis-ci/travis-settings
-  revision: debef595a6a54b082176edba630fdb5ee9d705af
+  revision: 9d6f936fd5eb3431162d82783e7ca3f64d22db95
+  branch: 6.1
   specs:
-    travis-settings (0.0.1)
-      activemodel
+    travis-settings (0.0.2)
+      activemodel (~> 6.1.6.1)
       virtus
 
 GIT
@@ -294,7 +295,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2022.0105)
     mini_portile2 (2.8.0)
-    minitest (5.16.3)
+    minitest (5.17.0)
     mocha (1.13.0)
     msgpack (1.4.5)
     multi_json (1.15.0)
@@ -437,7 +438,7 @@ GEM
     webrick (1.7.0)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.0)
+    zeitwerk (2.6.6)
 
 PLATFORMS
   ruby
