@@ -129,7 +129,7 @@ module Travis
             redis:                { url: 'redis://localhost:6379' },
             redis_gatekeeper:     { url: redis_gatekeeper_url },
             repository:           { ssl_key: { size: 4096 } },
-            encryption:           Travis.env == 'development' || Travis.env == 'test' ? { key: encryption_key } : {},
+            encryption:           { key: encryption_key },
             sync:                 { organizations: { repositories_limit: 1000 } },
             states_cache:         { memcached_servers: 'localhost:11211' },
             sentry:               {},
