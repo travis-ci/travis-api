@@ -147,6 +147,8 @@ module Travis
             aws_access_key_id: config[:access_key_id],
             aws_secret_access_key: config[:secret_access_key],
             provider: 'AWS',
+            host: config[:hostname],
+            region: config[:region],
             instrumentor: ActiveSupport::Notifications,
             connection_options: { instrumentor: ActiveSupport::Notifications })
           bucket = svc.directories.get(config[:bucket_name], options)
