@@ -29,6 +29,11 @@ module Travis::API::V3
       Travis::Features.owner_active?(:build_priorities_org, self)
     end
 
+    def custom_keys
+      return @custom_keys if defined? @custom_keys
+      @custom_keys = Models::CustomKey.where(owner_type: 'Organization', owner_id: id)
+    end
+
     alias members users
   end
 end
