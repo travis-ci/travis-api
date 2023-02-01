@@ -198,5 +198,13 @@ module Travis::API::V3
     def allow_migration?
       Travis::Features.owner_active?(:allow_migration, self.owner)
     end
+
+    def perforce?
+      server_type == 'perforce'
+    end
+
+    def subversion?
+      server_type == 'subversion'
+    end
   end
 end
