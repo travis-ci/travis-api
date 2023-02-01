@@ -166,4 +166,6 @@ Rails.application.routes.draw do
   get '/*owner/*repo', to: 'unknown#repository'
 
   get '/*other', to: 'unknown#canonical_route'
+
+  get '/stats', to: 'stats#show'
 end
