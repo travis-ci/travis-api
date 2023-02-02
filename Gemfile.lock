@@ -43,11 +43,11 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/simple_states
-  revision: b7dffc715181e54313784b315f6b7df795d01db4
+  revision: 458685f90e64639a6dc5e49081b3275777ed9edb
   branch: 6.1
   specs:
     simple_states (1.0.2)
-      activesupport (~> 6.1.6.1)
+      activesupport (~> 6.1.7.2)
 
 GIT
   remote: https://github.com/travis-ci/travis-amqp
@@ -84,11 +84,11 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-settings
-  revision: 9d6f936fd5eb3431162d82783e7ca3f64d22db95
+  revision: dd614292ede63952f75d5f78594a23e5e05a862a
   branch: 6.1
   specs:
     travis-settings (0.0.2)
-      activemodel (~> 6.1.6.1)
+      activemodel (~> 6.1.7.1)
       virtus
 
 GIT
@@ -104,12 +104,12 @@ GEM
     active_model_serializers (0.9.8)
       activemodel (>= 3.2)
       concurrent-ruby (~> 1.0)
-    activemodel (6.1.6.1)
-      activesupport (= 6.1.6.1)
-    activerecord (6.1.6.1)
-      activemodel (= 6.1.6.1)
-      activesupport (= 6.1.6.1)
-    activesupport (6.1.6.1)
+    activemodel (6.1.7.2)
+      activesupport (= 6.1.7.2)
+    activerecord (6.1.7.2)
+      activemodel (= 6.1.7.2)
+      activesupport (= 6.1.7.2)
+    activesupport (6.1.7.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -136,7 +136,7 @@ GEM
       descendants_tracker (~> 0.0.1)
     composite_primary_keys (13.0.3)
       activerecord (~> 6.1.0)
-    concurrent-ruby (1.1.10)
+    concurrent-ruby (1.2.0)
     connection_pool (2.2.5)
     crack (0.4.5)
       rexml
@@ -416,7 +416,7 @@ GEM
     timecop (0.9.4)
     tool (0.2.3)
     travis-rollout (0.0.2)
-    tzinfo (2.0.5)
+    tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uber (0.0.15)
     unf (0.1.4)
@@ -445,7 +445,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers (~> 0.9.8)
-  activerecord (~> 6.1.6.1)
+  activerecord (~> 6.1.7.2)
   addressable (~> 2.8.0)
   allocation_tracer
   bunny (~> 2.9.2)
