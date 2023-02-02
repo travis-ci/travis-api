@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   resources :broadcasts, only: [:index, :create, :update]
 
+  get '/stats', to: 'stats#show'
+
   # Backwards compability from admin v1
   get '/build/:id' => 'builds#show'
   resources :builds, only: [:show] do
@@ -166,6 +168,4 @@ Rails.application.routes.draw do
   get '/*owner/*repo', to: 'unknown#repository'
 
   get '/*other', to: 'unknown#canonical_route'
-
-  get '/stats', to: 'stats#show'
 end

@@ -2,9 +2,8 @@
 <script>
     var client = new Keen({
 
-        projectId: <%= Travis.config.keen.project_id.to_json %> ,
-
-        readKey: <%= Travis.config.keen.read_key.to_json %>
+        projectId: "<%= travis_config.keen.project_id %>",
+        readKey: "<%= travis_config.keen.read_key %>"
 
     });
 
