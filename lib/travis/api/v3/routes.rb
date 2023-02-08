@@ -385,6 +385,7 @@ module Travis::API::V3
 
     hidden_resource :v2_subscription do
       route '/v2_subscription/{subscription.id}'
+      patch :update_payment_details, '/payment_details'
       patch :update_address, '/address'
       patch :update_creditcard, '/creditcard'
       patch :changetofree, '/changetofree'

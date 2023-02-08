@@ -27,7 +27,11 @@ module Travis::API::V3
         "private_repos" => false,
         "concurrency_limit" => 1,
         "user_usage" => false,
-        "pending_user_licenses" => false
+        "pending_user_licenses" => false,
+        "payment_changes_block_captcha" => false,
+        "payment_changes_block_credit" => false,
+        "credit_card_block_duration" => 0,
+        "captcha_block_duration" => 0
       }.freeze)
     end
 
