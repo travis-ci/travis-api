@@ -3,7 +3,7 @@ module Travis::API::V3
     params :enabled, :threshold, :amount
 
     def update_payment_details(user_id)
-      recaptcha_redis_key = "recaptcha_attempts_#{params['subscription.id']}"
+      recaptcha_redis_key = "recaptcha_attempts_v2_#{params['subscription.id']}"
       count = Travis.redis.get(recaptcha_redis_key)&.to_i
       count = count.nil? ? 0 : count
       if count > captcha_max_failed_attempts
@@ -86,11 +86,11 @@ module Travis::API::V3
       client.update_auto_refill(addon_id, threshold, amount)
     end
 
+    private 
+
     def recaptcha_client
       @recaptcha_client ||= RecaptchaClient.new
     end
-
-    private 
 
     def captcha_block_duration
       Travis.config.antifraud.captcha_block_duration
