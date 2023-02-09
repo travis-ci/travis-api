@@ -594,10 +594,10 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
       "user_usage"                    => false,
       "pending_user_licenses"         => false,
       "id"                            => 0,
-      "captcha_block_duration"        => nil,
-      "credit_card_block_duration"    => nil,
-      "payment_changes_block_captcha" => nil,
-      "payment_changes_block_credit"  => nil
+      "captcha_block_duration"        => 0,
+      "credit_card_block_duration"    => 0,
+      "payment_changes_block_captcha" => false,
+      "payment_changes_block_credit"  => false
     }}
   end
 
