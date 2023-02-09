@@ -21,7 +21,8 @@ module Travis::API::V3
         raise ClientError, 'Error verifying reCAPTCHA, please try again.'
       end
 
-      address_data = params.dup.tap { |h| h.delete('subscription.id').delete('token') }
+      address_data = params.dup.tap { |h| h.delete('subscription.id') }
+      address_data = address_data.tap { |h| h.delete('token') }
       client = BillingClient.new(user_id)
       client.update_v2_address(params['subscription.id'], address_data) unless address_data.empty?
       client.update_v2_creditcard(params['subscription.id'], params['token']) if params.key?('token')
