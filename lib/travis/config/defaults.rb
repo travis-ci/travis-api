@@ -90,7 +90,9 @@ module Travis
             logs_api:             { url: logs_api_url, token: logs_api_auth_token },
             fallback_logs_api:    { url: fallback_logs_api_auth_url, token: fallback_logs_api_auth_token },
             scanner:              {},
-            insights:             { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' }
+            insights:             { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' },
+            recaptcha:            { endpoint: 'https://www.google.com', secret: '' },
+            antifraud:            { captcha_max_failed_attempts: 3, captcha_block_duration: 24, credit_card_max_failed_attempts: 3, credit_card_block_duration: 24 }
 
     default :_access => [:key]
 
