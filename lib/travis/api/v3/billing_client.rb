@@ -243,6 +243,14 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
+    def usage_stats(owners)
+      data = connection.post("/usage/stats", owners: owners, query: 'paid_plan_count')
+      data = data&.body
+      data.fetch('paid_plans').to_i > 0 if data && data['paid_plans']
+    rescue
+      false
+    end
+
     private
 
     def handle_subscription_response(response)

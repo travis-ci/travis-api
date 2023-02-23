@@ -106,6 +106,7 @@ class Travis::Api::App
       get '/handshake/?:provider?' do
         method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
+        params[:signup] ||= false
         send(method) do |user, token, redirect_uri|
           if target_ok? redirect_uri
             content_type :html
@@ -239,7 +240,8 @@ class Travis::Api::App
             vcs_data = remote_vcs_user.auth_request(
               provider: params[:provider],
               state: state,
-              redirect_uri: oauth_endpoint
+              redirect_uri: oauth_endpoint,
+              signup: params[:signup]
             )
 
             response.set_cookie(cookie_name(params[:provider]), value: state, httponly: true)

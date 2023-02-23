@@ -331,6 +331,13 @@ module Travis::API::V3
       delete   :delete
     end
 
+    hidden_resource :storage do
+      route  '/storage/{id}'
+      get    :find
+      patch  :update
+      delete :delete
+    end
+
     hidden_resource :beta_migration_requests do
       route '/beta_migration_requests'
 
