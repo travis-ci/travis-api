@@ -215,6 +215,10 @@ class Travis::Api::App
 
         def vcs_handshake
           if params[:code]
+            if params[:setup_action] && params[:setup_action] == 'update' && params[:provider]
+              redirect to("#{Travis.config.vcs_redirects.web_url}#{Travis.config.vcs_redirects[params[:provider]]}")
+            end
+
             unless state_ok?(params[:state], params[:provider])
               handle_invalid_response
               return
