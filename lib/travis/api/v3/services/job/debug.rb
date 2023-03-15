@@ -16,6 +16,7 @@ module Travis::API::V3
 
       query.restart(access_control.user)
       accepted(job: job, state_change: :created)
+      Travis::API::V3::Models::Audit.create!(owner: job.owner.name, change_source: 'travis-api', source: job.repository, source_changes: { debug: 'Debug build triggered' })
     end
 
     def debug_data
