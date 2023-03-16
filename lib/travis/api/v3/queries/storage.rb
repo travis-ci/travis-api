@@ -5,20 +5,20 @@ module Travis::API::V3
     PERMITTED_OPTIONS = [:billing_wizard_state]
 
     def find
-      Models::Storage.new(id: id).get if valid?
+      Models::Storage.new(id: option_id).get if valid?
     end
 
     def update
-      Models::Storage.new(id: id, value: value).create if valid?
+      Models::Storage.new(id: option_id, value: value).create if valid?
     end
 
     def delete
-      Models::Storage.new(id: id).delete if valid?
+      Models::Storage.new(id: option_id).delete if valid?
     end
 
     private
       def option_id
-        "#{user}::storage::#{id}"
+        "#{user.id}::storage::#{id}"
       end
 
       def valid?
