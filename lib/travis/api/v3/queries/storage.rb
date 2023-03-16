@@ -18,7 +18,7 @@ module Travis::API::V3
 
     private
       def option_id
-        "#{user.id}::storage::#{id}"
+        "#{user}::storage::#{id}"
       end
 
       def valid?
