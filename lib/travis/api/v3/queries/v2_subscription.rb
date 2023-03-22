@@ -10,7 +10,7 @@ module Travis::API::V3
 
     def update_creditcard(user_id)
       client = BillingClient.new(user_id)
-      client.update_v2_creditcard(params['subscription.id'], params['token'])
+      client.update_v2_creditcard(params['subscription.id'], params['token'], params['fingerprint'])
     end
 
     def changetofree(user_id)
