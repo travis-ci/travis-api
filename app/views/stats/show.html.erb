@@ -1,918 +1,469 @@
 <script src="https://d26b395fwzu5fz.cloudfront.net/latest/keen.min.js"></script>
 <script>
     var client = new Keen({
-
         projectId: "<%= travis_config.keen.project_id %>",
         readKey: "<%= travis_config.keen.read_key %>"
-
     });
 
-
-
     var defaultChartOptions = {
-
         hAxis: {
-
             slantedText: true,
-
             showTextEvery: 1
-
         },
-
         chartArea: {
-
             height: "60%",
-
             left: "5%",
-
             top: "5%",
-
             width: "95%"
-
         },
-
         colors: [
-
             "#00afd7",
-
             "#f35757",
-
             "#f0ad4e",
-
             "#8383c6",
-
             "#f9845b",
-
             "#49c5b1",
-
             "#2a99d1",
-
             "#aacc85",
-
             "#ba7fab"
-
         ],
-
         isStacked: true
-
     };
 
-
-
     function sum(array) {
-
         return array.reduce(function(prev, cur) {
-
             return prev + cur;
-
         });
-
     }
 
-
-
     function convertListToData(key, result) {
-
         var results = result.map(function(element) {
-
             return element[key].map(function(version) {
-
                 return [version, element.result];
-
             });
-
         }).reduce(function(a, b) {
-
             return a.concat(b);
-
         }).reduce(function(acc, elem) {
-
             acc[elem[0]] = (acc[elem[0]] || 0) + elem[1];
-
             return acc;
-
         }, {});
-
-
 
         var data = [];
 
-
-
         for (version in results) {
-
             data.push([version, results[version]]);
-
         }
 
-
-
         return data;
-
     }
 
-
-
     function createChartWithOthers(query, dataConverter, element, showLegend) {
-
         client.run(query, function(response) {
-
             var data = dataConverter(response.result);
 
-
-
             data.sort(function(left, right) {
-
                 return sum(right.slice(1)) - sum(left.slice(1));
-
             });
 
-
-
             var max = sum(data[0].slice(1));
-
-
-
             var firstIndexToRollUp;
 
             for (firstIndexToRollUp = 1; firstIndexToRollUp < data.length; firstIndexToRollUp++) {
-
                 if (sum(data[firstIndexToRollUp].slice(1)) < max / 10) {
-
                     break;
-
                 }
-
             }
-
-
 
             firstIndexToRollUp = Math.max(5, firstIndexToRollUp);
 
-
-
             if (firstIndexToRollUp < data.length) {
-
                 data[firstIndexToRollUp] = data.slice(firstIndexToRollUp).reduce(function(previous, current) {
-
                     return previous.map(function(cur, index) {
-
                         if (index === 0) {
-
                             return "Other";
-
                         } else {
-
                             return current[index] + previous[index];
-
                         }
-
                     });
-
                 });
-
                 data = data.slice(0, firstIndexToRollUp + 1);
-
             }
-
-
 
             data.unshift(["Version", "Repositories"]);
 
-
-
             var chart = new google.visualization.ColumnChart(element);
-
             chart.draw(google.visualization.arrayToDataTable(data), defaultChartOptions);
 
-
-
             return chart;
-
         });
-
     }
-
-
 
     function createVersionsChart(versionsKey, element, showLegend) {
-
         var query = new Keen.Query("count_unique", {
-
             eventCollection: "requests",
-
             timeframe: "this_week",
-
             targetProperty: "repository_id",
-
             groupBy: versionsKey,
-
             filters: [
-
                 {
-
                     property_name: versionsKey,
-
                     operator: "exists",
-
                     property_value: true
-
                 }
-
             ]
-
         });
-
-
 
         return createChartWithOthers(query, convertListToData.bind(undefined, versionsKey), element, showLegend);
-
     }
-
-
 
     function createBuildsPerDayChart() {
-
         var query = new Keen.Query("count", {
-
             eventCollection: "requests",
-
             timeframe: "this_7_days",
-
             interval: "daily",
-
             groupBy: "language"
-
         });
-
-
 
         client.draw(query, document.getElementById("chart-builds-per-day"), {
-
             chartType: "areachart",
-
             height: 250,
-
             width: "auto",
-
             legend: true,
-
             chartOptions: {
-
                 isStacked: true,
-
                 chartArea: {
-
                     height: "80%",
-
                     width: "75%",
-
                     top: "5%",
-
                     left: "10%"
-
                 }
-
             }
-
         });
-
     }
-
-
 
     function createRepositoriesWithBuildsPerDayChart() {
-
         var query = new Keen.Query("count_unique", {
-
             eventCollection: "requests",
-
             timeframe: "this_7_days",
-
             interval: "daily",
-
             groupBy: "language",
-
             targetProperty: "repository_id"
-
         });
-
-
 
         client.draw(query, document.getElementById("chart-repositories-per-day"), {
-
             chartType: "areachart",
-
             height: 250,
-
             width: "auto",
-
             legend: true,
-
             chartOptions: {
-
                 isStacked: true,
-
                 chartArea: {
-
                     height: "80%",
-
                     width: "75%",
-
                     top: "5%",
-
                     left: "10%"
-
                 }
-
             }
-
         });
-
     }
-
-
 
     function createSudoChart() {
-
         var query = new Keen.Query("count", {
-
             eventCollection: "requests",
-
             timeFrame: "this_7_days",
-
             groupBy: "uses_sudo"
-
         });
-
-
 
         client.draw(query, document.getElementById("chart-sudo"), {
-
             chartType: "piechart",
-
             height: 250,
-
             width: "auto",
-
             legend: true,
-
             title: false,
-
             labelMapping: {
-
                 true: "Uses sudo",
-
                 false: "Does not use sudo"
-
             }
-
         });
-
     }
-
-
 
     function createAptGetChart() {
-
         var query = new Keen.Query("count", {
-
             eventCollection: "requests",
-
             timeFrame: "this_7_days",
-
             groupBy: "uses_apt_get"
-
         });
-
-
 
         client.draw(query, document.getElementById("chart-apt-get"), {
-
             chartType: "piechart",
-
             height: 250,
-
             width: "auto",
-
             legend: true,
-
             title: false,
-
             labelMapping: {
-
                 true: "Uses apt-get",
-
                 false: "Does not use apt-get"
-
             }
-
         });
-
     }
-
-
 
     function createLanguagesChart() {
-
         var languagesQuery = new Keen.Query("count_unique", {
-
             eventCollection: "requests",
-
             timeframe: "this_week",
-
             targetProperty: "repository_id",
-
             groupBy: "language"
-
         });
-
-
 
         window.languageChart = createChartWithOthers(languagesQuery, function(result) {
-
             var results = {};
-
             var data = [];
 
-
-
             result.forEach(function(element) {
-
                 var language = element.language || "default";
-
                 language = language.toLowerCase();
-
                 if (language === "c++") {
-
                     language = "cpp";
-
                 }
-
                 results[language] = (results[language] || 0) + element.result;
-
             });
-
-
 
             for (lang in results) {
-
                 data.push([lang, results[lang]]);
-
             }
 
-
-
             return data;
-
         }, document.getElementById("chart-01"), false);
-
     }
-
-
 
     function createGithubLanguagesChart() {
-
         var githubLanguagesQuery = new Keen.Query("count_unique", {
-
             eventCollection: "requests",
-
             timeframe: "this_week",
-
             targetProperty: "repository_id",
-
             groupBy: "github_language",
-
         });
 
-
-
         window.githubLanguagesChart = createChartWithOthers(githubLanguagesQuery, function(result) {
-
             return result.map(function(element) {
-
                 return [element.github_language, element.result];
-
             });
-
         }, document.getElementById("chart-02"), false);
-
     }
 
-
-
     function createRubyCharts() {
-
         var rvmVersionsQuery = new Keen.Query("count_unique", {
-
             eventCollection: "requests",
-
             timeframe: "this_week",
-
             targetProperty: "repository_id",
-
             groupBy: "language_version.rvm",
-
             filters: [
-
                 {
                     "property_name": "language_version.rvm",
                     "operator": "exists",
                     "property_value": true
                 },
-
                 {
                     "property_name": "language",
                     "operator": "in",
                     "property_value": ["ruby", "objective-c"]
                 }
-
             ]
-
         });
 
         client.run(rvmVersionsQuery, function(response) {
-
             var results = {};
-
             var distData = [
-
                 ["MRI", 0],
-
                 ["JRuby", 0],
-
                 ["Rubinius", 0],
-
                 ["REE", 0]
-
             ];
 
-
-
             function distributionForVersion(version) {
-
                 if (version.toLowerCase().substr(0, 5) == "jruby") {
-
                     return "JRuby";
-
                 } else if (version.toLowerCase().substr(0, 3) == "rbx") {
-
                     return "Rubinius";
-
                 } else if (version.toLowerCase().substr(0, 3) == "ree") {
-
                     return "REE";
-
                 } else {
-
                     return "MRI";
-
                     dists["MRI"] = true;
-
                 }
-
             }
 
-
-
             response.result.forEach(function(element, index, array) {
-
                 var dists = {
-
                     "MRI": false,
-
                     "JRuby": false,
-
                     "Rubinius": false,
-
                     "REE": false
-
                 };
 
                 element["language_version.rvm"].forEach(function(version, index2, array2) {
-
                     dists[distributionForVersion(version)] = true;
-
                     results[version] = (results[version] || 0) + element.result;
-
                 });
 
-
-
                 if (dists["MRI"]) {
-
                     distData[0][1] += element.result;
-
                 }
-
                 if (dists["JRuby"]) {
-
                     distData[1][1] += element.result;
-
                 }
-
                 if (dists["Rubinius"]) {
-
                     distData[2][1] += element.result;
-
                 }
-
                 if (dists["REE"]) {
-
                     distData[3][1] += element.result;
-
                 }
-
             });
-
-
 
             var data = [];
 
-
-
             for (version in results) {
-
                 var res = results[version];
-
                 switch (distributionForVersion(version)) {
-
                     case "MRI":
-
                         data.push([version, res, 0, 0, 0]);
-
                         break;
-
                     case "JRuby":
-
                         data.push([version, 0, res, 0, 0]);
-
                         break;
-
                     case "Rubinius":
-
                         data.push([version, 0, 0, res, 0]);
-
                         break
-
                     case "REE":
-
                         data.push([version, 0, 0, 0, res]);
-
                         break;
-
                 }
-
             }
 
-
-
             data.sort(function(left, right) {
-
                 return (right[1] + right[2] + right[3] + right[4]) - (left[1] + left[2] + left[3] + left[4]);
-
             });
-
-
 
             distData.sort(function(left, right) {
-
                 return right[1] - left[1];
-
             });
-
-
 
             data[10] = data.slice(10).reduce(function(previous, current, index, array) {
-
                 return [previous[0], previous[1] + current[1], previous[2] + current[2], previous[3] + current[3], previous[4] + current[4]];
-
             }, ["Other", 0, 0, 0, 0]);
-
             data = data.slice(0, 11);
 
-
-
             data.unshift(["Version", "MRI", "JRuby", "Rubinius", "REE"]);
-
             distData.unshift(["Distribution", "Repositories"]);
 
-
-
             window.rvmChart = new google.visualization.ColumnChart(document.getElementById("chart-03"));
-
             window.rvmChart.draw(google.visualization.arrayToDataTable(data), {
-
                 hAxis: {
-
                     slantedText: true,
-
                     showTextEvery: 1
-
                 },
-
                 chartArea: {
-
                     height: "60%",
-
                     left: "5%",
-
                     top: "5%",
-
                     width: "80%"
-
                 },
-
                 colors: [
-
                     "#00afd7",
-
                     "#f35757",
-
                     "#f0ad4e",
-
                     "#8383c6",
-
                     "#f9845b",
-
                     "#49c5b1",
-
                     "#2a99d1",
-
                     "#aacc85",
-
                     "#ba7fab"
-
                 ],
-
                 isStacked: true,
-
             });
 
-
-
             window.rubyDistChart = new google.visualization.ColumnChart(document.getElementById("chart-04"));
-
             window.rubyDistChart.draw(google.visualization.arrayToDataTable(distData), {
-
                 hAxis: {
-
                     slantedText: false,
-
                     showTextEvery: 1
-
                 },
-
                 chartArea: {
-
                     height: "85%",
-
                     left: "7%",
-
                     top: "5%",
-
                     width: "95%"
-
                 },
-
                 colors: [
-
                     "#00afd7",
-
                     "#f35757",
-
                     "#f0ad4e",
-
                     "#8383c6",
-
                     "#f9845b",
-
                     "#49c5b1",
-
                     "#2a99d1",
-
                     "#aacc85",
-
                     "#ba7fab"
-
                 ],
-
                 isStacked: true,
-
                 legend: {
                     'position': 'none'
                 }
-
             });
-
         });
-
     }
-
-
 
     function createDistChart() {
-
         var query = new Keen.Query("count", {
-
             eventCollection: "requests",
-
             timeFrame: "this_7_days",
-
             groupBy: "dist_name"
-
         });
-
-
 
         client.draw(query, document.getElementById("chart-dist"), {
-
             chartType: "piechart",
-
             height: 250,
-
             width: "auto",
-
             legend: true,
-
             title: false
-
         });
-
     }
-
-
 
     function createGroupChart() {
-
         var query = new Keen.Query("count", {
-
             eventCollection: "requests",
-
             timeFrame: "this_7_days",
-
             groupBy: "group_name"
-
         });
-
-
 
         client.draw(query, document.getElementById("chart-group"), {
-
             chartType: "piechart",
-
             height: 250,
-
             width: "auto",
-
             legend: true,
-
             title: false
-
         });
-
     }
 
-
-
     Keen.ready(function() {
-
         createBuildsPerDayChart();
-
         createRepositoriesWithBuildsPerDayChart();
-
         createSudoChart();
-
         createAptGetChart();
-
         createLanguagesChart();
-
         createGithubLanguagesChart();
-
         createRubyCharts();
-
         createDistChart();
-
         createGroupChart();
 
-
-
         window.nodeChart = createVersionsChart("language_version.node_js", document.getElementById("chart-node"), false);
-
         window.pythonChart = createVersionsChart("language_version.python", document.getElementById("chart-python"), false);
-
         window.phpChart = createVersionsChart("language_version.php", document.getElementById("chart-php"), false);
-
         window.jdkChart = createVersionsChart("language_version.jdk", document.getElementById("chart-jdk"), false);
-
         window.otpChart = createVersionsChart("language_version.otp_release", document.getElementById("chart-erlang-otp"), false);
-
         window.perlChart = createVersionsChart("language_version.perl", document.getElementById("chart-perl"), false);
-
         window.goChart = createVersionsChart("language_version.go", document.getElementById("chart-go"), false);
-
         window.ghcChart = createVersionsChart("language_version.ghc", document.getElementById("chart-ghc"), false);
-
         window.scalaChart = createVersionsChart("language_version.scala", document.getElementById("chart-scala"), false);
 
     });
