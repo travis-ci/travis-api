@@ -82,7 +82,7 @@ class UsersController < ApplicationController
       @subscription = Billing::V2SubscriptionPresenter.new(v2_subscription, params[:page], self)
       render_either 'v2_subscriptions/subscription'
     else
-      subscription = Subscription.find_by(owner_id: params[:id])
+      subscription = Subscription.find_by(owner_id: params[:id], owner_type: 'User')
       @subscription = subscription && SubscriptionPresenter.new(subscription, subscription.selected_plan, self)
       render_either 'shared/subscription'
     end
