@@ -109,9 +109,10 @@ class Travis::Api::App
         params[:signup] ||= false
         send(method) do |user, token, redirect_uri|
           if target_ok? redirect_uri
+            user[:installation] = params[:installation_id]
             content_type :html
             if params[:setup_action] && params[:setup_action] == 'install' && params[:provider] == 'github'
-              redirect_uri = "#{Travis.config.vcs_redirects.web_url}#{Travis.config.vcs_redirects[params[:provider]]}?installation_id=#{params[:installation_id]}"
+              redirect_uri = redirect_uri + "?installation_id=#{params[:installation_id]}"
             end
             data = { user: user, token: token, uri: redirect_uri }
             erb(:post_payload, locals: data)
@@ -218,8 +219,8 @@ class Travis::Api::App
 
         def vcs_handshake
           if params[:code]
-            if params[:setup_action] && params[:setup_action] == 'update' && params[:provider] && !params[:state]
-              redirect to("#{Travis.config.vcs_redirects.web_url}#{Travis.config.vcs_redirects[params[:provider]]}")
+            if params[:setup_action] && (params[:setup_action] == 'update' || params[:setup_action] == 'install') && params[:provider] && !params[:state]
+              redirect to("#{Travis.config.vcs_redirects.web_url}#{Travis.config.vcs_redirects[params[:provider]]}?installation_id=#{params[:installation_id]}")
             end
 
             unless state_ok?(params[:state], params[:provider])
