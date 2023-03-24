@@ -113,6 +113,7 @@ class Travis::Api::App
             content_type :html
             if params[:setup_action] && params[:setup_action] == 'install' && params[:provider] == 'github'
               redirect_uri = redirect_uri + "?installation_id=#{params[:installation_id]}"
+              redirect_uri = "#{Travis.config.vcs_redirects.web_url}#{Travis.config.vcs_redirects[params[:provider]]}?installation_id=#{params[:installation_id]}"
             end
             data = { user: user, token: token, uri: redirect_uri }
             erb(:post_payload, locals: data)
