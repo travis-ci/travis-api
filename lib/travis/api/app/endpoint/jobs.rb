@@ -50,7 +50,7 @@ class Travis::Api::App
           status 422
           respond_with json
         else
-          payload = { id: params[:id], user_id: current_user.id, source: 'api' }
+          payload = { id: params[:id], user_id: current_user.id, source: 'api', reason: "Job Cancelled manually by User with id: #{user.login}" }
           service.push("job:cancel", payload)
 
           Metriks.meter("api.v2.request.cancel_job.success").mark
