@@ -62,6 +62,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
           "@type"             => "allowance",
           "id"                => 1
         },
+        "custom_keys" => [],
         "allow_migration" => false,
         "recently_signed_up" => false,
         "secure_user_hash" => nil,

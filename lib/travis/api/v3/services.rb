@@ -23,6 +23,8 @@ module Travis::API::V3
     CreditsCalculator     = Module.new { extend Services }
     Cron                  = Module.new { extend Services }
     Crons                 = Module.new { extend Services }
+    CustomKey             = Module.new { extend Services }
+    CustomKeys            = Module.new { extend Services }
     EmailSubscription     = Module.new { extend Services }
     EnvVar                = Module.new { extend Services }
     EnvVars               = Module.new { extend Services }
@@ -37,6 +39,8 @@ module Travis::API::V3
     Leads                 = Module.new { extend Services }
     Lint                  = Module.new { extend Services }
     Log                   = Module.new { extend Services }
+    ScanResult            = Module.new { extend Services }
+    ScanResults           = Module.new { extend Services }
     Messages              = Module.new { extend Services }
     Organization          = Module.new { extend Services }
     Organizations         = Module.new { extend Services }

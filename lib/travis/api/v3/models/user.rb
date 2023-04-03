@@ -82,5 +82,10 @@ module Travis::API::V3
     def github?
       vcs_type == 'GithubUser'
     end
+
+    def custom_keys
+      return @custom_keys if defined? @custom_keys
+      @custom_keys = Models::CustomKey.where(owner_type: 'User', owner_id: id)
+    end
   end
 end

@@ -22,6 +22,8 @@ class Travis::Api::App
       end
 
       get '/:owner_name/:name/builds', scope: [:public, :travis_token] do
+        halt 401 if scope == :travis_token && access_token.travis_token && !access_token.travis_token.rss? && access_token.user.tokens.rss.exists?
+
         respond_with service(:find_builds, params), responder: :atom, responders: :atom
       end
 
