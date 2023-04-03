@@ -7,6 +7,8 @@ require 'travis/model'
 # one) that they need use on their service hooks. This gives us some security
 # that people cannot throw random repositories at Travis CI.
 class Token < Travis::Model
+  enum purpose: [ :asset, :rss ]
+
   belongs_to :user
 
   validates :token, :presence => true
