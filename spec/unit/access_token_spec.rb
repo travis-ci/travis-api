@@ -44,4 +44,15 @@ describe Travis::Api::App::AccessToken do
     token = described_class.find_by_token(token.token)
     expect(token.extra).to eq({ 'required_params' => { 'job_id' => '1' } })
   end
+
+  it 'allows to save travis token' do
+    attrs = {
+      app_id: 1,
+      user_id: 3,
+      travis_token: Token.new
+    }
+
+    token = described_class.new(attrs).tap(&:save)
+    expect(token.travis_token).to eq(attrs[:travis_token])
+  end
 end

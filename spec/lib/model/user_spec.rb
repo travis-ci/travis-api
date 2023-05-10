@@ -182,4 +182,13 @@ describe User do
       end
     end
   end
+
+  describe 'tokens' do
+    let(:user) { FactoryBot.create(:user) }
+
+    it 'creates two tokens on creation' do
+      expect(user.tokens.asset.count).to eq(1)
+      expect(user.tokens.rss.count).to eq(1)
+    end
+  end
 end
