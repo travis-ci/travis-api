@@ -90,7 +90,8 @@ module Travis
             logs_api:             { url: logs_api_url, token: logs_api_auth_token },
             fallback_logs_api:    { url: fallback_logs_api_auth_url, token: fallback_logs_api_auth_token },
             scanner:              {},
-            insights:             { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' }
+            insights:             { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' },
+            authorizer:           {},
 
     default :_access => [:key]
 

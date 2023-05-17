@@ -80,5 +80,9 @@ module Travis::API::V3
       object.owner.build_priorities_enabled?
     end
 
+    def authorizer
+      @_authorizer ||= Authorizer::new(access_control.user.id)
+    end
+
   end
 end
