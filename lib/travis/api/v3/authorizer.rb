@@ -27,6 +27,8 @@ module Travis::API::V3
       raise AuthorizerConnectionError
     end
 
+    alias :for_org :for_account
+
     def has_repo_role?(repo_id, role)
       response = connection.get("roles/repo/:id")
       if handle_response(response) && response.status == 200
