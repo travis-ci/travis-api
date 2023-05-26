@@ -81,7 +81,7 @@ module Travis::API::V3
     end
 
     def authorizer
-      @_authorizer ||= Authorizer::new(access_control.user.id)
+      @_authorizer ||= Authorizer::new(access_control.user&.id)
     end
 
   end

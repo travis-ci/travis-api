@@ -111,7 +111,20 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
                 "delete_key_pair"=>false,
                 "create_request"=>false,
                 "check_scan_results"=>false,
-                "admin"=>false
+                "admin"=>false,
+                "build_cancel" => false,
+                "build_create" => false,
+                "build_debug" => false,
+                "build_restart" => false,
+                "cache_delete" => false,
+                "cache_view" => false,
+                "settings_create" => false,
+                "settings_delete" => false,
+                "settings_read" => true,
+                "settings_update" => false,
+                "log_delete" => false,
+                "log_view" => true
+
               },
               "id"=>1,
               "name"=>"minimal",
