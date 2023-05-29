@@ -67,6 +67,7 @@ module Travis::API::V3
       @connection ||= Faraday.new(url: authorizer_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
         conn.basic_auth '_', authorizer_auth_key
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
+        conn.headers['X-Travis-Origin'] = 'api'
         conn.headers['Content-Type'] = 'application/json'
         conn.request :json
         conn.response :json
