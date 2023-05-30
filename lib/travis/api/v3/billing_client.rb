@@ -128,8 +128,8 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
-    def update_v2_creditcard(subscription_id, creditcard_token)
-      response = connection.patch("/v2/subscriptions/#{subscription_id}/creditcard", token: creditcard_token)
+    def update_v2_creditcard(subscription_id, creditcard_token, creditcard_fingerprint)
+      response = connection.patch("/v2/subscriptions/#{subscription_id}/creditcard", token: creditcard_token, fingerprint: creditcard_fingerprint)
       handle_v2_subscription_response(response)
     end
 

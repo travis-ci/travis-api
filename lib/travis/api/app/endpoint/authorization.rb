@@ -392,6 +392,13 @@ class Travis::Api::App
           data    = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
           scopes  = parse_scopes data.headers['x-oauth-scopes']
           manager = UserManager.new(data, token, drop_token)
+          
+          # The new GitHub fine-grained tokens do not include scopes header yet
+          # or any way of retrieving scopes so we just have to assume that
+          # user gave all necessary permissions
+          # TODO: Remove this when GitHub implements x-oauth-scopes header for
+          # fine-grained tokens https://github.com/orgs/community/discussions/36441#discussioncomment-5183431
+          scopes = Travis::Github::Oauth.wanted_scopes if github_fine_grained_pat?(token.to_s)
 
           unless acceptable?(scopes, drop_token)
             # TODO: we should probably only redirect if this is a web
@@ -408,12 +415,21 @@ class Travis::Api::App
             halt 403, 'not a Travis user'
           end
 
+          if github_fine_grained_pat?(token.to_s)
+            user.github_scopes = Travis::Github::Oauth.wanted_scopes
+            user.save!
+          end
+
           Travis.run_service(:sync_user, user)
 
           user
         rescue GH::Error
           # not a valid token actually, but we don't want to expose that info
           halt 403, 'not a Travis user'
+        end
+
+        def github_fine_grained_pat?(token)
+          token.start_with?('github_pat_')
         end
 
         def get_token(endpoint, values)
