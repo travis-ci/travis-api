@@ -25,6 +25,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
                    }
   let(:parsed_body) { JSON.load(body) }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
     job.update_attributes!(stage: stage)
@@ -50,6 +52,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "restart"             => false,
         "debug"               => false,
         "delete_log"          => false,
+        "view_log"            => true,
         "prioritize"          => false },
       "id"                    => job.id,
       "allow_failure"         => job.allow_failure,
@@ -169,6 +172,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "restart"             => true,
         "debug"               => false,
         "delete_log"          => true,
+        "view_log"            => true,
         "prioritize"          => true },
       "id"                    => job.id,
       "allow_failure"         => job.allow_failure,
@@ -250,6 +254,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "restart"             => false,
         "debug"               => false,
         "delete_log"          => false,
+        "view_log"            => true,
         "prioritize"          => false },
       "id"                    => job2.id,
       "allow_failure"         => job2.allow_failure,

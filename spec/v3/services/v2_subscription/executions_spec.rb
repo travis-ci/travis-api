@@ -10,6 +10,8 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
     Travis.config.billing.auth_key = billing_auth_key
   end
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   context 'unauthenticated' do
     it 'responds 403' do
       get('/v3/owner/123/executions')

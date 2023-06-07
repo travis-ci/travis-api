@@ -18,6 +18,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   after         { repo.update_attribute(:private, false)                            }
   before        { RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 1024*1024 }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe "sorting by default_branch.last_build" do
     let!(:repo2) { Travis::API::V3::Models::Repository.create!(owner_name: 'svenfuchs', owner: repo.owner, name: 'second-repo', default_branch_name: 'other-branch') }
     let!(:branch) { repo2.default_branch }

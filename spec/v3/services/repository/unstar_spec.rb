@@ -1,6 +1,8 @@
 describe Travis::API::V3::Services::Repository::Unstar, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe "not authenticated" do
     before  { post("/v3/repo/#{repo.id}/unstar")      }
     example { expect(last_response.status).to be == 403 }

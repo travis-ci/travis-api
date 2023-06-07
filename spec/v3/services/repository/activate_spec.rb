@@ -4,6 +4,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
     Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
     Travis.config.vcs.token = 'vcs-token'
     repo.update_attributes!(active: false)
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
   end
   describe "not authenticated" do
     before  { post("/v3/repo/#{repo.id}/activate")      }

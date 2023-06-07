@@ -6,6 +6,8 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
   before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
   before        { repo.update_attribute(:private, true)                             }
   after         { repo.update_attribute(:private, false)                            }
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+  before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 401) }
 
   let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org')   }
   before    { org.save!                                }

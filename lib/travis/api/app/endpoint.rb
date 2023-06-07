@@ -112,6 +112,15 @@ class Travis::Api::App
         uri.to_s
       end
 
+      def authorizer
+        @_authorizer ||= Travis::API::V3::Authorizer::new(current_user&.id)
+      end
+
+      def auth_for_repo(id, type)
+        permission = authorizer.for_repo(id, type)
+        halt 401, { error: { message: "We're sorry, but you're not authorized to perform this request" } } unless permission
+      rescue Travis::API::V3::AuthorizerError
+      end
   end
 end
 

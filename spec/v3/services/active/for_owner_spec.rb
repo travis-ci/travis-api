@@ -75,6 +75,8 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
     let(:org_build) { V3::Models::Build.create(repository: org_repo, owner: org, state: 'created') }
     let!(:org_job)  { V3::Models::Job.create(source_id: org_build.id, source_type: 'Build', owner: org, state: 'queued', repository: org_repo) }
 
+    before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
     describe 'in public mode' do
       before { Travis.config[:public_mode] = true }
 
@@ -135,6 +137,8 @@ RSpec.describe Travis::API::V3::Services::Active::ForOwner, set_app: true do
     let(:private_build) { V3::Models::Build.create(repository: private_repo, owner: user, state: 'created') }
     let!(:private_job)  { V3::Models::Job.create(source_id: private_build.id, source_type: 'Build', owner: user, state: 'queued', repository: private_repo) }
     let!(:private_perm) { V3::Models::Permission.create(repository: private_repo, user: user) }
+
+    before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
 
     context 'viewing own profile' do
       describe 'can see builds for all own repos' do

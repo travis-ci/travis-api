@@ -6,6 +6,8 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
   let(:env_var) { { id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: true, branch: 'foo', repository_id: repo.id } }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe 'not authenticated' do
     before { delete("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}") }
     include_examples 'not authenticated'

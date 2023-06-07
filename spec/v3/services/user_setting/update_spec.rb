@@ -9,6 +9,8 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
   let(:old_params) { JSON.dump('setting.value' => false) }
   let(:new_params) { JSON.dump('setting.value' => false) }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe 'not authenticated' do
     before do
       patch("/v3/repo/#{repo.id}/setting/build_pushes", new_params, json_headers)

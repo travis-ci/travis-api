@@ -5,6 +5,8 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
   let(:job)         { build.jobs.first }
   let(:payload)     { { 'id'=> "#{job.id}", 'user_id' => 1 } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   before do
     job.update(state: :passed)
     Travis.config.billing.url = 'http://localhost:9292/'

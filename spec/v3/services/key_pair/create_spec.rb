@@ -7,6 +7,8 @@ describe Travis::API::V3::Services::KeyPair::Create, set_app: true do
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   shared_examples 'paid' do
     describe 'not authenticated' do
       before { post("/v3/repo/#{repo.id}/key_pair") }

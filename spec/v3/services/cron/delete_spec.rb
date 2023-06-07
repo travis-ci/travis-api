@@ -6,6 +6,8 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
   let(:parsed_body) { JSON.load(body) }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe "deleting a cron job by id" do
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
     before     { delete("/v3/cron/#{cron.id}", {}, headers) }

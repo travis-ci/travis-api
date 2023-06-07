@@ -4,6 +4,8 @@ describe Travis::API::V3::Services::Branch::Find, set_app: true do
 
   before { repo.default_branch.save! }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe "public repository, existing branch" do
     before     { get("/v3/repo/#{repo.id}/branch/master") }
     example    { expect(last_response).to be_ok           }

@@ -26,6 +26,12 @@ module Travis::API::V3
       write?
     end
 
+    def view_log?
+      authorizer.for_repo(object.id, 'repository_log_view')
+    rescue AuthorizerError
+      read?
+    end
+
     def prioritize?
       authorizer.for_repo(object.id, 'repository_build_create') && build_priorities?
     rescue AuthorizerError

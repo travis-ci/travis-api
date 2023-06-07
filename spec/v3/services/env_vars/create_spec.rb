@@ -6,6 +6,8 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe 'not authenticated' do
     before { post("/v3/repo/#{repo.id}/env_vars", {}) }
     include_examples 'not authenticated'

@@ -10,6 +10,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   after         { repo.update_attribute(:private, false)                                        }
   before        { Travis::Features.activate_owner(:allow_migration, repo.owner) }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe "private repository, private API, authenticated as user with access" do
     before  { get("/v3/repos", {}, headers)    }
     example { expect(last_response).to be_ok   }

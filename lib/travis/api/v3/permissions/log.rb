@@ -25,5 +25,11 @@ module Travis::API::V3
     rescue AuthorizerError
       write?
     end
+
+    def view_log?
+      authorizer.for_repo(object.id, 'repository_log_view')
+    rescue AuthorizerError
+      read?
+    end
   end
 end

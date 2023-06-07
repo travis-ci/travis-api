@@ -11,6 +11,7 @@ describe Travis::API::V3::Services::Job::Cancel, set_app: true do
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
   end
 
   after do

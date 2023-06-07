@@ -4,6 +4,8 @@ describe Travis::API::V3::Services::Cron::ForBranch, set_app: true do
   let(:cron)  { Travis::API::V3::Models::Cron.create(branch: branch, interval:'daily') }
   let(:parsed_body) { JSON.load(body) }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe "fetching all crons by repo id" do
     before     { cron }
     before     { get("/v3/repo/#{repo.id}/branch/#{branch.name}/cron")     }

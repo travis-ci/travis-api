@@ -18,6 +18,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     Travis::API::V3::Models::Permission.create!(user: user, repository: repo2)
   end
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe 'for current user' do
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}

@@ -2,6 +2,8 @@ describe Travis::Api::App::SettingsEndpoint do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   before do
     model_class = Class.new(Repository::Settings::Model) do
       attribute :name, String

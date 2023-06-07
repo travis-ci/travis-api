@@ -18,6 +18,7 @@ describe Travis::API::V3::Services::Request::Preview, set_app: true do
 
   before { repo.update_attributes(settings: { env_vars: [env_var] }) }
   before { stub_request(:post, 'https://yml.travis-ci.org/configs').to_return(status: 200, body: JSON.dump(configs)) }
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
 
   def parse(str)
     JSON.parse(str).deep_symbolize_keys

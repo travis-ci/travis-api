@@ -51,7 +51,7 @@ describe Travis::API::V3::Services::V2Subscription::UpdatePaymentDetails, set_ap
 
     let!(:stubbed_request_creditcard) do
       stub_billing_request(:patch, "/v2/subscriptions/#{subscription_id}/creditcard", auth_key: billing_auth_key, user_id: user.id)
-      .with(body: { 'token' => 'token_from_stripe' })
+      .with(body: { 'token' => 'token_from_stripe', 'fingerprint' => nil })
       .to_return(status: 204)
     end
 

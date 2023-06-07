@@ -6,6 +6,8 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
       Travis::Features.activate_owner(:allow_migration, repo.owner)
     end
 
+    before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
     context "logged in" do
       let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
       let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}

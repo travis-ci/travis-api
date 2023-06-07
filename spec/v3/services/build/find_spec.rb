@@ -14,6 +14,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
     build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
     build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
     build.reload
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
   end
 
   describe "fetching build on a public repository " do

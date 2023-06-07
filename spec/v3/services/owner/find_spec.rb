@@ -6,6 +6,9 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
     before    { org.save! }
     after     { org.delete                             }
 
+    before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+    before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 401) }
+
     describe 'existing org, public api, by login' do
       before  { get("/v3/owner/example-org")     }
       example { expect(last_response).to be_ok   }

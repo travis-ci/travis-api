@@ -5,6 +5,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
   before    { org.save!                              }
   after     { org.delete                             }
 
+  before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 401) }
+
   describe 'existing org, public api' do
     before  { Travis.config.public_mode = true }
     before  { get("/v3/org/#{org.id}") }

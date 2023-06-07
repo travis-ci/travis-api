@@ -8,6 +8,8 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
 
   before { ActiveRecord::Base.connection.execute("truncate requests cascade") }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   before do
     Travis.config.billing.url = 'http://localhost:9292/'
     Travis.config.billing.auth_key = 'secret'

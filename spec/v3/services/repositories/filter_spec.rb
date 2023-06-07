@@ -5,6 +5,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
 
   before { ActiveRecord::Base.connection.execute("truncate repositories cascade") }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe 'name_filter' do
     let(:web_repo)  { FactoryBot.create(:repository, name: 'travis-web') }
     let(:api_repo)  { FactoryBot.create(:repository, name: 'travis-api') }

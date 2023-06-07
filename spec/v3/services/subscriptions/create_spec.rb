@@ -2,6 +2,8 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
   let(:parsed_body) { JSON.load(last_response.body) }
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
+  
+  before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 401) }
 
   before do
     Travis.config.billing.url = billing_url

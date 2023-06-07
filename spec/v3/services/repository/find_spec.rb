@@ -5,6 +5,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
   let(:jobs)  { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   let(:permissions) do
     {
       admin: {

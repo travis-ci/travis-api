@@ -11,6 +11,8 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
   let(:other_token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 2) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe 'not authenticated' do
     before { post("/v3/repo/#{repo.id}/key_pair/generated") }
     include_examples 'not authenticated'

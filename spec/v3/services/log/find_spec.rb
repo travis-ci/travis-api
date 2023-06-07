@@ -68,6 +68,7 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       to_return(status: 200, body: xml_content, headers: {})
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job2.id}/log.txt").
         to_return(status: 200, body: nil, headers: {})
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
     Fog.mock!
     storage = Fog::Storage.new({
       aws_access_key_id: 'key',
@@ -183,7 +184,8 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
             'debug' => false,
             'cancel' => false,
             'restart' => false,
-            'delete_log' => false
+            'delete_log' => false,
+            'view_log' => true
           },
           'id' => log_from_api[:id],
           'content' => archived_content,

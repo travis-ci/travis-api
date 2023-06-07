@@ -3,6 +3,8 @@ describe Travis::API::V3::Services::Subscription::Pay, set_app: true, billing_sp
   let(:billing_auth_key) { 'secret' }
   let(:organization) { FactoryBot.create(:org, login: 'travis') }
 
+  before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 200) }
+
   before do
     Travis.config.billing.url = billing_url
     Travis.config.billing.auth_key = billing_auth_key

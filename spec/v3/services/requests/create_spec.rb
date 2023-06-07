@@ -12,6 +12,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     ActiveRecord::Base.connection.execute("truncate requests cascade")
     ActiveRecord::Base.connection.execute("truncate repositories cascade")
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
   end
 
   after do

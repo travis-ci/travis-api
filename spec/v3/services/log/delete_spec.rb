@@ -52,6 +52,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
       to_return(:status => 200, :body => xml_content, :headers => {})
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.org/?prefix=jobs/#{job.id}/log.txt").
       to_return(:status => 200, :body => xml_content, :headers => {})
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
   end
 
   describe "not authenticated" do
@@ -134,7 +135,8 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
           "delete_log" => false,
           "cancel" => false,
           "restart" => false,
-          "debug" => false
+          "debug" => false,
+          "view_log" => true
         },
         "id" => nil,
         "content" => nil,
