@@ -6,7 +6,7 @@ module Travis::API::V3
 
       begin
         unless Travis::API::V3::Authorizer::new(access_control.user.id).for_org(params['organization_id'], 'account_plan_view')
-          raise InsufficientAcess
+          raise InsufficientAccess
         end
       rescue AuthorizerError
         #nop
