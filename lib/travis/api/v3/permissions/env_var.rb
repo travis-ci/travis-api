@@ -7,7 +7,7 @@ module Travis::API::V3
     end
 
     def write?
-      authorizer.for_repo(object.repository_id, 'repository_settings_create')
+      authorizer.for_repo(object.repository_id, 'repository_settings_create') || authorizer.for_repo(object.repository_id, 'repository_settings_update')
     rescue AuthorizerError
       repository_permissions.write?
     end

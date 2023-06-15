@@ -64,8 +64,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "@href"            => "/v3/org/#{org.id}",
       "@representation"  => "standard",
       "@permissions"     => {
-        "read" => true, 
-        "sync" => true, 
+        "read" => true,
+        "sync" => true,
         "admin" => false,
         "plan_usage"=>true,
         "plan_view"=>true,

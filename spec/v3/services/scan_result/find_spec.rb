@@ -9,6 +9,8 @@ describe Travis::API::V3::Services::ScanResult::Find, set_app: true, scanner_spe
     Travis.config.scanner.token = scanner_auth_key
   end
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   context 'unauthenticated' do
     it 'responds 403' do
       get('/v3/scan_results')

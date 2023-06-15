@@ -6,7 +6,7 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
       Travis::Features.activate_owner(:allow_migration, repo.owner)
     end
 
-    before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+    before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: MultiJson.dump(permissions: ['repository_state_update']) ) }
 
     context "logged in" do
       let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
@@ -59,6 +59,7 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
 
       context "doesn't have admin permissions to the repository" do
         before { Travis::API::V3::Models::Permission.create(repository: repo, user: user, pull: true) }
+        before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: MultiJson.dump(permissions: []) ) }
 
         it "returns a 403 response" do
           response = post("/v3/repo/#{repo.id}/migrate", {}, headers)

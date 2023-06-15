@@ -3,19 +3,21 @@ require 'travis/api/v3/permissions/generic'
 module Travis::API::V3
   class Permissions::Repository < Permissions::Generic
     def activate?
-      authorizer.has_repo_role?(object.id, 'repository_admin') && object.allow_migration?
+      notgit_allowance = object.server_type == nil || object.server_type == 'git' || admin?
+      authorizer.for_repo(object.id, 'repository_state_update') && object.allow_migration? && notgit_allowance
     rescue AuthorizerError
       write?
     end
 
     def deactivate?
-      authorizer.has_repo_role?(object.id, 'repository_admin') && object.allow_migration?
+      notgit_allowance = object.server_type == nil || object.server_type == 'git' || admin?
+      authorizer.for_repo(object.id, 'repository_state_update') && object.allow_migration? && notgit_allowance
     rescue AuthorizerError
       write?
     end
 
     def migrate?
-      authorizer.has_repo_role?(object.id, 'repository_admin') && object.allow_migration?
+      authorizer.for_repo(object.id, 'repository_state_update') && object.allow_migration?
     rescue AuthorizerError
       admin? && object.allow_migration?
     end
@@ -29,7 +31,7 @@ module Travis::API::V3
     end
 
     def create_cron?
-      authorizer.for_repo(object.id, 'repository_settings_create')
+      authorizer.for_repo(object.id, 'repository_settings_create') && authorizer.for_repo(object.id, 'repository_build_create')
     rescue AuthorizerError
       write?
     end
@@ -59,6 +61,8 @@ module Travis::API::V3
     end
 
     def check_scan_results?
+      authorizer.for_repo(object.id, 'repository_scans_view')
+    rescue AuthorizerError
       write?
     end
 
