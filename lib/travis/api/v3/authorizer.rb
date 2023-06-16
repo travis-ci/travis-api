@@ -120,7 +120,7 @@ module Travis::API::V3
             redis.sadd(key, response.body['roles'])
             redis.expire(key, 2)
           end
-          response.body['roles']&.include?(policy)
+          response.body['roles']&.include?(role)
         end
       rescue Faraday::Error
         raise Travis::API::V3::AuthorizerConnectionError

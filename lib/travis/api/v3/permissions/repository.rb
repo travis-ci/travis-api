@@ -4,14 +4,14 @@ module Travis::API::V3
   class Permissions::Repository < Permissions::Generic
     def activate?
       notgit_allowance = object.server_type == nil || object.server_type == 'git' || admin?
-      authorizer.for_repo(object.id, 'repository_state_update') && object.allow_migration? && notgit_allowance
+      authorizer.for_repo(object.id, 'repository_state_update') && notgit_allowance
     rescue AuthorizerError
       write?
     end
 
     def deactivate?
       notgit_allowance = object.server_type == nil || object.server_type == 'git' || admin?
-      authorizer.for_repo(object.id, 'repository_state_update') && object.allow_migration? && notgit_allowance
+      authorizer.for_repo(object.id, 'repository_state_update') && notgit_allowance
     rescue AuthorizerError
       write?
     end
