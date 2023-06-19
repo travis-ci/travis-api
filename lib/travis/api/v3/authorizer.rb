@@ -28,6 +28,42 @@ module Travis::API::V3
       cache.get_role('organization', org_id, role)
     end
 
+    def patch_all_org_repos(org_id, roles)
+      response = connection.patch("/org/#{org_id}/repos") do |req|
+        req.body={roles: roles}
+      end
+      handle_response(response)
+    rescue Faraday::Error
+      raise AuthorizerConnectionError
+    end
+
+    def delete_all_org_repos(org_id, role)
+      response = connection.delete("/org/#{org_id}/repos") do |req|
+        req.body = {roles: roles}
+      end
+      handle_response(response)
+    rescue Faraday::Error
+      raise AuthorizerConnectionError
+    end
+
+    def patch_repo_roles(repo_id, roles)
+      response = connection.patch("/repo/#{repo_id}") do |req|
+        req.body={roles: roles}
+      end
+      handle_response(response)
+    rescue Faraday::Error
+      raise AuthorizerConnectionError
+    end
+
+    def delete_repo_roles(repo_id, role)
+      response = connection.delete("/repo/#{repo_id}") do |req|
+        req.body = {roles: roles}
+      end
+      handle_response(response)
+    rescue Faraday::Error
+      raise AuthorizerConnectionError
+    end
+
     def for_repox(repo_id, perm)
       response = connection.get("/repo/#{repo_id}/#{perm}")
       handle_response(response)
@@ -46,7 +82,7 @@ module Travis::API::V3
     alias :for_org :for_account
 
     def has_repo_rolex?(repo_id, role)
-      response = connection.get("roles/repo/:id")
+      response = connection.get("roles/repo/#{repo_id}")
       if handle_response(response) && response.status == 200
         response.body.include?('roles') && response.body['roles']&.include?(role)
       end
@@ -56,7 +92,7 @@ module Travis::API::V3
     end
 
     def has_org_rolex?(org_id, role)
-      response = connection.get("roles/org/:id")
+      response = connection.get("roles/org/#{org_id}")
       if handle_response(response) && response.status == 200
         response.body.include?('roles') && response.body['roles']&.include?(role)
       end
@@ -81,6 +117,10 @@ module Travis::API::V3
 
     def cache
       @_cache ||= Cache.new(@user_id)
+    end
+
+    def connection
+      @_connection ||= AuthorizerClient.new(@user_id).connection
     end
 
     class Cache
@@ -128,6 +168,16 @@ module Travis::API::V3
 
       def redis
         @_redis ||= Travis.redis
+      end
+
+      def connection
+        @_connection ||= AuthorizerClient.new(@user_id).connection
+      end
+    end
+
+    class AuthorizerClient
+      def initialize(user_id)
+        @user_id = user_id
       end
 
       def connection(timeout: 3)
