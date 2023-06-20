@@ -32,6 +32,11 @@ describe 'Requests', set_app: true do
       response = get '/requests', { repository_id: 0 }, headers
       expect(JSON.parse(response.body)['error']).to eq("Repository could not be found")
     end
+
+    it 'should accept limit option' do
+      response = get '/requests', { repository_id: repo.id, limit: 50 }, headers
+      response.should deliver_json_for(repo.requests, version: 'v2', type: 'requests')
+    end
   end
 
   describe 'GET /requests/:id' do
