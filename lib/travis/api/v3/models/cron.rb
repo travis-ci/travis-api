@@ -49,17 +49,14 @@ module Travis::API::V3
 
       return deactivate_and_log_reason(BRANCH_MISSING_ON_GH) unless branch.exists_on_github
 
-      user_id = branch.repository.users.detect { |u| u.github_oauth_token }.try(:id)
-      user_id ||= branch.repository.owner.id
-
       payload = {
         repository: {
           id:         branch.repository.vcs_id || branch.repository.github_id,
           vcs_type:   branch.repository.vcs_type,
           owner_name: branch.repository.owner_name,
           name:       branch.repository.name },
-        branch:     branch.name,
-        user:       { id: user_id }
+          branch:     branch.name,
+          user:       { type: "TRAVIS CRON" }
       }
 
       ::Travis::API::Sidekiq.gatekeeper(
