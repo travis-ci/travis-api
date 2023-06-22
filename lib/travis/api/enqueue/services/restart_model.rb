@@ -110,7 +110,7 @@ module Travis
           return true if authorizer.for_repo(repository.id,'repository_build_restart')
 
           false
-        rescue Travis::API:V3::AuthorizerError
+        rescue Travis::API::V3::AuthorizerError
           return false if repository.permissions.find_by(user_id: current_user.id).build == false
           return false if repository.owner_type == 'Organization' && repository.owner.memberships.find_by(user_id: current_user.id)&.build_permission == false
 
