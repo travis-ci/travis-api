@@ -37,7 +37,7 @@ module Travis::API::V3
       raise AuthorizerConnectionError
     end
 
-    def delete_all_org_repos(org_id, role)
+    def delete_all_org_repos(org_id, roles)
       response = connection.delete("/org/#{org_id}/repos") do |req|
         req.body = {roles: roles}
       end
@@ -55,7 +55,7 @@ module Travis::API::V3
       raise AuthorizerConnectionError
     end
 
-    def delete_repo_roles(repo_id, role)
+    def delete_repo_roles(repo_id, roles)
       response = connection.delete("/repo/#{repo_id}") do |req|
         req.body = {roles: roles}
       end
