@@ -282,14 +282,16 @@ module Travis::API::V3
       end
     end
 
-    resource :scan_results do
-      route '/scan_results'
-      get :all
-    end
+    unless ENV['SCANNER_DISABLED']
+      resource :scan_results do
+        route '/scan_results'
+        get :all
+      end
 
-    resource :scan_result do
-      route '/scan_result/{scan_result.id}'
-      get :find
+      resource :scan_result do
+        route '/scan_result/{scan_result.id}'
+        get :find
+      end
     end
 
     resource :user do
