@@ -15,12 +15,13 @@ module Travis
         end
       end
 
-      def authenticate(provider: :github, code:, redirect_uri:)
+      def authenticate(provider: :github, code:, redirect_uri:, cluster: nil)
         request(:post, __method__) do |req|
           req.url 'users/session'
           req.params['provider'] = provider
           req.params['code'] = code
           req.params['redirect_uri'] = redirect_uri
+          req.params['cluster'] = cluster unless cluster.nil?
         end
       end
 

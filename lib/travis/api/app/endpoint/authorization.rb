@@ -222,7 +222,8 @@ class Travis::Api::App
             vcs_data = remote_vcs_user.authenticate(
               provider: params[:provider],
               code: params[:code],
-              redirect_uri: oauth_endpoint
+              redirect_uri: oauth_endpoint,
+              cluster: params[:cluster]
             )
 
             if vcs_data['redirect_uri'].present?

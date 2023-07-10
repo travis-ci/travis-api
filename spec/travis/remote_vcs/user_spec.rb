@@ -48,4 +48,28 @@ describe Travis::RemoteVCS::User do
       subject
     end
   end
+
+  describe '#authenticate' do
+    let(:user) { described_class.new }
+    let(:provider) { 'assembla' }
+    let(:code) { '1234' }
+    let(:redirect_uri) { 'test' }
+    let(:cluster) { 'special' }
+    let!(:request) do
+      stub_request(:post, /\/users\/session\?cluster=#{cluster}&code=#{code}&provider=#{provider}&redirect_uri=#{redirect_uri}/)
+        .to_return(
+          status: 200,
+          body: nil,
+        )
+    end
+
+    before { Travis.config.vcs  = { url: 'http://vcs:3000', token: 'token' } }
+
+    subject { user.authenticate(provider: provider, code: code, redirect_uri: redirect_uri, cluster: cluster) }
+
+    it 'performs a proper request' do
+      subject
+      expect(request).to have_been_made
+    end
+  end
 end
