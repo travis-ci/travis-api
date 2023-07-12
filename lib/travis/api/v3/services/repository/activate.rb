@@ -8,7 +8,7 @@ module Travis::API::V3
       check_repo_key(repository)
       return repo_migrated if migrated?(repository)
 
-      admin = access_control.admin_for(repository)
+      admin = access_control.user
       remote_vcs_repository.set_hook(
         repository_id: repository.id,
         user_id: admin.id
