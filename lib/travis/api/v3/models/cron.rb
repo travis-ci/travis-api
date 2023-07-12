@@ -56,7 +56,7 @@ module Travis::API::V3
           owner_name: branch.repository.owner_name,
           name:       branch.repository.name },
           branch:     branch.name,
-          user:       { id: "TRAVIS CRON" }
+          user:       { id: "TRAVIS_CRON" }
       }
 
       ::Travis::API::Sidekiq.gatekeeper(
