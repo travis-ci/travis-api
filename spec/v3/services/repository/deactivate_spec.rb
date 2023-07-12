@@ -31,13 +31,20 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
   end
   shared_examples 'repository deactivation' do
     describe 'existing repository, wrong access' do
-      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+      before {
+        stub_request(:delete, "http://vcsfake.travis-ci.com/repos/#{repo.id}/hook?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      }
       before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
       example 'is success' do
         expect(last_response.status).to eq 403
         expect(JSON.load(body)).to include(
           '@type' => 'error',
-          'error_type' => 'admin_access_required'
+          'error_type' => 'insufficient_access'
         )
       end
     end
@@ -49,7 +56,8 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
             body: nil,
           )
       end
-      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) }
+      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) 
+      }
       around do |ex|
         Travis.config.service_hook_url = 'https://url.of.listener.something'
         ex.run
@@ -107,7 +115,14 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
       ex.run
       Travis.config.applications = apps
     end
-    it_behaves_like 'repository deactivation'
+    before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
+    example 'is success' do
+      expect(last_response.status).to eq 403
+      expect(JSON.load(body)).to include(
+        '@type' => 'error',
+        'error_type' => 'admin_access_required'
+      )
+    end
   end
   describe "existing repository, push access"
   # as this requires a call to github, and stubbing this request has proven difficult,

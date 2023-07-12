@@ -192,6 +192,7 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   before do
     repo.default_branch.save!
     repo.owner.permissions.create(repository_id: repo.id, push: true)
+    stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200)
   end
 
   around(:each) do |example|
@@ -306,10 +307,10 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
       get("/v3/repo/#{repo.id}/caches?match=osx", {}, headers)
 
-      expect(JSON.load(body)).to eq({
+      expect(JSON.load(body)).to include({
         "@type" => "error",
         "error_type" => "insufficient_access",
-        "error_message" => "forbidden",
+        "error_message" => "operation requires cache_view access to repository",
       })
       expect(last_response.status).to eq 403
     end
