@@ -76,6 +76,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var"   => false,
           "create_key_pair"  => false,
           "delete_key_pair"  => false,
+          "check_scan_results" => false,
           "admin"            => false
         },
         "id"                 => repo.id,
@@ -92,6 +93,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "private"            => true,
         "server_type"        => 'git',
         "shared"             => false,
+        "scan_failed_at"     => nil,
         "owner"              => {
           "@type"            => "user",
           "id"               => repo.owner_id,
@@ -132,6 +134,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var"   =>false,
           "create_key_pair"  =>false,
           "delete_key_pair"  =>false,
+          "check_scan_results" => false,
           "create_request"   =>false},
         "id"                 =>repo.id,
         "name"               =>"minimal",
@@ -147,6 +150,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "private"            =>true,
         "server_type"        => 'git',
         "shared"             =>false,
+        "scan_failed_at"     => nil,
         "owner"              =>{
           "@type"            =>"user",
           "id"               =>1,
@@ -249,6 +253,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var"   => false,
           "create_key_pair"  => false,
           "delete_key_pair"  => false,
+          "check_scan_results" => false,
           "create_request"   => false},
         "id"                 => repo.id,
         "name"               => "minimal",
@@ -264,6 +269,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "private"            => true,
         "server_type"        => 'git',
         "shared"             => false,
+        "scan_failed_at"     => nil,
         "owner"              => {
           "@type"            => "user",
           "id"               => 1,
@@ -411,6 +417,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var" => false,
           "create_key_pair"=> false,
           "delete_key_pair"=> false,
+          "check_scan_results" => false,
           "create_request"=> false
         },
         "id"              => 1,
@@ -426,6 +433,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "active"          => true,
         "private"         => true,
         "server_type"     => 'git',
+        "scan_failed_at"  => nil,
         "owner"           => {
           "@type"         => "user",
           "id"            => 1,
@@ -459,6 +467,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var"  => false,
           "create_key_pair" => false,
           "delete_key_pair"  => false,
+          "check_scan_results" => false,
           "create_request"=> false
         },
         "id"              => repo2.id,
@@ -475,6 +484,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "private"         => false,
         "server_type"     => 'git',
         "shared"          => false,
+        "scan_failed_at"  => nil,
         "owner"           => {
           "@type"         => "user",
           "id"            => 1,
@@ -533,6 +543,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var"   => true,
           "create_key_pair"  => true,
           "delete_key_pair"  => true,
+          "check_scan_results" => true,
           "admin"            => false
         },
         "id"                 => sharedrepo.id,
@@ -549,6 +560,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "private"            => false,
         "server_type"        => 'git',
         "shared"             => true,
+        "scan_failed_at"     => nil,
         "owner"              => {
           "@type"            => "user",
           "id"               => sharedrepo.owner_id,

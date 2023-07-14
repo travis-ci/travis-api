@@ -20,12 +20,12 @@ describe Travis::API::V3::Services::V2Subscription::UpdateCreditcard, set_app: t
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
                      'CONTENT_TYPE' => 'application/json' }}
-    let(:creditcard_token) { { 'token' => 'token_from_stripe' } }
+    let(:creditcard_token) { { 'token' => 'token_from_stripe', 'fingerprint' => 'fingerprint_from_stripe' } }
     let(:subscription_id) { rand(999) }
 
     let!(:stubbed_request) do
       stub_billing_request(:patch, "/v2/subscriptions/#{subscription_id}/creditcard", auth_key: billing_auth_key, user_id: user.id)
-      .with(body: { 'token' => 'token_from_stripe' })
+      .with(body: { 'token' => 'token_from_stripe', 'fingerprint' => 'fingerprint_from_stripe' })
       .to_return(status: 204)
     end
 

@@ -13,9 +13,10 @@ class User < Travis::Model
   has_many :repositories, through: :permissions
   has_many :emails, dependent: :destroy
   has_one :owner_group, as: :owner
+  has_many :custom_keys, as: :owner
 
   before_create :set_as_recent
-  after_create :create_a_token
+  after_create :create_the_tokens
   before_save :track_previous_changes
 
   serialize :github_scopes
@@ -163,8 +164,9 @@ class User < Travis::Model
     github_oauth_token ? super.gsub(github_oauth_token, '[REDACTED]') : super
   end
 
-  def create_a_token
-    self.tokens.create!
+  def create_the_tokens
+    self.tokens.asset.create! unless self.tokens.asset.exists?
+    self.tokens.rss.create!
   end
 
   def github?

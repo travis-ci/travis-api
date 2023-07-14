@@ -15,7 +15,7 @@ module Travis::API::V3
     def cancel(user, build_id)
       raise BuildNotCancelable if %w(passed failed canceled errored).include? find.state
 
-      payload = { id: build_id, user_id: user.id, source: 'api' }
+      payload = { id: build_id, user_id: user.id, source: 'api', reason: "Build Cancelled manually by User: #{user.login}" }
       service = Travis::Enqueue::Services::CancelModel.new(user, { build_id: build_id })
       service.push("build:cancel", payload)
       payload

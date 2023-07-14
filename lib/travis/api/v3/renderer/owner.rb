@@ -6,7 +6,7 @@ module Travis::API::V3
 
     representation(:minimal,    :id, :login, :name, :vcs_type, :ro_mode)
     representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education,
-                   :allow_migration, :allowance, :ro_mode)
+                   :allow_migration, :allowance, :ro_mode, :custom_keys)
     representation(:additional, :repositories, :installation)
 
     def initialize(*)

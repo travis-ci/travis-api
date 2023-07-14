@@ -173,7 +173,6 @@ module Travis::API::V3
 
       post :activate, '/activate'
       post :deactivate, '/deactivate'
-      post :migrate, '/migrate'
       post :star, '/star'
       post :unstar, '/unstar'
       hide(patch :update)
@@ -283,6 +282,16 @@ module Travis::API::V3
       end
     end
 
+    resource :scan_results do
+      route '/scan_results'
+      get :all
+    end
+
+    resource :scan_result do
+      route '/scan_result/{scan_result.id}'
+      get :find
+    end
+
     resource :user do
       capture id: :digit
       route '/user/{user.id}'
@@ -309,6 +318,16 @@ module Travis::API::V3
         route '/beta_migration_request'
         post   :proxy_create
       end
+    end
+
+    hidden_resource :custom_keys do
+      route '/custom_keys'
+      post   :create
+    end
+
+    hidden_resource :custom_key do
+      route '/custom_key/{id}'
+      delete   :delete
     end
 
     hidden_resource :beta_migration_requests do

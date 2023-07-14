@@ -4,7 +4,7 @@ require 'securerandom'
 class Travis::Api::App
   class AccessToken
     DEFAULT_SCOPES = [:public, :private]
-    attr_reader :token, :scopes, :user_id, :app_id, :expires_in, :extra
+    attr_reader :token, :travis_token, :scopes, :user_id, :app_id, :expires_in, :extra
 
     def self.create(options = {})
       new(options).tap(&:save)
@@ -12,7 +12,7 @@ class Travis::Api::App
 
     def self.for_travis_token(travis_token, options = {})
       travis_token = Token.find_by_token(travis_token) unless travis_token.respond_to? :user
-      new(scope: :travis_token, app_id: 1, user: travis_token.user).tap(&:save) if travis_token
+      new(scope: :travis_token, app_id: 1, user: travis_token.user, travis_token: travis_token).tap(&:save) if travis_token
     end
 
     def self.find_by_token(token)
@@ -32,12 +32,13 @@ class Travis::Api::App
         raise ArgumentError, 'expires_in must be of integer type'
       end
 
-      @app_id   = Integer(options[:app_id])
-      @scopes   = Array(options[:scopes] || options[:scope] || DEFAULT_SCOPES).map(&:to_sym)
-      @user     = options[:user]
-      @user_id  = Integer(options[:user_id] || @user.id)
-      @token    = options[:token] || reuse_token || SecureRandom.urlsafe_base64(16)
-      @extra    = options[:extra]
+      @app_id       = Integer(options[:app_id])
+      @scopes       = Array(options[:scopes] || options[:scope] || DEFAULT_SCOPES).map(&:to_sym)
+      @user         = options[:user]
+      @user_id      = Integer(options[:user_id] || @user.id)
+      @token        = options[:token] || reuse_token || SecureRandom.urlsafe_base64(16)
+      @travis_token = options[:travis_token]
+      @extra        = options[:extra]
     end
 
     def save

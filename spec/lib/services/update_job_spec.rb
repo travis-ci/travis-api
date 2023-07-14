@@ -22,7 +22,7 @@ describe Travis::Services::UpdateJob do
       publisher = double('publisher')
       allow(service).to receive(:publisher).and_return(publisher)
 
-      expect(publisher).to receive(:publish).with(type: 'cancel_job', job_id: job.id, source: 'update_job_service')
+      expect(publisher).to receive(:publish).with(type: 'cancel_job', job_id: job.id, source: 'update_job_service', reason: 'Some event other than reset was called on the job!')
 
       service.cancel_job_in_worker
     end
