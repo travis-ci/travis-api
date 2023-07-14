@@ -3,10 +3,11 @@ require 'travis/api/app'
 class Travis::Api::App
   class SettingsEndpoint < Endpoint
     include ActiveSupport::Callbacks
+    extend ActiveSupport::Concern
 
     define_callbacks :after_save
-
     set_callback :after_save, :after, :save_audit
+
     set(:prefix) { "/settings/" << name[/[^:]+$/].underscore }
 
     class << self
@@ -24,7 +25,7 @@ class Travis::Api::App
       end
 
       def create_settings_class(name)
-        klass = Class.new(self) do
+        Class.new(self) do
           define_method(:name) { name }
           before { authenticate_by_mode! }
           define_routes!
@@ -46,7 +47,6 @@ class Travis::Api::App
       auth_for_repo(repo.id, 'repository_settings_read')
 
       respond_with(collection, type: name, version: :v2)
-
     end
 
     def show
@@ -62,8 +62,13 @@ class Travis::Api::App
       disallow_migrating!(repo)
 
       record.update(JSON.parse(request.body.read)[singular_name])
+
       if record.valid?
-        @changes = { :"env_vars" => { created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} " } } if is_env_var?
+        @changes = {
+          env_vars: {
+            created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} "
+          }
+        } if is_env_var?
 
         repo_settings.save
         run_callbacks :after_save if is_env_var?
@@ -82,8 +87,13 @@ class Travis::Api::App
       disallow_migrating!(repo)
 
       record = collection.create(JSON.parse(request.body.read)[singular_name])
+
       if record.valid?
-        @changes = { :"env_vars" => { created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'}" } } if is_env_var?
+        @changes = {
+          env_vars: {
+            created: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'}"
+          }
+        } if is_env_var?
 
         repo_settings.save
         run_callbacks :after_save if is_env_var?
@@ -101,7 +111,11 @@ class Travis::Api::App
       disallow_migrating!(repo)
 
       record = collection.destroy(params[:id]) || record_not_found
-      @changes = { :"env_vars" => { destroyed: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} " } } if is_env_var?
+      @changes = {
+        env_vars: {
+          destroyed: "name: #{record.name}, is_public: #{record.public}, branch: #{record.branch || 'all'} "
+        }
+      } if is_env_var?
 
       repo_settings.save
       run_callbacks :after_save if is_env_var?
@@ -125,8 +139,8 @@ class Travis::Api::App
     # Sinatra's method
     def repo_settings
       @settings ||= begin
-        service(:find_repo_settings, id: params['repository_id'].to_i).run
-      end || halt(404, error: "Couldn't find repository")
+                      service(:find_repo_settings, id: params['repository_id'].to_i).run
+                    end || halt(404, error: "Couldn't find repository")
     end
 
     def record
@@ -149,7 +163,14 @@ class Travis::Api::App
 
     def save_audit
       change_source = access_token.app_id == 2 ? 'admin-v2' : 'travis-api'
-      Travis::API::V3::Models::Audit.create!(owner: current_user, change_source: change_source, source: @repo, source_changes: { settings: self.changes })
+      Travis::API::V3::Models::Audit.create!(
+        owner: current_user,
+        change_source: change_source,
+        source: @repo,
+        source_changes: {
+          settings: self.changes
+        }
+      )
       @changes = {}
     end
   end
