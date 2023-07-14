@@ -60,6 +60,9 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
   let(:json_log_from_api) { log_from_api.to_json }
   let(:archived_content) { "$ git clean -fdx\nRemoving Gemfile.lock\n$ git fetch" }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   before do
     allow_any_instance_of(Travis::API::V3::AccessControl::LegacyToken).to receive(:visible?).and_return(true)
     stub_request(:get, "https://bucket.s3.amazonaws.com/?max-keys=1000").
@@ -68,7 +71,6 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
       to_return(status: 200, body: xml_content, headers: {})
     stub_request(:get, "https://s3.amazonaws.com/archive.travis-ci.com/?prefix=jobs/#{s3job2.id}/log.txt").
         to_return(status: 200, body: nil, headers: {})
-    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
     Fog.mock!
     storage = Fog::Storage.new({
       aws_access_key_id: 'key',
@@ -170,7 +172,10 @@ describe Travis::API::V3::Services::Log::Find, set_app: true do
 
   context 'when log not found in db but stored on S3' do
     describe 'returns log with an array of Log Parts' do
+
+      let(:authorization) { { 'permissions' => ['repository_log_view'] } }
       example do
+
         s3log.attributes.merge!(archived_at: time, archive_verified: true)
         get("/v3/job/#{s3log.job.id}/log", {}, headers)
 

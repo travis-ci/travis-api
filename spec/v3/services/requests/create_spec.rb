@@ -8,11 +8,14 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
   let(:remaining_requests) { 10 }
   let(:body) { JSON.load(last_response.body).deep_symbolize_keys }
 
+  let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_build_create', 'repository_state_update'] } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   before do
     ActiveRecord::Base.connection.execute("truncate requests cascade")
     ActiveRecord::Base.connection.execute("truncate repositories cascade")
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
-    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
   end
 
   after do
@@ -148,6 +151,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
 
   describe 'not authenticated' do
     before { post("/v3/repo/#{repo.id}/requests") }
+    let(:authorization) { { 'permissions' =>[] } }
 
     it { expect(last_response.status).to be == 403 }
     it { expect(body).to eq login_required }
@@ -162,6 +166,8 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
   end
 
   describe 'existing repository, no push access' do
+
+    let(:authorization) { { 'permissions' =>[] } }
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
     before { post("/v3/repo/#{repo.id}/requests", {}, headers) }
 

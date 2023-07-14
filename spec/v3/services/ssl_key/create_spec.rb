@@ -11,7 +11,9 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
   let(:other_token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 2) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
-  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+  let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_settings_create'] } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   describe 'not authenticated' do
     before { post("/v3/repo/#{repo.id}/key_pair/generated") }
@@ -23,7 +25,10 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
       before do
         Travis::API::V3::Models::Permission.create(repository: repo, user: other_user, pull: true)
         post("/v3/repo/#{repo.id}/key_pair/generated", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}")
+
       end
+
+      let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
       include_examples 'insufficient access to repo', 'create_key_pair'
     end
   end

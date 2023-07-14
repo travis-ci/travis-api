@@ -9,7 +9,9 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
   let(:old_params) { JSON.dump('setting.value' => false) }
   let(:new_params) { JSON.dump('setting.value' => false) }
 
-  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+  let(:authorization) { { 'permissions' => [ 'repository_settings_read'] } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   describe 'not authenticated' do
     before do
@@ -43,6 +45,7 @@ describe Travis::API::V3::Services::UserSetting::Update, set_app: true do
   end
 
   shared_examples 'successful patch' do
+    let(:authorization) { { 'permissions' => [ 'repository_settings_read', 'repository_settings_create'] } }
     example { expect(last_response.status).to eq(200) }
     example do
       expect(JSON.load(body)).to eq(

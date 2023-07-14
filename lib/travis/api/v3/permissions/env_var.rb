@@ -2,14 +2,10 @@ module Travis::API::V3
   class Permissions::EnvVar < Permissions::Generic
     def read?
       authorizer.for_repo(object.repository_id, 'repository_settings_read')
-    rescue AuthorizerError
-      repository_permissions.read?
     end
 
     def write?
       authorizer.for_repo(object.repository_id, 'repository_settings_create') || authorizer.for_repo(object.repository_id, 'repository_settings_update')
-    rescue AuthorizerError
-      repository_permissions.write?
     end
 
     private

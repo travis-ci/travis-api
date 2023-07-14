@@ -3,7 +3,9 @@ describe Travis::API::V3::Services::Trials::Create, set_app: true, billing_spec_
     let(:billing_url) { 'http://billingfake.travis-ci.com' }
     let(:billing_auth_key) { 'secret' }
 
-    before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 200) }
+   let(:authorization) { { 'permissions' => ['account_billing_view', 'account_billing_update'] } }
+
+    before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
     before do
       Travis.config.billing.url = billing_url

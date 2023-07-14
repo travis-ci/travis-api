@@ -6,7 +6,12 @@ describe Travis::API::V3::Services::Repository::Migrate, set_app: true do
       Travis::Features.activate_owner(:allow_migration, repo.owner)
     end
 
-    before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: MultiJson.dump(permissions: ['repository_state_update']) ) }
+    let(:authorization) { { 'permissions' => ['repository_state_update'] } }
+
+    let(:authorization_role) { { 'roles' => ['repository_admin'] } }
+
+    before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+    before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
 
     context "logged in" do
       let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }

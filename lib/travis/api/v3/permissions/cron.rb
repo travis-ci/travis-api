@@ -4,8 +4,6 @@ module Travis::API::V3
   class Permissions::Cron < Permissions::Generic
     def delete?
       authorizer.for_repo(object.branch.repository_id, 'repository_settings_delete')
-    rescue AuthorizerError
-      write?
     end
 
     def start?

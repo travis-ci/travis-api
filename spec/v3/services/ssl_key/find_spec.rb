@@ -11,7 +11,9 @@ describe Travis::API::V3::Services::SslKey::Find, set_app: true do
   let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
-  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+  let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   describe 'not authenticated' do
     before { get("/v3/repo/#{repo.id}/key_pair/generated") }

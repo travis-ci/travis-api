@@ -3,7 +3,11 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
 
-  before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 200) }
+   let(:authorization) { { 'permissions' => ['account_billing_view'] } }
+
+    before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
+
 
   before do
     Travis.config.billing.url = billing_url
@@ -114,8 +118,8 @@ describe Travis::API::V3::Services::Subscriptions::All, set_app: true, billing_s
       stub_billing_request(:get, '/subscriptions', auth_key: billing_auth_key, user_id: user.id)
         .to_return(status: 200, body: v2_response_body)
 
-      stub_request(:get, %r((.+)/org/(.+))).to_return(status: 401)
     end
+
 
     it 'responds with list of subscriptions' do
       get('/v3/subscriptions', {}, headers)

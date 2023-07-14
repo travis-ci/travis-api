@@ -4,13 +4,19 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
   let(:billing_auth_key) { 'secret' }
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
+  let(:authorization) { { 'permissions' => ['repository_settings_create', 'repository_settings_update', 'repository_state_update', 'repository_settings_delete'] } }
+
+  let(:authorization_roles) { { 'roles' => [] } }
+
   before do
     Travis.config.host = 'travis-ci.com'
     Travis.config.billing.url = billing_url
     Travis.config.billing.auth_key = billing_auth_key
   end
 
-  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_roles)) }
 
   context 'unauthenticated' do
     it 'responds 403' do
@@ -34,6 +40,8 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
     let(:per_page) { 25 }
     let(:from) { Date.today - 2.months }
     let(:to) { Date.today }
+
+    let(:authorization) { { 'permissions' => ['repository_log_view', 'repository_settings_read'] } }
     before do
       stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=#{page}&per_page=#{per_page}&from=#{from.to_s}&to=#{to.to_s}")
         .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
@@ -80,6 +88,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
     end
 
     it 'responds with list of executions per repo' do
+
       get("/v3/owner/#{user.login}/executions_per_repo?from=#{from.to_s}&to=#{to.to_s}", {}, headers)
 
       expect(last_response.status).to eq(200)

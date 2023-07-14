@@ -5,9 +5,14 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
   before    { org.save!                              }
   after     { org.delete                             }
 
-  before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 401) }
+  let(:org_authorization) { { 'permissions' => ['account_billing_view','account_billing_update','account_plan_create','account_plan_view','account_plan_usage','account_plan_invoices','account_settings_create','account_settings_delete'] } }
+  let(:org_role_authorization) { { 'roles' => ['account_admin'] } }
+  before { stub_request(:get, %r((.+)/roles/org/(.+))).to_return(status: 200, body: JSON.generate(org_role_authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/org/(.+))).to_return(status: 200, body: JSON.generate(org_authorization)) }
 
   describe 'existing org, public api' do
+    let(:org_role_authorization) { { 'roles' => [] } }
+    let(:org_authorization) { { 'permissions' => [] } }
     before  { Travis.config.public_mode = true }
     before  { get("/v3/org/#{org.id}") }
     example { expect(last_response).to be_ok }
@@ -50,6 +55,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
   describe 'existing educational org, private api, authorized user' do
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+    let(:org_role_authorization) { { 'roles' => [] } }
+    let(:org_authorization) { { 'permissions' => ['account_billing_view', 'account_plan_invoices', 'account_plan_usage', 'account_plan_view', 'account_settings_create', 'account_settings_delete'] } }
     before  do
       org.memberships.create(user: user)
       org.save!
@@ -65,7 +72,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "@representation"  => "standard",
       "@permissions"     => {
         "read" => true,
-        "sync" => true,
+        "sync" => false,
         "admin" => false,
         "plan_usage"=>true,
         "plan_view"=>true,

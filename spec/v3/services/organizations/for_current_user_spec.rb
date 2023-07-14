@@ -6,8 +6,15 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
   before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
   before        { repo.update_attribute(:private, true)                             }
   after         { repo.update_attribute(:private, false)                            }
-  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
-  before { stub_request(:get, %r((.+)/org/(.+))).to_return(status: 401) }
+
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+  let(:org_authorization) { { 'permissions' => [] } }
+  let(:org_role_authorization) { { 'roles' => ['account_admin'] } }
+  let(:repo_role_authorization) { { 'roles' => ['repository_admin'] } }
+  before { stub_request(:get, %r((.+)/roles/org/(.+))).to_return(status: 200, body: JSON.generate(org_role_authorization)) }
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(org_role_authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/org/(.+))).to_return(status: 200, body: JSON.generate(org_authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org')   }
   before    { org.save!                                }
@@ -25,6 +32,8 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
   end
 
   describe "authenticated as user with access" do
+
+  let(:org_authorization) { { 'permissions' => ['account_billing_view','account_billing_update','account_plan_create','account_plan_view','account_plan_usage','account_plan_invoices','account_settings_create','account_settings_delete'] } }
     before  { get("/v3/orgs", {}, headers)     }
     example { expect(last_response).to be_ok   }
     example { expect(JSON.load(body)).to be == {

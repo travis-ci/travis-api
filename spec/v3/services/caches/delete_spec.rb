@@ -135,10 +135,13 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     </ListBucketResult>"
   }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   before do
     repo.default_branch.save!
     repo.owner.permissions.create(repository_id: repo.id, push: true)
-    stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200)
   end
 
   around(:each) do |example|
@@ -271,6 +274,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
   end
 
   context "without push permission" do
+    let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
     it "raises Travis::AuthorizationDenied" do
       repo.owner.permissions.last.update(push: false)
 

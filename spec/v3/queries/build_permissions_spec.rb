@@ -1,4 +1,11 @@
 describe Travis::API::V3::Queries::BuildPermissions do
+
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
+  before { stub_request(:delete, %r((.+)/org/(.+))).to_return(status: 200) }
+  before { stub_request(:delete, %r((.+)/repo/(.+))).to_return(status: 200) }
   let(:user) { FactoryBot.create(:user) }
 
   subject { described_class.new({}, 'BuildPermissions') }

@@ -25,7 +25,9 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
                    }
   let(:parsed_body) { JSON.load(body) }
 
-  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
@@ -39,6 +41,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   end
 
   describe "fetching job on a public repository, no pull access" do
+
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view'] } }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/job/#{job.id}")     }
     example    { expect(last_response).to be_ok }
@@ -159,6 +163,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
     before        { repo.update_attribute(:private, true)                             }
     before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:delete_log?).and_return(true) }
     before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:prioritize?).and_return(true) }
+
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view', 'repository_build_cancel', 'repository_build_restart'] } }
     before        { get("/v3/job/#{job.id}", {}, headers)                             }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
@@ -241,6 +247,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   end
 
   describe "config is correctly obfuscated" do
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view'] } }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/job/#{job2.id}?include=job.config")     }
     example    { expect(last_response).to be_ok }

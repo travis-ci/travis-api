@@ -1,7 +1,12 @@
 describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
-  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  let(:authorization_role) { { 'roles' => ['repository_admin'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
 
   before do
     Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
@@ -39,6 +44,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
             body: nil,
           )
       }
+      let(:authorization) { { 'permissions' => [] } }
       before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
       example 'is success' do
         expect(last_response.status).to eq 403
@@ -79,6 +85,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     it_behaves_like 'repository deactivation'
     describe "existing repository, no push access" do
+      let(:authorization) { { 'permissions' => [] } }
       before        { post("/v3/repo/#{repo.id}/deactivate", {}, headers)                 }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body).to_s).to include(

@@ -8,7 +8,10 @@ describe Travis::API::V3::Services::KeyPair::Find, set_app: true do
   let(:key_pair) { { description: 'foo key pair', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id } }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
-  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   shared_examples 'paid' do
     describe 'not authenticated' do
@@ -46,6 +49,7 @@ describe Travis::API::V3::Services::KeyPair::Find, set_app: true do
           get("/v3/repo/#{repo.id}/key_pair", {}, auth_headers)
         end
 
+        let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
         example { expect(last_response.status).to eq 200 }
         example do
           expect(JSON.parse(last_response.body)).to eq(
