@@ -6,8 +6,6 @@ $stdout.sync = true
 require 'bundler/setup'
 
 require 'active_record'
-# To silence deprecation warning
-ActiveRecord::Base.raise_in_transactional_callbacks = true
 
 require 'date'
 require 'stringio'

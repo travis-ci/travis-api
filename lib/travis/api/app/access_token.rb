@@ -1,4 +1,3 @@
-require 'travis/api/app'
 require 'securerandom'
 
 class Travis::Api::App

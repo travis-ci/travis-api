@@ -3,7 +3,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
   before do
     Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
     Travis.config.vcs.token = 'vcs-token'
-    repo.update_attributes!(active: true)
+    repo.update!(active: true)
   end
   describe "not authenticated" do
     before  { post("/v3/repo/#{repo.id}/deactivate")      }
@@ -114,7 +114,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true, pull: true) }
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
@@ -124,7 +124,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
       }}
     end
     describe "repo migrated" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {

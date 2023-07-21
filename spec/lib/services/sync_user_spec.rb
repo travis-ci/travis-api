@@ -14,7 +14,7 @@ describe Travis::Services::SyncUser do
       expect(Sidekiq::Client).to receive(:push).with(
         'queue' => 'sync',
         'class' => 'Travis::GithubSync::Worker',
-        'args'  => [:sync_user, { user_id: user.id }]
+        'args'  => [:sync_user, { user_id: user.id }].map! {|arg| arg.to_json}
       )
       service.run
     end

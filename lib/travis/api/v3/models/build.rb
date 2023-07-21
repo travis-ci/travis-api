@@ -13,7 +13,7 @@ module Travis::API::V3
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
     belongs_to :sender, polymorphic: true
-    belongs_to :config, foreign_key: :config_id, class_name: Models::BuildConfig
+    belongs_to :config, foreign_key: :config_id, class_name: 'Models::BuildConfig'.freeze
 
     has_many :stages
 
@@ -30,7 +30,6 @@ module Travis::API::V3
 
     has_one :branch,
       foreign_key: [:repository_id, :name],
-      primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
     scope :running_builds, -> { where.not(state: ['passed', 'failed', 'errored', 'cancelled']) }

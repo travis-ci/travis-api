@@ -6,7 +6,7 @@ module Travis::API
       gatekeeper_client.push(
         'queue' => 'build_requests',
         'class' => 'Travis::Gatekeeper::Worker',
-        'args' => args
+        'args' => args.map! { |a| a.to_json }
       )
     end
 
@@ -27,7 +27,6 @@ module Travis::API
       def gatekeeper_pool
         ::Sidekiq::RedisConnection.create(
           url: config.redis_gatekeeper.url,
-          namespace: config.sidekiq.namespace,
           id: nil
         )
       end

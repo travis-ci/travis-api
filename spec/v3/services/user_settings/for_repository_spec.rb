@@ -1,5 +1,6 @@
 describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true do
-  let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first_or_create }
+  let(:user) { Travis::API::V3::Models::User.create(login: 'tester') }
+  let(:repo)  { Travis::API::V3::Models::Repository.create(owner: user, name: 'minimal', id: 777) }
   let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
@@ -60,7 +61,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
     end
 
     describe 'a private repo' do
-      before { repo.update_attributes!(private: true) }
+      before { repo.update!(private: true) }
       before { get("/v3/repo/#{repo.id}/settings", {}, auth_headers) }
 
       example do
@@ -73,7 +74,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
 
   describe 'authenticated, existing repo, repo has some settings' do
     before do
-      repo.update_attributes(settings: { 'build_pushes' => false })
+      repo.update(settings: { 'build_pushes' => false })
       get("/v3/repo/#{repo.id}/settings", {}, auth_headers)
     end
 
@@ -103,7 +104,7 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
 
   describe 'authenticated, existing repo, update one setting' do
     before do
-      repo.update_attributes(settings: { 'build_pushes' => true })
+      repo.update(settings: { 'build_pushes' => true })
       patch("/v3/repo/#{repo.id}/setting/build_pushes", JSON.dump('setting.value' => false), json_headers.merge(auth_headers))
       get("/v3/repo/#{repo.id}/setting/build_pushes", {}, auth_headers)
     end

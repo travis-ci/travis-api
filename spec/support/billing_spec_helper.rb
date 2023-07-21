@@ -352,10 +352,10 @@ module Support
         'sender_id' => 1,
         'credits_consumed' => 5,
         'user_license_credits_consumed' => 4,
-        'started_at' => Time.now,
-        'finished_at' => Time.now + 10.minutes,
-        'created_at' => Time.now,
-        'updated_at' => Time.now
+        'started_at' => Time.now.utc.iso8601,
+        'finished_at' => (Time.now. + 10.minutes).utc.iso8601,
+        'created_at' => Time.now.utc.iso8601,
+        'updated_at' => Time.now.utc.iso8601
       }.deep_merge(attributes)
     end
   end

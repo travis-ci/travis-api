@@ -11,7 +11,7 @@ module Travis::API::V3
       super or method.to_sym == type.to_sym
     end
 
-    def warn(message, **info)
+    def warn(message,**info)
       warnings << { :@type => 'warning'.freeze, :message => message, **info }
     end
 

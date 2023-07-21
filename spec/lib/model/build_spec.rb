@@ -61,7 +61,7 @@ describe Build do
         FactoryBot.create(:build, state: 'failed')
         FactoryBot.create(:build, state: 'created')
 
-        expect(Build.recent.all.map(&:state)).to eq([:failed, :passed])
+        expect(Build.recent.all.map(&:state)).to eq(['failed', 'passed'])
       end
     end
 
@@ -71,7 +71,7 @@ describe Build do
         FactoryBot.create(:build, state: 'started')
         FactoryBot.create(:build, state: 'created')
 
-        expect(Build.was_started.map(&:state).sort).to eq([:passed, :started])
+        expect(Build.was_started.map(&:state).sort).to eq(['passed', 'started'])
       end
     end
 
@@ -301,7 +301,7 @@ describe Build do
 
       it 'sets the state to :created' do
         build.reset
-        expect(build.state).to eq(:created)
+        expect(build.state).to eq('created')
       end
 
       it 'resets related attributes' do

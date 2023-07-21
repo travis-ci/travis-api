@@ -12,7 +12,7 @@ module Travis::API::V3
         user_id: admin.id,
         activate: activate
       )
-      repository.update_attributes(active: activate)
+      repository.update(active: activate)
       result repository
     end
 

@@ -164,6 +164,7 @@ describe Travis::API::V3::Models::Cron do
   context "when repo ownership is transferred" do
     it "enqueues a cron for the repo with the new owner" do
       subject.branch.repository.update_attribute(:owner, FactoryBot.create(:user, name: "Yoda", login: "yoda", email: "yoda@yoda.com"))
+      subject.branch.repository.update_attribute(:owner_type, 'User')
       expect_any_instance_of(Sidekiq::Client).to receive(:push).once
       subject.enqueue
     end

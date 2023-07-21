@@ -21,7 +21,7 @@ describe Travis::API::V3::Services::CreditsCalculator::Calculator, set_app: true
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
 
-    let(:v2_response_body) { JSON.dump(billing_v2_credits_calculator_body) }
+    let(:v2_response_body) { JSON.generate(billing_v2_credits_calculator_body) }
 
     let(:expected_json) do
       {

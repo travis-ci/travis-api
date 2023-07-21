@@ -3,6 +3,7 @@ require 'travis/model'
 require 'travis/github/oauth'
 
 class User < Travis::Model
+  self.table_name = 'users'
   require 'travis/model/user/oauth'
   require 'travis/model/user/renaming'
 
@@ -14,6 +15,7 @@ class User < Travis::Model
   has_many :emails, dependent: :destroy
   has_one :owner_group, as: :owner
   has_many :custom_keys, as: :owner
+  has_many :broadcasts, as: :recipient
 
   before_create :set_as_recent
   after_create :create_the_tokens
@@ -22,6 +24,10 @@ class User < Travis::Model
   serialize :github_scopes
 
   serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
+
+  before_save do
+    ensure_preferences
+  end
 
   class << self
     def with_permissions(permissions)
@@ -171,6 +177,11 @@ class User < Travis::Model
 
   def github?
     vcs_type == 'GithubUser'
+  end
+
+  def ensure_preferences
+    return if attributes['preferences'].nil?
+    self.preferences = self['preferences'].is_a?(String) ? JSON.parse(self['preferences']) : self['preferences']
   end
 
   protected

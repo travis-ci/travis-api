@@ -6,14 +6,14 @@ module Travis::Api::App::Helpers
 
     it 'returns accept entries sorted properly' do
       accept = "text/html; q=0.2; level=1, application/vnd.travis-ci.2+json, text/*, text/html;level=2; q=0.5"
-      expect(FakeApp.new('HTTP_ACCEPT' => accept).accept_entries.map(&:to_s)).to eq(
+      expect(FakeApp.new({'HTTP_ACCEPT' => accept}).accept_entries.map(&:to_s)).to eq(
         ["application/json; q=1", "text/*; q=1", "text/html; q=0.5; level=2", "text/html; q=0.2; level=1"]
       )
     end
 
     it 'properly parses params, quality and version' do
       accept = "application/vnd.travis-ci.2+json; q=0.2; level=1; foo=bar"
-      accept_entry = FakeApp.new('HTTP_ACCEPT' => accept).accept_entries.first
+      accept_entry = FakeApp.new({'HTTP_ACCEPT' => accept}).accept_entries.first
       expect(accept_entry.quality).to eq(0.2)
       expect(accept_entry.params).to eq({ 'level' => '1', 'foo' => 'bar' })
       expect(accept_entry.mime_type).to eq('application/json')
@@ -26,11 +26,11 @@ module Travis::Api::App::Helpers
     end
 
     it 'accepts text/plain when chunked is preferred' do
-      app = FakeApp.new('HTTP_ACCEPT' => %w(
+      app = FakeApp.new({'HTTP_ACCEPT' => %w(
         application/json; chunked=true; version=2,
         application/json; version=2,
         text/plain
-      ).join(' '))
+      ).join(' ')})
 
       expect(app.accepts?('text/plain')).to eq(true)
     end

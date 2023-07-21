@@ -14,7 +14,7 @@ module Travis
         ::Sidekiq::Client.push(
           'queue' => 'sync',
           'class' => 'Travis::GithubSync::Worker',
-          'args'  => [:sync_user, { user_id: user.id }]
+          'args'  => [:sync_user, { user_id: user.id }].map! { |arg| arg.to_json }
         )
         user.update_column(:is_syncing, true)
         true

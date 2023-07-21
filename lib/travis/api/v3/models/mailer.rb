@@ -17,7 +17,7 @@ module Travis::API::V3::Models
       client.push(
         'queue' => 'email',
         'class' => 'Travis::Async::Sidekiq::Worker',
-        'args'  => [nil, task_class, 'perform', {}, params]
+        'args'  => [nil, task_class, 'perform', {}, params].map! {|arg| arg.to_json}
       )
     end
 

@@ -13,7 +13,7 @@ module Travis::API::V3
       response = connection(timeout: ALLOWANCE_TIMEOUT).get("/usage/#{owner_type.downcase}s/#{owner_id}/allowance")
       return BillingClient.default_allowance_response unless response.status == 200
 
-      Travis::API::V3::Models::Allowance.new(2, owner_id, response.body)
+      Travis::API::V3::Models::Allowance.new(2, owner_id, body(response))
     end
 
     def authorize_build(repo, sender_id, jobs)
@@ -37,7 +37,7 @@ module Travis::API::V3
 
     def executions(owner_type, owner_id, page, per_page, from, to)
       response = connection(timeout: EXECUTIONS_TIMEOUT).get("/usage/#{owner_type.downcase}s/#{owner_id}/executions?page=#{page}&per_page=#{per_page}&from=#{from}&to=#{to}")
-      executions = response.body.map do |execution_data|
+      executions = body(response).map do |execution_data|
         Travis::API::V3::Models::Execution.new(execution_data)
       end
       executions
@@ -45,7 +45,7 @@ module Travis::API::V3
 
     def calculate_credits(users, executions)
       response = connection.post("/usage/credits_calculator", users: users, executions: executions)
-      response.body.map do |calculator_data|
+      body(response).map do |calculator_data|
         Travis::API::V3::Models::CreditsResult.new(calculator_data)
       end
     end
@@ -53,11 +53,11 @@ module Travis::API::V3
     def credits_calculator_default_config
       response = connection.get('/usage/credits_calculator/default_config')
 
-      Travis::API::V3::Models::CreditsCalculatorConfig.new(response.body)
+      Travis::API::V3::Models::CreditsCalculatorConfig.new(body(response))
     end
 
     def all
-      data = connection.get('/subscriptions').body
+      data = body(connection.get('/subscriptions'))
       subscriptions = data.fetch('subscriptions').map do |subscription_data|
         Travis::API::V3::Models::Subscription.new(subscription_data)
       end
@@ -67,7 +67,7 @@ module Travis::API::V3
     end
 
     def all_v2
-      data = connection.get('/v2/subscriptions').body
+      data = body(connection.get('/v2/subscriptions'))
       subscriptions = data.fetch('plans').map do |subscription_data|
         Travis::API::V3::Models::V2Subscription.new(subscription_data)
       end
@@ -87,19 +87,19 @@ module Travis::API::V3
     end
 
     def get_invoices_for_subscription(id)
-      connection.get("/subscriptions/#{id}/invoices").body.map do |invoice_data|
+      body(connection.get("/subscriptions/#{id}/invoices")).map do |invoice_data|
         Travis::API::V3::Models::Invoice.new(invoice_data)
       end
     end
 
     def get_invoices_for_v2_subscription(id)
-      connection.get("/v2/subscriptions/#{id}/invoices").body.map do |invoice_data|
+      body(connection.get("/v2/subscriptions/#{id}/invoices")).map do |invoice_data|
         Travis::API::V3::Models::Invoice.new(invoice_data)
       end
     end
 
     def trials
-      connection.get('/trials').body.map do | trial_data |
+      body(connection.get('/trials')).map do | trial_data |
         Travis::API::V3::Models::Trial.new(trial_data)
       end
     end
@@ -160,19 +160,19 @@ module Travis::API::V3
     end
 
     def v2_subscription_user_usages(subscription_id)
-      connection.get("/v2/subscriptions/#{subscription_id}/user_usage").body.map do |usage_data|
+      body(connection.get("/v2/subscriptions/#{subscription_id}/user_usage")).map do |usage_data|
         Travis::API::V3::Models::V2AddonUsage.new(usage_data)
       end
     end
 
     def v2_plans_for_organization(organization_id)
-      connection.get("/v2/plans_for/organization/#{organization_id}").body.map do |plan_data|
+      body(connection.get("/v2/plans_for/organization/#{organization_id}")).map do |plan_data|
         Travis::API::V3::Models::V2PlanConfig.new(plan_data)
       end
     end
 
     def v2_plans_for_user
-      connection.get('/v2/plans_for/user').body.map do |plan_data|
+      body(connection.get('/v2/plans_for/user')).map do |plan_data|
         Travis::API::V3::Models::V2PlanConfig.new(plan_data)
       end
     end
@@ -183,13 +183,13 @@ module Travis::API::V3
     end
 
     def plans_for_organization(organization_id)
-      connection.get("/plans_for/organization/#{organization_id}").body.map do |plan_data|
+      body(connection.get("/plans_for/organization/#{organization_id}")).map do |plan_data|
         Travis::API::V3::Models::Plan.new(plan_data)
       end
     end
 
     def plans_for_user
-      connection.get('/plans_for/user').body.map do |plan_data|
+      body(connection.get('/plans_for/user')).map do |plan_data|
         Travis::API::V3::Models::Plan.new(plan_data)
       end
     end
@@ -254,36 +254,41 @@ module Travis::API::V3
     end
 
     def handle_errors_and_respond(response)
+      body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
+
       case response.status
       when 200, 201
-        yield(response.body) if block_given?
+        yield(body) if block_given?
       when 202
         true
       when 204
         true
       when 400
-        raise Travis::API::V3::ClientError, response.body['error']
+        raise Travis::API::V3::ClientError, body['error']
       when 403
-        raise Travis::API::V3::InsufficientAccess, response.body['rejection_code']
+        raise Travis::API::V3::InsufficientAccess, body['rejection_code']
       when 404
-        raise Travis::API::V3::NotFound, response.body['error']
+        raise Travis::API::V3::NotFound, body['error']
       when 422
-        raise Travis::API::V3::UnprocessableEntity, response.body['error']
+        raise Travis::API::V3::UnprocessableEntity, body['error']
       else
         raise Travis::API::V3::ServerError, 'Billing system failed'
       end
     end
 
+    def body(data)
+      data&.body.is_a?(String) && data&.body.length > 0 ? JSON.parse(data.body) : data&.body
+    end
+
     def connection(timeout: 10)
       @connection ||= Faraday.new(url: billing_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
-        conn.basic_auth '_', billing_auth_key
+        conn.request(:authorization, :basic, '_', billing_auth_key)
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
         conn.headers['Content-Type'] = 'application/json'
         conn.request :json
         conn.response :json
         conn.options[:open_timeout] = timeout
         conn.options[:timeout] = timeout
-        conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
         conn.adapter :net_http
       end
     end

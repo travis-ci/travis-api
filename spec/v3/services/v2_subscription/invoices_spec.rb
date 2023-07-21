@@ -31,7 +31,7 @@ describe Travis::API::V3::Services::V2Subscription::Invoices, set_app: true, bil
 
     before do
       stub_billing_request(:get, "/v2/subscriptions/#{subscription_id}/invoices", auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump([{'id' => invoice_id, 'created_at' => created_at, 'url' => url, 'amount_due' => amount_due, 'status' => status, 'cc_last_digits' => cc_last_digits }]))
+        .to_return(status: 200, body: [{'id' => invoice_id, 'created_at' => created_at, 'url' => url, 'amount_due' => amount_due, 'status' => status, 'cc_last_digits' => cc_last_digits }])
     end
 
     it 'responds with list of subscriptions' do
