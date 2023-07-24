@@ -585,15 +585,19 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
     before  { get("/v3/owner/svenfuchs/allowance", {}, headers) }
     example { expect(last_response).to be_ok }
     example { expect(JSON.load(body)).to be == {
-      "@representation"       => "standard",
-      "@type"                 => "allowance",
-      "concurrency_limit"     => 1,
-      "private_repos"         => false,
-      "public_repos"          => true,
-      "subscription_type"     => 1,
-      "user_usage"            => false,
-      "pending_user_licenses" => false,
-      "id"                    => 0
+      "@representation"               => "standard",
+      "@type"                         => "allowance",
+      "concurrency_limit"             => 1,
+      "private_repos"                 => false,
+      "public_repos"                  => true,
+      "subscription_type"             => 1,
+      "user_usage"                    => false,
+      "pending_user_licenses"         => false,
+      "id"                            => 0,
+      "captcha_block_duration"        => 0,
+      "credit_card_block_duration"    => 0,
+      "payment_changes_block_captcha" => false,
+      "payment_changes_block_credit"  => false
     }}
   end
 
@@ -608,15 +612,19 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
     end
     example { expect(last_response).to be_ok }
     example { expect(JSON.load(body)).to be == {
-      "@representation"       => "standard",
-      "@type"                 => "allowance",
-      "concurrency_limit"     => 666,
-      "private_repos"         => true,
-      "public_repos"          => true,
-      "subscription_type"     => 2,
-      "user_usage"            => true,
-      "pending_user_licenses" => false,
-      "id"                    => 1
+      "@representation"               => "standard",
+      "@type"                         => "allowance",
+      "concurrency_limit"             => 666,
+      "private_repos"                 => true,
+      "public_repos"                  => true,
+      "subscription_type"             => 2,
+      "user_usage"                    => true,
+      "pending_user_licenses"         => false,
+      "id"                            => 1,
+      "captcha_block_duration"        => nil,
+      "credit_card_block_duration"    => nil,
+      "payment_changes_block_captcha" => nil,
+      "payment_changes_block_credit"  => nil
     }}
   end
 
