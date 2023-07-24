@@ -36,11 +36,38 @@ GIT
       pg
 
 GIT
+  remote: https://github.com/travis-ci/metriks
+  revision: 6292ce11b8d22888bd9947b9f38d104834268fa7
+  branch: prd-ruby-upgrade-dev
+  specs:
+    metriks (0.9.9.8)
+      HDRHistogram (~> 0.1)
+      atomic (~> 1.0)
+      avl_tree (~> 1.2)
+      hitimes (~> 1.3)
+
+GIT
   remote: https://github.com/travis-ci/metriks-librato_metrics
   revision: 41aca2ed2ab40ecdc1dbebabf70e35a38377d101
   branch: prd-ruby-upgrade-dev
   specs:
     metriks-librato_metrics (1.0.6)
+
+GIT
+  remote: https://github.com/travis-ci/rollout
+  revision: 3907bb9cf1774e81b38ee434624b0402bc93f2ff
+  branch: prd-ruby-upgrade-dev
+  specs:
+    rollout (2.5.0)
+      redis (~> 5.0)
+
+GIT
+  remote: https://github.com/travis-ci/simple_states
+  revision: 1112afaf7bbbe51a6fdf8abae769ef827ab3bfd8
+  branch: prd-ruby-upgrade-dev
+  specs:
+    simple_states (1.0.2)
+      activesupport (~> 7.0)
 
 GIT
   remote: https://github.com/travis-ci/travis-amqp
@@ -92,27 +119,6 @@ GIT
   specs:
     travis-support (0.0.1)
 
-PATH
-  remote: ../metriks
-  specs:
-    metriks (0.9.9.8)
-      HDRHistogram (~> 0.1)
-      atomic (~> 1.0)
-      avl_tree (~> 1.2)
-      hitimes (~> 1.3)
-
-PATH
-  remote: ../rollout
-  specs:
-    rollout (2.5.0)
-      redis (~> 5.0)
-
-PATH
-  remote: ../simple_states
-  specs:
-    simple_states (1.0.2)
-      activesupport (~> 7.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -141,7 +147,7 @@ GEM
     avl_tree (1.2.1)
       atomic (~> 1.1)
     aws-eventstream (1.2.0)
-    aws-partitions (1.787.0)
+    aws-partitions (1.791.0)
     aws-sdk-core (3.178.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.651.0)
@@ -150,7 +156,7 @@ GEM
     aws-sdk-kms (1.71.0)
       aws-sdk-core (~> 3, >= 3.177.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.130.0)
+    aws-sdk-s3 (1.131.0)
       aws-sdk-core (~> 3, >= 3.177.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.6)
@@ -256,7 +262,7 @@ GEM
       googleapis-common-protos-types (>= 1.3.1, < 2.a)
       googleauth (~> 1.0)
       grpc (~> 1.36)
-    google-apis-core (0.11.0)
+    google-apis-core (0.11.1)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (>= 0.16.2, < 2.a)
       httpclient (>= 2.8.1, < 3.a)
