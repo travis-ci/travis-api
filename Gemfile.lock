@@ -14,8 +14,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/gh
-  revision: 045a8094b3a5928a1a5aa223447ccd1a55f85a5b
-  branch: dt-ror-update
+  revision: 7e06c717617b29131090acd23869e43b947cc9dc
+  branch: prd-ruby-upgrade-dev
   specs:
     gh (0.20.0)
       activesupport (>= 5, < 8)
@@ -28,21 +28,69 @@ GIT
       net-http-pipeline
 
 GIT
-  remote: https://github.com/travis-ci/travis-amqp
-  revision: 3966b3651adfd1c544f53d49d5986ac16cd9c4bc
-  specs:
-    travis-amqp (0.0.1)
-
-PATH
-  remote: ../marginalia
+  remote: https://github.com/travis-ci/marginalia
+  revision: af24f2a6d2c5da19626bfc469194aecf058e7b3f
+  branch: prd-ruby-upgrade-dev
   specs:
     marginalia (1.5.0)
       pg
 
-PATH
-  remote: ../metriks-librato_metrics
+GIT
+  remote: https://github.com/travis-ci/metriks-librato_metrics
+  revision: 41aca2ed2ab40ecdc1dbebabf70e35a38377d101
+  branch: prd-ruby-upgrade-dev
   specs:
     metriks-librato_metrics (1.0.6)
+
+GIT
+  remote: https://github.com/travis-ci/travis-amqp
+  revision: 3966b3651adfd1c544f53d49d5986ac16cd9c4bc
+  branch: prd-ruby-upgrade-dev
+  specs:
+    travis-amqp (0.0.1)
+
+GIT
+  remote: https://github.com/travis-ci/travis-config
+  revision: f02604a813cce3a672ae89cd7e4adaa30b001532
+  branch: prd-ruby-upgrade-dev
+  specs:
+    travis-config (1.1.5)
+      hashr (~> 2.0)
+
+GIT
+  remote: https://github.com/travis-ci/travis-github_apps
+  revision: d0a710fe392704775d5cdd85fe6e2da24314e8c2
+  branch: prd-ruby-upgrade-dev
+  specs:
+    travis-github_apps (0.2.1)
+      activesupport (>= 3.2)
+      faraday (~> 2)
+      faraday-follow_redirects
+      jwt
+      redis
+
+GIT
+  remote: https://github.com/travis-ci/travis-lock
+  revision: 46950a25cca6c3e4626bf7304787c02ce96eb5c6
+  branch: prd-ruby-upgrade-dev
+  specs:
+    travis-lock (0.1.1)
+
+GIT
+  remote: https://github.com/travis-ci/travis-settings
+  revision: 62dcff454e21f522789d1b729a038d4adf118a40
+  branch: prd-ruby-upgrade-dev
+  specs:
+    travis-settings (0.0.1)
+      activemodel
+      virtus
+
+GIT
+  remote: https://github.com/travis-ci/travis-support
+  revision: 77f8dad236002e6103cfdb796308e1a11d8d441e
+  branch: prd-ruby-upgrade-dev
+  specs:
+    travis-support (0.0.1)
 
 PATH
   remote: ../metriks
@@ -64,39 +112,6 @@ PATH
   specs:
     simple_states (1.0.2)
       activesupport (~> 7.0)
-
-PATH
-  remote: ../travis-config
-  specs:
-    travis-config (1.1.5)
-      hashr (~> 2.0)
-
-PATH
-  remote: ../travis-github_apps
-  specs:
-    travis-github_apps (0.2.1)
-      activesupport (>= 3.2)
-      faraday (~> 2)
-      faraday-follow_redirects
-      jwt
-      redis
-
-PATH
-  remote: ../travis-lock
-  specs:
-    travis-lock (0.1.1)
-
-PATH
-  remote: ../travis-settings
-  specs:
-    travis-settings (0.0.1)
-      activemodel
-      virtus
-
-PATH
-  remote: ../travis-support
-  specs:
-    travis-support (0.0.1)
 
 GEM
   remote: https://rubygems.org/
