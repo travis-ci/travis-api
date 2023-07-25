@@ -114,8 +114,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-support
-  revision: 77f8dad236002e6103cfdb796308e1a11d8d441e
-  branch: prd-ruby-upgrade-dev
+  revision: 12457578c7d7a9cced99db9d200b9945c13553a9
+  branch: prd-ruby-upgrade-dev-o
   specs:
     travis-support (0.0.1)
 

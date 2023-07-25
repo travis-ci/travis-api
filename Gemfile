@@ -4,7 +4,7 @@ ruby '3.2.2'
 
 gem 'mime-types'
 
-gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support', branch: 'prd-ruby-upgrade-dev'
+gem 'travis-support',  git: 'https://github.com/travis-ci/travis-support', branch: 'prd-ruby-upgrade-dev-o'
 gem 'travis-amqp',     git: 'https://github.com/travis-ci/travis-amqp', branch: 'prd-ruby-upgrade-dev'
 gem 'travis-config',   git: 'https://github.com/travis-ci/travis-config', branch: 'prd-ruby-upgrade-dev'
 gem 'travis-settings', git: 'https://github.com/travis-ci/travis-settings', branch: 'prd-ruby-upgrade-dev'
