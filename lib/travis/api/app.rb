@@ -120,7 +120,6 @@ module Travis::Api
               Sentry.tags_context(request_id: env['HTTP_X_REQUEST_ID'])
             end
           end
-          use Sentry::Rack
           use Sentry::Rack::CaptureExceptions
         end
 
