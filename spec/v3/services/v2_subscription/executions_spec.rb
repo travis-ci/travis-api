@@ -2,6 +2,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
   let(:parsed_body) { JSON.load(last_response.body) }
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
+  let(:user) { Travis::API::V3::Models::User.create(login: 'tester')}
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
   before do
@@ -35,10 +36,10 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
     before do
       stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=#{page}&per_page=#{per_page}&from=#{from.to_s}&to=#{to.to_s}")
         .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
-        .to_return(body: JSON.dump([billing_executions_response_body]))
+        .to_return(body: [billing_executions_response_body])
       stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=0&per_page=0&from=#{from.to_s}&to=#{to.to_s}")
         .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
-        .to_return(body: JSON.dump([billing_executions_response_body]))
+        .to_return(body: [billing_executions_response_body])
     end
 
     it 'responds with list of executions' do
@@ -66,10 +67,10 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
           'sender_id' => 1,
           'credits_consumed' => 5,
           'user_license_credits_consumed' => 4,
-          'started_at' => Time.now.to_s,
-          'finished_at' => (Time.now + 10.minutes).to_s,
-          'created_at' => Time.now.to_s,
-          'updated_at' => Time.now.to_s,
+          'started_at' => Time.now.utc.iso8601,
+          'finished_at' => (Time.now + 10.minutes).utc.iso8601,
+          'created_at' => Time.now.utc.iso8601,
+          'updated_at' => Time.now.utc.iso8601,
           'repo_owner_name' => "svenfuchs",
           'repo_slug' => "svenfuchs/minimal",
           'sender_login' => "svenfuchs"

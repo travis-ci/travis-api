@@ -1,5 +1,7 @@
 require 'auth/helpers/faraday'
 require 'auth/helpers/rack_test'
+require 'active_support/core_ext/hash'
+
 
 RSpec.shared_context 'cache setup' do
   include Support::S3

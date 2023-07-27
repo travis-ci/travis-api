@@ -12,8 +12,8 @@ module Travis
               end
             end
 
-            def serializable_hash
-              hash = super
+            def serializable_hash(adapter_options)
+              hash = super(adapter_options)
               hash.delete :value unless object.public?
               hash
             end

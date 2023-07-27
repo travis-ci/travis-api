@@ -14,7 +14,7 @@ module Travis::Api
         def apply
           cache_control
           result = normalize(resource.run)
-          result[:flash] = resource.messages if result && resource.respond_to?(:messages) # TODO should rather happen in the JSON responder, no?
+#          result[:flash] = resource.messages if result && resource.respond_to?(:messages) # TODO should rather happen in the JSON responder, no?
           result
         end
 

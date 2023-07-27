@@ -24,7 +24,12 @@ module Travis::API::V3
     alias last_started_build current_build
 
     after_initialize do
-      update_attributes! default_branch_name: 'master'.freeze unless default_branch_name
+      ensure_settings
+      update! default_branch_name: 'master'.freeze unless default_branch_name
+    end
+
+    before_save do
+      ensure_settings
     end
 
     def migrating?
@@ -87,7 +92,7 @@ module Travis::API::V3
         new_branch = true
       end
 
-      branch = branches.where(name: name).first
+      branch = branches.includes(:builds).where(name: name).first
       return branch unless new_branch
       return nil    unless create_without_build or branch.builds.any?
       branch.last_build = branch.builds.order("number::int desc").first
@@ -96,7 +101,7 @@ module Travis::API::V3
     end
 
     def legacy_find_or_create_branch(name, create_without_build: false)
-      return nil    unless branch = branches.where(name: name).first_or_initialize
+      return nil    unless branch = branches.includes(:builds).where(name: name).first_or_initialize
       return branch unless branch.new_record?
       return nil    unless create_without_build or branch.builds.any?
       branch.last_build = branch.builds.order("number::int desc").first
@@ -205,6 +210,11 @@ module Travis::API::V3
 
     def subversion?
       server_type == 'subversion'
+    end
+
+    def ensure_settings
+      return if attributes['settings'].nil?
+      self.settings = self['settings'].is_a?(String) ? JSON.parse(self['settings']) : self['settings']
     end
   end
 end

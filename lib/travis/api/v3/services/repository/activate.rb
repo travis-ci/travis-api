@@ -14,7 +14,7 @@ module Travis::API::V3
         user_id: admin.id
       )
 
-      repository.update_attributes(active: true)
+      repository.update(active: true)
 
       if repository.perforce?
         remote_vcs_repository.create_perforce_group(

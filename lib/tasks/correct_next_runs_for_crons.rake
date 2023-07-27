@@ -20,7 +20,7 @@ task :correct_next_runs_for_crons do
     crons.all.each do |cron|
       corrected = send("corrected_#{interval}_next_run", cron)
       puts "#{interval} cron #{cron.id}. Set next_run to #{corrected}"
-      cron.update_attributes!(next_run: corrected)
+      cron.update!(next_run: corrected)
     end
   end
 end

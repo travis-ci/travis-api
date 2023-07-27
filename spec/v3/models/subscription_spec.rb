@@ -2,7 +2,7 @@ describe Travis::API::V3::Models::Subscription do
   let(:user) { FactoryBot.create(:user) }
   let(:attributes) do
     {
-      'id' => 'id',
+      'id' => 1,
       'permissions' => { 'read' => true, 'write' => true },
       'valid_to' => Date.today.to_s,
       'created_at' => Date.today.to_s,

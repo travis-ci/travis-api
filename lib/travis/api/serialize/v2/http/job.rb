@@ -80,6 +80,9 @@ module Travis
                 !!serialization_options[:include_log_id]
               end
           end
+
+          class Test < Job
+          end
         end
       end
     end

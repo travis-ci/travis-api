@@ -1,6 +1,5 @@
-require 'fog/aws'
-require 'fog/google'
-require 'google/apis/storage_v1'
+require 'google/cloud/storage'
+require 'aws-sdk-s3'
 
 module Travis::API::V3
   class RemoteQuery < Query
@@ -19,16 +18,17 @@ module Travis::API::V3
     end
 
     def get(key)
-      io = StringIO.new
-      gcs_connection.get_object(gcs_config[:bucket_name], key, download_dest: io)
-      io.rewind
-      io.read
+      bucket = gcs_connection.bucket gcs_config[:bucket_name]
+      file = bucket.file key
+      d = file.download
+      d.rewind
+      d.read
     end
 
     def remove(objects)
       objects.each do |object|
         raise SourceUnknown "#{object.source} is an unknown source." unless ['s3', 'gcs'].include? object.source
-        send("#{object.source}_connection").delete_object(bucket_name_for(object), object.key)
+        send "#{object.source}_delete", object.key
       end
     end
 
@@ -43,7 +43,7 @@ module Travis::API::V3
         @content_length  = object.size
         @name            = object.name
         @branch          = object.name
-        @last_modified   = object.updated
+        @last_modified   = object.updated_at
         @source          = 'gcs'.freeze
         @key             = object.name
       end
@@ -52,14 +52,14 @@ module Travis::API::V3
     class S3Wrapper
       attr_reader :content_length, :name, :branch, :last_modified, :source, :key, :body
 
-      def initialize(object)
-        @content_length  = object.content_length
+      def initialize(object, body)
+        @content_length  = object.size
         @name            = object.key
         @branch          = object.key
         @last_modified   = object.last_modified
         @source          = 's3'.freeze
         @key             = object.key
-        @body            = object.body if object.key.include?("/log.txt")
+        @body            = body if object.key.include?("/log.txt")
       end
     end
 
@@ -72,51 +72,58 @@ module Travis::API::V3
       objects
     end
 
-    def prefix
-      warn 'prefix in RemoteQuery called. If you wanted a prefix filter please implement it in the subclass.'
-      ''
-    end
-
     def s3_connection
-      Fog::Storage.new(
-        aws_access_key_id: s3_config[:access_key_id],
-        aws_secret_access_key: s3_config[:secret_access_key],
-        provider: 'AWS',
-        instrumentor: ActiveSupport::Notifications,
-        connection_options: { instrumentor: ActiveSupport::Notifications }
-      )
-    end
-
-    def s3_bucket
-      s3_connection.directories.get(s3_config[:bucket_name], prefix: prefix)
+      if s3_config[:hostname]
+        Aws::S3::Client.new(
+          credentials: Aws::Credentials.new(
+            s3_config[:access_key_id],
+            s3_config[:secret_access_key]
+          ),
+          region: s3_config[:region] || 'us-east-2',
+          endpoint: s3_config[:hostname]
+        )
+      else
+        Aws::S3::Client.new(
+          credentials: Aws::Credentials.new(
+            s3_config[:access_key_id],
+            s3_config[:secret_access_key]
+          ),
+          region: s3_config[:region] || 'us-east-2'
+        )
+      end
     end
 
     def s3_objects
-      files = s3_bucket.files
-      files.map { |file| S3Wrapper.new(file) }
+      files = s3_connection.list_objects(bucket: s3_config[:bucket_name])
+      files&.contents.map { |file| S3Wrapper.new(file, s3_get_body(file.key)) }
+    end
+
+    def s3_get_body(key)
+      s3_connection.get_object(bucket: s3_config[:bucket_name], key: key)&.body&.read
+    end
+
+    def s3_delete(key)
+      s3_connection.delete_object(bucket: s3_config[:bucket_name], key: key)
     end
 
     def gcs_connection
-      gcs = ::Google::Apis::StorageV1::StorageService.new
-      json_key_io = StringIO.new(JSON.dump(gcs_config[:json_key]))
-
-      gcs.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
-        json_key_io: json_key_io,
-        scope: [
-          'https://www.googleapis.com/auth/devstorage.read_write'
-        ]
-      )
-      gcs
+      ENV['STORAGE_CREDENTIALS_JSON'] = JSON.dump(gcs_config[:json_key]) # store in file maybe? credentials param doesn't allow json
+      ::Google::Cloud::Storage.new
     end
 
     def gcs_bucket
-      gcs_connection.list_objects(gcs_config[:bucket_name], prefix: prefix)
+      @_gcs_bucket ||= gcs_connection.bucket gcs_config[:bucket_name]
     end
 
     def gcs_objects
-      items = gcs_bucket.items
+      items = gcs_bucket.files
       return [] if items.nil?
       items.map { |item| GcsWrapper.new(item) }
+    end
+
+    def gcs_delete(key)
+      file = gcs_bucket.file (key)
+      file.delete
     end
 
     def config

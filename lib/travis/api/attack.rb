@@ -3,6 +3,7 @@ require 'ipaddress'
 require 'metriks'
 
 ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, req|
+  req = req[:request] if req.is_a?(Hash)
   metric_name = [
     'api.rate_limiting',
     req.env['rack.attack.match_type'],
@@ -63,7 +64,7 @@ class Rack::Attack
   # Whitelisted IP addresses
   safelist('ip_in_redis') do |request|
     # TODO: deprecate :api_whitelisted_ips in favour of api_safelisted_ips
-    Travis.redis.sismember(:api_whitelisted_ips, request.ip) || Travis.redis.sismember(:api_safelisted_ips, request.ip)
+    request.ip && (Travis.redis.sismember(:api_whitelisted_ips, request.ip) || Travis.redis.sismember(:api_safelisted_ips, request.ip))
   end
 
   ####

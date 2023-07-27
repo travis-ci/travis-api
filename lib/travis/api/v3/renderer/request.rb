@@ -8,7 +8,8 @@ module Travis::API::V3
     end
 
     def config
-      model.config.reject { |key, _| key == :'.result' }
+      config_ = model.config.is_a?(String) ? JSON.parse(model.config) : model.config
+      config_.deep_symbolize_keys.reject { |key, _| key == :'.result' }
     end
 
     def yaml_config

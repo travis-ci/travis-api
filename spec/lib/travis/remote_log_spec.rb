@@ -10,25 +10,18 @@ describe Travis::RemoteLog do
     described_class::Remote.instance_variable_set(:@clients, nil)
     described_class::Remote.instance_variable_set(:@archive_clients, nil)
 
-    Fog.mock!
-    storage = Fog::Storage.new({
-      aws_access_key_id: 'key',
-      aws_secret_access_key: 'secret',
-      provider: 'AWS'
-    })
-    bucket = storage.directories.create(key: 'archive.travis-ci.org')
-    file = bucket.files.create(
-      key: "jobs/#{job_id}/log.txt",
-      body: archived_content
-    )
+    class FakeFile
+      attr_accessor :body
+      def initialize(data)
+        @body = data 
+      end
+    end
+
+    file = FakeFile.new(archived_content)
 
     allow_any_instance_of(Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
   end
 
-  after do
-    Fog.unmock!
-    Fog::Mock.reset
-  end
 
   it 'has a default client' do
     expect(described_class::Remote.new.send(:client)).to_not be_nil
@@ -358,6 +351,7 @@ describe Travis::RemoteLog::ArchiveClient do
   before do
     subject.instance_variable_set(:@s3, s3)
     allow(s3).to receive(:directories).and_return(s3)
+    allow(s3).to receive(:list_objects_v2).and_return([s3])
     allow(s3).to receive(:get)
       .with('fluffernutter-pretzel-pie', prefix: 'jobs/9/log.txt')
       .and_return(s3)

@@ -42,7 +42,7 @@ module Travis::API::V3
         repository.key.destroy if repository.subversion?
       end
 
-      repository.update_attributes(active: activate)
+      repository.update(active: activate)
       save_audit(repository)
       result repository
     end

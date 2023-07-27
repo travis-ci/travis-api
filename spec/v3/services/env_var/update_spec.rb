@@ -31,7 +31,7 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
 
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-      repo.update_attributes(settings: { env_vars: [env_var], foo: 'bar' })
+      repo.update(settings: { env_vars: [env_var], foo: 'bar' })
       patch("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", JSON.generate(params), auth_headers.merge(json_headers))
     end
 
@@ -65,7 +65,7 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
 
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
-      repo.update_attributes(settings: { env_vars: [env_var], foo: 'bar' })
+      repo.update(settings: { env_vars: [env_var], foo: 'bar' })
       patch("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", JSON.generate(params), auth_headers.merge(json_headers))
     end
 
@@ -100,7 +100,7 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { patch("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", JSON.generate(params), auth_headers.merge(json_headers)) }
 
       example { expect(last_response.status).to be == 403 }
@@ -112,7 +112,7 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { patch("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", JSON.generate(params), auth_headers.merge(json_headers)) }
 
       example { expect(last_response.status).to be == 403 }

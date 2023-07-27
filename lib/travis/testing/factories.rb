@@ -1,8 +1,10 @@
 require 'factory_bot'
 
 FactoryBot.define do
-  factory :build do
+
+  factory :build, class: Build do
     owner { User.first || FactoryBot.create(:user) }
+    owner_type { 'User' }
     repository { Repository.first || FactoryBot.create(:repository_without_last_build) }
     association :request
     association :commit
@@ -13,12 +15,12 @@ FactoryBot.define do
     private { false }
   end
 
-  factory :build_backup do
+  factory :build_backup, class: BuildBackup do
     repository { Repository.first || FactoryBot.create(:repository_without_last_build) }
     sequence(:file_name) { |n| "repository_builds_#{n}-#{n + 100}" }
   end
 
-  factory :commit do
+  factory :commit, class: Commit do
     commit { '62aae5f70ceee39123ef' }
     branch { 'master' }
     message { 'the commit message 🤔' }
@@ -55,9 +57,11 @@ FactoryBot.define do
 
   factory :test, :class => 'Job::Test', aliases: [:job] do
     owner      { User.first || FactoryBot.create(:user) }
+    owner_type { 'User' }
     repository { Repository.first || FactoryBot.create(:repository) }
     commit     { FactoryBot.create(:commit) }
     source     { FactoryBot.create(:build) }
+    source_type { 'Build' }
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
     number     { '2.1' }
     tags       { "" }
@@ -73,8 +77,12 @@ FactoryBot.define do
     private { false }
   end
 
+  factory :url, class: Url do
+    name { 'http://travis-ci.com' }
+  end
+
   factory :repository_without_last_build, class: Repository do
-    owner { User.find_by_login('svenfuchs') || FactoryBot.create(:user) }
+   # owner { User.find_by_login('svenfuchs') || FactoryBot.create(:user) }
     name { 'minimal' }
     owner_name { 'svenfuchs' }
     owner_email { 'svenfuchs@artweb-design.de' }
@@ -88,6 +96,13 @@ FactoryBot.define do
     last_build_finished_at { Time.now.utc }
     sequence(:github_id) {|n| n }
     private { false }
+
+    transient do
+      owner { User.first || FactoryBot.create(:user) }
+    end
+    owner_id {owner.id}
+    owner_type {owner.class.name}
+
   end
 
   factory :repository, :parent => :repository_without_last_build do
@@ -96,12 +111,16 @@ FactoryBot.define do
     end
   end
 
+  factory :v3_repository, class: Travis::API::V3::Models::Repository do
+  end
+
   factory :minimal, :parent => :repository_without_last_build do
   end
 
   factory :enginex, :parent => :repository_without_last_build do
     name { 'enginex' }
     owner_name { 'josevalim' }
+    owner_type { 'User' }
     owner_email { 'josevalim@email.example.com' }
     owner { User.find_by_login('josevalim') || FactoryBot.create(:user, :login => 'josevalim') }
   end
@@ -109,6 +128,7 @@ FactoryBot.define do
   factory :sharedrepo, :parent => :repository_without_last_build do
     name { 'sharedrepo' }
     owner_name { 'sharedrepoowner' }
+    owner_type { 'User' }
     owner_email { 'sharedrepo@owner.email.com' }
     owner { User.find_by_login('sharedrepoowner') || FactoryBot.create(:user, :login => 'sharedrepoowner', :name => 'Sharedrepo Owner') }
     last_build_number { nil }
@@ -155,39 +175,34 @@ FactoryBot.define do
     github_oauth_token { 'github_oauth_token' }
   end
 
-  factory :org, :class => 'Organization' do
-    name { 'travis-ci' }
-    login { 'travis-ci' }
-  end
-
   factory :org_v3, class: Travis::API::V3::Models::Organization do
     name { 'travis-ci' }
     login { 'travis-ci' }
   end
 
-  factory :running_build, :parent => :build do
+  factory :running_build, :parent => :build, class: Build do
     repository { FactoryBot.create(:repository, :name => 'running_build') }
     state { :started }
   end
 
-  factory :successful_build, :parent => :build do
+  factory :successful_build, :parent => :build, class: Build do
     repository { |b| FactoryBot.create(:repository, :name => 'successful_build') }
     state { :passed }
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
   end
 
-  factory :broken_build, :parent => :build do
+  factory :broken_build, :parent => :build, class: Build do
     repository { FactoryBot.create(:repository, :name => 'broken_build', :last_build_state => :failed) }
     state { :failed }
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
   end
 
-  factory :broken_build_with_tags, :parent => :build do
+  factory :broken_build_with_tags, :parent => :build, class: Build do
     repository  { FactoryBot.create(:repository, :name => 'broken_build_with_tags', :last_build_state => :errored) }
-    matrix      {[FactoryBot.create(:test, :tags => "database_missing,rake_not_bundled",   :number => "1.1"),
-                  FactoryBot.create(:test, :tags => "database_missing,log_limit_exceeded", :number => "1.2")]}
+    matrix      {[FactoryBot.create(:test, :owner_type => 'User', :tags => "database_missing,rake_not_bundled",   :number => "1.1"),
+                  FactoryBot.create(:test, :owner_type => 'User', :tags => "database_missing,log_limit_exceeded", :number => "1.2")]}
     state       { :failed }
     started_at  { Time.now.utc }
     finished_at { Time.now.utc }
@@ -196,10 +211,12 @@ FactoryBot.define do
   factory :branch, class: Travis::API::V3::Models::Branch do
     name { Random.rand(1..1000) }
     repository_id { FactoryBot.create(:repository).id }
+    association :repository
   end
 
   factory :v3_build, class: Travis::API::V3::Models::Build do
     owner { User.first || FactoryBot.create(:user) }
+    owner_type { 'User' }
     repository { Repository.first || FactoryBot.create(:repository) }
     association :request
     association :commit
@@ -214,6 +231,11 @@ FactoryBot.define do
     interval { "daily" }
     dont_run_if_recent_build_exists { false }
     active { true }
+  end
+
+  factory :org, class: Organization do
+    name { 'travis-ci' }
+    login { 'travis-ci' }
   end
 
   factory :beta_migration_request, class: Travis::API::V3::Models::BetaMigrationRequest do

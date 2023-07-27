@@ -147,6 +147,7 @@ describe Travis::API::V3::Services::Build::Cancel, set_app: true do
     end
 
     describe "started state" do
+
       before        { build.update_attribute(:state, "started")                                                  }
       before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
 
@@ -193,7 +194,6 @@ describe Travis::API::V3::Services::Build::Cancel, set_app: true do
         "user_id"=> repo.owner_id,
         "source" => "api"}
       }
-
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
     end

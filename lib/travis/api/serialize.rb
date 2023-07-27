@@ -23,24 +23,26 @@ module Travis
           version = 'v2' if version.start_with?('v2.')
           parts = [version, target] + type.to_s.split('::')
           parts = parts.map { |part| part.to_s.camelize }
-
           parts.inject(self) do |const, name|
             begin
               if const && const.const_defined?(name, false)
                 const.const_get(name, false)
               else
-                # puts "Could not find serialize builder for #{version} #{target} #{type}" unless [['Hash'], ['RemoteLog']].include?(type)
+                 puts "Could not find serialize builder for #{version} #{target} #{type}" unless [['Hash'], ['RemoteLog']].include?(type)
                 nil
               end
             rescue NameError
-              # puts "Could not find serialize builder for #{version} #{target}" unless [['Hash'], ['RemoteLog']].include?(type)
+               puts "Could not find serialize builder for #{version} #{target}" unless [['Hash'], ['RemoteLog']].include?(type)
               nil
             end
           end
         end
 
         def new(resource, options = {})
-          builder = builder(resource, options) || raise(ArgumentError, "cannot serialize #{resource.inspect}, options: #{options.inspect}")
+          builder = builder(resource, options)
+          if !builder 
+              raise(ArgumentError, "cannot serialize #{resource.inspect}, options: #{options.inspect}")
+          end
           builder.new(resource, options[:params] || {})
         end
 
@@ -50,9 +52,7 @@ module Travis
             if arel_relation?(resource)
               type = resource.klass.name.pluralize
             else
-              type = resource.class
-              type = type.base_class if active_record?(type)
-              type = type.name
+              type = resource.class.name
             end
             type.split('::').last
           end

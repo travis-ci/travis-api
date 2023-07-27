@@ -199,6 +199,7 @@ module Travis::API::V3
 
     def repository_visible?(repository, show_public = true)
       return false if repository.invalid?
+
       return true  if show_public and unrestricted_api?(repository.owner) and not repository.private?
       private_repository_visible?(repository)
     end

@@ -17,7 +17,7 @@ module Travis
             ::Sidekiq::Client.push(
               'queue'   => 'hub',
               'class'   => 'Travis::Hub::Sidekiq::Worker',
-              'args'    => [event, payload]
+              'args'    => [event, payload].map! { |arg| arg.to_json }
             )
 
             Result.new(value: payload)

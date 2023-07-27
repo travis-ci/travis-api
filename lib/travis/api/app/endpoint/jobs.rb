@@ -19,7 +19,7 @@ class Travis::Api::App
       get '/:id' do
         job = service(:find_job, params).run
         if job && job.repository
-          respond_with job, include_log_id: include_log_id?
+          respond_with job, type: :job, include_log_id: include_log_id?
         else
           json = { error: { message: "The job(#{params[:id]}) couldn't be found" } }
           status 404

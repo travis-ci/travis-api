@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
         describe 'authenticated user with wrong permissions' do
           before do
             Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-            repo.update_attributes(settings: { ssh_key: key_pair, foo: 'bar' })
+            repo.update(settings: { ssh_key: key_pair, foo: 'bar' })
             delete("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{token}" })
           end
           include_examples 'insufficient access to repo', 'delete_key_pair'
@@ -49,7 +49,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
 
           describe 'existing repo, deletes key pair' do
             before do
-              repo.update_attributes(settings: { ssh_key: key_pair, foo: 'bar' })
+              repo.update(settings: { ssh_key: key_pair, foo: 'bar' })
               delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers)
             end
 
@@ -77,7 +77,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
   end
 
   context 'private repo' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
 
     include_examples 'paid'
   end
@@ -90,10 +90,10 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
 
   context do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true) }
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -105,7 +105,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }

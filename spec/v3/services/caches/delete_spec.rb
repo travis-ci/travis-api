@@ -43,6 +43,16 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     ]
   }
 
+  let(:gcs_json_bucket_response) {
+    %q{
+      {"kind": "storage#bucket",
+       "selfLink":  "https://www.googleapis.com/storage/v1/b/travis-cache-staging-org-gce",
+        "name": "travis-cache-production-org-gce",
+        "id": "travis-cache-staging-org-gce/25736446"
+      }
+    }
+  }
+
   let(:gcs_json_response) {
     %q{
       {"kind": "storage#objects",
@@ -88,6 +98,47 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
           }
         }
       ]}
+    }
+  }
+
+  let(:gcs_json_file_response) {
+    %q{
+      { "kind": "storage#object",
+        "id": "travis-cache-staging-org-gce/25736446/cd-mac-build/cache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz/1488893377144168",
+        "selfLink":  "https://www.googleapis.com/storage/v1/b/travis-cache-staging-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz",
+        "name": "25736446/cd-mac-build/cache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz",
+        "bucket": "travis-cache-production-org-gce",
+        "generation": 1,
+        "metageneration": 2,
+        "contentType": "string",
+        "timeCreated": "2009-10-12T17:50:30.000Z",
+        "updated": "2009-10-12T17:50:30.000Z",
+        "timeDeleted": "2009-10-12T17:50:30.000Z",
+        "storageClass": "string",
+        "size": 123,
+        "md5Hash": "string",
+        "mediaLink": "string",
+        "contentEncoding": "string",
+        "contentDisposition": "string",
+        "contentLanguage": "string",
+        "cacheControl": "string",
+        "metadata": {
+          "key": "string"
+        },
+        "acl": [
+        ],
+        "owner": {
+          "entity": "string",
+          "entityId": "string"
+        },
+        "crc32c": "string",
+        "componentCount": 2,
+        "etag": "string",
+        "customerEncryption": {
+          "encryptionAlgorithm": "string",
+          "keySha256": "string"
+        }
+      }
     }
   }
 
@@ -161,55 +212,77 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     Travis.config.cache_options = {}
   end
 
+  before do
+    stub_request(:get,%r((.+))).with(
+      headers: { 'Metadata-Flavor'=>'Google', 'User-Agent'=>'Ruby'}
+    ).to_return(status: 200, body: "", headers: {})
+
+    stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url").
+      to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
+
+    stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
+      to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
+
+    stub_request(:post, "https://oauth2.googleapis.com/token").
+      to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
+    stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce").
+      to_return(:status => 200, :body => gcs_json_bucket_response, :headers => {"Content-Type" => "application/json"})
+
+    stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
+      to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
+
+    stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/1%2Fha-bug-rm_rf%2Fcache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
+      to_return(status: 200, body: gcs_json_file_response, headers: {"Content-Type" => "application/json"})
+
+    stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz").
+      to_return(status: 200, body: gcs_json_file_response, headers: {"Content-Type" => "application/json"})
+
+    stub_request(:delete, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
+      to_return(:status => 204, :body => xml_content_single_repo, :headers => {"Content-Type" => "application/json"})
+
+    stub_request(:delete, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz").
+      to_return(:status => 200, :body => "", :headers => {"Content-Type" => "application/json"})
+  end
+
   describe "delete all on s3 and gcs" do
-    before     do
-        stub_request(:get, "https://travis-cache-staging-org.s3.amazonaws.com/?prefix=1/").
-        to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
+    before do
+      stub_request(:delete, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz"). 
+      to_return(:status => 204, :body => "", :headers => {"Content-Type" => "application/json"})
+     stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url").
+      to_return(:status => 200, :body => empty_xml_content, :headers => {})
 
-        stub_request(:get, "https://travis-cache-staging-org.s3.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
-        to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
-
-        stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
-        to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
-
-        stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=#{repo.id}/").
-         to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
-
-        stub_request(:delete, "https://travis-cache-staging-org.s3.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
-          to_return(:status => 204, :body => xml_content_single_repo, :headers => {"Content-Type" => "application/json"})
-
-        stub_request(:delete, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz").
-          to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
+      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
+      to_return(:status => 200, :body => empty_gcs_content, :headers => {"Content-Type" => "application/json"})
     end
     before     { delete("/v3/repo/#{repo.id}/caches", {}, headers) }
     example    do
       expect(JSON.load(body)).to be == {
         "@type"=>"caches",
         "@representation"=>"standard",
-        "caches"=> result
+        "caches"=> []
       }
     end
   end
 
   describe "delete by branch" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/#{result[0]["branch"]}/").
+       stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url").
         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
       stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
         to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
 
-      stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=#{repo.id}/#{result[0]["branch"]}/").
+      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
         to_return(:status => 200, :body => empty_gcs_content, :headers => {"Content-Type" => "application/json"})
 
-      stub_request(:delete, "https://travis-cache-staging-org.s3.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
+      stub_request(:delete, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
       to_return(:status => 204, :body => xml_content_single_repo, :headers => {})
 
     end
 
     example do
       delete("/v3/repo/#{repo.id}/caches", { branch: result[0]["branch"] }, headers)
-      expect(JSON.load(body)).to be == {
+      expect( JSON.load(body)).to be == {
         "@type"=>"caches",
         "@representation"=>"standard",
         "caches"=> [result[0]]
@@ -219,20 +292,14 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   describe "delete by match" do
     before do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.amazonaws.com/?prefix=#{repo.id}/").
-        to_return(:status => 200, :body => empty_xml_content, :headers => {})
+       stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url").
+        to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
-      stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
-        to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
-
-      stub_request(:get, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/").
+      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
         to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
-
-      stub_request(:delete, "https://www.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz").
-      to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
-
-    end
-
+      stub_request(:delete, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz").
+      to_return(:status => 200, :body => gcs_json_file_response, :headers => {"Content-Type" => "application/json"})
+     end
     example do
       delete("/v3/repo/#{repo.id}/caches?match=osx", {}, headers)
       expect(JSON.load(body)).to be == {
@@ -245,7 +312,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   context do
     describe "repo migrating" do
-      before  { repo.update_attributes(migration_status: "migrating") }
+      before  { repo.update(migration_status: "migrating") }
       before  { delete("/v3/repo/#{repo.id}/caches", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -257,7 +324,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     end
 
     describe "repo migrating" do
-      before  { repo.update_attributes(migration_status: "migrated") }
+      before  { repo.update(migration_status: "migrated") }
       before  { delete("/v3/repo/#{repo.id}/caches", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }

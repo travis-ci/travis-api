@@ -3,7 +3,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
   before do
     Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
     Travis.config.vcs.token = 'vcs-token'
-    repo.update_attributes!(active: false)
+    repo.update!(active: false)
   end
   describe "not authenticated" do
     before  { post("/v3/repo/#{repo.id}/activate")      }
@@ -173,7 +173,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       Travis.config.host = 'http://travis-ci.com'
     end
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/activate", {}, headers) }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
@@ -183,7 +183,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       }}
     end
     describe "repo migrated" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/activate", {}, headers) }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {

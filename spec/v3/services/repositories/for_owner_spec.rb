@@ -14,7 +14,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   let(:headers_collaborator) {{ 'HTTP_AUTHORIZATION' => "token #{token_collaborator}"                        }}
   before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
   before        { repo.update_attribute(:private, true)                             }
-  before        { repo.update_attribute(:current_build, build)                             }
+  before        { repo.update_attribute(:current_build, build)                      }
   after         { repo.update_attribute(:private, false)                            }
   before        { RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 1024*1024 }
 
@@ -24,14 +24,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
     let!(:build) { Travis::API::V3::Models::Build.create(repository: repo2, branch_id: branch.id, branch_name: 'other-branch') }
 
     before do
-      branch.update_attributes!(last_build_id: build.id)
+      branch.update!(last_build_id: build.id)
       Travis::API::V3::Models::Permission.create(repository: repo2, user: repo2.owner, pull: true)
       get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build:desc&include=repository.default_branch", {}, headers)
     end
 
     example { expect(last_response).to be_ok }
     example 'repos with most recent build on default branch come first' do
-      repos = JSON.load(last_response.body)['repositories']
+      repos = JSON.parse(last_response.body)['repositories']
       last_build_ids = repos.map { |r| r['default_branch']['last_build']['id'] }
       expect(last_build_ids).to eq last_build_ids.sort.reverse
     end
@@ -40,7 +40,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   describe "private repository, private API, authenticated as user with access" do
     before  { get("/v3/owner/svenfuchs/repos", {}, headers) }
     example { expect(last_response).to be_ok }
-    example { expect(JSON.load(body)).to be == {
+    example { expect(JSON.parse(body)).to be == {
       "@type"                => "repositories",
       "@href"                => "/v3/owner/svenfuchs/repos",
       "@representation"      => "standard",
@@ -117,8 +117,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   describe "include: last_started_build" do
     before  { get("/v3/owner/svenfuchs/repos?include=repository.last_started_build", {}, headers)                           }
     example { expect(last_response)                   .to be_ok                                      }
-    example { expect(JSON.load(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?include=repository.last_started_build"}
-    example { expect(JSON.load(body)['repositories']) .to be == [{
+    example { expect(JSON.parse(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?include=repository.last_started_build"}
+    example { expect(JSON.parse(body)['repositories']) .to be == [{
         "@type"              =>"repository",
         "@href"              =>"/v3/repo/#{repo.id}",
         "@representation"    =>"standard",
@@ -191,11 +191,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "priority"       => false,
           "repository"    =>{
             "@href"       =>"/v3/repo/#{repo.id}"},
-          "branch"        =>{
-            "@type"       =>"branch",
-            "@href"       =>"/v3/repo/1/branch/master",
-            "@representation"=>"minimal",
-            "name"        =>"master"},
+          "branch"        =>nil,
           "tag"           =>nil,
           "commit"        =>{
             "@type"       =>"commit",
@@ -229,15 +225,18 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   end
 
   describe "include: current_build" do
+
+    before {  }
+    let!(:branch) { Travis::API::V3::Models::Branch.find_by(name: 'master', repository_id: repo.id) }
     before  { get("/v3/owner/svenfuchs/repos?include=repository.current_build", {}, headers)                           }
     example { expect(last_response)                   .to be_ok                                      }
-    example { expect(JSON.load(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?include=repository.current_build"}
-    example { expect(JSON.load(body)['@warnings'])    .to be == [{
+    example { expect(JSON.parse(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?include=repository.current_build"}
+    example { expect(JSON.parse(body)['@warnings'])    .to be == [{
         "@type"              => "warning",
         "message"            => "current_build will soon be deprecated. Please use repository.last_started_build instead",
         "warning_type"       => "deprecated_parameter",
         "parameter"          => "current_build"}]}
-    example { expect(JSON.load(body)['repositories']) .to be == [{
+    example { expect(JSON.parse(body)['repositories']) .to be == [{
         "@type"              => "repository",
         "@href"              => "/v3/repo/#{repo.id}",
         "@representation"    => "standard",
@@ -312,12 +311,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "repository"     => {
             "@href"       => "/v3/repo/#{repo.id}"
           },
-          "branch"        => {
-            "@type"           => "branch",
-            "@href"           => "/v3/repo/1/branch/master",
-            "@representation" => "minimal",
-            "name"            => "master"
-          },
+          "branch"        => nil,
           "tag"           => nil,
           "commit"        => {
             "@type"           => "commit",
@@ -360,14 +354,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   describe "filter: private=false" do
     before  { get("/v3/repos", {"repository.private" => "false"}, headers)                           }
     example { expect(last_response)                   .to be_ok                                      }
-    example { expect(JSON.load(body)['repositories']) .to be == []                                   }
-    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?repository.private=false" }
+    example { expect(JSON.parse(body)['repositories']) .to be == []                                   }
+    example { expect(JSON.parse(body)['@href'])        .to be == "/v3/repos?repository.private=false" }
   end
 
   describe "filter: active=false" do
     before  { get("/v3/repos", {"repository.active" => "false"}, headers)  }
     example { expect(last_response)                   .to be_ok            }
-    example { expect(JSON.load(body)['repositories']) .to be == []         }
+    example { expect(JSON.parse(body)['repositories']) .to be == []         }
   end
 
   describe "filter: starred=true" do
@@ -375,15 +369,15 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
     before  { get("/v3/repos", {"starred" => "true"}, headers)                           }
     after   { repo.owner.stars.each(&:destroy)                                           }
     example { expect(last_response)                   .to be_ok                          }
-    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=true" }
-    example { expect(JSON.load(body)['repositories']) .not_to be_empty                   }
+    example { expect(JSON.parse(body)['@href'])        .to be == "/v3/repos?starred=true" }
+    example { expect(JSON.parse(body)['repositories']) .not_to be_empty                   }
   end
 
   describe "filter: starred=false" do
     before  { get("/v3/repos", {"starred" => "false"}, headers)                              }
     example { expect(last_response)                   .to be_ok                              }
-    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=false"    }
-    example { expect(JSON.load(body)['repositories']) .not_to be_empty                       }
+    example { expect(JSON.parse(body)['@href'])        .to be == "/v3/repos?starred=false"    }
+    example { expect(JSON.parse(body)['repositories']) .not_to be_empty                       }
   end
 
   describe "filter: starred=false but no unstarred repos" do
@@ -391,8 +385,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
     after   { repo.owner.stars.each(&:destroy)                                               }
     before  { get("/v3/repos", {"starred" => "false"}, headers)                              }
     example { expect(last_response)                   .to be_ok                              }
-    example { expect(JSON.load(body)['@href'])        .to be == "/v3/repos?starred=false"    }
-    example { expect(JSON.load(body)['repositories']) .to be_empty                           }
+    example { expect(JSON.parse(body)['@href'])        .to be == "/v3/repos?starred=false"    }
+    example { expect(JSON.parse(body)['repositories']) .to be_empty                           }
   end
 
   describe "sorting by default_branch.last_build" do
@@ -400,8 +394,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
     before  { repo2.save! }
     before  { get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build", {}, headers) }
     example { expect(last_response).to be_ok }
-    example { expect(JSON.load(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build" }
-    example { expect(JSON.load(body)['repositories'])   .to be == [{
+    example { expect(JSON.parse(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build" }
+    example { expect(JSON.parse(body)['repositories'])   .to be == [{
         "@type"           => "repository",
         "@href"           => "/v3/repo/1",
         "@representation" => "standard",
@@ -507,7 +501,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   describe "shared repository for collaborator, authenticated as user with access" do
     before  { get("/v3/owner/johndoe/repos", {}, headers_collaborator) }
     example { expect(last_response).to be_ok }
-    example { expect(JSON.load(body)).to be == {
+    example { expect(JSON.parse(body)).to be == {
       "@type"                => "repositories",
       "@href"                => "/v3/owner/johndoe/repos",
       "@representation"      => "standard",
@@ -607,7 +601,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
       Travis.config.billing.url = billing_url
       Travis.config.billing.auth_key = billing_auth_key
       stub_billing_request(:get, "/usage/users/1/allowance", auth_key: billing_auth_key, user_id: 1)
-        .to_return(body: JSON.dump({ 'public_repos': true, 'private_repos': true, 'user_usage': true, 'pending_user_licenses': false, 'concurrency_limit': 666 }))
+        .to_return(body: JSON.generate({ 'public_repos': true, 'private_repos': true, 'user_usage': true, 'pending_user_licenses': false, 'concurrency_limit': 666 }), headers: {'Content-Type' => 'application/json'})
       get("/v3/owner/svenfuchs/allowance", {}, headers)
     end
     example { expect(last_response).to be_ok }
@@ -637,7 +631,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
     end
     example { expect(last_response.status).to eq(404) }
     example do
-      expect(JSON.load(body)).to eq(
+      expect(JSON.parse(body)).to eq(
         '@type' => 'error',
         'error_type' => 'not_found',
         'error_message' => 'resource not found (or insufficient access)'

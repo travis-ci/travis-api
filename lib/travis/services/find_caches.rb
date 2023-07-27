@@ -1,6 +1,5 @@
-require 's3'
-require 'travis/services/base'
-require 'google/apis/storage_v1'
+require 'aws-sdk-s3'
+require 'google-cloud-storage'
 
 module Travis
   module Services
@@ -99,6 +98,7 @@ module Travis
 
         c = caches(prefix: prefix)
         c.select! { |o| o.slug.include?(params[:match]) } if params[:match]
+        c.each {|cc| puts cc.s3_object.key }
         c
       end
 
@@ -138,35 +138,48 @@ module Travis
           fetch_s3(cache_objects, options) if valid_s3?
           fetch_gcs(cache_objects, options) if valid_gcs?
 
-          @caches = cache_objects.compact
+          cache_objects.compact
+        end
+
+        def s3_client
+          config = cache_options[:s3]&.to_h
+          if config[:endpoint]
+            Aws::S3::Client.new(
+              credentials: Aws::Credentials.new(
+                config[:access_key_id],
+                config[:secret_access_key]
+              ),
+              region: config[:region] || 'us-east-2',
+              endpoint: config[:endpint]
+            )
+          else
+            Aws::S3::Client.new(
+              credentials: Aws::Credentials.new(
+                config[:access_key_id],
+                config[:secret_access_key]
+              ),
+              region: config[:region] || 'us-east-2',
+            )
+          end
         end
 
         def fetch_s3(cache_objects, options)
-          config = cache_options[:s3]
-          svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
-          bucket = svc.buckets.find(config.to_h[:bucket_name])
-
-          if bucket
-             bucket.objects(options).each { |object| cache_objects << S3Wrapper.new(repo, object) }
-          end
+          config = cache_options[:s3]&.to_h
+          svc = s3_client
+          files = svc.list_objects(bucket: config[:bucket_name], prefix: options[:prefix])
+          files.contents.each { |object| cache_objects << S3Wrapper.new(repo, object) }
         end
 
         def fetch_gcs(cache_objects, options)
-          config = cache_options[:gcs]
-          storage     = ::Google::Apis::StorageV1::StorageService.new
-          json_key_io = StringIO.new(JSON.dump(config.to_h[:json_key]))
+          config = cache_options[:gcs].to_h
+          ENV['STORAGE_CREDENTIALS_JSON'] = JSON.dump(config[:json_key]) # store in file maybe? credentials param doesn't allow json
+          storage = Google::Cloud::Storage.new
           bucket_name = config[:bucket_name]
 
-          storage.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
-            json_key_io: json_key_io,
-            scope: [
-              'https://www.googleapis.com/auth/devstorage.read_write'
-            ]
-          )
+          gcs_bucket = storage.bucket config[:bucket_name]
 
-          if items = storage.list_objects(bucket_name, prefix: prefix).items
-            items.each { |object| cache_objects << GcsWrapper.new(storage, bucket_name, repo, object) }
-          end
+          items = gcs_bucket.files
+          items&.each { |object| cache_objects << GcsWrapper.new(storage, bucket_name, repo, object) }
         end
 
         def cache_options
