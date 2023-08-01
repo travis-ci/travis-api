@@ -106,9 +106,15 @@ class Travis::Api::App
       get '/handshake/?:provider?' do
         method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
+        params[:signup] ||= false
         send(method) do |user, token, redirect_uri|
           if target_ok? redirect_uri
+            user[:installation] = params[:installation_id]
             content_type :html
+            if params[:setup_action] && params[:setup_action] == 'install' && params[:provider] == 'github'
+              redirect_uri = redirect_uri + "?installation_id=#{params[:installation_id]}"
+              redirect_uri = "#{Travis.config.vcs_redirects.web_url}#{Travis.config.vcs_redirects[params[:provider]]}?installation_id=#{params[:installation_id]}"
+            end
             data = { user: user, token: token, uri: redirect_uri }
             erb(:post_payload, locals: data)
           else
@@ -214,6 +220,10 @@ class Travis::Api::App
 
         def vcs_handshake
           if params[:code]
+            if params[:setup_action] && (params[:setup_action] == 'update' || params[:setup_action] == 'install') && params[:provider] && !params[:state]
+              redirect to("#{Travis.config.vcs_redirects.web_url}#{Travis.config.vcs_redirects[params[:provider]]}?installation_id=#{params[:installation_id]}")
+            end
+
             unless state_ok?(params[:state], params[:provider])
               handle_invalid_response
               return
@@ -239,7 +249,8 @@ class Travis::Api::App
             vcs_data = remote_vcs_user.auth_request(
               provider: params[:provider],
               state: state,
-              redirect_uri: oauth_endpoint
+              redirect_uri: oauth_endpoint,
+              signup: params[:signup]
             )
 
             response.set_cookie(cookie_name(params[:provider]), value: state, httponly: true)

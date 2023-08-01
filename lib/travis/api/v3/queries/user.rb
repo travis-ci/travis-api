@@ -23,6 +23,27 @@ module Travis::API::V3
       end
     end
 
+    def collaborator?(id)
+      user = Models::User.find_by_id(id) if id
+      return false unless user
+
+      owners=[]
+      user.organizations.each do |org|
+        owners << {
+          :id => org.id,
+          :type => 'Organization'
+        }
+      end
+      Models::Repository.where(id: user.shared_repositories_ids).uniq.pluck(:owner_id, :owner_type).each do |owner|
+        owners << {
+          :id => owner[0],
+          :type =>owner[1]
+        }
+      end
+      client = BillingClient.new(id)
+      client.usage_stats(owners)
+    end
+
     def sync(user)
       raise AlreadySyncing if user.is_syncing?
       if Travis::Features.user_active?(:use_vcs, user) || !user.github?
