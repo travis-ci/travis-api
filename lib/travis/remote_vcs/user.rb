@@ -6,12 +6,13 @@ require 'travis/remote_vcs/client'
 module Travis
   class RemoteVCS
     class User < Client
-      def auth_request(provider: :github, redirect_uri:, state:)
+      def auth_request(provider: :github, redirect_uri:, state:, signup:)
         request(:get, __method__) do |req|
           req.url 'users/session/new'
           req.params['provider'] = provider
           req.params['redirect_uri'] = redirect_uri
           req.params['state'] = state
+          req.params['signup'] = signup
         end
       end
 

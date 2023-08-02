@@ -336,6 +336,13 @@ module Travis::API::V3
       delete   :delete
     end
 
+    hidden_resource :storage do
+      route  '/storage/{id}'
+      get    :find
+      patch  :update
+      delete :delete
+    end
+
     hidden_resource :beta_migration_requests do
       route '/beta_migration_requests'
 
@@ -379,6 +386,7 @@ module Travis::API::V3
 
     hidden_resource :subscription do
       route '/subscription/{subscription.id}'
+      patch :update_payment_details, '/payment_details'
       patch :update_address, '/address'
       patch :update_creditcard, '/creditcard'
       patch :update_plan, '/plan'
@@ -390,6 +398,7 @@ module Travis::API::V3
 
     hidden_resource :v2_subscription do
       route '/v2_subscription/{subscription.id}'
+      patch :update_payment_details, '/payment_details'
       patch :update_address, '/address'
       patch :update_creditcard, '/creditcard'
       patch :changetofree, '/changetofree'
