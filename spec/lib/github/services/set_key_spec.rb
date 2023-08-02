@@ -14,9 +14,7 @@ describe Travis::Github::Services::SetKey do
     WebMock.stub_request(:get, "http://vcsfake.travis-ci.com/repos/#{repo.id}/keys?user_id=#{owner.id}")
       .to_return(
         status: 200,
-        body: JSON.dump(
-          data: keys,
-        )
+        body: JSON.dump(keys)
       )
   end
   let!(:delete_request) do
