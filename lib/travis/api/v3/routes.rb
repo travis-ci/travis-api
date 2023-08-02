@@ -113,6 +113,12 @@ module Travis::API::V3
         get :find_for_organization
         patch :update_for_organization
       end
+
+      resource :email_subscription do
+        route '/email_subscription'
+        delete :unsubscribe
+        post :resubscribe
+      end
     end
 
     resource :organizations do
