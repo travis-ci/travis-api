@@ -53,6 +53,7 @@ module Travis::API::V3
     Queues                = Module.new { extend Services }
     Repositories          = Module.new { extend Services }
     Repository            = Module.new { extend Services }
+    RepositoryVcs         = Module.new { extend Services }
     Request               = Module.new { extend Services }
     Requests              = Module.new { extend Services }
     SslKey                = Module.new { extend Services }

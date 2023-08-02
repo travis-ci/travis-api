@@ -15,7 +15,7 @@ module Travis
       end
 
       def keys(repository_id:, user_id:)
-        request(:get, __method__) do |req|
+        request(:get, __method__, false) do |req|
           req.url "repos/#{repository_id}/keys"
           req.params['user_id'] = user_id
         end
@@ -49,6 +49,29 @@ module Travis
         end
       rescue ResponseError
         nil
+      end
+
+      def create_perforce_group(repository_id:, user_id:)
+        request(:post, __method__) do |req|
+          req.url "repos/#{repository_id}/perforce_groups"
+          req.params['user_id'] = user_id
+        end
+      end
+
+      def delete_perforce_group(repository_id:, user_id:)
+        request(:delete, __method__) do |req|
+          req.url "repos/#{repository_id}/perforce_groups"
+          req.params['user_id'] = user_id
+        end
+      end
+
+      def set_perforce_ticket(repository_id:, user_id:)
+        request(:post, __method__, false) do |req|
+          req.url "repos/#{repository_id}/perforce_ticket"
+          req.params['user_id'] = user_id
+        end
+      rescue ResponseError
+        {}
       end
     end
   end

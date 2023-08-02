@@ -197,6 +197,30 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
         end
       end
     end
+    
+    describe 'when cluster param is passed' do
+      let(:user) { FactoryBot.create :user }
+      let(:cluster) { 'awscluster' }
+
+      before do
+        ENV['TRAVIS_SITE'] = 'com'
+        cookie_jar['travis.state-assembla'] = state
+        Travis.redis.sadd('github:states', state)
+        WebMock.stub_request(:post, /\/users\/session\?cluster=#{cluster}&code=1234&provider=assembla&redirect_uri=http:\/\/example.org\/auth\/handshake\/assembla/)
+          .to_return(status: 200, body: JSON.dump(data: { user: { id: '1' } }))
+      end
+      
+      after do
+        ENV['TRAVIS_SITE'] = nil
+      end
+      
+      let(:state) { '1234' }
+
+      it 'passes the cluster param' do
+        response = get "/auth/handshake/assembla?code=1234&state=#{URI.encode(state)}&cluster=#{cluster}"
+        expect(response.status).to eq(302)
+      end
+    end
 
     describe 'with insufficient oauth permissions' do
       before do
