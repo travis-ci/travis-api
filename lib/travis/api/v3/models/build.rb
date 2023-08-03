@@ -5,6 +5,8 @@ module Travis::API::V3
   class Models::Build < Model
 
     HIGH_PRIORITY = 5
+
+    self.table_name = 'builds'
     
     belongs_to :commit
     belongs_to :tag

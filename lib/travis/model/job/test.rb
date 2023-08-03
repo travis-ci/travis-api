@@ -69,8 +69,10 @@ class Job
     end
 
     def invalid_config?
-      config[:".result"] == "parse_error"
+      (config.is_a?(String) ? JSON.parse(config) : config)[:".result"] == "parse_error"
     end
+
+
 
     def finished?
       FINISHED_STATES.include?(state.to_sym)

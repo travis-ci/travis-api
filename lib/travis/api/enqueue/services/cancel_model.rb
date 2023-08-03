@@ -27,7 +27,7 @@ module Travis
                   'queue'   => 'hub',
                   'class'   => 'Travis::Hub::Sidekiq::Worker',
                   #'args'    => ["#{type}:cancel", @params]
-                  'args'    => [event, payload]
+                  'args'    => [event, payload].map! { |arg| arg.to_json}
                 )
           end
         end

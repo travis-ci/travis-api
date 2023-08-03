@@ -136,6 +136,7 @@ class Job < Travis::Model
     config ||= record&.config
     config ||= read_attribute(:config) if has_attribute?(:config)
     config ||= {}
+    config = JSON.parse(config) if config.is_a?(String)
     config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
     config
   end
