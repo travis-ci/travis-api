@@ -167,8 +167,8 @@ module Travis::API::V3
     end
 
     resource :repository do
-      capture slug: %r{[^/]+%2[fF][^/]+}
-      route '/repo/({provider}/)?({repository.id}|{repository.slug})'
+      capture id: :digit, slug: %r{[^/]+%2[fF][^/]+}
+      route '/repo/({provider}/)?({repository.id}|{repository.slug}|{repository.vcs_id})'
       get :find
 
       post :activate, '/activate'

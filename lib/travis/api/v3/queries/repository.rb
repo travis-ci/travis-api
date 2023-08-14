@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::Repository < Query
     setup_sidekiq(:repo_sync, queue: :sync, class_name: "Travis::GithubSync::Worker")
-    params :id, :slug, :by_vcs
+    params :id, :slug, :vcs_id, :by_vcs
 
     def find
       @find ||= find!
@@ -61,7 +61,7 @@ module Travis::API::V3
         "repositories.vcs_id = ? "\
         "and lower(repositories.vcs_type) = ? "\
         "and repositories.invalidated_at is null",
-        id,
+        id || vcs_id,
         provider.downcase + 'repository'
       ).order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc").first
     end
