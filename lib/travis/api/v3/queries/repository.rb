@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::Repository < Query
     setup_sidekiq(:repo_sync, queue: :sync, class_name: "Travis::GithubSync::Worker")
-    params :id, :slug
+    params :id, :slug, :by_vcs
 
     def find
       @find ||= find!
@@ -37,7 +37,8 @@ module Travis::API::V3
 
     def find!
       return by_slug if slug
-      return Models::Repository.find_by_id(id) if id
+      return by_vcs_id if by_vcs
+      return Models::Repository.find_by_id(id) if id && !id.match(/\D/)
       raise WrongParams, 'missing repository.id'.freeze
     end
 
@@ -51,6 +52,16 @@ module Travis::API::V3
         slug.downcase,
         owner_name.downcase,
         repo_name.downcase,
+        provider.downcase + 'repository'
+      ).order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc").first
+    end
+
+    def by_vcs_id
+      Models::Repository.where(
+        "repositories.vcs_id = ? "\
+        "and lower(repositories.vcs_type) = ? "\
+        "and repositories.invalidated_at is null",
+        id,
         provider.downcase + 'repository'
       ).order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc").first
     end
