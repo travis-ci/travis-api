@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Queries::Repository < Query
     setup_sidekiq(:repo_sync, queue: :sync, class_name: "Travis::GithubSync::Worker")
-    params :id, :slug
+    params :id, :slug, :server_type
 
     def find
       @find ||= find!
@@ -43,16 +43,29 @@ module Travis::API::V3
 
     def by_slug
       owner_name, repo_name = slug.split('/')
-      Models::Repository.where(
-        "(lower(repositories.vcs_slug) = ? "\
+      query = "(lower(repositories.vcs_slug) = ? "\
         "or (lower(repositories.owner_name) = ? and lower(repositories.name) = ?)) "\
         "and lower(repositories.vcs_type) = ? "\
-        "and repositories.invalidated_at is null",
-        slug.downcase,
-        owner_name.downcase,
-        repo_name.downcase,
-        provider.downcase + 'repository'
-      ).order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc").first
+        "and repositories.invalidated_at is null"
+      unless server_type.nil?
+        query += " and repositories.server_type = ?"
+        Models::Repository.where(
+          query,
+          slug.downcase,
+          owner_name.downcase,
+          repo_name.downcase,
+          provider.downcase + 'repository',
+          server_type
+        ).order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc").first
+      else
+        Models::Repository.where(
+          query,
+          slug.downcase,
+          owner_name.downcase,
+          repo_name.downcase,
+          provider.downcase + 'repository'
+        ).order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc").first
+      end
     end
 
     def provider
