@@ -43,34 +43,24 @@ module Travis::API::V3
 
     def by_slug
       owner_name, repo_name = slug.split('/')
-      query = "(lower(repositories.vcs_slug) = ? "\
+      repos = Models::Repository.where(
+        "(lower(repositories.vcs_slug) = ? "\
         "or (lower(repositories.owner_name) = ? and lower(repositories.name) = ?)) "\
         "and lower(repositories.vcs_type) = ? "\
-        "and repositories.invalidated_at is null"
-      unless server_type.nil?
-        query += " and repositories.server_type = ?"
-        Models::Repository.where(
-          query,
-          slug.downcase,
-          owner_name.downcase,
-          repo_name.downcase,
-          provider.downcase + 'repository',
-          server_type
-        ).order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc").first
-      else
-        Models::Repository.where(
-          query,
-          slug.downcase,
-          owner_name.downcase,
-          repo_name.downcase,
-          provider.downcase + 'repository'
-        ).order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc").first
-      end
+        "and repositories.invalidated_at is null",
+        slug.downcase,
+        owner_name.downcase,
+        repo_name.downcase,
+        "#{provider.downcase}repository"
+      )
+      repos = repos.by_server_type(server_type) if server_type
+
+      repos.order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc")
+           .first
     end
 
     def provider
       params['provider'] || 'github'
     end
-
   end
 end
