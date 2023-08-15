@@ -282,6 +282,11 @@ module Travis::API::V3
       end
     end
 
+    hidden_resource :repository_vcs do
+      route '/repo_vcs/{provider}/{repository_vcs.vcs_id}'
+      get :find
+    end
+
     resource :scan_results do
       route '/scan_results'
       get :all
