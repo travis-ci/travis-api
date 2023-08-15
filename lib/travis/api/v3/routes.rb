@@ -168,7 +168,7 @@ module Travis::API::V3
 
     resource :repository do
       capture id: :digit, slug: %r{[^/]+%2[fF][^/]+}
-      route '/repo/({provider}/)?({repository.id}|{repository.slug}|{repository.vcs_id})'
+      route '/repo/({provider}/)?({repository.id}|{repository.slug})'
       get :find
 
       post :activate, '/activate'
@@ -280,6 +280,11 @@ module Travis::API::V3
         delete :unsubscribe
         post :resubscribe
       end
+    end
+
+    hidden_resource :repository_vcs do
+      route '/repo_vcs/{provider}/{repository_vcs.vcs_id}'
+      get :find
     end
 
     resource :scan_results do
