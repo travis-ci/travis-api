@@ -105,7 +105,7 @@ module Travis
           part_numbers: part_numbers
         ).map(&:as_json)
       else
-        ret['body'] =  content || archived_log_content
+        ret['body'] =  archived? ? archived_log_content : content
       end
 
       { 'log' => ret }
@@ -176,7 +176,7 @@ module Travis
           end
         end
 
-        puts "RESPONSE IN find_parts_by_job_id is: #{resp}"
+        puts "RESPONSE IN find_parts_by_job_id is: #{resp.inspect}"
 
         unless resp.success?
           raise Error, "failed to fetch log-parts job_id=#{job_id}"
@@ -206,12 +206,12 @@ module Travis
           req.params['source'] = 'api'
         end
 
-        puts "RESPONSE IS: #{resp}"
+        puts "RESPONSE IS: #{resp.inspect}"
 
         return nil unless resp.success?
         remote_log = RemoteLog.new(JSON.parse(resp.body))
         remote_log.platform = platform
-        puts "REMOTE LOG is: #{remote_log}"
+        puts "REMOTE LOG is: #{remote_log.inspect}"
         remote_log
       end
 
