@@ -16,8 +16,12 @@ module Travis::API::V3
 
       Travis::API::V3::Models::Audit.create!(owner: access_control.user, change_source: 'travis-api', source: job.repository, source_changes: { debug: 'Debug build triggered' })
 
-      query.restart(access_control.user)
-      accepted(job: job, state_change: :created)
+      result = query.restart(access_control.user)
+      if result.success?
+        accepted(job: job, state_change: :created)
+      else
+        insufficient_balance
+      end
     end
 
     def debug_data
