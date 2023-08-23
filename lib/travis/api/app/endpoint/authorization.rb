@@ -375,6 +375,7 @@ class Travis::Api::App
 
         def user_for_github_token(token, drop_token = false)
           data    = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
+          puts "data headers are #{data.headers}"
           scopes  = parse_scopes data.headers['x-oauth-scopes']
           manager = UserManager.new(data, token, drop_token)
 
