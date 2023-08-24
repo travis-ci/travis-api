@@ -52,7 +52,7 @@ describe Job::Test do
       }.to change { build.canceled_at }
       }.to change { build.repository.reload.last_build_state }
 
-      expect(build.reload.state).to eq(:canceled)
+      expect(build.reload.state).to eq('canceled')
       expect(build.repository.last_build_state).to eq('canceled')
     end
 

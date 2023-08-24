@@ -78,7 +78,7 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-config
-  revision: 78218b276d4d39ec078675ba3d55d6afbc643405
+  revision: d6b678fb17b242508fa4e061ff7b01cae3b08996
   branch: prd-ruby-upgrade-dev
   specs:
     travis-config (1.1.5)

@@ -289,7 +289,11 @@ module Travis::API::V3
     end
 
     def body(data)
-      data&.body.is_a?(String) && data&.body.length > 0 ? JSON.parse(data.body) : data&.body
+      if data&.body.is_a?(String)
+        data&.body.length > 0 ? JSON.parse(data.body) : {}
+      else
+        data&.body
+      end
     end
 
     def connection(timeout: 10)
