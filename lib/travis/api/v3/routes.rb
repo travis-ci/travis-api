@@ -288,6 +288,11 @@ module Travis::API::V3
       end
     end
 
+    hidden_resource :repository_vcs do
+      route '/repo_vcs/{provider}/{repository_vcs.vcs_id}'
+      get :find
+    end
+
     unless ENV['SCANNER_DISABLED']
       resource :scan_results do
         route '/scan_results'
