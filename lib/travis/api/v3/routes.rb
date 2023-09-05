@@ -3,6 +3,13 @@ module Travis::API::V3
     require 'travis/api/v3/routes/dsl'
     extend DSL
 
+    resource :access_token do
+      route '/access_token'
+
+      patch :regenerate_token
+      delete :remove_token
+    end
+
     resource :broadcasts do
       route '/broadcasts'
       get :for_current_user

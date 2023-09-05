@@ -36,7 +36,7 @@ class Travis::Api::App
       @scopes       = Array(options[:scopes] || options[:scope] || DEFAULT_SCOPES).map(&:to_sym)
       @user         = options[:user]
       @user_id      = Integer(options[:user_id] || @user.id)
-      @token        = options[:token] || reuse_token || SecureRandom.urlsafe_base64(16)
+      @token        = options[:token] || (options[:force] ? false : reuse_token) || SecureRandom.urlsafe_base64(16)
       @travis_token = options[:travis_token]
       @extra        = options[:extra]
     end
