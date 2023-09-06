@@ -21,6 +21,8 @@ module Travis::API::V3
       primary_key: [:id,  :default_branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
+    scope :by_server_type, ->(server_type) { where(server_type: server_type) }
+
     alias last_started_build current_build
 
     after_initialize do

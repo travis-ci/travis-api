@@ -29,14 +29,19 @@ module Travis::API::V3
       href    = self.href
       href    = V3.location(env) if href.nil? and env['REQUEST_METHOD'.freeze] == 'GET'.freeze
       include = params.to_h['include'.freeze].to_s.split(?,.freeze)
-      add_info Renderer[type].render(resource,
+      result = Renderer[type].render(
+        resource,
         href:           href,
         script_name:    env['SCRIPT_NAME'.freeze],
         params:         params,
         include:        include,
         access_control: access_control,
         meta_data:      meta_data,
-        accept:         env.fetch('HTTP_ACCEPT'.freeze, 'application/json'.freeze))
+        accept:         env.fetch('HTTP_ACCEPT'.freeze, 'application/json'.freeze)
+      )
+      Travis.logger.error("#{self.class}#render: Render failed! type=#{type.inspect} resource=#{resource.inspect} href=#{href} params=#{params.inspect} env=#{env}") if result.nil?
+
+      add_info(result)
     end
 
     def add_info(payload)
