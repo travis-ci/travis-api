@@ -32,6 +32,8 @@ class Travis::Api::App
 
         service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
 
+        auth_for_repo(service&.target&.repository&.id, 'repository_build_cancel')
+
         if !service.authorized?
           json = { error: {
             message: "You don't have access to cancel job(#{params[:id]})"
@@ -62,6 +64,8 @@ class Travis::Api::App
         Metriks.meter("api.v2.request.restart_job").mark
 
         service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
+
+        auth_for_repo(service&.repository&.id, 'repository_build_restart')
         disallow_migrating!(service.repository)
 
         result = if !service.accept?
