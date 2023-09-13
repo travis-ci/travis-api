@@ -23,6 +23,13 @@ module Travis::API::V3
       
       results.map do |execution|
         execution.sender_login = senders[execution.sender_id]&.login || 'Unknown Sender'
+        if execution.sender_id == 0
+          job = Job.find(execution.job_id)
+          if job&.source_type == 'Build'
+            request = Build.find(job.source_id)&.request
+            execution.sender_login = 'cron' if request&.event_type == 'cron'
+          end
+        end
         repo = repositories[execution.repository_id]
         execution.repo_slug = repo&.slug || 'Unknown Repository'
         execution.repo_owner_name = repo&.owner_name || 'Unknown Repository Owner'
