@@ -118,7 +118,7 @@ class Travis::Api::App
 
       def auth_for_repo(id, type)
         permission = authorizer.for_repo(id, type)
-        halt 401, { error: { message: "We're sorry, but you're not authorized to perform this request" } } unless permission
+        halt 403, { error: { message: "We're sorry, but you're not authorized to perform this request" } } unless permission
       rescue Travis::API::V3::AuthorizerError
       end
   end
