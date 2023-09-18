@@ -94,7 +94,7 @@ module Travis::API::V3
     end
 
     def s3_objects
-      files = s3_connection.list_objects(bucket: s3_config[:bucket_name])
+      files = s3_connection.list_objects(bucket: s3_config[:bucket_name], prefix: prefix)
       files&.contents.map { |file| S3Wrapper.new(file, s3_get_body(file.key)) }
     end
 
@@ -116,7 +116,7 @@ module Travis::API::V3
     end
 
     def gcs_objects
-      items = gcs_bucket.files
+      items = gcs_bucket.files prefix: prefix
       return [] if items.nil?
       items.map { |item| GcsWrapper.new(item) }
     end
