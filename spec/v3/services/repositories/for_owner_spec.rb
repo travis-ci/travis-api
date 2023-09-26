@@ -276,7 +276,6 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
     let(:authorization_role) { { 'roles' => [] } }
     let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view', 'repository_build_cancel', 'repository_build_restart'] } }
     before  { get("/v3/owner/svenfuchs/repos?include=repository.current_build", {}, headers)                           }
-    before {build.update!(branch: branch) }
     example { expect(last_response)                   .to be_ok                                      }
     example { expect(JSON.parse(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?include=repository.current_build"}
     example { expect(JSON.parse(body)['@warnings'])    .to be == [{
