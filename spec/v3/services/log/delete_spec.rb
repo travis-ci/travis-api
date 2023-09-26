@@ -45,6 +45,10 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     Travis.config.log_options = options
   end
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   before do
     allow_any_instance_of(Travis::API::V3::AccessControl::LegacyToken).to receive(:visible?).and_return(true)
     allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:delete_log?).and_return(true)
@@ -101,6 +105,7 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
     }
     before { Timecop.freeze(Time.now) }
 
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view'] } }
     example do
       stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api").
         with(headers: {
@@ -134,7 +139,8 @@ describe Travis::API::V3::Services::Log::Delete, set_app: true do
           "delete_log" => false,
           "cancel" => false,
           "restart" => false,
-          "debug" => false
+          "debug" => false,
+          "view_log" => true
         },
         "id" => nil,
         "content" => nil,

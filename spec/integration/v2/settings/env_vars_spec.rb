@@ -2,6 +2,8 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200) }
+
   describe 'with authenticated user' do
     let(:user)    { User.where(login: 'svenfuchs').first }
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }

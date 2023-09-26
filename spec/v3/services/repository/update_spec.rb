@@ -3,6 +3,13 @@ describe Travis::API::V3::Services::Repository::Update, set_app: true do
 
   before { Travis.config.applications = { app: { full_access: true, token: '12345' } } }
   after  { Travis.config.applications = {} }
+  let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
+
+  let(:authorization_role) { { 'roles' => ['repository_admin'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
 
   describe "not authenticated" do
     before  { patch("/v3/repo/#{repo.id}", com_id: 1) }

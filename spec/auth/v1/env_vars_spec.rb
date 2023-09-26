@@ -4,6 +4,8 @@ describe 'v1 settings/env_vars', auth_helpers: true, api_version: :v1, set_app: 
 
   before { repo.settings.tap { |s| s.env_vars.create(name: 'FOO', value: 'foo', private: true) && s.save } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe 'in public mode, with a private repo', mode: :public, repo: :private do
     describe 'GET /settings/env_vars?repository_id=%{repo.id}' do
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }

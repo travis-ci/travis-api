@@ -2,6 +2,8 @@ describe 'ssh keys endpoint', set_app: true do
   let(:repo)    { FactoryBot.create(:repository) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe 'without an authenticated user' do
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
     let(:user)    { FactoryBot.create(:user) }

@@ -186,6 +186,10 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     </ListBucketResult>"
   }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   before do
     repo.default_branch.save!
     repo.owner.permissions.create(repository_id: repo.id, push: true)
@@ -217,7 +221,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
       headers: { 'Metadata-Flavor'=>'Google', 'User-Agent'=>'Ruby'}
     ).to_return(status: 200, body: "", headers: {})
 
-    stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url").
+    stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url&prefix=1/").
       to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
     stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
@@ -228,7 +232,7 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce").
       to_return(:status => 200, :body => gcs_json_bucket_response, :headers => {"Content-Type" => "application/json"})
 
-    stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
+    stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/").
       to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
 
     stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/1%2Fha-bug-rm_rf%2Fcache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
@@ -248,10 +252,10 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
     before do
       stub_request(:delete, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz"). 
       to_return(:status => 204, :body => "", :headers => {"Content-Type" => "application/json"})
-     stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url").
+     stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url&prefix=1/").
       to_return(:status => 200, :body => empty_xml_content, :headers => {})
 
-      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
+      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/").
       to_return(:status => 200, :body => empty_gcs_content, :headers => {"Content-Type" => "application/json"})
     end
     before     { delete("/v3/repo/#{repo.id}/caches", {}, headers) }
@@ -266,13 +270,13 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   describe "delete by branch" do
     before     do
-       stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url").
+       stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url&prefix=1/ha-bug-rm_rf/").
         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
       stub_request(:post, "https://www.googleapis.com/oauth2/v4/token").
         to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
 
-      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
+      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/ha-bug-rm_rf/").
         to_return(:status => 200, :body => empty_gcs_content, :headers => {"Content-Type" => "application/json"})
 
       stub_request(:delete, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/1/ha-bug-rm_rf/cache-linux-precise-lkjdhfsod8fu4tc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-2.2.5--gemfile-Gemfile.tgz").
@@ -292,10 +296,10 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
 
   describe "delete by match" do
     before do
-       stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url").
+       stub_request(:get, "https://travis-cache-staging-org.s3.us-east-2.amazonaws.com/?encoding-type=url&prefix=1/ha-bug-rm_rf/").
         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
-      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
+      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/ha-bug-rm_rf/").
         to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
       stub_request(:delete, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o/25736446%2Fcd-mac-build%2Fcache-osx-xcode8.2-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855--rvm-default--gemfile-Gemfile.tgz").
       to_return(:status => 200, :body => gcs_json_file_response, :headers => {"Content-Type" => "application/json"})
@@ -337,15 +341,16 @@ describe Travis::API::V3::Services::Caches::Delete, set_app: true do
   end
 
   context "without push permission" do
+    let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
     it "raises Travis::AuthorizationDenied" do
       repo.owner.permissions.last.update(push: false)
 
       delete("/v3/repo/#{repo.id}/caches", {}, headers)
 
-      expect(JSON.load(body)).to eq({
+      expect(JSON.load(body)).to include({
         "@type" => "error",
         "error_type" => "insufficient_access",
-        "error_message" => "forbidden",
+        "error_message" => "operation requires cache_delete access to repository",
       })
       expect(last_response.status).to eq 403
     end

@@ -4,6 +4,10 @@ describe Travis::API::V3::Services::UserSetting::Find, set_app: true do
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
+  let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   describe 'not authenticated' do
     before { get("/v3/repo/#{repo.id}/setting/build_pushes") }
     include_examples 'not authenticated'

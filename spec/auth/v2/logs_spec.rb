@@ -5,6 +5,8 @@ describe 'v2 logs', auth_helpers: true, api_version: :v2, set_app: true do
   let(:job)   { build.matrix.first }
   let(:log)   { double(id: 1) }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   let :log_from_api do
     {
       aggregated_at: Time.now,

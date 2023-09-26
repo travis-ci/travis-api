@@ -5,6 +5,13 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
 
   before { ActiveRecord::Base.connection.execute("truncate repositories cascade") }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  let(:authorization_role) { { 'roles' => ['repository_admin'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
+
   describe 'name_filter' do
     let(:web_repo)  { FactoryBot.create(:repository, name: 'travis-web') }
     let(:api_repo)  { FactoryBot.create(:repository, name: 'travis-api') }

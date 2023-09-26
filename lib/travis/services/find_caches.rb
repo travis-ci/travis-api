@@ -98,8 +98,6 @@ module Travis
 
         c = caches(prefix: prefix)
         c.select! { |o| o.slug.include?(params[:match]) } if params[:match]
-        c.each {|cc| puts cc.s3_object.key }
-        c
       end
 
       private

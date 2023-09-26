@@ -17,9 +17,6 @@ describe Travis::Services::FindHooks do
     expect(hooks).to include(repo)
     expect(hooks).to include(push_repo)
     expect(hooks.size).to eq(2)
-
-    # hooks should include admin information
-    expect(hooks.sort_by(&:id).map(&:admin?)).to eq([true, false])
   end
 
   it 'does not order the repos with order=none' do

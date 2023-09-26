@@ -2,9 +2,14 @@ describe Travis::API::V3::Services::Builds::ForCurrentUser, set_app: true do
   include Support::Formats
   let(:repo)   { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
   let(:build)  { repo.builds.first }
+  let(:branch)    { Travis::API::V3::Models::Branch.find_by(repository_id: repo.id, name: 'master') }
   let(:stages) { build.stages }
   let(:jobs)   { Travis::API::V3::Models::Build.find(build.id).jobs }
   let(:parsed_body) { JSON.load(body) }
+
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_debug', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   before do
     # TODO should this go into the scenario? is it ok to keep it here?

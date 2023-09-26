@@ -11,7 +11,11 @@ class Travis::Api::App
 
         halt 404 unless job
 
+
         repo = Travis::API::V3::Models::Repository.find(job.repository.id)
+        
+        auth_for_repo(repo.id, 'repository_log_view')
+
         repo_can_write = current_user ? !!repo.users.where(id: current_user.id, permissions: { push: true }).first : false
 
         if !repo.user_settings.job_log_time_based_limit && job.started_at && job.started_at < Time.now - repo.user_settings.job_log_access_older_than_days.days
