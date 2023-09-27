@@ -137,7 +137,7 @@ module Travis::API::V3
           response = connection.get("/permissions/#{resource_type == 'repository' ? 'repo' : 'org'}/#{resource_id}")
           raise Travis::API::V3::AuthorizerError unless response.status == 200 && response.body&.include?('permissions')
 
-          body = JSON.parse(response.body) if response.body.is_a?(String) && response.body.length > 0
+          body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
           unless body['permissions'].empty?
             redis.sadd(key, body['permissions']) 
@@ -157,7 +157,7 @@ module Travis::API::V3
         else
           response = connection.get("/roles/#{resource_type == 'repository' ? 'repo' : 'org'}/#{resource_id}")
           raise Travis::API::V3::AuthorizerError unless response.status == 200 && response.body&.include?('roles')
-          body = JSON.parse(response.body) if response.body.is_a?(String) && response.body.length > 0
+          body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
           unless body['roles'].empty?
             redis.sadd(key, body['roles'])
