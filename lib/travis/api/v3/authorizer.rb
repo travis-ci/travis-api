@@ -139,10 +139,9 @@ module Travis::API::V3
 
           body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
-          unless body['permissions'].empty?
-            redis.sadd(key, body['permissions']) 
-            redis.expire(key, 2)
-          end
+          redis.sadd(key, body['permissions'].empty? ? ['none'] : body['permissions'])
+          redis.expire(key, 5)
+
           body['permissions']&.include?(permission)
         end
       rescue Faraday::Error
@@ -159,10 +158,9 @@ module Travis::API::V3
           raise Travis::API::V3::AuthorizerError unless response.status == 200 && response.body&.include?('roles')
           body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
-          unless body['roles'].empty?
-            redis.sadd(key, body['roles'])
-            redis.expire(key, 2)
-          end
+          redis.sadd(key, body['roles'].empty? ? ['none'] : body['roles'])
+          redis.expire(key, 5)
+
           body['roles']&.include?(role)
         end
       rescue Faraday::Error

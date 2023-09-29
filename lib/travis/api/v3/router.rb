@@ -36,9 +36,13 @@ module Travis::API::V3
 
       ::Marginalia.set('endpoint', factory.name)
 
+      t1 = (Time.now.to_f * 1000).to_i
+
       metrics.tick(:prepare)
       result   = service.run
       metrics.tick(:service)
+
+      t2 = (Time.now.to_f * 1000).to_i
 
       env_params.each_key { |key| result.ignored_param(key, reason: "not safelisted".freeze) unless filtered.include?(key) }
       response = render(result, env_params, env, content_type)
@@ -47,6 +51,9 @@ module Travis::API::V3
 
       metrics.tick(:renderer)
       metrics.success(status: response[0])
+
+      t3 = (Time.now.to_f * 1000).to_i
+      puts "TIME for #{env['PATH_INFO']} :: run: #{t2-t1} , render: #{t3-t2}"
       response
     rescue Error => error
       metrics.tick(:service)
