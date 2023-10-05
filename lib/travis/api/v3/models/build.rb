@@ -32,6 +32,7 @@ module Travis::API::V3
 
     has_one :branch,
       foreign_key: [:repository_id, :name],
+      primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 
     scope :running_builds, -> { where.not(state: ['passed', 'failed', 'errored', 'cancelled']) }
