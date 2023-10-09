@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Services::V2Subscription::UpdatePaymentDetails < Service
-    params :captcha_token, :token, :first_name, :last_name, :company, :address, :address2, :city, :country, :state, :vat_id, :zip_code, :billing_email, :has_local_registration
+    params :captcha_token, :token, :fingerprint, :first_name, :last_name, :company, :address, :address2, :city, :country, :state, :vat_id, :zip_code, :billing_email, :has_local_registration
 
     def run!
       raise LoginRequired unless access_control.full_access_or_logged_in?
