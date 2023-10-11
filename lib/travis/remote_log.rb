@@ -314,7 +314,7 @@ module Travis
 
       private def create_archive_client
         Travis.logger.info("archive_s3_config.access_key_id: #{archive_s3_config[:access_key_id]}")
-        Travis.logger.info("s3_bucket: #{archive_s3_bucket}")
+        Travis.logger.info("s3_bucket: #{archive_s3_config[:bucket] || archive_s3_config[:bucket_name] || archive_s3_bucket}")
         ArchiveClient.new(
           access_key_id: archive_s3_config[:access_key_id],
           secret_access_key: archive_s3_config[:secret_access_key],
