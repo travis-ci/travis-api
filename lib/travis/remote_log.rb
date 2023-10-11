@@ -260,7 +260,7 @@ module Travis
         candidates = s3.list_objects_v2(bucket: bucket_name, prefix: "jobs/#{job_id}/log.txt")
         return nil if candidates.empty?
 
-        candidates.first
+        candidates&.contents&.first
       end
     end
 
