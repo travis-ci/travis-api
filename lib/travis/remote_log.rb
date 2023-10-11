@@ -318,7 +318,7 @@ module Travis
         ArchiveClient.new(
           access_key_id: archive_s3_config[:access_key_id],
           secret_access_key: archive_s3_config[:secret_access_key],
-          bucket_name: archive_s3_config[:bucket] || archive_s3_bucket,
+          bucket_name: archive_s3_config[:bucket] || archive_s3_config[:bucket_name] || archive_s3_bucket,
           region: archive_s3_config[:region] || 'us-east-2',
           endpoint: archive_s3_config[:endpoint]
         )
