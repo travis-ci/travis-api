@@ -12,6 +12,7 @@ module Travis
       end
 
       private def result
+        puts "PARAM: #{params.inspect}"
         if params[:id]
           # as we don't have the job id, we first need to get the log to check
           # permissions

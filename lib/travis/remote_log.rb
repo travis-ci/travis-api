@@ -202,10 +202,15 @@ module Travis
           req.url "logs/#{id}", by: by
           req.params['source'] = 'api'
         end
+        puts "RESP #{resp.inspect}"
         return nil unless resp.success?
+        puts "GOT RESP"
         remote_log = RemoteLog.new(JSON.parse(resp.body))
+        puts "RL: #{remote_log.inspect}"
         remote_log.platform = platform
         remote_log
+      rescue => e
+        puts "ERROR!? #{e.inspect}"
       end
 
       private def conn
