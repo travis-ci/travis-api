@@ -260,7 +260,7 @@ module Travis
         candidates = s3.list_objects_v2(bucket: bucket_name, prefix: "jobs/#{job_id}/log.txt")
         return nil if candidates.empty?
 
-        candidates.first
+        candidates&.contents&.first
       end
     end
 
@@ -314,11 +314,11 @@ module Travis
 
       private def create_archive_client
         Travis.logger.info("archive_s3_config.access_key_id: #{archive_s3_config[:access_key_id]}")
-        Travis.logger.info("s3_bucket: #{archive_s3_bucket}")
+        Travis.logger.info("s3_bucket: #{archive_s3_config[:bucket] || archive_s3_config[:bucket_name] || archive_s3_bucket}")
         ArchiveClient.new(
           access_key_id: archive_s3_config[:access_key_id],
           secret_access_key: archive_s3_config[:secret_access_key],
-          bucket_name: archive_s3_config[:bucket] || archive_s3_bucket,
+          bucket_name: archive_s3_config[:bucket] || archive_s3_config[:bucket_name] || archive_s3_bucket,
           region: archive_s3_config[:region] || 'us-east-2',
           endpoint: archive_s3_config[:endpoint]
         )

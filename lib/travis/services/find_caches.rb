@@ -63,7 +63,7 @@ module Travis
         end
 
         def last_modified
-          cache_object.updated
+          cache_object.updated_at
         end
 
         def size
