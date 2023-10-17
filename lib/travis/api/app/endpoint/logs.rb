@@ -48,7 +48,7 @@ class Travis::Api::App
           end
         else
           puts "RESPOND: #{resource.inspect}"
-          respond_with resource
+          respond_with resource, type: :log
         end
       end
 
