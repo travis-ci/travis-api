@@ -15,12 +15,9 @@ class Travis::Api::App
 
         repo = Travis::API::V3::Models::Repository.find(job.repository.id)
 
-        puts "REPO: #{repo.inspect}"
-        
         auth_for_repo(repo.id, 'repository_log_view')
 
         repo_can_write = current_user ? !!repo.users.where(id: current_user.id, permissions: { push: true }).first : false
-        puts "CANWRITE: #{repo_can_write}"
 
         if !repo.user_settings.job_log_time_based_limit && job.started_at && job.started_at < Time.now - repo.user_settings.job_log_access_older_than_days.days
           halt 403, { error: { message: "We're sorry, but this data is not available anymore. Please check the repository settings in Travis CI." } }
@@ -33,10 +30,8 @@ class Travis::Api::App
         if !resource || ((job.try(:private?) || !allow_public?) && !has_permission?(job))
           halt 404
         elsif resource.removed_at && accepts?('application/json')
-          puts "REM.AT"
           respond_with resource
         elsif resource.archived?
-          puts "ARCH"
           # the way we use responders makes it hard to validate proper format
           # automatically here, so we need to check it explicitly
           if accepts?('text/plain')
@@ -47,7 +42,6 @@ class Travis::Api::App
             status 406
           end
         else
-          puts "RESPOND: #{resource.inspect}"
           respond_with resource, type: :remote_log
         end
       end
