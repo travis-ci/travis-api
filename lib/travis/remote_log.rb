@@ -88,24 +88,37 @@ module Travis
     end
 
     def as_json(chunked: false, after: nil, part_numbers: [])
+      puts "AS JSON1"
       ret = {
         'id' => id,
         'job_id' => job_id,
         'type' => 'Log'
       }
 
+      puts "AS JSON2 ret: #{ret.inspect}"
       unless removed_at.nil?
         ret['removed_at'] = removed_at.utc.to_s
         ret['removed_by'] = removed_by.name || removed_by.login
       end
 
       if chunked
+
+        puts "AS JSON3 - chunked"
         ret['parts'] = parts(
           after: after,
           part_numbers: part_numbers
         ).map(&:as_json)
       else
-        ret['body'] = archived_log_content || content
+
+        puts "AS JSON3 - !chunked"
+        alc = archived_log_content
+        puts "ALC: #{alc.inspect}"
+        lc = content
+
+        puts "LC: #{lc.inspect}"
+
+        ret['body'] = alc || lc
+        puts "BDY: #{ret['body'].inspect}"
       end
 
       { 'log' => ret }
