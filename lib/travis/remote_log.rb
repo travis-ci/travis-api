@@ -253,7 +253,7 @@ module Travis
       def fetch_archived_log_content(job_id)
         file = fetch_archived(job_id)
         return "" if file.nil?
-        file.body.force_encoding("UTF-8")
+        s3.get_object(bucket: bucket_name, key: file.key)&.body&.read
       end
 
       private def fetch_archived(job_id)
