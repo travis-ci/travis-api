@@ -8,7 +8,6 @@ class Travis::Api::App
       get '/:id' do |id|
         resource = service(:find_log, id: params[:id]).run
         job = resource ? Job.find(resource.job_id) : nil
-        puts "JOB: #{job.inspect}"
 
         halt 404 unless job
 

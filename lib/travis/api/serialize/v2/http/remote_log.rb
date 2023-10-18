@@ -13,17 +13,11 @@ module Travis
             end
 
             def data
-              puts "PARM: #{params.inspect}"
-              puts "LOG: #{log.inspect}"
-              res = log.as_json(
+              log.as_json(
                 chunked: chunked?,
                 after: params[:after],
                 part_numbers: part_numbers
               )
-              puts "\n\nLOG1: #{res.inspect}"
-              res
-            rescue => e
-              puts "ERR: #{e.inspect}"
             end
 
             private

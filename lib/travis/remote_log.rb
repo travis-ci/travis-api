@@ -88,37 +88,24 @@ module Travis
     end
 
     def as_json(chunked: false, after: nil, part_numbers: [])
-      puts "AS JSON1"
       ret = {
         'id' => id,
         'job_id' => job_id,
         'type' => 'Log'
       }
 
-      puts "AS JSON2 ret: #{ret.inspect}"
       unless removed_at.nil?
         ret['removed_at'] = removed_at.utc.to_s
         ret['removed_by'] = removed_by.name || removed_by.login
       end
 
       if chunked
-
-        puts "AS JSON3 - chunked"
         ret['parts'] = parts(
           after: after,
           part_numbers: part_numbers
         ).map(&:as_json)
       else
-
-        puts "AS JSON3 - !chunked"
-        alc = archived_log_content
-        puts "ALC: #{alc.inspect}"
-        lc = content
-
-        puts "LC: #{lc.inspect}"
-
-        ret['body'] = alc || lc
-        puts "BDY: #{ret['body'].inspect}"
+        ret['body'] = archived_log_content || content
       end
 
       { 'log' => ret }
@@ -215,15 +202,10 @@ module Travis
           req.url "logs/#{id}", by: by
           req.params['source'] = 'api'
         end
-        puts "RESP #{resp.inspect}"
         return nil unless resp.success?
-        puts "GOT RESP"
         remote_log = RemoteLog.new(JSON.parse(resp.body))
-        puts "RL: #{remote_log.inspect}"
         remote_log.platform = platform
         remote_log
-      rescue => e
-        puts "ERROR!? #{e.inspect}"
       end
 
       private def conn
@@ -271,8 +253,6 @@ module Travis
       def fetch_archived_log_content(job_id)
         file = fetch_archived(job_id)
         return "" if file.nil?
-        puts "FILE: #{file.inspect}"
-        puts "key: #{file.key}"
         s3.get_object(bucket: bucket_name, key: file.key)&.body&.read
       end
 
