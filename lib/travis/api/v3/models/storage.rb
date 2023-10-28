@@ -6,6 +6,7 @@ module Travis::API::V3
     attr_reader :id, :value
 
     def initialize(attrs)
+      puts "ATTRS: #{attrs.inspect}"
       @id = attrs.fetch(:id)
       @value = attrs[:value]
     end
@@ -15,7 +16,11 @@ module Travis::API::V3
     end
 
     def get
+      puts "ID: #{id.inspect}, VAL: #{value.inspect}"
       @value = Travis.redis.get(id) || 0
+
+
+      puts "ID: #{id.inspect}, VAL: #{value.inspect}"
       self
     end
 

@@ -8,6 +8,14 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
   before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
   before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
 
+  let(:keys) { [] }
+  let!(:keys_request) do
+    stub_request(:get, "http://vcsfake.travis-ci.com/repos/#{repo.id}/keys?user_id=#{repo.owner_id}")
+      .to_return(
+        status: 200,
+        body: JSON.dump(keys),
+      )
+  end
   before do
     Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
     Travis.config.vcs.token = 'vcs-token'
@@ -62,7 +70,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
             body: nil,
           )
       end
-      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) 
+      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true)
       }
       around do |ex|
         Travis.config.service_hook_url = 'https://url.of.listener.something'
@@ -111,6 +119,68 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         "error_message" => "repository not found (or insufficient access)",
         "resource_type" => "repository"
       }}
+    end
+
+    context 'when deactivating a perforce repo' do
+      let!(:permission) { FactoryBot.create :permission, user_id: repo.owner_id, repository_id: repo.id, admin: true, pull: true, push: true }
+      let!(:hook_request) do
+        stub_request(:delete, "http://vcsfake.travis-ci.com/repos/#{repo.id}/hook?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      end
+      let!(:group_request) do
+        stub_request(:delete, "http://vcsfake.travis-ci.com/repos/#{repo.id}/perforce_groups?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      end
+
+      before { repo.update(server_type: 'perforce') }
+
+      it 'deletes the perforce group' do
+        post("/v3/repo/#{repo.id}/deactivate", {}, headers)
+        expect(last_response.status).to eq(200)
+        expect(group_request).to have_been_made
+      end
+    end
+
+    context 'when deactivating a private subversion repo' do
+      let!(:permission) { FactoryBot.create :permission, user_id: repo.owner_id, repository_id: repo.id, admin: true, pull: true, push: true }
+      let(:fingerprint) { PrivateKey.new(repo.key.private_key).fingerprint.gsub(':', '') }
+      let(:key) do
+        {
+          id: 1,
+          fingerprint: fingerprint
+        }
+      end
+      let!(:hook_request) do
+        stub_request(:delete, "http://vcsfake.travis-ci.com/repos/#{repo.id}/hook?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      end
+      let(:keys) { [key] }
+      let!(:key_request) do
+        stub_request(:delete, "http://vcsfake.travis-ci.com/repos/#{repo.id}/keys/#{key[:id]}?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      end
+
+      before { repo.update(private: true, server_type: 'subversion') }
+
+      it 'deactivates repository' do
+        expect do
+          post("/v3/repo/#{repo.id}/deactivate", {}, headers)
+        end.to change(Travis::API::V3::Models::Audit, :count).by(1)
+        expect(Travis::API::V3::Models::Audit.last.source_changes).to eq('active' => [true, false])
+        expect(last_response.status).to eq(200)
+      end
     end
   end
   context 'internal auth' do

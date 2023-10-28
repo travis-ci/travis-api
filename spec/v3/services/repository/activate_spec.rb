@@ -87,6 +87,78 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
         "resource_type" => "repository"
       }}
     end
+
+    context 'when activating a perforce repo' do
+      let!(:permission) { FactoryBot.create :permission, user_id: repo.owner_id, repository_id: repo.id, admin: true, pull: true, push: true }
+      let!(:hook_request) do
+        stub_request(:post, "http://vcsfake.travis-ci.com/repos/#{repo.id}/hook?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      end
+      let!(:group_request) do
+        stub_request(:post, "http://vcsfake.travis-ci.com/repos/#{repo.id}/perforce_groups?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      end
+      let!(:ticket_request) do
+        stub_request(:post, "http://vcsfake.travis-ci.com/repos/#{repo.id}/perforce_ticket?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      end
+
+      before { repo.update(server_type: 'perforce') }
+
+      it 'creates a perforce group and sets a perforce ticket' do
+        post("/v3/repo/#{repo.id}/activate", {}, headers)
+        expect(last_response.status).to eq(200)
+        expect(group_request).to have_been_made
+        expect(ticket_request).to have_been_made
+      end
+    end
+
+    context 'when activating a private subversion repo' do
+      let!(:permission) { FactoryBot.create :permission, user_id: repo.owner_id, repository_id: repo.id, admin: true, pull: true, push: true }
+      let!(:hook_request) do
+        stub_request(:post, "http://vcsfake.travis-ci.com/repos/#{repo.id}/hook?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      end
+      let!(:key_request) do
+        stub_request(:post, "http://vcsfake.travis-ci.com/repos/#{repo.id}/keys?read_only=false&user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      end
+
+      before { repo.update(private: true, server_type: 'subversion') }
+
+      it 'activates repository' do
+        expect do
+          post("/v3/repo/#{repo.id}/activate", {}, headers)
+        end.to change(Travis::API::V3::Models::Audit, :count).by(1)
+        expect(Travis::API::V3::Models::Audit.last.source_changes).to eq('active' => [false, true])
+        expect(last_response.status).to eq(200)
+      end
+
+      context 'when repository does not have a key' do
+        before { repo.key.delete }
+
+        it 'generates a key' do
+          post("/v3/repo/#{repo.id}/activate", {}, headers)
+          expect(repo.reload.key).to be_present
+          expect(last_response.status).to eq(200)
+        end
+      end
+    end
   end
   context 'with internal auth' do
     let(:internal_token) { 'FOO' }
