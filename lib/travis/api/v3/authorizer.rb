@@ -136,7 +136,7 @@ module Travis::API::V3
         else
           response = connection.get("/permissions/#{resource_type == 'repository' ? 'repo' : 'org'}/#{resource_id}")
           unless response.status == 200 && response.body&.include?('permissions')
-            Travis.logger.warn("Authorizer permission response error: #{response.status} for user: #{@user_id}, resource: #{resource_type}: #{resource_id}"
+            Travis.logger.warn("Authorizer permission response error: #{response.status} for user: #{@user_id}, resource: #{resource_type}: #{resource_id}")
             raise Travis::API::V3::AuthorizerError
           end
 
@@ -159,7 +159,7 @@ module Travis::API::V3
         else
           response = connection.get("/roles/#{resource_type == 'repository' ? 'repo' : 'org'}/#{resource_id}")
           unless response.status == 200 && response.body&.include?('roles')
-            Travis.logger.warn("Authorizer role response error: #{response.status} for user: #{@user_id}, resource: #{resource_type}: #{resource_id}"
+            Travis.logger.warn("Authorizer role response error: #{response.status} for user: #{@user_id}, resource: #{resource_type}: #{resource_id}")
             raise Travis::API::V3::AuthorizerError
           end
 
