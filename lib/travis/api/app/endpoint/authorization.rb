@@ -259,7 +259,7 @@ class Travis::Api::App
           end
         rescue ::Travis::RemoteVCS::ResponseError => error
           Travis.logger.error(error.message)
-
+          Sentry.capture_exception(error)
           halt 401, "Can't login"
         end
 
