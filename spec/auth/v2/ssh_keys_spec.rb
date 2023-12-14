@@ -2,6 +2,7 @@ describe 'v2 settings/ssh_key', auth_helpers: true, api_version: :v2, set_app: t
   let(:user) { FactoryBot.create(:user) }
   let(:repo) { Repository.by_slug('svenfuchs/minimal').first }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
   # before(:all) { SslKey.create(repository_id: 1) }
   # before { SslKey.update_all(repository_id: repo.id) }
 

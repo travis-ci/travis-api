@@ -1,11 +1,11 @@
 module Travis::API::V3
   class Permissions::KeyPair < Permissions::Generic
     def read?
-      repository_permissions.read?
+      authorizer.for_repo(object.repository.id, 'repository_settings_read')
     end
 
     def write?
-      repository_permissions.write?
+      authorizer.for_repo(object.repository.id, 'repository_settings_create')
     end
 
     private

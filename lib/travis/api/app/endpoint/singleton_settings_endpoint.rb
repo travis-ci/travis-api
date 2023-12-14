@@ -16,6 +16,8 @@ class Travis::Api::App
     end
 
     def update
+      auth_for_repo(parent.repository.id, 'repository_settings_update')
+
       disallow_migrating!(parent.repository)
 
       record = parent.update(name, JSON.parse(request.body.read)[singular_name])
@@ -30,6 +32,8 @@ class Travis::Api::App
     end
 
     def destroy
+      auth_for_repo(parent.repository.id, 'repository_settings_delete')
+
       disallow_migrating!(parent.repository)
 
       record = parent.delete(name)

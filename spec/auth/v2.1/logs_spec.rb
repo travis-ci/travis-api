@@ -35,6 +35,7 @@ describe 'v2.1 logs', auth_helpers: true, api_version: :'v2.1', set_app: true do
     repository = Travis::API::V3::Models::Repository.find(repo.id)
     repository.user_settings.update(:job_log_time_based_limit, true)
     repository.save!
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
   end
 
   describe 'in public mode, with a private repo', mode: :public, repo: :private do
