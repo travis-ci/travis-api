@@ -4,6 +4,9 @@ describe Travis::API::V3::Services::BuildPermissions::UpdateForOrganization, set
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) { { 'HTTP_AUTHORIZATION'  =>  "token #{token}" } }
 
+
+  before { stub_request(:patch, %r((.+)/org/(.+)/repos)).to_return(status: 200) }
+
   context 'not authenticated' do
     it 'returns access error' do
       patch("/v3/org/#{organization.id}/build_permissions", { user_ids: [user.id], permission: false })

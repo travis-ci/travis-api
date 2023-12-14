@@ -9,6 +9,10 @@ describe Travis::API::V3::Services::ScanResult::Find, set_app: true, scanner_spe
     Travis.config.scanner.token = scanner_auth_key
   end
 
+  let(:authorization) { { 'permissions' => ['repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   context 'unauthenticated' do
     it 'responds 403' do
       get('/v3/scan_results')
@@ -78,6 +82,8 @@ describe Travis::API::V3::Services::ScanResult::Find, set_app: true, scanner_spe
 
     context 'without push access to repository' do
       before { repository.permissions.create(user: user, push: false) }        
+
+      let(:authorization) { { 'permissions' => [] } }
 
       it 'responds with list of plugins' do
         get("/v3/scan_result/#{scan_result_id}", {}, headers)

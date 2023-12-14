@@ -16,7 +16,13 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     jobs.each(&:reload)
   end
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   describe "jobs on public repository" do
+
+    let(:authorization) { { 'permissions' => ['repository_log_view', 'repository_settings_read'] } }
     before     { get("/v3/build/#{build.id}/jobs?include=job.config") }
     example    { expect(last_response).to be_ok }
     example    { expect(parsed_body).to eql_json({
@@ -33,6 +39,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "restart"             => false,
           "debug"               => false,
           "delete_log"          => false,
+          "view_log"            => true,
           "prioritize"          => false },
         "id"                    => jobs[0].id,
         "private"          => false,
@@ -112,6 +119,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "restart"             => false,
           "debug"               => false,
           "delete_log"          => false,
+          "view_log"            => true,
           "prioritize"          => false},
         "id"                    => jobs[1].id,
         "private"          => false,
@@ -191,6 +199,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "restart"             => false,
           "debug"               => false,
           "delete_log"          => false,
+          "view_log"            => true,
           "prioritize"          => false},
         "id"                    => jobs[2].id,
         "private"          => false,
@@ -270,6 +279,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "restart"             => false,
           "debug"               => false,
           "delete_log"          => false,
+          "view_log"            => true,
           "prioritize"          => false},
         "id"                    => jobs[3].id,
         "private"          => false,
@@ -346,6 +356,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
   end
 
   describe "jobs private repository, private API, authenticated as user with pull access" do
+
+  let(:authorization) { { 'permissions' => ['repository_log_view', 'repository_build_cancel', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
@@ -367,6 +379,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "restart"             => true,
           "debug"               => false,
           "delete_log"          => false,
+          "view_log"            => true,
           "prioritize"          => false },
         "id"                    => jobs[0].id,
         "private"          => false,
@@ -446,6 +459,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "restart"             => true,
           "debug"               => false,
           "delete_log"          => false,
+          "view_log"            => true,
           "prioritize"          => false },
         "id"                    => jobs[1].id,
         "private"          => false,
@@ -525,6 +539,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "restart"             => true,
           "debug"               => false,
           "delete_log"          => false,
+          "view_log"            => true,
           "prioritize"          => false },
         "id"                    => jobs[2].id,
         "private"          => false,
@@ -604,6 +619,7 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
           "restart"             => true,
           "debug"               => false,
           "delete_log"          => false,
+          "view_log"            => true,
           "prioritize"          => false },
         "id"                    => jobs[3].id,
         "private"          => false,
@@ -704,6 +720,7 @@ describe "jobs private repository, private API, authenticated as user with push 
           "restart"        => true,
           "debug"          => true,
           "delete_log"     => true,
+          "view_log"       => true,
           "prioritize"     => true },
         "id"               => jobs[0].id,
         "private"          => false,
@@ -783,6 +800,7 @@ describe "jobs private repository, private API, authenticated as user with push 
           "restart"        => true,
           "debug"          => true,
           "delete_log"     => true,
+          "view_log"       => true,
           "prioritize"     => true },
         "id"               => jobs[1].id,
         "private"          => false,
@@ -862,6 +880,7 @@ describe "jobs private repository, private API, authenticated as user with push 
           "restart"        => true,
           "debug"          => true,
           "delete_log"     => true,
+          "view_log"       => true,
           "prioritize"     => true },
         "id"               => jobs[2].id,
         "private"          => false,
@@ -941,6 +960,7 @@ describe "jobs private repository, private API, authenticated as user with push 
           "restart"        => true,
           "debug"          => true,
           "delete_log"     => true,
+          "view_log"       => true,
           "prioritize"     => true },
         "id"               => jobs[3].id,
         "private"          => false,

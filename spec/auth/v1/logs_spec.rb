@@ -8,6 +8,7 @@ describe 'v1 logs', auth_helpers: true, api_version: :v1, set_app: true do
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }
   before do
     stub_request(:get, log_url).to_return(status: 200, body: %({"job_id": #{job.id}, "content": "content"}))
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
     repository = Travis::API::V3::Models::Repository.find(repo.id)
     repository.user_settings.update(:job_log_time_based_limit, true)
     repository.save!

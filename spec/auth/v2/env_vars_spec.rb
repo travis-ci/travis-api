@@ -4,6 +4,8 @@ describe 'v2 settings/env_vars', auth_helpers: true, api_version: :v2, set_app: 
 
   before { repo.settings.tap { |s| s.env_vars.create(name: 'FOO', value: 'foo') && s.save } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   # TODO get /settings/env_vars/:id
   # TODO post /settings/env_vars/
   # TODO patch /settings/env_vars/:id
