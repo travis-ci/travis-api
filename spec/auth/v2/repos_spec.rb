@@ -6,6 +6,11 @@ describe 'v2 repos', auth_helpers: true, api_version: :v2, set_app: true do
   before(:all) { SslKey.create(repository_id: 1) }
   before { SslKey.update_all(repository_id: repo.id) }
 
+  let(:authorization) { { 'permissions' => ['repository_settings_create', 'repository_settings_update', 'repository_state_update', 'repository_settings_delete', 'repository_settings_read' ,'repository_cache_view'] } }
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/repo/)).to_return(status: 404, body: JSON.generate(authorization)) }
+
   # TODO
   # patch '/repos/:id/settings'
   # post '/repos/:id/key' }

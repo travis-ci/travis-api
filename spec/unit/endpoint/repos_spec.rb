@@ -1,6 +1,11 @@
 describe Travis::Api::App::Endpoint::Repos, set_app: true do
   include Support::S3
 
+  let(:authorization) { { 'permissions' => ['repository_settings_create', 'repository_settings_update', 'repository_state_update', 'repository_settings_delete', 'repository_settings_read' ,'repository_cache_view'] } }
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/repo/)).to_return(status: 404, body: JSON.generate(authorization)) }
+
   context 'correctly capture params' do
     before do
       described_class.get('/spec/match/((?<id>\d+)|(?<owner_name>[^\/]+))', mustermann_opts: { type: :regexp }) do
