@@ -329,7 +329,7 @@ GEM
       ffi (>= 1.0.6)
       msgpack (>= 0.4.3)
       optimist (>= 3.0.0)
-    redcarpet (3.5.0)
+    redcarpet (3.5.1)
     redis (3.3.5)
     redis-namespace (1.7.0)
       redis (>= 3.0.4)
