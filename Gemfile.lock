@@ -139,7 +139,7 @@ GEM
     connection_pool (2.2.3)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
-    dalli (2.7.10)
+    dalli (3.2.3)
     database_cleaner (1.8.3)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
