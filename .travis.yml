@@ -3,7 +3,7 @@ language: ruby
 import:
   - travis-ci/build-configs:db-setup.yml
 
-rvm: 3.0.0
+rvm: 2.6.5
 
 script: "bundle exec rake knapsack:rspec"
 
@@ -25,6 +25,7 @@ services:
   - redis-server
 
 before_install:
+  - gem install rubygems-update || gem install rubygems-update --version '< 3'
   - 'gem update --system'
 
 jobs:
