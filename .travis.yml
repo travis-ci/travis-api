@@ -25,6 +25,7 @@ services:
   - redis-server
 
 before_install:
+  - 'gem install rubygems-update -v 3.4.22'
   - 'gem update --system'
 
 jobs:
