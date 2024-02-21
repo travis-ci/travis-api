@@ -135,6 +135,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
       message: nil,
       branch: 'master',
       sha: nil,
+      tag_name: nil,
       merge_mode: nil,
       config: nil,
       configs: nil
@@ -270,6 +271,11 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     describe 'overriding sha (with request type)' do
       let(:params) { { '@type': 'request', sha: 'it' } }
       it { expect(sidekiq_payload).to eq payload.merge(sha: params[:sha]) }
+    end
+
+    describe 'overriding tag_name (in request)' do
+      let(:params) { { request: { tag_name: 'v1.0' } } }
+      it { expect(sidekiq_payload).to eq payload.merge(tag_name: params[:request][:tag_name]) }
     end
 
     describe 'when the repository is inactive' do

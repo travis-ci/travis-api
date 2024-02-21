@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Queries::Request < Query
-    params :id, :message, :branch, :sha, :merge_mode, :config, :configs, :token, prefix: :request
+    params :id, :message, :branch, :sha, :tag_name, :merge_mode, :config, :configs, :token, prefix: :request
 
     def find
       raise WrongParams, 'missing request.id'.freeze unless id
@@ -36,6 +36,7 @@ module Travis::API::V3
         id: request.id,
         message: message,
         branch: branch || repository.default_branch.name,
+        tag_name: tag_name,
         sha: sha,
         configs: request_configs,
         # BC, remove once everyone is on yml/configs, coordinate with Gatekeeper
