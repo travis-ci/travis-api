@@ -9,6 +9,7 @@ describe Travis::API::V3::Models::V2Subscription do
       'valid_to' => nil,
       'canceled_at' => nil,
       'scheduled_plan' => nil,
+      'cancellation_requested' => false,
       'billing_info' => {
         'address' => 'Washington str.',
         'address2' => '',
