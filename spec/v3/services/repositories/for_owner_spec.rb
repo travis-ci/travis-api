@@ -139,9 +139,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   describe "include: last_started_build" do
     let(:authorization_role) { { 'roles' => [] } }
     let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view'] } }
-
     let!(:branch) { Travis::API::V3::Models::Branch.find_by(name: 'master', repository_id: repo.id) }
     before { repo.update!(default_branch: branch) }
+
     before  { get("/v3/owner/svenfuchs/repos?include=repository.last_started_build", {}, headers)                           }
 
     example { expect(last_response)                   .to be_ok                                      }
@@ -273,6 +273,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
 
     before {  }
     let!(:branch) { Travis::API::V3::Models::Branch.find_by(name: 'master', repository_id: repo.id) }
+
     let(:authorization_role) { { 'roles' => [] } }
     let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view', 'repository_build_cancel', 'repository_build_restart'] } }
     before  { get("/v3/owner/svenfuchs/repos?include=repository.current_build", {}, headers)                           }

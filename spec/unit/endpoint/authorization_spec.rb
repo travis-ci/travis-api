@@ -230,6 +230,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
 
       it 'passes the cluster param' do
         response = get "/auth/handshake/assembla?code=1234&state=#{CGI.escape(state)}&cluster=#{cluster}"
+
         expect(response.status).to eq(302)
       end
     end
