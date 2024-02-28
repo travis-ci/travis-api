@@ -550,7 +550,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers (~> 0.9.9)
-  activerecord (~> 7)
+  activerecord (~> 7.0.8)
   allocation_tracer
   aws-sdk-s3
   bunny (~> 2.22)
