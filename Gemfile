@@ -66,7 +66,7 @@ gem 'useragent'
 gem 'tool'
 gem 'google-cloud-storage'
 gem 'aws-sdk-s3'
-gem 'activerecord',      '~> 7.0.6.0'
+gem 'activerecord',      '~> 7.0.8' # it was fixed in predicate_builder file to 7.0.6 but gh gem requires 7.0.8
 gem 'coder',             '~> 0.4.0'
 gem 'dry-types'
 gem 'dry-struct'
