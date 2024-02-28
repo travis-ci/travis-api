@@ -4,8 +4,8 @@ describe Build, 'matrix' do
       context 'if at least one job has not finished and is not allowed to fail' do
         it 'returns false' do
           build = FactoryBot.create(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-          build.matrix[0].update_attributes(state: :passed)
-          build.matrix[1].update_attributes(state: :started)
+          build.matrix[0].update(state: :passed)
+          build.matrix[1].update(state: :started)
 
           expect(build.matrix_finished?).not_to be true
         end
@@ -14,8 +14,8 @@ describe Build, 'matrix' do
       context 'if at least one job has not finished and is allowed to fail' do
         it 'returns false' do
           build = FactoryBot.create(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-          build.matrix[0].update_attributes(state: :passed)
-          build.matrix[1].update_attributes(state: :started, allow_failure: true)
+          build.matrix[0].update(state: :passed)
+          build.matrix[1].update(state: :started, allow_failure: true)
 
           expect(build.matrix_finished?).not_to be true
         end
@@ -24,8 +24,8 @@ describe Build, 'matrix' do
       context 'if all jobs have finished' do
         it 'returns true' do
           build = FactoryBot.create(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-          build.matrix[0].update_attributes!(state: :passed)
-          build.matrix[1].update_attributes!(state: :passed)
+          build.matrix[0].update!(state: :passed)
+          build.matrix[1].update!(state: :passed)
 
           expect(build.matrix_finished?).to be true
         end
@@ -35,8 +35,8 @@ describe Build, 'matrix' do
       context 'if at least one job has not finished and is not allowed to fail' do
         it 'returns false' do
           build = FactoryBot.create(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
-          build.matrix[0].update_attributes(state: :passed)
-          build.matrix[1].update_attributes(state: :started)
+          build.matrix[0].update(state: :passed)
+          build.matrix[1].update(state: :started)
 
           expect(build.matrix_finished?).to be false
         end
@@ -45,8 +45,8 @@ describe Build, 'matrix' do
       context 'if at least one job has not finished and is allowed to fail' do
         it 'returns true' do
           build = FactoryBot.create(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
-          build.matrix[0].update_attributes(state: :passed)
-          build.matrix[1].update_attributes(state: :started, allow_failure: true)
+          build.matrix[0].update(state: :passed)
+          build.matrix[1].update(state: :started, allow_failure: true)
 
           expect(build.matrix_finished?).to be true
         end
@@ -55,8 +55,8 @@ describe Build, 'matrix' do
       context 'if all jobs have finished' do
         it 'returns true' do
           build = FactoryBot.create(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
-          build.matrix[0].update_attributes!(state: :passed)
-          build.matrix[1].update_attributes!(state: :passed)
+          build.matrix[0].update!(state: :passed)
+          build.matrix[1].update!(state: :passed)
 
           expect(build.matrix_finished?).to be true
         end
@@ -68,56 +68,56 @@ describe Build, 'matrix' do
     let(:build) { FactoryBot.create(:build, config: { rvm: ['1.8.7', '1.9.2'] }) }
 
     it 'returns :passed if all jobs have passed' do
-      build.matrix[0].update_attributes!(state: "passed")
-      build.matrix[1].update_attributes!(state: "passed")
+      build.matrix[0].update!(state: "passed")
+      build.matrix[1].update!(state: "passed")
       expect(build.matrix_state).to eq(:passed)
     end
 
     it 'returns :failed if one job has failed' do
-      build.matrix[0].update_attributes!(state: "passed")
-      build.matrix[1].update_attributes!(state: "failed")
+      build.matrix[0].update!(state: "passed")
+      build.matrix[1].update!(state: "failed")
       expect(build.matrix_state).to eq(:failed)
     end
 
     it 'returns :failed if one job has failed and one job has errored' do
-      build.matrix[0].update_attributes!(state: "errored")
-      build.matrix[1].update_attributes!(state: "failed")
+      build.matrix[0].update!(state: "errored")
+      build.matrix[1].update!(state: "failed")
       expect(build.matrix_state).to eq(:errored)
     end
 
     it 'returns :errored if one job has errored' do
-      build.matrix[0].update_attributes!(state: "passed")
-      build.matrix[1].update_attributes!(state: "errored")
+      build.matrix[0].update!(state: "passed")
+      build.matrix[1].update!(state: "errored")
       expect(build.matrix_state).to eq(:errored)
     end
 
     it 'returns :passed if a errored job is allowed to fail' do
-      build.matrix[0].update_attributes!(state: "passed")
-      build.matrix[1].update_attributes!(state: "errored", allow_failure: true)
+      build.matrix[0].update!(state: "passed")
+      build.matrix[1].update!(state: "errored", allow_failure: true)
       expect(build.matrix_state).to eq(:passed)
     end
 
     it 'returns :passed if a failed job is allowed to fail' do
-      build.matrix[0].update_attributes!(state: "passed")
-      build.matrix[1].update_attributes!(state: "failed", allow_failure: true)
+      build.matrix[0].update!(state: "passed")
+      build.matrix[1].update!(state: "failed", allow_failure: true)
       expect(build.matrix_state).to eq(:passed)
     end
 
     it 'returns :failed if all jobs have failed and only one is allowed to fail' do
-      build.matrix[0].update_attributes!(state: "failed")
-      build.matrix[1].update_attributes!(state: "failed", allow_failure: true)
+      build.matrix[0].update!(state: "failed")
+      build.matrix[1].update!(state: "failed", allow_failure: true)
       expect(build.matrix_state).to eq(:failed)
     end
 
     it 'returns :failed if all jobs have failed and only one is allowed to fail' do
-      build.matrix[0].update_attributes!(state: "finished")
+      build.matrix[0].update!(state: "finished")
       expect { build.matrix_state }.to raise_error(StandardError)
     end
 
     it 'returns :passed if all jobs have passed except a job that is allowed to fail, and config[:matrix][:finish_fast] is set' do
       build.config.update(finish_fast: true)
-      build.matrix[0].update_attributes!(state: "passed")
-      build.matrix[1].update_attributes!(state: "failed", allow_failure: true)
+      build.matrix[0].update!(state: "passed")
+      build.matrix[1].update!(state: "failed", allow_failure: true)
       expect(build.matrix_state).to eq(:passed)
     end
   end
@@ -126,7 +126,7 @@ describe Build, 'matrix' do
     let(:build) { FactoryBot.create(:build, config: { rvm: ['1.9.3'] }) }
 
     it 'returns :passed' do
-      build.matrix[0].update_attributes!(state: "failed", allow_failure: true)
+      build.matrix[0].update!(state: "failed", allow_failure: true)
       expect(build.matrix_state).to eq(:passed)
     end
   end

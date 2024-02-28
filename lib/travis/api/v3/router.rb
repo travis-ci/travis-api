@@ -47,6 +47,7 @@ module Travis::API::V3
 
       metrics.tick(:renderer)
       metrics.success(status: response[0])
+
       response
     rescue Error => error
       metrics.tick(:service)

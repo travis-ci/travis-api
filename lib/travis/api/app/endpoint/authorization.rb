@@ -1,6 +1,5 @@
 require 'addressable/uri'
 require 'faraday'
-require 'faraday_middleware'
 require 'securerandom'
 require 'travis/api/app'
 require 'travis/github/education'
@@ -129,7 +128,7 @@ class Travis::Api::App
         erb(:container, locals: data)
       end
 
-      error Faraday::Error::ClientError do
+      error Faraday::ClientError do
         halt 401, 'could not resolve github token'
       end
 
@@ -153,7 +152,7 @@ class Travis::Api::App
         # update first login date if not set
         def update_first_login(user)
           unless user.first_logged_in_at
-            user.update_attributes(first_logged_in_at: Time.now)
+            user.update(first_logged_in_at: Time.now)
           end
         end
 
@@ -364,7 +363,7 @@ class Travis::Api::App
               if user
                 ensure_token_is_available
                 rename_repos_owner(user.login, info['login'])
-                user.update_attributes info
+                user.update info
               else
                 self.user = ::User.create! info
               end
@@ -441,8 +440,6 @@ class Travis::Api::App
 
           conn = Faraday.new(http_options) do |conn|
             conn.request :json
-            conn.use :instrumentation
-            conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
             conn.adapter :net_http_persistent
           end
           response = conn.post(endpoint, values)
@@ -497,7 +494,7 @@ class Travis::Api::App
         end
 
         def target_ok?(target_origin)
-          test_target_origin = URI.decode(target_origin).downcase
+          test_target_origin = CGI.unescape(target_origin).downcase
           return if SUSPICIOUS_CODES.any? { |word| test_target_origin.include?(word) }
           return unless uri = Addressable::URI.parse(target_origin)
           if allowed_https_targets.include?(uri.host)

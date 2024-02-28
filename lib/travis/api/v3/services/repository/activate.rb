@@ -8,13 +8,18 @@ module Travis::API::V3
       check_repo_key(repository)
       return repo_migrated if migrated?(repository)
 
-      admin = access_control.admin_for(repository)
+      admin = access_control.class.name == 'Travis::API::V3::AccessControl::Internal' ?
+              access_control.admin_for(repository) :
+              access_control.user
+
+      raise NotFound unless admin&.id
+
       remote_vcs_repository.set_hook(
         repository_id: repository.id,
         user_id: admin.id
       )
 
-      repository.update_attributes(active: true)
+      repository.update(active: true)
 
       if repository.perforce?
         remote_vcs_repository.create_perforce_group(

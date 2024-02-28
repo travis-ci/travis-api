@@ -29,7 +29,7 @@ module Travis::API::V3
 
     def update(attrs)
       repository = find
-      repository.update_attributes!(attrs)
+      repository.update!(attrs)
       repository
     end
 
@@ -53,7 +53,7 @@ module Travis::API::V3
         repo_name.downcase,
         "#{provider.downcase}repository"
       )
-      repos = repos.by_server_type(server_type) if server_type
+      repos = repos.by_server_type(server_type) if server_type && provider == 'assembla'
 
       repos.order("updated_at desc, vcs_slug asc, owner_name asc, name asc, vcs_type asc")
            .first

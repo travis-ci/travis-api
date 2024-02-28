@@ -37,8 +37,7 @@ describe Repository::Settings do
 
     settings.maximum_number_of_builds = 'foo'
     expect(settings).not_to be_valid
-
-    expect(settings.errors[:maximum_number_of_builds]).to eq([:not_a_number])
+    expect(settings.errors.details[:maximum_number_of_builds].map{|k| k[:error]}).to eq([:not_a_number])
 
     settings.maximum_number_of_builds = 0
     expect(settings).to be_valid

@@ -4,7 +4,7 @@ class User
       def find_or_create_by(payload)
         attrs = attributes_from(payload)
         user = User.find_by_github_id(attrs['github_id'])
-        user ? user.update_attributes(attrs) : user = User.create!(attrs)
+        user ? user.update(attrs) : user = User.create!(attrs)
         user
       end
 

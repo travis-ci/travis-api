@@ -19,7 +19,7 @@ class Travis::Api::App
       get '/:id' do
         job = service(:find_job, params).run
         if job && job.repository
-          respond_with job, include_log_id: include_log_id?
+          respond_with job, type: :job, include_log_id: include_log_id?
         else
           json = { error: { message: "The job(#{params[:id]}) couldn't be found" } }
           status 404
@@ -31,6 +31,8 @@ class Travis::Api::App
         Metriks.meter("api.v2.request.cancel_job").mark
 
         service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
+
+        auth_for_repo(service&.target&.repository&.id, 'repository_build_cancel')
 
         if !service.authorized?
           json = { error: {
@@ -62,6 +64,8 @@ class Travis::Api::App
         Metriks.meter("api.v2.request.restart_job").mark
 
         service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
+
+        auth_for_repo(service&.repository&.id, 'repository_build_restart')
         disallow_migrating!(service.repository)
 
         result = if !service.accept?

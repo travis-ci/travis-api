@@ -6,14 +6,20 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
   let(:env_var) { { id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: true, branch: 'foo', repository_id: repo.id } }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   describe 'not authenticated' do
     before { delete("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}") }
     include_examples 'not authenticated'
   end
 
   describe 'authenticated, wrong permissions' do
+
+    let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
     before do
-      repo.update_attributes(settings: { env_vars: [env_var] })
+      repo.update(settings: { env_vars: [env_var] })
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
       delete("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", {}, auth_headers)
     end
@@ -53,7 +59,7 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
 
     describe 'existing repo, existing env var' do
       before do
-        repo.update_attributes(settings: { env_vars: [env_var], foo: 'bar' })
+        repo.update(settings: { env_vars: [env_var], foo: 'bar' })
         delete("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", {}, auth_headers)
       end
 
@@ -74,7 +80,7 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
 
   context do
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { delete("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", {}, auth_headers) }
 
@@ -87,7 +93,7 @@ describe Travis::API::V3::Services::EnvVar::Delete, set_app: true do
     end
 
     describe "repo migrating" do
-      before  { repo.update_attributes(migration_status: "migrated") }
+      before  { repo.update(migration_status: "migrated") }
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { delete("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", {}, auth_headers) }
 

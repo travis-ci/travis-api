@@ -27,7 +27,7 @@ module Travis::API::V3
 
     def connection
       @connection ||= Faraday.new(url: gdpr_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
-        conn.token_auth gdpr_auth_token
+        conn.request(:authorization, 'Token',"token=\"#{gdpr_auth_token}\"")
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
         conn.headers['X-Travis-Source'] = 'travis-api'
         conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?

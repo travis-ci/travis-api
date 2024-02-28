@@ -1,4 +1,5 @@
 class Subscription < ActiveRecord::Base
+  self.table_name = 'subscriptions'
   EU = [
     "Austria", "Belgium", "Bulgaria", "Cyprus", "Czech Republic",
     "Denmark", "Estonia", "Finland", "France", "Monaco", "Greece",

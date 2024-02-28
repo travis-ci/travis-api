@@ -1,6 +1,8 @@
 describe Travis::Api::App::Endpoint::Logs, set_app: true do
   after { Travis.config.public_mode = false }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   context do
     let(:user) { FactoryBot.create(:user, login: :rkh) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }

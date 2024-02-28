@@ -5,7 +5,7 @@ module Travis::API::V3
     attr_reader :id, :permissions, :valid_to, :plan, :coupon, :discount, :status, :source, :billing_info, :credit_card_info, :owner, :client_secret, :payment_intent, :created_at
 
     def initialize(attributes = {})
-      @id = attributes.fetch('id')
+      @id = attributes.fetch('id').to_i
       @permissions = Models::BillingPermissions.new(attributes.fetch('permissions'))
       @valid_to = attributes.fetch('valid_to') && DateTime.parse(attributes.fetch('valid_to'))
       plan_data = attributes.fetch('plan')

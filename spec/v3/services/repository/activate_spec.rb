@@ -1,11 +1,19 @@
 describe Travis::API::V3::Services::Repository::Activate, set_app: true do
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  let(:authorization_role) { { 'roles' => ['repository_admin'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
   before do
     Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
     Travis.config.vcs.token = 'vcs-token'
-    repo.update_attributes!(active: false)
+    repo.update!(active: false)
   end
   describe "not authenticated" do
+    let(:authorization) { { 'permissions' => [] } }
     before  { post("/v3/repo/#{repo.id}/activate")      }
     example { expect(last_response.status).to be == 403 }
     example { expect(JSON.load(body)).to      be ==     {
@@ -52,6 +60,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     it_behaves_like 'repository activation'
     describe "existing repository, no push access" do
+      let(:authorization) { { 'permissions' => [] } }
       before        { post("/v3/repo/#{repo.id}/activate", {}, headers)                 }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body).to_s).to include(
@@ -173,7 +182,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       Travis.config.host = 'http://travis-ci.com'
     end
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/activate", {}, headers) }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
@@ -183,7 +192,7 @@ describe Travis::API::V3::Services::Repository::Activate, set_app: true do
       }}
     end
     describe "repo migrated" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/activate", {}, headers) }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {

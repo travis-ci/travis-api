@@ -6,6 +6,10 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   describe 'not authenticated' do
     before { post("/v3/repo/#{repo.id}/env_vars", {}) }
     include_examples 'not authenticated'
@@ -17,9 +21,10 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
   end
 
   describe 'authenticated, existing repo, wrong permissions' do
+    let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-      repo.update_attributes(settings: { env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }] })
+      repo.update(settings: { env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }] })
       post("/v3/repo/#{repo.id}/env_vars", JSON.generate({}), auth_headers.merge(json_headers))
     end
 
@@ -79,7 +84,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
 
     before do
       Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true)
-      repo.update_attributes(settings: { env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }] })
+      repo.update(settings: { env_vars: [{ id: 'abc', name: 'FOO', value: Travis::Settings::EncryptedValue.new('bar'), public: false }] })
       post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers))
     end
 
@@ -167,7 +172,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers)) }
 
       example { expect(last_response.status).to be == 403 }
@@ -179,7 +184,7 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/env_vars", JSON.generate(params), auth_headers.merge(json_headers)) }
 
       example { expect(last_response.status).to be == 403 }

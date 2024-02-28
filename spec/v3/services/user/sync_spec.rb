@@ -1,7 +1,7 @@
 describe Travis::API::V3::Services::User::Sync, set_app: true do
   let(:user)  { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
   let(:user2) { Travis::API::V3::Models::User.create(login: 'carlad', is_syncing: true) }
-  let(:sidekiq_payload) { JSON.load(Sidekiq::Client.last['args'].to_json) }
+  let(:sidekiq_payload) { Sidekiq::Client.last['args'].map! {|m| JSON.parse(m)} }
   let(:sidekiq_params)  { Sidekiq::Client.last['args'].last.deep_symbolize_keys }
 
   before do
@@ -22,7 +22,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
   describe "not authenticated" do
     before  { post("/v3/user/#{user.id}/sync") }
     example { expect(last_response.status).to be == 403 }
-    example { expect(JSON.load(body)).to      be ==     {
+    example { expect(JSON.parse(body)).to      be ==     {
       "@type"         => "error",
       "error_type"    => "login_required",
       "error_message" => "login required"
@@ -35,7 +35,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
     before        { post("/v3/user/9999999999/sync", {}, headers) }
 
     example { expect(last_response.status).to be == 404 }
-    example { expect(JSON.load(body)).to      be ==     {
+    example { expect(JSON.parse(body)).to      be ==     {
       "@type"         => "error",
       "error_type"    => "not_found",
       "error_message" => "user not found (or insufficient access)",
@@ -51,7 +51,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
     before        { post("/v3/user/#{user.id}/sync", params, headers) }
 
     example { expect(last_response.status).to be == 200 }
-    example { expect(JSON.load(body).to_s).to include(
+    example { expect(JSON.parse(body).to_s).to include(
       "@type",
       "user",
       "@href",
@@ -76,7 +76,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
     before        { post("/v3/user/#{user2.id}/sync", params, headers) }
 
     example { expect(last_response.status).to be == 403 }
-    example { expect(JSON.load(body)).to be == {
+    example { expect(JSON.parse(body)).to be == {
       "@type"         => "error",
       "error_type"    => "insufficient_access",
       "error_message" => "operation requires sync access to user",
@@ -114,7 +114,7 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
     before        { post("/v3/user/#{user2.id}/sync", params, headers) }
 
     example { expect(last_response.status).to be == 409 }
-    example { expect(JSON.load(body)).to be == {
+    example { expect(JSON.parse(body)).to be == {
       "@type"         => "error",
       "error_type"    => "already_syncing",
       "error_message" => "sync already in progress"

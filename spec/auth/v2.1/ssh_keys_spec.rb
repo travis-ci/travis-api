@@ -11,6 +11,8 @@ describe 'v2.1 settings/ssh_key', auth_helpers: true, api_version: :'v2.1', set_
     settings.save
   end
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   # TODO patch /settings/ssh_key/:repo_id
   # TODO delete /settings/ssh_key/:repo_id
 

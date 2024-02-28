@@ -7,12 +7,16 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   let(:parsed_body) { JSON.load(body) }
   let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org') }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   before do
-    build.update_attributes(sender_id: repo.owner.id, sender_type: 'User')
+    build.update(sender_id: repo.owner.id, sender_type: 'User')
     test   = build.stages.create(number: 1, name: 'test')
     deploy = build.stages.create(number: 2, name: 'deploy')
-    build.jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
-    build.jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+    build.jobs[0, 2].each { |job| job.update!(stage: test) }
+    build.jobs[2, 2].each { |job| job.update!(stage: deploy) }
     build.reload
   end
 
@@ -33,6 +37,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   end
 
   describe "build on public repository, no pull access" do
+    let(:authorization) { { 'permissions' => ['repository_log_view', 'repository_settings_read'] } }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/build/#{build.id}") }
     example    { expect(last_response).to be_ok }
@@ -223,6 +228,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   end
 
   describe "build on public repository, no pull access" do
+    let(:authorization) { { 'permissions' => ['repository_log_view', 'repository_settings_read'] } }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/build/#{build.id}") }
     example    { expect(last_response).to be_ok }
@@ -389,7 +395,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
             'Authorization'=>'token notset',
             'Connection'=>'keep-alive',
             'Keep-Alive'=>'30',
-            'User-Agent'=>'Faraday v0.17.3'
+            'User-Agent'=>'Faraday v2.7.10'
              }).
            to_return(status: 200, body: "{}", headers: {})
       end
@@ -413,7 +419,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
             'Authorization'=>'token notset',
             'Connection'=>'keep-alive',
             'Keep-Alive'=>'30',
-            'User-Agent'=>'Faraday v0.17.3'
+            'User-Agent'=>'Faraday v2.7.10'
              }).
            to_return(status: 200, body: "{}", headers: {})
       end

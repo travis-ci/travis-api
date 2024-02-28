@@ -10,6 +10,7 @@ describe 'Builds', set_app: true do
     stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
       body: MultiJson.dump(allowed: true, rejection_code: nil)
     )
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
   end
 
   after do
@@ -152,20 +153,20 @@ describe 'Builds', set_app: true do
     end
 
     context 'when the repo is migrating' do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post "/builds/#{build.id}/restart", {}, headers }
       it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated' do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post "/builds/#{build.id}/restart", {}, headers }
       it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated on .com' do
       before { Travis.config.host = 'travis-ci.com' }
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post "/builds/#{build.id}/restart", {}, headers }
       it { expect(last_response.status).to eq(202) }
     end

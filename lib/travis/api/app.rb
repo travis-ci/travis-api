@@ -11,15 +11,13 @@ require 'rack/protection'
 require 'rack/contrib/config'
 require 'rack/contrib/jsonp'
 require 'rack/contrib/json_body_parser'
+require 'rack/contrib/post_body_content_type_parser'
 require 'dalli'
-require 'memcachier'
 require 'rack/cache'
 require 'travis/api/attack'
 require 'active_record'
 require 'redis'
 require 'gh'
-require 'raven'
-require 'raven/integrations/rack'
 require 'sidekiq'
 require 'connection_pool'
 require 'metriks/reporter/logger'
@@ -27,7 +25,6 @@ require 'metriks/librato_metrics_reporter'
 require 'travis/support/log_subscriber/active_record_metrics'
 require 'fileutils'
 require 'securerandom'
-require 'fog/aws'
 require 'rbtrace'
 
 module Travis::Api
@@ -39,6 +36,7 @@ require 'travis/api/serialize/v2'
 require 'travis/api/v3'
 require 'travis/api/app/error_handling'
 require 'travis/api/sidekiq'
+require 'travis/support/database'
 
 # Rack class implementing the HTTP API.
 # Instances respond to #call.
@@ -88,7 +86,8 @@ module Travis::Api
 
     attr_accessor :app
 
-    def initialize
+    def initialize(options = {})
+      self.class.setup(options)
       @app = Rack::Builder.app do
         # if stackprof = ENV['STACKPROF']
         #   require 'stackprof'
@@ -118,10 +117,12 @@ module Travis::Api
         if Travis::Api::App.use_monitoring?
           use Rack::Config do |env|
             if env['HTTP_X_REQUEST_ID']
-              Raven.tags_context(request_id: env['HTTP_X_REQUEST_ID'])
+              Sentry.with_scope do |scope|
+                scope.set_tags(request_id: env['HTTP_X_REQUEST_ID'])
+              end
             end
           end
-          use Raven::Rack
+          use Sentry::Rack::CaptureExceptions
         end
 
         if Travis::Honeycomb.api_requests.enabled?
@@ -137,8 +138,7 @@ module Travis::Api
         end
 
         use Rack::SSL if Endpoint.production? && !ENV['DOCKER']
-        use ActiveRecord::ConnectionAdapters::ConnectionManagement
-        use ActiveRecord::QueryCache
+        use ConnectionManagement
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
@@ -178,9 +178,8 @@ module Travis::Api
         end
 
         Endpoint.subclasses.each do |e|
-          next if e == SettingsEndpoint # TODO: add something like abstract? method to check if
-                                        # class should be registered
-          map(e.prefix) { run(e.new) }
+          next if e == SettingsEndpoint # TODO: add something like abstract? method to check if class should be registered
+          map(e.prefix) { run e }
         end
       end
     end
@@ -219,33 +218,11 @@ module Travis::Api
         setup_database_connections
 
         Sidekiq.configure_client do |config|
-          options = Travis.config.redis.to_h
-          namespace = Travis.config.sidekiq.namespace
-
-          # share connection with Travis.redis to ensure
-          # that we only create one redis connection per
-          # unicorn worker.
-          #
-          # this is so that we do not run into redis
-          # connection limits.
-          config.redis = ConnectionPool.new(timeout: options[:pool_timeout] || 1, size: 1) do
-            client = Travis.redis
-            if namespace
-              require 'redis/namespace'
-              client = Redis::Namespace.new(namespace, :redis => client)
-            end
-            client
-          end
+          config.redis = Travis.config.redis.to_h
         end
 
         if use_monitoring? && !console?
           setup_monitoring
-        end
-
-        if defined?(Fog) && defined?(Fog::Logger)
-          %i(warning deprecation debug).each do |channel|
-            Fog::Logger[channel] = nil
-          end
         end
 
         Travis::RequestDeadline.setup
@@ -288,5 +265,24 @@ module Travis::Api
       def self.setup_endpoints
         Base.subclasses.each(&:setup)
       end
+  end
+
+  class ConnectionManagement
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      testing = ENV['RACK_ENV'] == 'test'
+
+      status, headers, body = @app.call(env)
+      proxy = ::Rack::BodyProxy.new(body) do
+        ActiveRecord::Base.clear_active_connections! unless testing
+      end
+      [status, headers, proxy]
+    rescue Exception
+      ActiveRecord::Base.clear_active_connections! unless testing
+      raise
+    end
   end
 end

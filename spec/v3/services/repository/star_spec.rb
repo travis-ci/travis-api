@@ -1,6 +1,13 @@
 describe Travis::API::V3::Services::Repository::Star, set_app: true do
   let(:repo)  { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update'] } }
+
+  let(:authorization_role) { { 'roles' => ['repository_admin'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
+
   describe "not authenticated" do
     before  { post("/v3/repo/#{repo.id}/star")      }
     example { expect(last_response.status).to be == 403 }
@@ -79,7 +86,7 @@ describe Travis::API::V3::Services::Repository::Star, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true, pull: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/star", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -91,7 +98,7 @@ describe Travis::API::V3::Services::Repository::Star, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/star", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }

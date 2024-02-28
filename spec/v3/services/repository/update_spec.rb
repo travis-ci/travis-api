@@ -3,6 +3,13 @@ describe Travis::API::V3::Services::Repository::Update, set_app: true do
 
   before { Travis.config.applications = { app: { full_access: true, token: '12345' } } }
   after  { Travis.config.applications = {} }
+  let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
+
+  let(:authorization_role) { { 'roles' => ['repository_admin'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
 
   describe "not authenticated" do
     before  { patch("/v3/repo/#{repo.id}", com_id: 1) }
@@ -53,7 +60,7 @@ describe Travis::API::V3::Services::Repository::Update, set_app: true do
     let(:headers) { { 'HTTP_AUTHORIZATION' => "internal app:12345" } }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { patch("/v3/repo/#{repo.id}", { com_id: 1 }, headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -65,7 +72,7 @@ describe Travis::API::V3::Services::Repository::Update, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { patch("/v3/repo/#{repo.id}", { com_id: 1 }, headers) }
 
       example { expect(last_response.status).to be == 403 }

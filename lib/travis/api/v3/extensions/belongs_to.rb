@@ -30,7 +30,7 @@ module Travis::API::V3
           @polymorfic_foreign_types ||= []
         end
 
-        def belongs_to(field, options = {})
+        def belongs_to(field, **options)
           polymorfic_foreign_types << (options[:foreign_type] || "#{field}_type") if options[:polymorphic]
           super
         end
@@ -41,7 +41,7 @@ module Travis::API::V3
         end
 
         def polymorphic_name
-          @polymorfic_name ||= name.sub("#{parent}::", ''.freeze)
+          @polymorfic_name ||= name.sub("#{module_parent}::", ''.freeze)
         end
       end
 
@@ -52,12 +52,12 @@ module Travis::API::V3
 
       def [](key)
         value   = super
-        value &&= "#{self.class.parent}::#{value}" if self.class.polymorfic_foreign_types.include?(key)
+        value &&= "#{self.class.module_parent}::#{value}" if self.class.polymorfic_foreign_types.include?(key)
         value
       end
 
       def []=(key, value)
-        value &&= value.sub("#{self.class.parent}::", ''.freeze) if self.class.polymorfic_foreign_types.include?(key)
+        value &&= value.sub("#{self.class.module_parent}::", ''.freeze) if self.class.polymorfic_foreign_types.include?(key)
         super(key, value)
       end
     end

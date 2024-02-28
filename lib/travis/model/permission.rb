@@ -2,6 +2,7 @@ require 'core_ext/active_record/none_scope'
 require 'travis/model'
 
 class Permission < Travis::Model
+  self.table_name = 'permissions'
   ROLES = %w(admin push pull)
 
   class << self

@@ -6,6 +6,11 @@ describe 'Hooks', set_app: true do
     user.permissions.create repository: repo, admin: true
   end
 
+  let(:authorization) { { 'permissions' => ['repository_settings_create', 'repository_settings_update', 'repository_state_update', 'repository_settings_delete', 'repository_settings_read' ,'repository_cache_view'] } }
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/repo/)).to_return(status: 404, body: JSON.generate(authorization)) }
+
   let(:user)    { User.where(login: 'svenfuchs').first }
   let(:repo)    { Repository.first }
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
@@ -40,13 +45,13 @@ describe 'Hooks', set_app: true do
     end
 
     context 'when the repo is migrating' do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
       it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated' do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { put 'hooks', { hook: { id: hook.id, active: 'true' } }, headers }
       it { expect(last_response.status).to eq(403) }
     end

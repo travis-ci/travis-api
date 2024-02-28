@@ -2,6 +2,8 @@ describe 'ssh keys endpoint', set_app: true do
   let(:repo)    { FactoryBot.create(:repository) }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
+
   describe 'without an authenticated user' do
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
     let(:user)    { FactoryBot.create(:user) }
@@ -103,14 +105,14 @@ describe 'ssh keys endpoint', set_app: true do
 
       context 'when the repo is migrating' do
         let(:env_var) { repo.settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY).tap { repo.settings.save } }
-        before { repo.update_attributes(migration_status: "migrating") }
+        before { repo.update(migration_status: "migrating") }
         before { patch "/settings/ssh_key/#{repo.id}", '{"settings": {}}', headers }
         it { expect(last_response.status).to eq(403) }
       end
 
       context 'when the repo is migrated' do
         let(:env_var) { repo.settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY).tap { repo.settings.save } }
-        before { repo.update_attributes(migration_status: "migrated") }
+        before { repo.update(migration_status: "migrated") }
         before { patch "/settings/ssh_key/#{repo.id}", '{}', headers }
         it { expect(JSON.parse(last_response.body)["error_type"]).to eq("migrated_repository") }
         it { expect(last_response.status).to eq(403) }

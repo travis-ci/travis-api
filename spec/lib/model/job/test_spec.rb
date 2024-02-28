@@ -30,7 +30,6 @@ describe Job::Test do
       job = FactoryBot.create(:test, state: :created, source: build)
       FactoryBot.create(:test, state: :started, source: build)
       build.reload
-
       expect {
         job.cancel!
       }.to_not change { job.source.reload.state }
@@ -53,7 +52,7 @@ describe Job::Test do
       }.to change { build.canceled_at }
       }.to change { build.repository.reload.last_build_state }
 
-      expect(build.reload.state).to eq(:canceled)
+      expect(build.reload.state).to eq('canceled')
       expect(build.repository.last_build_state).to eq('canceled')
     end
 

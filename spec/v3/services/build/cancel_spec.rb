@@ -3,6 +3,10 @@ describe Travis::API::V3::Services::Build::Cancel, set_app: true do
   let(:build) { repo.builds.first }
   let(:payload) { { 'id'=> "#{build.id}", 'user_id' => 1, 'source' => 'api' } }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   before do
     allow(Travis::Features).to receive(:owner_active?).and_return(true)
     allow(Travis::Features).to receive(:owner_active?).with(:enqueue_to_hub, repo.owner).and_return(false)
@@ -147,6 +151,7 @@ describe Travis::API::V3::Services::Build::Cancel, set_app: true do
     end
 
     describe "started state" do
+
       before        { build.update_attribute(:state, "started")                                                  }
       before        { post("/v3/build/#{build.id}/cancel", params, headers)                                      }
 
@@ -193,7 +198,6 @@ describe Travis::API::V3::Services::Build::Cancel, set_app: true do
         "user_id"=> repo.owner_id,
         "source" => "api"}
       }
-
       example { expect(Sidekiq::Client.last['queue']).to be == 'hub'                }
       example { expect(Sidekiq::Client.last['class']).to be == 'Travis::Hub::Sidekiq::Worker' }
     end

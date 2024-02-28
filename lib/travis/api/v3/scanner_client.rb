@@ -36,21 +36,23 @@ module Travis::API::V3
     private
 
     def handle_errors_and_respond(response)
+
+      body = response&.body&.length > 0 && response.body.is_a?(String)  ? JSON.parse(response.body) : response.body
       case response.status
       when 200, 201
-        yield(response.body) if block_given?
+        yield(body) if block_given?
       when 202
         true
       when 204
         true
       when 400
-        raise Travis::API::V3::ClientError, response.body&.fetch('error', '')
+        raise Travis::API::V3::ClientError, body&.fetch('error', '')
       when 403
-        raise Travis::API::V3::InsufficientAccess, response.body&.fetch('rejection_code', '')
+        raise Travis::API::V3::InsufficientAccess, body&.fetch('rejection_code', '')
       when 404
-        raise Travis::API::V3::NotFound, response.body&.fetch('error', '')
+        raise Travis::API::V3::NotFound, body&.fetch('error', '')
       when 422
-        raise Travis::API::V3::UnprocessableEntity, response.body&.fetch('error', '')
+        raise Travis::API::V3::UnprocessableEntity, body&.fetch('error', '')
       else
         raise Travis::API::V3::ServerError, 'Scanner API failed'
       end

@@ -2,6 +2,8 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
 
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200) }
+
   describe 'with authenticated user' do
     let(:user)    { User.where(login: 'svenfuchs').first }
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
@@ -85,13 +87,13 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
       end
 
       context 'when the repo is migrating' do
-        before { repo.update_attributes(migration_status: "migrating") }
+        before { repo.update(migration_status: "migrating") }
         before { post "/settings/env_vars?repository_id=#{repo.id}", '{}', headers }
         it { expect(last_response.status).to eq(403) }
       end
 
       context 'when the repo is migrated' do
-        before { repo.update_attributes(migration_status: "migrated") }
+        before { repo.update(migration_status: "migrated") }
         before { post "/settings/env_vars?repository_id=#{repo.id}", '{}', headers }
         it { expect(last_response.status).to eq(403) }
       end
@@ -169,14 +171,14 @@ describe Travis::Api::App::SettingsEndpoint, set_app: true do
 
       context 'when the repo is migrating' do
         let(:env_var) { repo.settings.env_vars.create(name: 'FOO', value: 'bar').tap { repo.settings.save } }
-        before { repo.update_attributes(migration_status: "migrating") }
+        before { repo.update(migration_status: "migrating") }
         before { patch "/settings/env_vars/#{env_var.id}?repository_id=#{repo.id}", '{}', headers }
         it { expect(last_response.status).to eq(403) }
       end
 
       context 'when the repo is migrated' do
         let(:env_var) { repo.settings.env_vars.create(name: 'FOO', value: 'bar').tap { repo.settings.save } }
-        before { repo.update_attributes(migration_status: "migrated") }
+        before { repo.update(migration_status: "migrated") }
         before { patch "/settings/env_vars/#{env_var.id}?repository_id=#{repo.id}", '{}', headers }
         it { expect(last_response.status).to eq(403) }
       end

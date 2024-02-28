@@ -8,6 +8,10 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
   let(:key) { OpenSSL::PKey::RSA.generate(4096) }
   let(:key_pair) { { description: 'foo key pair', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id } }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   shared_examples 'paid' do
     describe 'not authenticated' do
       before { delete("/v3/repo/#{repo.id}/key_pair") }
@@ -22,9 +26,11 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
 
       context 'existing repo' do
         describe 'authenticated user with wrong permissions' do
+
+          let(:authorization) { { 'permissions' => [] } }
           before do
             Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
-            repo.update_attributes(settings: { ssh_key: key_pair, foo: 'bar' })
+            repo.update(settings: { ssh_key: key_pair, foo: 'bar' })
             delete("/v3/repo/#{repo.id}/key_pair", {}, { 'HTTP_AUTHORIZATION' => "token #{token}" })
           end
           include_examples 'insufficient access to repo', 'delete_key_pair'
@@ -49,7 +55,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
 
           describe 'existing repo, deletes key pair' do
             before do
-              repo.update_attributes(settings: { ssh_key: key_pair, foo: 'bar' })
+              repo.update(settings: { ssh_key: key_pair, foo: 'bar' })
               delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers)
             end
 
@@ -77,7 +83,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
   end
 
   context 'private repo' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
 
     include_examples 'paid'
   end
@@ -90,10 +96,10 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
 
   context do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true) }
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -105,7 +111,7 @@ describe Travis::API::V3::Services::KeyPair::Delete, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { delete("/v3/repo/#{repo.id}/key_pair", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }
