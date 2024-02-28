@@ -198,6 +198,9 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
       }
     }
   }
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   before do
     repo.default_branch.save!
@@ -261,10 +264,10 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
   describe "existing cache on s3 and gcs" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.us-east-2.amazonaws.com/?encoding-type=url").
+      stub_request(:get, "https://#{s3_bucket_name}.s3.us-east-2.amazonaws.com/?encoding-type=url&prefix=1/").
         to_return(:status => 200, :body => xml_content, :headers => {})
 
-      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
+      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/").
         to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
 
     end
@@ -282,10 +285,10 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
   describe "filter by branch s3" do
     before     do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.us-east-2.amazonaws.com/?encoding-type=url").
+      stub_request(:get, "https://#{s3_bucket_name}.s3.us-east-2.amazonaws.com/?encoding-type=url&prefix=1/ha-bug-rm_rf/").
         to_return(:status => 200, :body => xml_content_single_repo, :headers => {})
 
-      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
+      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/ha-bug-rm_rf/").
         to_return(:status => 200, :body => empty_gcs_content, :headers => {"Content-Type" => "application/json"})
     end
 
@@ -302,10 +305,10 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
 
   describe "filter by match on gcs" do
     before do
-      stub_request(:get, "https://#{s3_bucket_name}.s3.us-east-2.amazonaws.com/?encoding-type=url").
+      stub_request(:get, "https://#{s3_bucket_name}.s3.us-east-2.amazonaws.com/?encoding-type=url&prefix=1/").
         to_return(:status => 200, :body => empty_xml_content, :headers => {})
 
-      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o").
+      stub_request(:get, "https://storage.googleapis.com/storage/v1/b/travis-cache-production-org-gce/o?prefix=1/").
         to_return(:status => 200, :body => gcs_json_response, :headers => {"Content-Type" => "application/json"})
     end
 
@@ -321,15 +324,17 @@ describe Travis::API::V3::Services::Caches::Find, set_app: true do
   end
 
   context "without push permission" do
+
+    let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
     it "raises Travis::AuthorizationDenied" do
       repo.owner.permissions.last.update(push: false)
 
       get("/v3/repo/#{repo.id}/caches?match=osx", {}, headers)
 
-      expect(JSON.load(body)).to eq({
+      expect(JSON.load(body)).to include({
         "@type" => "error",
         "error_type" => "insufficient_access",
-        "error_message" => "forbidden",
+        "error_message" => "operation requires cache_view access to repository",
       })
       expect(last_response.status).to eq 403
     end

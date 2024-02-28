@@ -3,6 +3,13 @@ module Travis::API::V3
     require 'travis/api/v3/routes/dsl'
     extend DSL
 
+    resource :access_token do
+      route '/access_token'
+
+      patch :regenerate_token
+      delete :remove_token
+    end
+
     resource :broadcasts do
       route '/broadcasts'
       get :for_current_user
@@ -112,6 +119,12 @@ module Travis::API::V3
         route '/build_permissions'
         get :find_for_organization
         patch :update_for_organization
+      end
+
+      resource :email_subscription do
+        route '/email_subscription'
+        delete :unsubscribe
+        post :resubscribe
       end
     end
 
@@ -287,14 +300,16 @@ module Travis::API::V3
       get :find
     end
 
-    resource :scan_results do
-      route '/scan_results'
-      get :all
-    end
+    unless ENV['SCANNER_DISABLED']
+      resource :scan_results do
+        route '/scan_results'
+        get :all
+      end
 
-    resource :scan_result do
-      route '/scan_result/{scan_result.id}'
-      get :find
+      resource :scan_result do
+        route '/scan_result/{scan_result.id}'
+        get :find
+      end
     end
 
     resource :user do

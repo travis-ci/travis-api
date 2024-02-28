@@ -19,11 +19,16 @@ describe Travis::API::V3::Services::Request::Preview, set_app: true do
   before { repo.update(settings: { env_vars: [env_var] }) }
   before { stub_request(:post, 'https://yml.travis-ci.org/configs').to_return(status: 200, body: JSON.dump(configs)) }
 
+  let(:authorization) { { 'permissions' => ['repository_build_create'] } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   def parse(str)
     JSON.parse(str).deep_symbolize_keys
   end
 
   describe 'not authenticated' do
+    let(:authorization) { { 'permissions' => [] } }
     before { post("/v3/repo/#{repo.id}/request/preview") }
     it { expect(status).to eq 403 }
     it do

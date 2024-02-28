@@ -18,6 +18,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   after         { repo.update_attribute(:private, false)                            }
   before        { RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 1024*1024 }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  let(:authorization_role) { { 'roles' => ['repository_admin'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
+
+
   describe "sorting by default_branch.last_build" do
     let!(:repo2) { Travis::API::V3::Models::Repository.create!(owner_name: 'svenfuchs', owner: repo.owner, name: 'second-repo', default_branch_name: 'other-branch') }
     let!(:branch) { repo2.default_branch }
@@ -38,6 +46,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   end
 
   describe "private repository, private API, authenticated as user with access" do
+    let(:authorization_role) { { 'roles' => [] } }
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view'] } }
     before  { get("/v3/owner/svenfuchs/repos", {}, headers) }
     example { expect(last_response).to be_ok }
     example { expect(JSON.parse(body)).to be == {
@@ -77,7 +87,19 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_key_pair"  => false,
           "delete_key_pair"  => false,
           "check_scan_results" => false,
-          "admin"            => false
+          "admin"            => false,
+          "build_cancel"=>false,
+          "build_create"=>false,
+          "build_debug"=>false,
+          "build_restart"=>false,
+          "cache_delete"=>false,
+          "cache_view"=>false,
+          "log_delete"=>false,
+          "log_view"=>true,
+          "settings_create"=>false,
+          "settings_delete"=>false,
+          "settings_read"=>true,
+          "settings_update"=>false,
         },
         "id"                 => repo.id,
         "name"               => "minimal",
@@ -115,7 +137,13 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   end
 
   describe "include: last_started_build" do
+    let(:authorization_role) { { 'roles' => [] } }
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view'] } }
+
+    let!(:branch) { Travis::API::V3::Models::Branch.find_by(name: 'master', repository_id: repo.id) }
+    before { repo.update!(default_branch: branch) }
     before  { get("/v3/owner/svenfuchs/repos?include=repository.last_started_build", {}, headers)                           }
+
     example { expect(last_response)                   .to be_ok                                      }
     example { expect(JSON.parse(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?include=repository.last_started_build"}
     example { expect(JSON.parse(body)['repositories']) .to be == [{
@@ -125,6 +153,12 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "@permissions"       =>{
           "read"             =>true,
           "admin"            =>false,
+          "build_cancel"     =>false,
+          "build_create"     =>false,
+          "build_debug"      =>false,
+          "build_restart"    =>false,
+          "cache_delete"     =>false,
+          "cache_view"       =>false,
           "activate"         =>false,
           "deactivate"       =>false,
           "migrate"          => false,
@@ -134,7 +168,13 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var"   =>false,
           "create_key_pair"  =>false,
           "delete_key_pair"  =>false,
+          "log_delete"    =>false,
+          "log_view"      =>true,
           "check_scan_results" => false,
+          "settings_create"=>false,
+          "settings_delete"=>false,
+          "settings_read"=>true,
+          "settings_update"=>false,
           "create_request"   =>false},
         "id"                 =>repo.id,
         "name"               =>"minimal",
@@ -174,8 +214,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "@representation"=>"standard",
           "@permissions"   =>{
             "read"         =>true,
-            "cancel"       =>true,
-            "restart"      =>true,
+            "cancel"       =>false,
+            "restart"      =>false,
             "prioritize"   =>false},
           "id"             =>build.id,
           "number"         =>"#{build.number}",
@@ -192,6 +232,11 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "repository"    =>{
             "@href"       =>"/v3/repo/#{repo.id}"},
           "branch"        =>nil,
+          "branch"     =>{
+            "@type"            =>"branch",
+            "@href"            =>"/v3/repo/1/branch/master",
+            "@representation"  =>"minimal",
+            "name"             =>"master"},
           "tag"           =>nil,
           "commit"        =>{
             "@type"       =>"commit",
@@ -228,6 +273,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
 
     before {  }
     let!(:branch) { Travis::API::V3::Models::Branch.find_by(name: 'master', repository_id: repo.id) }
+    let(:authorization_role) { { 'roles' => [] } }
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view', 'repository_build_cancel', 'repository_build_restart'] } }
     before  { get("/v3/owner/svenfuchs/repos?include=repository.current_build", {}, headers)                           }
     example { expect(last_response)                   .to be_ok                                      }
     example { expect(JSON.parse(body)['@href'])        .to be == "/v3/owner/svenfuchs/repos?include=repository.current_build"}
@@ -243,6 +290,12 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "@permissions"       => {
           "read"             => true,
           "admin"            => false,
+          "build_cancel"     =>true,
+          "build_create"     =>false,
+          "build_debug"      =>false,
+          "build_restart"    =>true,
+          "cache_delete"     =>false,
+          "cache_view"       =>false,
           "activate"         => false,
           "deactivate"       => false,
           "migrate"          => false,
@@ -252,7 +305,13 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var"   => false,
           "create_key_pair"  => false,
           "delete_key_pair"  => false,
+          "log_delete"    =>false,
+          "log_view"      =>true,
           "check_scan_results" => false,
+          "settings_create"=>false,
+          "settings_delete"=>false,
+          "settings_read"=>true,
+          "settings_update"=>false,
           "create_request"   => false},
         "id"                 => repo.id,
         "name"               => "minimal",
@@ -311,7 +370,12 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "repository"     => {
             "@href"       => "/v3/repo/#{repo.id}"
           },
-          "branch"        => nil,
+          "branch"=>{
+                "@href"=>"/v3/repo/1/branch/master",
+                "@representation"=>"minimal",
+                "@type"=>"branch",
+                "name"=>"master"
+          },
           "tag"           => nil,
           "commit"        => {
             "@type"           => "commit",
@@ -391,6 +455,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
 
   describe "sorting by default_branch.last_build" do
     let(:repo2)  { Travis::API::V3::Models::Repository.create(owner_name: 'svenfuchs', name: 'maximal', owner_id: 1, owner_type: "User", last_build_state: "passed", active: true, next_build_number: 3) }
+
+    let(:authorization_role) { { 'roles' => [] } }
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view'] } }
     before  { repo2.save! }
     before  { get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build", {}, headers) }
     example { expect(last_response).to be_ok }
@@ -402,6 +469,12 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "@permissions"    => {
           "read"          => true,
           "admin"         => false,
+          "build_cancel"     =>false,
+          "build_create"     =>false,
+          "build_debug"      =>false,
+          "build_restart"    =>false,
+          "cache_delete"     =>false,
+          "cache_view"       =>false,
           "activate"      => false,
           "deactivate"    => false,
           "migrate"       => false,
@@ -411,7 +484,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var" => false,
           "create_key_pair"=> false,
           "delete_key_pair"=> false,
+          "log_delete"    =>false,
+          "log_view"      =>true,
           "check_scan_results" => false,
+
+          "settings_create"=>false,
+          "settings_delete"=>false,
+          "settings_read"=>true,
+          "settings_update"=>false,
           "create_request"=> false
         },
         "id"              => 1,
@@ -452,6 +532,12 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "@permissions"    => {
           "read"          => true,
           "admin"         => false,
+          "build_cancel"  =>false,
+          "build_create"  =>false,
+          "build_debug"   =>false,
+          "build_restart" =>false,
+          "cache_delete"  =>false,
+          "cache_view"    =>false,
           "activate"      => false,
           "deactivate"    => false,
           "migrate"       => false,
@@ -461,8 +547,14 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var"  => false,
           "create_key_pair" => false,
           "delete_key_pair"  => false,
+          "log_delete"    =>false,
+          "log_view"      =>true,
           "check_scan_results" => false,
-          "create_request"=> false
+          "create_request"=> false,
+          "settings_create"=>false,
+          "settings_delete"=>false,
+          "settings_read"=>true,
+          "settings_update"=>false
         },
         "id"              => repo2.id,
         "name"            => "maximal",
@@ -499,6 +591,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   end
 
   describe "shared repository for collaborator, authenticated as user with access" do
+
+    let(:authorization_role) { { 'roles' => [] } }
     before  { get("/v3/owner/johndoe/repos", {}, headers_collaborator) }
     example { expect(last_response).to be_ok }
     example { expect(JSON.parse(body)).to be == {
@@ -537,8 +631,24 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "create_env_var"   => true,
           "create_key_pair"  => true,
           "delete_key_pair"  => true,
+          "log_delete"       =>true,
+          "log_view"         =>true,
+          "settings_create"  =>true,
+          "settings_delete"  =>true,
+          "settings_read"    =>true,
+          "settings_update"  =>true,
           "check_scan_results" => true,
-          "admin"            => false
+          "settings_create"=>true,
+          "settings_delete"=>true,
+          "settings_read"=>true,
+          "settings_update"=>true,
+          "admin"            => false,
+          "build_cancel"    =>true,
+          "build_create"    =>true,
+          "build_debug"     =>true,
+          "build_restart"   =>true,
+          "cache_delete"    =>true,
+          "cache_view"      =>true
         },
         "id"                 => sharedrepo.id,
         "name"               => "sharedrepo",

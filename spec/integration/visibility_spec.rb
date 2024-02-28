@@ -16,6 +16,7 @@ describe 'visibilty', set_app: true do
   before { requests[0].update(private: false) }
   before { builds[0].update(private: false) }
   before { jobs[0].update(private: false) }
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
   before do
     repository = Travis::API::V3::Models::Repository.find(repo.id)
     repository.user_settings.update(:job_log_time_based_limit, true)
@@ -23,17 +24,18 @@ describe 'visibilty', set_app: true do
   end
   before :each do
     class FakeFile
-      attr_accessor :body
+      attr_accessor :body, :key
       def initialize(data)
         @body = JSON.generate(data)
+        @key = "jobs/1/log.txt"
       end
     end
     file = FakeFile.new({
-      key: "jobs/#{job_id}/log.txt",
       body: archived_content
     })
 
     allow_any_instance_of(Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
+    allow_any_instance_of(Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived_log_content).and_return(file.body)
   end
 
   let(:public_request)  { requests[0] }

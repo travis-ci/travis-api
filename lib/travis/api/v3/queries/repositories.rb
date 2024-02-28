@@ -72,9 +72,13 @@ module Travis::API::V3
         list = list.select("repositories.*, similarity(lower(repositories.owner_name) || '/'
                               || lower(repositories.name), '#{query}') as slug_filter")
       end
-      list = list.includes(default_branch: :last_build)
+
+      if includes? 'build.commit'.freeze
+        list = list.includes(default_branch: { last_build: :commit })
+      else
+        list = list.includes(default_branch: :last_build)
+      end
       list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
-      list = list.includes(default_branch: { last_build: :commit }) if includes? 'build.commit'.freeze
       sort list
     end
 

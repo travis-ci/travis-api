@@ -63,7 +63,7 @@ module Travis
         end
 
         def last_modified
-          cache_object.updated
+          cache_object.updated_at
         end
 
         def size
@@ -98,7 +98,6 @@ module Travis
 
         c = caches(prefix: prefix)
         c.select! { |o| o.slug.include?(params[:match]) } if params[:match]
-        c.each {|cc| puts cc.s3_object.key }
         c
       end
 

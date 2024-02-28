@@ -10,6 +10,7 @@ describe 'Builds', set_app: true do
     stub_request(:post, /http:\/\/localhost:9292\/(users|organizations)\/(.+)\/authorize_build/).to_return(
       body: MultiJson.dump(allowed: true, rejection_code: nil)
     )
+    stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401)
   end
 
   after do

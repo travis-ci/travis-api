@@ -246,6 +246,7 @@ module Travis::API::V3
     def usage_stats(owners)
       data = connection.post("/usage/stats", owners: owners, query: 'paid_plan_count')
       data = data&.body
+      data = data.is_a?(String) && data.length > 0 ? JSON.parse(data) : data
       data.fetch('paid_plans').to_i > 0 if data && data['paid_plans']
     rescue
       false

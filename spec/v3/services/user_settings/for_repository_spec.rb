@@ -4,8 +4,11 @@ describe Travis::API::V3::Services::UserSettings::ForRepository, set_app: true d
   let(:token) { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
+  let(:authorization) { { 'permissions' => ['repository_settings_create', 'repository_settings_update', 'repository_settings_read'] } }
 
   before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true, admin: false) }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   describe 'not authenticated' do
     before { get("/v3/repo/#{repo.id}/settings") }

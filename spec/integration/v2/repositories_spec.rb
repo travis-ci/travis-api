@@ -7,6 +7,9 @@ describe 'Repos', set_app: true do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
   before { user.permissions.create!(:repository_id => repo.id, :admin => true, :push => true) }
 
+  let(:authorization) { { 'permissions' => ['repository_settings_create', 'repository_settings_update', 'repository_state_update', 'repository_settings_delete', 'repository_settings_read'] } }
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   it 'returns 403 if not authenticated' do
     repos = Repository.all
     ids = repos[0..1].map(&:id)
