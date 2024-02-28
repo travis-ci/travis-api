@@ -135,11 +135,14 @@ module Travis::API::V3
           data.include?(permission)
         else
           response = connection.get("/permissions/#{resource_type == 'repository' ? 'repo' : 'org'}/#{resource_id}")
-          raise Travis::API::V3::AuthorizerError unless response.status == 200 && response.body&.include?('permissions')
+          unless response.status == 200 && response.body&.include?('permissions')
+            Travis.logger.warn("Authorizer permission response error: #{response.status} for user: #{@user_id}, resource: #{resource_type}: #{resource_id}")
+            raise Travis::API::V3::AuthorizerError
+          end
 
           body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
-          redis.sadd(key, body['permissions'].empty? ? ['none'] : body['permissions'])
+          redis.sadd(key, body['permissions'].nil? || body['permissions'].empty? ? ['none'] : body['permissions'])
           redis.expire(key, 5)
 
           body['permissions']&.include?(permission)
@@ -155,10 +158,14 @@ module Travis::API::V3
           data.include?(role)
         else
           response = connection.get("/roles/#{resource_type == 'repository' ? 'repo' : 'org'}/#{resource_id}")
-          raise Travis::API::V3::AuthorizerError unless response.status == 200 && response.body&.include?('roles')
+          unless response.status == 200 && response.body&.include?('roles')
+            Travis.logger.warn("Authorizer role response error: #{response.status} for user: #{@user_id}, resource: #{resource_type}: #{resource_id}")
+            raise Travis::API::V3::AuthorizerError
+          end
+
           body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
-          redis.sadd(key, body['roles'].empty? ? ['none'] : body['roles'])
+          redis.sadd(key, body['roles'].nil? || body['roles'].empty? ? ['none'] : body['roles'])
           redis.expire(key, 5)
 
           body['roles']&.include?(role)
