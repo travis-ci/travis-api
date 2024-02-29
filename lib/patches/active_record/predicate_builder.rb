@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-EXPECTED_AR_VERSION = '7.0.8'.freeze
+EXPECTED_AR_VERSION = '7.0.6'.freeze # gh gem requires 7.0.8
 ACTUAL_AR_VERSION = "#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}.#{ActiveRecord::VERSION::TINY}"
 
 if EXPECTED_AR_VERSION != ACTUAL_AR_VERSION
