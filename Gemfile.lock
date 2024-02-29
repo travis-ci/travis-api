@@ -66,9 +66,9 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-amqp
-  revision: f044144193f2d275b085eac9f795eca42626d99b
+  revision: 69e72f432436eca5d39991255d5cc3b45c1035e6
   specs:
-    travis-amqp (0.0.2)
+    travis-amqp (0.0.3)
 
 GIT
   remote: https://github.com/travis-ci/travis-config
