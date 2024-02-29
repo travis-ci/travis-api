@@ -75,7 +75,6 @@ module ActiveRecord
     end
 
     def build_bind_attribute(column_name, value)
-      type = table.type(column_name)
       Relation::QueryAttribute.new(column_name, value, table.type(column_name))
     end
 
