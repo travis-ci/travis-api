@@ -11,8 +11,8 @@ describe Travis::API::V3::Services::Jobs::Find, set_app: true do
     # TODO should this go into the scenario? is it ok to keep it here?
     test   = build.stages.create(number: 1, name: 'test')
     deploy = build.stages.create(number: 2, name: 'deploy')
-    jobs[0, 2].each { |job| job.update_attributes!(stage: test) }
-    jobs[2, 2].each { |job| job.update_attributes!(stage: deploy) }
+    jobs[0, 2].each { |job| job.update!(stage: test) }
+    jobs[2, 2].each { |job| job.update!(stage: deploy) }
     jobs.each(&:reload)
   end
 

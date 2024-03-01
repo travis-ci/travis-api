@@ -47,7 +47,8 @@ module Travis::API::V3
     end
 
     def bucket_name
-      hostname('archive')
+      platform_prefix = "#{platform}_" unless platform == :default
+      config["#{platform_prefix}#{main_type}_options".to_sym][:s3][:bucket_name] || hostname('archive')
     end
 
     def hostname(name)

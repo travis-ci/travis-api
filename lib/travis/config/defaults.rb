@@ -91,7 +91,7 @@ module Travis
             fallback_logs_api:    { url: fallback_logs_api_auth_url, token: fallback_logs_api_auth_token },
             scanner:              {},
             insights:             { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' },
-            authorizer:           { auth_key: 'testtest', url: 'http://localhost:3434'},
+            authorizer:           { url: 'http://authorizer', auth_key: 'secret' },
             recaptcha:            { endpoint: 'https://www.google.com', secret: ENV['RECAPTCHA_SECRET_KEY'] || '' },
             antifraud:            { captcha_max_failed_attempts: 3, captcha_block_duration: 24, credit_card_max_failed_attempts: 3, credit_card_block_duration: 24 }
 

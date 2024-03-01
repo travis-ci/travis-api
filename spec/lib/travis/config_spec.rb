@@ -10,7 +10,7 @@ describe Travis::Config do
     ENV.replace(old_env)
   end
 
-  let(:config) { Travis::Config.load(:files, :env, :heroku, :docker) }
+  let(:config) { Travis::Config.load(:files, :env, :heroku, :docker, :keychain) }
   let(:statement_timeout) { Travis::Config::Heroku::Database::VARIABLES[:statement_timeout] }
 
   describe 'endpoints' do

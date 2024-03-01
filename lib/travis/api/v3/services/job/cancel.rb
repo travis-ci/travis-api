@@ -6,7 +6,6 @@ module Travis::API::V3
       return not_found if job.owner.ro_mode?
 
       access_control.permissions(job).cancel!
-
       query.cancel(access_control.user)
       accepted(job: job, state_change: :cancel)
     end

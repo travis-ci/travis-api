@@ -7,7 +7,7 @@ module Travis::API::V3
 
     def self.result_type(rt = nil)
       @result_type   = rt if rt
-      @result_type ||= parent.result_type if parent and parent.respond_to? :result_type
+      @result_type ||= module_parent.result_type if module_parent and module_parent.respond_to? :result_type
       raise 'result type not set' unless defined? @result_type
       @result_type
     end
@@ -102,14 +102,14 @@ module Travis::API::V3
       meta_data[:status]         ||= 200
       meta_data[:access_control] ||= access_control
       meta_data[:resource]       ||= resource
-      Result.new(meta_data)
+      Result.new(access_control: access_control, type: meta_data[:type], resource: meta_data[:resource], **meta_data)
     end
 
     def head(**meta_data)
       meta_data[:access_control] ||= access_control
       meta_data[:type]           ||= result_type
       meta_data[:resource]       ||= nil
-      Result::Head.new(meta_data)
+      Result::Head.new(access_control: access_control, type: result_type, resource: nil, **meta_data)
     end
 
     def deleted
@@ -148,12 +148,12 @@ module Travis::API::V3
       @warnings ||= []
     end
 
-    def warn(*args)
+    def warn(*args, **info)
       warnings << args
     end
 
     def apply_warnings(result)
-      warnings.each { |args| result.warn(*args) }
+      warnings.each { |args| args.count > 1 ? result.warn(args[0], **args[1]) : result.warn(args[0]) }
     end
 
     def paginate(result)

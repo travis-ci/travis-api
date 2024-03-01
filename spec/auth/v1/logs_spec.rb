@@ -2,7 +2,7 @@ describe 'v1 logs', auth_helpers: true, api_version: :v1, set_app: true do
   let(:user)  { FactoryBot.create(:user) }
   let(:repo)  { Repository.by_slug('svenfuchs/minimal').first }
   let(:build) { repo.builds.first }
-  let(:job)   { build.matrix.first }
+  let(:job)   { Job.where(source_id: build.id).first }
   let(:log)   { double(id: 1) }
 
   let(:log_url) { "#{Travis.config[:logs_api][:url]}/logs/1?by=id&source=api" }

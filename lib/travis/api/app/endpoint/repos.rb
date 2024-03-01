@@ -7,9 +7,7 @@ class Travis::Api::App
         halt 401 if private_mode? && !org? && !authenticated?
       end
 
-      set :pattern, capture: { id: /\d+/ }
-
-      get '/:id/cc', scope: [:public, :travis_token] do
+      get Mustermann.new('/:id/cc', capture: { id: /\d+/ }), scope: [:public, :travis_token] do
         respond_with service(:find_repo, params.merge(schema: 'cc')), responder: :xml
       end
 
@@ -35,8 +33,6 @@ class Travis::Api::App
     class Repos < Endpoint
       before { authenticate_by_mode! }
 
-      set :pattern, capture: { id: /\d+/ }
-
       # Endpoint for getting all repositories.
       #
       # You can filter the repositories by adding parameters to the request. For example, you can get all repositories
@@ -54,25 +50,21 @@ class Travis::Api::App
         end
       end
 
-      # Given a single string, consider two cases:
-      # 1. string consisting entirely of digits
+      # Gets the repository with the given id.
+      #
       # ### Response
       #
       # json(:repository)
-      #
-      # 2. All other cases
-      # ### Response
-      #
-      # array of repositories owned by that owner
-      get '/((?<id>\d+)|(?<owner_name>[^\/]+))', mustermann_opts: { type: :regexp } do
-        prefer_follower do
-          if params[:id]
-            params.delete :owner_name
-            respond_with service(:find_repo, params)
-          elsif params[:owner_name]
-            params.delete :id
-            respond_with service(:find_repos, params).run
+      get Mustermann.new('/:id', capture: { id: /\d+/ }) do
+          prefer_follower do
+            respond_with service(:find_repo, params), type: :repository
           end
+      end
+
+      # Retrieves repositories for a given owner.
+      get '/:owner_name' do
+        prefer_follower do
+          respond_with service(:find_repos, params).run
         end
       end
 
@@ -123,9 +115,9 @@ class Travis::Api::App
       #
       # json(:repository_key)
       get '/:id/key' do
-
         auth_for_repo(params['id'], 'repository_settings_read')
         respond_with service(:find_repo_key, params), version: :v2
+        respond_with service(:find_repo_key, params), type: :ssl_key, version: :v2
       end
 
       post '/:id/key' do
@@ -167,7 +159,7 @@ class Travis::Api::App
       # json(:repository)
       get '/:owner_name/:name' do
         prefer_follower do
-          respond_with service(:find_repo, params), type_hint: Repository
+          respond_with service(:find_repo, params), type_hint: Repository, type: :repository
         end
       end
 
@@ -180,7 +172,7 @@ class Travis::Api::App
         # `name` is unused
         # name = params[:branches] ? :find_branches : :find_builds
         params['ids'] = params['ids'].split(',') if params['ids'].respond_to?(:split)
-        respond_with service(:find_builds, params)
+        respond_with service(:find_builds, params), type: :builds
       end
 
       # Get a build with the given id in the repository with the given name.
@@ -189,7 +181,7 @@ class Travis::Api::App
       #
       # json(:build)
       get '/:owner_name/:name/builds/:id' do
-        respond_with service(:find_build, params)
+        respond_with service(:find_build, params), type: :build
       end
 
       # Get the public key for a given repository.
@@ -203,12 +195,17 @@ class Travis::Api::App
       # json(:repository_key)
       get '/:owner_name/:name/key' do
         repo = service(:find_repo, params).run
-        auth_for_repo(repo&.id, 'repository_settings_view')
-        respond_with service(:find_repo_key, params), version: :v2
+        halt 404 unless repo
+
+        auth_for_repo(repo&.id, 'repository_settings_read')
+        respond_with service(:find_repo_key, params), type: :ssl_key, version: :v2
       end
 
       post '/:owner_name/:name/key' do
         repo = service(:find_repo, params).run
+        halt 404 unless repo
+
+
         auth_for_repo(repo&.id, 'repository_settings_create')
         service = service(:regenerate_repo_key, params)
         disallow_migrating!(service.repo)

@@ -17,7 +17,7 @@ class Travis::Api::App
       end
 
       get '/:id' do
-        respond_with service(:find_request, params)
+        respond_with service(:find_request, params), type: :request
       end
 
       post '/', scope: :private do

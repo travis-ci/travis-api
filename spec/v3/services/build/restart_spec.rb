@@ -62,14 +62,14 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
 
     describe "repo migrating on .com" do
       before  { Travis.config.host = "travis-ci.com" }
-      before  { repo.update_attributes(migration_status: "migrating") }
+      before  { repo.update(migration_status: "migrating") }
       before  { post("/v3/build/#{build.id}/restart", {}, headers) }
 
       example { expect(last_response.status).to be == 202 }
     end
 
     describe "repo migrating" do
-      before  { repo.update_attributes(migration_status: "migrating") }
+      before  { repo.update(migration_status: "migrating") }
       before  { post("/v3/build/#{build.id}/restart", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -81,7 +81,7 @@ describe Travis::API::V3::Services::Build::Restart, set_app: true do
     end
 
     describe "repo migrating" do
-      before  { repo.update_attributes(migration_status: "migrated") }
+      before  { repo.update(migration_status: "migrated") }
       before  { post("/v3/build/#{build.id}/restart", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }

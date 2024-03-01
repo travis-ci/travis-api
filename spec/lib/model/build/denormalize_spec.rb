@@ -34,7 +34,7 @@ describe Build, 'denormalization' do
 
   describe 'on build:finished' do
     before :each do
-      build.update_attributes(state: :errored)
+      build.update(state: :errored)
       build.denormalize(:finish)
       build.reload
     end

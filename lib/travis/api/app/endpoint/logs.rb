@@ -13,7 +13,7 @@ class Travis::Api::App
 
 
         repo = Travis::API::V3::Models::Repository.find(job.repository.id)
-        
+
         auth_for_repo(repo.id, 'repository_log_view')
 
         repo_can_write = current_user ? !!repo.users.where(id: current_user.id, permissions: { push: true }).first : false
@@ -41,7 +41,7 @@ class Travis::Api::App
             status 406
           end
         else
-          respond_with resource
+          respond_with resource, type: :remote_log
         end
       end
 

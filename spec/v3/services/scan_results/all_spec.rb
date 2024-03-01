@@ -93,7 +93,7 @@ describe Travis::API::V3::Services::ScanResults::All, set_app: true, scanner_spe
 
     before do
       stub_scanner_request(:get, '/scan_results', query: "repository_id=#{repository.id}&page=#{(offset.to_i / limit.to_i) + 1}&limit=#{limit}", auth_key: scanner_auth_key)
-        .to_return(body: JSON.dump(scanner_scan_results_response(job.id)))
+        .to_return(body: JSON.generate(scanner_scan_results_response(job.id)), headers: {'Content-Type' => 'application/json'})
     end
 
     context 'with push access to repository' do

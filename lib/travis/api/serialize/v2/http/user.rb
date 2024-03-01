@@ -57,7 +57,7 @@ module Travis
               # return Github::Oauth.correct_scopes?(user) if user.github?
 
               ::Travis::RemoteVCS::User.new.check_scopes(user_id: user.id)
-            rescue ::Travis::RemoteVCS::ResponseError
+            rescue ::Travis::RemoteVCS::ResponseError, Addressable::URI::InvalidURIError
               false
             end
 

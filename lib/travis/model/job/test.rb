@@ -28,7 +28,7 @@ class Job
     event :all, after: [:propagate]
 
     def enqueue # TODO rename to queue and make it an event, simple_states should support that now
-      update_attributes!(state: :queued, queued_at: Time.now.utc)
+      update!(state: :queued, queued_at: Time.now.utc)
     end
 
     def receive(data = {})
@@ -69,8 +69,10 @@ class Job
     end
 
     def invalid_config?
-      config[:".result"] == "parse_error"
+      (config.is_a?(String) ? JSON.parse(config) : config)[:".result"] == "parse_error"
     end
+
+
 
     def finished?
       FINISHED_STATES.include?(state.to_sym)

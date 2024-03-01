@@ -10,25 +10,21 @@ describe Travis::RemoteLog do
     described_class::Remote.instance_variable_set(:@clients, nil)
     described_class::Remote.instance_variable_set(:@archive_clients, nil)
 
-    Fog.mock!
-    storage = Fog::Storage.new({
-      aws_access_key_id: 'key',
-      aws_secret_access_key: 'secret',
-      provider: 'AWS'
-    })
-    bucket = storage.directories.create(key: 'archive.travis-ci.org')
-    file = bucket.files.create(
-      key: "jobs/#{job_id}/log.txt",
-      body: archived_content
-    )
+    class FakeFile
+      attr_accessor :body
+      attr_accessor :key
+      def initialize(data)
+        @body = data 
+        @key = 'key'
+      end
+    end
 
-    allow_any_instance_of(Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
+    file = FakeFile.new(archived_content)
+
+    allow_any_instance_of(::Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
+    allow_any_instance_of(::Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived_log_content).and_return(file.body)
   end
 
-  after do
-    Fog.unmock!
-    Fog::Mock.reset
-  end
 
   it 'has a default client' do
     expect(described_class::Remote.new.send(:client)).to_not be_nil
@@ -354,27 +350,62 @@ describe Travis::RemoteLog::ArchiveClient do
   end
 
   let(:s3) { double('s3') }
+  let(:archived_content) { 'hello world' }
+  let(:archived_content_url) { 'https://wowneat.example.com/flah' }
+  let(:archived_content_public) { true }
 
   before do
     subject.instance_variable_set(:@s3, s3)
     allow(s3).to receive(:directories).and_return(s3)
+    allow(s3).to receive(:list_objects_v2).and_return([s3])
     allow(s3).to receive(:get)
       .with('fluffernutter-pretzel-pie', prefix: 'jobs/9/log.txt')
       .and_return(s3)
     allow(s3).to receive(:files).and_return([s3])
+
+    class FakeFile
+      attr_accessor :body
+      attr_accessor :key
+
+      def public_url
+        @archived_content_url
+      end
+
+      def url(expires=nil)
+        @archived_content_url
+      end
+
+      def public?
+        @public
+      end
+
+      def initialize(data, url, pub)
+        @body = data
+        @archived_content_url = url
+        @public = pub
+      end
+    end
+
+    file = FakeFile.new(archived_content, archived_content_url, archived_content_public)
+
+    allow_any_instance_of(::Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
+
   end
 
-  it 'fetches public archived URLs' do
-    allow(s3).to receive(:public?).and_return(true)
-    allow(s3).to receive(:public_url).and_return('https://wowneat.example.com/flah')
-    expect(subject.fetch_archived_url(9)).to eq 'https://wowneat.example.com/flah'
+  context 'for public url' do
+    let(:archived_content_url) { 'https://wowneat.example.com/flah' }
+    let(:archived_content_public) { true }
+    it 'fetches archived URLs' do
+      expect(subject.fetch_archived_url(9)).to eq 'https://wowneat.example.com/flah'
+    end
   end
 
-  it 'fetches private archived URLs' do
-    allow(s3).to receive(:public?).and_return(false)
-    allow(s3).to receive(:url).with(8001)
-      .and_return('https://whoabud.example.com/flah?sig=ya&exp=nah')
-    expect(subject.fetch_archived_url(9, expires: 8001))
-      .to eq'https://whoabud.example.com/flah?sig=ya&exp=nah'
+  context 'for private url' do
+    let(:archived_content_url) { 'https://whoabud.example.com/flah?sig=ya&exp=nah' }
+    let(:archived_content_public) { false }
+    it 'fetches private archived URLs' do
+      expect(subject.fetch_archived_url(9, expires: 8001))
+        .to eq'https://whoabud.example.com/flah?sig=ya&exp=nah'
+    end
   end
 end

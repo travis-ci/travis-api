@@ -7,10 +7,8 @@ describe 'Repos', set_app: true do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: -1) }
   before { user.permissions.create!(:repository_id => repo.id, :admin => true, :push => true) }
 
-  let(:authorization) { { 'permissions' => ['repository_settings_create', 'repository_settings_update', 'repository_state_update', 'repository_settings_delete', 'repository_settings_read' ,'repository_cache_view'] } }
+  let(:authorization) { { 'permissions' => ['repository_settings_create', 'repository_settings_update', 'repository_state_update', 'repository_settings_delete', 'repository_settings_read'] } }
   before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
-  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
-  before { stub_request(:get, %r((.+)/permissions/repo/)).to_return(status: 404, body: JSON.generate(authorization)) }
 
   it 'returns 403 if not authenticated' do
     repos = Repository.all
@@ -23,7 +21,7 @@ describe 'Repos', set_app: true do
     let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json', 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
     context 'when the repo is migrating' do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
 
       it "responds with 403" do
         response = post "/repos/#{repo.id}/key", {}, headers
@@ -35,7 +33,7 @@ describe 'Repos', set_app: true do
     end
 
     context 'when the repo is migrated' do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
 
       it "responds with 403" do
         response = post "/repos/#{repo.id}/key", {}, headers
@@ -198,7 +196,7 @@ describe 'Repos', set_app: true do
   it 'does not proxy to .com if a user agent is set to PROXY_USER_AGENT' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
-    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    repo.update(migration_status: 'migrated', migrated_at: Time.now)
     FactoryBot.create(:build, repository: repo, state: :passed)
 
     headers = {
@@ -214,7 +212,7 @@ describe 'Repos', set_app: true do
   it 'proxies to .com if a repo has been migrated' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
-    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    repo.update(migration_status: 'migrated', migrated_at: Time.now)
     FactoryBot.create(:build, repository: repo, state: :passed)
 
     stub_request(:get, "https://api.travis-ci.com/svenfuchs/minimal.svg?branch=master").
@@ -229,7 +227,7 @@ describe 'Repos', set_app: true do
   it 'proxies to .com and an image if a repo has been migrated and with browser-like accept header' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
-    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    repo.update(migration_status: 'migrated', migrated_at: Time.now)
     FactoryBot.create(:build, repository: repo, state: :passed)
 
     stub_request(:get, "https://api.travis-ci.com/svenfuchs/minimal.svg?branch=master").
@@ -244,7 +242,7 @@ describe 'Repos', set_app: true do
   it 'proxies to .com to .com if a repo has been migrated, slug without format' do
     Travis.config.host = 'travis-ci.org'
     Travis.config.public_mode = true
-    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    repo.update(migration_status: 'migrated', migrated_at: Time.now)
     FactoryBot.create(:build, repository: repo, state: :passed)
 
     stub_request(:get, "https://api.travis-ci.com/svenfuchs/minimal?branch=master").
@@ -259,7 +257,7 @@ describe 'Repos', set_app: true do
   it 'does not proxy to .org if a user agent is set to PROXY_USER_AGENT' do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = true
-    repo.update_attributes(migration_status: 'migrated', migrated_at: Time.now)
+    repo.update(migration_status: 'migrated', migrated_at: Time.now)
     FactoryBot.create(:build, repository: repo, state: :passed)
 
     headers = {
@@ -275,7 +273,7 @@ describe 'Repos', set_app: true do
   it 'proxies to .org if a repo has not been migrated and is not active' do
     Travis.config.host = 'travis-ci.com'
     Travis.config.public_mode = true
-    repo.update_attributes(migration_status: nil, migrated_at: Time.now, active: false)
+    repo.update(migration_status: nil, migrated_at: Time.now, active: false)
     FactoryBot.create(:build, repository: repo, state: :passed)
 
     stub_request(:get, "https://api.travis-ci.org/svenfuchs/minimal.svg?branch=master").
@@ -496,7 +494,7 @@ describe 'Repos', set_app: true do
       FactoryBot.create(:build, repository: repo, state: :passed, commit: on_foo)
       FactoryBot.create(:build, repository: repo, state: :passed, commit: on_bar)
       FactoryBot.create(:build, repository: repo, state: :started,  commit: on_bar)
-      repo.update_attributes!(last_build_state: nil)
+      repo.update!(last_build_state: nil)
       result = get('/repos/svenfuchs/minimal.png?branch=foo,bar', {}, headers)
       expect(result).to deliver_result_image_for('passing')
     end

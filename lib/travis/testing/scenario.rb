@@ -1,11 +1,31 @@
 module Scenario
   class << self
     def default
+
+      Organization.table_name = 'organizations'
+      Repository.table_name = 'repositories'
+      User.table_name = 'users'
+      Token.table_name = 'tokens'
+      SslKey.table_name = 'ssl_keys'
+      Commit.table_name = 'commits'
+      Request.table_name = 'requests'
+      Job.table_name = 'jobs'
+      Url.table_name = 'urls'
+      Build.table_name = 'builds'
+      BuildBackup.table_name = 'build_backups'
+      Broadcast.table_name = 'broadcasts'
+      Branch.table_name = 'branches'
+      OwnerGroup.table_name = 'owner_groups'
+      Travis::API::V3::Models::Branch.table_name = 'branches'
+      Job::Test.table_name = 'jobs'
+      Permission.table_name = 'permissions'
+      Membership.table_name = 'memberships'
       minimal, enginex, sharedrepo = repositories :minimal, :enginex, :sharedrepo
       sharedrepo_permission = permissions :sharedrepo_permission
 
       build :repository => minimal,
             :owner => minimal.owner,
+            :owner_type => minimal.owner.class.name,
             :number => 1,
             :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
             :state  => 'failed',
@@ -21,11 +41,12 @@ module Scenario
               :committed_at => '2010-11-12 11:50:00',
             },
             :jobs => [
-              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+              { :owner => minimal.owner, :owner_type => 'User', :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4', :source_type => 'Build' }
             ]
-
+      
       build :repository => minimal,
             :owner => minimal.owner,
+            :owner_type => minimal.owner.class.name,
             :number => 2,
             :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
             :state  => 'passed',
@@ -41,11 +62,12 @@ module Scenario
               :committed_at => '2010-11-12 12:25:00',
             },
             :jobs => [
-              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+              { :owner => minimal.owner, :owner_type => minimal.owner.class.name, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' , source_type: 'Build'}
             ]
 
       build :repository => minimal,
             :owner => minimal.owner,
+            :owner_type => minimal.owner.class.name,
             :number => '3',
             :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
             :state  => 'configured',
@@ -61,14 +83,15 @@ module Scenario
               :committer_email => 'svenfuchs@artweb-design.de',
             },
             :jobs => [
-              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
-              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
-              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
-              { :owner => minimal.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+              { :owner => minimal.owner, :owner_type => minimal.owner.class.name, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-5' , source_type: 'Build'},
+              { :owner => minimal.owner, :owner_type => minimal.owner.class.name, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-6' , source_type: 'Build'},
+              { :owner => minimal.owner, :owner_type => minimal.owner.class.name, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-7' , source_type: 'Build'},
+              { :owner => minimal.owner, :owner_type => minimal.owner.class.name, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-8' , source_type: 'Build'}
             ]
 
       build :repository => sharedrepo,
             :owner => sharedrepo.owner,
+            :owner_type => sharedrepo.owner.class.name,
             :number => 1,
             :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
             :state  => 'failed',
@@ -84,11 +107,12 @@ module Scenario
               :committed_at => '2010-11-12 11:50:00',
             },
             :jobs => [
-              { :owner => sharedrepo.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+              { :owner => sharedrepo.owner, :owner_type => sharedrepo.owner.class.name, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-9' , source_type: 'Build'}
             ]
 
       build :repository => enginex,
             :owner => enginex.owner,
+            :owner_type => enginex.owner.class.name,
             :number => 1,
             :state  => 'fails',
             :started_at => '2010-11-11 12:00:00',
@@ -105,7 +129,7 @@ module Scenario
               :committed_at => '2010-11-11 11:55:00',
             },
             :jobs => [
-              { :owner => enginex.owner, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' }
+              { :owner => enginex.owner, :owner_type => enginex.owner.class.name, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4' , source_type: 'Build'}
             ]
 
       [minimal, enginex]
@@ -127,19 +151,20 @@ module Scenario
     end
 
     def build(attributes)
+      Build.table_name = 'builds'
       commit = attributes.delete(:commit)
       jobs  = attributes.delete(:jobs)
       commit = FactoryBot.create(:commit, commit)
 
       build  = FactoryBot.create(:build, attributes.merge(:commit => commit))
       build.matrix.each_with_index do |job, ix|
-        job.update_attributes!(jobs[ix] || {})
+        job.update!(jobs[ix] || {})
       end
 
       if build.finished?
         keys = %w(id number state finished_at started_at)
         attributes = keys.inject({}) { |result, key| result.merge(:"last_build_#{key}" => build.send(key)) }
-        build.repository.update_attributes!(attributes)
+        build.repository.update!(attributes)
       end
     end
   end

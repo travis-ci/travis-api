@@ -16,7 +16,7 @@ describe Travis::API::V3::Services::Request::Preview, set_app: true do
     }
   end
 
-  before { repo.update_attributes(settings: { env_vars: [env_var] }) }
+  before { repo.update(settings: { env_vars: [env_var] }) }
   before { stub_request(:post, 'https://yml.travis-ci.org/configs').to_return(status: 200, body: JSON.dump(configs)) }
 
   let(:authorization) { { 'permissions' => ['repository_build_create'] } }

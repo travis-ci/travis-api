@@ -7,8 +7,8 @@ describe Repository do
     let(:build2) { FactoryBot.create(:build, repository: repo, finished_at: Time.now, state: :failed) }
 
     before do
-      build1.update_attributes(branch: 'master')
-      build2.update_attributes(branch: 'development')
+      build1.update(branch: 'master')
+      build2.update(branch: 'development')
     end
 
     it 'returns last completed build' do
@@ -34,12 +34,12 @@ describe Repository do
       let(:org)  { FactoryBot.create(:org)  }
 
       it 'can be a user' do
-        repo = FactoryBot.create(:repository, owner: user)
+        repo = FactoryBot.create(:repository, owner: user, owner_type: 'User')
         expect(repo.reload.owner).to eq(user)
       end
 
       it 'can be an organization' do
-        repo = FactoryBot.create(:repository, owner: org)
+        repo = FactoryBot.create(:repository, owner: org, owner_type: 'Organization')
         expect(repo.reload.owner).to eq(org)
       end
     end
@@ -170,9 +170,9 @@ describe Repository do
 
     describe 'counts_by_owner_ids' do
       let!(:repositories) do
-        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'svenfuchs', name: 'minimal')
-        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'travis-ci')
-        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
+        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'svenfuchs', name: 'minimal', owner_type: 'Organization')
+        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'travis-ci', owner_type: 'Organization')
+        FactoryBot.create(:repository, owner: FactoryBot.create(:org), owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now, owner_type: 'Organization')
       end
 
       it 'returns repository counts per owner_id for the given owner_ids' do
@@ -258,7 +258,7 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        expect(repo.last_build('master').id).to eq(@build.id)
+        expect(repo.last_build_on('master').id).to eq(@build.id)
       end
     end
 
@@ -268,7 +268,7 @@ describe Repository do
       end
 
       it 'returns the most recent build' do
-        expect(repo.last_build('master').id).to eq(@build.id)
+        expect(repo.last_build_on('master').id).to eq(@build.id)
       end
     end
   end

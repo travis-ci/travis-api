@@ -130,7 +130,7 @@ module Travis::API::V3
 
       def get_permission(resource_type, resource_id, permission)
         key = "api::role_cache::#{@user_id}::#{resource_type.downcase}::#{resource_id}::permissions"
-        if redis.exists(key)
+        if redis.exists?(key)
           data = redis.smembers(key)
           data.include?(permission)
         else
@@ -153,7 +153,7 @@ module Travis::API::V3
 
       def get_role(resource_type, resource_id, role)
         key = "api::role_cache::#{@user_id}::#{resource_type.downcase}::#{resource_id}::roles"
-        if redis.exists(key)
+        if redis.exists?(key)
           data = redis.smembers(key)
           data.include?(role)
         else
@@ -190,7 +190,7 @@ module Travis::API::V3
 
       def connection(timeout: 3)
         @connection ||= Faraday.new(url: authorizer_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
-          conn.basic_auth '_', authorizer_auth_key
+          conn.request :authorization, :basic, '_', authorizer_auth_key
           conn.headers['X-Travis-User-Id'] = @user_id.to_s
           conn.headers['X-Travis-Origin'] = 'api'
           conn.headers['Content-Type'] = 'application/json'

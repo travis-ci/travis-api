@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::Subscription::Resubscribe, set_app: true, bi
 
     let!(:stubbed_request) do
       stub_billing_request(:patch, "/subscriptions/#{subscription_id}/resubscribe", auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 201, body: JSON.dump(billing_subscription_response_body(
+        .to_return(status: 201, body: JSON.generate(billing_subscription_response_body(
           owner: { type: 'User', id: user.id },
           status: 'incomplete',
           client_secret: 'ABC'

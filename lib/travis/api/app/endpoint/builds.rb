@@ -16,7 +16,7 @@ class Travis::Api::App
       end
 
       get '/:id' do
-        respond_with service(:find_build, params), include_log_id: include_log_id?
+        respond_with service(:find_build, params), type: :build, include_log_id: include_log_id?
       end
 
       post '/:id/cancel' do

@@ -60,7 +60,7 @@ describe Travis::API::V3::Services::Repository::Update, set_app: true do
     let(:headers) { { 'HTTP_AUTHORIZATION' => "internal app:12345" } }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { patch("/v3/repo/#{repo.id}", { com_id: 1 }, headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -72,7 +72,7 @@ describe Travis::API::V3::Services::Repository::Update, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { patch("/v3/repo/#{repo.id}", { com_id: 1 }, headers) }
 
       example { expect(last_response.status).to be == 403 }

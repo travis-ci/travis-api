@@ -60,7 +60,7 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
 
   context do
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { delete("/v3/cron/#{cron.id}", {}, headers) }
 
@@ -73,7 +73,7 @@ describe Travis::API::V3::Services::Cron::Delete, set_app: true do
     end
 
     describe "repo migrating" do
-      before  { repo.update_attributes(migration_status: "migrated") }
+      before  { repo.update(migration_status: "migrated") }
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { delete("/v3/cron/#{cron.id}", {}, headers) }
 

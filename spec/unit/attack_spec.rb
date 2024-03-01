@@ -6,7 +6,7 @@ describe Rack::Attack do
     }
 
     it 'should be safelisted' do
-      expect(Rack::Attack.safelisted?(request)).to be_truthy
+      expect(Rack::Attack.configuration.safelisted?(request)).to be_truthy
     end
   end
 
@@ -19,7 +19,7 @@ describe Rack::Attack do
     }
 
     it 'should be safelisted' do
-      expect(Rack::Attack.safelisted?(request)).to be_truthy
+      expect(Rack::Attack.configuration.safelisted?(request)).to be_truthy
     end
   end
 
@@ -30,7 +30,7 @@ describe Rack::Attack do
     }
 
     it 'should not be safelisted' do
-      expect(Rack::Attack.safelisted?(request)).to be_falsey
+      expect(Rack::Attack.configuration.safelisted?(request)).to be_falsey
     end
   end
 end

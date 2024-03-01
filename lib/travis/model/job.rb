@@ -7,6 +7,7 @@ class JobConfig < ActiveRecord::Base
 end
 
 class Job < Travis::Model
+  self.table_name = 'jobs'
   require 'travis/model/job/queue'
   require 'travis/model/job/test'
   require 'travis/model/env_helpers'
@@ -65,7 +66,7 @@ class Job < Travis::Model
   belongs_to :commit
   belongs_to :source, polymorphic: true, autosave: true
   belongs_to :owner, polymorphic: true
-  belongs_to :config, foreign_key: :config_id, class_name: JobConfig
+  belongs_to :config, foreign_key: :config_id, class_name: 'JobConfig'
 
   validates :repository_id, :commit_id, :source_id, :source_type, :owner_id, :owner_type, presence: true
 
@@ -135,6 +136,7 @@ class Job < Travis::Model
     config ||= record&.config
     config ||= read_attribute(:config) if has_attribute?(:config)
     config ||= {}
+    config = JSON.parse(config) if config.is_a?(String)
     config.deep_symbolize_keys! if config.respond_to?(:deep_symbolize_keys!)
     config
   end
@@ -210,7 +212,7 @@ class Job < Travis::Model
     end
 
     def normalize_config(config)
-      config = YAML.load(config) if config.is_a? String
+      config = YAML.load(config, aliases: true) if config.is_a? String
       config = config ? config.deep_symbolize_keys : {}
 
       if config[:deploy]

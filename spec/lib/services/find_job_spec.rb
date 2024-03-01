@@ -1,6 +1,6 @@
 describe Travis::Services::FindJob do
   let(:repo)    { FactoryBot.create(:repository) }
-  let!(:job)    { FactoryBot.create(:test, repository: repo, state: :created, queue: 'builds.linux', config: {'sudo' => false}) }
+  let!(:job)    { FactoryBot.create(:test, repository: repo, state: :created, owner_type: 'User', queue: 'builds.linux', config: {'sudo' => false}) }
   let(:params)  { { id: job.id } }
   let(:service) { described_class.new(double('user'), params) }
 

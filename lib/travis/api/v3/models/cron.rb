@@ -79,7 +79,7 @@ module Travis::API::V3
     end
 
     def deactivate
-      update_attributes!(active: false)
+      update!(active: false)
     end
 
     def deactivate_and_log_reason(reason)

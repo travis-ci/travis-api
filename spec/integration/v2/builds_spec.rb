@@ -153,20 +153,20 @@ describe 'Builds', set_app: true do
     end
 
     context 'when the repo is migrating' do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post "/builds/#{build.id}/restart", {}, headers }
       it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated' do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post "/builds/#{build.id}/restart", {}, headers }
       it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated on .com' do
       before { Travis.config.host = 'travis-ci.com' }
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post "/builds/#{build.id}/restart", {}, headers }
       it { expect(last_response.status).to eq(202) }
     end

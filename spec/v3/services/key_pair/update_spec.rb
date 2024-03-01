@@ -174,7 +174,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
   end
 
   context 'private repo' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
 
     include_examples 'paid'
   end
@@ -187,10 +187,10 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
 
   context do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true) }
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { patch("/v3/repo/#{repo.id}/key_pair", JSON.generate({}), auth_headers.merge(json_headers)) }
 
       example { expect(last_response.status).to be == 403 }
@@ -202,7 +202,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { patch("/v3/repo/#{repo.id}/key_pair", JSON.generate({}), auth_headers.merge(json_headers)) }
 
       example { expect(last_response.status).to be == 403 }

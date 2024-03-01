@@ -14,14 +14,14 @@ module Travis::API::V3
       access_control.permissions(repository).create_request!
       return repo_migrated if migrated?(repository)
 
-      raise RepositoryInactive, repository: repository unless repository.active?
+      raise RepositoryInactive.new(repository: repository) unless repository.active?
 
       user = find(:user) if access_control.full_access? and params_for? 'user'.freeze
       user ||= access_control.user
       max = limit(repository)
       remaining = remaining_requests(max, repository)
 
-      raise RequestLimitReached, repository: repository, max_requests: max, per_seconds: TIME_FRAME.to_i if remaining == 0
+      raise RequestLimitReached.new(repository: repository, max_requests: max, per_seconds: TIME_FRAME.to_i) if remaining == 0
 
       payload = query.schedule(repository, user)
       accepted(remaining_requests: remaining, repository: repository, request: payload)

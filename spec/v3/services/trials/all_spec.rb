@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::Trials::All, set_app: true, billing_spec_hel
     let(:created_at) { '2018-04-17T18:30:32Z' }
     before do
       stub_billing_request(:get, '/trials', auth_key: billing_auth_key, user_id: user.id)
-        .to_return(status: 200, body: JSON.dump([billing_trial_response_body('id' => 123, 'created_at' => created_at, 'builds_remaining' => 6, 'owner' => { 'type' => 'User', 'id' => user.id })]))
+        .to_return(status: 200, body: [billing_trial_response_body('id' => 123, 'created_at' => created_at, 'builds_remaining' => 6, 'owner' => { 'type' => 'User', 'id' => user.id })])
     end
 
     it 'responds with list of trials' do

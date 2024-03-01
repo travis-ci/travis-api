@@ -71,7 +71,14 @@ describe Travis::Services::FindCaches do
     end
 
     context 'with GCS configuration' do
-      let(:cache_options) { { gcs: { bucket_name: '', json_key: { type: 'service_account', project_id: 'test-project-id' } } } }
+      before do
+        stub_request(:post, "https://oauth2.googleapis.com/token").
+          to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
+        stub_request(:get,%r((.+))).with(
+          headers: { 'Metadata-Flavor'=>'Google', 'User-Agent'=>'Ruby'}
+        ).to_return(status: 200, body: "", headers: {})
+      end
+      let(:cache_options) { { gcs: { bucket_name: '', json_key: { type: 'service_account', project_id: 'test-project-id', private_key_id: "123456", private_key: TEST_PRIVATE_KEY } } } }
       its(:size) { is_expected.to eq 0 }
     end
   end

@@ -1,12 +1,7 @@
-require 'travis/api/app'
-
 class Travis::Api::App
   class SettingsEndpoint < Endpoint
     include ActiveSupport::Callbacks
     extend ActiveSupport::Concern
-
-    define_callbacks :after_save
-    set_callback :after_save, :after, :save_audit
 
     set(:prefix) { "/settings/" << name[/[^:]+$/].underscore }
 
@@ -71,7 +66,7 @@ class Travis::Api::App
         } if is_env_var?
 
         repo_settings.save
-        run_callbacks :after_save if is_env_var?
+        save_audit if is_env_var?
 
         respond_with(record, type: singular_name, version: :v2)
       else
@@ -96,7 +91,7 @@ class Travis::Api::App
         } if is_env_var?
 
         repo_settings.save
-        run_callbacks :after_save if is_env_var?
+        save_audit if is_env_var?
 
         respond_with(record, type: singular_name, version: :v2)
       else
@@ -118,7 +113,7 @@ class Travis::Api::App
       } if is_env_var?
 
       repo_settings.save
-      run_callbacks :after_save if is_env_var?
+      save_audit if is_env_var?
 
       respond_with(record, type: singular_name, version: :v2)
     end

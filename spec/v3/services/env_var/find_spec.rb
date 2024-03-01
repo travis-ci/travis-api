@@ -29,7 +29,7 @@ describe Travis::API::V3::Services::EnvVar::Find, set_app: true do
 
     let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
     before do
-      repo.update_attributes(settings: { env_vars: [env_var]} )
+      repo.update(settings: { env_vars: [env_var]} )
       get("/v3/repo/#{repo.id}/env_var/#{env_var[:id]}", {}, auth_headers)
     end
 

@@ -101,6 +101,7 @@ class Build
     attr_reader :config, :options
 
     def initialize(config, options = {})
+      config = JSON.parse(config) if config.is_a?(String) && config&.length > 0
       @config = (config || {}).deep_symbolize_keys
       @options = options
     end

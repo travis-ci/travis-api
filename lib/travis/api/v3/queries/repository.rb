@@ -29,7 +29,7 @@ module Travis::API::V3
 
     def update(attrs)
       repository = find
-      repository.update_attributes!(attrs)
+      repository.update!(attrs)
       repository
     end
 

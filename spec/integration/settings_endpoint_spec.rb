@@ -79,7 +79,7 @@ describe Travis::Api::App::SettingsEndpoint do
 
     describe 'POST /items' do
       context 'when the repo is migrating' do
-        before { repo.update_attributes(migration_status: "migrating") }
+        before { repo.update(migration_status: "migrating") }
 
         it "responds with 403" do
           body = { item: { name: 'foo', secret: 'TEH SECRET' } }.to_json
@@ -89,7 +89,7 @@ describe Travis::Api::App::SettingsEndpoint do
       end
 
       context 'when the repo is migrated' do
-        before { repo.update_attributes(migration_status: "migrated") }
+        before { repo.update(migration_status: "migrated") }
 
         it "responds with 403" do
           body = { item: { name: 'foo', secret: 'TEH SECRET' } }.to_json
@@ -132,7 +132,7 @@ describe Travis::Api::App::SettingsEndpoint do
 
     describe 'PATCH /items/:id' do
       context 'when the repo is migrating' do
-        before { repo.update_attributes(migration_status: "migrating") }
+        before { repo.update(migration_status: "migrating") }
 
         it "responds with 403" do
           settings = repo.settings
@@ -147,7 +147,7 @@ describe Travis::Api::App::SettingsEndpoint do
       end
 
       context 'when the repo is migrated' do
-        before { repo.update_attributes(migration_status: "migrated") }
+        before { repo.update(migration_status: "migrated") }
 
         it "responds with 403" do
           settings = repo.settings
@@ -203,7 +203,7 @@ describe Travis::Api::App::SettingsEndpoint do
 
     describe 'DELETE /items/:id' do
       context 'when the repo is migrating' do
-        before { repo.update_attributes(migration_status: "migrating") }
+        before { repo.update(migration_status: "migrating") }
 
         it "responds with 403" do
           settings = repo.settings
@@ -219,7 +219,7 @@ describe Travis::Api::App::SettingsEndpoint do
       end
 
       context 'when the repo is migrated' do
-        before { repo.update_attributes(migration_status: "migrated") }
+        before { repo.update(migration_status: "migrated") }
 
         it "responds with 403" do
           settings = repo.settings

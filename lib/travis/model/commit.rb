@@ -3,6 +3,7 @@ require 'travis/model'
 # Encapsulates a commit that a Build belongs to (and that a Github Request
 # referred to).
 class Commit < Travis::Model
+  self.table_name = 'commits'
   include Travis::ScopeAccess
 
   has_one :request

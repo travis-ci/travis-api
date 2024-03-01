@@ -20,8 +20,8 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
     let(:user) { FactoryBot.create(:user) }
     let(:organization) { FactoryBot.create(:org, login: 'travis') }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
-                     'CONTENT_TYPE' => 'application/json' }}
+    let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}",
+                     'Content-Type' => 'application/json' }}
     let(:subscription_data) do
       {
         'plan' => 'pro_tier_plan',
@@ -48,7 +48,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'plan' => 'pro_tier_plan',
             'client_secret' => 'client_secret',
             'coupon' => nil,
-            'organization_id' => organization.id,
+            'organization_id' => organization.id.to_s,
             'billing_info' => {
               'first_name' => 'Travis',
               'last_name' => 'Schmidt',
@@ -59,14 +59,14 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               'zip_code' => '10001',
               'billing_email' => 'travis@example.org',
               'state' => 'Alabama',
-              'has_local_registration' => true
+              'has_local_registration' => 'true'
             },
             'credit_card_info' => {
               'token' => 'token_from_stripe'
             },
             'v1_subscription_id': nil
-            })
-          .to_return(status: 201, body: JSON.dump(billing_subscription_response_body(
+          })
+          .to_return(status: 201, body: JSON.generate(billing_subscription_response_body(
             'id' => 1234,
             'owner' => { 'type' => 'Organization', 'id' => organization.id },
             'canceled_at': nil,
@@ -197,7 +197,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
       end
 
       it 'creates the subscription and responds with its representation' do
-        post('/v3/v2_subscriptions', JSON.dump(subscription_data), headers)
+        post('/v3/v2_subscriptions', subscription_data, headers)
 
         expect(last_response.status).to eq(201)
         expect(parsed_body).to eql_json({
@@ -363,11 +363,11 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
     context 'billing app returns an error' do
       let!(:stubbed_request) do
         stub_billing_request(:post, '/v2/subscriptions', auth_key: billing_auth_key, user_id: user.id)
-          .to_return(status: 422, body: JSON.dump(error: 'This is the error message from the billing app'))
+          .to_return(status: 422, body: JSON.generate(error: 'This is the error message from the billing app'))
       end
 
       it 'responds with the same error' do
-        post('/v3/v2_subscriptions', JSON.dump(subscription_data), headers)
+        post('/v3/v2_subscriptions', JSON.generate(subscription_data), headers)
 
         expect(last_response.status).to eq(422)
         expect(parsed_body).to eql_json('@type' => 'error',

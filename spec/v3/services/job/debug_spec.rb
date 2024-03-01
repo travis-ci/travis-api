@@ -99,7 +99,7 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
 
         context "for a private repo" do
           before do
-            job.repository.update_attributes!(private: true)
+            job.repository.update!(private: true)
             post("/v3/job/#{job.id}/debug", {}, headers)
           end
 
@@ -115,7 +115,7 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/job/#{job.id}/debug", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -127,7 +127,7 @@ describe Travis::API::V3::Services::Job::Debug, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/job/#{job.id}/debug", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }

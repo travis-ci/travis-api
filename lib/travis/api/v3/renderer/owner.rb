@@ -9,7 +9,7 @@ module Travis::API::V3
                    :allow_migration, :allowance, :ro_mode, :custom_keys)
     representation(:additional, :repositories, :installation)
 
-    def initialize(*)
+    def initialize(model, **options)
       super
 
       owner_includes = include.select { |i| i.start_with?('owner.'.freeze) }
