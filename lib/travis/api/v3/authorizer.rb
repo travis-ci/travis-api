@@ -46,6 +46,20 @@ module Travis::API::V3
       raise AuthorizerConnectionError
     end
 
+    def delete_repo_build_permission(repo_id)
+      response = connection.delete("/repo/#{repo_id}/build_permission")
+      handle_response(response)
+    rescue Faraday::Error
+      raise AuthorizerConnectionError
+    end
+
+    def add_repo_build_permission(repo_id)
+      response = connection.post("/repo/#{repo_id}/build_permission")
+      handle_response(response)
+    rescue Faraday::Error
+      raise AuthorizerConnectionError
+    end
+
     def patch_repo_roles(repo_id, roles)
       response = connection.patch("/repo/#{repo_id}") do |req|
         req.body={roles: roles}
