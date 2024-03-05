@@ -13,13 +13,12 @@ module Travis::API::V3
     end
 
     def update_for_repo(repository, user_ids, permission)
-      roles = ['repository_builds_triggerer', 'repository_builds_restarter']
       user_ids.each do |user_id|
         authorizer = Authorizer::new(user_id)
         if (bool(permission))
-          authorizer.patch_repo_roles(repository.id, roles)
+          authorizer.add_repo_build_permission(repository.id)
         else
-          authorizer.delete_repo_roles(repository.id, roles)
+          authorizer.delete_repo_build_permission(repository.id)
         end
       end
 
