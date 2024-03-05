@@ -47,14 +47,14 @@ module Travis::API::V3
     end
 
     def delete_repo_build_permission(repo_id)
-      response = connection.delete("/repo/#{repo_id}/build_permission")
+      response = connection.delete("/repo_build_permission/#{repo_id}")
       handle_response(response)
     rescue Faraday::Error
       raise AuthorizerConnectionError
     end
 
     def add_repo_build_permission(repo_id)
-      response = connection.post("/repo/#{repo_id}/build_permission")
+      response = connection.post("/repo_build_permission/#{repo_id}")
       handle_response(response)
     rescue Faraday::Error
       raise AuthorizerConnectionError
