@@ -6,6 +6,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1)             }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                                    }}
   before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true, push: true, admin: true) }
+  before        { Travis::API::V3::Models::Installation.create(owner_type: 'User', owner_id: repo.owner.id, github_id: 789) }
   before        { repo.update_attribute(:private, true)                                         }
   after         { repo.update_attribute(:private, false)                                        }
   before        { Travis::Features.activate_owner(:allow_migration, repo.owner) }
