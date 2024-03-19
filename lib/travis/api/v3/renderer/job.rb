@@ -34,7 +34,7 @@ module Travis::API::V3
         'id' => restarter.id,
         'login' => restarter.login
       }
-     end
+    end
 
     def config
       if include_config?

@@ -12,7 +12,7 @@ module Travis::API::V3
 
       token = SecureRandom.urlsafe_base64(16)
       redis.hset("l:#{token}", :job_id, job.id)
-      redis.hset("l:#{token}", :repo_can_write, repo_can_write)
+      redis.hset("l:#{token}", :repo_can_write, repo_can_write.to_s)
       redis.expire("l:#{token}", 1.day)
       token
     end

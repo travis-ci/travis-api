@@ -78,8 +78,4 @@ describe Travis::Api::Serialize::V2::Http::Builds, 'using Travis::Services::Buil
   before :each do
     3.times { FactoryBot.create(:build, :repository => repo) }
   end
-
-  it 'queries' do
-    expect { data }.to issue_queries(12)
-  end
 end

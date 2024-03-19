@@ -7,6 +7,8 @@ require 'core_ext/active_record/base'
 
 module Travis
   class Model < ActiveRecord::Base
+    self.abstract_class = true
+
     require 'travis/model/scope_access'
     require 'travis/model/account'
     require 'travis/model/branch'
@@ -30,7 +32,6 @@ module Travis
     require 'travis/model/user'
     require 'travis/model/url'
 
-    self.abstract_class = true
 
     cattr_accessor :follower_connection_handler
 

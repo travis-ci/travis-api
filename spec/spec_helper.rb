@@ -21,7 +21,6 @@ require 'sidekiq/testing'
 require 'webmock/rspec'
 
 require 'active_record'
-ActiveRecord::Base.raise_in_transactional_callbacks = true
 
 require 'travis/api/app'
 require 'travis/testing'
@@ -98,6 +97,7 @@ RSpec.configure do |c|
 
     DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.allow_remote_database_url = true
 
     # This sets up a scenario in the db as an initial state. The db will be
     # rolled back to this state after each test. Several tests in ./spec depend

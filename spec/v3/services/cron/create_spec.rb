@@ -11,6 +11,10 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
   let(:wrong_options) {{ "interval" => "notExisting", "dont_run_if_recent_build_exists" => false }}
   let(:parsed_body) { JSON.load(body) }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   describe "creating a cron job" do
     before     { last_cron }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
@@ -125,6 +129,8 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
   end
 
   describe "try creating a cron job with a user without permissions" do
+
+    let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: false) }
     before     { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers) }
     example    { expect(parsed_body).to eql_json({
@@ -169,7 +175,7 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
 
   context do
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers) }
 
@@ -182,7 +188,7 @@ describe Travis::API::V3::Services::Cron::Create, set_app: true do
     end
 
     describe "repo migrating" do
-      before  { repo.update_attributes(migration_status: "migrated") }
+      before  { repo.update(migration_status: "migrated") }
       before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
       before { post("/v3/repo/#{repo.id}/branch/#{branch.name}/cron", options, headers) }
 

@@ -45,7 +45,7 @@ module Travis::API::V3
       end
 
       def normalize_config(config)
-        config = YAML.load(config) if config.is_a? String
+        config = YAML.load(config, aliases: true) if config.is_a? String
         config = config ? config.deep_symbolize_keys : {}
 
         if config[:deploy]

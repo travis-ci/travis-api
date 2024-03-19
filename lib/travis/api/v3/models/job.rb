@@ -8,13 +8,14 @@ module Travis::API::V3
   class Models::Job < Model
 
     self.inheritance_column = :_type_disabled
+    self.table_name = 'jobs'
 
     belongs_to :repository
     belongs_to :commit
     belongs_to :build, autosave: true, foreign_key: 'source_id'
     belongs_to :stage
     belongs_to :owner, polymorphic: true
-    belongs_to :config, foreign_key: :config_id, class_name: Models::JobConfig
+    belongs_to :config, foreign_key: :config_id, class_name: 'Models::JobConfig'
     serialize :config
     serialize :debug_options
 

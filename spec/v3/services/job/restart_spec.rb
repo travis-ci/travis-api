@@ -5,6 +5,10 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
   let(:job)         { build.jobs.first }
   let(:payload)     { { 'id'=> "#{job.id}", 'user_id' => 1 } }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   before do
     job.update(state: :passed)
     Travis.config.billing.url = 'http://localhost:9292/'
@@ -54,6 +58,8 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
   end
 
   describe "existing repository, no push or pull access" do
+      
+      let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
       let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
       let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
       before        { post("/v3/job/#{job.id}/cancel", {}, headers)                 }
@@ -372,7 +378,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/job/#{job.id}/restart", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -384,7 +390,7 @@ describe Travis::API::V3::Services::Job::Restart, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/job/#{job.id}/restart", {}, headers) }
 
       example { expect(last_response.status).to be == 403 }

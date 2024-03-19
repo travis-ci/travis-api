@@ -1,5 +1,5 @@
 describe Url do
-  subject { Url.create(:url => "http://example.com") }
+  subject { Url.create(url: "http://example.com") }
 
   describe ".shorten" do
     it "creates a new Url object if the url has not been shortened" do

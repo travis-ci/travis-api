@@ -3,6 +3,9 @@ describe Travis::API::V3::Services::Subscription::Pay, set_app: true, billing_sp
   let(:billing_auth_key) { 'secret' }
   let(:organization) { FactoryBot.create(:org, login: 'travis') }
 
+  let(:org_authorization) { { 'permissions' => ['account_billing_view','account_billing_update','account_plan_create','account_plan_view','account_plan_usage','account_plan_invoices','account_settings_create','account_settings_delete'] } }
+  before { stub_request(:get, %r((.+)/permissions/org/(.+))).to_return(status: 200, body: JSON.generate(org_authorization)) }
+
   before do
     Travis.config.billing.url = billing_url
     Travis.config.billing.auth_key = billing_auth_key

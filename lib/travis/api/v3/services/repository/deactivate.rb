@@ -3,9 +3,16 @@ module Travis::API::V3
     def run!(activate = false)
       repository = check_login_and_find(:repository)
       check_access(repository)
+
       return repo_migrated if migrated?(repository)
 
-      admin = access_control.admin_for(repository)
+      if access_control.class.name == 'Travis::API::V3::AccessControl::Internal'
+        admin = access_control.admin_for(repository)
+      else
+        admin = access_control.user
+      end
+
+      raise InsufficientAccess unless admin&.id
 
       remote_vcs_repository.set_hook(
         repository_id: repository.id,
@@ -42,7 +49,7 @@ module Travis::API::V3
         repository.key.destroy if repository.subversion?
       end
 
-      repository.update_attributes(active: activate)
+      repository.update(active: activate)
       save_audit(repository)
       result repository
     end

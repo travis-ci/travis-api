@@ -31,7 +31,7 @@ module Travis::API::V3
             permission:    "#{permission}".freeze
           }
           payload[:#{type}] = object if read?
-          raise InsufficientAccess.new('operation requires #{permission} access to #{type}', payload)
+          raise InsufficientAccess.new('operation requires #{permission} access to #{type}', **payload)
         end
       RUBY
     end
@@ -78,6 +78,10 @@ module Travis::API::V3
     def build_priorities?
       return false if object.owner_type != 'Organization'
       object.owner.build_priorities_enabled?
+    end
+
+    def authorizer
+      @_authorizer ||= Authorizer::new(access_control.user&.id)
     end
 
   end

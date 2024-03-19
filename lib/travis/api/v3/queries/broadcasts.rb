@@ -2,7 +2,7 @@ module Travis::API::V3
   class Queries::Broadcasts < Query
     params :active, prefix: :broadcast
 
-    def initialize(*)
+    def initialize(params, main_type, **args)
       super
       self.active = "true".freeze if active.nil?
     end

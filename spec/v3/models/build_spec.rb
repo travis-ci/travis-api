@@ -8,7 +8,7 @@ describe Travis::API::V3::Models::Build do
     let(:sender) { FactoryBot.create(:user) }
 
     before do
-      subject.update_attributes(sender_type: 'User', sender_id: sender.id)
+      subject.update(sender_type: 'User', sender_id: sender.id)
     end
 
     it 'always returns a V3 namespaced sender instance' do

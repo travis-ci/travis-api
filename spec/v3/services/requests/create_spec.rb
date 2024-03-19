@@ -3,10 +3,14 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
   let(:repo) { FactoryBot.create(:repository_without_last_build, owner_name: 'svenfuchs', name: 'minimal') }
   let(:request) { Travis::API::V3::Models::Request.last }
   let(:sidekiq_job) { Sidekiq::Queues['build_requests'].first }
-  let(:sidekiq_payload) { JSON.load(sidekiq_job['args'].first['payload']).deep_symbolize_keys }
-  let(:sidekiq_params) { sidekiq_job['args'].first.deep_symbolize_keys }
+  let(:sidekiq_payload) { JSON.parse(JSON.parse(sidekiq_job['args'].first)['payload']).deep_symbolize_keys }
+  let(:sidekiq_params) { JSON.parse(sidekiq_job['args'].first).deep_symbolize_keys }
   let(:remaining_requests) { 10 }
   let(:body) { JSON.load(last_response.body).deep_symbolize_keys }
+
+  let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_build_create', 'repository_state_update'] } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   before do
     ActiveRecord::Base.connection.execute("truncate requests cascade")
@@ -148,6 +152,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
 
   describe 'not authenticated' do
     before { post("/v3/repo/#{repo.id}/requests") }
+    let(:authorization) { { 'permissions' =>[] } }
 
     it { expect(last_response.status).to be == 403 }
     it { expect(body).to eq login_required }
@@ -162,6 +167,8 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
   end
 
   describe 'existing repository, no push access' do
+
+    let(:authorization) { { 'permissions' =>[] } }
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
     before { post("/v3/repo/#{repo.id}/requests", {}, headers) }
 
@@ -279,7 +286,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     end
 
     describe 'when the repository is inactive' do
-      before { repo.update_attributes!(active: false) }
+      before { repo.update!(active: false) }
       before { post("/v3/repo/#{repo.id}/requests", {}, headers) }
 
       it { expect(last_response.status).to be == 406 }
@@ -343,7 +350,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
     describe 'repo migrating' do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/requests", {}, headers) }
 
       it { expect(last_response.status).to be == 403 }
@@ -351,7 +358,7 @@ describe Travis::API::V3::Services::Requests::Create, set_app: true do
     end
 
     describe 'repo migrating' do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
 
       it { expect(last_response.status).to be == 403 }

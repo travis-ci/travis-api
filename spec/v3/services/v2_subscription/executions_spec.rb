@@ -2,13 +2,22 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
   let(:parsed_body) { JSON.load(last_response.body) }
   let(:billing_url) { 'http://billingfake.travis-ci.com' }
   let(:billing_auth_key) { 'secret' }
+  let(:user) { Travis::API::V3::Models::User.create(login: 'tester')}
   let(:repo) { Travis::API::V3::Models::Repository.where(owner_name: 'svenfuchs', name: 'minimal').first }
+
+  let(:authorization) { { 'permissions' => ['repository_settings_create', 'repository_settings_update', 'repository_state_update', 'repository_settings_delete'] } }
+
+  let(:authorization_roles) { { 'roles' => [] } }
 
   before do
     Travis.config.host = 'travis-ci.com'
     Travis.config.billing.url = billing_url
     Travis.config.billing.auth_key = billing_auth_key
   end
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_roles)) }
 
   context 'unauthenticated' do
     it 'responds 403' do
@@ -32,13 +41,15 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
     let(:per_page) { 25 }
     let(:from) { Date.today - 2.months }
     let(:to) { Date.today }
+
+    let(:authorization) { { 'permissions' => ['repository_log_view', 'repository_settings_read'] } }
     before do
       stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=#{page}&per_page=#{per_page}&from=#{from.to_s}&to=#{to.to_s}")
         .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
-        .to_return(body: JSON.dump([billing_executions_response_body]))
+        .to_return(body: [billing_executions_response_body])
       stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=0&per_page=0&from=#{from.to_s}&to=#{to.to_s}")
         .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
-        .to_return(body: JSON.dump([billing_executions_response_body]))
+        .to_return(body: [billing_executions_response_body])
     end
 
     it 'responds with list of executions' do
@@ -66,10 +77,10 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
           'sender_id' => 1,
           'credits_consumed' => 5,
           'user_license_credits_consumed' => 4,
-          'started_at' => Time.now.to_s,
-          'finished_at' => (Time.now + 10.minutes).to_s,
-          'created_at' => Time.now.to_s,
-          'updated_at' => Time.now.to_s,
+          'started_at' => Time.now.utc.iso8601,
+          'finished_at' => (Time.now + 10.minutes).utc.iso8601,
+          'created_at' => Time.now.utc.iso8601,
+          'updated_at' => Time.now.utc.iso8601,
           'repo_owner_name' => "svenfuchs",
           'repo_slug' => "svenfuchs/minimal",
           'sender_login' => "svenfuchs"
@@ -78,6 +89,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
     end
 
     it 'responds with list of executions per repo' do
+
       get("/v3/owner/#{user.login}/executions_per_repo?from=#{from.to_s}&to=#{to.to_s}", {}, headers)
 
       expect(last_response.status).to eq(200)
@@ -111,7 +123,20 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
                 "delete_key_pair"=>false,
                 "create_request"=>false,
                 "check_scan_results"=>false,
-                "admin"=>false
+                "admin"=>false,
+                "build_cancel" => false,
+                "build_create" => false,
+                "build_debug" => false,
+                "build_restart" => false,
+                "cache_delete" => false,
+                "cache_view" => false,
+                "settings_create" => false,
+                "settings_delete" => false,
+                "settings_read" => true,
+                "settings_update" => false,
+                "log_delete" => false,
+                "log_view" => true
+
               },
               "id"=>1,
               "name"=>"minimal",

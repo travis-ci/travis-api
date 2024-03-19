@@ -1,5 +1,8 @@
 module Travis::API::V3
   class Models::Branch < Model
+
+    self.table_name = 'branches'
+
     belongs_to :repository
     belongs_to :last_build, class_name: 'Travis::API::V3::Models::Build'.freeze
     has_many   :builds,  -> { where(event_type: 'push').order('builds.id DESC'.freeze) }, foreign_key: [:repository_id, :branch], primary_key: [:repository_id, :name]

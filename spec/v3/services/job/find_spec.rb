@@ -25,11 +25,15 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
                    }
   let(:parsed_body) { JSON.load(body) }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   before do
     # TODO should this go into the scenario? is it ok to keep it here?
-    job.update_attributes!(stage: stage)
-    job2.update_attributes!(config: config, stage: stage)
-    # for some reason update_attributes! doesn't update updated_at
+    job.update!(stage: stage, source_id: build.id, source_type: 'Build' , owner: repo.owner)
+    job2.update!(config: config, stage: stage)
+    # for some reason update! doesn't update updated_at
     # and it doesn't play well with out triggers (as triggers will update
     # updated_at and instance variable in tests will have a different value)
     job.reload
@@ -37,6 +41,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   end
 
   describe "fetching job on a public repository, no pull access" do
+
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view'] } }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/job/#{job.id}")     }
     example    { expect(last_response).to be_ok }
@@ -50,6 +56,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "restart"             => false,
         "debug"               => false,
         "delete_log"          => false,
+        "view_log"            => true,
         "prioritize"          => false },
       "id"                    => job.id,
       "allow_failure"         => job.allow_failure,
@@ -156,6 +163,8 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
     before        { repo.update_attribute(:private, true)                             }
     before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:delete_log?).and_return(true) }
     before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:prioritize?).and_return(true) }
+
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view', 'repository_build_cancel', 'repository_build_restart'] } }
     before        { get("/v3/job/#{job.id}", {}, headers)                             }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
@@ -169,6 +178,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "restart"             => true,
         "debug"               => false,
         "delete_log"          => true,
+        "view_log"            => true,
         "prioritize"          => true },
       "id"                    => job.id,
       "allow_failure"         => job.allow_failure,
@@ -237,6 +247,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
   end
 
   describe "config is correctly obfuscated" do
+    let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_log_view'] } }
     before     { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: false) }
     before     { get("/v3/job/#{job2.id}?include=job.config")     }
     example    { expect(last_response).to be_ok }
@@ -250,6 +261,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
         "restart"             => false,
         "debug"               => false,
         "delete_log"          => false,
+        "view_log"            => true,
         "prioritize"          => false },
       "id"                    => job2.id,
       "allow_failure"         => job2.allow_failure,
@@ -336,7 +348,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
           'Authorization'=>'token notset',
           'Connection'=>'keep-alive',
           'Keep-Alive'=>'30',
-          'User-Agent'=>'Faraday v0.17.3'
+          'User-Agent'=>'Faraday v2.7.10'
            }).
          to_return(status: 200, body: "{}", headers: {})
     end
@@ -358,7 +370,6 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
           'Authorization'=>'token notset',
           'Connection'=>'keep-alive',
           'Keep-Alive'=>'30',
-          'User-Agent'=>'Faraday v0.17.3'
            }).
          to_return(status: 200, body: "{}", headers: {})
 

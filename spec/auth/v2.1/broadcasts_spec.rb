@@ -1,7 +1,7 @@
 describe 'v2.1 broadcasts', auth_helpers: true, api_version: :'v2.1', set_app: true do
   let(:user) { FactoryBot.create(:user) }
 
-  before { Broadcast.create!(recipient: user) }
+  before { Broadcast.create!(recipient: user, recipient_type: 'User') }
 
   describe 'in public mode', mode: :public do
     describe 'GET /broadcasts' do

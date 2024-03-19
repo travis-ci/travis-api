@@ -8,7 +8,7 @@ unless login = ARGV.first
 end
 
 if user = User.find_by_login(login)
-  user.update_attributes!(suspended: true, suspended_at: Time.now.utc)
+  user.update!(suspended: true, suspended_at: Time.now.utc)
   puts "Suspending user id=#{user.id} login=#{login}"
   exit 0
 else

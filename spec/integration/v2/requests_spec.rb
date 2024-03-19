@@ -48,13 +48,13 @@ describe 'Requests', set_app: true do
     end
 
     context 'when the repo is migrating' do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post "/requests", { build_id: build.id }, headers }
       it { expect(last_response.status).to eq(403) }
     end
 
     context 'when the repo is migrated' do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post "/requests", { build_id: build.id }, headers }
       it { expect(last_response.status).to eq(403) }
     end

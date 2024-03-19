@@ -5,7 +5,14 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
   before    { org.save!                              }
   after     { org.delete                             }
 
+  let(:org_authorization) { { 'permissions' => ['account_billing_view','account_billing_update','account_plan_create','account_plan_view','account_plan_usage','account_plan_invoices','account_settings_create','account_settings_delete'] } }
+  let(:org_role_authorization) { { 'roles' => ['account_admin'] } }
+  before { stub_request(:get, %r((.+)/roles/org/(.+))).to_return(status: 200, body: JSON.generate(org_role_authorization)) }
+  before { stub_request(:get, %r((.+)/permissions/org/(.+))).to_return(status: 200, body: JSON.generate(org_authorization)) }
+
   describe 'existing org, public api' do
+    let(:org_role_authorization) { { 'roles' => [] } }
+    let(:org_authorization) { { 'permissions' => [] } }
     before  { Travis.config.public_mode = true }
     before  { get("/v3/org/#{org.id}") }
     example { expect(last_response).to be_ok }
@@ -13,7 +20,19 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "@type"            => "organization",
       "@href"            => "/v3/org/#{org.id}",
       "@representation"  => "standard",
-      "@permissions"     => { "read" => true, "sync" => false, "admin" => false },
+      "@permissions"     => { 
+        "read" => true, 
+        "sync" => false, 
+        "admin" => false,
+        "plan_usage"=>false,
+        "plan_view"=>false,
+        "plan_create"=>false,
+        "billing_update"=>false,
+        "billing_view"=>false,
+        "settings_delete"=>false,
+        "settings_create"=>false,
+        "plan_invoices"=>false
+      },
       "id"               => org.id,
       "login"            => "example-org",
       "name"             => nil,
@@ -36,6 +55,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
   describe 'existing educational org, private api, authorized user' do
     let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
+    let(:org_role_authorization) { { 'roles' => [] } }
+    let(:org_authorization) { { 'permissions' => ['account_billing_view', 'account_plan_invoices', 'account_plan_usage', 'account_plan_view', 'account_settings_create', 'account_settings_delete'] } }
     before  do
       org.memberships.create(user: user)
       org.save!
@@ -49,7 +70,19 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "@type"            => "organization",
       "@href"            => "/v3/org/#{org.id}",
       "@representation"  => "standard",
-      "@permissions"     => { "read" => true, "sync" => true, "admin" => false },
+      "@permissions"     => {
+        "read" => true,
+        "sync" => false,
+        "admin" => false,
+        "plan_usage"=>true,
+        "plan_view"=>true,
+        "plan_create"=>false,
+        "billing_update"=>false,
+        "billing_view"=>true,
+        "settings_delete"=>true,
+        "settings_create"=>true,
+        "plan_invoices"=>true
+      },
       "id"               => org.id,
       "login"            => "example-org",
       "name"             => nil,

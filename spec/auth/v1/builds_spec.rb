@@ -26,7 +26,7 @@ describe 'v1 builds', auth_helpers: true, api_version: :v1, set_app: true do
     end
 
     describe 'GET /builds?running=true' do
-      before { build.update_attributes(state: :started) }
+      before { build.update(state: :started) }
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
@@ -64,7 +64,7 @@ describe 'v1 builds', auth_helpers: true, api_version: :v1, set_app: true do
     end
 
     describe 'GET /builds?running=true' do
-      before { build.update_attributes(state: :started) }
+      before { build.update(state: :started) }
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
@@ -102,7 +102,7 @@ describe 'v1 builds', auth_helpers: true, api_version: :v1, set_app: true do
     end
 
     describe 'GET /builds?running=true' do
-      before { build.update_attributes(state: :started) }
+      before { build.update(state: :started) }
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
@@ -150,7 +150,7 @@ describe 'v1 builds', auth_helpers: true, api_version: :v1, set_app: true do
     end
 
     describe 'GET /builds?running=true' do
-      before { build.update_attributes(state: :started) }
+      before { build.update(state: :started) }
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: true }
       it(:invalid_token)      { should auth status: 403 }
@@ -188,7 +188,7 @@ describe 'v1 builds', auth_helpers: true, api_version: :v1, set_app: true do
     end
 
     describe 'GET /builds?running=true' do
-      before { build.update_attributes(state: :started) }
+      before { build.update(state: :started) }
       it(:with_permission)    { should auth status: 200, type: :json, empty: false }
       it(:without_permission) { should auth status: 200, type: :json, empty: false }
       it(:invalid_token)      { should auth status: 403 }

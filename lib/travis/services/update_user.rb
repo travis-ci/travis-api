@@ -10,8 +10,8 @@ module Travis
       attr_reader :result
 
       def run
-        @result = current_user.update_attributes!(attributes) if valid_locale?
-        true
+        @result = current_user.update!(attributes) if valid_locale?
+        current_user
       end
 
       def messages

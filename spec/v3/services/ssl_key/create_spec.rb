@@ -11,6 +11,10 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
   let(:other_token) { Travis::Api::App::AccessToken.create(user: other_user, app_id: 2) }
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
+  let(:authorization) { { 'permissions' => ['repository_settings_read', 'repository_settings_create'] } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+
   describe 'not authenticated' do
     before { post("/v3/repo/#{repo.id}/key_pair/generated") }
     include_examples 'not authenticated'
@@ -21,7 +25,10 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
       before do
         Travis::API::V3::Models::Permission.create(repository: repo, user: other_user, pull: true)
         post("/v3/repo/#{repo.id}/key_pair/generated", {}, 'HTTP_AUTHORIZATION' => "token #{other_token}")
+
       end
+
+      let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
       include_examples 'insufficient access to repo', 'create_key_pair'
     end
   end
@@ -66,7 +73,7 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/key_pair/generated", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -78,7 +85,7 @@ describe Travis::API::V3::Services::SslKey::Create, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/key_pair/generated", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }

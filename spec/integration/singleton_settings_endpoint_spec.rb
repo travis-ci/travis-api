@@ -1,6 +1,9 @@
+#require 'travis/api/app/endpoint/singleton_settings_endpoint'
 describe Travis::Api::App::SettingsEndpoint do
   let(:repo)    { Repository.by_slug('svenfuchs/minimal').first }
   let(:headers) { { 'HTTP_ACCEPT' => 'application/vnd.travis-ci.2+json' } }
+
+  before { stub_request(:get, %r((.+)/repo/(.+))).to_return(status: 401) }
 
   before do
     model_class = Class.new(Repository::Settings::Model) do
@@ -54,7 +57,7 @@ describe Travis::Api::App::SettingsEndpoint do
 
     describe 'PATCH /item' do
       context 'when the repo is migrating' do
-        before { repo.update_attributes(migration_status: "migrating") }
+        before { repo.update(migration_status: "migrating") }
 
         it "responds with 403" do
           body = { item: { name: 'a name', secret: 'a secret' } }.to_json
@@ -64,7 +67,7 @@ describe Travis::Api::App::SettingsEndpoint do
       end
 
       context 'when the repo is migrated' do
-        before { repo.update_attributes(migration_status: "migrated") }
+        before { repo.update(migration_status: "migrated") }
 
         it "responds with 403" do
           body = { item: { name: 'a name', secret: 'a secret' } }.to_json
@@ -124,7 +127,7 @@ describe Travis::Api::App::SettingsEndpoint do
 
     describe 'DELETE /item' do
       context 'when the repo is migrating' do
-        before { repo.update_attributes(migration_status: "migrating") }
+        before { repo.update(migration_status: "migrating") }
 
         it "responds with 403" do
           response = delete "/settings/item/#{repo.id}", {}, headers
@@ -133,7 +136,7 @@ describe Travis::Api::App::SettingsEndpoint do
       end
 
       context 'when the repo is migrated' do
-        before { repo.update_attributes(migration_status: "migrated") }
+        before { repo.update(migration_status: "migrated") }
 
         it "responds with 403" do
           response = delete "/settings/item/#{repo.id}", {}, headers

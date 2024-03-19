@@ -89,8 +89,11 @@ describe Travis::Services::FindBuilds do
     let(:org)  { FactoryBot.create(:org, login: :travis) }
     let(:private_repo)   { FactoryBot.create(:repository, owner: org, private: true) }
     let(:public_repo)    { FactoryBot.create(:repository, owner: org, private: false) }
-    let!(:private_build) { FactoryBot.create(:build, repository: private_repo, private: true) }
-    let!(:public_build)  { FactoryBot.create(:build, repository: public_repo, private: false) }
+
+    let(:private_repo_branch)    { Branch.find_by(repository_id: private_repo.id, name: 'master') }
+    let(:public_repo_branch)    { Branch.find_by(repository_id: public_repo.id, name: 'master') }
+    let!(:private_build) { FactoryBot.create(:build, repository: private_repo, private: true, branch: private_repo_branch) }
+    let!(:public_build)  { FactoryBot.create(:build, repository: public_repo, private: false, branch: public_repo_branch) }
 
     before { Travis.config.host = 'example.com' }
 

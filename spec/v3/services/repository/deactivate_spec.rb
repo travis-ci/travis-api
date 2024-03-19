@@ -8,10 +8,18 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
         body: JSON.dump(keys),
       )
   end
+
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  let(:authorization_role) { { 'roles' => ['repository_admin'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
+
   before do
     Travis.config.vcs.url = 'http://vcsfake.travis-ci.com'
     Travis.config.vcs.token = 'vcs-token'
-    repo.update_attributes!(active: true)
+    repo.update!(active: true)
   end
   describe "not authenticated" do
     before  { post("/v3/repo/#{repo.id}/deactivate")      }
@@ -36,13 +44,21 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
   end
   shared_examples 'repository deactivation' do
     describe 'existing repository, wrong access' do
-      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true) }
+      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+      before {
+        stub_request(:delete, "http://vcsfake.travis-ci.com/repos/#{repo.id}/hook?user_id=#{repo.owner_id}")
+          .to_return(
+            status: 200,
+            body: nil,
+          )
+      }
+      let(:authorization) { { 'permissions' => [] } }
       before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
       example 'is success' do
         expect(last_response.status).to eq 403
         expect(JSON.load(body)).to include(
           '@type' => 'error',
-          'error_type' => 'admin_access_required'
+          'error_type' => 'insufficient_access'
         )
       end
     end
@@ -54,7 +70,8 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
             body: nil,
           )
       end
-      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) }
+      before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true) 
+      }
       around do |ex|
         Travis.config.service_hook_url = 'https://url.of.listener.something'
         ex.run
@@ -76,6 +93,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
     it_behaves_like 'repository deactivation'
     describe "existing repository, no push access" do
+      let(:authorization) { { 'permissions' => [] } }
       before        { post("/v3/repo/#{repo.id}/deactivate", {}, headers)                 }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body).to_s).to include(
@@ -174,7 +192,14 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
       ex.run
       Travis.config.applications = apps
     end
-    it_behaves_like 'repository deactivation'
+    before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
+    example 'is success' do
+      expect(last_response.status).to eq 403
+      expect(JSON.load(body)).to include(
+        '@type' => 'error',
+        'error_type' => 'admin_access_required'
+      )
+    end
   end
   describe "existing repository, push access"
   # as this requires a call to github, and stubbing this request has proven difficult,
@@ -184,7 +209,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
     let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, admin: true, push: true, pull: true) }
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {
@@ -194,7 +219,7 @@ describe Travis::API::V3::Services::Repository::Deactivate, set_app: true do
       }}
     end
     describe "repo migrated" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { post("/v3/repo/#{repo.id}/deactivate", {}, headers) }
       example { expect(last_response.status).to be == 403 }
       example { expect(JSON.load(body)).to be == {

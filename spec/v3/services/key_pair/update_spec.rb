@@ -6,6 +6,9 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
   let(:auth_headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
   let(:json_headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
+  let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
+
+  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
   shared_examples 'paid' do
     describe 'not authenticated' do
       before { patch("/v3/repo/#{repo.id}/key_pair") }
@@ -22,6 +25,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
         describe 'correct user, wrong permissions' do
           let(:key) { OpenSSL::PKey::RSA.generate(2048) }
 
+          let(:authorization) { { 'permissions' => ['repository_settings_read'] } }
           before do
             Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true)
             repo.update_attribute(:settings, JSON.generate(ssh_key: { description: 'foo', value: Travis::Settings::EncryptedValue.new(key.to_pem), repository_id: repo.id }))
@@ -170,7 +174,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
   end
 
   context 'private repo' do
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
 
     include_examples 'paid'
   end
@@ -183,10 +187,10 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
 
   context do
     before { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, push: true, pull: true) }
-    before { repo.update_attributes(private: true) }
+    before { repo.update(private: true) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { patch("/v3/repo/#{repo.id}/key_pair", JSON.generate({}), auth_headers.merge(json_headers)) }
 
       example { expect(last_response.status).to be == 403 }
@@ -198,7 +202,7 @@ describe Travis::API::V3::Services::KeyPair::Update, set_app: true do
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrated") }
+      before { repo.update(migration_status: "migrated") }
       before { patch("/v3/repo/#{repo.id}/key_pair", JSON.generate({}), auth_headers.merge(json_headers)) }
 
       example { expect(last_response.status).to be == 403 }

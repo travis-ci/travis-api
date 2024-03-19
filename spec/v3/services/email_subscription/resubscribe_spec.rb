@@ -56,7 +56,7 @@ describe Travis::API::V3::Services::EmailSubscription::Resubscribe, set_app: tru
     before { delete("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers) }
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }
@@ -68,7 +68,7 @@ describe Travis::API::V3::Services::EmailSubscription::Resubscribe, set_app: tru
     end
 
     describe "repo migrating" do
-      before { repo.update_attributes(migration_status: "migrating") }
+      before { repo.update(migration_status: "migrating") }
       before { post("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers) }
 
       example { expect(last_response.status).to be == 403 }

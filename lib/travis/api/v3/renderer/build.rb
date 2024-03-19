@@ -24,6 +24,10 @@ module Travis::API::V3
       model.active_jobs.map{ |j| job(j.id) }
     end
 
+    def branch
+      V3::Models::Branch.find_by(repository_id: repository.id, name: model[:branch])
+    end
+
     def created_by
      return nil unless creator = model.created_by
      return creator if include?('build.created_by')

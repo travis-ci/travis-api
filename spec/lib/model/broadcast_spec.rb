@@ -17,17 +17,17 @@ describe Broadcast do
     end
 
     it 'finds a broadcast for the given user' do
-      to_user = Broadcast.create!(recipient: user)
+      to_user = Broadcast.create!(recipient: user, recipient_type: 'User')
       expect(broadcasts).to include(to_user)
     end
 
     it 'does not find a broadcast for a different user' do
-      to_user = Broadcast.create!(recipient: FactoryBot.create(:user, login: 'rkh'))
+      to_user = Broadcast.create!(recipient: FactoryBot.create(:user, login: 'rkh'),  recipient_type: 'User')
       expect(broadcasts).not_to include(to_user)
     end
 
     it 'finds a broadcast for orgs where the given user is a member' do
-      to_org = Broadcast.create!(recipient: org)
+      to_org = Broadcast.create!(recipient: org,  recipient_type: 'Organization')
       expect(broadcasts).to include(to_org)
     end
 
@@ -37,7 +37,7 @@ describe Broadcast do
     end
 
     it 'finds a broadcast for a repo where the given user has any permissions' do
-      to_repo = Broadcast.create!(recipient: repo)
+      to_repo = Broadcast.create!(recipient: repo, recipient_type: 'Repository')
       expect(broadcasts).to include(to_repo)
     end
 
@@ -66,36 +66,36 @@ describe Broadcast do
     end
 
     it 'finds a broadcast for the given repo' do
-      to_repo = Broadcast.create!(recipient: repo)
+      to_repo = Broadcast.create!(recipient: repo, recipient_type: 'Repository')
       expect(broadcasts).to include(to_repo)
     end
 
     it 'does not find a broadcast for a different repo' do
-      to_repo = Broadcast.create!(recipient: FactoryBot.create(:repository, name: 'sinatra'))
+      to_repo = Broadcast.create!(recipient: FactoryBot.create(:repository, name: 'sinatra'), recipient_type: 'Repository')
       expect(broadcasts).not_to include(to_repo)
     end
 
     it 'finds a broadcast for an org this repo belongs to' do
-      repo.update_attributes(owner: org)
-      to_org = Broadcast.create!(recipient: org)
+      repo.update(owner: org, owner_type: 'Organization')
+      to_org = Broadcast.create!(recipient: org,  recipient_type: 'Organization')
       expect(broadcasts).to include(to_org)
     end
 
     it 'does not find a broadcast for a different org' do
-      repo.update_attributes(owner: org)
-      to_org = Broadcast.create!(recipient: FactoryBot.create(:org, login: 'sinatra'))
+      repo.update(owner: org)
+      to_org = Broadcast.create!(recipient: FactoryBot.create(:org, login: 'sinatra'),  recipient_type: 'Organization')
       expect(broadcasts).not_to include(to_org)
     end
 
     it 'finds a broadcast for a user this repo belongs to' do
-      repo.update_attributes(owner: user)
-      to_org = Broadcast.create!(recipient: user)
+      repo.update(owner: user, owner_type: 'User')
+      to_org = Broadcast.create!(recipient: user,  recipient_type: 'User')
       expect(broadcasts).to include(to_org)
     end
 
     it 'does not find a broadcast for a different user' do
-      repo.update_attributes(owner: org)
-      to_org = Broadcast.create!(recipient: FactoryBot.create(:user, login: 'rkh'))
+      repo.update(owner: org)
+      to_org = Broadcast.create!(recipient: FactoryBot.create(:user, login: 'rkh'),  recipient_type: 'User')
       expect(broadcasts).not_to include(to_org)
     end
   end

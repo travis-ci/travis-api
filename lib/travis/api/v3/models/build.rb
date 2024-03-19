@@ -5,6 +5,8 @@ module Travis::API::V3
   class Models::Build < Model
 
     HIGH_PRIORITY = 5
+
+    self.table_name = 'builds'
     
     belongs_to :commit
     belongs_to :tag
@@ -13,7 +15,7 @@ module Travis::API::V3
     belongs_to :repository, autosave: true
     belongs_to :owner, polymorphic: true
     belongs_to :sender, polymorphic: true
-    belongs_to :config, foreign_key: :config_id, class_name: Models::BuildConfig
+    belongs_to :config, foreign_key: :config_id, class_name: 'Models::BuildConfig'.freeze
 
     has_many :stages
 
@@ -29,7 +31,7 @@ module Travis::API::V3
       class_name:  'Travis::API::V3::Models::Job'.freeze
 
     has_one :branch,
-      foreign_key: [:repository_id, :name],
+      foreign_key: :last_build_id,
       primary_key: [:repository_id, :branch],
       class_name:  'Travis::API::V3::Models::Branch'.freeze
 

@@ -66,7 +66,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
               'Connection' => 'keep-alive',
               'Content-Type' => 'application/json',
               'Keep-Alive' => '30',
-              'User-Agent' => 'Faraday v0.17.3'
+              'User-Agent' => 'Faraday v2.7.10'
             }).
           to_return(status: 200, body: "", headers: {})
       end
@@ -90,6 +90,12 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
             body: JSON.dump(name: 'Piotr Sarnacki', login: 'drogus', gravatar_id: '123', id: 456, foo: 'bar'), headers: {'X-OAuth-Scopes' => 'repo, user, new_scope'}
           )
 
+          WebMock.stub_request(:head, "https://api.github.com/user")
+          .to_return(
+            status: 200,
+          )
+
+
         cookie_jar['travis.state-github'] = state
         Travis.redis.sadd('github:states', state)
       end
@@ -102,7 +108,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
         let(:state) { 'github-state:::https://travis-ci.com/?any=params' }
 
         it 'it does allow redirect' do
-          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response = get "/auth/handshake?code=1234&state=#{CGI.escape(state)}"
           expect(response.status).to eq(200)
         end
       end
@@ -111,7 +117,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
         let(:state) { 'github-state:::https://dark-corner-of-web.com/' }
 
         it 'does not allow redirect' do
-          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response = get "/auth/handshake?code=1234&state=#{CGI.escape(state)}"
           expect(response.status).to eq(401)
           expect(response.body).to eq("target URI not allowed")
         end
@@ -121,7 +127,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
         let(:state) { 'github-state:::https://travis-ci.com/<sCrIpt' }
 
         it 'does not allow redirect' do
-          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response = get "/auth/handshake?code=1234&state=#{CGI.escape(state)}"
           expect(response.status).to eq(401)
           expect(response.body).to eq("target URI not allowed")
         end
@@ -131,7 +137,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
         let(:state) { 'github-state:::https://travis-ci.com/<img% src="" onerror="badcode()"' }
 
         it 'does not allow redirect' do
-          response = get "/auth/handshake?code=1234&state=#{URI.encode(state)}"
+          response = get "/auth/handshake?code=1234&state=#{CGI.escape(state)}"
           expect(response.status).to eq(401)
           expect(response.body).to eq("target URI not allowed")
         end
@@ -149,6 +155,12 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
             body: JSON.dump(name: 'Piotr Sarnacki', login: 'drogus', gravatar_id: '123', id: 456, foo: 'bar'), headers: {'X-OAuth-Scopes' => 'repo, user, new_scope'}
           )
 
+        WebMock.stub_request(:head, "https://api.github.com/user")
+          .to_return(
+            status: 200,
+          )
+
+
         cookie_jar['travis.state-github'] = state
         Travis.redis.sadd('github:states', state)
         ENV['TRAVIS_SITE'] = nil
@@ -162,7 +174,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
         let(:state) { 'github-state:::https://travis-ci.com/?any=params' }
 
         it 'it does allow redirect' do
-          response = get "/auth/handshake/github?code=1234&state=#{URI.encode(state)}"
+          response = get "/auth/handshake/github?code=1234&state=#{CGI.escape(state)}"
           expect(response.status).to eq(200)
         end
       end
@@ -171,7 +183,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
         let(:state) { 'github-state:::https://dark-corner-of-web.com/' }
 
         it 'does not allow redirect' do
-          response = get "/auth/handshake/github?code=1234&state=#{URI.encode(state)}"
+          response = get "/auth/handshake/github?code=1234&state=#{CGI.escape(state)}"
           expect(response.status).to eq(401)
           expect(response.body).to eq("target URI not allowed")
         end
@@ -181,7 +193,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
         let(:state) { 'github-state:::https://travis-ci.com/<sCrIpt' }
 
         it 'does not allow redirect' do
-          response = get "/auth/handshake/github?code=1234&state=#{URI.encode(state)}"
+          response = get "/auth/handshake/github?code=1234&state=#{CGI.escape(state)}"
           expect(response.status).to eq(401)
           expect(response.body).to eq("target URI not allowed")
         end
@@ -191,7 +203,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
         let(:state) { 'github-state:::https://travis-ci.com/<img% src="" onerror="badcode()"' }
 
         it 'does not allow redirect' do
-          response = get "/auth/handshake/github?code=1234&state=#{URI.encode(state)}"
+          response = get "/auth/handshake/github?code=1234&state=#{CGI.escape(state)}"
           expect(response.status).to eq(401)
           expect(response.body).to eq("target URI not allowed")
         end
@@ -217,7 +229,8 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
       let(:state) { '1234' }
 
       it 'passes the cluster param' do
-        response = get "/auth/handshake/assembla?code=1234&state=#{URI.encode(state)}&cluster=#{cluster}"
+        response = get "/auth/handshake/assembla?code=1234&state=#{CGI.escape(state)}&cluster=#{cluster}"
+
         expect(response.status).to eq(302)
       end
     end
@@ -272,7 +285,7 @@ describe Travis::Api::App::Endpoint::Authorization, billing_spec_helper: true do
       allow(GH).to receive(:with).with(token: 'private repos', client_id: nil).and_return double(:[] => user.login, :headers => {'x-oauth-scopes' => 'repo'}, :to_hash => data)
       allow(GH).to receive(:with).with(token: 'public repos', client_id: nil).and_return  double(:[] => user.login, :headers => {'x-oauth-scopes' => 'public_repo'}, :to_hash => data)
       allow(GH).to receive(:with).with(token: 'no repos', client_id: nil).and_return      double(:[] => user.login, :headers => {'x-oauth-scopes' => 'user'}, :to_hash => data)
-      allow(GH).to receive(:with).with(token: 'invalid token', client_id: nil).and_raise(Faraday::Error::ClientError, 'CLIENT ERROR!')
+      allow(GH).to receive(:with).with(token: 'invalid token', client_id: nil).and_raise(Faraday::ClientError, 'CLIENT ERROR!')
     end
 
     def get_token(github_token)

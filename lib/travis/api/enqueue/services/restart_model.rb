@@ -17,7 +17,7 @@ module Travis
             ::Sidekiq::Client.push(
               'queue'   => 'hub',
               'class'   => 'Travis::Hub::Sidekiq::Worker',
-              'args'    => [event, payload]
+              'args'    => [event, payload].map! { |arg| arg.to_json }
             )
 
             Result.new(value: payload)
@@ -107,6 +107,10 @@ module Travis
 
         def build_permission?
           # nil value is considered true
+          return true if authorizer.for_repo(repository.id,'repository_build_restart')
+
+          false
+        rescue Travis::API::V3::AuthorizerError
           return false if repository.permissions.find_by(user_id: current_user.id).build == false
           return false if repository.owner_type == 'Organization' && repository.owner.memberships.find_by(user_id: current_user.id)&.build_permission == false
 
@@ -125,6 +129,10 @@ module Travis
 
         def required_role
           Travis.config.roles.reset_model
+        end
+
+        def authorizer
+          @_authorizer ||= Travis::API::V3::Authorizer::new(current_user&.id)
         end
 
         class Result

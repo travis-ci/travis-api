@@ -11,7 +11,7 @@ describe Travis::Services::UpdateHook do
   end
 
   it 'finds the repo by the given params' do
-    expect(user).to receive(:service_hook).with(id: repo.id).and_return(repo)
+    expect(user).to receive(:service_hook).with({id: repo.id}).and_return(repo)
     service.run
   end
 
@@ -51,7 +51,7 @@ describe Travis::Services::UpdateHook do
     expect(Sidekiq::Client).to receive(:push).with(
       'queue' => 'sync',
       'class' => 'Travis::GithubSync::Worker',
-      'args'  => [:sync_repo, repo_id: 1, user_id: user.id]
+      'args'  => [:sync_repo, repo_id: 1, user_id: user.id].map! {|arg| arg.to_json}
     )
     service.run
   end

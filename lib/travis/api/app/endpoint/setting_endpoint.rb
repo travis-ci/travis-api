@@ -1,12 +1,7 @@
-require 'travis/api/app'
-
 class Travis::Api::App
   class SettingsEndpoint < Endpoint
     include ActiveSupport::Callbacks
     extend ActiveSupport::Concern
-
-    define_callbacks :after_save
-    set_callback :after_save, :after, :save_audit
 
     set(:prefix) { "/settings/" << name[/[^:]+$/].underscore }
 
@@ -43,14 +38,22 @@ class Travis::Api::App
 
     # Rails style methods for easy overriding
     def index
+
+      auth_for_repo(repo.id, 'repository_settings_read')
+
       respond_with(collection, type: name, version: :v2)
     end
 
     def show
+      auth_for_repo(repo.id, 'repository_settings_read')
+
       respond_with(record, type: singular_name, version: :v2)
     end
 
     def update
+
+      auth_for_repo(repo.id, 'repository_settings_update')
+
       disallow_migrating!(repo)
 
       record.update(JSON.parse(request.body.read)[singular_name])
@@ -63,7 +66,7 @@ class Travis::Api::App
         } if is_env_var?
 
         repo_settings.save
-        run_callbacks :after_save if is_env_var?
+        save_audit if is_env_var?
 
         respond_with(record, type: singular_name, version: :v2)
       else
@@ -73,6 +76,9 @@ class Travis::Api::App
     end
 
     def create
+
+      auth_for_repo(repo.id, 'repository_settings_create')
+
       disallow_migrating!(repo)
 
       record = collection.create(JSON.parse(request.body.read)[singular_name])
@@ -85,7 +91,7 @@ class Travis::Api::App
         } if is_env_var?
 
         repo_settings.save
-        run_callbacks :after_save if is_env_var?
+        save_audit if is_env_var?
 
         respond_with(record, type: singular_name, version: :v2)
       else
@@ -95,6 +101,8 @@ class Travis::Api::App
     end
 
     def destroy
+      auth_for_repo(repo.id, 'repository_settings_delete')
+
       disallow_migrating!(repo)
 
       record = collection.destroy(params[:id]) || record_not_found
@@ -105,7 +113,7 @@ class Travis::Api::App
       } if is_env_var?
 
       repo_settings.save
-      run_callbacks :after_save if is_env_var?
+      save_audit if is_env_var?
 
       respond_with(record, type: singular_name, version: :v2)
     end

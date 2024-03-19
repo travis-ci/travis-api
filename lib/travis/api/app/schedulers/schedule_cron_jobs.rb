@@ -40,7 +40,7 @@ class Travis::Api::App
             cron.needs_new_build? ? cron.enqueue : cron.skip_and_schedule_next_build
           rescue => e
             Metriks.meter("api.v3.cron_scheduler.enqueue.error").mark
-            Raven.capture_exception(e, tags: { 'cron_id' => cron.try(:id) })
+            Sentry.capture_exception(e, tags: { 'cron_id' => cron.try(:id) })
             next
           end
         end

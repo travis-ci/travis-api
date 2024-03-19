@@ -22,7 +22,7 @@ class Travis::Api::App
       #       }
       #     }
       get '/', scope: :private do
-        respond_with current_user
+        respond_with current_user, type: :user
       end
 
       get '/permissions', scope: :private do
@@ -41,11 +41,11 @@ class Travis::Api::App
 
       get '/:id', scope: :private do
         pass unless current_user.id.to_s == params[:id]
-        respond_with current_user
+        respond_with current_user, type: :user
       end
 
       put '/:id?', scope: :private do
-        respond_with service(:update_user, params[:user])
+        respond_with service(:update_user, params[:user]), type: :user
       end
 
       post '/sync', scope: :private do

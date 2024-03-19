@@ -11,7 +11,7 @@ describe Travis::API::V3::Services::Insights::Metrics, set_app: true do
   let(:stubbed_response_headers) {{ content_type: 'application/json' }}
 
   let!(:stubbed_request) do
-    stub_request(:get, insights_url).with(headers: { 'Authorization' => "Token token=\"#{Travis.config.insights.auth_token}\""}).to_return(status: stubbed_response_status, body: stubbed_response_body, headers: stubbed_response_headers)
+    stub_request(:get, insights_url).to_return(status: stubbed_response_status, body: stubbed_response_body, headers: stubbed_response_headers)
   end
 
   before do

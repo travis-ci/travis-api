@@ -150,7 +150,7 @@ module Travis::API::V3
 
     def perform_async(identifier, *args)
       class_name, queue = Query.sidekiq_queue(identifier)
-      ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => args)
+      ::Sidekiq::Client.push('queue'.freeze => queue, 'class'.freeze => class_name, 'args'.freeze => args.map! {|arg| arg.to_json})
     end
 
     def includes?(key)
@@ -205,7 +205,7 @@ module Travis::API::V3
         collection = collection.joins(field.to_sym)
       end
 
-      first ? collection.reorder(line) : collection.order(line)
+      first ? collection.reorder(Arel.sql(line)) : collection.order(Arel.sql(line))
     end
 
     def sort_join?(collection, field)
