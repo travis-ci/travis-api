@@ -18,6 +18,14 @@ class Organization < Travis::Model
     ensure_preferences
   end
 
+  after_initialize do
+    ensure_preferences
+  end
+
+  before_save do
+    ensure_preferences
+  end
+
   def education?
     Travis::Features.owner_active?(:educational_org, self)
   end

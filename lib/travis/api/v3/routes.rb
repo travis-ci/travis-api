@@ -470,9 +470,5 @@ module Travis::API::V3
       get :stats, '/stats'
     end
 
-    hidden_resource :leads do
-      route '/leads'
-      post :create
-    end
   end
 end

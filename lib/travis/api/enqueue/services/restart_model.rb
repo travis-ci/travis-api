@@ -21,6 +21,8 @@ module Travis
             )
 
             Result.new(value: payload)
+
+            Result.new(value: payload)
           else
             Result.new(error: @cause_of_denial || 'restart failed')
           end
@@ -33,6 +35,9 @@ module Travis
         def billing?
           # there is no billing for .org
           return true if Travis.config.org?
+
+          # there is no billing for .enterprise
+          return true if !!Travis.config.enterprise
 
           @_billing_ok ||= begin
             jobs = target.is_a?(Job) ? [target] : target.matrix

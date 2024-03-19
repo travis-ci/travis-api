@@ -30,7 +30,7 @@ module Travis::API::V3
     class ProxyClient
       def initialize(endpoint, auth_token)
         @connection = Faraday::Connection.new(URI(endpoint)) do |conn|
-          conn.headers[:Authorization] = "Token token=\"#{auth_token}\""
+          conn.token_auth auth_token
           conn.response :json, content_type: 'application/json'
           conn.adapter Faraday.default_adapter
         end
