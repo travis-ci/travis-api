@@ -194,7 +194,6 @@ class Travis::Api::App
       #
       # json(:repository_key)
       get '/:owner_name/:name/key' do
-
         repo = service(:find_repo, params).run
         halt 404 unless repo
 
@@ -203,9 +202,9 @@ class Travis::Api::App
       end
 
       post '/:owner_name/:name/key' do
-
         repo = service(:find_repo, params).run
         halt 404 unless repo
+
 
         auth_for_repo(repo&.id, 'repository_settings_create')
         service = service(:regenerate_repo_key, params)
