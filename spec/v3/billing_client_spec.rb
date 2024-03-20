@@ -306,18 +306,6 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     end
   end
 
-  describe '#pay_v2' do
-    subject { billing.pay_v2(subscription_id) }
-
-    it 'requests to retry payment' do
-      stubbed_request = stub_billing_request(:post, "/v2/subscriptions/#{subscription_id}/pay", auth_key: auth_key, user_id: user_id)
-        .to_return(status: 200, body: JSON.dump(billing_v2_subscription_response_body('id' => subscription_id, 'client_secret' => 'client_secret', 'owner' => { 'type' => 'Organization', 'id' => organization.id })))
-
-      expect { subject }.to_not raise_error
-      expect(stubbed_request).to have_been_made
-    end
-  end
-
   describe '#trials' do
     subject { billing.trials }
     let(:trial_id) { rand(999) }

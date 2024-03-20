@@ -71,16 +71,6 @@ module Travis::API::V3
     end
 
     def all_v2
-      data = connection.get('/v2/subscriptions').body
-      subscriptions = data.fetch('plans').map do |subscription_data|
-        Travis::API::V3::Models::V2Subscription.new(subscription_data)
-      end
-      permissions = data.fetch('permissions')
-
-      Travis::API::V3::Models::SubscriptionsCollection.new(subscriptions, permissions)
-    end
-
-    def all_v2
       data = body(connection.get('/v2/subscriptions'))
       subscriptions = data.fetch('plans').map do |subscription_data|
         Travis::API::V3::Models::V2Subscription.new(subscription_data)
@@ -102,18 +92,6 @@ module Travis::API::V3
 
     def get_invoices_for_subscription(id)
       body(connection.get("/subscriptions/#{id}/invoices")).map do |invoice_data|
-        Travis::API::V3::Models::Invoice.new(invoice_data)
-      end
-    end
-
-    def get_invoices_for_v2_subscription(id)
-      body(connection.get("/v2/subscriptions/#{id}/invoices")).map do |invoice_data|
-        Travis::API::V3::Models::Invoice.new(invoice_data)
-      end
-    end
-
-    def get_invoices_for_v2_subscription(id)
-      connection.get("/v2/subscriptions/#{id}/invoices").body.map do |invoice_data|
         Travis::API::V3::Models::Invoice.new(invoice_data)
       end
     end
@@ -320,8 +298,6 @@ module Travis::API::V3
         conn.headers['Content-Type'] = 'application/json'
         conn.request :json
         conn.response :json
-        conn.options[:open_timeout] = timeout
-        conn.options[:timeout] = timeout
         conn.options[:open_timeout] = timeout
         conn.options[:timeout] = timeout
         conn.adapter :net_http

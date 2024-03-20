@@ -21,8 +21,6 @@ module Travis
             )
 
             Result.new(value: payload)
-
-            Result.new(value: payload)
           else
             Result.new(error: @cause_of_denial || 'restart failed')
           end
