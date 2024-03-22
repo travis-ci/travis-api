@@ -3,7 +3,8 @@ module Travis::API::V3
     include Models::Owner
 
     attr_reader :id, :plan, :permissions, :source, :billing_info, :credit_card_info, :owner, :status, :valid_to, :canceled_at,
-                :client_secret, :payment_intent, :addons, :auto_refill, :available_standalone_addons, :created_at, :scheduled_plan_name
+                :client_secret, :payment_intent, :addons, :auto_refill, :available_standalone_addons, :created_at, :scheduled_plan_name,
+                :cancellation_requested
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
@@ -31,6 +32,7 @@ module Travis::API::V3
       @valid_to = attributes.fetch('valid_to')
       @canceled_at = attributes.fetch('canceled_at')
       @scheduled_plan_name = attributes.fetch('scheduled_plan')
+      @cancellation_requested = attributes.fetch('cancellation_requested')
     end
   end
 

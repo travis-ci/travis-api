@@ -209,6 +209,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
           'status' => nil,
           'valid_to' => nil,
           'scheduled_plan_name' => nil,
+          'cancellation_requested' => false,
           'plan' => {
             '@type' => 'v2_plan_config',
             '@representation' => 'standard',
