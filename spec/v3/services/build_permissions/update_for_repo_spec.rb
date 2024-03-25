@@ -7,6 +7,7 @@ describe Travis::API::V3::Services::BuildPermissions::UpdateForRepo, set_app: tr
 
   before { stub_request(:patch, %r((.+)/repo/(.+))).to_return(status: 200) }
   before { stub_request(:delete, %r((.+)/repo/(.+))).to_return(status: 200) }
+  before { stub_request(:delete, %r((.+)/repo_build_permission/(.+))).to_return(status: 200) }
 
   context 'not authenticated' do
     it 'returns access error' do

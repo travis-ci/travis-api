@@ -6,6 +6,7 @@ describe Travis::API::V3::Queries::BuildPermissions do
 
   before { stub_request(:delete, %r((.+)/org/(.+))).to_return(status: 200) }
   before { stub_request(:delete, %r((.+)/repo/(.+))).to_return(status: 200) }
+  before { stub_request(:delete, %r((.+)/repo_build_permission/(.+))).to_return(status: 200) }
   let(:user) { FactoryBot.create(:user) }
 
   subject { described_class.new({}, 'BuildPermissions') }
