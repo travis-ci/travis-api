@@ -60,7 +60,7 @@ describe Travis::API::V3::Queries::BuildPermissions do
     before { repo.permissions.create(build: true, user: user) }
 
     it 'updates build permissions' do
-      expect_any_instance_of(Travis::API::V3::Authorizer).to receive(:delete_repo_roles).with(repo.id, ['repository_builds_triggerer', 'repository_builds_restarter'])
+      expect_any_instance_of(Travis::API::V3::Authorizer).to receive(:delete_repo_build_permission).with(repo.id)
       expect(subject.update_for_repo(repo, [user.id], false)).to eq(1)
       expect(repo.permissions.first.build).to eq(false)
     end
