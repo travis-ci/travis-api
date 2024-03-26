@@ -75,10 +75,6 @@ module Travis::Api
       FileUtils.touch('/tmp/app-initialized') if ENV['DYNO'] # Heroku
     end
 
-    def self.new(options = {})
-      setup(options)
-      super()
-    end
 
     def self.deploy_sha
       @deploy_sha ||= ENV['HEROKU_SLUG_COMMIT'] || SecureRandom.hex(5)
@@ -186,6 +182,7 @@ module Travis::Api
 
     # Rack protocol
     def call(env)
+      #app.after { ActiveRecord::Base.clear_active_connections! }
       app.call(env)
     rescue
       if Endpoint.production?

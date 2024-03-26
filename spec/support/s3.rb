@@ -34,6 +34,7 @@ module Support
         FakeBucket.new(@contents.select { |o| o.key.start_with? prefix })
       end
 
+
       def add(key, options = {})
         contents << FakeObject.new(key, options)
       end

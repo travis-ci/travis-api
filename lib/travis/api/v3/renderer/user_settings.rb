@@ -12,6 +12,8 @@ module Travis::API::V3
     end
 
     def allow?(setting)
+      return unless setting
+
       case setting[:name]
       when :allow_config_imports then repo.private?
       else true

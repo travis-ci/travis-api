@@ -1,4 +1,4 @@
-describe User do
+describe Organization do
   let(:org) { FactoryBot.create(:org, :login => 'travis-organization') }
 
   describe 'educational_org' do
@@ -13,6 +13,20 @@ describe User do
 
     it 'returns false if the organization has not been flagged as educational_org' do
       expect(org.education?).to be false
+    end
+  end
+
+  describe '#preferences' do
+    it 'keeps them as ruby hash' do
+      org.preferences = { 'a' => 'b', 'c' => 'd' }.to_json
+      org.save!
+
+      expect(org.reload.preferences).to be_a(Hash)
+
+      org.preferences = { 'a' => 'b', 'c' => 'd' }
+      org.save!
+
+      expect(org.reload.preferences).to be_a(Hash)
     end
   end
 end

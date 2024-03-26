@@ -2,13 +2,17 @@ FROM ruby:3.2.2-slim
 
 LABEL maintainer Travis CI GmbH <support+travis-api-docker-images@travis-ci.com>
 
-# packages required for bundle install
 RUN ( \
+   mkdir -p /app/vendor /app/cache; \
+   groupadd -r travis -g 1000 && \
+   useradd -u 1000 -r -g travis -s /bin/sh -c "travis user" -d "/app" travis;\
+   chown -R travis:travis /app; \
    apt-get update ; \
    apt-get install -y --no-install-recommends git make gcc g++ libpq-dev libjemalloc-dev libcurl4\
    && rm -rf /var/lib/apt/lists/* \
 )
 
+USER travis
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
 # throw errors if Gemfile has been modified since Gemfile.lock
@@ -28,4 +32,4 @@ RUN gem install --user-install executable-hooks
 
 COPY . /app
 
-CMD ./script/server-buildpacks
+CMD ["./script/server-buildpacks"]

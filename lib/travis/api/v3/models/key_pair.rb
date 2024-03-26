@@ -18,6 +18,8 @@ module Travis::API::V3
     def public_key
       return unless value.decrypt
       OpenSSL::PKey::RSA.new(value.decrypt).public_key.to_s
+    rescue OpenSSL::PKey::RSAError
+      nil
     end
 
     def to_h

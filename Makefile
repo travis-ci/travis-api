@@ -27,7 +27,7 @@ DOCKER ?= docker
 
 .PHONY: docker-build
 docker-build:
-	$(DOCKER) build -t $(DOCKER_DEST) .
+	$(DOCKER) build --no-cache --pull -t $(DOCKER_DEST) . -f Dockerfile.tcie
 
 .PHONY: docker-login
 docker-login:

@@ -147,6 +147,10 @@ class Build < Travis::Model
     end
   end
 
+  def state
+    (super || :created).to_sym
+  end
+
   def matrix_ids
     matrix.map(&:id)
   end

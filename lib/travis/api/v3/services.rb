@@ -37,7 +37,6 @@ module Travis::API::V3
     Job                   = Module.new { extend Services }
     Jobs                  = Module.new { extend Services }
     KeyPair               = Module.new { extend Services }
-    Leads                 = Module.new { extend Services }
     Lint                  = Module.new { extend Services }
     Log                   = Module.new { extend Services }
     ScanResult            = Module.new { extend Services }

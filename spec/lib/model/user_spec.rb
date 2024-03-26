@@ -191,4 +191,18 @@ describe User do
       expect(user.tokens.rss.count).to eq(1)
     end
   end
+
+  describe '#preferences' do
+    it 'keeps them as ruby hash' do
+      user.preferences = { 'a' => 'b', 'c' => 'd' }.to_json
+      user.save!
+
+      expect(user.reload.preferences).to be_a(Hash)
+
+      user.preferences = { 'a' => 'b', 'c' => 'd' }
+      user.save!
+
+      expect(user.reload.preferences).to be_a(Hash)
+    end
+  end
 end

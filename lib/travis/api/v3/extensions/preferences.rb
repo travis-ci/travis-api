@@ -1,3 +1,5 @@
+require 'active_support/all'
+
 module Travis::API::V3
   module Extensions
     module Preferences

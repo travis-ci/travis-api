@@ -1,5 +1,6 @@
 require 'aws-sdk-s3'
 require 'google-cloud-storage'
+require 'travis/services/base'
 
 module Travis
   module Services
