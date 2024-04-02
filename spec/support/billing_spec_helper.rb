@@ -211,61 +211,6 @@ module Support
       }.deep_merge(attributes)
     end
 
-    def billing_addons_response_body
-      [
-        {
-          "id" => "1",
-          "name" => "OSS Build Credits",
-          "type" => "credit_public",
-          "recurring" => false,
-          "current_usage" => {
-              "id" => 1,
-              "addon_id" => 1,
-              "addon_quantity" => 40000,
-              "addon_usage" => 0,
-              "remaining" => 40000,
-              "purchase_date" => "2017-11-28T00:09:59.502Z",
-              "valid_to" => "2017-12-28T00:09:59.502Z",
-              "status" => "subscribed",
-              "active" => true
-          }
-        },
-        {
-          "id" => 2,
-          "name" => "Build Credits",
-          "type" => "credit_private",
-          "recurring" => false,
-          "current_usage" => {
-            "id" => 2,
-            "addon_id" => 2,
-            "addon_quantity" => 10000,
-            "addon_usage" => 0,
-            "remaining" => 10000,
-            "purchase_date" => "2017-11-28T00:09:59.502Z",
-            "valid_to" => "",
-            "status" => "subscribed",
-            "active" => true
-          }
-        }
-      ]
-    end
-
-    def billing_addon_usage_response_body(attributes = {})
-      {
-        'id' => 1,
-        'addon_id' => 1,
-        'addon_quantity' => 100,
-        'addon_usage' => 0,
-        'remaining' => 100,
-        'purchase_date' => '2020-09-14T11:25:02.612Z',
-        'valid_to' => '2020-10-14T11:25:02.612Z',
-        'status' => 'subscribed',
-        'active' => true,
-        'created_at' => '2020-09-14T11:25:02.614Z',
-        'updated_at' => '2020-09-14T11:25:02.614Z'
-      }.deep_merge(attributes)
-    end
-
     def billing_plan_response_body(attributes={})
       {
         "id" => "travis-ci-ten-builds",

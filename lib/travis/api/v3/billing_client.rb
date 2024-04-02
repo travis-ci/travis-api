@@ -96,6 +96,12 @@ module Travis::API::V3
       end
     end
 
+    def get_invoices_for_v2_subscription(id)
+      body(connection.get("/v2/subscriptions/#{id}/invoices")).map do |invoice_data|
+        Travis::API::V3::Models::Invoice.new(invoice_data)
+      end
+    end
+
     def trials
       body(connection.get('/trials')).map do | trial_data |
         Travis::API::V3::Models::Trial.new(trial_data)

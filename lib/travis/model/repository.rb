@@ -204,8 +204,11 @@ class Repository < Travis::Model
   end
 
   def settings=(value)
-    value = value.is_a?(String) ? JSON.parse(value) : value
-    super(value)
+    if value.is_a?(String) || value.nil?
+      super(value)
+    else
+      super(value.to_json)
+    end
   end
 
   def users_with_permission(permission)
