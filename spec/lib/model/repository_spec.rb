@@ -428,12 +428,12 @@ describe Repository do
       repo.settings = {'build_pushes' => false}.to_json
       repo.save
 
-      expect(repo.reload.attributes['settings']).to be_a(Hash)
+      expect(JSON.parse(repo.reload.attributes['settings'])).to be_a(Hash)
 
       repo.settings = {'build_pushes' => false}
       repo.save
 
-      expect(repo.reload.attributes['settings']).to be_a(Hash)
+      expect(JSON.parse(repo.reload.attributes['settings'])).to be_a(Hash)
     end
   end
 end
