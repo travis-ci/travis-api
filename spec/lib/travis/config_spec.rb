@@ -79,7 +79,7 @@ describe Travis::Config do
         :database => 'travis_test',
         :encoding => 'unicode',
         :min_messages => 'warning',
-        :variables => { :statement_timeout => 45000 }
+        :variables => { :statement_timeout => 10000 }
       })
     end
   end
