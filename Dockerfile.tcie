@@ -9,7 +9,7 @@ RUN ( \
    chown -R travis:travis /app; \
    apt-get update ; \
    apt-get upgrade -y ; \
-   apt-get install -y --no-install-recommends git make gcc g++ libpq-dev libjemalloc-dev xz-utils libcurl curl \
+   apt-get install -y --no-install-recommends git make gcc g++ libpq-dev libjemalloc-dev xz-utils libcurl4 curl \
    && rm -rf /var/lib/apt/lists/*; \
    gem update --system; \
    bundle config set app_config /app; \
