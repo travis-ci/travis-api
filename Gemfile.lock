@@ -352,7 +352,7 @@ GEM
       msgpack (>= 0.4.3)
       optimist (>= 3.0.0)
     redcarpet (3.5.1)
-    redis (4.2.5)
+    redis (4.3.1)
     redis-namespace (1.8.1)
       redis (>= 3.0.4)
     redlock (1.2.2)
@@ -495,7 +495,7 @@ DEPENDENCIES
   rb-fsevent (~> 0.9.1)
   rbtrace
   redcarpet (>= 3.2.3)
-  redis (~> 4.2.0)
+  redis (~> 4.3.0)
   redis-namespace
   redlock (~> 1.2.2)
   rerun
