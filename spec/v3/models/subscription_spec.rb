@@ -6,6 +6,7 @@ describe Travis::API::V3::Models::Subscription do
       'permissions' => { 'read' => true, 'write' => true },
       'valid_to' => Date.today.to_s,
       'created_at' => Date.today.to_s,
+      'cancellation_requested' => false,
       'plan' => {
         'id' => 123,
         'name' => 'some_name',

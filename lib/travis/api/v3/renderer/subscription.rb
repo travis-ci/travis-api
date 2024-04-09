@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Renderer::Subscription < ModelRenderer
-    representation(:standard, :id, :valid_to, :plan, :coupon, :discount, :status, :source, :owner, :client_secret, :billing_info, :credit_card_info, :payment_intent, :created_at)
+    representation(:standard, :id, :valid_to, :plan, :coupon, :discount, :status, :source, :owner, :client_secret, :billing_info, :credit_card_info, :payment_intent, :created_at, :cancellation_requested)
 
     def billing_info
       Renderer.render_model(model.billing_info, mode: :standard) unless model.billing_info.nil?

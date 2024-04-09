@@ -38,6 +38,12 @@ module Travis::API::V3
       client.cancel_subscription(params['subscription.id'], reason_data)
     end
 
+    def pause(user_id)
+      reason_data = params.dup.tap { |h| h.delete('subscription.id') }
+      client = BillingClient.new(user_id)
+      client.pause_subscription(params['subscription.id'], reason_data)
+    end
+
     def update_creditcard(user_id)
       client = BillingClient.new(user_id)
       client.update_creditcard(params['subscription.id'], params['token'])

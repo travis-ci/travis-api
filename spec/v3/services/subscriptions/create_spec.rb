@@ -122,6 +122,7 @@ describe Travis::API::V3::Services::Subscriptions::Create, set_app: true, billin
             'annual' => false
           },
           'client_secret' => 'client_secret',
+          'cancellation_requested' => false,
           'coupon' => '',
           'status' => 'canceled',
           'source' => 'stripe',
