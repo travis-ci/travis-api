@@ -10,7 +10,7 @@ module Travis::API::V3
         end
       rescue AuthorizerError
         #nop
-      end if params.include?('organization_id')
+      end if !Travis.config.legacy_roles && params.include?('organization_id')
 
       result query(:v2_plans).all(access_control.user.id)
     end

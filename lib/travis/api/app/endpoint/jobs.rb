@@ -32,7 +32,7 @@ class Travis::Api::App
 
         service = Travis::Enqueue::Services::CancelModel.new(current_user, { job_id: params[:id] })
 
-        auth_for_repo(service&.target&.repository&.id, 'repository_build_cancel')
+        auth_for_repo(service&.target&.repository&.id, 'repository_build_cancel') unless Travis.config.legacy_roles
 
         if !service.authorized?
           json = { error: {
@@ -65,7 +65,7 @@ class Travis::Api::App
 
         service = Travis::Enqueue::Services::RestartModel.new(current_user, { job_id: params[:id] })
 
-        auth_for_repo(service&.repository&.id, 'repository_build_restart')
+        auth_for_repo(service&.repository&.id, 'repository_build_restart') unless Travis.config.legacy_roles
         disallow_migrating!(service.repository)
 
         result = if !service.accept?

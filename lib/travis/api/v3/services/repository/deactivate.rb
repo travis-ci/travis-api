@@ -6,7 +6,7 @@ module Travis::API::V3
 
       return repo_migrated if migrated?(repository)
 
-      if access_control.class.name == 'Travis::API::V3::AccessControl::Internal'
+      if Travis.config.legacy_roles || access_control.class.name == 'Travis::API::V3::AccessControl::Internal'
         admin = access_control.admin_for(repository)
       else
         admin = access_control.user
