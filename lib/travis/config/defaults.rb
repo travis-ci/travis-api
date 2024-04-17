@@ -2,7 +2,6 @@ require 'travis/config'
 
 module Travis
   class Config < Hashr
-
     class << self
       def logs_api_url
         ENV['TRAVIS_API_LOGS_API_URL'] ||
