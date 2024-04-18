@@ -43,8 +43,8 @@ module Travis
             amqp:                 { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             closeio:              { key: 'key' },
             gdpr:                 {},
-            database:             { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
-            db:                   { max_statement_timeout_in_seconds: 15, slow_host_max_statement_timeout_in_seconds: 60},
+            database:             { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: ENV['TRAVIS_DB_STATEMENT_TIMEOUT'] || 10000 } },
+            db:                   { max_statement_timeout_in_seconds: 15, slow_host_max_statement_timeout_in_seconds: ENV['TRAVIS_MAX_DB_STATEMENT_TIMEOUT'] || 60},
             log_options:          { s3: { access_key_id: '', secret_access_key: ''}},
             s3:                   { access_key_id: '', secret_access_key: ''},
             pusher:               { app_id: 'app-id', key: 'key', secret: 'secret' },
@@ -93,7 +93,8 @@ module Travis
             insights:             { endpoint: 'https://insights.travis-ci.dev/', auth_token: 'secret' },
             authorizer:           { url: 'http://authorizer', auth_key: 'secret' },
             recaptcha:            { endpoint: 'https://www.google.com', secret: ENV['RECAPTCHA_SECRET_KEY'] || '' },
-            antifraud:            { captcha_max_failed_attempts: 3, captcha_block_duration: 24, credit_card_max_failed_attempts: 3, credit_card_block_duration: 24 }
+            antifraud:            { captcha_max_failed_attempts: 3, captcha_block_duration: 24, credit_card_max_failed_attempts: 3, credit_card_block_duration: 24 },
+            legacy_roles:         false
 
     default :_access => [:key]
 

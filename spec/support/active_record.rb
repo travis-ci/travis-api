@@ -12,6 +12,7 @@ ActiveRecord::Base.establish_connection(Travis.config.database.to_h)
 
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :transaction
+DatabaseCleaner.allow_remote_database_url = true
 
 module Support
   module ActiveRecord

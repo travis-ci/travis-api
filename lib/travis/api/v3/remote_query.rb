@@ -80,7 +80,7 @@ module Travis::API::V3
             s3_config[:secret_access_key]
           ),
           region: s3_config[:region] || 'us-east-2',
-          endpoint: s3_config[:hostname]
+          endpoint: endpoint
         )
       else
         Aws::S3::Client.new(
@@ -91,6 +91,10 @@ module Travis::API::V3
           region: s3_config[:region] || 'us-east-2'
         )
       end
+    end
+
+    def endpoint
+      s3_config[:hostname]&.index('http') == 0 ? s3_config[:hostname] : "https://#{s3_config[:hostname]}"
     end
 
     def s3_objects

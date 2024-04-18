@@ -17,6 +17,10 @@ describe Travis::API::V3::Queries::BuildBackup do
     }
 
     before do
+      stub_request(:post, 'https://www.googleapis.com/oauth2/v4/token').
+        to_return(status: 200, body: '{}', headers: { 'Content-Type' => 'application/json' })
+      stub_request(:get, /o\/#{build_backup.file_name}\?alt=media/).
+        to_return(status: 200, body: content, headers: { 'Content-Type' => 'application/json' })
       stub_request(:post, "https://oauth2.googleapis.com/token").
         to_return(:status => 200, :body => "{}", :headers => {"Content-Type" => "application/json"})
       stub_request(:get,%r((.+))).with(

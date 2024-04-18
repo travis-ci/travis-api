@@ -1,4 +1,5 @@
 language: ruby
+group: edge
 
 import:
   - travis-ci/build-configs:db-setup.yml
@@ -19,12 +20,11 @@ env:
     - CI_NODE_INDEX=1
     - CI_NODE_INDEX=2
 
-cache: bundler
-
 services:
   - redis-server
 
 before_install:
+  - 'gem install rubygems-update -v 3.4.22'
   - 'gem update --system'
 
 jobs:

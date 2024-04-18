@@ -31,6 +31,8 @@ module Travis::API::V3
     end
 
     def allowance
+      return BillingClient.minimal_allowance_response(id) if !!Travis.config.enterprise
+
       return BillingClient.default_allowance_response(id) if Travis.config.org?
       return BillingClient.default_allowance_response(id) unless access_control.user
 

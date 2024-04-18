@@ -420,4 +420,20 @@ describe Repository do
       expect(repo.users_with_permission(:admin)).not_to include(user_wrong_permission)
     end
   end
+
+  describe '#settings' do
+    let(:repo)   { FactoryBot.create(:repository, name: 'foobarbaz') }
+
+    it 'ensures settings are always a hash' do
+      repo.settings = {'build_pushes' => false}.to_json
+      repo.save
+
+      expect(JSON.parse(repo.reload.attributes['settings'])).to be_a(Hash)
+
+      repo.settings = {'build_pushes' => false}
+      repo.save
+
+      expect(JSON.parse(repo.reload.attributes['settings'])).to be_a(Hash)
+    end
+  end
 end

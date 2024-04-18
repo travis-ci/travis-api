@@ -16,7 +16,7 @@ class Travis::Api::App
     end
 
     def update
-      auth_for_repo(parent.repository.id, 'repository_settings_update')
+      auth_for_repo(parent.repository.id, 'repository_settings_update') unless Travis.config.legacy_roles
 
       disallow_migrating!(parent.repository)
 
@@ -32,7 +32,7 @@ class Travis::Api::App
     end
 
     def destroy
-      auth_for_repo(parent.repository.id, 'repository_settings_delete')
+      auth_for_repo(parent.repository.id, 'repository_settings_delete') unless Travis.config.legacy_roles
 
       disallow_migrating!(parent.repository)
 
