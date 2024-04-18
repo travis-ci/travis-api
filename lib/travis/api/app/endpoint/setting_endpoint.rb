@@ -39,20 +39,20 @@ class Travis::Api::App
     # Rails style methods for easy overriding
     def index
 
-      auth_for_repo(repo.id, 'repository_settings_read')
+      auth_for_repo(repo.id, 'repository_settings_read') unless Travis.config.legacy_roles
 
       respond_with(collection, type: name, version: :v2)
     end
 
     def show
-      auth_for_repo(repo.id, 'repository_settings_read')
+      auth_for_repo(repo.id, 'repository_settings_read') unless Travis.config.legacy_roles
 
       respond_with(record, type: singular_name, version: :v2)
     end
 
     def update
 
-      auth_for_repo(repo.id, 'repository_settings_update')
+      auth_for_repo(repo.id, 'repository_settings_update') unless Travis.config.legacy_roles
 
       disallow_migrating!(repo)
 
@@ -77,7 +77,7 @@ class Travis::Api::App
 
     def create
 
-      auth_for_repo(repo.id, 'repository_settings_create')
+      auth_for_repo(repo.id, 'repository_settings_create') unless Travis.config.legacy_roles
 
       disallow_migrating!(repo)
 
@@ -101,7 +101,7 @@ class Travis::Api::App
     end
 
     def destroy
-      auth_for_repo(repo.id, 'repository_settings_delete')
+      auth_for_repo(repo.id, 'repository_settings_delete') unless Travis.config.legacy_roles
 
       disallow_migrating!(repo)
 
