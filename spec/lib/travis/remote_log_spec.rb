@@ -14,7 +14,7 @@ describe Travis::RemoteLog do
       attr_accessor :body
       attr_accessor :key
       def initialize(data)
-        @body = data 
+        @body = data
         @key = 'key'
       end
     end
@@ -24,7 +24,6 @@ describe Travis::RemoteLog do
     allow_any_instance_of(::Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived).and_return(file)
     allow_any_instance_of(::Travis::RemoteLog::ArchiveClient).to receive(:fetch_archived_log_content).and_return(file.body)
   end
-
 
   it 'has a default client' do
     expect(described_class::Remote.new.send(:client)).to_not be_nil
@@ -227,6 +226,35 @@ describe Travis::RemoteLog do
     allow(Time).to receive(:now).and_return(now)
 
     expect(subject.clear!(user)).to eq(content)
+  end
+
+  context 'when the log is not archived' do
+    let(:local_content) { 'Content from DB' }
+
+    before do
+      subject.archived_at = nil
+      subject.archive_verified = false
+      subject.content = local_content
+    end
+
+    it 'does not fetch archived content' do
+      expect(subject).not_to receive(:archived_log_content)
+      from_json = JSON.parse(subject.to_json).fetch('log')
+      expect(from_json.fetch('body')).to eq(local_content)
+    end
+  end
+
+  context 'when the log is archived' do
+    before do
+      subject.archived_at = Time.now
+      subject.archive_verified = true
+    end
+
+    it 'fetches archived content' do
+      expect(subject).to receive(:archived_log_content).and_return(archived_content)
+      from_json = JSON.parse(subject.to_json).fetch('log')
+      expect(from_json.fetch('body')).to eq(archived_content)
+    end
   end
 end
 
