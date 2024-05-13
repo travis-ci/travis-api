@@ -18,6 +18,16 @@ NDlDSE5OAQIDBAUG
 -----END OPENSSH PRIVATE KEY-----"
   }
 
+  let(:private_key_ecdsa2) {
+"-----BEGIN EC PRIVATE KEY-----
+MIHcAgEBBEIBmZrR2UTV14mmdfrFTlRqP1YnMtiNXgsU7Xhmj9n08XZkYHvQkT34
+R1aYYyWiTw8hN1NlogNf5FCMS8r5KeS+tvqgBwYFK4EEACOhgYkDgYYABAHioHp7
+ZORB46eq33p5bfa8T+hLCJdPLP9E4UZkSHB0HFAOHB8YiMo48JnvQSCQbvro2ykE
+1TLfmB/vQwraz2zR1wA/6qCHne1CLS3X8M0IPukRo3j7W1+J08+lSY4o68oa0bUL
+QVH+IcYT4suxaGF9Agu2bxGkAGHvbgaOwFng9RIn3w==
+-----END EC PRIVATE KEY-----"
+  }
+
   subject { Travis::API::V3::Models::CustomKey.new }
 
   it 'must save valid private key' do
@@ -32,6 +42,13 @@ NDlDSE5OAQIDBAUG
 
     expect(key.name).to eq(name)
     expect(key.fingerprint).to eq('ca:b4:4d:ee:34:27:8b:6b:18:52:69:0a:5b:c0:75:16')
+  end
+
+  it 'must save ecdsa valid private key' do
+    key = subject.save_key!(owner_type, owner_id, name, '', private_key_ecdsa2, added_by)
+
+    expect(key.name).to eq(name)
+    expect(key.fingerprint).to eq('69:d4:be:73:b6:d3:7b:78:b5:09:d0:4e:cf:3b:b2:3e')
   end
 
   it 'must not save invalid private key' do

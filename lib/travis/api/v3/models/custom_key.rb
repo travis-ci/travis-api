@@ -30,20 +30,31 @@ module Travis::API::V3
     def get_public_key(key)
       OpenSSL::PKey::RSA.new(key).public_key
     rescue OpenSSL::PKey::RSAError
-      parsed_key = SSHData::PrivateKey.parse_openssh(key)
-      return nil unless parsed_key && parsed_key.length
+      begin
+        parsed_key = SSHData::PrivateKey.parse_openssh(key)
 
-      bytes = if parsed_key[0]&.public_key.respond_to?(:public_key_bytes)
-        parsed_key[0]&.public_key.public_key_bytes
-      elsif parsed_key[0]&.public_key.respond_to?(:pk)
-        parsed_key[0]&.public_key.pk
-      else
-        nil
+        return nil unless parsed_key && parsed_key.length
+
+
+        bytes = if parsed_key[0]&.public_key.respond_to?(:public_key_bytes)
+                  parsed_key[0]&.public_key.public_key_bytes
+                elsif parsed_key[0]&.public_key.respond_to?(:pk)
+                  parsed_key[0]&.public_key.pk
+                else
+                  nil
+                end
+
+        return nil unless bytes
+
+        "-----BEGIN PUBLIC KEY-----\n#{Base64.encode64(bytes)}\n-----END PUBLIC KEY-----\n"
+      rescue SSHData::DecodeError
+        begin
+          pkey = OpenSSL::PKey::EC.new(key)
+          pkey.public_to_pem
+        rescue => e
+          nil
+        end
       end
-
-      return nil unless bytes
-
-      "-----BEGIN PUBLIC KEY-----\n#{Base64.encode64(bytes)}\n-----END PUBLIC KEY-----\n"
     end
 
     def valid_pem?
@@ -58,8 +69,13 @@ module Travis::API::V3
       return false unless key
 
       true
-    rescue SSHData::DecodeError
-      false
+    rescue SSHData::DecodeError, SSHData::DecryptError
+      begin
+        res =  OpenSSL::PKey::EC.new(private_key, '')
+        return true
+      rescue => e
+        false
+      end
     end
 
     private
@@ -69,10 +85,12 @@ module Travis::API::V3
       public_ssh_rsa = "\x00\x00\x00\x07ssh-rsa" + rsa_key.e.to_s(0) + rsa_key.n.to_s(0)
       OpenSSL::Digest::MD5.new(public_ssh_rsa).hexdigest.scan(/../).join(':')
     rescue OpenSSL::PKey::RSAError
-      key = get_public_key(source)
-      return false unless key
+      begin
+        key = get_public_key(source)
+        return false unless key
 
-      OpenSSL::Digest::MD5.new(key).hexdigest.scan(/../).join(':')
+        OpenSSL::Digest::MD5.new(key).hexdigest.scan(/../).join(':')
+      end
     end
   end
 end
