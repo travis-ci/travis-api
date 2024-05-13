@@ -92,6 +92,7 @@ class Repository::Settings < Travis::Settings
   attribute :builds_only_with_travis_yml, Boolean, default: false
   attribute :build_pushes, Boolean, default: true
   attribute :build_pull_requests, Boolean, default: true
+  attribute :build_releases, Boolean, default: true
   attribute :maximum_number_of_builds, Integer
   attribute :ssh_key, SshKey
   attribute :timeout_hard_limit
