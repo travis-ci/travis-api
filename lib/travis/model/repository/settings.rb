@@ -3,6 +3,7 @@ require 'coercible'
 require 'travis/settings'
 require 'travis/settings/encrypted_value'
 require 'openssl'
+require 'ssh_data'
 
 class Repository::Settings < Travis::Settings
   class EnvVar < Travis::Settings::Model
@@ -38,12 +39,31 @@ class Repository::Settings < Travis::Settings
       # it seems there is no easy way to check if key
       # needs a pass phrase with ruby's openssl bindings,
       # that's why we need to manually check that
-      if value.decrypt.to_s =~ /ENCRYPTED/
-        errors.add(:value, :key_with_a_passphrase)
-      else
-        errors.add(:value, :not_a_private_key)
+      unless validate_nonrsa
+       if value.decrypt.to_s =~ /ENCRYPTED/
+          errors.add(:value, :key_with_a_passphrase)
+        else
+          errors.add(:value, :not_a_private_key)
+        end
       end
     end
+
+    def validate_nonrsa
+      key = SSHData::PrivateKey.parse_openssh(value.decrypt)
+      unless key
+        if value.decrypt.to_s =~ /ENCRYPTED/
+          errors.add(:value, :key_with_a_passphrase)
+        else
+          errors.add(:value, :not_a_private_key)
+        end
+        return false
+      end
+
+      true
+    rescue SSHData::DecodeError
+      false
+    end
+
 
     def repository
       Repository.find(repository_id)

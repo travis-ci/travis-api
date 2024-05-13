@@ -40,6 +40,8 @@ gem 'nakayoshi_fork'
 gem 'sidekiq'
 gem 'redis-namespace'
 gem 'marginalia', git: 'https://github.com/travis-ci/marginalia', branch: 'prd-ruby-upgrade-dev'
+gem 'ssh_data'
+gem 'ed25519'
 
 gem 'rbtrace'
 gem 'memory_profiler'
