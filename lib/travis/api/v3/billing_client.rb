@@ -186,6 +186,11 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
+    def pause_subscription(id, reason_data)
+      response = connection.post("/subscriptions/#{id}/pause", reason_data)
+      handle_subscription_response(response)
+    end
+
     def plans_for_organization(organization_id)
       body(connection.get("/plans_for/organization/#{organization_id}")).map do |plan_data|
         Travis::API::V3::Models::Plan.new(plan_data)
@@ -240,6 +245,11 @@ module Travis::API::V3
 
     def cancel_v2_subscription(id, reason_data)
       response = connection.post("/v2/subscriptions/#{id}/cancel", reason_data)
+      handle_subscription_response(response)
+    end
+
+    def pause_v2_subscription(id, reason_data)
+      response = connection.post("/v2/subscriptions/#{id}/pause", reason_data)
       handle_subscription_response(response)
     end
 

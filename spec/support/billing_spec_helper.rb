@@ -17,6 +17,7 @@ module Support
         "status" => "canceled",
         "source" => "stripe",
         "created_at" => "2017-11-28T00:09:59.502Z",
+        "cancellation_requested" => false,
         "billing_info" => {
           "first_name" => "ana",
           "last_name" => "rosas",
@@ -52,6 +53,7 @@ module Support
         'valid_to' => nil,
         'canceled_at' => nil,
         "scheduled_plan" => nil,
+        "cancellation_requested" => false,
         "plan_config" => {
           'id' => 'pro_tier_plan',
           'name' => 'Pro Tier Plan',

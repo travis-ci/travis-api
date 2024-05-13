@@ -6,6 +6,7 @@ describe Travis::API::V3::Queries::BuildPermissions do
 
   before { stub_request(:delete, %r((.+)/org/(.+))).to_return(status: 200) }
   before { stub_request(:delete, %r((.+)/repo/(.+))).to_return(status: 200) }
+  before { stub_request(:delete, %r((.+)/repo_build_permission/(.+))).to_return(status: 200) }
   let(:user) { FactoryBot.create(:user) }
 
   subject { described_class.new({}, 'BuildPermissions') }
@@ -59,6 +60,7 @@ describe Travis::API::V3::Queries::BuildPermissions do
     before { repo.permissions.create(build: true, user: user) }
 
     it 'updates build permissions' do
+      expect_any_instance_of(Travis::API::V3::Authorizer).to receive(:delete_repo_build_permission).with(repo.id)
       expect(subject.update_for_repo(repo, [user.id], false)).to eq(1)
       expect(repo.permissions.first.build).to eq(false)
     end

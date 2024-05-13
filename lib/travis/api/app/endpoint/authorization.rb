@@ -256,7 +256,9 @@ class Travis::Api::App
             response.set_cookie(cookie_name(params[:provider]), value: state, httponly: true)
             redirect to(vcs_data['authorize_url'])
           end
-        rescue ::Travis::RemoteVCS::ResponseError
+        rescue ::Travis::RemoteVCS::ResponseError => error
+          Travis.logger.error(error.message)
+
           halt 401, "Can't login"
         end
 
@@ -392,7 +394,7 @@ class Travis::Api::App
           data    = GH.with(token: token.to_s, client_id: nil) { GH['user'] }
           scopes  = parse_scopes data.headers['x-oauth-scopes']
           manager = UserManager.new(data, token, drop_token)
-          
+
           # The new GitHub fine-grained tokens do not include scopes header yet
           # or any way of retrieving scopes so we just have to assume that
           # user gave all necessary permissions
