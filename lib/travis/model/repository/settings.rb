@@ -39,7 +39,7 @@ class Repository::Settings < Travis::Settings
       # it seems there is no easy way to check if key
       # needs a pass phrase with ruby's openssl bindings,
       # that's why we need to manually check that
-      unless validate_nonrsa
+      unless valid_nonrsa?
        if value.decrypt.to_s =~ /ENCRYPTED/
           errors.add(:value, :key_with_a_passphrase)
         else
@@ -48,7 +48,7 @@ class Repository::Settings < Travis::Settings
       end
     end
 
-    def validate_nonrsa
+    def valid_nonrsa?
       key = SSHData::PrivateKey.parse_openssh(value.decrypt)
       unless key
         if value.decrypt.to_s =~ /ENCRYPTED/

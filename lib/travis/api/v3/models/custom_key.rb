@@ -19,7 +19,7 @@ module Travis::API::V3
 
       if self.valid?
         self.fingerprint = calculate_fingerprint(private_key)
-        self.public_key = get_public_key(private_key).to_s
+        self.public_key = OpenSSL::PKey::RSA.new(private_key).public_key.to_s
 
         self.save!
       end
@@ -27,55 +27,11 @@ module Travis::API::V3
       self
     end
 
-    def get_public_key(key)
-      OpenSSL::PKey::RSA.new(key).public_key
-    rescue OpenSSL::PKey::RSAError
-      begin
-        parsed_key = SSHData::PrivateKey.parse_openssh(key)
-
-        return nil unless parsed_key && parsed_key.length
-
-
-        bytes = if parsed_key[0]&.public_key.respond_to?(:public_key_bytes)
-                  parsed_key[0]&.public_key.public_key_bytes
-                elsif parsed_key[0]&.public_key.respond_to?(:pk)
-                  parsed_key[0]&.public_key.pk
-                else
-                  nil
-                end
-
-        return nil unless bytes
-
-        "-----BEGIN PUBLIC KEY-----\n#{Base64.encode64(bytes)}\n-----END PUBLIC KEY-----\n"
-      rescue SSHData::DecodeError
-        begin
-          pkey = OpenSSL::PKey::EC.new(key)
-          pkey.public_to_pem
-        rescue => e
-          nil
-        end
-      end
-    end
-
     def valid_pem?
       private_key && OpenSSL::PKey::RSA.new(private_key)
       true
     rescue OpenSSL::PKey::RSAError
-      validate_nonrsa
-    end
-
-    def validate_nonrsa
-      key = SSHData::PrivateKey.parse_openssh(private_key)
-      return false unless key
-
-      true
-    rescue SSHData::DecodeError, SSHData::DecryptError
-      begin
-        res =  OpenSSL::PKey::EC.new(private_key, '')
-        return true
-      rescue => e
-        false
-      end
+      false
     end
 
     private
@@ -84,13 +40,6 @@ module Travis::API::V3
       rsa_key = OpenSSL::PKey::RSA.new(source)
       public_ssh_rsa = "\x00\x00\x00\x07ssh-rsa" + rsa_key.e.to_s(0) + rsa_key.n.to_s(0)
       OpenSSL::Digest::MD5.new(public_ssh_rsa).hexdigest.scan(/../).join(':')
-    rescue OpenSSL::PKey::RSAError
-      begin
-        key = get_public_key(source)
-        return false unless key
-
-        OpenSSL::Digest::MD5.new(key).hexdigest.scan(/../).join(':')
-      end
     end
   end
 end
