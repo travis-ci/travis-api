@@ -16,9 +16,9 @@ module Travis::API::V3
       public_ssh_rsa = "\x00\x00\x00\x07ssh-rsa" + rsa_key.e.to_s(0) + rsa_key.n.to_s(0)
       OpenSSL::Digest::MD5.new(public_ssh_rsa).hexdigest.scan(/../).join(':')
     rescue => e
-      key = SSHData::PublicKey.parse_openssh(source)
-      if key&.length > 0
-        OpenSSL::Digest::MD5.new(key[0]&.public_key&.pk).hexdigest.scan(/../).join(':')
+      keys = SSHData::PrivateKey.parse_openssh(source)
+      if keys.any?
+        OpenSSL::Digest::MD5.new(keys[0]&.public_key&.pk).hexdigest.scan(/../).join(':')
       end
     end
 

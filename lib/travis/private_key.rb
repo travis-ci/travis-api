@@ -16,8 +16,8 @@ class PrivateKey
   end
 
   def handle_non_rsa
-      nkey = ::SSHData::PrivateKey.parse_openssh(key)
-      if nkey&.length > 0
+      nkeys = ::SSHData::PrivateKey.parse_openssh(key)
+      if nkeys.any?
         OpenSSL::Digest::MD5.new(nkey[0]&.public_key&.pk).hexdigest.scan(/../).join(':')
       end
   rescue
