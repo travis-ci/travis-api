@@ -59,8 +59,6 @@ class Repository::Settings < Travis::Settings
       end
     end
 
-
-
     def repository
       Repository.find(repository_id)
     end
