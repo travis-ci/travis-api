@@ -36,16 +36,16 @@ class Repository::Settings < Travis::Settings
       key = OpenSSL::PKey::RSA.new(value.decrypt, '')
       raise NotAPrivateKeyError unless key.private?
     rescue OpenSSL::PKey::RSAError, NotAPrivateKeyError
-      add_errors unless valid_nonrsa?
+      validate_nonrsa
     end
 
-    def valid_nonrsa?
+    def validate_nonrsa
       keys = SSHData::PrivateKey.parse_openssh(value.decrypt)
       add_errors unless keys.any?
-      !!keys.any?
     rescue SSHData::DecodeError
       add_errors
-      raise NotAPrivateKeyError
+    rescue SSHData::DecryptError
+      errors.add(:value, :key_with_a_passphrase)
     end
 
     def add_errors
