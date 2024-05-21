@@ -36,33 +36,29 @@ class Repository::Settings < Travis::Settings
       key = OpenSSL::PKey::RSA.new(value.decrypt, '')
       raise NotAPrivateKeyError unless key.private?
     rescue OpenSSL::PKey::RSAError, NotAPrivateKeyError
-      # it seems there is no easy way to check if key
-      # needs a pass phrase with ruby's openssl bindings,
-      # that's why we need to manually check that
-      unless valid_nonrsa?
-       if value.decrypt.to_s =~ /ENCRYPTED/
-          errors.add(:value, :key_with_a_passphrase)
-        else
-          errors.add(:value, :not_a_private_key)
-        end
-      end
+      add_errors unless valid_nonrsa?
     end
 
     def valid_nonrsa?
-      key = SSHData::PrivateKey.parse_openssh(value.decrypt)
-      unless key
-        if value.decrypt.to_s =~ /ENCRYPTED/
-          errors.add(:value, :key_with_a_passphrase)
-        else
-          errors.add(:value, :not_a_private_key)
-        end
-        return false
-      end
-
-      true
+      keys = SSHData::PrivateKey.parse_openssh(value.decrypt)
+      add_errors unless keys.any?
+      !!keys.any?
     rescue SSHData::DecodeError
-      false
+      add_errors
+      raise NotAPrivateKeyError
     end
+
+    def add_errors
+      # it seems there is no easy way to check if key
+      # needs a pass phrase with ruby's openssl bindings,
+      # that's why we need to manually check that
+      if value.decrypt.to_s =~ /ENCRYPTED/
+        errors.add(:value, :key_with_a_passphrase)
+      else
+        errors.add(:value, :not_a_private_key)
+      end
+    end
+
 
 
     def repository
