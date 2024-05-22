@@ -41,6 +41,8 @@ gem "ipaddress", "~> 0.8.3"
 gem 'nakayoshi_fork'
 gem 'sidekiq'
 gem 'redis-namespace'
+gem 'ssh_data'
+gem 'ed25519'
 
 gem 'rbtrace'
 gem 'memory_profiler'
