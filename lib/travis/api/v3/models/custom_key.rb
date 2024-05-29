@@ -12,6 +12,7 @@ module Travis::API::V3
     def save_key!(owner_type, owner_id, name, description, private_key, added_by, public_key = nil)
       self.owner_type = owner_type
       self.owner_id = owner_id
+      private_key = "#{private_key}\n" unless private_key.end_with?("\n")
       self.private_key = private_key
       self.name = name
       self.description = description
