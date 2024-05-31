@@ -19,20 +19,10 @@ module Travis::API::V3
     experimental_sortable_by :current_build, :slug_filter
 
     def for_member(user, **options)
-      start_time = Time.now
-      puts "Start time: #{start_time}"
-
-      result = all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
-
-      end_time = Time.now
-      puts "End time: #{end_time}"
-      puts "Execution time: #{end_time - start_time} seconds"
-
-      result
+      all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
     end
 
     def for_owner(owner, **options)
-
       filter(owner.repositories, **options)
     end
 
@@ -45,6 +35,7 @@ module Travis::API::V3
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
+
       list = list.where("managed_by_installation_at #{bool(managed_by_installation) ? 'IS NOT' : 'IS'} NULL") unless managed_by_installation.nil?
       list = list.where(active_on_org: bool(active_on_org) ? true : [false, nil]) unless active_on_org.nil?
 
@@ -98,12 +89,15 @@ module Travis::API::V3
         name_filter_condition = lambda { |sort_by| sort_by =~ /^name_filter/ }
         slug_filter_condition = lambda { |sort_by| sort_by =~ /^slug_filter/ }
 
+        name_filter_lookup = Hash[sort_by_list.collect { |v| [v, name_filter_condition.call(v)] }]
+
         if name_filter.nil? && sort_by_list.find(&name_filter_condition)
           warn "name_filter sort was selected, but name_filter param is not supplied, ignoring"
 
           # TODO: it would be nice to have better primitives for sorting so
           # manipulation is easier than that
-          params['sort_by'] = sort_by_list.reject(&name_filter_condition).join(',')
+          # params['sort_by'] = sort_by_list.reject(&name_filter_condition).join(',')
+          params['sort_by'] = sort_by_list.reject { |v| name_filter_lookup[v] }.join(',')
         end
 
         if slug_filter.nil? && sort_by_list.find(&slug_filter_condition)
