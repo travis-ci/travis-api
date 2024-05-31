@@ -19,10 +19,20 @@ module Travis::API::V3
     experimental_sortable_by :current_build, :slug_filter
 
     def for_member(user, **options)
-      all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
+      start_time = Time.now
+      puts "Start time: #{start_time}"
+
+      result = all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
+
+      end_time = Time.now
+      puts "End time: #{end_time}"
+      puts "Execution time: #{end_time - start_time} seconds"
+
+      result
     end
 
     def for_owner(owner, **options)
+
       filter(owner.repositories, **options)
     end
 
