@@ -27,11 +27,11 @@ describe Travis::API::V3::Services::Crons::ForRepository, set_app: true do
           "first"           => {
                 "@href"     => "/v3/repo/#{repo.id}/crons",
                 "offset"    => 0,
-                "limit"     => 25},
+                "limit"     => 5},
           "last"      => {
                 "@href"     => "/v3/repo/#{repo.id}/crons",
                 "offset"    => 0,
-                "limit"     => 25 }},
+                "limit"     => 5 }},
           "crons"           => [
             {
                 "@type"               => "cron",

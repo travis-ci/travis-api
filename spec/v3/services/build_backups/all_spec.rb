@@ -34,12 +34,12 @@ describe Travis::API::V3::Services::BuildBackups::All, set_app: true do
           'first' => {
             '@href' => "/v3/build_backups?repository_id=#{repository.id}",
             'offset' => 0,
-            'limit' => 25
+            'limit' => 5
           },
           'last' => {
             '@href' => "/v3/build_backups?repository_id=#{repository.id}",
             'offset' => 0,
-            'limit' => 25
+            'limit' => 5
           }
         },
         '@representation' => 'standard',
