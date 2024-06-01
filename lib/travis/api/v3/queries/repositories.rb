@@ -88,16 +88,12 @@ module Travis::API::V3
         sort_by_list = list(params['sort_by'])
         name_filter_condition = lambda { |sort_by| sort_by =~ /^name_filter/ }
         slug_filter_condition = lambda { |sort_by| sort_by =~ /^slug_filter/ }
-
-        name_filter_lookup = Hash[sort_by_list.collect { |v| [v, name_filter_condition.call(v)] }]
-
         if name_filter.nil? && sort_by_list.find(&name_filter_condition)
           warn "name_filter sort was selected, but name_filter param is not supplied, ignoring"
 
           # TODO: it would be nice to have better primitives for sorting so
           # manipulation is easier than that
-          # params['sort_by'] = sort_by_list.reject(&name_filter_condition).join(',')
-          params['sort_by'] = sort_by_list.reject { |v| name_filter_lookup[v] }.join(',')
+          params['sort_by'] = sort_by_list.reject(&name_filter_condition).join(',')
         end
 
         if slug_filter.nil? && sort_by_list.find(&slug_filter_condition)
