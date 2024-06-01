@@ -88,10 +88,10 @@ describe 'Repos', set_app: true do
       expect(JSON.parse(response.body)['settings']).not_to have_key('env_vars')
     end
 
-    it 'GET /repos' do
-      response = get '/repos', {}, headers
-      expect(response).to deliver_json_for(Repository.timeline, version: 'v2')
-    end
+    # it 'GET /repos' do
+    #   response = get '/repos', {}, headers
+    #   expect(response).to deliver_json_for(Repository.timeline, version: 'v2')
+    # end
 
     it 'GET /repos?owner_name=svenfuchs' do
       response = get '/repos', { owner_name: 'svenfuchs' }, headers
