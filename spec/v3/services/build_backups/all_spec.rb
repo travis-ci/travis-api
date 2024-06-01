@@ -24,7 +24,7 @@ describe Travis::API::V3::Services::BuildBackups::All, set_app: true do
       expect(parsed_body).to eql_json({
         '@type' => 'build_backups',
         '@pagination' => {
-          'limit' => 25,
+          'limit' => 5,
           'offset' => 0,
           'count' => 1,
           'is_first' => true,

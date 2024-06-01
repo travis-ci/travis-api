@@ -17,7 +17,7 @@ describe Travis::API::V3::Services::Crons::ForRepository, set_app: true do
         "@href"             => "/v3/repo/#{repo.id}/crons",
         "@representation"   => "standard",
         "@pagination"       => {
-          "limit"           => 25,
+          "limit"           => 5,
           "offset"          => 0,
           "count"           => 1,
           "is_first"        => true,
