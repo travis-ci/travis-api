@@ -72,7 +72,7 @@ module Travis
             sync:                 { organizations: { repositories_limit: 1000 } },
             states_cache:         { memcached_servers: 'localhost:11211' },
             sentry:               {},
-            services:             { find_requests: { max_limit: 100, default_limit: 5 } },
+            services:             { find_requests: { max_limit: 100, default_limit: 25 } },
             settings:             { timeouts: { defaults: { hard_limit: 50, log_silence: 10 }, maximums: { hard_limit: 180, log_silence: 60 } },
                                     rate_limit: { defaults: { api_builds: 10 }, maximums: { api_builds: 200 } } },
             endpoints:            {},

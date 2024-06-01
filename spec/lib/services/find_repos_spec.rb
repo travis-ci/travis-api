@@ -13,11 +13,11 @@ describe Travis::Services::FindRepos do
     expect(service.run.length).to eq(1)
   end
 
-  # it 'ignores the limit if it is not a number' do
-  #   FactoryBot.create(:repository)
-  #   @params = { :limit => 'a' }
-  #   expect(service.run.length).to eq(2)
-  # end
+  it 'ignores the limit if it is not a number' do
+    FactoryBot.create(:repository)
+    @params = { :limit => 'a' }
+    expect(service.run.length).to eq(2)
+  end
 
   it 'does not allow for limit higher than 50' do
     @params = { :limit => 60 }

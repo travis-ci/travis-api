@@ -17,7 +17,7 @@ describe Travis::API::V3::Services::Crons::ForRepository, set_app: true do
         "@href"             => "/v3/repo/#{repo.id}/crons",
         "@representation"   => "standard",
         "@pagination"       => {
-          "limit"           => 5,
+          "limit"           => 25,
           "offset"          => 0,
           "count"           => 1,
           "is_first"        => true,
@@ -27,11 +27,11 @@ describe Travis::API::V3::Services::Crons::ForRepository, set_app: true do
           "first"           => {
                 "@href"     => "/v3/repo/#{repo.id}/crons",
                 "offset"    => 0,
-                "limit"     => 5},
+                "limit"     => 25},
           "last"      => {
                 "@href"     => "/v3/repo/#{repo.id}/crons",
                 "offset"    => 0,
-                "limit"     => 5 }},
+                "limit"     => 25 }},
           "crons"           => [
             {
                 "@type"               => "cron",

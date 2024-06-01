@@ -2,7 +2,7 @@ module Travis::API::V3
   class Paginator
     attr_accessor :default_limit, :max_limit
 
-    def initialize(default_limit: 5, max_limit: 100)
+    def initialize(default_limit: 25, max_limit: 100)
       @default_limit = default_limit
       @max_limit     = max_limit
     end

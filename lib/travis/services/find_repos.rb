@@ -42,7 +42,7 @@ module Travis
         def limit
           limit = params[:limit].to_i
 
-          return 1 if limit == 0
+          return 25 if limit == 0
 
           if limit > 50
             50

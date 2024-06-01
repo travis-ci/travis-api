@@ -74,7 +74,7 @@ class Repository < Travis::Model
     includes(:permissions).where('permissions.admin = ?', true)
   }
   scope :recent, -> {
-    limit(3)
+    limit(25)
   }
   scope :by_owner_name, ->(owner_name) {
     without_invalidated.where(owner_name: owner_name)
