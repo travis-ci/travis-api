@@ -35,7 +35,6 @@ module Travis::API::V3
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
       list = list.includes(:owner) if includes? 'repository.owner'.freeze
-
       list = list.where("managed_by_installation_at #{bool(managed_by_installation) ? 'IS NOT' : 'IS'} NULL") unless managed_by_installation.nil?
       list = list.where(active_on_org: bool(active_on_org) ? true : [false, nil]) unless active_on_org.nil?
 
