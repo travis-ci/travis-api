@@ -31,8 +31,7 @@ module Travis::API::V3
     end
 
     def filter(list, user: nil)
-      start_time = Time.now
-      puts "Start time of FILTER: #{start_time}"
+
       list = list.where(invalidated_at: nil)
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
@@ -96,6 +95,7 @@ module Travis::API::V3
     end
 
     def sort(*args)
+      start_time = Time.now
       if params['sort_by']
         sort_by_list = list(params['sort_by'])
         name_filter_condition = lambda { |sort_by| sort_by =~ /^name_filter/ }
@@ -116,8 +116,9 @@ module Travis::API::V3
           params['sort_by'] = sort_by_list.reject(&slug_filter_condition).join(',')
         end
       end
-
-      super(*args)
-    end
+      s = super(*args)
+      enttime = Time.now
+      puts "Execution timeof SORTING: #{enttime - start_time} seconds"
+      s
   end
 end
