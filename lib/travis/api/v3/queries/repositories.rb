@@ -89,11 +89,11 @@ module Travis::API::V3
       list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
       start_time = Time.now
 
-      list = sort list
+      lista = list
       end_time = Time.now
       execution_time = end_time - start_time
-      puts "Execution time of SORT LIST: #{execution_time} seconds"
-      list
+      puts "Execution time of NOT SORTED LIST: #{execution_time} seconds"
+      lista
 
     end
 
