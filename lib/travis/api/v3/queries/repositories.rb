@@ -87,7 +87,8 @@ module Travis::API::V3
         list = list.includes(default_branch: :last_build)
       end
       list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
-      sort list
+      # sort list
+      list
     end
 
     def sort(*args)
