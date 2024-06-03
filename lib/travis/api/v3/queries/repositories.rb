@@ -87,12 +87,17 @@ module Travis::API::V3
         list = list.includes(default_branch: :last_build)
       end
       list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
-      # sort list
+      start_time = Time.now
+
+      list = sort list
+      end_time = Time.now
+      execution_time = end_time - start_time
+      puts "Execution time of SORT LIST: #{execution_time} seconds"
       list
+
     end
 
     def sort(*args)
-      start_time = Time.now
 
       if params['sort_by']
         sort_by_list = list(params['sort_by'])
@@ -116,13 +121,9 @@ module Travis::API::V3
       end
 
 
-      result = super(*args)
+      super(*args)
 
-      end_time = Time.now
-      execution_time = end_time - start_time
-      puts "Execution time of SORT: #{execution_time} seconds"
 
-      result
     end
   end
 end
