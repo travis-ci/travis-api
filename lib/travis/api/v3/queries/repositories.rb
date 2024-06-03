@@ -96,6 +96,7 @@ module Travis::API::V3
 
     def sort(*args)
       start_time = Time.now
+
       if params['sort_by']
         sort_by_list = list(params['sort_by'])
         name_filter_condition = lambda { |sort_by| sort_by =~ /^name_filter/ }
@@ -116,9 +117,11 @@ module Travis::API::V3
           params['sort_by'] = sort_by_list.reject(&slug_filter_condition).join(',')
         end
       end
-      s = super(*args)
-      enttime = Time.now
-      puts "Execution timeof SORTING: #{enttime - start_time} seconds"
-      s
+
+      super(*args)
+      end_time = Time.now
+      execution_time = end_time - start_time
+      puts "Execution time: #{execution_time} seconds"
+    end
   end
 end
