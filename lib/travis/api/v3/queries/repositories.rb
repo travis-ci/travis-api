@@ -115,12 +115,13 @@ module Travis::API::V3
       end
 
 
-    result = super(*args)
+      result = super(*args)
 
-    end_time = Time.now
-    execution_time = end_time - start_time
-    puts "Execution time of SORT: #{execution_time} seconds"
+      end_time = Time.now
+      execution_time = end_time - start_time
+      puts "Execution time of SORT: #{execution_time} seconds"
 
-    result
+      result
+    end
   end
 end
