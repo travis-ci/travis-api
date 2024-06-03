@@ -31,6 +31,8 @@ module Travis::API::V3
     end
 
     def filter(list, user: nil)
+      start_time = Time.now
+      puts "Start time of FILTER: #{start_time}"
       list = list.where(invalidated_at: nil)
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?
@@ -38,6 +40,13 @@ module Travis::API::V3
       list = list.where("managed_by_installation_at #{bool(managed_by_installation) ? 'IS NOT' : 'IS'} NULL") unless managed_by_installation.nil?
       list = list.where(active_on_org: bool(active_on_org) ? true : [false, nil]) unless active_on_org.nil?
 
+
+      # list = list.where(invalidated_at: nil)
+      # list = list.where(active: bool(active)) if active.present?
+      # list = list.where(private: bool(private)) if private.present?
+      # list = list.includes(:owner) if includes?('repository.owner'.freeze)
+      # list = list.where.not(managed_by_installation_at: nil) if bool(managed_by_installation)
+      # list = list.where(active_on_org: bool(active_on_org) ? true : [false, nil]) if active_on_org.present?
       if user and not starred.nil?
         if bool(starred)
           list = list.joins(:stars).where(stars: { user_id: user.id })
@@ -79,7 +88,11 @@ module Travis::API::V3
         list = list.includes(default_branch: :last_build)
       end
       list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
-      sort list
+      l = sort list
+      enttime = Time.now
+      puts "End time of FILTER: #{enttime}"
+      puts "Execution timeof FILTER: #{enttime - start_time} seconds"
+      l
     end
 
     def sort(*args)
