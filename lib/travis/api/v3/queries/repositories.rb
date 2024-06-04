@@ -53,27 +53,27 @@ module Travis::API::V3
       end
 
       start_time = Time.now
-      if name_filter
-        query = name_filter.strip.downcase
-        sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
+      # if name_filter
+      #   query = name_filter.strip.downcase
+      #   sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
 
-        query = ActiveRecord::Base.sanitize_sql(query)
+      #   query = ActiveRecord::Base.sanitize_sql(query)
 
-        list = list.where(["(lower(repositories.name)) LIKE ?", sql_phrase])
-        list = list.select("repositories.*, similarity(lower(repositories.name), '#{query}') as name_filter")
-      end
+      #   list = list.where(["(lower(repositories.name)) LIKE ?", sql_phrase])
+      #   list = list.select("repositories.*, similarity(lower(repositories.name), '#{query}') as name_filter")
+      # end
 
-      if slug_filter
-        query = slug_filter.strip.downcase
-        sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
+      # if slug_filter
+      #   query = slug_filter.strip.downcase
+      #   sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
 
-        query = ActiveRecord::Base.sanitize_sql(query)
+      #   query = ActiveRecord::Base.sanitize_sql(query)
 
-        list = list.where(["(lower(repositories.owner_name) || '/'
-                              || lower(repositories.name)) LIKE ?", sql_phrase])
-        list = list.select("repositories.*, similarity(lower(repositories.owner_name) || '/'
-                              || lower(repositories.name), '#{query}') as slug_filter")
-      end
+      #   list = list.where(["(lower(repositories.owner_name) || '/'
+      #                         || lower(repositories.name)) LIKE ?", sql_phrase])
+      #   list = list.select("repositories.*, similarity(lower(repositories.owner_name) || '/'
+      #                         || lower(repositories.name), '#{query}') as slug_filter")
+      # end
 
       end_time = Time.now
       execution_time = end_time - start_time
@@ -85,7 +85,7 @@ module Travis::API::V3
         list = list.includes(default_branch: :last_build)
       end
       list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
-      sort list
+      list
 
 
     end
