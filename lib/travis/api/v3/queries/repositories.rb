@@ -31,6 +31,7 @@ module Travis::API::V3
     end
 
     def filter(list, user: nil)
+      start_time = Time.now
 
       list = list.where(invalidated_at: nil)
       list = list.where(active:  bool(active))  unless active.nil?
@@ -52,7 +53,6 @@ module Travis::API::V3
         list = list.includes(last_build: :commit) if includes? 'build.commit'.freeze
       end
 
-      start_time = Time.now
       # if name_filter
       #   query = name_filter.strip.downcase
       #   sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
@@ -75,9 +75,7 @@ module Travis::API::V3
       #                         || lower(repositories.name), '#{query}') as slug_filter")
       # end
 
-      end_time = Time.now
-      execution_time = end_time - start_time
-      puts "Execution time of name and slug: #{execution_time} seconds"
+
 
       if includes? 'build.commit'.freeze
         list = list.includes(default_branch: { last_build: :commit })
@@ -85,8 +83,11 @@ module Travis::API::V3
         list = list.includes(default_branch: :last_build)
       end
       list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
-      list
-
+      l = list
+      end_time = Time.now
+      execution_time = end_time - start_time
+      puts "Execution time of filter without sorting: #{execution_time} seconds"
+      l
 
     end
 
