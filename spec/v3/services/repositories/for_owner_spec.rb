@@ -37,12 +37,12 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
       get("/v3/owner/svenfuchs/repos?sort_by=default_branch.last_build:desc&include=repository.default_branch", {}, headers)
     end
 
-    # example { expect(last_response).to be_ok }
-    # example 'repos with most recent build on default branch come first' do
-    #   repos = JSON.parse(last_response.body)['repositories']
-    #   last_build_ids = repos.map { |r| r['default_branch']['last_build']['id'] }
-    #   expect(last_build_ids).to eq last_build_ids.sort.reverse
-    # end
+    example { expect(last_response).to be_ok }
+    example 'repos with most recent build on default branch come first' do
+      repos = JSON.parse(last_response.body)['repositories']
+      last_build_ids = repos.map { |r| r['default_branch']['last_build']['id'] }
+      expect(last_build_ids).to eq last_build_ids.sort.reverse
+    end
   end
 
   describe "private repository, private API, authenticated as user with access" do
