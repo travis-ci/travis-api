@@ -39,13 +39,6 @@ module Travis::API::V3
       list = list.where("managed_by_installation_at #{bool(managed_by_installation) ? 'IS NOT' : 'IS'} NULL") unless managed_by_installation.nil?
       list = list.where(active_on_org: bool(active_on_org) ? true : [false, nil]) unless active_on_org.nil?
 
-
-      # list = list.where(invalidated_at: nil)
-      # list = list.where(active: bool(active)) if active.present?
-      # list = list.where(private: bool(private)) if private.present?
-      # list = list.includes(:owner) if includes?('repository.owner'.freeze)
-      # list = list.where.not(managed_by_installation_at: nil) if bool(managed_by_installation)
-      # list = list.where(active_on_org: bool(active_on_org) ? true : [false, nil]) if active_on_org.present?
       if user and not starred.nil?
         if bool(starred)
           list = list.joins(:stars).where(stars: { user_id: user.id })
@@ -81,19 +74,19 @@ module Travis::API::V3
                               || lower(repositories.name), '#{query}') as slug_filter")
       end
 
+      start_time = Time.now
       if includes? 'build.commit'.freeze
         list = list.includes(default_branch: { last_build: :commit })
       else
         list = list.includes(default_branch: :last_build)
       end
       list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
-      start_time = Time.now
 
-      lista = sort list
       end_time = Time.now
       execution_time = end_time - start_time
-      puts "Execution time of SORTED LIST: #{execution_time} seconds"
-      lista
+      puts "Execution time of build: #{execution_time} seconds"
+      sort list
+
 
     end
 
