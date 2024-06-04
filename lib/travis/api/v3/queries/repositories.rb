@@ -1,3 +1,5 @@
+require 'benchmark'
+
 module Travis::API::V3
   class Queries::Repositories < Query
     params :active, :private, :starred, :managed_by_installation, :active_on_org, prefix: :repository
@@ -19,105 +21,149 @@ module Travis::API::V3
     experimental_sortable_by :current_build, :slug_filter
 
     def for_member(user, **options)
-      start_time = Time.now
-      result = all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
-      end_time = Time.now
-      execution_time = end_time - start_time
-      puts "Execution time of for_member: #{execution_time} seconds"
-      result
+      all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
     end
 
     def for_owner(owner, **options)
-      start_time = Time.now
-      result = filter(owner.repositories, **options)
-      end_time = Time.now
-      execution_time = end_time - start_time
-      puts "Execution time of for_owner: #{execution_time} seconds"
-      result
+      filter(owner.repositories, **options)
     end
 
     def all(**options)
-      start_time = Time.now
-      result = filter(Models::Repository, **options)
-      end_time = Time.now
-      execution_time = end_time - start_time
-      puts "Execution time of all: #{execution_time} seconds"
-      result
+      filter(Models::Repository, **options)
     end
 
     def filter(list, user: nil)
-      start_time = Time.now
-
-      list = list.where(invalidated_at: nil)
-      list = list.where(active:  bool(active))  unless active.nil?
-      list = list.where(private: bool(private)) unless private.nil?
-      list = list.includes(:owner) if includes? 'repository.owner'.freeze
-      list = list.where("managed_by_installation_at #{bool(managed_by_installation) ? 'IS NOT' : 'IS'} NULL") unless managed_by_installation.nil?
-      list = list.where(active_on_org: bool(active_on_org) ? true : [false, nil]) unless active_on_org.nil?
-
-      if user and not starred.nil?
-        if bool(starred)
-          list = list.joins(:stars).where(stars: { user_id: user.id })
-        elsif user.starred_repository_ids.any?
-          list = list.where("repositories.id NOT IN (?)", user.starred_repository_ids)
-        end
+      Benchmark.bm do |x|
+        x.report("filter_base") { list = list.where(invalidated_at: nil) }
+        x.report("filter_active") { list = list.where(active: bool(active)) unless active.nil? }
+        x.report("filter_private") { list = list.where(private: bool(private)) unless private.nil? }
+        x.report("filter_owner") { list = list.includes(:owner) if includes? 'repository.owner'.freeze }
+        x.report("filter_managed_by_installation") {
+          list = list.where("managed_by_installation_at #{bool(managed_by_installation) ? 'IS NOT' : 'IS'} NULL") unless managed_by_installation.nil?
+        }
+        x.report("filter_active_on_org") {
+          list = list.where(active_on_org: bool(active_on_org) ? true : [false, nil]) unless active_on_org.nil?
+        }
+        x.report("filter_starred") {
+          if user and not starred.nil?
+            if bool(starred)
+              list = list.joins(:stars).where(stars: { user_id: user.id })
+            elsif user.starred_repository_ids.any?
+              list = list.where("repositories.id NOT IN (?)", user.starred_repository_ids)
+            end
+          end
+        }
+        x.report("filter_last_build") {
+          if includes? 'repository.last_build'.freeze or includes? 'build'.freeze
+            list = list.includes(:last_build)
+            list = list.includes(last_build: :commit) if includes? 'build.commit'.freeze
+          end
+        }
+        x.report("filter_name") {
+          if name_filter
+            query = name_filter.strip.downcase
+            sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
+            query = ActiveRecord::Base.sanitize_sql(query)
+            list = list.where(["(lower(repositories.name)) LIKE ?", sql_phrase])
+            list = list.select("repositories.*, similarity(lower(repositories.name), '#{query}') as name_filter")
+          end
+        }
+        x.report("filter_slug") {
+          if slug_filter
+            query = slug_filter.strip.downcase
+            sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
+            query = ActiveRecord::Base.sanitize_sql(query)
+            list = list.where(["(lower(repositories.owner_name) || '/' || lower(repositories.name)) LIKE ?", sql_phrase])
+            list = list.select("repositories.*, similarity(lower(repositories.owner_name) || '/' || lower(repositories.name), '#{query}') as slug_filter")
+          end
+        }
+        x.report("filter_commit") {
+          if includes? 'build.commit'.freeze
+            list = list.includes(default_branch: { last_build: :commit })
+          else
+            list = list.includes(default_branch: :last_build)
+          end
+        }
+        x.report("filter_current_build") {
+          list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
+        }
+        x.report("sort") { list = sort(list) }
       end
-
-      if includes? 'repository.last_build'.freeze or includes? 'build'.freeze
-        list = list.includes(:last_build)
-        list = list.includes(last_build: :commit) if includes? 'build.commit'.freeze
-      end
-
-      if name_filter
-        query = name_filter.strip.downcase
-        sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
-
-        query = ActiveRecord::Base.sanitize_sql(query)
-
-        list = list.where(["(lower(repositories.name)) LIKE ?", sql_phrase])
-        list = list.select("repositories.*, similarity(lower(repositories.name), '#{query}') as name_filter")
-      end
-
-      if slug_filter
-        query = slug_filter.strip.downcase
-        sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
-
-        query = ActiveRecord::Base.sanitize_sql(query)
-
-        list = list.where(["(lower(repositories.owner_name) || '/'
-                              || lower(repositories.name)) LIKE ?", sql_phrase])
-        list = list.select("repositories.*, similarity(lower(repositories.owner_name) || '/'
-                              || lower(repositories.name), '#{query}') as slug_filter")
-      end
-
-
-
-      if includes? 'build.commit'.freeze
-        list = list.includes(default_branch: { last_build: :commit })
-      else
-        list = list.includes(default_branch: :last_build)
-      end
-      list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
-      l = sort list
-      end_time = Time.now
-      execution_time = end_time - start_time
-      puts "Execution time of filter: #{execution_time} seconds"
-      l
-
     end
 
+    # def filter(list, user: nil)
+    #   time = Benchmark.measure do
+    #   list = list.where(invalidated_at: nil)
+    #   end
+    #   puts "filter_base: #{time.real}"
+    #   list = list.where(active:  bool(active))  unless active.nil?
+    #   list = list.where(private: bool(private)) unless private.nil?
+    #   list = list.includes(:owner) if includes? 'repository.owner'.freeze
+    #   list = list.where("managed_by_installation_at #{bool(managed_by_installation) ? 'IS NOT' : 'IS'} NULL") unless managed_by_installation.nil?
+    #   list = list.where(active_on_org: bool(active_on_org) ? true : [false, nil]) unless active_on_org.nil?
+
+    #   if user and not starred.nil?
+    #     if bool(starred)
+    #       list = list.joins(:stars).where(stars: { user_id: user.id })
+    #     elsif user.starred_repository_ids.any?
+    #       list = list.where("repositories.id NOT IN (?)", user.starred_repository_ids)
+    #     end
+    #   end
+
+    #   if includes? 'repository.last_build'.freeze or includes? 'build'.freeze
+    #     list = list.includes(:last_build)
+    #     list = list.includes(last_build: :commit) if includes? 'build.commit'.freeze
+    #   end
+
+    #   if name_filter
+
+    #     query = name_filter.strip.downcase
+    #     sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
+
+    #     query = ActiveRecord::Base.sanitize_sql(query)
+
+    #     list = list.where(["(lower(repositories.name)) LIKE ?", sql_phrase])
+    #     list = list.select("repositories.*, similarity(lower(repositories.name), '#{query}') as name_filter")
+
+    #   end
+
+    #   if slug_filter
+    #     query = slug_filter.strip.downcase
+    #     sql_phrase = query.empty? ? '%' : "%#{query.split('').join('%')}%"
+
+    #     query = ActiveRecord::Base.sanitize_sql(query)
+
+    #     list = list.where(["(lower(repositories.owner_name) || '/'
+    #     || lower(repositories.name)) LIKE ?", sql_phrase])
+    #     list = list.select("repositories.*, similarity(lower(repositories.owner_name) || '/'
+    #     || lower(repositories.name), '#{query}') as slug_filter")
+    #   end
+
+    #   if includes? 'build.commit'.freeze
+    #     list = list.includes(default_branch: { last_build: :commit })
+    #   else
+    #     list = list.includes(default_branch: :last_build)
+    #   end
+
+    #   list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
+
+    #   sort(list)
+
+
+    # end
+
     def sort(*args)
-      start_time = Time.now
       if params['sort_by']
         sort_by_list = list(params['sort_by'])
         name_filter_condition = lambda { |sort_by| sort_by =~ /^name_filter/ }
         slug_filter_condition = lambda { |sort_by| sort_by =~ /^slug_filter/ }
-        if name_filter.nil? && sort_by_list.find(&name_filter_condition)
-          warn "name_filter sort was selected, but name_filter param is not supplied, ignoring"
 
-          # TODO: it would be nice to have better primitives for sorting so
-          # manipulation is easier than that
-          params['sort_by'] = sort_by_list.reject(&name_filter_condition).join(',')
+        if name_filter.nil? && sort_by_list.find(&name_filter_condition)
+            warn "name_filter sort was selected, but name_filter param is not supplied, ignoring"
+
+            # TODO: it would be nice to have better primitives for sorting so
+            # manipulation is easier than that
+            params['sort_by'] = sort_by_list.reject(&name_filter_condition).join(',')
         end
 
         if slug_filter.nil? && sort_by_list.find(&slug_filter_condition)
@@ -130,11 +176,8 @@ module Travis::API::V3
       end
 
 
-      result = super(*args)
-      end_time = Time.now
-      execution_time = end_time - start_time
-      puts "Execution time of sort: #{execution_time} seconds"
-      result
+      super(*args)
+
     end
   end
 end
