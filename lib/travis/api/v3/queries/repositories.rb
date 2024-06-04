@@ -19,15 +19,30 @@ module Travis::API::V3
     experimental_sortable_by :current_build, :slug_filter
 
     def for_member(user, **options)
-      all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
+      start_time = Time.now
+      result = all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
+      end_time = Time.now
+      execution_time = end_time - start_time
+      puts "Execution time of for_member: #{execution_time} seconds"
+      result
     end
 
     def for_owner(owner, **options)
-      filter(owner.repositories, **options)
+      start_time = Time.now
+      result = filter(owner.repositories, **options)
+      end_time = Time.now
+      execution_time = end_time - start_time
+      puts "Execution time of for_owner: #{execution_time} seconds"
+      result
     end
 
     def all(**options)
-      filter(Models::Repository, **options)
+      start_time = Time.now
+      result = filter(Models::Repository, **options)
+      end_time = Time.now
+      execution_time = end_time - start_time
+      puts "Execution time of all: #{execution_time} seconds"
+      result
     end
 
     def filter(list, user: nil)
@@ -86,13 +101,13 @@ module Travis::API::V3
       l = sort list
       end_time = Time.now
       execution_time = end_time - start_time
-      puts "Execution time of filter without sorting: #{execution_time} seconds"
+      puts "Execution time of filter: #{execution_time} seconds"
       l
 
     end
 
     def sort(*args)
-
+      start_time = Time.now
       if params['sort_by']
         sort_by_list = list(params['sort_by'])
         name_filter_condition = lambda { |sort_by| sort_by =~ /^name_filter/ }
@@ -115,9 +130,11 @@ module Travis::API::V3
       end
 
 
-      super(*args)
-
-
+      result = super(*args)
+      end_time = Time.now
+      execution_time = end_time - start_time
+      puts "Execution time of sort: #{execution_time} seconds"
+      result
     end
   end
 end
