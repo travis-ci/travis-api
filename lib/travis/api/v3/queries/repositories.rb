@@ -20,16 +20,43 @@ module Travis::API::V3
     experimental_sortable_by :current_build, :name_filter
     experimental_sortable_by :current_build, :slug_filter
 
+    # def for_member(user, **options)
+    #   all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
+    # end
+
+    # def for_owner(owner, **options)
+    #   filter(owner.repositories, **options)
+    # end
+
+    # def all(**options)
+    #   filter(Models::Repository, **options)
+    # end
+
     def for_member(user, **options)
-      all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
+      result = nil
+      time = Benchmark.measure do
+        result = all(user: user, **options).joins(:users).where(users: user_condition(user), invalidated_at: nil)
+      end
+      puts "Time for for_member: #{time}"
+      result
     end
 
     def for_owner(owner, **options)
-      filter(owner.repositories, **options)
+      result = nil
+      time = Benchmark.measure do
+        result = filter(owner.repositories, **options)
+      end
+      puts "Time for for_owner: #{time}"
+      result
     end
 
     def all(**options)
-      filter(Models::Repository, **options)
+      result = nil
+      time = Benchmark.measure do
+        result = filter(Models::Repository, **options)
+      end
+      puts "Time for all: #{time}"
+      result
     end
 
 
@@ -189,7 +216,7 @@ module Travis::API::V3
         list = list.includes(current_build: [:repository, :branch, :commit, :stages]) if includes? 'repository.current_build'.freeze
       }
       puts "Time for current_build: #{time}"
-      
+
       time = Benchmark.measure {
         list = sort(list)
       }
@@ -197,34 +224,59 @@ module Travis::API::V3
       list
     end
 
-    def sort(*args)
+    # def sort(*args)
 
+    #     if params['sort_by']
+    #       sort_by_list = list(params['sort_by'])
+    #       name_filter_condition = lambda { |sort_by| sort_by =~ /^name_filter/ }
+    #       slug_filter_condition = lambda { |sort_by| sort_by =~ /^slug_filter/ }
+
+    #       if name_filter.nil? && sort_by_list.find(&name_filter_condition)
+    #           warn "name_filter sort was selected, but name_filter param is not supplied, ignoring"
+
+    #           # TODO: it would be nice to have better primitives for sorting so
+    #           # manipulation is easier than that
+    #           params['sort_by'] = sort_by_list.reject(&name_filter_condition).join(',')
+    #       end
+
+    #       if slug_filter.nil? && sort_by_list.find(&slug_filter_condition)
+    #         warn "slug_filter sort was selected, but slug_filter param is not supplied, ignoring"
+
+    #         # TODO: it would be nice to have better primitives for sorting so
+    #         # manipulation is easier than that
+    #         params['sort_by'] = sort_by_list.reject(&slug_filter_condition).join(',')
+    #       end
+    #     end
+
+
+    #     super(*args)
+
+
+    # end
+
+    def sort(*args)
+      result = nil
+      time = Benchmark.measure do
         if params['sort_by']
           sort_by_list = list(params['sort_by'])
           name_filter_condition = lambda { |sort_by| sort_by =~ /^name_filter/ }
           slug_filter_condition = lambda { |sort_by| sort_by =~ /^slug_filter/ }
 
           if name_filter.nil? && sort_by_list.find(&name_filter_condition)
-              warn "name_filter sort was selected, but name_filter param is not supplied, ignoring"
-
-              # TODO: it would be nice to have better primitives for sorting so
-              # manipulation is easier than that
-              params['sort_by'] = sort_by_list.reject(&name_filter_condition).join(',')
+            warn "name_filter sort was selected, but name_filter param is not supplied, ignoring"
+            params['sort_by'] = sort_by_list.reject(&name_filter_condition).join(',')
           end
 
           if slug_filter.nil? && sort_by_list.find(&slug_filter_condition)
             warn "slug_filter sort was selected, but slug_filter param is not supplied, ignoring"
-
-            # TODO: it would be nice to have better primitives for sorting so
-            # manipulation is easier than that
             params['sort_by'] = sort_by_list.reject(&slug_filter_condition).join(',')
           end
         end
 
-
-        super(*args)
-
-
+        result = super(*args)
+      end
+      puts "Time for sort from Repository: #{time}"
+      result
     end
   end
 end

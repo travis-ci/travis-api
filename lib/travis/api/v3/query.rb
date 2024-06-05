@@ -1,3 +1,5 @@
+require 'benchmark'
+
 module Travis::API::V3
   class Query
     @@sidekiq_queue = {}
@@ -173,19 +175,38 @@ module Travis::API::V3
       value.split(?,.freeze)
     end
 
+    # def sort(collection, **options)
+    #   return collection unless sort_by = params["sort_by".freeze] || self.class.default_sort and not sort_by.empty?
+    #   first = true
+    #   list(sort_by).each do |field_with_order|
+    #     field, order = field_with_order.split(?:.freeze, 2)
+    #     order      ||= "asc".freeze
+    #     if sort_by? field, order
+    #       collection = sort_by(collection, field, order: order, first: first, **options)
+    #       first      = false
+    #     else
+    #       ignored_value("sort_by".freeze, field_with_order, reason: "not a valid sort mode".freeze)
+    #     end
+    #   end
+    #   collection
+    # end
+
     def sort(collection, **options)
-      return collection unless sort_by = params["sort_by".freeze] || self.class.default_sort and not sort_by.empty?
-      first = true
-      list(sort_by).each do |field_with_order|
-        field, order = field_with_order.split(?:.freeze, 2)
-        order      ||= "asc".freeze
-        if sort_by? field, order
-          collection = sort_by(collection, field, order: order, first: first, **options)
-          first      = false
-        else
-          ignored_value("sort_by".freeze, field_with_order, reason: "not a valid sort mode".freeze)
+      time = Benchmark.measure do
+        return collection unless sort_by = params["sort_by".freeze] || self.class.default_sort and not sort_by.empty?
+        first = true
+        list(sort_by).each do |field_with_order|
+          field, order = field_with_order.split(?:.freeze, 2)
+          order      ||= "asc".freeze
+          if sort_by? field, order
+            collection = sort_by(collection, field, order: order, first: first, **options)
+            first      = false
+          else
+            ignored_value("sort_by".freeze, field_with_order, reason: "not a valid sort mode".freeze)
+          end
         end
       end
+      puts "Time for Query sort collection: #{time}"
       collection
     end
 
