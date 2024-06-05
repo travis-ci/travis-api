@@ -8,12 +8,12 @@ module Travis::API::V3
 
     def run!
       raise LoginRequired unless access_control.logged_in?
-      result = nil
+      res = nil
       time = Benchmark.measure do
-        result = query.for_member(access_control.user)
+        res = result query.for_member(access_control.user)
       end
       puts "Time for current user run!: #{time}"
-      result
+      res
     end
   end
 end
