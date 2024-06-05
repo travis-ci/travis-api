@@ -1,3 +1,6 @@
+require 'benchmark'
+
+
 module Travis::API::V3
   class CollectionRenderer
     def self.render(list, mode = nil, **options)
@@ -51,16 +54,33 @@ module Travis::API::V3
       meta_data[:pagination].merge generator.to_h
     end
 
+    # def render
+    #   result                 = fields
+    #   included               = self.included.dup
+    #   result[collection_key] = list.map do |entry|
+    #     rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
+    #     included << entry
+    #     rendered
+    #   end
+    #   result
+    # end
+
+
     def render
-      result                 = fields
-      included               = self.included.dup
-      result[collection_key] = list.map do |entry|
-        rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
-        included << entry
-        rendered
+      result = nil
+      time = Benchmark.measure do
+        result                 = fields
+        included               = self.included.dup
+        result[collection_key] = list.map do |entry|
+          rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
+          included << entry
+          rendered
+        end
       end
+      puts "Time for render method: #{time}"
       result
     end
+
 
     def filtered_include
       key = collection_key.to_s
