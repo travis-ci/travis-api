@@ -4,7 +4,10 @@ module Travis::API::V3
     representation(:standard, *representations[:minimal], :committer, :author)
 
     def sha
+      t1 = Time.now
       model.commit
+    ensure
+      puts "T:commit:sha #{(Time.now - t1).in_milliseconds}"
     end
 
     def committer

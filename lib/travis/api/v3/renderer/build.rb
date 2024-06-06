@@ -13,22 +13,32 @@ module Travis::API::V3
     end
 
     def request
+      t1 = Time.now
       model.request
+    ensure
+      puts "T:build:request #{(Time.now - t1).in_milliseconds}"
     end
 
     def jobs
+      t1 = Time.now
       # no filtering here, we assume that job.private == job.build.private
       return model.active_jobs if include_full_jobs? && representation?(:active)
       return model.jobs if include_full_jobs?
       return model.job_ids.map { |id| job(id) } unless representation?(:active)
       model.active_jobs.map{ |j| job(j.id) }
+    ensure
+      puts "T:build:jobs #{(Time.now - t1).in_milliseconds}"
     end
 
     def branch
+      t1 = Time.now
       V3::Models::Branch.find_by(repository_id: repository.id, name: model[:branch])
+    ensure
+      puts "T:build:branch #{(Time.now - t1).in_milliseconds}"
     end
 
     def created_by
+    t1 = Time.now
      return nil unless creator = model.created_by
      return creator if include?('build.created_by')
      {
@@ -38,6 +48,8 @@ module Travis::API::V3
        'id' => creator.id,
        'login' => creator.login
      }
+    ensure
+      puts "T:build:created_by #{(Time.now - t1).in_milliseconds}"
     end
 
     def updated_at
@@ -68,12 +80,15 @@ module Travis::API::V3
     end
 
     private def job(id)
+      t1 = Time.now
       {
         "@type"           => "job",
         :@href            => Renderer.href(:job, script_name: script_name, id: id),
         "@representation" => "minimal",
         "id"              => id
       }
+    ensure
+      puts "T:build:job#{id} #{(Time.now - t1).in_milliseconds}"
     end
 
     private def include_log_complete?

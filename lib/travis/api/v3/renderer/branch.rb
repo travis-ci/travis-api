@@ -5,8 +5,11 @@ module Travis::API::V3
     representation(:additional, :recent_builds)
 
     def recent_builds
+      t1 = Time.now
       return unless include_recent_builds?
       access_control.visible_builds(model.builds.limit(10))
+    ensure
+      puts "T:branch:visible_builds #{(Time.now - t1).in_milliseconds}"
     end
 
     def include_recent_builds?

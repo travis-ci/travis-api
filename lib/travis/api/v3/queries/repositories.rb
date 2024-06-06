@@ -31,6 +31,9 @@ module Travis::API::V3
     end
 
     def filter(list, user: nil)
+      puts "ENABLED1: #{ActiveRecord::Base.connection.query_cache_enabled}"
+#      ActiveRecord::Base.connection.enable_query_cache!
+#      puts "ENABLED2: #{ActiveRecord::Base.connection.query_cache_enabled}"
       list = list.where(invalidated_at: nil)
       list = list.where(active:  bool(active))  unless active.nil?
       list = list.where(private: bool(private)) unless private.nil?

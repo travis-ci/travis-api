@@ -6,7 +6,12 @@ module Travis::API::V3
 
     def run!
       raise LoginRequired unless access_control.logged_in?
-      result query.for_member(access_control.user)
+      t1 = Time.now
+      q = query.for_member(access_control.user)
+      t2 = Time.now
+      res = result q
+      puts "query: #{(t2-t1).in_milliseconds}\nresult query: #{(Time.now - t2).in_milliseconds}"
+      res
     end
   end
 end

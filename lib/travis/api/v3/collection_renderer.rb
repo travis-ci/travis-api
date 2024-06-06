@@ -52,6 +52,7 @@ module Travis::API::V3
     end
 
     def render
+      t1 = Time.now
       result                 = fields
       included               = self.included.dup
       result[collection_key] = list.map do |entry|
@@ -59,6 +60,7 @@ module Travis::API::V3
         included << entry
         rendered
       end
+      puts "RENDERER: #{(Time.now - t1).in_milliseconds}"
       result
     end
 

@@ -26,6 +26,7 @@ module Travis::API::V3
     end
 
     def default_branch
+      t1 = Time.now
       return model.default_branch if include_default_branch?
       {
         :@type           => 'branch'.freeze,
@@ -33,41 +34,64 @@ module Travis::API::V3
         :@representation => 'minimal'.freeze,
         :name            => model.default_branch_name
       }
+    ensure
+      puts "T:default_branch #{(Time.now - t1).in_milliseconds}"
     end
 
     def current_build
+      t1 = Time.now
       build = model.current_build
       build if access_control.visible? build
+    ensure
+      puts "T:current_build #{(Time.now - t1).in_milliseconds}"
     end
 
     def last_started_build
+      t1 = Time.now
       build = model.last_started_build
       build if access_control.visible? build
+    ensure
+      puts "T:last_started_build #{(Time.now - t1).in_milliseconds}"
     end
 
     def starred
+      t1 = Time.now
       return false unless user = access_control.user
       user.starred_repository_ids.include? id
+
+    ensure
+      puts "T:starred #{(Time.now - t1).in_milliseconds}"
     end
 
     def shared
+      t1 = Time.now
       return owner_name.downcase != access_control.user.login.downcase \
       && access_control.user.shared_repositories_ids.include?(id) if access_control.user && owner_name
       false
+
+    ensure
+      puts "T:shared #{(Time.now - t1).in_milliseconds}"
     end
 
     def email_subscribed
+      t1 = Time.now
       return false unless user = access_control.user
       !user.email_unsubscribed_repository_ids.include?(id)
+    ensure
+      puts "T:email_subscribed #{(Time.now - t1).in_milliseconds}"
     end
 
     def include_default_branch?
+      t1 = Time.now
       return true if include? 'repository.default_branch'.freeze
       return true if include.any? { |i| i.start_with? 'branch'.freeze }
       return true if included.any? { |i| i.is_a? Models::Branch and i.repository_id == id and i.name == model.default_branch_name }
+    ensure
+      puts "T:include_default_branch #{(Time.now - t1).in_milliseconds}"
     end
 
     def owner
+      t1 = Time.now
       return nil         if model.owner_type.nil?
       return model.owner if include_owner?
       owner_href = Renderer.href(owner_type.to_sym, id: model.owner_id, script_name: script_name)
@@ -79,12 +103,17 @@ module Travis::API::V3
         result[:@href] = owner_href if owner_href
         result
       end
+    ensure
+      puts "T:owner #{(Time.now - t1).in_milliseconds}"
     end
 
     def owner_ro_mode
+      t1 = Time.now
       return false unless Travis.config.org? && Travis.config.read_only?
 
       !Travis::Features.owner_active?(:read_only_disabled, model.owner)
+    ensure
+      puts "T:owner_ro_mode #{(Time.now - t1).in_milliseconds}"
     end
 
     def include_owner?
@@ -103,11 +132,17 @@ module Travis::API::V3
     end
 
     def managed_by_installation
+      t1 = Time.now
       model.managed_by_installation?
+    ensure
+      puts "T:managed_by_inst #{(Time.now - t1).in_milliseconds}"
     end
 
     def server_type
+      t1 = Time.now
       model.server_type || 'git'
+    ensure
+      puts "T:server_type #{(Time.now - t1).in_milliseconds}"
     end
   end
 end

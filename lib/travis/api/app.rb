@@ -139,6 +139,7 @@ module Travis::Api
 
         use Rack::SSL if Endpoint.production? && !ENV['DOCKER']
         use ConnectionManagement
+        ActiveRecord::Base.connection.enable_query_cache!
 
         memcache_servers = ENV['MEMCACHIER_SERVERS']
         if Travis::Features.feature_active?(:use_rack_cache) && memcache_servers
@@ -248,6 +249,9 @@ module Travis::Api
         Travis.config.database.variables                    ||= {}
         Travis.config.database.variables[:application_name] ||= ["api", Travis.env, ENV['DYNO']].compact.join(?-)
         Travis::Database.connect
+
+        ActiveRecord::Base.connection.enable_query_cache!
+        puts "ENABLED: #{ActiveRecord::Base.connection.query_cache_enabled}"
       end
 
       def self.setup_monitoring
