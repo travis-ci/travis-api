@@ -82,15 +82,16 @@ module Travis::API::V3
     # end
     def render
       result = fields
-      included = self.included.dup
       time = Benchmark.measure do
-        result[collection_key] = list.map do |entry|
-          rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
-          included << entry
-          rendered
-        end
+        included = self.included.dup
       end
-      puts "Time for map operation: #{time}"
+      puts "Time for duplication operation: #{time}"
+
+      result[collection_key] = list.map do |entry|
+        rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
+        included << entry
+        rendered
+      end
       result
     end
 
