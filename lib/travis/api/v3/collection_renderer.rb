@@ -66,21 +66,33 @@ module Travis::API::V3
     # end
 
 
+    # def render
+    #   result = nil
+    #   time = Benchmark.measure do
+    #     result                 = fields
+    #     included               = self.included.dup
+    #     result[collection_key] = list.map do |entry|
+    #       rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
+    #       included << entry
+    #       rendered
+    #     end
+    #   end
+    #   puts "Time for render method: #{time}"
+    #   result
+    # end
     def render
-      result = nil
+      result = fields
+      included = self.included.dup
       time = Benchmark.measure do
-        result                 = fields
-        included               = self.included.dup
         result[collection_key] = list.map do |entry|
           rendered = render_entry(entry, included: included, include: filtered_include, mode: representation, **options)
           included << entry
           rendered
         end
       end
-      puts "Time for render method: #{time}"
+      puts "Time for map operation: #{time}"
       result
     end
-
 
     def filtered_include
       key = collection_key.to_s
