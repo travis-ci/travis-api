@@ -232,6 +232,35 @@ describe Travis::RemoteLog do
 
     expect(subject.clear!(user)).to eq(content)
   end
+
+  context 'when the log is not archived' do
+    let(:local_content) { 'Content from DB' }
+
+    before do
+      subject.archived_at = nil
+      subject.archive_verified = false
+      subject.content = local_content
+    end
+
+    it 'does not fetch archived content' do
+      expect(subject).not_to receive(:archived_log_content)
+      from_json = JSON.parse(subject.to_json).fetch('log')
+      expect(from_json.fetch('body')).to eq(local_content)
+    end
+  end
+
+  context 'when the log is archived' do
+    before do
+      subject.archived_at = Time.now
+      subject.archive_verified = true
+    end
+
+    it 'fetches archived content' do
+      expect(subject).to receive(:archived_log_content).and_return(archived_content)
+      from_json = JSON.parse(subject.to_json).fetch('log')
+      expect(from_json.fetch('body')).to eq(archived_content)
+    end
+  end
 end
 
 describe Travis::RemoteLog::Client do
