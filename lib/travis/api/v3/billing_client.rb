@@ -61,6 +61,7 @@ module Travis::API::V3
     end
 
     def all
+      t1 = Time.now
       data = body(connection.get('/subscriptions'))
       subscriptions = data.fetch('subscriptions').map do |subscription_data|
         Travis::API::V3::Models::Subscription.new(subscription_data)
@@ -68,9 +69,12 @@ module Travis::API::V3
       permissions = data.fetch('permissions')
 
       Travis::API::V3::Models::SubscriptionsCollection.new(subscriptions, permissions)
+    ensure
+      puts "T:billing:all #{(Time.now - t1).in_milliseconds}"
     end
 
     def all_v2
+      t1 = Time.now
       data = body(connection.get('/v2/subscriptions'))
       subscriptions = data.fetch('plans').map do |subscription_data|
         Travis::API::V3::Models::V2Subscription.new(subscription_data)
@@ -78,6 +82,8 @@ module Travis::API::V3
       permissions = data.fetch('permissions')
 
       Travis::API::V3::Models::SubscriptionsCollection.new(subscriptions, permissions)
+    ensure
+      puts "T:billing:all_v2 #{(Time.now - t1).in_milliseconds}"
     end
 
     def get_subscription(id)
@@ -103,9 +109,12 @@ module Travis::API::V3
     end
 
     def trials
+      t1 = Time.now
       body(connection.get('/trials')).map do | trial_data |
         Travis::API::V3::Models::Trial.new(trial_data)
       end
+    ensure
+      puts "T:billing:trials #{(Time.now - t1).in_milliseconds}"
     end
 
     def create_trial(type, id)
@@ -170,15 +179,21 @@ module Travis::API::V3
     end
 
     def v2_plans_for_organization(organization_id)
+      t1 = Time.now
       body(connection.get("/v2/plans_for/organization/#{organization_id}")).map do |plan_data|
         Travis::API::V3::Models::V2PlanConfig.new(plan_data)
       end
+    ensure
+      puts "T:billing:v2_plans_for_org #{(Time.now - t1).in_milliseconds}"
     end
 
     def v2_plans_for_user
+      t1 = Time.now
       body(connection.get('/v2/plans_for/user')).map do |plan_data|
         Travis::API::V3::Models::V2PlanConfig.new(plan_data)
       end
+    ensure
+      puts "T:billing:v2_plans_for_user #{(Time.now - t1).in_milliseconds}"
     end
 
     def cancel_subscription(id, reason_data)
@@ -192,15 +207,21 @@ module Travis::API::V3
     end
 
     def plans_for_organization(organization_id)
+      t1 = Time.now
       body(connection.get("/plans_for/organization/#{organization_id}")).map do |plan_data|
         Travis::API::V3::Models::Plan.new(plan_data)
       end
+    ensure
+      puts "T:billing:plans_for_org #{(Time.now - t1).in_milliseconds}"
     end
 
     def plans_for_user
+      t1 = Time.now
       body(connection.get('/plans_for/user')).map do |plan_data|
         Travis::API::V3::Models::Plan.new(plan_data)
       end
+    ensure
+      puts "T:billing:plans_for_user #{(Time.now - t1).in_milliseconds}"
     end
 
     def resubscribe(id)
@@ -239,8 +260,11 @@ module Travis::API::V3
     end
 
     def get_auto_refill(plan_id)
+      t1 = Time.now
       response = connection.get("/auto_refill?plan_id=#{plan_id}")
       handle_errors_and_respond(response) { |r| Travis::API::V3::Models::AutoRefill.new(r) }
+    ensure
+      puts "T:billing:get_auto_refill #{(Time.now - t1).in_milliseconds}"
     end
 
     def cancel_v2_subscription(id, reason_data)
@@ -254,12 +278,16 @@ module Travis::API::V3
     end
 
     def usage_stats(owners)
+      t1 = Time.now
       data = connection.post("/usage/stats", owners: owners, query: 'paid_plan_count')
       data = data&.body
       data = data.is_a?(String) && data.length > 0 ? JSON.parse(data) : data
       data.fetch('paid_plans').to_i > 0 if data && data['paid_plans']
     rescue
       false
+
+    ensure
+      puts "T:billing:usage_stats #{(Time.now - t1).in_milliseconds}"
     end
 
     private
