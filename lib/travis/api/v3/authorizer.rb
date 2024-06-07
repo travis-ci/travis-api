@@ -13,19 +13,31 @@ module Travis::API::V3
     end
 
     def for_repo(repo_id, perm)
+      t1 = Time.now
       cache.get_permission('repository', repo_id, perm)
+    ensure
+      puts "T:perm:for_repo:#{perm} #{(Time.now - t1).in_milliseconds}"
     end
 
     def for_account(org_id, perm)
+      t1 = Time.now
       cache.get_permission('organization', org_id, perm)
+    ensure
+      puts "T:perm:for_acc:#{perm} #{(Time.now - t1).in_milliseconds}"
     end
 
     def has_repo_role?(repo_id, role)
+      t1 = Time.now
       cache.get_role('repository', repo_id, role)
+    ensure
+      puts "T:perm:has_repo_role:#{role} #{(Time.now - t1).in_milliseconds}"
     end
 
     def has_org_role?(org_id, role)
+      t1 = Time.now
       cache.get_role('organization', org_id, role)
+    ensure
+      puts "T:perm:has_org_role:#{role} #{(Time.now - t1).in_milliseconds}"
     end
 
     def patch_all_org_repos(org_id, roles)
