@@ -19,7 +19,8 @@ module Travis::API::V3
         params['name'],
         params['description'],
         params['private_key'],
-        params['added_by']
+        params['added_by'],
+        params['public_key']
       )
       handle_errors(key) unless key.valid?
 
