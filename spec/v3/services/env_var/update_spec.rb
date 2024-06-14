@@ -89,6 +89,10 @@ describe Travis::API::V3::Services::EnvVar::Update, set_app: true do
     example 'does not clobber other settings' do
       expect(repo.reload.settings['foo']).to eq 'bar'
     end
+    example 'audit is created' do
+      expect(Travis::API::V3::Models::Audit.last.source_id).to eq(repo.id)
+      expect(Travis::API::V3::Models::Audit.last.source_type).to eq('Repository')
+    end
   end
 
   context do
