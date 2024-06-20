@@ -80,6 +80,32 @@ describe 'ssh keys endpoint', set_app: true do
         expect(updated_ssh_key.value.decrypt).to eq(new_key)
       end
 
+      it 'should update a eddsa key' do
+        settings = repo.settings
+        ssh_key = settings.create(:ssh_key, description: 'foo', value: TEST_PRIVATE_KEY)
+        settings.save
+
+        new_key = "-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACBQXfKTsmUKEONVc2i974UqTzI+Jci36WMfk/BnsWbU1gAAAJgPwlTaD8JU
+2gAAAAtzc2gtZWQyNTUxOQAAACBQXfKTsmUKEONVc2i974UqTzI+Jci36WMfk/BnsWbU1g
+AAAEBKnjD7h7IMc9yK5y+8yddm7Lze3vvP7+4OIbsYJ83raFBd8pOyZQoQ41VzaL3vhSpP
+Mj4lyLfpYx+T8GexZtTWAAAAEmJnQExBUFRPUC1ISTQ5Q0hOTgECAw==
+-----END OPENSSH PRIVATE KEY-----"
+
+        body = { ssh_key: { description: 'bar', value: new_key } }.to_json
+        response = patch "/settings/ssh_key/#{repo.id}", body, headers
+        json = JSON.parse(response.body)
+        expect(json['ssh_key']['description']).to eq('bar')
+        expect(json['ssh_key']).not_to have_key('value')
+
+        updated_ssh_key = repo.reload.settings.ssh_key
+        expect(updated_ssh_key.description).to eq('bar')
+        expect(updated_ssh_key.repository_id).to eq(repo.id)
+        expect(updated_ssh_key.value.decrypt).to eq(new_key)
+      end
+
+
       it 'returns an error message if ssh_key is invalid' do
         settings = repo.settings
         ssh_key = settings.create(:ssh_key, description: 'foo', value: 'the key')

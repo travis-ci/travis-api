@@ -1,6 +1,6 @@
 module Travis::API::V3
   class Services::CustomKeys::Create < Service
-    params :owner_id, :owner_type, :name, :description, :private_key, :added_by
+    params :owner_id, :owner_type, :name, :description, :private_key, :added_by, :public_key
     result_type :custom_key
 
     def run!

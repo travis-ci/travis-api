@@ -406,6 +406,7 @@ module Travis::API::V3
       patch :update_plan, '/plan'
       patch :resubscribe, '/resubscribe'
       post :cancel, '/cancel'
+      post :pause, '/pause'
       post :pay, '/pay'
       get :invoices, '/invoices'
     end
@@ -419,6 +420,7 @@ module Travis::API::V3
       patch :update_plan, '/plan'
       post :pay, '/pay'
       post :cancel, '/cancel'
+      post :pause, '/pause'
       post :buy_addon, '/addon/{addon.id}'
       get :user_usages, '/user_usages'
       get :invoices, '/invoices'

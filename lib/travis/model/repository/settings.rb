@@ -3,6 +3,7 @@ require 'coercible'
 require 'travis/settings'
 require 'travis/settings/encrypted_value'
 require 'openssl'
+require 'ssh_data'
 
 class Repository::Settings < Travis::Settings
   class EnvVar < Travis::Settings::Model
@@ -35,6 +36,19 @@ class Repository::Settings < Travis::Settings
       key = OpenSSL::PKey::RSA.new(value.decrypt, '')
       raise NotAPrivateKeyError unless key.private?
     rescue OpenSSL::PKey::RSAError, NotAPrivateKeyError
+      validate_nonrsa
+    end
+
+    def validate_nonrsa
+      keys = SSHData::PrivateKey.parse_openssh(value.decrypt)
+      add_errors unless keys.any?
+    rescue SSHData::DecodeError
+      add_errors
+    rescue SSHData::DecryptError
+      errors.add(:value, :key_with_a_passphrase)
+    end
+
+    def add_errors
       # it seems there is no easy way to check if key
       # needs a pass phrase with ruby's openssl bindings,
       # that's why we need to manually check that
@@ -91,6 +105,7 @@ class Repository::Settings < Travis::Settings
   attribute :builds_only_with_travis_yml, Boolean, default: false
   attribute :build_pushes, Boolean, default: true
   attribute :build_pull_requests, Boolean, default: true
+  attribute :build_releases, Boolean, default: true
   attribute :maximum_number_of_builds, Integer
   attribute :ssh_key, SshKey
   attribute :timeout_hard_limit

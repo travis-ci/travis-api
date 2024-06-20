@@ -31,8 +31,27 @@ tFns8eTxHpZOYOftxpX91vS3tzKCKgkdPhnYBDrvFFWnGgRLXFpb
 "
   }
 
+  let (:private_key_eddsa) { 
+"-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACBQXfKTsmUKEONVc2i974UqTzI+Jci36WMfk/BnsWbU1gAAAJgPwlTaD8JU
+2gAAAAtzc2gtZWQyNTUxOQAAACBQXfKTsmUKEONVc2i974UqTzI+Jci36WMfk/BnsWbU1g
+AAAEBKnjD7h7IMc9yK5y+8yddm7Lze3vvP7+4OIbsYJ83raFBd8pOyZQoQ41VzaL3vhSpP
+Mj4lyLfpYx+T8GexZtTWAAAAEmJnQExBUFRPUC1ISTQ5Q0hOTgECAw==
+-----END OPENSSH PRIVATE KEY-----"
+  }
+
   it 'validates correctness of private key' do
     ssh_key = described_class.new(value: private_key)
+    expect(ssh_key).to be_valid
+
+    ssh_key.value = 'foo'
+    expect(ssh_key).not_to be_valid
+    expect(ssh_key.errors.details[:value].map{|k| k[:error]}).to eq([:not_a_private_key])
+  end
+
+  it 'validates correctness of eddsa private key' do
+    ssh_key = described_class.new(value: private_key_eddsa)
     expect(ssh_key).to be_valid
 
     ssh_key.value = 'foo'
