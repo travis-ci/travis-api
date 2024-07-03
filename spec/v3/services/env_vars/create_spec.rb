@@ -126,6 +126,11 @@ describe Travis::API::V3::Services::EnvVars::Create, set_app: true do
       example 'persists repository id' do
         expect(repo.reload.settings['env_vars'].first['repository_id']).to eq repo.id
       end
+      example 'audit is created' do
+        expect(Travis::API::V3::Models::Audit.last.source_id).to eq(repo.id)
+        expect(Travis::API::V3::Models::Audit.last.source_type).to eq('Repository')
+        expect(Travis::API::V3::Models::Audit.last.source_changes).to eq({"settings"=>{"env_vars"=>{"created"=> "{\"name\"=>\"FOO\", \"public\"=>false}"}}}) 
+      end
     end
 
     describe 'public' do
