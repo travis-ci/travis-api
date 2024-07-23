@@ -22,6 +22,12 @@ module Travis::API::V3
       OpenSSL::HMAC.hexdigest('sha256', hmac_secret_key, @model.id.to_s) if @model.id && hmac_secret_key
     end
 
+    def confirmed_at
+      return Date.new(2000,1,1) if !!Travis.config.enterprise
+
+      @model.confirmed_at
+    end
+
     def ro_mode
       return false unless Travis.config.org? && Travis.config.read_only?
 

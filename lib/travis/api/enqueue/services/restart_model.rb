@@ -34,6 +34,9 @@ module Travis
           # there is no billing for .org
           return true if Travis.config.org?
 
+          # there is no billing for .enterprise
+          return true if !!Travis.config.enterprise
+
           @_billing_ok ||= begin
             jobs = target.is_a?(Job) ? [target] : target.matrix
 
@@ -106,11 +109,17 @@ module Travis
         end
 
         def build_permission?
+          return build_permission_legacy? if Travis.config.legacy_roles
+
           # nil value is considered true
           return true if authorizer.for_repo(repository.id,'repository_build_restart')
 
           false
         rescue Travis::API::V3::AuthorizerError
+          build_permission_legacy?
+        end
+
+        def build_permission_legacy?
           return false if repository.permissions.find_by(user_id: current_user.id).build == false
           return false if repository.owner_type == 'Organization' && repository.owner.memberships.find_by(user_id: current_user.id)&.build_permission == false
 

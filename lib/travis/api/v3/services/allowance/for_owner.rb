@@ -1,6 +1,9 @@
 module Travis::API::V3
   class Services::Allowance::ForOwner < Service
     def run!
+
+      return result BillingClient.default_allowance_response if !!Travis.config.enterprise
+
       return result BillingClient.default_allowance_response if Travis.config.org?
       raise LoginRequired unless access_control.logged_in?
 

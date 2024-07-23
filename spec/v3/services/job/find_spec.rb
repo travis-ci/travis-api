@@ -341,7 +341,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
 
   describe 'including log_complete on hosted' do
     before do
-      stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{job.id}?by=job_id&source=api").
+      stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job.id}?by=job_id&source=api").
          with(  headers: {
           'Accept'=>'*/*',
           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
@@ -363,13 +363,14 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
 
   describe 'including log_complete on enterprise' do
     before do
-      stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{job2.id}?by=job_id&source=api").
+      stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{job2.id}?by=job_id&source=api").
          with(  headers: {
           'Accept'=>'*/*',
           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
           'Authorization'=>'token notset',
           'Connection'=>'keep-alive',
           'Keep-Alive'=>'30',
+          'User-Agent'=>'Faraday v2.7.10'
            }).
          to_return(status: 200, body: "{}", headers: {})
 

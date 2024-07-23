@@ -14,7 +14,7 @@ class Travis::Api::App
 
         repo = Travis::API::V3::Models::Repository.find(job.repository.id)
 
-        auth_for_repo(repo.id, 'repository_log_view')
+        auth_for_repo(repo.id, 'repository_log_view') unless Travis.config.legacy_roles
 
         repo_can_write = current_user ? !!repo.users.where(id: current_user.id, permissions: { push: true }).first : false
 
