@@ -11,7 +11,7 @@ module Travis::API::V3
         repo_can_write = access_control.repo_can_write
       elsif access_control.user
         repo_can_write = !!job.repository.users.where(id: access_control.user.id, permissions: { push: true }).first
-        raise LogAccessDenied if !access_control.permissions(job).view_log? && job.repository.private?
+        raise LogAccessDenied if !Travis.config.legacy_roles && !access_control.permissions(job).view_log? && job.repository.private?
       end
 
       raise(NotFound, :log) unless access_control.visible? log

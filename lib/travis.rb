@@ -1,6 +1,6 @@
 require 'pusher'
 require 'travis/support'
-require 'travis/support/database'
+#require 'travis/support/database'
 require 'travis/errors'
 
 module Travis

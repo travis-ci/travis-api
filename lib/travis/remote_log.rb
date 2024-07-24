@@ -320,8 +320,12 @@ module Travis
           secret_access_key: archive_s3_config[:secret_access_key],
           bucket_name: archive_s3_config[:bucket] || archive_s3_config[:bucket_name] || archive_s3_bucket,
           region: archive_s3_config[:region] || 'us-east-2',
-          endpoint: archive_s3_config[:endpoint]
+          endpoint: endpoint
         )
+      end
+
+      private def endpoint
+        archive_s3_config[:endpoint]&.index('http') == 0 ? archive_s3_config[:endpoint] : "https://#{archive_s3_config[:endpoint]}"
       end
 
       private def archive_s3_bucket

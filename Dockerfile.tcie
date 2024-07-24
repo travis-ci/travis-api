@@ -1,0 +1,44 @@
+FROM ruby:3.2.2-slim
+
+LABEL maintainer Travis CI GmbH <support+travis-api-docker-images@travis-ci.com>
+
+RUN ( \
+   mkdir -p /app/vendor /app/cache; \
+   groupadd -r travis -g 1000 && \
+   useradd -u 1000 -r -g travis -s /bin/sh -c "travis user" -d "/app" travis;\
+   chown -R travis:travis /app; \
+   apt-get update ; \
+   apt-get upgrade -y ; \
+   apt-get install -y --no-install-recommends git make gcc g++ libpq-dev libjemalloc-dev xz-utils libcurl4 curl \
+   && rm -rf /var/lib/apt/lists/*; \
+   gem update --system; \
+   bundle config set app_config /app; \
+   bundle config set cache_path /app; \
+   bundle config --global frozen 1; \
+   bundle config set deployment 'true'; \
+   chown -R travis:travis /usr/local/bundle; \
+)
+
+
+
+WORKDIR /app
+
+USER travis
+COPY Gemfile*      /app/
+RUN ( \
+   bundle config set without 'development test'; \
+   bundler install --verbose --retry=3; \
+   bundle config set frozen true; \
+   )
+USER root
+RUN ( apt-get remove -y gcc g++ make git perl xz-utils && apt-get -y autoremove; \
+   bundle clean && rm -rf /app/vendor/bundle/ruby/2.7.0/cache/*; \
+   for i in `find /app/vendor/ -name \*.o -o -name \*.c -o -name \*.h`; do rm -f $i; done; \
+)
+
+USER travis
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+
+COPY . /app
+
+CMD ["./script/server-buildpacks"]

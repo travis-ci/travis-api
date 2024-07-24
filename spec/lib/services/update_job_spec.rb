@@ -63,7 +63,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to received' do
       service.run
-      expect(job.reload.source.state).to eq('received')
+      expect(job.reload.source.state).to eq(:received)
     end
 
     it 'sets the build received_at' do
@@ -73,7 +73,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to received' do
       service.run
-      expect(job.reload.source.state).to eq('received')
+      expect(job.reload.source.state).to eq(:received)
     end
   end
 
@@ -108,7 +108,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to started' do
       service.run
-      expect(job.reload.source.state).to eq('started')
+      expect(job.reload.source.state).to eq(:started)
     end
 
     it 'sets the build started_at' do
@@ -118,7 +118,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to started' do
       service.run
-      expect(job.reload.source.state).to eq('started')
+      expect(job.reload.source.state).to eq(:started)
     end
 
     it 'sets the repository last_build_state to started' do
@@ -162,7 +162,7 @@ describe Travis::Services::UpdateJob do
 
     it 'sets the build state to passed' do
       service.run
-      expect(job.reload.source.state).to eq('passed')
+      expect(job.reload.source.state).to eq(:passed)
     end
 
     it 'sets the build finished_at' do
@@ -221,7 +221,7 @@ describe Travis::Services::UpdateJob do
 
     it 'resets the build state to started' do
       service.run
-      expect(job.reload.source.state).to eq('created')
+      expect(job.reload.source.state).to eq(:created)
     end
 
     it 'resets the build started_at' do
@@ -231,7 +231,7 @@ describe Travis::Services::UpdateJob do
 
     it 'resets the build state to started' do
       service.run
-      expect(job.reload.source.state).to eq('created')
+      expect(job.reload.source.state).to eq(:created)
     end
 
     it 'resets the repository last_build_state to started' do

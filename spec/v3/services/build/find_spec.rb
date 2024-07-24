@@ -388,7 +388,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   describe 'including log_complete on hosted' do
     before do
       jobs.each do |j|
-        stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{j.id}?by=job_id&source=api").
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{j.id}?by=job_id&source=api").
            with(  headers: {
             'Accept'=>'*/*',
             'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
@@ -412,7 +412,7 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
   describe 'including log_complete on enterprise' do
     before do
       jobs.each do |j|
-        stub_request(:get, "http://travis-logs-notset.example.com:1234/logs/#{j.id}?by=job_id&source=api").
+        stub_request(:get, "#{Travis.config.logs_api.url}/logs/#{j.id}?by=job_id&source=api").
            with(  headers: {
             'Accept'=>'*/*',
             'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',

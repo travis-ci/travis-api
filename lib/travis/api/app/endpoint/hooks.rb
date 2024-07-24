@@ -11,7 +11,7 @@ class Travis::Api::App
 
       put '/:id?', scope: :private do
         service = service(:update_hook, id: params[:id] || params[:hook][:id], active: params[:hook][:active])
-        auth_for_repo(params[:id] || params[:hook][:id], 'repository_state_update')
+        auth_for_repo(params[:id] || params[:hook][:id], 'repository_state_update') unless Travis.config.legacy_roles
         disallow_migrating!(service.repo)
         respond_with service
       end

@@ -27,6 +27,7 @@ module Travis::API::V3
       user = Models::User.find_by_id(id) if id
       return false unless user
 
+
       owners=[]
       user.organizations.each do |org|
         owners << {
@@ -34,6 +35,9 @@ module Travis::API::V3
           :type => 'Organization'
         }
       end
+
+      return owners.length > 0 if !!Travis.config.enterprise
+
       Models::Repository.where(id: user.shared_repositories_ids).uniq.pluck(:owner_id, :owner_type).each do |owner|
         owners << {
           :id => owner[0],
