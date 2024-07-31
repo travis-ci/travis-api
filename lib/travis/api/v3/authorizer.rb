@@ -12,6 +12,11 @@ module Travis::API::V3
       @user_id = user_id
     end
 
+    def cache_repos(repo_ids)
+      cache.cache_repos(repo_ids, 'permissions')
+      cache.cache_repos(repo_ids, 'roles')
+    end
+
     def for_repo(repo_id, perm)
       cache.get_permission('repository', repo_id, perm)
     end
@@ -142,6 +147,28 @@ module Travis::API::V3
         @user_id = user_id
       end
 
+
+
+      def cache_repos(repo_ids, type = 'permissions')
+        ids = repo_ids.select do |id|
+          redis.smembers("api::role_cache::#{@user_id}::repository::#{id}::#{type}")&.empty?
+        end
+
+        response = connection.post("/#{type}/repositories") do |req|
+          req.body = {repository_ids: ids}.to_json
+        end unless ids.empty?
+
+        if response&.status == 200
+          body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
+          body["#{type}"]&.keys&.each do |id|
+            key = "api::role_cache::#{@user_id}::repository::#{id}::#{type}"
+            perms = body["#{type}"][id]
+            redis.sadd(key, (perms.nil? || perms.empty?) ? ['none'] : perms)
+            redis.expire(key,15)
+          end
+        end
+      end
+
       def get_permission(resource_type, resource_id, permission)
         key = "api::role_cache::#{@user_id}::#{resource_type.downcase}::#{resource_id}::permissions"
         if redis.exists?(key)
@@ -157,7 +184,7 @@ module Travis::API::V3
           body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
           redis.sadd(key, body['permissions'].nil? || body['permissions'].empty? ? ['none'] : body['permissions'])
-          redis.expire(key, 5)
+          redis.expire(key, 15)
 
           body['permissions']&.include?(permission)
         end

@@ -136,6 +136,8 @@ module Travis::API::V3
       @main_type = main_type.to_s
       @includes  = includes
       @service   = service
+
+      ActiveRecord::Base.connection.enable_query_cache! unless Travis.env == 'test'
     end
 
     def warn(*args)
