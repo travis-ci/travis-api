@@ -74,5 +74,9 @@ module Travis::API::V3
     def render_entry(entry, **options)
       Renderer.render_value(entry, **options)
     end
+
+    def authorizer
+      @_authorizer ||= Authorizer::new(options[:access_control].user&.id)
+    end
   end
 end
