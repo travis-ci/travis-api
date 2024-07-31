@@ -11,6 +11,8 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
 
   before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
   before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
+  before { stub_request(:post, %r((.+)/permissions/repositories)).to_return(status: 400) }
+  before { stub_request(:post, %r((.+)/roles/repositories)).to_return(status: 400) }
 
   describe 'name_filter' do
     let(:web_repo)  { FactoryBot.create(:repository, name: 'travis-web') }
