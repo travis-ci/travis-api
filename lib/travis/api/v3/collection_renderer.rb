@@ -68,7 +68,7 @@ module Travis::API::V3
     end
 
     def representation
-      :standard
+      params['representation']&.to_sym || :standard
     end
 
     def render_entry(entry, **options)
