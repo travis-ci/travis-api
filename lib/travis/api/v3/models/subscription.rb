@@ -22,8 +22,8 @@ module Travis::API::V3
       @client_secret = attributes.fetch('client_secret')
       @created_at = attributes.fetch('created_at')
       @cancellation_requested = attributes.fetch('cancellation_requested')
-      @on_trial_period = attributes.fetch('on_trial_period')
-      current_trial = attributes.fetch('current_trial')
+      @on_trial_period = attributes.fetch('on_trial_period', false)
+      current_trial = attributes.fetch('current_trial', nil)
       @current_trial = current_trial && Models::V2Trial.new(current_trial)
     end
   end

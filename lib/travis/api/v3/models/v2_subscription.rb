@@ -33,7 +33,7 @@ module Travis::API::V3
       @canceled_at = attributes.fetch('canceled_at')
       @scheduled_plan_name = attributes.fetch('scheduled_plan')
       @cancellation_requested = attributes.fetch('cancellation_requested')
-      current_trial = attributes.fetch('current_trial')
+      current_trial = attributes.fetch('current_trial', nil)
       if current_trial
         @current_trial = Models::V2Trial.new(current_trial)
       end

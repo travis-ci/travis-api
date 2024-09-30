@@ -69,6 +69,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "private"               => false,
       "restarted_at"          => nil,
       "restarted_by"          => nil,
+      "vm_size"               => nil,
       "build"                 => {
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",
@@ -191,6 +192,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "private"               => false,
       "restarted_at"          => nil,
       "restarted_by"          => nil,
+      "vm_size"               => nil,
       "build"                 => {
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",
@@ -274,6 +276,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
       "private"               => false,
       "restarted_at"          => nil,
       "restarted_by"          => nil,
+      "vm_size"               => nil,
       "build"                 => {
         "@type"               => "build",
         "@href"               => "/v3/build/#{build.id}",

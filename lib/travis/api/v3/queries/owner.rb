@@ -8,7 +8,7 @@ module Travis::API::V3
 
     def trial_allowed(user_id, owner_id, owner_type)
       client = BillingClient.new(user_id)
-      client.trial_allowed(owner_id, owner_type)
+      !!client.trial_allowed(owner_id, owner_type)
     end
 
     private
