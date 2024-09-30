@@ -1,5 +1,6 @@
 describe Travis::API::V3::Services::Owner::Find, set_app: true do
 
+  before { stub_request(:post, %r((.+)/usage/stats)) }
   describe "organization" do
     let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
 
