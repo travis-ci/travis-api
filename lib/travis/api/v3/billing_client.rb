@@ -253,6 +253,15 @@ module Travis::API::V3
       handle_subscription_response(response)
     end
 
+    def trial_allowed(owner_id, owner_type)
+      data = connection.post("/usage/stats", owners: [{id: owner_id, type: owner_type}], query: 'trial_allowed')
+      data = data&.body
+      data = data.is_a?(String) && data.length > 0 ? JSON.parse(data) : data
+      data.fetch('trial_allowed') == 'true' if data && data['trial_allowed']
+    rescue
+      false
+    end
+
     def usage_stats(owners)
       data = connection.post("/usage/stats", owners: owners, query: 'paid_plan_count')
       data = data&.body

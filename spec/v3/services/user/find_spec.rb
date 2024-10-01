@@ -40,6 +40,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
       "synced_at"        => user.synced_at,
       "education"        => true,
       "allow_migration"  => false,
+      "trial_allowed"    => false,
       "allowance"        => {
         "@type"                 => "allowance",
         "@representation"       => "minimal",
@@ -80,6 +81,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
       "synced_at"        => user.synced_at,
       "education"        => true,
       "allow_migration"  => false,
+      "trial_allowed"    => false,
       "allowance"        => {
         "@type"                 => "allowance",
         "@representation"       => "minimal",
@@ -120,6 +122,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
       "synced_at"        => user.synced_at,
       "education"        => true,
       "allow_migration"  => false,
+      "trial_allowed"    => false,
       "allowance"        => {
         "@type"                 => "allowance",
         "@representation"       => "minimal",

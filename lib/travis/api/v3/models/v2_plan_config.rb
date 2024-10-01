@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Models::V2PlanConfig
     attr_reader :id, :name, :private_repos, :starting_price, :starting_users, :plan_type,
-                :private_credits, :public_credits, :addon_configs, :concurrency_limit, :available_standalone_addons, :auto_refill_enabled, :trial_plan,
+                :private_credits, :public_credits, :addon_configs, :concurrency_limit, :available_standalone_addons, :auto_refill_enabled, :trial_plan, :trial_config,
                 :annual, :auto_refill_thresholds, :auto_refill_amounts
 
     def initialize(attrs)
@@ -20,6 +20,7 @@ module Travis::API::V3
       @auto_refill_thresholds = attrs.fetch('auto_refill_thresholds')
       @auto_refill_amounts = attrs.fetch('auto_refill_amounts')
       @trial_plan = attrs.fetch('trial_plan', false)
+      @trial_config = attrs.fetch('trial_config', nil)
     end
   end
 end

@@ -6,6 +6,11 @@ module Travis::API::V3
       find!(:organization) || find!(:user)
     end
 
+    def trial_allowed(user_id, owner_id, owner_type)
+      client = BillingClient.new(user_id)
+      !!client.trial_allowed(owner_id, owner_type)
+    end
+
     private
 
     def query(type, main_type: self.main_type, params: self.params)

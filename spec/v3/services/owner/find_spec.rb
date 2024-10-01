@@ -1,5 +1,6 @@
 describe Travis::API::V3::Services::Owner::Find, set_app: true do
 
+  before { stub_request(:post, %r((.+)/usage/stats)) }
   describe "organization" do
     let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org', github_id: 1234) }
 
@@ -48,6 +49,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 1234,
         "vcs_id"           => org.vcs_id,
         "vcs_type"         => org.vcs_type,
+        "trial_allowed"    => false,
         "ro_mode"          => true,
         "avatar_url"       => nil,
         "education"        => false,
@@ -90,6 +92,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 1234,
         "vcs_id"           => org.vcs_id,
         "vcs_type"         => org.vcs_type,
+        "trial_allowed"    => false,
         "ro_mode"          => true,
         "avatar_url"       => nil,
         "education"        => false,
@@ -136,6 +139,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"           => 1234,
         "vcs_id"              => org.vcs_id,
         "vcs_type"            => org.vcs_type,
+        "trial_allowed"       => false,
         "ro_mode"             => true,
         "avatar_url"          => nil,
         "education"           => false,
@@ -241,6 +245,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"         => 1234,
         "vcs_id"            => org.vcs_id,
         "vcs_type"          => org.vcs_type,
+        "trial_allowed"     => false,
         "ro_mode"           => true,
         "avatar_url"        => nil,
         "education"         => false,
@@ -340,6 +345,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"        => 1234,
         "vcs_id"           => org.vcs_id,
         "vcs_type"         => org.vcs_type,
+        "trial_allowed"     => false,
         "ro_mode"          => true,
         "avatar_url"       => nil,
         "education"        => false,
@@ -386,6 +392,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "github_id"      => 1234,
         "vcs_id"         => org.vcs_id,
         "vcs_type"       => org.vcs_type,
+        "trial_allowed"     => false,
         "ro_mode"        => true,
         "avatar_url"     => nil,
         "education"      => false,
@@ -438,6 +445,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "custom_keys"    => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "trial_allowed"     => false,
         "ro_mode" => false,
         "confirmed_at" => nil,
       }}
@@ -471,6 +479,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "custom_keys"    => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "trial_allowed"     => false,
         "ro_mode" => false,
         "confirmed_at" => nil,
       }}
@@ -504,6 +513,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "custom_keys"      => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "trial_allowed"     => false,
         "ro_mode" => false,
         "confirmed_at" => nil,
       }}
@@ -544,6 +554,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "custom_keys"      => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
+        "trial_allowed"     => false,
         "ro_mode"          => false,
         "confirmed_at" => nil,
         "@warnings"        => [{

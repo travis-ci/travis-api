@@ -15,6 +15,7 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
   before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(org_role_authorization)) }
   before { stub_request(:get, %r((.+)/permissions/org/(.+))).to_return(status: 200, body: JSON.generate(org_authorization)) }
   before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
+  before { stub_request(:post, %r((.+)/usage/stats)) }
 
   let(:org) { Travis::API::V3::Models::Organization.new(login: 'example-org')   }
   before    { org.save!                                }
@@ -82,6 +83,7 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
         "avatar_url"      => nil,
         "education"       => false,
         "allow_migration" => false,
+        "trial_allowed"    => false,
         "ro_mode"         => true,
         "allowance" => {
           "@type"             => "allowance",
