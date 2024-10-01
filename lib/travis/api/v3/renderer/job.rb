@@ -3,13 +3,13 @@ require 'travis/api/v3/config_obfuscator'
 module Travis::API::V3
   class Renderer::Job < ModelRenderer
     representation(:minimal, :id)
-    representation(:standard, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :created_at, :updated_at, :private, :restarted_at, :restarted_by)
+    representation(:standard, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :created_at, :updated_at, :private, :restarted_at, :restarted_by, :vm_size)
     representation(:active, *representations[:standard])
 
     # TODO: I don't want to config be visible in the regular representation
     # as I want it to be visible only after adding include=job.config
     # we probably need to have a better way of doing this
-    representation(:with_config, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :created_at, :updated_at, :restarted_at, :restarted_by, :config)
+    representation(:with_config, *representations[:minimal], :allow_failure, :number, :state, :started_at, :finished_at, :build, :queue, :repository, :commit, :owner, :stage, :created_at, :updated_at, :restarted_at, :restarted_by, :vm_size, :config)
 
     hidden_representations(:with_config)
     hidden_representations(:active)

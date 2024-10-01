@@ -68,11 +68,15 @@ module Travis::API::V3
     end
 
     def representation
-      :standard
+      params['representation']&.to_sym || :standard
     end
 
     def render_entry(entry, **options)
       Renderer.render_value(entry, **options)
+    end
+
+    def authorizer
+      @_authorizer ||= Authorizer::new(options[:access_control].user&.id)
     end
   end
 end
