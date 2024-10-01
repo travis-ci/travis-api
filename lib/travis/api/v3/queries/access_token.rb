@@ -1,8 +1,8 @@
 module Travis::API::V3
   class Queries::AccessToken < Query
-    def regenerate_token(user, token, app_id)
+    def regenerate_token(user, token, app_id, expires_in: nil)
       Travis.redis.del("t:#{token}")
-      Travis::Api::App::AccessToken.create(user: user, app_id: app_id, force: true).token
+      Travis::Api::App::AccessToken.create(user: user, app_id: app_id, expires_in:, force: true).token
     end
 
     def remove_token(user, token, app_id)
