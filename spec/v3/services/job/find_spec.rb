@@ -158,7 +158,7 @@ describe Travis::API::V3::Services::Job::Find, set_app: true do
 
   describe "fetching job on private repository, private API, authenticated as user with access" do
     let(:token)   { Travis::Api::App::AccessToken.create(user: repo.owner, app_id: 1) }
-    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                        }}
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}", 'CONTENT_TYPE' => 'application/json' }}
     before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
     before        { repo.update_attribute(:private, true)                             }
     before        { allow_any_instance_of(Travis::API::V3::Permissions::Job).to receive(:delete_log?).and_return(true) }
