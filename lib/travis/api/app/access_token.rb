@@ -19,7 +19,7 @@ class Travis::Api::App
       user_id, app_id, *scopes = redis.lrange(key(token), 0, -1)
       extra = decode_json(scopes.pop) if scopes.last && scopes.last =~ /^json:/
 
-      reset_expiry(token)
+      reset_expiry(token, user_id, app_id)
 
       new(token: token, scopes: scopes, user_id: user_id, app_id: app_id, extra: extra) if user_id
     end
@@ -105,13 +105,17 @@ class Travis::Api::App
         end
       end
 
-      def self.reset_expiry(token)
+      def self.reset_expiry(token, user_id, app_id)
         web_token = Token.find_by(purpose: :web)
-
         if web_token && (token == web_token.token)
           redis.expire(key(token), web_token_expires_in)
         else
-          redis.expire(key(token), auth_token_expires_in)
+          if app_id == '1' # This is the TravisCLI token app_id
+            redis.expire(key(token), auth_cli_token_expires_in)
+            redis.expire("r:#{user_id}:#{app_id}", auth_cli_token_expires_in)
+          else
+            redis.expire(key(token), auth_token_expires_in)
+          end
         end
       end
 
@@ -121,6 +125,10 @@ class Travis::Api::App
 
       def self.auth_token_expires_in
         Travis.config.tokens&.auth_token.expires_in
+      end
+
+      def self.auth_cli_token_expires_in
+        Travis.config.tokens&.auth_cli_token.expires_in
       end
   end
 end
