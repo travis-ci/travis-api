@@ -162,6 +162,7 @@ class Travis::Api::App
           rendered['user'].merge(
             'token' => token,
             'rss_token' => user.tokens.rss.first.try(:token) || token,
+            'web_token' => user.tokens.web.first.try(:token) || token
           )
         end
 

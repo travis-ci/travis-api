@@ -8,7 +8,7 @@ require 'travis/model'
 # that people cannot throw random repositories at Travis CI.
 class Token < Travis::Model
   self.table_name = 'tokens'
-  enum purpose: [ :asset, :rss ]
+  enum purpose: [ :asset, :rss, :web ]
 
   belongs_to :user
 
