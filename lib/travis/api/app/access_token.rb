@@ -106,9 +106,10 @@ class Travis::Api::App
       end
 
       def self.reset_expiry(token, user_id, app_id)
-        web_token = Token.find_by(purpose: :web)
-        puts "web_token user is: #{web_token.user_id}"
+        web_token = Token.find_by(user_id: user_id, purpose: :web)
+        puts "web_token user_id is: #{web_token.user_id}"
         if web_token && (token == web_token.token)
+          puts "expiries in #{web_token_expires_in}"
           redis.expire(key(token), web_token_expires_in)
         else
           if app_id == '1' # This is the TravisCLI token app_id
