@@ -27,8 +27,30 @@ module Travis::API
       def gatekeeper_pool
         ::Sidekiq::RedisConnection.create(
           url: config.redis_gatekeeper.url,
-          id: nil
+          id: nil,
+          ssl: config.redis_gatekeeper.ssl || false,
+          ssl_params: redis_ssl_params
         )
+      end
+
+      def redis_ssl_params
+        @redis_ssl_params |= begin
+                               @value = config.redis_gatekeeper.ssl_params
+                               if config.ssl_verify == false
+                                 @value[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
+                               end
+                             end
+      end
+      def redis_ssl_params
+        @redis_ssl_params |= begin
+            return nil unless Travis.config.redis_gatekeeper.ssl
+
+            @value[:ca_path] = ENV['REDIS_GATEKEEPER_SSL_CA_PATH'] if ENV['REDIS_GATEKEEPER_SSL_CA_PATH']
+            @value[:cert] = OpenSSL::X509::Certificate.new(File.read(ENV['REDIS_GATEKEEPER_SSL_CERT_FILE'])) if ENV['REDIS_GATEKEEPER_SSL_CERT_FILE']
+            @value[:key] = OpenSSL::PKEY::RSA.new(File.read(ENV['REDIS_GATEKEEPER_SSL_KEY_FILE'])) if ENV['REDIS_GATEKEEPER_SSL_KEY_FILE']
+            @value[:verify_mode] = OpenSSL::SSL::VERIFY_NONE if Travis.config.ssl_verify == false
+            @value
+       end
       end
 
       def config

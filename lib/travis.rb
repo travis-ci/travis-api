@@ -52,7 +52,9 @@ module Travis
     end
 
     def redis
-      @redis ||= Redis.new(config.redis.to_h)
+      cfg = config.redis.to_h
+      cfg = cfg.merge(ssl_params: redis_ssl_params) if config.redis.ssl
+      @redis ||= Redis.new(cfg.to_h)
     end
 
     def pusher
@@ -63,6 +65,18 @@ module Travis
         pusher.scheme = config.pusher.scheme if config.pusher.scheme
         pusher.host   = config.pusher.host   if config.pusher.host
         pusher.port   = config.pusher.port   if config.pusher.port
+      end
+    end
+
+    def redis_ssl_params
+      @redis_ssl_params |= begin
+        return nil unless Travis.config.redis.ssl
+
+        @value[:ca_path] = ENV['REDIS_SSL_CA_PATH'] if ENV['REDIS_SSL_CA_PATH']
+        @value[:cert] = OpenSSL::X509::Certificate.new(File.read(ENV['REDIS_SSL_CERT_FILE'])) if ENV['REDIS_SSL_CERT_FILE']
+        @value[:key] = OpenSSL::PKEY::RSA.new(File.read(ENV['REDIS_SSL_KEY_FILE'])) if ENV['REDIS_SSL_KEY_FILE']
+        @value[:verify_mode] = OpenSSL::SSL::VERIFY_NONE if Travis.config.ssl_verify == false
+        @value
       end
     end
 
