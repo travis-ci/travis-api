@@ -19,13 +19,15 @@ describe Travis::Api::App::AccessToken do
   end
 
   it 'expires the token after given period of time' do
-    token = described_class.new(app_id: 1, user_id: 2, expires_in: 1).tap(&:save)
+    token = described_class.new(app_id: 1, user_id: 2).tap(&:save)
+    key = "t:#{token.token}"
+    Travis.redis.expire(key, 1)
 
-    expect(described_class.find_by_token(token.token)).not_to be_nil
+    expect(Travis.redis.exists(key)).to eq 1
 
     sleep 2
 
-    expect(described_class.find_by_token(token.token)).to be_nil
+    expect(Travis.redis.exists(key)).to eq 0
   end
 
   it 'allows to save extra information' do
