@@ -40,7 +40,7 @@ module Travis::API::V3
     end
 
     def trial_allowed
-      query(:owner).trial_allowed(access_control&.user&.id, @model.id, @model.class.name)
+      query(:owner).trial_allowed(access_control&.user&.id, @model.id, @model.class.name.split('::').last)
     end
 
     def owner_type
