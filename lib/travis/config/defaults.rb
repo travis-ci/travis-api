@@ -43,10 +43,10 @@ module Travis
                 expires_in: ENV['WEB_TOKEN_EXPIRES_IN_HOURS'] == 'unlimited' ? 2 * 365 * 86_400 : (ENV['WEB_TOKEN_EXPIRES_IN_HOURS'] ? ENV['WEB_TOKEN_EXPIRES_IN_HOURS'].to_i * 3_600 : 5 * 60)
               },
               auth_token: {
-                expires_in: ENV['AUTH_TOKEN_EXPIRES_IN_DAYS'] == 'unlimited' ? 2 * 365 * 86_400 : (ENV['AUTH_TOKEN_EXPIRES_IN_DAYS'] ? ENV['AUTH_TOKEN_EXPIRES_IN_DAYS'].to_i * 86_400 : 90 * 86_400)
+                expires_in: ENV['AUTH_TOKEN_EXPIRES_IN_DAYS'] == 'unlimited' ? 2 * 365 * 86_400 : (ENV['AUTH_TOKEN_EXPIRES_IN_DAYS'] ? ENV['AUTH_TOKEN_EXPIRES_IN_DAYS'].to_i * 86_400 : 5 * 60)
               },
               auth_cli_token: {
-                expires_in: ENV['AUTH_CLI_TOKEN_EXPIRES_IN_DAYS'] == 'unlimited' ? 2 * 365 * 86_400 : (ENV['AUTH_CLI_TOKEN_EXPIRES_IN_DAYS'] ? ENV['AUTH_CLI_TOKEN_EXPIRES_IN_DAYS'].to_i * 86_400 : 90 * 86_400)
+                expires_in: ENV['AUTH_CLI_TOKEN_EXPIRES_IN_DAYS'] == 'unlimited' ? 2 * 365 * 86_400 : (ENV['AUTH_CLI_TOKEN_EXPIRES_IN_DAYS'] ? ENV['AUTH_CLI_TOKEN_EXPIRES_IN_DAYS'].to_i * 86_400 : 5 * 60)
               }
             },
             auth:                 { target_origin: nil },
