@@ -35,14 +35,6 @@ module Travis::API
 
       def redis_ssl_params
         @redis_ssl_params ||= begin
-                               @value = config.redis_gatekeeper.ssl_params
-                               if config.ssl_verify == false
-                                 @value[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
-                               end
-                             end
-      end
-      def redis_ssl_params
-        @redis_ssl_params ||= begin
             return nil unless Travis.config.redis_gatekeeper.ssl
 
             value = {}
