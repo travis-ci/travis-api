@@ -215,7 +215,8 @@ module Travis::Api
         setup_database_connections
 
         Sidekiq.configure_client do |config|
-          config.redis = Travis.config.redis.to_h
+          cfg = Travis.config.redis.to_h
+          config.redis = cfg.merge(ssl_params: Travis.redis_ssl_params) if Travis.config.redis.ssl && Travis.redis_ssl_params
         end
 
         if use_monitoring? && !console?
