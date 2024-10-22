@@ -6,8 +6,8 @@ module Travis::API::V3
 
     representation(:minimal,    :id, :login, :name, :vcs_type, :ro_mode)
     representation(:standard,   :id, :login, :name, :github_id, :vcs_id, :vcs_type, :avatar_url, :education,
-                   :allow_migration, :allowance, :ro_mode, :custom_keys)
-    representation(:additional, :repositories, :installation)
+                   :allow_migration, :allowance, :ro_mode, :custom_keys, :trial_allowed)
+    representation(:additional, :repositories, :installation, :trial_allowed)
 
     def initialize(model, **options)
       super
@@ -37,6 +37,10 @@ module Travis::API::V3
       return BillingClient.default_allowance_response(id) unless access_control.user
 
       BillingClient.minimal_allowance_response(id)
+    end
+
+    def trial_allowed
+      query(:owner).trial_allowed(access_control&.user&.id, @model.id, @model.class.name.split('::').last)
     end
 
     def owner_type

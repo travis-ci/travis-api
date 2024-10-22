@@ -4,7 +4,7 @@ module Travis::API::V3
 
     attr_reader :id, :plan, :permissions, :source, :billing_info, :credit_card_info, :owner, :status, :valid_to, :canceled_at,
                 :client_secret, :payment_intent, :addons, :auto_refill, :available_standalone_addons, :created_at, :scheduled_plan_name,
-                :cancellation_requested
+                :cancellation_requested, :current_trial
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
@@ -33,6 +33,10 @@ module Travis::API::V3
       @canceled_at = attributes.fetch('canceled_at')
       @scheduled_plan_name = attributes.fetch('scheduled_plan')
       @cancellation_requested = attributes.fetch('cancellation_requested')
+      current_trial = attributes.fetch('current_trial', nil)
+      if current_trial
+        @current_trial = Models::V2Trial.new(current_trial)
+      end
     end
   end
 
