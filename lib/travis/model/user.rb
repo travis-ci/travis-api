@@ -172,7 +172,8 @@ class User < Travis::Model
 
   def create_the_tokens
     self.tokens.asset.create! unless self.tokens.asset.exists?
-    self.tokens.rss.create!
+    self.tokens.rss.create! unless self.tokens.rss.exists?
+    self.tokens.web.create! unless self.tokens.web.exists?
   end
 
   def github?
