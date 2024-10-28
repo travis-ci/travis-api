@@ -11,8 +11,10 @@ module Travis::API::V3
       @status = attributes.fetch('status')
       @started_at = attributes.fetch('started_at')
       @finish_time = attributes.fetch('finish_time')
-      @credit_usage = Models::V2AddonUsage.new(attributes.fetch('credit_usage'))
-      @user_usage = Models::V2AddonUsage.new(attributes.fetch('user_usage'))
+      c_usage =  attributes.fetch('credit_usage', nil)
+      @credit_usage = Models::V2AddonUsage.new(c_usage) if c_usage
+      u_usage = attributes.fetch('user_usage', nil)
+      @user_usage = Models::V2AddonUsage.new(u_usage) if u_usage
     end
   end
 end
