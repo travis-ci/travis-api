@@ -9,7 +9,8 @@ module Travis::API::V3
     end
 
     def update_for_organization(organization, user_ids, permission)
-      Models::Membership.where(organization_id: organization.id, user_id: user_ids).update_all(build_permission: bool(permission))
+      build_permission_value = permission.nil? ? nil : bool(permission)
+      Models::Membership.where(organization_id: organization.id, user_id: user_ids).update_all(build_permission: build_permission_value)
     end
 
     def update_for_repo(repository, user_ids, permission)
