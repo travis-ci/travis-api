@@ -223,6 +223,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'public_credits' => 40_000,
             'concurrency_limit' => 20,
             'plan_type' => 'metered',
+             'vm_size' => nil,
             'trial_config' => nil,
             'annual' => false,
             'auto_refill_thresholds' => [10000, 50000, 100000],
