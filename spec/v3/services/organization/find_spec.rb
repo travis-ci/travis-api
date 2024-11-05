@@ -9,6 +9,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
   let(:org_role_authorization) { { 'roles' => ['account_admin'] } }
   before { stub_request(:get, %r((.+)/roles/org/(.+))).to_return(status: 200, body: JSON.generate(org_role_authorization)) }
   before { stub_request(:get, %r((.+)/permissions/org/(.+))).to_return(status: 200, body: JSON.generate(org_authorization)) }
+  before { stub_request(:post, %r((.+)/usage/stats)) }
 
   describe 'existing org, public api' do
     let(:org_role_authorization) { { 'roles' => [] } }
@@ -42,6 +43,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "avatar_url"       => nil,
       "education"        => false,
       "allow_migration"  => false,
+      "trial_allowed"    => false,
       "ro_mode"          => true,
       "allowance"        => {
         "@type"             => "allowance",
@@ -92,6 +94,7 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
       "avatar_url"       => nil,
       "education"        => true,
       "allow_migration"  => true,
+      "trial_allowed"    => false,
       "ro_mode"          => false,
       "allowance"        => {
         "@type"             => "allowance",
