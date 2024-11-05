@@ -19,6 +19,8 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
 
   before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_roles)) }
 
+  before { stub_billing_request(:post, "/usage/stats", auth_key: billing_auth_key, user_id: nil) }
+
   context 'unauthenticated' do
     it 'responds 403' do
       get('/v3/owner/123/executions')
@@ -196,6 +198,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "avatar_url"=>"https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
               "education"=>nil,
               "allow_migration"=>false,
+              "trial_allowed"=>false,
               "allowance"=>
               {
                 "@type"=>"allowance",

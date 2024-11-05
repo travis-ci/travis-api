@@ -1,11 +1,16 @@
-describe Travis::API::V3::Services::Installation::Find, set_app: true do
+describe Travis::API::V3::Services::Installation::Find, set_app: true, billing_spec_helper: true do
   let(:user) { Travis::API::V3::Models::User.find_by_login('svenfuchs') }
   let!(:installation) { Travis::API::V3::Models::Installation.create(owner_type: 'User', owner_id: user.id, github_id: 789) }
 
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}"                  }}
+  let(:billing_url) { 'http://billingfake.travis-ci.com' }
+  let(:billing_auth_key) { 'secret' }
 
-  before { user.save! }
+  before do
+    user.save!
+    stub_billing_request(:post, "/usage/stats", auth_key: billing_auth_key, user_id: user.id)
+  end
 
   describe "authenticated as user with access" do
     before  { get("/v3/installation/#{installation.github_id}", {}, headers) }
@@ -66,6 +71,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true do
         "allow_migration" => false,
         "recently_signed_up" => false,
         "secure_user_hash" => nil,
+        "trial_allowed" => false,
         "ro_mode" => true,
         "confirmed_at" => nil,
       }
