@@ -32,6 +32,7 @@ module Travis::API::V3
         end
       rescue => e
         Travis.logger.error("Error fetching enterprise license: #{e.message}")
+        Travis.logger.error("Backtrace:\n\t#{e.backtrace.join("\n\t")}")
       end
 
     end
