@@ -103,6 +103,7 @@ class Travis::Api::App
       #
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake/?:provider?' do
+        halt 404, 'Not Found'
         puts("Debug Login: Entering /handshake with params: #{params.inspect}")
         method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
