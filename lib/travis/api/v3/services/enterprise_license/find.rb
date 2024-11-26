@@ -2,7 +2,7 @@ module Travis::API::V3
   class Services::EnterpriseLicense::Find < Service
     def run!
       begin
-        Travis.logger.info("Fetching enterprise license")
+        puts("Fetching enterprise license")
         if replicated_endpoint
           # We turn off verification because this is an internal IP and a self signed cert so it will always fail
           http_options = {url: replicated_endpoint, ssl: Travis.config.ssl.to_h.merge(verify: false)}.compact
@@ -12,7 +12,7 @@ module Travis::API::V3
           end
           response = conn.get("license/v1/license")
           replicated_response = JSON.parse(response.body)
-          Travis.logger.info("Fetched enterprise license: #{replicated_response}")
+          puts("Fetched enterprise license: #{replicated_response}")
           license_id = replicated_response["license_id"]
           license_type = replicated_response["license_type"]
           seats = get_seats(replicated_response)
@@ -27,12 +27,12 @@ module Travis::API::V3
                    expiration_time: expiration_time
                  })
         else
-          Travis.logger.error("REPLICATED_INTEGRATIONAPI not set")
+          puts("REPLICATED_INTEGRATIONAPI not set")
           raise InsufficientAccess
         end
       rescue => e
-        Travis.logger.error("Error fetching enterprise license: #{e.message}")
-        Travis.logger.error("Backtrace:\n\t#{e.backtrace.join("\n\t")}")
+        puts("Error fetching enterprise license: #{e.message}")
+        puts("Backtrace:\n\t#{e.backtrace.join("\n\t")}")
       end
 
     end
