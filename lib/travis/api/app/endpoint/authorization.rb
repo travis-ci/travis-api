@@ -103,10 +103,12 @@ class Travis::Api::App
       #
       # * **redirect_uri**: URI to redirect to after handshake.
       get '/handshake/?:provider?' do
+        Travis.logger.info("Debug Login: Entering /handshake with params: #{params.inspect}")
         method = org? ? :handshake : :vcs_handshake
         params[:provider] ||= 'github'
         params[:signup] ||= false
         send(method) do |user, token, redirect_uri|
+          Travis.logger.info("Debug Login: Handshake successful for user: #{user.inspect}, token: #{token}, redirect_uri: #{redirect_uri}")
           if target_ok? redirect_uri
             user[:installation] = params[:installation_id]
             content_type :html
@@ -114,9 +116,11 @@ class Travis::Api::App
               redirect_uri = redirect_uri + "?installation_id=#{params[:installation_id]}"
               redirect_uri = "#{Travis.config.vcs_redirects.web_url}#{Travis.config.vcs_redirects[params[:provider]]}?installation_id=#{params[:installation_id]}"
             end
+            Travis.logger.info("Debug Login: Redirecting to: #{redirect_uri}")
             data = { user: user, token: token, uri: redirect_uri }
             erb(:post_payload, locals: data)
           else
+            Travis.logger.error("Debug Login: Target URI not allowed: #{redirect_uri}")
             halt 401, 'target URI not allowed'
           end
         end
