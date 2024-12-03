@@ -194,7 +194,7 @@ module Travis::Api
 
     private
 
-      enterprise?
+      def enterprise?
         !!Travis.config.enterprise
       end
 
