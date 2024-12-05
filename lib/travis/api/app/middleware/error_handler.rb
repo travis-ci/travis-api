@@ -12,7 +12,7 @@ class Travis::Api::App
         Sentry.capture_exception(e)
         raise if Travis.testing
 
-        body = Travis::API::V3::TimeoutError.message
+        body = e.message
         if env['HTTP_X_REQUEST_ID']
           body += "\n"
           body += "request_id:#{env['HTTP_X_REQUEST_ID']}\n"
@@ -22,12 +22,7 @@ class Travis::Api::App
         Sentry.capture_exception(e)
         raise if Travis.testing
 
-        if e.is_a?(Timeout::Error)
-          body = "Credit card processing is currently taking longer than expected. Please check back in a few minutes and refresh the screen at that time. We apologize for the inconvenience and appreciate your patience."
-        else
-          body = "Sorry, we experienced an error."
-        end
-
+        body = "Sorry, we experienced an error."
         if env['HTTP_X_REQUEST_ID']
           body += "\n"
           body += "request_id:#{env['HTTP_X_REQUEST_ID']}\n"
