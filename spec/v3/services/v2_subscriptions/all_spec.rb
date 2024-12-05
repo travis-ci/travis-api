@@ -86,6 +86,7 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
           'scheduled_plan_name' => nil,
           'cancellation_requested' => false,
           'current_trial' => nil,
+          'defer_pause' => false,
           'plan' => {
             '@type' => 'v2_plan_config',
             '@representation' => 'standard',
