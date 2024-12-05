@@ -286,6 +286,7 @@ module Travis::API::V3
     end
 
     def handle_errors_and_respond(response)
+      puts "Billing response: #{response.inspect}"
       body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
       case response.status
@@ -306,6 +307,8 @@ module Travis::API::V3
       else
         raise Travis::API::V3::ServerError, 'Billing system failed'
       end
+    rescue Faraday::TimeoutError
+      raise Travis::API::V3::TimeoutError
     end
 
     def body(data)
@@ -316,7 +319,7 @@ module Travis::API::V3
       end
     end
 
-    def connection(timeout: 10)
+    def connection(timeout: 1)
       @connection ||= Faraday.new(url: billing_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
         conn.request(:authorization, :basic, '_', billing_auth_key)
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
