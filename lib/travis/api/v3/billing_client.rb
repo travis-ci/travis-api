@@ -328,7 +328,6 @@ module Travis::API::V3
         conn.options[:open_timeout] = timeout
         conn.options[:timeout] = timeout
         conn.adapter :net_http
-
       end
     end
 
