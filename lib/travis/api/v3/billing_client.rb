@@ -146,24 +146,9 @@ module Travis::API::V3
     def create_v2_subscription(subscription_data)
       response = connection.post('/v2/subscriptions', subscription_data)
       handle_v2_subscription_response(response)
+    rescue Faraday::TimeoutError
+      raise Travis::API::V3::TimeoutError
     end
-
-    # Create a wrapper method for making requests
-    # def make_request(method, path, data = nil)
-    #   puts "Making #{method.upcase} request to #{path}"
-    #   begin
-    #     case method
-    #     when :post
-    #       connection.post(path, data)
-    #     when :get
-    #       connection.get(path)
-    #     when :patch
-    #       connection.patch(path, data)
-    #     end
-    #   rescue Faraday::TimeoutError => e
-    #     raise Travis::API::V3::TimeoutError
-    #   end
-    # end
 
     def changetofree_v2_subscription(subscription_id, data)
       response = connection.patch("/v2/subscriptions/#{subscription_id}/changetofree", data)
@@ -345,8 +330,6 @@ module Travis::API::V3
         conn.adapter :net_http
 
       end
-    rescue Faraday::TimeoutError => e
-      raise Travis::API::V3::TimeoutError
     end
 
     def billing_url
