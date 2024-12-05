@@ -148,6 +148,23 @@ module Travis::API::V3
       handle_v2_subscription_response(response)
     end
 
+    # Create a wrapper method for making requests
+    # def make_request(method, path, data = nil)
+    #   puts "Making #{method.upcase} request to #{path}"
+    #   begin
+    #     case method
+    #     when :post
+    #       connection.post(path, data)
+    #     when :get
+    #       connection.get(path)
+    #     when :patch
+    #       connection.patch(path, data)
+    #     end
+    #   rescue Faraday::TimeoutError => e
+    #     raise Travis::API::V3::TimeoutError
+    #   end
+    # end
+
     def changetofree_v2_subscription(subscription_id, data)
       response = connection.patch("/v2/subscriptions/#{subscription_id}/changetofree", data)
       handle_v2_subscription_response(response)
@@ -286,7 +303,6 @@ module Travis::API::V3
     end
 
     def handle_errors_and_respond(response)
-      puts "Billing response: #{response.inspect}"
       body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
       case response.status
@@ -307,8 +323,6 @@ module Travis::API::V3
       else
         raise Travis::API::V3::ServerError, 'Billing system failed'
       end
-    rescue Faraday::TimeoutError
-      raise Travis::API::V3::TimeoutError
     end
 
     def body(data)
@@ -320,7 +334,7 @@ module Travis::API::V3
     end
 
     def connection(timeout: 1)
-      @connection ||= Faraday.new(url: billing_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
+      @connection = Faraday.new(url: billing_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
         conn.request(:authorization, :basic, '_', billing_auth_key)
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
         conn.headers['Content-Type'] = 'application/json'
@@ -329,7 +343,10 @@ module Travis::API::V3
         conn.options[:open_timeout] = timeout
         conn.options[:timeout] = timeout
         conn.adapter :net_http
+
       end
+    rescue Faraday::TimeoutError => e
+      raise Travis::API::V3::TimeoutError
     end
 
     def billing_url
