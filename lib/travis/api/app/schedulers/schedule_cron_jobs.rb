@@ -29,7 +29,7 @@ class Travis::Api::App
               retries:  0,
               ssl: Travis.config.redis.ssl || false,
             }
-            opt[:ca_path] ||= ENV['REDIS_SSL_CA_PATH'] if ENV['REDIS_SSL_CA_PATH']
+            opt[:ca_file] ||= ENV['REDIS_SSL_CA_FILE'] if ENV['REDIS_SSL_CA_FILE']
             opt[:cert] ||= OpenSSL::X509::Certificate.new(File.read(ENV['REDIS_SSL_CERT_FILE'])) if ENV['REDIS_SSL_CERT_FILE']
             opt[:key] ||= OpenSSL::PKEY::RSA.new(File.read(ENV['REDIS_SSL_KEY_FILE'])) if ENV['REDIS_SSL_KEY_FILE']
             opt[:verify_mode] ||= OpenSSL::SSL::VERIFY_NONE if Travis.config.ssl_verify == false
