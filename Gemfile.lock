@@ -90,7 +90,8 @@ GIT
 
 GIT
   remote: https://github.com/travis-ci/travis-lock
-  revision: aeee7b5d11e3d44f19d0a113c2e54ec54756f20f
+  revision: 535bbe651e1d407c58b1f1c7f521dd1d7a08691c
+  branch: ga-tbt151-redistls
   specs:
     travis-lock (0.2.0)
 
