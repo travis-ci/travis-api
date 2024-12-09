@@ -13,9 +13,13 @@ Travis::Amqp.config = Travis.config.amqp.to_h
 Travis::Notification.setup
 
 Sidekiq.configure_server do |config|
-  config.redis = Travis.config.redis.to_h.merge(id: nil, ssl_params: Travis.redis_ssl_params)
+  cfg = Travis.config.redis.to_h.merge(id: nil)
+  cfg = cfg.merge(ssl_params: Travis.redis_ssl_params) if Travis.config.redis.ssl
+  config.redis = cfg
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = Travis.config.redis.to_h.merge(size: 1, id: nil, ssl_params: Travis.redis_ssl_params)
+  cfg = Travis.config.redis.to_h.merge(size: 1, id: nil)
+  cfg = cfg.merge(ssl_params: Travis.redis_ssl_params) if Travis.config.redis.ssl
+  config.redis = cfg
 end

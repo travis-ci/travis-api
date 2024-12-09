@@ -35,7 +35,7 @@ module Travis::API
 
       def redis_ssl_params
         @redis_ssl_params ||= begin
-            return nil unless Travis.config.redis_gatekeeper.ssl
+            return {} unless Travis.config.redis_gatekeeper.ssl
 
             value = {}
             value[:ca_file] = ENV['REDIS_GATEKEEPER_SSL_CA_FILE'] if ENV['REDIS_GATEKEEPER_SSL_CA_FILE']
