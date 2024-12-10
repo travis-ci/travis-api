@@ -184,7 +184,9 @@ module Travis::Api
     def call(env)
       #app.after { ActiveRecord::Base.clear_active_connections! }
       app.call(env)
-    rescue
+    rescue => e
+      puts("Debug error 'app.call': #{e.message}")
+      puts("Backtrace:\n\t#{e.backtrace.join("\n\t")}")
       if Endpoint.production?
         [500, {'Content-Type' => 'application/json'}, [ERROR_RESPONSE]]
       else
