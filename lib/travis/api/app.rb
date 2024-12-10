@@ -194,12 +194,11 @@ module Travis::Api
       end
     end
 
+    def enterprise?
+      !!Travis.config.enterprise
+    end
+
     private
-
-      def enterprise?
-        !!Travis.config.enterprise
-      end
-
       def self.console?
         defined? Travis::Console
       end
