@@ -110,6 +110,7 @@ module Travis::Api
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
 
+        puts "is it enterprise? #{Travis::Api::App.enterprise?}"
         if Travis::Api::App.use_monitoring?
           use Rack::Config do |env|
             if env['HTTP_X_REQUEST_ID']
