@@ -114,7 +114,7 @@ module Travis::Api
           use Rack::Config do |env|
             if env['HTTP_X_REQUEST_ID']
               Sentry.with_scope do |scope|
-                scope.set_tags(request_id: env['HTTP_X_REQUEST_ID']) unless enterprise?
+                scope.set_tags(request_id: env['HTTP_X_REQUEST_ID']) unless Travis::Api::App.enterprise?
               end
             end
           end
@@ -194,11 +194,12 @@ module Travis::Api
       end
     end
 
-    def enterprise?
-      !!Travis.config.enterprise
-    end
-
     private
+
+      def self.enterprise?
+        !!Travis.config.enterprise
+      end
+
       def self.console?
         defined? Travis::Console
       end
