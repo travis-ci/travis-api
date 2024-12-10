@@ -37,7 +37,18 @@ module Travis
             shorten_host:         'trvs.io',
             public_mode:          !!ENV['PUBLIC_MODE'],
             applications:         {},
-            tokens:               { internal: 'token' },
+            tokens: {
+              internal: 'token',
+              web_token: {
+                expires_in: ENV['WEB_TOKEN_EXPIRES_IN_HOURS'] == 'unlimited' ? 2 * 365 * 86_400 : (ENV['WEB_TOKEN_EXPIRES_IN_HOURS'] ? ENV['WEB_TOKEN_EXPIRES_IN_HOURS'].to_i * 3_600 : 1 * 3_600)
+              },
+              auth_token: {
+                expires_in: ENV['AUTH_TOKEN_EXPIRES_IN_DAYS'] == 'unlimited' ? 2 * 365 * 86_400 : (ENV['AUTH_TOKEN_EXPIRES_IN_DAYS'] ? ENV['AUTH_TOKEN_EXPIRES_IN_DAYS'].to_i * 86_400 : 90 * 86_400)
+              },
+              auth_cli_token: {
+                expires_in: ENV['AUTH_CLI_TOKEN_EXPIRES_IN_DAYS'] == 'unlimited' ? 2 * 365 * 86_400 : (ENV['AUTH_CLI_TOKEN_EXPIRES_IN_DAYS'] ? ENV['AUTH_CLI_TOKEN_EXPIRES_IN_DAYS'].to_i * 86_400 : 90 * 86_400)
+              }
+            },
             auth:                 { target_origin: nil },
             assets:               { host: HOSTS[Travis.env.to_sym] },
             amqp:                 { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },

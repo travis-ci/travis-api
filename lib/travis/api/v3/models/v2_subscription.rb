@@ -4,7 +4,7 @@ module Travis::API::V3
 
     attr_reader :id, :plan, :permissions, :source, :billing_info, :credit_card_info, :owner, :status, :valid_to, :canceled_at,
                 :client_secret, :payment_intent, :addons, :auto_refill, :available_standalone_addons, :created_at, :scheduled_plan_name,
-                :cancellation_requested
+                :cancellation_requested, :current_trial, :defer_pause
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
@@ -20,7 +20,7 @@ module Travis::API::V3
       refill = attributes['addons'].detect { |addon| addon['addon_config_id'] === 'auto_refill' } || {"enabled" => false};
       default_refill = @plan.respond_to?('available_standalone_addons') ?
         @plan.available_standalone_addons.detect { |addon| addon['id'] === 'auto_refill' } : nil
-      
+
       refill['enabled'] = attributes['auto_refill_enabled']
       if default_refill
         refill['refill_threshold'] = default_refill['refill_threshold'] unless refill.key?('refill_threshold')
@@ -33,6 +33,11 @@ module Travis::API::V3
       @canceled_at = attributes.fetch('canceled_at')
       @scheduled_plan_name = attributes.fetch('scheduled_plan')
       @cancellation_requested = attributes.fetch('cancellation_requested')
+      current_trial = attributes.fetch('current_trial', nil)
+      if current_trial
+        @current_trial = Models::V2Trial.new(current_trial)
+      end
+      @defer_pause = attributes.fetch('defer_pause', false)
     end
   end
 

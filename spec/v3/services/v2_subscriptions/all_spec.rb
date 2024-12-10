@@ -85,6 +85,8 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
           'valid_to' => nil,
           'scheduled_plan_name' => nil,
           'cancellation_requested' => false,
+          'current_trial' => nil,
+          'defer_pause' => false,
           'plan' => {
             '@type' => 'v2_plan_config',
             '@representation' => 'standard',
@@ -98,6 +100,8 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
             'private_credits' => 500_000,
             'public_credits' => 40_000,
             'annual' => false,
+            'vm_size' => nil,
+            'trial_config' => nil,
             'auto_refill_thresholds' => [10000, 50000, 100000],
             'auto_refill_amounts' => [
               {

@@ -210,6 +210,8 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
           'valid_to' => nil,
           'scheduled_plan_name' => nil,
           'cancellation_requested' => false,
+          'current_trial' => nil,
+          'defer_pause' => false,
           'plan' => {
             '@type' => 'v2_plan_config',
             '@representation' => 'standard',
@@ -222,6 +224,8 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'public_credits' => 40_000,
             'concurrency_limit' => 20,
             'plan_type' => 'metered',
+             'vm_size' => nil,
+            'trial_config' => nil,
             'annual' => false,
             'auto_refill_thresholds' => [10000, 50000, 100000],
             'auto_refill_amounts' => [
