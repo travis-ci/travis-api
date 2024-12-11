@@ -52,6 +52,7 @@ module Travis
       UnprocessableEntity = ClientError        .create('request unable to be processed due to semantic errors', status: 422)
       WrongCredentials    = ClientError        .create('access denied',  status: 403)
       WrongParams         = ClientError        .create('wrong parameters')
+      TimeoutError        = ServerError        .create("Credit card processing is currently taking longer than expected. Please check back in a few minutes and refresh the screen at that time.<br>We apologize for the inconvenience and appreciate your patience.", status: 504)
     end
   end
 end
