@@ -9,8 +9,8 @@ class Travis::Api::App
       def call(env)
         app.call(env)
       rescue Exception => e
-        puts("Debug issue 'app.middleware': #{e.message}")
-        puts("Backtrace:\n\t#{e.backtrace.join("\n\t")}")
+        # puts("Debug issue 'app.middleware': #{e.message}")
+        # puts("Backtrace:\n\t#{e.backtrace.join("\n\t")}")
         Sentry.capture_exception(e)
         raise if Travis.testing
 
