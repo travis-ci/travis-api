@@ -231,6 +231,16 @@ describe Travis::API::V3::BillingClient, billing_spec_helper: true do
     let(:subscription_data) {{ 'address' => 'Rigaer' }}
     subject { billing.create_v2_subscription(subscription_data) }
 
+    context 'when the connection times out' do
+      before do
+        allow_any_instance_of(Faraday::Connection).to receive(:post).and_raise(Faraday::TimeoutError)
+      end
+
+      it 'raises a TimeoutError with the correct message and status' do
+        expect { subject }.to raise_error(Travis::API::V3::TimeoutError, /Credit card processing is currently taking longer than expected/)
+      end
+    end
+
     it 'requests the creation and returns the representation' do
       stubbed_request = stub_billing_request(:post, "/v2/subscriptions", auth_key: auth_key, user_id: user_id)
         .with(body: JSON.dump(subscription_data))
