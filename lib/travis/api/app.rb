@@ -110,11 +110,12 @@ module Travis::Api
         use Travis::Api::App::Middleware::RequestId
         use Travis::Api::App::Middleware::ErrorHandler
 
+        # puts "is it enterprise? #{Travis::Api::App.enterprise?}"
         if Travis::Api::App.use_monitoring?
           use Rack::Config do |env|
             if env['HTTP_X_REQUEST_ID']
               Sentry.with_scope do |scope|
-                scope.set_tags(request_id: env['HTTP_X_REQUEST_ID']) unless enterprise?
+                scope.set_tags(request_id: env['HTTP_X_REQUEST_ID']) unless Travis::Api::App.enterprise?
               end
             end
           end
@@ -184,7 +185,9 @@ module Travis::Api
     def call(env)
       #app.after { ActiveRecord::Base.clear_active_connections! }
       app.call(env)
-    rescue
+    rescue => e
+      # puts("Debug error 'app.call': #{e.message}")
+      # puts("Backtrace:\n\t#{e.backtrace.join("\n\t")}")
       if Endpoint.production?
         [500, {'Content-Type' => 'application/json'}, [ERROR_RESPONSE]]
       else
@@ -194,7 +197,7 @@ module Travis::Api
 
     private
 
-      def enterprise?
+      def self.enterprise?
         !!Travis.config.enterprise
       end
 
