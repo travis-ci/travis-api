@@ -288,7 +288,8 @@ module Travis::API::V3
     end
 
     def handle_errors_and_respond(response)
-      body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
+      begin
+        body = response.body.is_a?(String) && response.body.length > 0 ? JSON.parse(response.body) : response.body
 
       rescue JSON::ParserError => e
         Sentry.capture_message("Billing system failed to parse response: #{response.body}")
