@@ -15,6 +15,7 @@ class User < Travis::Model
   has_many :emails, dependent: :destroy
   has_one :owner_group, as: :owner
   has_many :custom_keys, as: :owner
+  has_many :account_env_vars, as: :owner
   has_many :broadcasts, as: :recipient
 
   before_create :set_as_recent
