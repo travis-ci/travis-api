@@ -66,9 +66,11 @@ module Travis::API::V3
     private
 
     def storage_objects
+      puts "DEBUG: RemoteQuery.storage_objects"
       objects = []
       s3_objects.each { |object| objects << object } if s3_config
       gcs_objects.each { |object| objects << object } if gcs_config
+      puts "DEBUG: RemoteQuery.storage_objects - Objects: #{objects}"
       objects
     end
 
@@ -98,8 +100,11 @@ module Travis::API::V3
     end
 
     def s3_objects
+      puts "DEBUG: RemoteQuery.s3_objects"
       files = s3_connection.list_objects(bucket: s3_config[:bucket_name], prefix: prefix)
-      files&.contents.map { |file| S3Wrapper.new(file, s3_get_body(file.key)) }
+      f = files&.contents.map { |file| S3Wrapper.new(file, s3_get_body(file.key)) }
+      puts "DEBUG: RemoteQuery.s3_objects - Files: #{f}"
+      f
     end
 
     def s3_get_body(key)

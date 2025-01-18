@@ -3,6 +3,7 @@ module Travis::API::V3
     params :branch, :match
 
     def find(repo)
+      puts "DEBUG: Queries::Caches.find"
       @repo = repo
       caches = fetch
       filter Models::Cache.factory(caches, repo)
