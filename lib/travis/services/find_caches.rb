@@ -62,6 +62,7 @@ module Travis
           @bucket_name  = bucket_name
           @repository   = repository
           @cache_object = cache_object
+          puts "Debugging Cache issue: Travis::Services::FindCaches::GcsWrapper.initialize"
         end
 
         def source
@@ -73,7 +74,10 @@ module Travis
         end
 
         def size
-          Integer(cache_object.size)
+          s = Integer(cache_object.size)
+          puts "Debugging Cache issue: Travis::Services::FindCaches::GcsWrapper.size"
+          puts "Size: #{s}"
+          s
         end
 
         def slug
@@ -183,6 +187,8 @@ module Travis
 
         def fetch_gcs(cache_objects, options)
           config = cache_options[:gcs].to_h
+          puts "Debugging Cache issue: Travis::Services::FindCaches.fetch_gcs"
+          puts "Config: #{config}"
           ENV['STORAGE_CREDENTIALS_JSON'] = JSON.dump(config[:json_key]) # store in file maybe? credentials param doesn't allow json
           storage = Google::Cloud::Storage.new
           bucket_name = config[:bucket_name]
