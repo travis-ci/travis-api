@@ -13,6 +13,8 @@ module Travis
         def initialize(repository, s3_object)
           @repository = repository
           @s3_object  = s3_object
+          puts "Debugging Cache issue: Travis::Services::FindCaches::S3Wrapper.initialize"
+          puts "S3Wrapper: #{s3_object}"
         end
 
         def source
@@ -24,7 +26,10 @@ module Travis
         end
 
         def size
-          Integer(s3_object.size)
+          s = Integer(s3_object.size)
+          puts "Debugging Cache issue: Travis::Services::FindCaches::S3Wrapper.size"
+          puts "Size: #{s}"
+          s
         end
 
         def slug
@@ -165,9 +170,15 @@ module Travis
 
         def fetch_s3(cache_objects, options)
           config = cache_options[:s3]&.to_h
+          puts "Debugging Cache issue: Travis::Services::FindCaches.fetch_s3"
+          puts "Config: #{config}"
           svc = s3_client
+          puts "Svc: #{svc}"
           files = svc.list_objects(bucket: config[:bucket_name], prefix: options[:prefix])
-          files.contents.each { |object| cache_objects << S3Wrapper.new(repo, object) }
+          puts "Files: #{files}"
+          contents = files.contents.each { |object| cache_objects << S3Wrapper.new(repo, object) }
+          puts "Contents: #{contents}"
+          contents
         end
 
         def fetch_gcs(cache_objects, options)
