@@ -102,13 +102,17 @@ module Travis::API::V3
     def s3_objects
       puts "DEBUG: RemoteQuery.s3_objects"
       files = s3_connection.list_objects(bucket: s3_config[:bucket_name], prefix: prefix)
+      puts "DEBUG: RemoteQuery.s3_objects - Files: #{files}"
       f = files&.contents.map { |file| S3Wrapper.new(file, s3_get_body(file.key)) }
       puts "DEBUG: RemoteQuery.s3_objects - Files: #{f}"
       f
     end
 
     def s3_get_body(key)
-      s3_connection.get_object(bucket: s3_config[:bucket_name], key: key)&.body&.read
+      puts "DEBUG: RemoteQuery.s3_get_body"
+      obj = s3_connection.get_object(bucket: s3_config[:bucket_name], key: key)&.body&.read
+      puts "DEBUG: RemoteQuery.s3_get_body - Object: #{obj}"
+      obj
     end
 
     def s3_delete(key)
