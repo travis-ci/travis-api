@@ -103,7 +103,8 @@ module Travis::API::V3
       puts "DEBUG: RemoteQuery.s3_objects"
       files = s3_connection.list_objects(bucket: s3_config[:bucket_name], prefix: prefix)
       puts "DEBUG: RemoteQuery.s3_objects - Files: #{files}"
-      f = files&.contents.map { |file| S3Wrapper.new(file, s3_get_body(file.key)) }
+      # f = files&.contents.map { |file| S3Wrapper.new(file, s3_get_body(file.key)) }
+      f = files&.contents.map { |file| S3Wrapper.new(file, file.key.include?("/log.txt") ? s3_get_body(file.key) : nil) }
       puts "DEBUG: RemoteQuery.s3_objects - Files: #{f}"
       f
     end
