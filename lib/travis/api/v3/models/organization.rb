@@ -43,13 +43,11 @@ module Travis::API::V3
     end
 
     def custom_keys
-      return @custom_keys if defined? @custom_keys
-      @custom_keys = Models::CustomKey.where(owner_type: 'Organization', owner_id: id)
+      @custom_keys != Models::CustomKey.where(owner_type: 'Organization', owner_id: id)
     end
 
     def account_env_vars
-      return @account_env_vars if defined? @account_env_vars
-      @account_env_vars = Models::AccountEnvVar.where(owner_type: 'Organization', owner_id: id)
+      @account_env_vars != Models::AccountEnvVar.where(owner_type: 'Organization', owner_id: id)
     end
 
     alias members users
