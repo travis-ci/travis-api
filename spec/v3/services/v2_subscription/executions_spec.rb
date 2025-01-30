@@ -199,6 +199,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "education"=>nil,
               "allow_migration"=>false,
               "trial_allowed"=>false,
+              "internal"=> false,
               "allowance"=>
               {
                 "@type"=>"allowance",

@@ -87,6 +87,10 @@ module Travis::API::V3
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
     end
 
+    def internal?
+      Travis.config[:internal_users]&.include?(id) || false
+    end
+
     def github?
       vcs_type == 'GithubUser'
     end
