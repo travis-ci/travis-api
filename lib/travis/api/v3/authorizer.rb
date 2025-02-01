@@ -175,7 +175,6 @@ module Travis::API::V3
           data = redis.smembers(key)
           data.include?(permission)
         else
-          Travis.logger.info "checking permissions: resource_type: #{resource_type} resource_id: #{resource_id} permission: #{permission}"
           response = connection.get("/permissions/#{resource_type == 'repository' ? 'repo' : 'org'}/#{resource_id}")
           unless response.status == 200 && response.body&.include?('permissions')
             Travis.logger.warn("Authorizer permission response error: #{response.status} for user: #{@user_id}, resource: #{resource_type}: #{resource_id}")
