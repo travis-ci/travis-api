@@ -10,6 +10,7 @@ module Travis::API::V3
       )
 
       if account_env_var
+        Travis.logger.info "starting deletion"
         access_control.permissions(account_env_var).delete!
         query(:account_env_var).delete(params, access_control.user)
         deleted
