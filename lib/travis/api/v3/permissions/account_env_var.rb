@@ -7,7 +7,7 @@ module Travis::API::V3
     end
 
     def delete?
-      authorizer.for_account(object.owner_id, 'account_settings_delete') if object.owner_type == 'Organization'
+      return authorizer.for_account(object.owner_id, 'account_settings_delete') if object.owner_type == 'Organization'
     end
 
     private
