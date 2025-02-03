@@ -3,14 +3,15 @@ require 'travis/api/v3/permissions/generic'
 module Travis::API::V3
   class Permissions::AccountEnvVar < Permissions::Generic
     def write?
-      authorizer.for_account(object.owner_id, 'account_settings_create') if object.owner_type == 'Organization'
+      object.owner_type == 'Organization' ?
+        authorizer.for_account(object.owner_id, 'account_settings_create') :
+        true
     end
 
     def delete?
-      Travis.logger.info "checking rights"
-      Travis.logger.info "the object: #{object.owner_id}"
-      return authorizer.for_account(object.owner_id, 'account_settings_delete') if object.owner_type == 'Organization'
-      Travis.logger.info "user rights"
+      object.owner_type == 'Organization' ?
+        authorizer.for_account(object.owner_id, 'account_settings_delete') :
+        true
     end
 
     private
