@@ -88,7 +88,15 @@ module Travis::API::V3
     end
 
     def internal?
-      Travis.config[:internal_users]&.include?(id) || false
+      !!get_internal_user
+    end
+
+    def get_internal_user
+      Travis.config[:internal_users]&.find { |item| item[:id] == id }
+    end
+
+    def login
+      read_attribute(:login) || get_internal_user&.dig(:login)
     end
 
     def github?

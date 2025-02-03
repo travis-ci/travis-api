@@ -106,7 +106,7 @@ module Travis
             recaptcha:            { endpoint: 'https://www.google.com', secret: ENV['RECAPTCHA_SECRET_KEY'] || '' },
             antifraud:            { captcha_max_failed_attempts: 3, captcha_block_duration: 24, credit_card_max_failed_attempts: 3, credit_card_block_duration: 24 },
             legacy_roles:         false,
-            internal_users:       [0]
+            internal_users:       [{id: 0, login: 'cron'}]
 
     default :_access => [:key]
 

@@ -362,5 +362,48 @@ module Support
         'updated_at' => Time.now.utc.iso8601
       }.deep_merge(attributes)
     end
+
+    def billing_executions_multiple_response_body(attributes = {})
+      [{
+        'id' => 1,
+        'os' => 'linux',
+        'instance_size' => 'standard-2',
+        'arch' => 'amd64',
+        'virtualization_type' => 'vm',
+        'queue' => 'builds.gce-oss',
+        'job_id' => 123,
+        'repository_id' => 1,
+        'owner_id' => 1,
+        'owner_type' => 'User',
+        'plan_id' => 2,
+        'sender_id' => 1,
+        'credits_consumed' => 5,
+        'user_license_credits_consumed' => 4,
+        'started_at' => Time.now.utc.iso8601,
+        'finished_at' => (Time.now. + 10.minutes).utc.iso8601,
+        'created_at' => Time.now.utc.iso8601,
+        'updated_at' => Time.now.utc.iso8601
+      }.deep_merge(attributes),
+      {
+        'id' => 2,
+        'os' => 'linux',
+        'instance_size' => 'standard-2',
+        'arch' => 'amd64',
+        'virtualization_type' => 'vm',
+        'queue' => 'builds.gce-oss',
+        'job_id' => 123,
+        'repository_id' => 1,
+        'owner_id' => 1,
+        'owner_type' => 'User',
+        'plan_id' => 2,
+        'sender_id' => 0,
+        'credits_consumed' => 5,
+        'user_license_credits_consumed' => 4,
+        'started_at' => Time.now.utc.iso8601,
+        'finished_at' => (Time.now. + 10.minutes).utc.iso8601,
+        'created_at' => Time.now.utc.iso8601,
+        'updated_at' => Time.now.utc.iso8601
+      }]
+    end
   end
 end
