@@ -7,7 +7,10 @@ module Travis::API::V3
     end
 
     def delete?
+      Travis.logger.info "checking rights"
+      Travis.logger.info "the object: #{object.owner_id}"
       return authorizer.for_account(object.owner_id, 'account_settings_delete') if object.owner_type == 'Organization'
+      Travis.logger.info "user rights"
     end
 
     private
