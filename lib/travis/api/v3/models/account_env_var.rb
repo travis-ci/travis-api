@@ -11,9 +11,7 @@ module Travis::API::V3
       self.value = value
       self.public = public
 
-      if self.valid?
-        self.save!
-      end
+      self.save! if self.valid?
 
       self
     end
