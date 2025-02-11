@@ -19,6 +19,22 @@ module Travis::API::V3
       client.update_organization_billing_permission(params['organization.id'], data)
     end
 
+    def suspend(value)
+      raise WrongParams, 'missing user ids'.freeze unless params['user_ids']&.size > 0
+
+      filtered_ids = filter_ids
+      puts "FIDS: #{filtered_ids.inspect}"
+      Models::User.where("id in (?)", filtered_ids).update!(suspended: value, suspended_at: value ? Time.now.utc : nil)
+      Models::BulkChangeResult.new(
+        changed: filtered_ids,
+        skipped: params['user_ids'] - filtered_ids
+      )
+    end
+
+    def filter_ids
+      Membership.where(organization_id: id, user_id: params['user_ids']).all.map(&:user_id)
+    end
+
     private
 
     def provider
