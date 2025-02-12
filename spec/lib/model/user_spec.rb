@@ -86,6 +86,15 @@ describe User do
     end
   end
 
+  describe 'last activity' do
+    it 'contains last activity' do
+      user.save!
+      expect(user.last_activity_at).to be_nil
+      user.touch
+      expect(user.last_activity_at).to_not be_nil
+    end
+  end
+
   describe 'avatar_url' do
     it "returns avatar url if it's present" do
       user.avatar_url = 'foo'

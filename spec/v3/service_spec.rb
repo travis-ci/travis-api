@@ -37,6 +37,7 @@ describe Travis::API::V3::Services::Examples::Find, set_app: true do
   context 'when forcing authentication' do
     before { Travis.config.force_authentication = true }
     after { Travis.config.force_authentication = false }
+    before { User.last.update!(last_activity_at: nil) }
 
     it 'does not allow access without authentication' do
       get '/v3/examples'
@@ -44,8 +45,10 @@ describe Travis::API::V3::Services::Examples::Find, set_app: true do
     end
 
     it 'does allow access with authentication' do
+      expect(User.last.last_activity_at).to be_nil
       get '/v3/examples', {}, auth_headers
       expect(last_response.status).to eq 200
+      expect(User.last.last_activity_at).to_not be_nil
     end
 
     it 'does allow access with log token' do
