@@ -23,7 +23,6 @@ module Travis::API::V3
       raise WrongParams, 'missing user ids'.freeze unless params['user_ids']&.size > 0
 
       filtered_ids = filter_ids
-      puts "FIDS: #{filtered_ids.inspect}"
       Models::User.where("id in (?)", filtered_ids).update!(suspended: value, suspended_at: value ? Time.now.utc : nil)
       Models::BulkChangeResult.new(
         changed: filtered_ids,
