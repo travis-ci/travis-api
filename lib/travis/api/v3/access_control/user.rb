@@ -7,7 +7,7 @@ module Travis::API::V3
     def initialize(user)
       user                = Models::User.find(user.id) if user.is_a? ::User
       @user               = user
-      user.touch()
+      user.touch
       @access_permissions = user.permissions.where(user_id: user.id)
       super()
     end
