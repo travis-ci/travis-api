@@ -9,9 +9,13 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
 
   let(:authorization_role) { { 'roles' => ['repository_admin'] } }
 
-  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
-  before { stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role)) }
-
+  before do
+    stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) 
+    stub_request(:get, %r((.+)/roles/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization_role))
+    stub_request(:post,  'http://billingfake.travis-ci.com/usage/stats')
+      .with(body: "{\"owners\":[{\"id\":1,\"type\":\"User\"}],\"query\":\"trial_allowed\"}")
+      .to_return(status: 200, body: "{\"trial_allowed\": false }", headers: {})
+  end
 
   let(:permissions) do
     {
