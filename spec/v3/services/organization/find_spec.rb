@@ -50,7 +50,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
         "@representation"   => "minimal",
         "id"                => org.id
       },
-      "custom_keys"      => []
+      "custom_keys"      => [],
+      "account_env_vars" => []
     }}
   end
 
@@ -101,7 +102,8 @@ describe Travis::API::V3::Services::Organization::Find, set_app: true do
         "@representation"   => "minimal",
         "id"                => org.id
       },
-      "custom_keys"      => []
+      "custom_keys"      => [],
+      "account_env_vars" => []
     }}
   end
 

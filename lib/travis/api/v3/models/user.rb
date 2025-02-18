@@ -109,8 +109,12 @@ module Travis::API::V3
     end
 
     def custom_keys
-      return @custom_keys if defined? @custom_keys
-      @custom_keys = Models::CustomKey.where(owner_type: 'User', owner_id: id)
+      @custom_keys ||= Models::CustomKey.where(owner_type: 'User', owner_id: id)
     end
+
+    def account_env_vars
+      @account_env_vars ||= Models::AccountEnvVar.where(owner_type: 'User', owner_id: id)
+    end
+
   end
 end
