@@ -91,6 +91,18 @@ module Travis::API::V3
       update(last_activity_at: Time.now) if last_activity_at.nil? || Time.now.utc - last_activity_at > 300
     end
 
+    def internal?
+      !!get_internal_user
+    end
+
+    def get_internal_user
+      Travis.config[:internal_users]&.find { |item| item[:id] == id }
+    end
+
+    def login
+      read_attribute(:login) || get_internal_user&.dig(:login)
+    end
+
     def github?
       vcs_type == 'GithubUser'
     end

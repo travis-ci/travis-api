@@ -72,6 +72,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true, billing_s
         "recently_signed_up" => false,
         "secure_user_hash" => nil,
         "trial_allowed" => false,
+        "internal" => false,
         "ro_mode" => true,
         "confirmed_at" => nil,
       }
