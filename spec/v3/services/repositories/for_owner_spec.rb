@@ -134,7 +134,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "active_on_org"    => nil,
           "migration_status" => nil,
           "history_migration_status"  => nil,
-          "config_validation" => false
+          "config_validation" => false,
+          "build_count"      => 3
         }]}}
   end
 
@@ -210,6 +211,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "migration_status"  => nil,
         "history_migration_status"  => nil,
         "config_validation" => false,
+        "build_count"       => 3,
         "last_started_build"=>{
           "@type"          =>"build",
           "@href"          =>"/v3/build/#{build.id}",
@@ -348,6 +350,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "migration_status" => nil,
         "history_migration_status"  => nil,
         "config_validation" => false,
+        "build_count" => 3,
         "current_build" => {
           "@type"               => "build",
           "@href"               => "/v3/build/#{build.id}",
@@ -528,7 +531,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
         "active_on_org"   => nil,
         "migration_status" => nil,
         "history_migration_status"  => nil,
-        "config_validation" => false}, {
+        "config_validation" => false,
+        "build_count"      => 3}, {
         "@type"           => "repository",
         "@href"           => "/v3/repo/#{repo2.id}",
         "@representation" => "standard",
@@ -590,7 +594,9 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "active_on_org"  =>nil,
           "migration_status" => nil,
           "history_migration_status" => nil,
-          "config_validation" => false}]}
+          "config_validation" => false,
+          "build_count"     => 0
+        }]}
   end
 
   describe "shared repository for collaborator, authenticated as user with access" do
@@ -684,7 +690,8 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
           "active_on_org"    => nil,
           "migration_status" => nil,
           "history_migration_status"  => nil,
-          "config_validation" => false
+          "config_validation" => false,
+          "build_count" => 1
         }]}}
   end
 
