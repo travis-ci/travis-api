@@ -103,6 +103,7 @@ module Travis::API::V3
       route '/org/{organization.id}'
       get :find
       patch :update_billing_permission, '/update_billing_permission'
+      post :suspend, '/suspend'
 
       resource :preferences do
         route '/preferences'
@@ -373,6 +374,12 @@ module Travis::API::V3
     resource :user do
       route '/logout'
       get :logout
+    end
+
+    resource :users do
+      route '/users'
+      post :suspend, '/suspend'
+      post :unsuspend, '/unsuspend'
     end
 
     resource :preferences do
