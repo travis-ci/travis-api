@@ -2,7 +2,7 @@ require 'travis/api/v3/renderer/owner'
 
 module Travis::API::V3
   class Renderer::User < Renderer::Owner
-    representation(:standard, :email, :is_syncing, :synced_at, :recently_signed_up, :secure_user_hash, :ro_mode, :confirmed_at, :custom_keys)
+    representation(:standard, :email, :is_syncing, :synced_at, :recently_signed_up, :secure_user_hash, :ro_mode, :confirmed_at, :custom_keys, :internal)
     representation(:additional, :emails, :collaborator)
 
     def email
@@ -15,6 +15,10 @@ module Travis::API::V3
 
     def collaborator
       query(:user).collaborator? @model.id
+    end
+
+    def internal
+      @model.internal?
     end
 
     def secure_user_hash
