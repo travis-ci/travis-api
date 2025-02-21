@@ -11,7 +11,7 @@ module Travis::API::V3
 
       if account_env_var
         access_control.permissions(account_env_var).delete!
-        query(:account_env_var).delete(params, access_control.user)
+        query(:account_env_var).delete(account_env_var)
         deleted
       else
         raise NotFound, "No matching environment variable found."

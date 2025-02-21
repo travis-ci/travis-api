@@ -12,6 +12,7 @@ module Travis::API::V3
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
     has_many :beta_migration_requests
+    has_many :account_env_vars, as: :owner
 
     has_preferences Models::UserPreferences
 

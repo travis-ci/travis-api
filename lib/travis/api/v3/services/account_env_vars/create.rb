@@ -1,5 +1,5 @@
 module Travis::API::V3
-  class Services::AccountEnvVar::Create < Service
+  class Services::AccountEnvVars::Create < Service
     params :owner_id, :owner_type, :name, :value, :public
     result_type :account_env_var
 
@@ -16,7 +16,7 @@ module Travis::API::V3
 
       access_control.permissions(account_env_var).write?
 
-      result query(:account_env_var).create(params, access_control.user)
+      result query(:account_env_var).create(account_env_var)
     end
   end
 end

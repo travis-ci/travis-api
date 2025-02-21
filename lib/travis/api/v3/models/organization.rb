@@ -5,6 +5,7 @@ module Travis::API::V3
     has_many :memberships
     has_many :users, through: :memberships
     has_one  :beta_migration_request
+    has_many :account_env_vars, as: :owner
 
     has_preferences Models::OrganizationPreferences
 

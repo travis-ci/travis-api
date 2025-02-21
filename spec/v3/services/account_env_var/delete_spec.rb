@@ -1,6 +1,15 @@
 describe Travis::API::V3::Services::AccountEnvVar::Delete, set_app: true do
   let(:user)    { FactoryBot.create(:user) }
-  let(:account_env_var) { Travis::API::V3::Models::AccountEnvVar.new.save_account_env_var!('User', user.id, 'TEST_VAR', 'VAL', true) }
+  let(:account_env_var) {
+    account_env_var = Travis::API::V3::Models::AccountEnvVar.new(
+      owner_type: 'User',
+      owner_id: user.id,
+      name: 'TEST_VAR',
+      value: 'VAL',
+      public: true
+    )
+    Travis::API::V3::Models::AccountEnvVar.new.save_account_env_var!(account_env_var)
+  }
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
   let(:parsed_body) { JSON.load(body) }

@@ -350,8 +350,8 @@ module Travis::API::V3
       delete   :delete
     end
 
-    hidden_resource :account_env_var do
-      route '/account_env_var'
+    hidden_resource :account_env_vars do
+      route '/account_env_vars'
       post   :create
     end
 

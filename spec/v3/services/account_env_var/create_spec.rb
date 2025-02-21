@@ -1,4 +1,4 @@
-describe Travis::API::V3::Services::CustomKeys::Create, set_app: true do
+describe Travis::API::V3::Services::AccountEnvVars::Create, set_app: true do
   let(:user)    { FactoryBot.create(:user) }
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}", "Content-Type" => "application/json" }}
@@ -14,7 +14,7 @@ describe Travis::API::V3::Services::CustomKeys::Create, set_app: true do
   let(:parsed_body) { JSON.load(body) }
 
   describe "try creating a account env var without login" do
-    before     { post('/v3/account_env_var', options) }
+    before     { post('/v3/account_env_vars', options) }
     example { expect(parsed_body).to eql_json({
       "@type"         => "error",
       "error_type"    => "login_required",
@@ -23,7 +23,7 @@ describe Travis::API::V3::Services::CustomKeys::Create, set_app: true do
   end
 
   describe "creating account env var" do
-    before  { post('/v3/account_env_var', options, headers) }
+    before  { post('/v3/account_env_vars', options, headers) }
     example { expect(parsed_body.except("id", "@permissions")).to eql_json({
       "@type" => "account_env_var",
       "@representation" => "standard",

@@ -67,6 +67,7 @@ module Travis::API::V3
     UserSetting           = Module.new { extend Services }
     UserSettings          = Module.new { extend Services }
     AccountEnvVar         = Module.new { extend Services }
+    AccountEnvVars        = Module.new { extend Services }
 
     def result_type
       @result_type ||= name[/[^:]+$/].underscore.to_sym
