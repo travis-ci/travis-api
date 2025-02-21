@@ -90,7 +90,8 @@ describe Travis::API::V3::Services::Organizations::ForCurrentUser, set_app: true
           "@representation"   => "minimal",
           "id"                => org.id
         },
-        "custom_keys"     => []
+        "custom_keys"      => [],
+        "account_env_vars" => []
       }]
     }}
   end

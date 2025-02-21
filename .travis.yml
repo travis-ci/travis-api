@@ -2,7 +2,7 @@ language: ruby
 group: edge
 
 import:
-  - travis-ci/build-configs:db-setup.yml
+  - travis-ci/build-configs:db-setup.yml@TBT-137-account-env-vars
 
 rvm: 3.2.2
 
@@ -26,6 +26,15 @@ services:
 before_install:
   - 'gem install rubygems-update -v 3.4.22'
   - 'gem update --system'
+  - sudo apt-get install -yq --no-install-suggests --no-install-recommends postgresql-common
+  - sudo service postgresql stop
+  - sudo apt install -yq --no-install-suggests --no-install-recommends postgresql-11 postgresql-client-11
+  - sed -e 's/^port.*/port = 5432/' /etc/postgresql/11/main/postgresql.conf > postgresql.conf
+  - sudo chown postgres postgresql.conf
+  - sudo mv postgresql.conf /etc/postgresql/11/main
+  - sudo cp /etc/postgresql/{10,11}/main/pg_hba.conf
+  - sudo service postgresql stop
+  - sudo systemctl start postgresql@11-main
 
 jobs:
   include:
