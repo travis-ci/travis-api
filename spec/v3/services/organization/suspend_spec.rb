@@ -9,7 +9,8 @@ describe Travis::API::V3::Services::Organization::Suspend, set_app: true do
     end
   end
 
-  describe 'authenticated' do
+
+  describe 'authenticated org admin' do
     let(:user) { FactoryBot.create(:user) }
     let(:user_to_suspend) { FactoryBot.create(:user) }
     let(:another_user_to_suspend) { FactoryBot.create(:user) }
@@ -23,6 +24,24 @@ describe Travis::API::V3::Services::Organization::Suspend, set_app: true do
         organization.memberships.create(user: another_user_to_suspend, role: 'member')
       end
 
+      it 'has no rights to suspend the users' do
+        post("/v3/org/#{organization_id}/suspend", JSON.generate({user_ids: [user_to_suspend.id, another_user_to_suspend.id]}), headers)
+        expect(last_response.status).to eq(403)
+        post("/v3/org/#{organization_id}/unsuspend", JSON.generate({user_ids: [user_to_suspend.id, another_user_to_suspend.id]}), headers)
+        expect(last_response.status).to eq(403)
+      end
+    end
+  end
+
+  describe 'authenticated with proper org token' do
+    let(:user) { FactoryBot.create(:user) }
+    let(:user_to_suspend) { FactoryBot.create(:user) }
+    let(:another_user_to_suspend) { FactoryBot.create(:user) }
+    let(:token) { Travis::API::V3::Models::OrganizationToken.create(organization: organization, token: "#{organization.id}:toktok") }
+    let!(:token_perms) { Travis::API::V3::Models::OrganizationTokenPermission.create(organization_token: token, permission: 'suspend') }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "org.token #{token.token}",
+                     'CONTENT_TYPE' => 'application/json' }}
+    context 'proper org token is used' do
       it 'suspends the users' do
         post("/v3/org/#{organization_id}/suspend", JSON.generate({user_ids: [user_to_suspend.id, another_user_to_suspend.id]}), headers)
         expect(last_response.status).to eq(200)
@@ -31,6 +50,16 @@ describe Travis::API::V3::Services::Organization::Suspend, set_app: true do
         post("/v3/org/#{organization_id}/unsuspend", JSON.generate({user_ids: [user_to_suspend.id]}), headers)
         expect(!user_to_suspend.suspended)
         expect(another_user_to_suspend.suspended)
+      end
+    end
+
+    context 'org token with wrong scope is used' do
+      before {token_perms.update!(permission: 'activity')}
+      it 'doesn\'t suspend the users' do
+        post("/v3/org/#{organization_id}/suspend", JSON.generate({user_ids: [user_to_suspend.id, another_user_to_suspend.id]}), headers)
+        expect(last_response.status).to eq(403)
+        post("/v3/org/#{organization_id}/unsuspend", JSON.generate({user_ids: [user_to_suspend.id]}), headers)
+        expect(last_response.status).to eq(403)
       end
     end
   end

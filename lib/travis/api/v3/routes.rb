@@ -104,6 +104,8 @@ module Travis::API::V3
       get :find
       patch :update_billing_permission, '/update_billing_permission'
       post :suspend, '/suspend'
+      post :unsuspend, '/unsuspend'
+      get :user_activity, '/user_activity'
 
       resource :preferences do
         route '/preferences'
