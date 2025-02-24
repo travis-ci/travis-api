@@ -214,6 +214,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "secure_user_hash"=>nil,
               "ro_mode" => false,
               "confirmed_at" => nil,
+              "last_activity_at" => nil
             }
           }
         ]}
@@ -272,6 +273,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
                 "secure_user_hash"=>nil,
                 "ro_mode" => false,
                 "confirmed_at" => nil,
+                "last_activity_at" => nil
               }
             },
             {
@@ -309,6 +311,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
                 "secure_user_hash"=>nil,
                 "ro_mode" => false,
                 "confirmed_at" => nil,
+                "last_activity_at" => nil
               }
             }
           ]}

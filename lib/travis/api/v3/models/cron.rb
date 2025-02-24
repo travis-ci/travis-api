@@ -66,6 +66,7 @@ module Travis::API::V3
       )
 
       update_attribute(:last_run, DateTime.now.utc)
+      update_activity
       schedule_next_build
     end
 
@@ -80,6 +81,13 @@ module Travis::API::V3
 
     def deactivate
       update!(active: false)
+    end
+
+    def update_activity
+      owner = branch.repository.owner
+      owner&.touch if owner.is_a? Models::User
+      sender = Build.find_by_id(branch.last_build_id)&.sender
+      sender&.touch if sender.is_a? User
     end
 
     def deactivate_and_log_reason(reason)

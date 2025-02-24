@@ -92,7 +92,9 @@ describe Travis::API::V3::Models::Cron do
   describe "enqueue" do
     it "enqueues the cron" do
       expect_any_instance_of(Sidekiq::Client).to receive(:push).once
+      expect(subject.branch.repository.owner.last_activity_at).to be_nil
       subject.enqueue
+      expect(subject.branch.repository.owner.last_activity_at).to_not be_nil
     end
 
     it "set the last_run time to now" do
