@@ -26,18 +26,37 @@ module Travis::API::V3
     end
 
     def suspend(value)
-      raise WrongParams, 'missing user ids'.freeze unless params['user_ids']&.size > 0
+      if params['vcs_type']
+       raise WrongParams, 'missing user ids'.freeze unless params['vcs_ids']&.size > 0
 
-      filtered_ids = filter_ids
+      user_ids = Models::User.where("vcs_type = ? and vcs_id in (?)", vcs_type,params['vcs_ids']).all.map(&:id)
+     else
+       raise WrongParams, 'missing user ids'.freeze unless params['user_ids']&.size > 0
+
+       user_ids = params['user_ids']
+     end
+
+      filtered_ids = filter_ids(user_ids)
       Models::User.where("id in (?)", filtered_ids).update!(suspended: value, suspended_at: value ? Time.now.utc : nil)
       Models::BulkChangeResult.new(
         changed: filtered_ids,
-        skipped: params['user_ids'] - filtered_ids
+        skipped: user_ids - filtered_ids
       )
     end
 
-    def filter_ids
-      Membership.where(organization_id: id, user_id: params['user_ids']).all.map(&:user_id)
+    def filter_ids(ids)
+      Membership.where(organization_id: id, user_id: ids).all.map(&:user_id)
+    end
+
+    def vcs_type
+      @_vcs_type ||=
+        params['vcs_type'] ?
+          (
+            params['vcs_type'].end_with?('User') ?
+              params['vcs_type'] :
+              "#{params['vcs_type'].capitalize}User"
+          )
+        : 'GithubUser'
     end
 
     private
@@ -45,6 +64,5 @@ module Travis::API::V3
     def provider
       params['provider'] || 'github'
     end
-
   end
 end

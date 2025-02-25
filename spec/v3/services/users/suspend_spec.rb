@@ -18,14 +18,24 @@ describe Travis::API::V3::Services::Organization::Suspend, set_app: true do
       ex.run
       Travis.config.applications = apps
     end
-    let(:user_to_suspend) { FactoryBot.create(:user) }
-    let(:another_user_to_suspend) { FactoryBot.create(:user) }
+    let(:user_to_suspend) { FactoryBot.create(:user, vcs_id: 100, vcs_type: 'GithubUser') }
+    let(:another_user_to_suspend) { FactoryBot.create(:user, vcs_id: 101, vcs_type: 'GithubUser') }
     it 'suspends the users' do
       post("/v3/users/suspend",JSON.generate({user_ids: [user_to_suspend.id, another_user_to_suspend.id]}),  headers)
       expect(last_response.status).to eq(200)
       expect(user_to_suspend.suspended)
       expect(another_user_to_suspend.suspended)
       post("/v3/users/unsuspend", JSON.generate({user_ids: [user_to_suspend.id]}), headers)
+      expect(!user_to_suspend.suspended)
+      expect(another_user_to_suspend.suspended)
+    end
+
+    it 'suspends the users by vcs_id' do
+      post("/v3/users/suspend",JSON.generate({vcs_ids: [user_to_suspend.vcs_id, another_user_to_suspend.vcs_id], vcs_type: 'github'}),  headers)
+      expect(last_response.status).to eq(200)
+      expect(user_to_suspend.suspended)
+      expect(another_user_to_suspend.suspended)
+      post("/v3/users/unsuspend", JSON.generate({vcs_ids: [user_to_suspend.vcs_id], vcs_type: 'GithubUser'}), headers)
       expect(!user_to_suspend.suspended)
       expect(another_user_to_suspend.suspended)
     end
