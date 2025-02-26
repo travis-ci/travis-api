@@ -199,6 +199,7 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "education"=>nil,
               "allow_migration"=>false,
               "trial_allowed"=>false,
+              "internal"=> false,
               "allowance"=>
               {
                 "@type"=>"allowance",
@@ -218,6 +219,102 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
           }
         ]}
       )
+    end
+
+    context 'with cron build' do
+      let!(:cron_user) { FactoryBot.create(:user, id: 0, login: nil, name: nil) }
+      before {
+        stub_request(:get, "#{billing_url}/usage/users/#{user.id}/executions?page=0&per_page=0&from=#{from.to_s}&to=#{to.to_s}")
+          .with(basic_auth: ['_', billing_auth_key],  headers: { 'X-Travis-User-Id' => user.id })
+          .to_return(body: billing_executions_multiple_response_body)
+      }
+      it 'responds with list of executions per sender' do
+        get("/v3/owner/#{user.login}/executions_per_sender?from=#{from.to_s}&to=#{to.to_s}", {}, headers)
+
+        expect(last_response.status).to eq(200)
+        expect(parsed_body).to eql_json({
+          '@type' => 'executionspersender',
+          '@href' => "/v3/owner/travis-ci/executions_per_sender?from=#{from.to_s}&to=#{to.to_s}",
+          '@representation' => 'standard',
+          'executionspersender' =>
+          [
+            {
+              "credits_consumed"=>5,
+              "minutes_consumed"=>10,
+              "sender_id"=>1,
+              "sender"=>
+              {
+                "@type"=>"user",
+                "@href"=>"/user/1",
+                "@representation"=>"standard",
+                "@permissions"=>{"read"=>true, "sync"=>false},
+                "id"=>1,
+                "login"=>"svenfuchs",
+                "name"=>"Sven Fuchs",
+                "github_id"=>nil,
+                "vcs_id"=>nil,
+                "vcs_type"=>"GithubUser",
+                "avatar_url"=>"https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
+                "education"=>nil,
+                "allow_migration"=>false,
+                "trial_allowed"=>false,
+                "internal"=> false,
+                "allowance"=>
+                {
+                  "@type"=>"allowance",
+                  "@representation"=>"minimal",
+                  "id"=>1
+                },
+                "custom_keys" => [],
+                "email"=>"sven@fuchs.com",
+                "is_syncing"=>nil,
+                "synced_at"=>nil,
+                "recently_signed_up"=>false,
+                "secure_user_hash"=>nil,
+                "ro_mode" => false,
+                "confirmed_at" => nil,
+              }
+            },
+            {
+              "credits_consumed"=>5,
+              "minutes_consumed"=>10,
+              "sender_id"=>0,
+              "sender"=>
+              {
+                "@type"=>"user",
+                "@href"=>"/user/0",
+                "@representation"=>"standard",
+                "@permissions"=>{"read"=>true, "sync"=>false},
+                "id"=>0,
+                "login"=>"cron",
+                "name"=>nil,
+                "github_id"=>nil,
+                "vcs_id"=>nil,
+                "vcs_type"=>"GithubUser",
+                "avatar_url"=>"https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
+                "education"=>nil,
+                "allow_migration"=>false,
+                "trial_allowed"=>false,
+                "internal"=> true,
+                "allowance"=>
+                {
+                  "@type"=>"allowance",
+                  "@representation"=>"minimal",
+                  "id"=>0
+                },
+                "custom_keys" => [],
+                "email"=>"sven@fuchs.com",
+                "is_syncing"=>nil,
+                "synced_at"=>nil,
+                "recently_signed_up"=>false,
+                "secure_user_hash"=>nil,
+                "ro_mode" => false,
+                "confirmed_at" => nil,
+              }
+            }
+          ]}
+        )
+      end
     end
   end
 end

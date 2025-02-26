@@ -12,6 +12,9 @@ describe Travis::API::V3::Services::User::Sync, set_app: true do
     @original_sidekiq = Sidekiq::Client
     Sidekiq.send(:remove_const, :Client) # to avoid a warning
     Sidekiq::Client = []
+    stub_request(:post,  'http://billingfake.travis-ci.com/usage/stats').
+          with(body: "{\"owners\":[{\"id\":1,\"type\":\"User\"}],\"query\":\"trial_allowed\"}")
+      .to_return(status: 200, body: "{\"trial_allowed\": false }", headers: {})
   end
 
   after do

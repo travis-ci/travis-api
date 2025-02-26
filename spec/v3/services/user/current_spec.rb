@@ -26,6 +26,7 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
       "education"        => nil,
       "allow_migration"  => false,
       "trial_allowed"    => false,
+      "internal"         => false,
       "allowance"        => {
         "@type"                 => "allowance",
         "@representation"       => "minimal",

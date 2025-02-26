@@ -9,9 +9,12 @@ describe Travis::API::V3::Services::Build::Find, set_app: true do
 
   let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
 
-  before { stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization)) }
 
   before do
+    stub_request(:get, %r((.+)/permissions/repo/(.+))).to_return(status: 200, body: JSON.generate(authorization))
+    stub_request(:post,  'http://billingfake.travis-ci.com/usage/stats')
+      .with(body: "{\"owners\":[{\"id\":1,\"type\":\"User\"}],\"query\":\"trial_allowed\"}")
+      .to_return(status: 200, body: "{\"trial_allowed\": false }", headers: {})
     build.update(sender_id: repo.owner.id, sender_type: 'User')
     test   = build.stages.create(number: 1, name: 'test')
     deploy = build.stages.create(number: 2, name: 'deploy')
