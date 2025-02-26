@@ -86,8 +86,10 @@ module Travis::API::V3
     def update_activity
       owner = branch.repository.owner
       owner&.touch if owner.is_a? Models::User
-      sender = Build.find_by_id(branch.last_build_id)&.sender
-      sender&.touch if sender.is_a? User
+      build = Build.find_by_id(branch.last_build_id)
+      if build && build.sender_type == 'User' && build.sender_id > 0
+        Models::User.find(build.sender_id)&.touch
+      end
     end
 
     def deactivate_and_log_reason(reason)
