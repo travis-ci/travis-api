@@ -6,6 +6,7 @@ module Travis::API::V3
 
     def run!
       raise LoginRequired unless access_control.logged_in?
+      raise InstallationMissing unless Travis.config.org? || access_control.user.vcs_type != 'GithubUser' || access_control.user.installation
       result query.for_member(access_control.user)
     end
   end

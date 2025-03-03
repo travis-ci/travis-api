@@ -5,6 +5,7 @@ module Travis::API::V3
     paginate(default_limit: 100)
 
     def run!
+      raise InstallationMissing unless Travis.config.org? || access_control.user.installation
       unfiltered = query.for_owner(find(:owner), user: access_control.user)
       result access_control.visible_repositories(unfiltered)
     end
