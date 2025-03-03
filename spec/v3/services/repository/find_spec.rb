@@ -168,7 +168,8 @@ describe Travis::API::V3::Services::Repository::Find, set_app: true do
       "managed_by_installation" => false,
       "migration_status"   => nil,
       "history_migration_status" => nil,
-      "config_validation"  => false
+      "config_validation"  => false,
+      "build_count" => 3
     })}
   end
 

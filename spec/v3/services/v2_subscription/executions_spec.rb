@@ -162,7 +162,8 @@ describe Travis::API::V3::Services::Executions, set_app: true, billing_spec_help
               "history_migration_status"=>nil,
               "scan_failed_at"=>nil,
               "shared"=>false,
-              "config_validation"=>false
+              "config_validation"=>false,
+              "build_count"=> 3
             }
           }
         ]
