@@ -101,10 +101,11 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
           "name"             => "master"},
         "starred"            => false,
         "managed_by_installation"=>false,
-        "active_on_org"=>nil,
-        "migration_status" => nil,
+        "active_on_org"      =>nil,
+        "migration_status"   => nil,
         "history_migration_status" => nil,
-        "config_validation" => false
+        "config_validation"  => false,
+        "build_count"        => 3
         }]
     }}
   end
