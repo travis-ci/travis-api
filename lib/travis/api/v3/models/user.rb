@@ -87,6 +87,10 @@ module Travis::API::V3
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
     end
 
+    def touch
+      update(last_activity_at: Time.now) if last_activity_at.nil? || Time.now.utc - last_activity_at > 300
+    end
+
     def internal?
       !!get_internal_user
     end

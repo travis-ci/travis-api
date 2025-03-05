@@ -451,6 +451,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "internal" => false,
         "ro_mode" => false,
         "confirmed_at" => nil,
+        "last_activity_at" => nil,
       }}
     end
 
@@ -486,6 +487,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "internal" => false,
         "ro_mode" => false,
         "confirmed_at" => nil,
+        "last_activity_at" => nil,
       }}
     end
 
@@ -521,6 +523,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "internal" => false,
         "ro_mode" => false,
         "confirmed_at" => nil,
+        "last_activity_at" => nil,
       }}
     end
 
@@ -563,6 +566,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "internal"         => false,
         "ro_mode"          => false,
         "confirmed_at" => nil,
+        "last_activity_at" => nil,
         "@warnings"        => [{
           "@type"          => "warning",
           "message"        => "query parameter user.id not safelisted, ignored",
