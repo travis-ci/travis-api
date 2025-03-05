@@ -117,6 +117,7 @@ class Travis::Api::App
       end
 
       def auth_for_repo(id, type)
+        current_user&.touch
         permission = authorizer.for_repo(id, type)
         halt 403, { error: { message: "We're sorry, but you're not authorized to perform this request" } } unless permission
       rescue Travis::API::V3::AuthorizerError

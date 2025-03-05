@@ -92,7 +92,9 @@ describe Travis::API::V3::Models::Cron do
   describe "enqueue" do
     it "enqueues the cron" do
       expect_any_instance_of(Sidekiq::Client).to receive(:push).once
+      expect(subject.branch.repository.owner.last_activity_at).to be_nil
       subject.enqueue
+      expect(subject.branch.repository.owner.last_activity_at).to_not be_nil
     end
 
     it "set the last_run time to now" do
@@ -125,10 +127,15 @@ describe Travis::API::V3::Models::Cron do
     end
 
     context "when last build within last 24h has no started_at" do
-      let(:build) { FactoryBot.create(:v3_build, started_at: nil, number: 100) }
+      let(:sender) { FactoryBot.create(:user) }
+                     let(:build) { FactoryBot.create(:v3_build, started_at: nil, number: 100, sender_id: sender.id, sender_type: 'User') }
       let(:cron) { FactoryBot.create(:cron, branch_id: FactoryBot.create(:branch, last_build: build).id, dont_run_if_recent_build_exists: true) }
       it "needs_new_build? returns true" do
         expect(cron.needs_new_build?).to be_truthy
+        expect(sender.last_activity_at).to be_nil
+        expect(cron.enqueue).to eq true
+        sender.reload
+        expect(sender.last_activity_at).to_not be_nil
       end
     end
 
