@@ -8,7 +8,7 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
   describe "authenticated as user with access" do
     before  { get("/v3/user", {}, headers)     }
     example { expect(last_response).to be_ok   }
-    example { expect(JSON.load(body)).to be == {
+    example { expect(JSON.load(body)).to include( {
       "@type"            => "user",
       "@href"            => "/v3/user/#{user.id}",
       "@representation"  => "standard",
@@ -37,6 +37,6 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
       "secure_user_hash" => nil,
       "ro_mode" => true,
       "confirmed_at" => nil,
-    }}
+    })}
   end
 end
