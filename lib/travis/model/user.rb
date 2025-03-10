@@ -48,6 +48,10 @@ class User < Travis::Model
     end
   end
 
+  def touch
+    update(last_activity_at: Time.now) if last_activity_at.nil? || Time.now.utc - last_activity_at > 300
+  end
+
   def token
     tokens.first.try(:token)
   end

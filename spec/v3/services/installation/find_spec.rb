@@ -8,6 +8,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true, billing_s
   let(:billing_auth_key) { 'secret' }
 
   before do
+    user.last_activity_at = Time.now.utc
     user.save!
     stub_billing_request(:post, "/usage/stats", auth_key: billing_auth_key, user_id: user.id)
   end
@@ -37,7 +38,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true, billing_s
   describe "authenticated as user with access, including installation.owner" do
     before  { get("/v3/installation/#{installation.github_id}?include=installation.owner", {}, headers) }
     example { expect(last_response).to be_ok          }
-    example { expect(JSON.load(body)).to be ==        {
+    example { expect(JSON.load(body)).to include({
       "@type"            => "installation",
       "@href"            => "/v3/installation/#{installation.github_id}",
       "@representation"  => "standard",
@@ -76,7 +77,8 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true, billing_s
         "internal" => false,
         "ro_mode" => true,
         "confirmed_at" => nil,
+        "last_activity_at" => user.last_activity_at.utc.iso8601
       }
-    }}
+    })}
   end
 end
