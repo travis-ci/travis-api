@@ -93,6 +93,21 @@ module Travis::API::V3
       client.update_auto_refill(addon_id, threshold, amount)
     end
 
+    def share(user_id, receiver_id)
+      puts "SHARE!!!, plan: #{receiver_id}"
+      puts "PARaM: #{params['subscription.id']}"
+      client = BillingClient.new(user_id)
+      client.share(params['subscription.id'], receiver_id)
+    rescue =>e 
+      puts "ERR: #{e.inspect}"
+      raise
+    end
+
+    def delete_share(user_id, receiver_id)
+      client = BillingClient.new(user_id)
+      client.delete_share(params['subscription.id'], receiver_id)
+    end
+
     private 
 
     def recaptcha_client

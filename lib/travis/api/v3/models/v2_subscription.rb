@@ -4,7 +4,7 @@ module Travis::API::V3
 
     attr_reader :id, :plan, :permissions, :source, :billing_info, :credit_card_info, :owner, :status, :valid_to, :canceled_at,
                 :client_secret, :payment_intent, :addons, :auto_refill, :available_standalone_addons, :created_at, :scheduled_plan_name,
-                :cancellation_requested, :current_trial, :defer_pause
+                :cancellation_requested, :current_trial, :defer_pause, :plan_shares
 
     def initialize(attributes = {})
       @id = attributes.fetch('id')
@@ -38,6 +38,9 @@ module Travis::API::V3
         @current_trial = Models::V2Trial.new(current_trial)
       end
       @defer_pause = attributes.fetch('defer_pause', false)
+      puts "PS1"
+      @plan_shares = attributes['plan_shares'] && attributes['plan_shares'].map { |sp| Models::PlanShare.new(sp) }
+      puts "PS2 #{@plan_shares.inspect}"
     end
   end
 

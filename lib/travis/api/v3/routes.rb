@@ -427,6 +427,8 @@ module Travis::API::V3
       get :auto_refill, '/auto_refill'
       patch :toggle_auto_refill,  '/auto_refill'
       patch :update_auto_refill, '/update_auto_refill'
+      post :share, '/share'
+      post :delete_share, '/delete_share'
     end
 
     hidden_resource :trials do
