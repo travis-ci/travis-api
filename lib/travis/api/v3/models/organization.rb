@@ -5,6 +5,7 @@ module Travis::API::V3
     has_many :memberships
     has_many :users, through: :memberships
     has_one  :beta_migration_request
+    has_many :account_env_vars, as: :owner
 
     has_preferences Models::OrganizationPreferences
 
@@ -43,8 +44,11 @@ module Travis::API::V3
     end
 
     def custom_keys
-      return @custom_keys if defined? @custom_keys
-      @custom_keys = Models::CustomKey.where(owner_type: 'Organization', owner_id: id)
+      @custom_keys ||= Models::CustomKey.where(owner_type: 'Organization', owner_id: id)
+    end
+
+    def account_env_vars
+      @account_env_vars ||= Models::AccountEnvVar.where(owner_type: 'Organization', owner_id: id)
     end
 
     alias members users

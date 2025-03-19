@@ -69,6 +69,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true, billing_s
           "id"                => 1
         },
         "custom_keys" => [],
+        "account_env_vars" => [],
         "allow_migration" => false,
         "recently_signed_up" => false,
         "secure_user_hash" => nil,

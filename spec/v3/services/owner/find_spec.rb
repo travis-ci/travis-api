@@ -59,7 +59,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "minimal",
           "id"                => org.id
         },
-        "custom_keys"      => []
+        "custom_keys"      => [],
+        "account_env_vars" => []
       }}
     end
 
@@ -102,7 +103,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "minimal",
           "id"                => org.id
         },
-        "custom_keys"      => []
+        "custom_keys"      => [],
+        "account_env_vars" => []
       }}
     end
 
@@ -150,6 +152,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "id"                => org.id
         },
         "custom_keys"         => [],
+        "account_env_vars"    => [],
         "repositories"        => [{
           "@type"             => "repository",
           "@href"             => "/v3/repo/#{repo.id}",
@@ -257,6 +260,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "id"                => org.id
         },
         "custom_keys"       => [],
+        "account_env_vars"  => [],
         "repositories"      => [{
           "@type"           => "repository",
           "@href"           => "/v3/repo/#{repo.id}",
@@ -357,7 +361,8 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "@representation"   => "minimal",
           "id"                => org.id
         },
-        "custom_keys"      => []
+        "custom_keys"      => [],
+        "account_env_vars" => []
       }}
     end
 
@@ -405,6 +410,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "id"                => org.id
         },
         "custom_keys"    => [],
+        "account_env_vars" => [],
         "@warnings"      => [{
           "@type"        => "warning",
           "message"      => "query parameter organization.id not safelisted, ignored",
@@ -445,6 +451,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "id"                => user.id
         },
         "custom_keys"    => [],
+        "account_env_vars" => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
         "trial_allowed" => false,
@@ -481,6 +488,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "id"                => user.id
         },
         "custom_keys"    => [],
+        "account_env_vars" => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
         "trial_allowed" => false,
@@ -517,6 +525,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "id"                => user.id
         },
         "custom_keys"      => [],
+        "account_env_vars" => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
         "trial_allowed" => false,
@@ -560,6 +569,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
           "id"                => user.id
         },
         "custom_keys"      => [],
+        "account_env_vars" => [],
         "recently_signed_up"=>false,
         "secure_user_hash" => nil,
         "trial_allowed"    => false,
