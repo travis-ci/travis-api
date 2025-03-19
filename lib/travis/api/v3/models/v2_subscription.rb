@@ -38,9 +38,7 @@ module Travis::API::V3
         @current_trial = Models::V2Trial.new(current_trial)
       end
       @defer_pause = attributes.fetch('defer_pause', false)
-      puts "PS1"
       @plan_shares = attributes['plan_shares'] && attributes['plan_shares'].map { |sp| Models::PlanShare.new(sp) }
-      puts "PS2 #{@plan_shares.inspect}"
     end
   end
 
