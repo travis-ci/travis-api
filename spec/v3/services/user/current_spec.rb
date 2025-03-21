@@ -33,6 +33,7 @@ describe Travis::API::V3::Services::User::Current, set_app: true do
         "id"                    => user.id
       },
       "custom_keys"      => [],
+      "account_env_vars" => [],
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
       "ro_mode" => true,
