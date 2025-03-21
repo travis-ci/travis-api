@@ -235,6 +235,16 @@ module Travis::API::V3
       handle_errors_and_respond(response)
     end
 
+    def share(plan_id, receiver)
+      response = connection.post("/v2/subscriptions/#{plan_id}/share", {plan: plan_id, receiver: receiver, requested_by: @user_id })
+      handle_errors_and_respond(response)
+    end
+
+    def delete_share(plan_id, receiver)
+      response = connection.delete("/v2/subscriptions/#{plan_id}/share", {plan: plan_id, receiver: receiver, requested_by: @user_id })
+      handle_errors_and_respond(response)
+    end
+
     def update_auto_refill(addon_id, threshold, amount)
       response = connection.patch('/auto_refill', {id: addon_id, threshold: threshold, amount: amount})
       handle_errors_and_respond(response)
