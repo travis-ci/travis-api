@@ -212,6 +212,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
           'cancellation_requested' => false,
           'current_trial' => nil,
           'defer_pause' => false,
+          'plan_shares' => nil,
           'plan' => {
             '@type' => 'v2_plan_config',
             '@representation' => 'standard',
