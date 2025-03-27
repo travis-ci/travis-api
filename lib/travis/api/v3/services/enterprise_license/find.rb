@@ -8,7 +8,14 @@ module Travis::API::V3
           conn.use OpenCensus::Trace::Integrations::FaradayMiddleware if Travis::Api::App::Middleware::OpenCensus.enabled?
           conn.adapter Faraday.default_adapter
         end
-        response = conn.get("license/v1/license")
+
+        begin
+          response = conn.get("license/v1/license")
+        rescue StandardError => e
+          puts ("Error fetching license: #{e.message}")
+          puts ("Backtrace:\n#{e.backtrace.join("\n")}")
+        end
+
         replicated_response = JSON.parse(response.body)
         license_id = replicated_response["license_id"]
         license_type = replicated_response["license_type"]
