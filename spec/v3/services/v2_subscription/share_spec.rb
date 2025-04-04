@@ -10,14 +10,20 @@ describe Travis::API::V3::Services::V2Subscription::Share, set_app: true, billin
   end
 
   context 'unauthenticated' do
-    it 'responds 403' do
+    it 'responds 403 for post' do
       post('/v3/v2_subscription/123/share', {})
+
+      expect(last_response.status).to eq(403)
+    end
+
+    it 'responds 403 for delete' do
+      delete('/v3/v2_subscription/123/share', {})
 
       expect(last_response.status).to eq(403)
     end
   end
 
-  context 'authenticated' do
+  context 'authenticated create share' do
     let(:user) { FactoryBot.create(:user) }
     let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
     let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
@@ -37,6 +43,29 @@ describe Travis::API::V3::Services::V2Subscription::Share, set_app: true, billin
     it 'shares the subscription' do
       post("/v3/v2_subscription/#{subscription_id}/share", JSON.generate(data), headers)
 
+      expect(last_response.status).to eq(204)
+      expect(stubbed_request).to have_been_made.once
+    end
+  end
+
+  context 'authenticated delete share' do
+    let(:user) { FactoryBot.create(:user) }
+    let(:token) { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
+    let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}",
+                     'CONTENT_TYPE' => 'application/json' }}
+    let(:subscription_id) { rand(999) }
+
+    let!(:stubbed_request) do
+      stub_request(:delete, "#{billing_url}/v2/subscriptions/#{subscription_id}/share?plan=#{subscription_id}&receiver=#{receiver.id}&requested_by=#{user.id}").with(
+          headers: {
+            'X-Travis-User-Id' => user.id
+          }
+        )
+        .to_return(status: 204)
+    end
+
+    it 'deletes subscription share' do
+      delete("/v3/v2_subscription/#{subscription_id}/share", JSON.generate(data), headers)
       expect(last_response.status).to eq(204)
       expect(stubbed_request).to have_been_made.once
     end
