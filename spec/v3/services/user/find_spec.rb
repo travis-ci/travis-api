@@ -23,7 +23,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
   describe "authenticated as user with access" do
     before  { get("/v3/user/#{user.id}", {}, headers) }
     example { expect(last_response).to be_ok          }
-    example { expect(JSON.load(body)).to be ==        {
+    example { expect(JSON.load(body)).to include({
       "@type"            => "user",
       "@href"            => "/v3/user/#{user.id}",
       "@representation"  => "standard",
@@ -48,11 +48,12 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
         "id"                    => user.id
       },
       "custom_keys" => [],
+      "account_env_vars" => [],
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
       "ro_mode" => false,
       "confirmed_at" => nil,
-    }}
+    })}
   end
 
   describe "authenticated as user with access ,collaboration status" do
@@ -65,7 +66,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
     example {
       expect(last_response).to be_ok
     }
-    example { expect(JSON.load(body)).to be ==        {
+    example { expect(JSON.load(body)).to include({
       "@type"            => "user",
       "@href"            => "/v3/user/#{user.id}",
       "@representation"  => "standard",
@@ -90,12 +91,13 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
         "id"                    => user.id
       },
       "custom_keys" => [],
+      "account_env_vars" => [],
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
       "ro_mode" => false,
       "confirmed_at" => nil,
-      'collaborator' => true
-    }}
+      'collaborator' => true,
+    })}
   end
 
   describe "authenticated as user with access ,collaboration status when user is not a collaborator" do
@@ -107,7 +109,7 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
     example {
       expect(last_response).to be_ok
     }
-    example { expect(JSON.load(body)).to be ==        {
+    example { expect(JSON.load(body)).to include ({
       "@type"            => "user",
       "@href"            => "/v3/user/#{user.id}",
       "@representation"  => "standard",
@@ -132,11 +134,12 @@ describe Travis::API::V3::Services::User::Find, set_app: true, billing_spec_help
         "id"                    => user.id
       },
       "custom_keys" => [],
+      "account_env_vars" => [],
       "recently_signed_up"=>false,
       "secure_user_hash" => nil,
       "ro_mode" => false,
       "confirmed_at" => nil,
-      'collaborator' => false
-    }}
+      'collaborator' => false,
+    })}
   end
 end

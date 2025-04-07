@@ -15,6 +15,7 @@ class User < Travis::Model
   has_many :emails, dependent: :destroy
   has_one :owner_group, as: :owner
   has_many :custom_keys, as: :owner
+  has_many :account_env_vars, as: :owner
   has_many :broadcasts, as: :recipient
 
   before_create :set_as_recent
@@ -45,6 +46,10 @@ class User < Travis::Model
     def with_email(email_address)
       Email.where(email: email_address).first.try(:user)
     end
+  end
+
+  def touch
+    update(last_activity_at: Time.now) if last_activity_at.nil? || Time.now.utc - last_activity_at > 300
   end
 
   def token

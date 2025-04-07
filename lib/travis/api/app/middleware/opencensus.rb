@@ -83,8 +83,8 @@ class Travis::Api::App
         span_context = ::OpenCensus::Trace.span_context
         if span_context
           span = span_context.start_span event.name, skip_frames: 2
-          span.start_time = event.time
-          span.end_time = event.end
+          span.start_time = event.time.is_a?(Time) ? event.time : Time.at(event.time)
+          span.end_time   = event.end.is_a?(Time)  ? event.end  : Time.at(event.end)
           event.payload.each do |k, v|
             span.put_attribute "#{k}", v.to_s
           end

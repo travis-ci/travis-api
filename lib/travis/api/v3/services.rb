@@ -64,8 +64,11 @@ module Travis::API::V3
     V2Subscriptions       = Module.new { extend Services }
     Trials                = Module.new { extend Services }
     User                  = Module.new { extend Services }
+    Users                 = Module.new { extend Services }
     UserSetting           = Module.new { extend Services }
     UserSettings          = Module.new { extend Services }
+    AccountEnvVar         = Module.new { extend Services }
+    AccountEnvVars        = Module.new { extend Services }
 
     def result_type
       @result_type ||= name[/[^:]+$/].underscore.to_sym

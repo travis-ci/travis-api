@@ -12,6 +12,7 @@ module Travis::API::V3
     has_many :user_beta_features
     has_many :beta_features, through: :user_beta_features
     has_many :beta_migration_requests
+    has_many :account_env_vars, as: :owner
 
     has_preferences Models::UserPreferences
 
@@ -87,6 +88,10 @@ module Travis::API::V3
       @installation = Models::Installation.find_by(owner_type: 'User', owner_id: id, removed_by_id: nil)
     end
 
+    def touch
+      update(last_activity_at: Time.now) if last_activity_at.nil? || Time.now.utc - last_activity_at > 300
+    end
+
     def internal?
       !!get_internal_user
     end
@@ -109,8 +114,12 @@ module Travis::API::V3
     end
 
     def custom_keys
-      return @custom_keys if defined? @custom_keys
-      @custom_keys = Models::CustomKey.where(owner_type: 'User', owner_id: id)
+      @custom_keys ||= Models::CustomKey.where(owner_type: 'User', owner_id: id)
     end
+
+    def account_env_vars
+      @account_env_vars ||= Models::AccountEnvVar.where(owner_type: 'User', owner_id: id)
+    end
+
   end
 end
