@@ -1,7 +1,7 @@
 module Travis::API::V3
   class Renderer::CustomImage < ModelRenderer
     representation :minimal, :id, :owner_id, :owner_type, :name, :usage, :created_at, :updated_at, :os_version,
-                   :created_by, :private
+                   :created_by, :private, :size_bytes
     representation :standard, *representations[:minimal]
 
     def created_by
