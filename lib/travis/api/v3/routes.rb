@@ -169,6 +169,11 @@ module Travis::API::V3
         route '/executions_per_sender'
         get :for_owner_per_sender
       end
+
+      resource :custom_images do
+        route '/custom_images'
+        get :for_owner
+      end
     end
 
     resource :credits_calculator do
