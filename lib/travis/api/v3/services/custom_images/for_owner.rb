@@ -9,8 +9,10 @@ module Travis::API::V3
       owner = query(:owner).find
 
       raise NotFound unless owner
+
       repo = owner.repositories.first
       raise InsufficientAccess unless repo
+
       access_control.permissions(repo).build_create!
 
       results = query(:custom_images).for_owner(owner)
