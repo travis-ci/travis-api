@@ -5,6 +5,8 @@ describe Travis::API::V3::Services::Messages::ForRequest, set_app: true do
   let!(:message) { Travis::API::V3::Models::Message.create!(level: 'warn', subject_id: request.id, subject_type: 'Request')}
   let!(:message_2) { Travis::API::V3::Models::Message.create!(level: 'error', subject_id: request.id, subject_type: 'Request')}
 
+  before { repo.user_settings.update(:config_validation, true) }
+
   describe "retrieve request messages on a public repository" do
     before     { get("/v3/repo/#{repo.id}/request/#{request.id}/messages")     }
     example    { expect(last_response).to be_ok }
@@ -33,7 +35,7 @@ describe Travis::API::V3::Services::Messages::ForRequest, set_app: true do
     before        { get("/v3/repo/#{repo.id}/request/#{request.id}/messages", {}, headers)                             }
     after         { repo.update_attribute(:private, false)                            }
     example       { expect(last_response).to be_ok                                    }
-    example       { expect(JSON.load(body).to_s).to include( 
+    example       { expect(JSON.load(body).to_s).to include(
                     "@type",
                     "messages",
                     "/v3/repo/#{repo.id}/request/#{request.id}/messages",
