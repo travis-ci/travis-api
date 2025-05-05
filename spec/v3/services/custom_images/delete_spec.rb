@@ -3,8 +3,12 @@ describe Travis::API::V3::Services::CustomImages::Delete, set_app: true do
   let(:token)   { Travis::Api::App::AccessToken.create(user: user, app_id: 1) }
   let(:headers) {{ 'HTTP_AUTHORIZATION' => "token #{token}" }}
   let(:parsed_body) { JSON.load(body) }
+  let(:url) { 'https://artifact-manager.travis-ci.com' }
+  let(:auth_key) { 'super_secret' }
 
   before do
+    Travis.config.artifact_manager.url = url
+    Travis.config.artifact_manager.auth_key = auth_key
     Travis.config.host = 'travis-ci.com'
   end
 
