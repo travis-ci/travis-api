@@ -4,6 +4,11 @@ module Travis::API::V3
       Models::CustomImage.where(owner_id: owner.id, owner_type: owner_type(owner))
     end
 
+    def delete(image_ids, sender)
+      client = ArtifactManagerClient.new(sender.id)
+      client.delete_images(image_ids)
+    end
+
     private
 
     def owner_type(owner)
