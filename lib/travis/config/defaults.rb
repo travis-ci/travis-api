@@ -55,7 +55,7 @@ module Travis
             closeio:              { key: 'key' },
             gdpr:                 {},
             database:             { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: ENV['TRAVIS_DB_STATEMENT_TIMEOUT'] || 10000 } },
-            db:                   { max_statement_timeout_in_seconds: 15, slow_host_max_statement_timeout_in_seconds: ENV['TRAVIS_MAX_DB_STATEMENT_TIMEOUT'] || 60},
+            db:                   { max_statement_timeout_in_seconds: ENV['TRAVIS_MAX_DB_STATEMENT_TIMEOUT'] || 60, slow_host_max_statement_timeout_in_seconds: ENV['TRAVIS_MAX_DB_STATEMENT_TIMEOUT'] || 60},
             log_options:          { s3: { access_key_id: '', secret_access_key: ''}},
             s3:                   { access_key_id: '', secret_access_key: ''},
             pusher:               { app_id: 'app-id', key: 'key', secret: 'secret' },
