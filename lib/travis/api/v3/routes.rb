@@ -173,6 +173,7 @@ module Travis::API::V3
       resource :custom_images do
         route '/custom_images'
         get :for_owner
+        delete :delete
       end
     end
 
