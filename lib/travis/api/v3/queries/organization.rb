@@ -45,14 +45,14 @@ module Travis::API::V3
     end
 
     def vcs_type
-      @_vcs_type ||=
-        params['vcs_type'] ?
-          (
-            params['vcs_type'].end_with?('User') ?
-              params['vcs_type'] :
-              "#{params['vcs_type'].capitalize}User"
-          )
-        : 'GithubUser'
+      @_vcs_type ||= case
+        when params['vcs_type']&.end_with?('User')
+          params['vcs_type']
+        when params['vcs_type']
+          "#{params['vcs_type'].capitalize}User"
+        else
+          'GithubUser'
+      end
     end
 
     private
