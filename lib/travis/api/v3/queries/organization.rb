@@ -25,8 +25,8 @@ module Travis::API::V3
       if params['vcs_type']
         raise_missing_ids_unless('vcs_ids')
 
-      user_ids = Models::User.where("vcs_type = ? and vcs_id in (?)", vcs_type,params['vcs_ids']).all.map(&:id)
-     else
+        user_ids = Models::User.where(vcs_type: vcs_type, vcs_id: params['vcs_ids']).pluck(:id)
+      else
         raise_missing_ids_unless('user_ids')
 
         user_ids = params['user_ids']
