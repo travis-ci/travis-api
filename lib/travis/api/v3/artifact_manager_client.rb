@@ -6,6 +6,28 @@ module Travis::API::V3
       @user_id = user_id
     end
 
+    def create(owner:, image_name:, job_restart: false)
+      params = {
+        owner_type: owner.class.name.downcase,
+        id: owner.id,
+        name: image_name,
+        job_restart:
+      }
+      handle_errors_and_respond(connection.post("/create", params)) do |body|
+        body.include?('image_id')  ? body['image_id'] : false
+      end
+    rescue Faraday::Error
+      raise ArtifactManagerConnectionError
+    end
+
+    def use(owner:, image_name:)
+      handle_errors_and_respond(connection.get("/image/#{owner.class.name.downcase}/#{owner.id}/#{image_name}")) do |response|
+        body.include?('image_id')  ? body['image_id'] : false
+      end
+    rescue Faraday::Error
+      raise ArtifactManagerConnectionError
+    end
+
     def images(owner_type, owner_id)
       response = connection.get("/images?owner_type=#{owner_type}&id=#{owner_id}")
       handle_images_response(response)

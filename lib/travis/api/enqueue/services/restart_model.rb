@@ -27,7 +27,7 @@ module Travis
         end
 
         def accept?
-          current_user && permission? && resetable? && billing?
+          current_user && permission? && resetable? && billing? && custom_image_allowed?
         end
 
         def billing?
@@ -61,6 +61,39 @@ module Travis
           end
         end
 
+        def custom_image_allowed?
+          return true if !!Travis.config.enterprise
+
+          jobs = target.is_a?(Job) ? [target] : target.matrix
+
+          jobs.map do |job|
+            next unless job.config
+
+            create_name = job.config.dig(:vm, :create, :name)
+            use_name = job.config.dig(:vm, :use)
+            use_name = use_name.dig(:name) if use_name.is_a?(Hash)
+
+            if create_name
+              return false unless !!artifact_manager.create(owner: repository.owner, image_name: create_name, job_restart: true)
+            end
+
+            if use_name
+              return false unless can_use_custom_image?(owner: repository.owner, image_name: use_name)
+            end
+          end
+          true
+        rescue Travis::API::V3::Error
+          false
+        end
+
+        def can_use_custom_image?(owner:, image_name:)
+          !!artifact_manager.use(owner: , image_name:)
+        rescue Travis::API::V3::NotFound
+          true
+        rescue Travis::API::V3::Error
+          false
+        end
+
         def messages
           messages = []
           messages << { notice: "The #{type} was successfully restarted." } if accept?
@@ -87,6 +120,10 @@ module Travis
         end
 
         private
+
+        def artifact_manager
+          @_artifact_manger = Travis::API::V3::ArtifactManagerClient.new(current_user&.id)
+        end
 
         def subscription
           Subscription.where(owner: repository.owner)&.first
