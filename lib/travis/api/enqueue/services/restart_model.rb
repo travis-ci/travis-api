@@ -71,7 +71,6 @@ module Travis
 
               create_name = job.config.dig(:vm, :create, :name)
               if create_name
-
                 return false unless !!artifact_manager.create(owner: repository.owner, image_name: create_name, job_restart: true)
               end
             end
