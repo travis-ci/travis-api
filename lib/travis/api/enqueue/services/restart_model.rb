@@ -71,11 +71,15 @@ module Travis
 
               create_name = job.config.dig(:vm, :create, :name)
               if create_name
+
+                puts "CHECK CREATE NAME: #{create_name.inspect}"
                 return false unless !!artifact_manager.create(owner: repository.owner, image_name: create_name, job_restart: true)
               end
             end
+            puts "ALLOWING CREATE"
             true
           rescue Travis::API::V3::Error
+            puts "ERROR ON API on CREATE"
             false
           end
         end
@@ -91,14 +95,17 @@ module Travis
               next unless job.config
 
               use_name = job.config.dig(:vm, :use)
-              use_name = use_name.dig(:name) if use_name.is_a?(Hash)
+              use_name = use_name[:name] if use_name.is_a?(Hash)
 
               if use_name
+                puts "CHECK NAME: #{use_name.inspect}"
                 return false unless can_use_custom_image?(owner: repository.owner, image_name: use_name)
               end
             end
+            puts "ALLOWING USE"
             true
           rescue Travis::API::V3::Error
+            puts "ERROR ON API on USE"
             false
           end
         end
