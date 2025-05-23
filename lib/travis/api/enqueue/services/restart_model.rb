@@ -27,7 +27,7 @@ module Travis
         end
 
         def accept?
-          current_user && permission? && resetable? && billing? && custom_image_allowed?
+          current_user && permission? && resetable? && billing? && custom_image_create_allowed? && custom_image_use_allowed?
         end
 
         def billing?
@@ -61,29 +61,46 @@ module Travis
           end
         end
 
-        def custom_image_allowed?
+        def custom_image_create_allowed?
           return true if !!Travis.config.enterprise
 
-          jobs = target.is_a?(Job) ? [target] : target.matrix
+          @_custom_image_create_allowed ||= begin
+            jobs = target.is_a?(Job) ? [target] : target.matrix
+            jobs.map do |job|
+              next unless job.config
 
-          jobs.map do |job|
-            next unless job.config
-
-            create_name = job.config.dig(:vm, :create, :name)
-            use_name = job.config.dig(:vm, :use)
-            use_name = use_name.dig(:name) if use_name.is_a?(Hash)
-
-            if create_name
-              return false unless !!artifact_manager.create(owner: repository.owner, image_name: create_name, job_restart: true)
+              create_name = job.config.dig(:vm, :create, :name)
+              if create_name
+                return false unless !!artifact_manager.create(owner: repository.owner, image_name: create_name, job_restart: true)
+              end
             end
-
-            if use_name
-              return false unless can_use_custom_image?(owner: repository.owner, image_name: use_name)
-            end
+            true
+          rescue Travis::API::V3::Error
+            false
           end
-          true
-        rescue Travis::API::V3::Error
-          false
+        end
+
+
+        def custom_image_use_allowed?
+          return true if !!Travis.config.enterprise
+
+          @_custom_image_use_allowed ||= begin
+            jobs = target.is_a?(Job) ? [target] : target.matrix
+
+            jobs.map do |job|
+              next unless job.config
+
+              use_name = job.config.dig(:vm, :use)
+              use_name = use_name.dig(:name) if use_name.is_a?(Hash)
+
+              if use_name
+                return false unless can_use_custom_image?(owner: repository.owner, image_name: use_name)
+              end
+            end
+            true
+          rescue Travis::API::V3::Error
+            false
+          end
         end
 
         def can_use_custom_image?(owner:, image_name:)
@@ -100,6 +117,8 @@ module Travis
           messages << { error:  'You do not seem to have sufficient permissions.' } unless permission?
           messages << { error:  'You do not have enough credits.' } unless billing?
           messages << { error:  "This #{type} currently can not be restarted." } unless resetable?
+          messages << { error:  "Image creation build restart not allowed." } unless custom_image_create_allowed?
+          messages << { error:  "Can't use the custom image. Make sure it's already created" } unless custom_image_use_allowed?
           messages
         end
 
