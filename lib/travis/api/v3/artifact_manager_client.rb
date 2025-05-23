@@ -21,7 +21,7 @@ module Travis::API::V3
     end
 
     def use(owner:, image_name:)
-      handle_errors_and_respond(connection.get("/image/#{owner.class.name.downcase}/#{owner.id}/#{image_name}")) do |response|
+      handle_errors_and_respond(connection.get("/image/#{owner.class.name.downcase}/#{owner.id}/#{image_name}")) do |body|
         body.include?('image_id')  ? body['image_id'] : false
       end
     rescue Faraday::Error
