@@ -91,7 +91,7 @@ module Travis
               next unless job.config
 
               use_name = job.config.dig(:vm, :use)
-              use_name = use_name.dig(:name) if use_name.is_a?(Hash)
+              use_name = use_name[:name] if use_name.is_a?(Hash)
 
               if use_name
                 return false unless can_use_custom_image?(owner: repository.owner, image_name: use_name)
