@@ -37,11 +37,11 @@ module Travis::API::V3
       handle_images_response(response)
     end
 
-    def delete_images(image_ids)
-      response = connection.delete('/images') do |req|
-        req.body = { image_ids: }.to_json
+    def delete_images(owner_type, owner_id, image_ids)
+      image_ids.each do |image_id|
+        response = connection.delete("/image/#{owner_type.downcase}/#{owner_id}/#{image_id}")
+        handle_errors_and_respond(response)
       end
-      handle_errors_and_respond(response)
     end
 
     private

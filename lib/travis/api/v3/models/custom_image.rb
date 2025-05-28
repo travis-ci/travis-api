@@ -7,7 +7,7 @@ module Travis::API::V3
     scope :available, -> { where(state: 'available') }
 
     def created_by
-      user_id = custom_image_logs.created.frist&.sender_id
+      user_id = custom_image_logs.created.first&.sender_id
       return unless user_id
 
       User.find(user_id)

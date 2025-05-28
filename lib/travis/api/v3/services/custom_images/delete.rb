@@ -14,7 +14,7 @@ module Travis::API::V3
         access_control.permissions(owner).admin!
       end
 
-      query.delete(params['image_ids'], access_control.user)
+      query.delete(params['image_ids'], owner, access_control.user)
       deleted
     end
   end
