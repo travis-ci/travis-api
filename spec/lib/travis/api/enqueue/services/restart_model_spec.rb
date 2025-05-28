@@ -102,7 +102,7 @@ describe Travis::Enqueue::Services::RestartModel do
 
           before do
             repository.permissions.create(user: user, build: true)
-            Travis.config.artifact_manager  = { url: 'http://localhost:9911' , auth_key: 'test_test'}
+            Travis.config.artifact_manager = { url: 'http://localhost:9911' , auth_key: 'test_test'}
             stub_request(:post, "http://localhost:9911/create").to_return(status: 200, body: { image_id: 1}.to_json)
           end
 
@@ -114,7 +114,7 @@ describe Travis::Enqueue::Services::RestartModel do
 
           before do
             repository.permissions.create(user: user, build: true)
-            Travis.config.artifact_manager  = { url: 'http://localhost:9911' , auth_key: 'test_test'}
+            Travis.config.artifact_manager = { url: 'http://localhost:9911' , auth_key: 'test_test'}
             stub_request(:post, "http://localhost:9911/create").to_return(status: 401)
           end
 

@@ -14,7 +14,7 @@ module Travis::API::V3
         job_restart:
       }
       handle_errors_and_respond(connection.post("/create", params)) do |body|
-        body.include?('image_id')  ? body['image_id'] : false
+        body.include?('image_id') ? body['image_id'] : false
       end
     rescue Faraday::Error
       raise ArtifactManagerConnectionError
