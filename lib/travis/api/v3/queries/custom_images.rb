@@ -9,6 +9,11 @@ module Travis::API::V3
       client.delete_images(owner_type(owner), owner.id, image_ids)
     end
 
+    def usage(owner, user_id, from, to)
+      client = BillingClient.new(user_id)
+      client.storage_usage(owner_type(owner), owner.id, from, to)
+    end
+
     private
 
     def owner_type(owner)
