@@ -9,7 +9,7 @@ module Travis::API::V3
       raise NotFound unless owner
 
       if owner.is_a?(Travis::API::V3::Models::User)
-        access_control.permissions(owner).write!
+        access_control.permissions(owner).sync!
       else
         access_control.permissions(owner).admin!
       end
