@@ -15,11 +15,7 @@ describe Travis::API::V3::Services::CustomImages::Delete, set_app: true do
   context 'authenticated' do
     describe "deleting custom images by id list" do
       before do
-        stub_request(:delete, "#{Travis.config.artifact_manager.url}/images")
-          .with(
-            body: { image_ids: ['1', '2', '3'] }.to_json,
-            headers: { 'X-Travis-User-Id' => user.id.to_s }
-          )
+        stub_request(:delete, %r{#{Travis.config.artifact_manager.url}/image/user/#{user.id}/\d+})
           .to_return(status: 204, headers: { 'Content-Type' => 'application/json' })
       end
 

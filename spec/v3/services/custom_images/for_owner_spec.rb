@@ -36,7 +36,7 @@ RSpec.describe Travis::API::V3::Services::CustomImages::ForOwner, set_app: true 
       let(:authorization) { { 'permissions' => [ 'repository_state_update' ] } }
 
       it 'returns an empty list' do
-        get("/v3/owner/#{other_user.login}/custom_images", {}, json_headers.merge('HTTP_AUTHORIZATION' => "token #{other_user_token}"))
+        get("/v3/owner/#{user.login}/custom_images", {}, json_headers.merge('HTTP_AUTHORIZATION' => "token #{other_user_token}"))
 
         expect(JSON.parse(last_response.body)).to include(
           'error_type' => 'insufficient_access'
