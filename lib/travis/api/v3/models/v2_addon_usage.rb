@@ -4,7 +4,6 @@ module Travis::API::V3
                 :quantity_limit_type, :quantity_limit_charge, :total_usage
 
     def initialize(attrs)
-      pp attrs
       @id = attrs.fetch('id')
       @addon_id = attrs.fetch('addon_id')
       @addon_quantity = attrs.fetch('addon_quantity')
