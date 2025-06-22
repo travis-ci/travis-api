@@ -30,6 +30,7 @@ module Travis::API::V3
 
         payload = {
           'owner_id' => owner.id,
+          'owner_type' => owner.class.name,
           'report_type' => csv_export_data['report_type'],
           'recipient_email' => csv_export_data['recipient_email'],
           'expires_in' => csv_export_data['expires_in']
@@ -37,11 +38,20 @@ module Travis::API::V3
 
         puts " this is the payload: #{payload}"
 
-        Sidekiq::Client.push(
-          'queue' => 'hub',
-          'class' => 'Travis::Hub::Sidekiq::Worker',
-          'args' => ['csv_export:create', payload].map(&:to_json)
+        job_id = Sidekiq::Client.push(
+          'queue' => 'billing',
+          'class' => 'Travis::Billing::Worker',
+          'args' => [
+            nil,
+            'Travis::Billing::Services::Executions::CsvExport',
+            'perform',
+            payload
+          ].map(&:to_json)
         )
+
+        Travis.logger.info "CSV export job enqueued with ID: #{job_id}, payload: #{payload}"
+
+        job_id
       end
     end
   end
