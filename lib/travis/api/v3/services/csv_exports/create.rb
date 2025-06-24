@@ -16,7 +16,8 @@ module Travis::API::V3
         response = OpenStruct.new(
           status: 202,
           message: "CSV export job enqueued. You will receive an email at #{recipient_email} when it's ready.",
-          owner_id: owner.id
+          owner_id: owner.id,
+          owner_type: owner.class.name
         )
 
         result(response)
@@ -36,9 +37,7 @@ module Travis::API::V3
           'expires_in' => csv_export_data['expires_in']
         }
 
-        puts " this is the payload: #{payload}"
-
-        job_id = Sidekiq::Client.push(
+        Sidekiq::Client.push(
           'queue' => 'billing',
           'class' => 'Travis::Billing::Worker',
           'args' => [
@@ -49,9 +48,7 @@ module Travis::API::V3
           ].map(&:to_json)
         )
 
-        Travis.logger.info "CSV export job enqueued with ID: #{job_id}, payload: #{payload}"
-
-        job_id
+        Travis.logger.info "CSV export job enqueued with payload: #{payload}"
       end
     end
   end

@@ -170,7 +170,7 @@ module Travis::API::V3
         get :for_owner_per_sender
       end
 
-      resource :csv_exports, only: [:create] do
+      resource :csv_exports do
         route '/csv_exports'
         post :create
       end
