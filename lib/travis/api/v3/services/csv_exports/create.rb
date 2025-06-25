@@ -1,11 +1,11 @@
 module Travis::API::V3
   module Services::CsvExports
     class Create < Service
-      params :report_type, :recipient_email, :expires_in, prefix: :csv_export
+      params :report_type, :recipient_email, :expires_in, :start_date, :end_date, prefix: :csv_export
 
       def run!
         owner = query(:owner).find
-        raise NotFound, "Owner not found" unless owner
+        raise NotFound, 'Owner not found' unless owner
 
         csv_export_data = get_csv_export_data
         enqueue_csv_export(owner, csv_export_data)
@@ -35,7 +35,9 @@ module Travis::API::V3
           'owner_type' => owner.class.name,
           'report_type' => csv_export_data['report_type'],
           'recipient_email' => csv_export_data['recipient_email'],
-          'expires_in' => csv_export_data['expires_in']
+          'expires_in' => csv_export_data['expires_in'],
+          'start_date' => csv_export_data['start_date'],
+          'end_date' => csv_export_data['end_date']
         }
 
         Sidekiq::Client.push(
