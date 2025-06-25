@@ -7,10 +7,9 @@ module Travis::API::V3
         owner = query(:owner).find
         raise NotFound, "Owner not found" unless owner
 
-        enqueue_csv_export(owner)
+        csv_export_data = get_csv_export_data
+        enqueue_csv_export(owner, csv_export_data)
 
-        input_json = @env['travis.input.json'] if @env
-        csv_export_data = input_json&.dig('csv_export') || {}
         recipient_email = csv_export_data['recipient_email']
 
         response = OpenStruct.new(
@@ -25,10 +24,12 @@ module Travis::API::V3
 
       private
 
-      def enqueue_csv_export(owner)
+      def get_csv_export_data
         input_json = @env['travis.input.json'] if @env
-        csv_export_data = input_json&.dig('csv_export') || {}
+        input_json&.dig('csv_export') || {}
+      end
 
+      def enqueue_csv_export(owner, csv_export_data)
         payload = {
           'owner_id' => owner.id,
           'owner_type' => owner.class.name,
