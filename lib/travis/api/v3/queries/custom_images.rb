@@ -14,6 +14,10 @@ module Travis::API::V3
       client.storage_usage(owner_type(owner), owner.id, from, to)
     end
 
+    def current_storage(owner, user_id)
+      Models::CustomImageStorage.where(owner_type: owner_type(owner), owner_id: owner.id).order('id desc').limit(1).first
+    end
+
     private
 
     def owner_type(owner)

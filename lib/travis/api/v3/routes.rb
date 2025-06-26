@@ -175,6 +175,7 @@ module Travis::API::V3
         get :for_owner
         delete :delete
         get :usage, '/usage'
+        get :current_storage, '/current_storage'
       end
     end
 
