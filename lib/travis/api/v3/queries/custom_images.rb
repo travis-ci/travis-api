@@ -18,6 +18,10 @@ module Travis::API::V3
       Models::CustomImageStorage.where(owner_type: owner_type(owner), owner_id: owner.id).order('id desc').limit(1).first
     end
 
+    def storage_executions_usage(owner, user_id)
+      BillingClient.new(user_id).storage_executions_usage(owner_type(owner), owner.id)
+    end
+
     private
 
     def owner_type(owner)
