@@ -176,6 +176,7 @@ module Travis::API::V3
         delete :delete
         get :usage, '/usage'
         get :current_storage, '/current_storage'
+        get :storage_executions_usage, '/storage_executions_usage'
       end
     end
 
