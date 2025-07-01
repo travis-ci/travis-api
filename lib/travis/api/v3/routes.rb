@@ -169,6 +169,11 @@ module Travis::API::V3
         route '/executions_per_sender'
         get :for_owner_per_sender
       end
+
+      resource :csv_exports do
+        route '/csv_exports'
+        post :create
+      end
     end
 
     resource :credits_calculator do
