@@ -32,7 +32,6 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
       end
 
       it 'returns user info and token' do
-        binding.pry
         header 'Authorization', "Bearer #{token}"
         post '/assembla/login'
         expect(last_response.status).to eq(200)
