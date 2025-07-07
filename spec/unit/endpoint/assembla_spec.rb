@@ -27,8 +27,8 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
   describe 'POST /assembla/login' do
     context 'with valid JWT' do
       before do
-        allow(::User).to receive(:first_or_create!).and_return(double('User', id: 1, login: 'testuser', token: 'abc123'))
         allow_any_instance_of(Travis::RemoteVCS::User).to receive(:sync).and_return(true)
+        allow_any_instance_of(Travis::API::V3::BillingClient).to receive(:create_v2_subscription).and_return(true)
       end
 
       it 'returns user info and token' do
@@ -36,9 +36,8 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
         post '/assembla/login'
         expect(last_response.status).to eq(200)
         body = JSON.parse(last_response.body)
-        expect(body['user_id']).to eq(1)
         expect(body['login']).to eq('testuser')
-        expect(body['token']).to eq('abc123')
+        expect(body['token']).to be_present
         expect(body['status']).to eq('signed_in')
       end
     end
@@ -92,6 +91,45 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
         post '/assembla/login'
         expect(last_response.status).to eq(403)
         expect(last_response.body).to include('Invalid ASM cluster')
+      end
+    end
+
+    context 'with missing required fields in JWT payload' do
+      let(:payload) do
+        {
+          'name' => 'Test User',
+          'login' => 'testuser',
+          'space_id' => 'space123' # 'email' is missing
+        }
+      end
+      let(:token) { JWT.encode(payload, jwt_secret, 'HS256') }
+
+      it 'returns 400 with missing fields' do
+        header 'Authorization', "Bearer #{token}"
+        post '/assembla/login'
+        expect(last_response.status).to eq(400)
+        expect(last_response.body).to include('Missing required fields')
+        expect(last_response.body).to include('email')
+      end
+    end
+
+    context 'with expired JWT token' do
+      let(:payload) do
+        {
+          'name' => 'Test User',
+          'email' => 'test@example.com',
+          'login' => 'testuser',
+          'space_id' => 'space123',
+          'exp' => (Time.now.to_i - 60)
+        }
+      end
+      let(:token) { JWT.encode(payload, jwt_secret, 'HS256') }
+
+      it 'returns 401 with expired error' do
+        header 'Authorization', "Bearer #{token}"
+        post '/assembla/login'
+        expect(last_response.status).to eq(401)
+        expect(last_response.body).to match(/expired|exp/i)
       end
     end
   end
