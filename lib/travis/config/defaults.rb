@@ -108,7 +108,7 @@ module Travis
             legacy_roles:         false,
             internal_users:       [{id: 0, login: 'cron'}],
             deep_integration_enabled: ENV['DEEP_INTEGRATION_ENABLED'],
-            assembla_clusters: ENV['ASSEMBLA_CLUSTERS'].split(','),
+            assembla_clusters: ENV['ASSEMBLA_CLUSTERS'],
             assembla_jwt_secret: ENV['ASSEMBLA_JWT_SECRET']
 
     default :_access => [:key]

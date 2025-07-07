@@ -18,7 +18,7 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
 
   before do
     Travis.config[:deep_integration_enabled] = true
-    Travis.config[:assembla_clusters] = ['cluster1']
+    Travis.config[:assembla_clusters] = 'cluster1'
     Travis.config[:assembla_jwt_secret] = jwt_secret
 
     header 'X_ASSEMBLA_CLUSTER', 'cluster1'
