@@ -167,6 +167,7 @@ module Support
           "name" => "OSS Build Credits",
           "type" => "credit_public",
           "recurring" => false,
+          "free" => false,
           "current_usage" => {
               "id" => 1,
               "addon_id" => 1,
@@ -184,6 +185,7 @@ module Support
           "name" => "Build Credits",
           "type" => "credit_private",
           "recurring" => false,
+          "free" => false,
           "current_usage" => {
             "id" => 2,
             "addon_id" => 2,
