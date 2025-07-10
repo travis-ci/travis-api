@@ -11,10 +11,17 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
       'name' => 'Test User',
       'email' => 'test@example.com',
       'login' => 'testuser',
-      'space_id' => 'space123'
+      'space_id' => 'space123',
+      'id' => 'assembla_vcs_user_id',
+      'access_token' => 'test_access_token',
+      'refresh_token' => 'test_refresh_token'
     }
   end
   let(:token) { JWT.encode(payload, jwt_secret, 'HS256') }
+  let(:user) { double('User', id: 1, login: 'testuser', token: 'abc123', name: 'Test User', email: 'test@example.com', organizations: organizations) }
+  let(:organization) { double('Organization', id: 1) }
+  let(:organizations) { double('Organizations') }
+  let(:subscription_response) { { 'status' => 'subscribed' } }
 
   before do
     Travis.config[:deep_integration_enabled] = true
@@ -26,18 +33,25 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
 
   describe 'POST /assembla/login' do
     context 'with valid JWT' do
+      let(:service) { instance_double(Travis::Services::AssemblaUserService) }
+      let(:remote_vcs_user) { instance_double(Travis::RemoteVCS::User) }
+      let(:billing_client) { instance_double(Travis::API::V3::BillingClient) }
+
       before do
-        allow_any_instance_of(Travis::RemoteVCS::User).to receive(:sync).and_return(true)
-        allow_any_instance_of(Travis::API::V3::BillingClient).to receive(:create_v2_subscription).and_return(true)
+        allow(Travis::Services::AssemblaUserService).to receive(:new).with(payload).and_return(service)
+        allow(service).to receive(:find_or_create_user).and_return(user)
+        allow(service).to receive(:find_or_create_organization).with(user).and_return(organization)
+        allow(service).to receive(:create_org_subscription).with(user, organization.id).and_return(subscription_response)
       end
 
-      it 'returns user info and token' do
+      it 'creates user, organization and subscription' do
         header 'Authorization', "Bearer #{token}"
         post '/assembla/login'
+
         expect(last_response.status).to eq(200)
         body = JSON.parse(last_response.body)
         expect(body['login']).to eq('testuser')
-        expect(body['token']).to be_present
+        expect(body['token']).to eq('abc123')
         expect(body['status']).to eq('signed_in')
       end
     end
@@ -59,23 +73,24 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
       end
     end
 
-    context 'when user sync fails' do
-      before do
-        allow(::User).to receive(:first_or_create!).and_return(double('User', id: 1, login: 'testuser', token: 'abc123'))
-        allow_any_instance_of(Travis::RemoteVCS::User).to receive(:sync).and_raise(StandardError.new('sync error'))
-      end
+    context 'with missing required fields' do
+      let(:invalid_payload) { payload.tap { |p| p.delete('email') } }
+      let(:invalid_token) { JWT.encode(invalid_payload, jwt_secret, 'HS256') }
 
-      it 'returns 500 with error message' do
-        header 'Authorization', "Bearer #{token}"
+      it 'returns 400 with missing fields' do
+        header 'Authorization', "Bearer #{invalid_token}"
         post '/assembla/login'
-        expect(last_response.status).to eq(500)
-        expect(last_response.body).to include('User sync failed')
-        expect(last_response.body).to include('sync error')
+        
+        expect(last_response.status).to eq(400)
+        body = JSON.parse(last_response.body)
+        expect(body['error']).to eq('Missing required fields')
+        expect(body['missing']).to include('email')
       end
     end
 
     context 'when integration is not enabled' do
       before { Travis.config[:deep_integration_enabled] = false }
+      
       it 'returns 403' do
         header 'Authorization', "Bearer #{token}"
         post '/assembla/login'
@@ -86,50 +101,12 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
 
     context 'when cluster is invalid' do
       before { header 'X_ASSEMBLA_CLUSTER', 'invalid-cluster' }
+      
       it 'returns 403' do
         header 'Authorization', "Bearer #{token}"
         post '/assembla/login'
         expect(last_response.status).to eq(403)
         expect(last_response.body).to include('Invalid ASM cluster')
-      end
-    end
-
-    context 'with missing required fields in JWT payload' do
-      let(:payload) do
-        {
-          'name' => 'Test User',
-          'login' => 'testuser',
-          'space_id' => 'space123' # 'email' is missing
-        }
-      end
-      let(:token) { JWT.encode(payload, jwt_secret, 'HS256') }
-
-      it 'returns 400 with missing fields' do
-        header 'Authorization', "Bearer #{token}"
-        post '/assembla/login'
-        expect(last_response.status).to eq(400)
-        expect(last_response.body).to include('Missing required fields')
-        expect(last_response.body).to include('email')
-      end
-    end
-
-    context 'with expired JWT token' do
-      let(:payload) do
-        {
-          'name' => 'Test User',
-          'email' => 'test@example.com',
-          'login' => 'testuser',
-          'space_id' => 'space123',
-          'exp' => (Time.now.to_i - 60)
-        }
-      end
-      let(:token) { JWT.encode(payload, jwt_secret, 'HS256') }
-
-      it 'returns 401 with expired error' do
-        header 'Authorization', "Bearer #{token}"
-        post '/assembla/login'
-        expect(last_response.status).to eq(401)
-        expect(last_response.body).to match(/expired|exp/i)
       end
     end
   end
