@@ -309,6 +309,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'name' => 'OSS Build Credits',
             'type' => 'credit_public',
             'recurring' => nil,
+            'free' => nil,
             'current_usage' => {
               '@type' => 'v2_addon_usage',
               '@representation' => 'standard',
