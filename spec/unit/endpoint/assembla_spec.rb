@@ -5,7 +5,7 @@ require 'jwt'
 RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
   include Rack::Test::Methods
 
-  let(:jwt_secret) { 'testsecret' }
+  let(:jwt_secret) { 'assembla_jwt_secret' }
   let(:payload) do
     {
       'name' => 'Test User',
@@ -22,18 +22,17 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
   let(:organization) { double('Organization', id: 1) }
   let(:organizations) { double('Organizations') }
   let(:subscription_response) { { 'status' => 'subscribed' } }
-  let(:assembla_cluster) { 'cluster1' }
+  let(:assembla_cluster) { 'eu' }
+  let!(:original_deep_integration_enabled) { Travis.config[:deep_integration_enabled] }
 
   before do
     Travis.config[:deep_integration_enabled] = true
-    Travis.config[:assembla_clusters] = assembla_cluster
-    Travis.config[:assembla_jwt_secret] = jwt_secret
 
     header 'X_ASSEMBLA_CLUSTER', assembla_cluster
   end
 
   after do
-    Travis.config[:deep_integration_enabled] = false
+    Travis.config[:deep_integration_enabled] = original_deep_integration_enabled
   end
 
   describe 'POST /assembla/login' do
@@ -56,7 +55,7 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
         expect(last_response.status).to eq(200)
         body = JSON.parse(last_response.body)
         expect(body['login']).to eq(user.login)
-        expect(body['token']).to eq('abc123')
+        expect(body['token']).to eq(user.token)
       end
     end
 
@@ -93,7 +92,9 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
     end
 
     context 'when integration is not enabled' do
-      before { Travis.config[:deep_integration_enabled] = false }
+      
+      before { Travis.config[:deep_integration_enabled] = original_deep_integration_enabled }
+      after { Travis.config[:deep_integration_enabled] = true }
       
       it 'returns 403' do
         header 'Authorization', "Bearer #{token}"
