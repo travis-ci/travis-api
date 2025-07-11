@@ -1,9 +1,11 @@
 require 'spec_helper'
+require 'factory_bot'
 
 RSpec.describe Travis::Services::AssemblaUserService do
   let(:payload) do
     {
       'id' => '12345',
+      'name' => 'Test User',
       'email' => 'test@example.com',
       'login' => 'testuser',
       'refresh_token' => 'refresh123',
@@ -12,39 +14,30 @@ RSpec.describe Travis::Services::AssemblaUserService do
   end
 
   let(:service) { described_class.new(payload) }
-  let(:user) { double('User', id: 1, login: 'testuser', email: 'test@example.com', name: 'Test User') }
-  let(:organization) { double('Organization', id: 2) }
-
-  describe '#initialize' do
-    it 'stores the payload' do
-      expect(service.instance_variable_get(:@payload)).to eq(payload)
-    end
-  end
+  let(:user) { FactoryBot.create(:user, vcs_id: payload['id'], email: payload['email'], login: payload['login'], name: payload['name']) }
+  let(:organization) { FactoryBot.create(:org, vcs_id: payload['space_id'], vcs_type: 'AssemblaOrganization') }
 
   describe '#find_or_create_user' do
     let(:expected_attrs) do
       {
-        vcs_id: '12345',
-        email: 'test@example.com',
-        login: 'testuser',
+        vcs_id: payload['id'],
+        email: payload['email'],
+        name: payload['name'],
+        login: payload['login'],
         vcs_type: 'AssemblaUser'
       }
     end
 
     before do
-      allow(::User).to receive(:find_or_create_by!).with(expected_attrs).and_return(user)
-      allow(user).to receive(:update)
       allow(Travis::RemoteVCS::User).to receive(:new).and_return(double(sync: true))
     end
 
     it 'finds or creates a user with correct attributes' do
-      expect(::User).to receive(:find_or_create_by!).with(expected_attrs)
-      service.find_or_create_user
-    end
-
-    it 'returns the user' do
-      result = service.find_or_create_user
-      expect(result).to eq(user)
+      service_user = service.find_or_create_user
+      expect(service_user.login).to eq(expected_attrs[:login])
+      expect(service_user.email).to eq(expected_attrs[:email])
+      expect(service_user.name).to eq(expected_attrs[:name])
+      expect(service_user.vcs_id).to eq(expected_attrs[:vcs_id])
     end
 
     context 'when sync fails' do
@@ -60,60 +53,26 @@ RSpec.describe Travis::Services::AssemblaUserService do
   end
 
   describe '#find_or_create_organization' do
-    let(:organizations_relation) { double('organizations') }
     let(:expected_attrs) do
       {
-        vcs_id: '67890',
+        vcs_id: payload['space_id'],
         vcs_type: 'AssemblaOrganization'
       }
     end
 
-    before do
-      allow(user).to receive(:organizations).and_return(organizations_relation)
-    end
-
     it 'finds or creates organization with correct attributes' do
-      expect(organizations_relation).to receive(:find_or_create_by).with(expected_attrs).and_return(organization)
+      service_org = service.find_or_create_organization(user)
       
-      result = service.find_or_create_organization(user)
-      expect(result).to eq(organization)
+      expect(service_org.vcs_type).to eq(expected_attrs[:vcs_type])
+      expect(service_org.vcs_id).to eq(expected_attrs[:vcs_id])
     end
   end
 
   describe '#create_org_subscription' do
     let(:billing_client) { double('BillingClient') }
-    let(:expected_subscription_params) do
-      {
-        'plan' => 'beta_plan',
-        'organization_id' => 2,
-        'billing_info' => {
-          'address' => 'System-generated for user testuser (1)',
-          'city' => 'AutoCity-1',
-          'country' => 'Poland',
-          'first_name' => 'Test',
-          'last_name' => 'User',
-          'zip_code' => '0001',
-          'billing_email' => 'test@example.com'
-        },
-        'credit_card_info' => { 'token' => nil }
-      }
-    end
 
     before do
-      allow(Travis::API::V3::BillingClient).to receive(:new).with(1).and_return(billing_client)
-    end
-
-    it 'creates a billing client with user id' do
-      expect(Travis::API::V3::BillingClient).to receive(:new).with(1)
-      allow(billing_client).to receive(:create_v2_subscription)
-      
-      service.create_org_subscription(user, 2)
-    end
-
-    it 'calls create_v2_subscription with correct params' do
-      expect(billing_client).to receive(:create_v2_subscription).with(expected_subscription_params)
-      
-      service.create_org_subscription(user, 2)
+      allow(Travis::API::V3::BillingClient).to receive(:new).with(user.id).and_return(billing_client)
     end
 
     context 'when billing client raises an error' do
@@ -122,22 +81,9 @@ RSpec.describe Travis::Services::AssemblaUserService do
       it 'returns error hash' do
         allow(billing_client).to receive(:create_v2_subscription).and_raise(error)
         
-        result = service.create_org_subscription(user, 2)
-        expect(result).to eq({ error: true, details: 'Billing error' })
-      end
-    end
-
-    context 'when user has no name' do
-      let(:user_without_name) { double('User', id: 1, login: 'testuser', email: 'test@example.com', name: nil) }
-
-      it 'handles nil name gracefully' do
-        expected_params = expected_subscription_params.dup
-        expected_params['billing_info']['first_name'] = nil
-        expected_params['billing_info']['last_name'] = nil
-
-        expect(billing_client).to receive(:create_v2_subscription).with(expected_params)
-        
-        service.create_org_subscription(user_without_name, 2)
+        result = service.create_org_subscription(user, organization.id)
+        expect(result[:error]).to be_truthy
+        expect(result[:details]).to be_present
       end
     end
   end

@@ -12,9 +12,8 @@ class Travis::Api::App
     class Assembla < Endpoint
       include Travis::Api::App::JWTUtils
 
-      REQUIRED_JWT_FIELDS = %w[name email login space_id id access_token refresh_token].freeze
+      REQUIRED_JWT_FIELDS = %w[name email login space_id id refresh_token].freeze
       CLUSTER_HEADER = 'HTTP_X_ASSEMBLA_CLUSTER'.freeze
-
 
       set prefix: '/assembla'
       set :check_auth, false
@@ -30,13 +29,11 @@ class Travis::Api::App
         org = service.find_or_create_organization(user)
         service.create_org_subscription(user, org.id)
 
-
-        response = {
+        {
           user_id: user.id,
           login: user.login,
-          token: user.token,
-          status: 'signed_in'
-        }.to_json
+          token: user.token
+        }
       end
 
       private
@@ -51,7 +48,7 @@ class Travis::Api::App
       def check_required_fields
         missing = REQUIRED_JWT_FIELDS.select { |f| @jwt_payload[f].nil? || @jwt_payload[f].to_s.strip.empty? }
         unless missing.empty?
-          halt 400, { error: 'Missing required fields', missing: missing }.to_json
+          halt 400, { error: 'Missing required fields', missing: missing }
         end
       end
 
@@ -62,7 +59,7 @@ class Travis::Api::App
       def valid_asm_cluster?
         allowed = Array(Travis.config.assembla_clusters.to_s.split(','))
         cluster = request.env[CLUSTER_HEADER]
-        !cluster.nil? && allowed.include?(cluster)
+        allowed.include?(cluster)
       end
     end
   end

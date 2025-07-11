@@ -22,13 +22,18 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
   let(:organization) { double('Organization', id: 1) }
   let(:organizations) { double('Organizations') }
   let(:subscription_response) { { 'status' => 'subscribed' } }
+  let(:assembla_cluster) { 'cluster1' }
 
   before do
     Travis.config[:deep_integration_enabled] = true
-    Travis.config[:assembla_clusters] = 'cluster1'
+    Travis.config[:assembla_clusters] = assembla_cluster
     Travis.config[:assembla_jwt_secret] = jwt_secret
 
-    header 'X_ASSEMBLA_CLUSTER', 'cluster1'
+    header 'X_ASSEMBLA_CLUSTER', assembla_cluster
+  end
+
+  after do
+    Travis.config[:deep_integration_enabled] = false
   end
 
   describe 'POST /assembla/login' do
@@ -50,9 +55,8 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
 
         expect(last_response.status).to eq(200)
         body = JSON.parse(last_response.body)
-        expect(body['login']).to eq('testuser')
+        expect(body['login']).to eq(user.login)
         expect(body['token']).to eq('abc123')
-        expect(body['status']).to eq('signed_in')
       end
     end
 

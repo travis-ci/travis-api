@@ -3,35 +3,39 @@ module Travis
     class AssemblaUserService
       class SyncError < StandardError; end
 
+      BILLING_COUNTRY = 'Poland'
+      BILLING_ADDRESS = "System-generated for user %{login} (%{id})"
+      BILLING_CITY = "AutoCity-%{id}"
+      BILLING_ZIP = "000%{id}"
+
       def initialize(payload)
         @payload = payload
       end
 
       def find_or_create_user
-        attrs = {
+        user = ::User.find_or_initialize_by(
+          name: @payload['name'],
           vcs_id: @payload['id'],
           email: @payload['email'],
           login: @payload['login'],
           vcs_type: 'AssemblaUser'
-        }
-
-        user = ::User.find_or_create_by!(attrs)
-        user.update(vcs_oauth_token: @payload['refresh_token'])
+        )
+        user.vcs_oauth_token = @payload['refresh_token']
+        user.save!
         sync_user(user.id)
         user
       end
 
       def find_or_create_organization(user)
-        attrs = {
+        user.organizations.find_or_create_by!(
           vcs_id: @payload['space_id'], 
           vcs_type: 'AssemblaOrganization'
-        }
-        user.organizations.find_or_create_by(attrs)
+        )
       end
 
       def create_org_subscription(user, organization_id)
-        client = Travis::API::V3::BillingClient.new(user.id)
-        client.create_v2_subscription(subscription_params(user, organization_id))
+        billing_client = Travis::API::V3::BillingClient.new(user.id)
+        billing_client.create_v2_subscription(subscription_params(user, organization_id))
       rescue => e
         { error: true, details: e.message }
       end
@@ -46,7 +50,7 @@ module Travis
 
       def subscription_params(user, organization_id)
         {
-          'plan' => 'beta_plan',
+          'plan' => Travis.config.beta_plan_name,
           'organization_id' => organization_id,
           'billing_info' => billing_info(user),
           'credit_card_info' => { 'token' => nil }
@@ -55,12 +59,12 @@ module Travis
 
       def billing_info(user)
         {
-          'address' => "System-generated for user #{user.login} (#{user.id})",
-          'city' => "AutoCity-#{user.id}",
-          'country' => 'Poland',
+          'address' => BILLING_ADDRESS % { login: user.login, id: user.id },
+          'city' => BILLING_CITY % { id: user.id },
+          'country' => BILLING_COUNTRY,
           'first_name' => user.name&.split&.first,
           'last_name' => user.name&.split&.last,
-          'zip_code' => "000#{user.id}",
+          'zip_code' => BILLING_ZIP % { id: user.id },
           'billing_email' => user.email
         }
       end
