@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'factory_bot'
 
 RSpec.describe Travis::Services::AssemblaUserService do
   let(:payload) do
@@ -83,7 +82,7 @@ RSpec.describe Travis::Services::AssemblaUserService do
         
         result = service.create_org_subscription(user, organization.id)
         expect(result[:error]).to be_truthy
-        expect(result[:details]).to be_present
+        expect(result[:details]).to eq(error.message)
       end
     end
   end

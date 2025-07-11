@@ -3,11 +3,6 @@ module Travis
     class AssemblaUserService
       class SyncError < StandardError; end
 
-      BILLING_COUNTRY = 'Poland'
-      BILLING_ADDRESS = "System-generated for user %{login} (%{id})"
-      BILLING_CITY = "AutoCity-%{id}"
-      BILLING_ZIP = "000%{id}"
-
       def initialize(payload)
         @payload = payload
       end
@@ -50,7 +45,7 @@ module Travis
 
       def subscription_params(user, organization_id)
         {
-          'plan' => Travis.config.beta_plan_name,
+          'plan' => Travis.config.deep_integration_plan_name,
           'organization_id' => organization_id,
           'billing_info' => billing_info(user),
           'credit_card_info' => { 'token' => nil }
@@ -59,12 +54,12 @@ module Travis
 
       def billing_info(user)
         {
-          'address' => BILLING_ADDRESS % { login: user.login, id: user.id },
-          'city' => BILLING_CITY % { id: user.id },
-          'country' => BILLING_COUNTRY,
+          'address' => 'Dummy Address',
+          'city' => 'Dummy City',
+          'country' => 'Dummy Country',
           'first_name' => user.name&.split&.first,
           'last_name' => user.name&.split&.last,
-          'zip_code' => BILLING_ZIP % { id: user.id },
+          'zip_code' => 'DUMMY ZIP',
           'billing_email' => user.email
         }
       end

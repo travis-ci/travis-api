@@ -110,7 +110,7 @@ module Travis
             assembla_clusters: 'eu, us',
             deep_integration_enabled: false,
             assembla_jwt_secret: 'assembla_jwt_secret',
-            beta_plan_name: 'beta_plan'
+            deep_integration_beta_plan_name: 'beta_plan'
 
     default :_access => [:key]
 

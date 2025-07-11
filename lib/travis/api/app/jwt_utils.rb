@@ -10,7 +10,7 @@ class Travis::Api::App
       halt 401, { error: "Missing JWT" } unless token
       
       begin
-        decoded, = JWT.decode(token, Travis.config.assembla_jwt_secret, true, algorithm: 'HS256' )
+        decoded, = JWT.decode(token, Travis.config.assembla_jwt_secret, true, algorithm: 'HS256')
         decoded
       rescue JWT::DecodeError => e
         halt 401, { error: "Invalid JWT: #{e.message}" }
