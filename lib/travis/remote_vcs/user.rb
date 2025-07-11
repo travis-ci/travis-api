@@ -35,9 +35,11 @@ module Travis
         end
       end
 
-      def sync(user_id:)
+      def sync(user_id:, space_id: nil, repository_id: nil)
         request(:post, __method__) do |req|
           req.url "users/#{user_id}/sync_data"
+          req.params['space_id'] = space_id if space_id
+          req.params['repository_id'] = repository_id if repository_id
         end && true
       end
 
