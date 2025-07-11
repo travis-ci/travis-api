@@ -92,8 +92,8 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
     end
 
     context 'when integration is not enabled' do
-      
       before { Travis.config[:deep_integration_enabled] = original_deep_integration_enabled }
+
       after { Travis.config[:deep_integration_enabled] = true }
       
       it 'returns 403' do

@@ -57,7 +57,7 @@ class Travis::Api::App
       end
 
       def valid_asm_cluster?
-        allowed = Travis.config.assembla_clusters.to_s.split(',')
+        allowed = Travis.config.assembla_clusters
         allowed.include?(request.env[CLUSTER_HEADER])
       end
     end
