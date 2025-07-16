@@ -14,6 +14,7 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
       'space_id' => 'space123',
       'id' => 'assembla_vcs_user_id',
       'access_token' => 'test_access_token',
+      'repository_id' => 'repository123',
       'refresh_token' => 'test_refresh_token'
     }
   end
