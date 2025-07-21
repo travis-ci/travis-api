@@ -16,7 +16,7 @@ module Travis::API::V3
       @payment_intent = attributes['payment_intent'] && Models::PaymentIntent.new(attributes['payment_intent'])
       @owner = fetch_owner(attributes.fetch('owner'))
       @client_secret = attributes.fetch('client_secret')
-      @addons = attributes['addons'].select { |addon| addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
+      @addons = attributes['addons'].select { |addon| addon['current_usage'] if addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
       refill = attributes['addons'].detect { |addon| addon['addon_config_id'] === 'auto_refill' } || {"enabled" => false}
       default_refill = @plan.respond_to?('available_standalone_addons') ?
         @plan.available_standalone_addons.detect { |addon| addon['id'] === 'auto_refill' } : nil
