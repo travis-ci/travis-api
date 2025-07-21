@@ -16,7 +16,27 @@ module Travis::API::V3
       @payment_intent = attributes['payment_intent'] && Models::PaymentIntent.new(attributes['payment_intent'])
       @owner = fetch_owner(attributes.fetch('owner'))
       @client_secret = attributes.fetch('client_secret')
-      @addons = attributes['addons'].select { |addon| addon['current_usage'] if addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
+      raw_addons = attributes['addons']
+
+      # 1. keep only addons that *have* a current_usage object
+      usable_addons = raw_addons.select { |a| a['current_usage'].present? }
+
+      # 2. split them by status
+      non_expired = usable_addons.select { |a| a['current_usage']['status'] != 'expired' }
+      expired      = usable_addons.select { |a| a['current_usage']['status'] == 'expired' }
+
+      picked =
+        if non_expired.any?                            # case 1 ─ we have non-expired usages
+          non_expired                                  #     → keep only those
+        elsif expired.any?                             # case 2 ─ no non-expired usages
+          # pick the *latest* expired one
+          [expired.max_by { |a| a['current_usage']['valid_to'] }] # fallbacks, adjust to your schema
+        else
+          []                                            # nothing usable at all
+        end
+
+      @addons = picked.map { |addon| Models::V2Addon.new(addon) }
+      # @addons = attributes['addons'].select { |addon| addon['current_usage'] if addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
       refill = attributes['addons'].detect { |addon| addon['addon_config_id'] === 'auto_refill' } || {"enabled" => false}
       default_refill = @plan.respond_to?('available_standalone_addons') ?
         @plan.available_standalone_addons.detect { |addon| addon['id'] === 'auto_refill' } : nil
