@@ -18,22 +18,36 @@ module Travis::API::V3
       @client_secret = attributes.fetch('client_secret')
       raw_addons = attributes['addons']
 
-      # 1. keep only addons that *have* a current_usage object
-      usable_addons = raw_addons.select { |a| a['current_usage'].present? }
+      # Debug: Let's see what we're working with
+      puts "Total addons: #{raw_addons.count}"
 
-      # 2. split them by status
+      # Keep only addons that have a current_usage object
+      usable_addons = raw_addons.select { |a| a['current_usage'] }
+
+      # Debug: Check what we have after filtering
+      puts "Usable addons (with current_usage): #{usable_addons.count}"
+
+      # Split them by status
       non_expired = usable_addons.select { |a| a['current_usage']['status'] != 'expired' }
-      expired      = usable_addons.select { |a| a['current_usage']['status'] == 'expired' }
+      expired = usable_addons.select { |a| a['current_usage']['status'] == 'expired' }
 
-      picked =
-        if non_expired.any?                            # case 1 ─ we have non-expired usages
-          non_expired                                  #     → keep only those
-        elsif expired.any?                             # case 2 ─ no non-expired usages
-          # pick the *latest* expired one
-          [expired.max_by { |a| a['current_usage']['valid_to'] }] # fallbacks, adjust to your schema
-        else
-          []                                            # nothing usable at all
-        end
+      # Debug: Check the split
+      puts "Non-expired: #{non_expired.count}, Expired: #{expired.count}"
+
+      # If debugging shows expired is empty but should have items, check the actual status values:
+      if expired.empty? && non_expired.empty? && usable_addons.any?
+        puts "Status values found: #{usable_addons.map { |a| a['current_usage']['status'] }.uniq}"
+      end
+
+      picked = if non_expired.any?
+                 non_expired
+               elsif expired.any?
+                 # Sort by valid_to and take the latest (most recent date)
+                 latest = expired.max_by { |a| a['current_usage']['valid_to'] || '1900-01-01' }
+                 [latest].compact  # compact removes nil if max_by returns nil
+               else
+                 []
+               end
 
       @addons = picked.map { |addon| Models::V2Addon.new(addon) }
       # @addons = attributes['addons'].select { |addon| addon['current_usage'] if addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
