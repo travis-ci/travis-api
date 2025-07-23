@@ -23,6 +23,22 @@ module Travis::API::V3
       puts "=== ADDON SELECTION DEBUG ==="
       puts "Total raw addons: #{raw_addons.count}"
 
+      # Helper method to normalize current_usage to array
+      def normalize_current_usage(addon)
+        return [] unless addon['current_usage']
+
+        # If it's already an array, return it; otherwise wrap in array
+        addon['current_usage'].is_a?(Array) ? addon['current_usage'] : [addon['current_usage']]
+      end
+
+      # Helper to get the latest valid_to date from an addon's current_usages
+      def latest_valid_to(addon)
+        usages = normalize_current_usage(addon)
+        return '1900-01-01' if usages.empty?
+
+        usages.map { |u| u['valid_to'] || '1900-01-01' }.max
+      end
+
       # Group addons by type first
       addons_by_type = raw_addons.group_by { |addon| addon['type'] }
 
@@ -30,33 +46,47 @@ module Travis::API::V3
 
       # Process each type independently
       addons_by_type.each do |type, type_addons|
-        puts "--- Processing type: #{type} ---"
+        puts "\n--- Processing type: #{type} ---"
         count = type_addons&.count || 0
         puts "  Type '#{type}': #{count} addons"
 
-        # Filter addons with current_usage for this type
-        usable_addons = type_addons.select { |a| a['current_usage'] }
+        # Filter addons with at least one current_usage
+        usable_addons = type_addons.select do |addon|
+          usages = normalize_current_usage(addon)
+          usages.any?
+        end
 
-        puts "Total addons for type: #{type_addons.count}"
-        puts "Addons with current_usage: #{usable_addons.count}"
+        puts "  Total addons for type: #{type_addons.count}"
+        puts "  Addons with current_usage: #{usable_addons.count}"
 
         # Skip if no usable addons for this type
         if usable_addons.empty?
-          puts "No usable addons for type '#{type}', skipping..."
+          puts "  No usable addons for type '#{type}', skipping..."
           next
         end
 
         # Split by expiration status
-        non_expired = usable_addons.select { |a| a['current_usage']['status'] != 'expired' }
-        expired = usable_addons.select { |a| a['current_usage']['status'] == 'expired' }
+        # An addon is considered non-expired if it has at least one non-expired usage
+        non_expired = usable_addons.select do |addon|
+          usages = normalize_current_usage(addon)
+          usages.any? { |usage| usage['status'] != 'expired' }
+        end
 
-        puts "Non-expired: #{non_expired.count}"
-        puts "Expired: #{expired.count}"
+        # An addon is considered expired if ALL its usages are expired
+        expired = usable_addons.select do |addon|
+          usages = normalize_current_usage(addon)
+          usages.all? { |usage| usage['status'] == 'expired' }
+        end
+
+        puts "  Non-expired: #{non_expired.count}"
+        puts "  Expired: #{expired.count}"
 
         # Debug: Show actual status values if neither category has items
         if non_expired.empty? && expired.empty? && usable_addons.any?
-          statuses = usable_addons.map { |a| a['current_usage']['status'] }.uniq
-          puts "WARNING: No addons categorized! Status values found: #{statuses.inspect}"
+          all_statuses = usable_addons.flat_map do |addon|
+            normalize_current_usage(addon).map { |u| u['status'] }
+          end.uniq
+          puts "  WARNING: No addons categorized! Status values found: #{all_statuses.inspect}"
         end
 
         # Apply selection logic for this type
@@ -66,31 +96,29 @@ module Travis::API::V3
           selected_addons.concat(non_expired)
         elsif expired.any?
           # Case 2: Include only the latest expired addon for this type
-          latest_expired = expired.max_by do |a|
-            a['current_usage']['valid_to'] || '1900-01-01'
-          end
+          # Find the addon with the most recent valid_to across all its current_usages
+          latest_expired = expired.max_by { |addon| latest_valid_to(addon) }
 
           if latest_expired
-            puts "  ✓ Including latest expired addon (valid_to: #{latest_expired['current_usage']['valid_to']})"
+            puts "  ✓ Including latest expired addon (latest valid_to: #{latest_valid_to(latest_expired)})"
             selected_addons << latest_expired
           else
-            puts "Could not find latest expired addon"
+            puts "  Could not find latest expired addon"
           end
         else
-          puts "No addons selected for type '#{type}'"
+          puts "  No addons selected for type '#{type}'"
         end
       end
 
-      puts "=== FINAL RESULT ==="
+      puts "\n=== FINAL RESULT ==="
       puts "Total selected addons: #{selected_addons.count}"
       selected_addons.group_by { |a| a['type'] }.each do |type, addons|
         count = addons&.count || 0
-        puts "  Type '#{type}': #{count} addons"
+        puts "  Type '#{type}': #{count} addon(s)"
       end
 
       # Convert to model objects
       @addons = selected_addons.map { |addon| Models::V2Addon.new(addon) }
-
       # @addons = attributes['addons'].select { |addon| addon['current_usage'] if addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
       refill = attributes['addons'].detect { |addon| addon['addon_config_id'] === 'auto_refill' } || {"enabled" => false}
       default_refill = @plan.respond_to?('available_standalone_addons') ?
