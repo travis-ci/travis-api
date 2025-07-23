@@ -23,20 +23,16 @@ module Travis::API::V3
       puts "=== ADDON SELECTION DEBUG ==="
       puts "Total raw addons: #{raw_addons.count}"
 
-      # Helper method to normalize current_usage to array
       def normalize_current_usage(addon)
         return [] unless addon['current_usage']
-
-        # If it's already an array, return it; otherwise wrap in array
         addon['current_usage'].is_a?(Array) ? addon['current_usage'] : [addon['current_usage']]
       end
 
-      # Helper to get the latest valid_to date from an addon's current_usages
-      def latest_valid_to(addon)
+      def latest_purchase_date(addon)
         usages = normalize_current_usage(addon)
         return '1900-01-01' if usages.empty?
 
-        usages.map { |u| u['valid_to'] || '1900-01-01' }.max
+        usages.map { |u| u['purchase_date'] || '1900-01-01' }.max
       end
 
       # Group addons by type first
@@ -97,10 +93,10 @@ module Travis::API::V3
         elsif expired.any?
           # Case 2: Include only the latest expired addon for this type
           # Find the addon with the most recent valid_to across all its current_usages
-          latest_expired = expired.max_by { |addon| latest_valid_to(addon) }
+          latest_expired = expired.max_by { |addon| latest_purchase_date(addon) }
 
           if latest_expired
-            puts "  ✓ Including latest expired addon (latest valid_to: #{latest_valid_to(latest_expired)})"
+            puts "  ✓ Including latest expired addon (latest valid_to: #{latest_purchase_date(latest_expired)})"
             selected_addons << latest_expired
           else
             puts "  Could not find latest expired addon"
