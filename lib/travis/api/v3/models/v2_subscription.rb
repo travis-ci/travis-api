@@ -16,40 +16,79 @@ module Travis::API::V3
       @payment_intent = attributes['payment_intent'] && Models::PaymentIntent.new(attributes['payment_intent'])
       @owner = fetch_owner(attributes.fetch('owner'))
       @client_secret = attributes.fetch('client_secret')
+
       raw_addons = attributes['addons']
 
-      # Debug: Let's see what we're working with
-      puts "Total addons: #{raw_addons.count}"
+      # Debug: Initial state
+      puts "=== ADDON SELECTION DEBUG ==="
+      puts "Total raw addons: #{raw_addons.count}"
 
-      # Keep only addons that have a current_usage object
-      usable_addons = raw_addons.select { |a| a['current_usage'] }
+      # Group addons by type first
+      addons_by_type = raw_addons.group_by { |addon| addon['type'] }
 
-      # Debug: Check what we have after filtering
-      puts "Usable addons (with current_usage): #{usable_addons.count}"
+      selected_addons = []
 
-      # Split them by status
-      non_expired = usable_addons.select { |a| a['current_usage']['status'] != 'expired' }
-      expired = usable_addons.select { |a| a['current_usage']['status'] == 'expired' }
+      # Process each type independently
+      addons_by_type.each do |type, type_addons|
+        puts "  Type '#{type}': #{addons.count} addons"
+        puts "--- Processing type: #{type} ---"
 
-      # Debug: Check the split
-      puts "Non-expired: #{non_expired.count}, Expired: #{expired.count}"
+        # Filter addons with current_usage for this type
+        usable_addons = type_addons.select { |a| a['current_usage'] }
 
-      # If debugging shows expired is empty but should have items, check the actual status values:
-      if expired.empty? && non_expired.empty? && usable_addons.any?
-        puts "Status values found: #{usable_addons.map { |a| a['current_usage']['status'] }.uniq}"
+        puts "Total addons for type: #{type_addons.count}"
+        puts "Addons with current_usage: #{usable_addons.count}"
+
+        # Skip if no usable addons for this type
+        if usable_addons.empty?
+          puts "No usable addons for type '#{type}', skipping..."
+          next
+        end
+
+        # Split by expiration status
+        non_expired = usable_addons.select { |a| a['current_usage']['status'] != 'expired' }
+        expired = usable_addons.select { |a| a['current_usage']['status'] == 'expired' }
+
+        puts "Non-expired: #{non_expired.count}"
+        puts "Expired: #{expired.count}"
+
+        # Debug: Show actual status values if neither category has items
+        if non_expired.empty? && expired.empty? && usable_addons.any?
+          statuses = usable_addons.map { |a| a['current_usage']['status'] }.uniq
+          puts "WARNING: No addons categorized! Status values found: #{statuses.inspect}"
+        end
+
+        # Apply selection logic for this type
+        if non_expired.any?
+          # Case 1: Include all non-expired addons for this type
+          puts "  ✓ Including #{non_expired.count} non-expired addon(s)"
+          selected_addons.concat(non_expired)
+        elsif expired.any?
+          # Case 2: Include only the latest expired addon for this type
+          latest_expired = expired.max_by do |a|
+            a['current_usage']['valid_to'] || '1900-01-01'
+          end
+
+          if latest_expired
+            puts "  ✓ Including latest expired addon (valid_to: #{latest_expired['current_usage']['valid_to']})"
+            selected_addons << latest_expired
+          else
+            puts "Could not find latest expired addon"
+          end
+        else
+          puts "No addons selected for type '#{type}'"
+        end
       end
 
-      picked = if non_expired.any?
-                 non_expired
-               elsif expired.any?
-                 # Sort by valid_to and take the latest (most recent date)
-                 latest = expired.max_by { |a| a['current_usage']['valid_to'] || '1900-01-01' }
-                 [latest].compact  # compact removes nil if max_by returns nil
-               else
-                 []
-               end
+      puts "=== FINAL RESULT ==="
+      puts "Total selected addons: #{selected_addons.count}"
+      selected_addons.group_by { |a| a['type'] }.each do |type, addons|
+        puts "  Type '#{type}': #{addons.count} addon(s)"
+      end
 
-      @addons = picked.map { |addon| Models::V2Addon.new(addon) }
+      # Convert to model objects
+      @addons = selected_addons.map { |addon| Models::V2Addon.new(addon) }
+
       # @addons = attributes['addons'].select { |addon| addon['current_usage'] if addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
       refill = attributes['addons'].detect { |addon| addon['addon_config_id'] === 'auto_refill' } || {"enabled" => false}
       default_refill = @plan.respond_to?('available_standalone_addons') ?
