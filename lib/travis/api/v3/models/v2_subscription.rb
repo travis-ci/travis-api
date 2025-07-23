@@ -30,8 +30,9 @@ module Travis::API::V3
 
       # Process each type independently
       addons_by_type.each do |type, type_addons|
-        puts "  Type '#{type}': #{addons.count} addons"
         puts "--- Processing type: #{type} ---"
+        count = type_addons&.count || 0
+        puts "  Type '#{type}': #{count} addons"
 
         # Filter addons with current_usage for this type
         usable_addons = type_addons.select { |a| a['current_usage'] }
@@ -83,7 +84,8 @@ module Travis::API::V3
       puts "=== FINAL RESULT ==="
       puts "Total selected addons: #{selected_addons.count}"
       selected_addons.group_by { |a| a['type'] }.each do |type, addons|
-        puts "  Type '#{type}': #{addons.count} addon(s)"
+        count = addons&.count || 0
+        puts "  Type '#{type}': #{count} addons"
       end
 
       # Convert to model objects
