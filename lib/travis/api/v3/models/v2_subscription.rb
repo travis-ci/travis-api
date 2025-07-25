@@ -45,7 +45,7 @@ module Travis::API::V3
       addons_by_type = raw_addons.group_by { |addon| addon['type'] }
       selected_addons = []
 
-      addons_by_type.each do |type_addons|
+      addons_by_type.each do |type, type_addons|
         usable_addons = type_addons.select do |addon|
           usages = normalize_current_usage(addon)
           usages.any?
