@@ -44,10 +44,11 @@ module Travis
       !removed_by_id.nil?
     end
 
-    def parts(after: nil, part_numbers: [])
+    def parts(after: nil, part_numbers: [], require_all: false, content: true)
       return solo_part if removed? || aggregated?
+
       remote.find_parts_by_job_id(
-        job_id, after: after, part_numbers: part_numbers
+        job_id, after: after, part_numbers: part_numbers, require_all: require_all, content: content
       )
     end
 
@@ -167,10 +168,12 @@ module Travis
         JSON.parse(resp.body).fetch('id')
       end
 
-      def find_parts_by_job_id(job_id, after: nil, part_numbers: [])
+      def find_parts_by_job_id(job_id, after: nil, part_numbers: [], require_all: false, content: true)
         resp = conn.get do |req|
           req.url "log-parts/#{job_id}"
           req.params['after'] = after unless after.nil?
+          req.params['require_all'] = require_all if require_all
+          req.params['content'] = content
           unless part_numbers.empty?
             req.params['part_numbers'] = part_numbers.map(&:to_s).join(',')
           end
@@ -351,6 +354,10 @@ module Travis
 
     def as_json(**_)
       attributes.slice(*%i(content final number))
+    end
+
+    def as_info_json(**_)
+      attributes.slice(*%i(final number))
     end
   end
 end

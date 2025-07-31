@@ -91,6 +91,10 @@ module Travis::API::V3
         delete :delete
       end
 
+      resource :log_parts do
+        route '/log_parts'
+        get   :find
+      end
     end
 
     resource :lint do
