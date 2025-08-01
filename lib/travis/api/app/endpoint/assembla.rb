@@ -19,10 +19,12 @@ class Travis::Api::App
       set :check_auth, false
 
       before do
+        puts "VALIDATE!!!"
         validate_request!
       end
 
       post '/login' do
+        puts "LOGIN CALLED!"
         service = Travis::Services::AssemblaUserService.new(@jwt_payload)
         
         user = service.find_or_create_user
@@ -39,9 +41,14 @@ class Travis::Api::App
       private
 
       def validate_request!
+        puts "DEEP: #{deep_integration_enabled?}"
+        puts "VALID_CLUSTER: #{valid_asm_cluster?}"
+        puts "REQ: #{request.env.inspect}"
         halt 403, { error: 'Deep integration not enabled' } unless deep_integration_enabled?
         halt 403, { error: 'Invalid ASM cluster' } unless valid_asm_cluster?
+        puts 'VERIFY JWT'
         @jwt_payload = verify_jwt(request)
+        puts "PLY: #{@jwt_payload.inspect}"
         check_required_fields
       end
 
