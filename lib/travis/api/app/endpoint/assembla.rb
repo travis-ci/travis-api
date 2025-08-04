@@ -27,6 +27,7 @@ class Travis::Api::App
         
         user = service.find_or_create_user
         org = service.find_or_create_organization(user)
+        service.find_or_create_repository(org)
         service.create_org_subscription(user, org.id)
 
         {

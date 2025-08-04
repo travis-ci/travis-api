@@ -28,6 +28,20 @@ module Travis
         )
       end
 
+      def find_or_create_repository(org)
+        repo = org.repositories.find_by(vcs_id: @payload['repository_id'], vcs_type: 'AssemblaRepository')
+
+        unless repo
+          repo = org.repositories.create!(
+            vcs_id: @payload['repository_id'],
+            vcs_type: 'AssemblaRepository',
+            owner_name: org.name,
+            name: "Repos #{org.name}"
+          )
+        end
+
+      end
+
       def create_org_subscription(user, organization_id)
         billing_client = Travis::API::V3::BillingClient.new(user.id)
         billing_client.create_v2_subscription(subscription_params(user, organization_id))
