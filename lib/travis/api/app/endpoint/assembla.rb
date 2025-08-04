@@ -32,7 +32,7 @@ class Travis::Api::App
         {
           user_id: user.id,
           login: user.login,
-          token: user.token
+          token: user.vcs_oauth_token
         }
       end
 
