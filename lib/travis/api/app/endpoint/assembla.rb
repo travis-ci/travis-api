@@ -28,15 +28,20 @@ class Travis::Api::App
         user = service.find_or_create_user
         org = service.find_or_create_organization(user)
         service.create_org_subscription(user, org.id)
+        access_token = generate_access_token(user: user, app_id: 11)
 
         {
           user_id: user.id,
           login: user.login,
-          token: user.vcs_oauth_token
+          token: access_token
         }
       end
 
       private
+
+      def generate_access_token(options)
+        AccessToken.create(options).token
+      end
 
       def validate_request!
         halt 403, { error: 'Deep integration not enabled' } unless deep_integration_enabled?
