@@ -23,6 +23,7 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
   let(:organizations) { double('Organizations') }
   let(:subscription_response) { { 'status' => 'subscribed' } }
   let(:assembla_cluster) { 'eu' }
+  let(:access_token) { double('AccessToken', token: 'mocked_access_token_123') }
   let!(:original_deep_integration_enabled) { Travis.config[:deep_integration_enabled] }
 
   before do
@@ -46,6 +47,7 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
         allow(service).to receive(:find_or_create_user).and_return(user)
         allow(service).to receive(:find_or_create_organization).with(user).and_return(organization)
         allow(service).to receive(:create_org_subscription).with(user, organization.id).and_return(subscription_response)
+        allow(Travis::Api::App::AccessToken).to receive(:create).with(user: user, app_id: 0).and_return(access_token)
       end
 
       it 'creates user, organization and subscription' do
@@ -55,7 +57,7 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
         expect(last_response.status).to eq(200)
         body = JSON.parse(last_response.body)
         expect(body['login']).to eq(user.login)
-        expect(body['token']).to eq(user.token)
+        expect(body['token']).to eq(access_token.token)
       end
     end
 
