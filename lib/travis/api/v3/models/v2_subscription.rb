@@ -16,8 +16,8 @@ module Travis::API::V3
       @payment_intent = attributes['payment_intent'] && Models::PaymentIntent.new(attributes['payment_intent'])
       @owner = fetch_owner(attributes.fetch('owner'))
       @client_secret = attributes.fetch('client_secret')
-      @addons = attributes['addons'].select { |addon| addon['current_usage']['status'] != 'expired' if addon['current_usage'] }.map { |addon| Models::V2Addon.new(addon) }
-      refill = attributes['addons'].detect { |addon| addon['addon_config_id'] === 'auto_refill' } || {"enabled" => false};
+      @addons = process_addons(attributes['addons']).map { |addon| Models::V2Addon.new(addon) }
+      refill = attributes['addons'].detect { |addon| addon['addon_config_id'] === 'auto_refill' } || {"enabled" => false}
       default_refill = @plan.respond_to?('available_standalone_addons') ?
         @plan.available_standalone_addons.detect { |addon| addon['id'] === 'auto_refill' } : nil
 
@@ -39,6 +39,54 @@ module Travis::API::V3
       end
       @defer_pause = attributes.fetch('defer_pause', false)
       @plan_shares = attributes['plan_shares'] && attributes['plan_shares'].map { |sp| Models::PlanShare.new(sp) }
+    end
+
+    def process_addons(raw_addons)
+      addons_by_type = raw_addons.group_by { |addon| addon['type'] }
+      selected_addons = []
+
+      addons_by_type.each do |type, type_addons|
+        usable_addons = type_addons.select do |addon|
+          usages = normalize_current_usage(addon)
+          usages.any?
+        end
+
+        if usable_addons.empty?
+          next
+        end
+
+        non_expired = usable_addons.select do |addon|
+          usages = normalize_current_usage(addon)
+          usages.any? { |usage| usage['status'] != 'expired' }
+        end
+
+        expired = usable_addons.select do |addon|
+          usages = normalize_current_usage(addon)
+          usages.all? { |usage| usage['status'] == 'expired' }
+        end
+
+        if non_expired.any?
+          selected_addons.concat(non_expired)
+        elsif expired.any?
+          latest_expired = expired.max_by { |addon| latest_purchase_date(addon) }
+          if latest_expired
+            selected_addons << latest_expired
+          end
+        end
+      end
+      selected_addons
+    end
+
+    def normalize_current_usage(addon)
+      return [] unless addon['current_usage']
+      addon['current_usage'].is_a?(Array) ? addon['current_usage'] : [addon['current_usage']]
+    end
+
+    def latest_purchase_date(addon)
+      usages = normalize_current_usage(addon)
+      return '1900-01-01' if usages.empty?
+
+      usages.map { |u| u['purchase_date'] || '1900-01-01' }.max
     end
   end
 
