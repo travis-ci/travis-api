@@ -11,7 +11,7 @@ if ENV['DYNO']
   listen File.expand_path("nginx.socket", tmp_dir), backlog: 1024
 else
   if ENV['DOCKER']
-    listen "#{Integer(ENV.fetch('PORT'))}", backlog: 1024
+    listen "0.0.0.0:#{Integer(ENV.fetch('PORT'))}", backlog: 1024
   else
     listen "127.0.0.1:#{Integer(ENV.fetch('PORT'))}", backlog: 1024
   end

@@ -6,4 +6,4 @@ tmp_dir = ENV.fetch("tmp_dir", "/tmp")
 bind "unix://#{tmp_dir}/nginx.socket"
 environment ENV['RACK_ENV'] || 'development'
 
-threads 0, 16
+threads 1, 1

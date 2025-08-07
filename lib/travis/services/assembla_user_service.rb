@@ -16,6 +16,7 @@ module Travis
           vcs_type: 'AssemblaUser'
         )
         user.vcs_oauth_token = @payload['refresh_token']
+        user.confirmed_at = DateTime.now if user.confirmed_at.nil?
         user.save!
         sync_user(user.id)
         user

@@ -291,6 +291,7 @@ GEM
     google-cloud-trace-v2 (0.6.1)
       gapic-common (>= 0.19.1, < 2.a)
       google-cloud-errors (~> 1.0)
+    google-protobuf (3.23.4-aarch64-linux)
     google-protobuf (3.23.4-arm64-darwin)
     google-protobuf (3.23.4-x86_64-linux)
     googleapis-common-protos (1.4.0)
@@ -386,6 +387,8 @@ GEM
     pry-byebug (3.10.1)
       byebug (~> 11.0)
       pry (>= 0.13, < 0.15)
+    pry-rails (0.3.11)
+      pry (>= 0.13.0)
     public_suffix (5.0.3)
     pusher (2.0.3)
       httpclient (~> 2.8)
@@ -547,6 +550,7 @@ GEM
     zeitwerk (2.6.8)
 
 PLATFORMS
+  aarch64-linux
   arm64-darwin-22
   x86_64-linux
 
@@ -591,6 +595,7 @@ DEPENDENCIES
   pg (~> 1.5)
   pry
   pry-byebug
+  pry-rails
   pusher (~> 2.0.3)
   rack (~> 2.2)
   rack-attack (~> 6)
@@ -639,4 +644,4 @@ RUBY VERSION
    ruby 3.2.2p53
 
 BUNDLED WITH
-   2.4.14
+   2.6.9
