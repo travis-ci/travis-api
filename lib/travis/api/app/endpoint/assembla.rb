@@ -12,7 +12,7 @@ class Travis::Api::App
     class Assembla < Endpoint
       include Travis::Api::App::JWTUtils
 
-      REQUIRED_JWT_FIELDS = %w[name email login space_id id refresh_token].freeze
+      REQUIRED_JWT_FIELDS = %w[name email login space_id repository_id id refresh_token].freeze
       CLUSTER_HEADER = 'HTTP_X_ASSEMBLA_CLUSTER'.freeze
 
       set prefix: '/assembla'

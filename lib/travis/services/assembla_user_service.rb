@@ -39,7 +39,7 @@ module Travis
       private
 
       def sync_user(user_id)
-        Travis::RemoteVCS::User.new.sync(user_id: user_id)
+        Travis::RemoteVCS::User.new.sync(user_id: user_id, space_id: @payload['space_id'], repository_id: @payload['repository_id'])
       rescue => e
         raise SyncError, "Failed to sync user: #{e.message}"
       end
