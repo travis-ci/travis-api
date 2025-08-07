@@ -78,6 +78,7 @@ gem 'hashr'
 gem 'pusher',            '~> 2.0.3'
 gem 'multi_json'
 gem 'closeio',           '~> 3.15'
+gem 'pry-rails'
 
 group :test do
   gem 'rspec'

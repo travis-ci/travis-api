@@ -9,12 +9,11 @@ RUN ( \
    && rm -rf /var/lib/apt/lists/* \
 )
 
-ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+# ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
 RUN bundle config set deployment 'true'
-RUN bundle config set without 'development test'
 
 RUN mkdir -p /app
 WORKDIR /app

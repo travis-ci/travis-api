@@ -2,7 +2,7 @@ config/travis.yml
 config/travis/*
 config/database.yml
 config/nginx.conf
-
+vendor
 db/
 
 tmp/

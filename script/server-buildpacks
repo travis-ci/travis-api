@@ -3,6 +3,9 @@
 # $PGBOUNCER_ENABLED variable is set to '1' or 'true'
 # or if the space-delimited list
 # $PGBOUNCER_ENABLED_FOR_DYNOS contains $DYNO
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/travis_development
+export TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/travis_test
 
 cd "$(dirname "$0")/.."
 

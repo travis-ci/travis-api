@@ -28,14 +28,7 @@ class Travis::Api::App
         user = service.find_or_create_user
         org = service.find_or_create_organization(user)
         service.create_org_subscription(user, org.id)
-        access_token = generate_access_token(user: user, app_id: 0)
-        puts <<~TEXT
-          User_id: #{user.id}
-          refresh_token_form_payload: #{@jwt_payload['refresh_token']}
-          github_oauth_token: #{user.github_oauth_token}
-          repository_id: #{@jwt_payload['repository_id' ]}
-          SpaceID: '#{@jwt_payload['space_id']}'
-        TEXT
+        access_token = AccessToken.create(user: user, app_id: 0).token
 
         {
           user_id: user.id,
