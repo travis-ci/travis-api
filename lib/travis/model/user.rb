@@ -22,8 +22,10 @@ class User < Travis::Model
   after_create :create_the_tokens
   before_save :track_previous_changes
 
-  serialize :github_scopes
+  alias_attribute :vcs_oauth_token, :github_oauth_token
 
+  serialize :github_scopes
+  serialize :vcs_oauth_token, EncryptedColumn.new
   serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
 
   before_save do
