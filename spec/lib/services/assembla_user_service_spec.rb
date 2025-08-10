@@ -66,6 +66,11 @@ RSpec.describe Travis::Services::AssemblaUserService do
       expect(service_org.vcs_type).to eq(expected_attrs[:vcs_type])
       expect(service_org.vcs_id).to eq(expected_attrs[:vcs_id])
     end
+
+    it 'has admin membership' do
+      service_org = service.find_or_create_organization(user)
+      expect(service_org.memberships.find_by(user: user).role).to eq('admin')
+    end
   end
 
   describe '#create_org_subscription' do

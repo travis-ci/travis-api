@@ -23,10 +23,13 @@ module Travis
       end
 
       def find_or_create_organization(user)
-        user.organizations.find_or_create_by!(
+        org = Organization.find_or_create_by!(
           vcs_id: @payload['space_id'], 
           vcs_type: 'AssemblaOrganization'
         )
+        membership = org.memberships.find_or_create_by(user: user)
+        membership.update(role: 'admin')
+        org
       end
 
       def create_org_subscription(user, organization_id)
