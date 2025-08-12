@@ -28,11 +28,12 @@ class Travis::Api::App
         user = service.find_or_create_user
         org = service.find_or_create_organization(user)
         service.create_org_subscription(user, org.id)
+        access_token = AccessToken.create(user: user, app_id: 0).token
 
         {
           user_id: user.id,
           login: user.login,
-          token: user.token
+          token: access_token
         }
       end
 

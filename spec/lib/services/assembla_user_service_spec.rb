@@ -37,6 +37,7 @@ RSpec.describe Travis::Services::AssemblaUserService do
       expect(service_user.email).to eq(expected_attrs[:email])
       expect(service_user.name).to eq(expected_attrs[:name])
       expect(service_user.vcs_id).to eq(expected_attrs[:vcs_id])
+      expect(service_user.confirmed_at).to be_present
     end
 
     context 'when sync fails' do
@@ -64,6 +65,11 @@ RSpec.describe Travis::Services::AssemblaUserService do
       
       expect(service_org.vcs_type).to eq(expected_attrs[:vcs_type])
       expect(service_org.vcs_id).to eq(expected_attrs[:vcs_id])
+    end
+
+    it 'has admin membership' do
+      service_org = service.find_or_create_organization(user)
+      expect(service_org.memberships.find_by(user: user).role).to eq('admin')
     end
   end
 
