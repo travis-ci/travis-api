@@ -49,6 +49,32 @@ describe Travis::RemoteVCS::User do
     end
   end
 
+  describe '#sync' do
+    let(:user_id) { 123 }
+    let(:space_id) { 456 }
+    let(:repository_id) { 789 }
+    let(:instance) { described_class.new }
+    let(:req) { double(:request) }
+    let(:params) { double(:params) }
+
+    subject { instance.sync(user_id: user_id, space_id: space_id, repository_id: repository_id) }
+
+    before do
+      allow(req).to receive(:url)
+      allow(req).to receive(:params).and_return(params)
+      allow(params).to receive(:[]=)
+    end
+
+    it 'performs POST to VCS with proper params' do
+      expect(instance).to receive(:request).with(:post, :sync).and_yield(req)
+      expect(req).to receive(:url).with("users/#{user_id}/sync_data")
+      expect(params).to receive(:[]=).with('space_id', space_id)
+      expect(params).to receive(:[]=).with('repository_id', repository_id)
+
+      expect(subject).to be true
+    end
+  end
+
   describe '#authenticate' do
     let(:user) { described_class.new }
     let(:provider) { 'assembla' }
