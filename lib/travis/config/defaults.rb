@@ -106,7 +106,11 @@ module Travis
             recaptcha:            { endpoint: 'https://www.google.com', secret: ENV['RECAPTCHA_SECRET_KEY'] || '' },
             antifraud:            { captcha_max_failed_attempts: 3, captcha_block_duration: 24, credit_card_max_failed_attempts: 3, credit_card_block_duration: 24 },
             legacy_roles:         false,
-            internal_users:       [{id: 0, login: 'cron'}]
+            internal_users:       [{id: 0, login: 'cron'}],
+            assembla_clusters: ['eu', 'us'],
+            deep_integration_enabled: false,
+            assembla_jwt_secret: 'assembla_jwt_secret',
+            deep_integration_plan_name: 'beta_plan'
 
     default :_access => [:key]
 
