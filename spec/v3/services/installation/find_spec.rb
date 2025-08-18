@@ -61,6 +61,7 @@ describe Travis::API::V3::Services::Installation::Find, set_app: true, billing_s
         "vcs_type" => user.vcs_type,
         "avatar_url" => "https://0.gravatar.com/avatar/07fb84848e68b96b69022d333ca8a3e2",
         "is_syncing" => nil,
+        "memberships" => [],
         "synced_at" => nil,
         "education" => nil,
         "allowance"   => {

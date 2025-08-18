@@ -47,6 +47,20 @@ module Travis::API::V3
       executions
     end
 
+    def storage_usage(owner_type, owner_id, from, to)
+      response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/storage?from=#{from}&to=#{to}")
+      body(response).map do |usage_data|
+        usage_data
+      end
+    end
+
+    def storage_executions_usage(owner_type, owner_id)
+      response = connection.get("/usage/#{owner_type.downcase}s/#{owner_id}/storage_executions")
+      body(response).map do |usage_data|
+        usage_data
+      end
+    end
+
     def calculate_credits(users, executions)
       response = connection.post("/usage/credits_calculator", users: users, executions: executions)
       body(response).map do |calculator_data|
