@@ -244,4 +244,31 @@ FactoryBot.define do
     owner_type { 'User' }
     accepted_at { nil }
   end
+
+  factory :custom_image, class: Travis::API::V3::Models::CustomImage do
+    name { 'custom_image_name' }
+    description { 'custom_image_description' }
+    state { 'available' }
+    owner { User.first || FactoryBot.create(:user) }
+    owner_type { 'User' }
+    architecture { 'x86' }
+    size_bytes { 1024 }
+    created_at { Time.now.utc }
+    updated_at { Time.now.utc }
+
+    after(:build) do |custom_image|
+      custom_image.define_singleton_method(:readonly?) { false }
+    end
+  end
+
+  factory :custom_image_log, class: Travis::API::V3::Models::CustomImageLog do
+    custom_image { CustomImage.first || FactoryBot.create(:custom_image) }
+    action { 'created' }
+    sender_id { User.first.id || FactoryBot.create(:user).id }
+    created_at { Time.now.utc }
+
+    after(:build) do |custom_image_log|
+      custom_image_log.define_singleton_method(:readonly?) { false }
+    end
+  end
 end
