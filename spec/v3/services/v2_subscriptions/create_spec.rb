@@ -159,6 +159,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               'created_at': '2017-11-28T00:09:59.502Z',
               'updated_at': '2017-11-28T00:09:59.502Z',
               'current_usage_id': 7,
+              'free': false,
               'current_usage': {
                 'id': 7,
                 'addon_id': 7,
@@ -313,6 +314,7 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
             'name' => 'OSS Build Credits',
             'type' => 'credit_public',
             'recurring' => nil,
+            'free' => false,
             'current_usage' => {
               '@type' => 'v2_addon_usage',
               '@representation' => 'standard',

@@ -185,6 +185,7 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
               'name' => 'OSS Build Credits',
               'type' => 'credit_public',
               'recurring' => false,
+              'free' => false,
               'current_usage' => {
                 '@type' => 'v2_addon_usage',
                 '@representation' => 'standard',
@@ -210,6 +211,7 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
               'name' => 'Build Credits',
               'type' => 'credit_private',
               'recurring' => false,
+              'free' => false,
               'current_usage' =>
               {
                 '@type' => 'v2_addon_usage',
