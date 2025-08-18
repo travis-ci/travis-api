@@ -6,6 +6,7 @@ module Travis::API::V3
 
     def created_by
       return nil unless user = model.created_by
+
       {
         '@type' => 'user',
         '@href' => "/v3/user/#{user.id}",
@@ -13,8 +14,9 @@ module Travis::API::V3
         'id' => user.id,
         'login' => user.login,
         'name' => user.name,
-        'avatar_url' => user.avatar_url
-      }
+      }.tap do |data|
+        data['avatar_url'] = user.avatar_url if user.email.present?
+      end
     end
   end
 end

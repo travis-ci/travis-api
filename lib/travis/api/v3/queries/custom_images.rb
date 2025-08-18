@@ -9,6 +9,19 @@ module Travis::API::V3
       client.delete_images(owner_type(owner), owner.id, image_ids)
     end
 
+    def usage(owner, user_id, from, to)
+      client = BillingClient.new(user_id)
+      client.storage_usage(owner_type(owner), owner.id, from, to)
+    end
+
+    def current_storage(owner, user_id)
+      Models::CustomImageStorage.where(owner_type: owner_type(owner), owner_id: owner.id).order('id desc').limit(1).first
+    end
+
+    def storage_executions_usage(owner, user_id)
+      BillingClient.new(user_id).storage_executions_usage(owner_type(owner), owner.id)
+    end
+
     private
 
     def owner_type(owner)
