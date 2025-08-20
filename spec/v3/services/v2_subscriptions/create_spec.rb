@@ -171,7 +171,11 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
                 'status': 'pending',
                 'active': false,
                 'created_at': '2017-11-28T00:09:59.502Z',
-                'updated_at': '2017-11-28T00:09:59.502Z'
+                'updated_at': '2017-11-28T00:09:59.502Z',
+                'total_usage': nil,
+                'quantity_limit_charge': nil,
+                'quantity_limit_free': 0,
+                'quantity_limit_type': nil,
               }
             }],
             'discount' => nil,
@@ -322,7 +326,11 @@ describe Travis::API::V3::Services::V2Subscriptions::Create, set_app: true, bill
               'valid_to' => '2017-11-28T00:09:59.502Z',
               'remaining' => 40_000,
               'status' => 'pending',
-              'active' => false
+              'active' => false,
+              'total_usage'=> nil,
+              'quantity_limit_charge'=> nil,
+              'quantity_limit_free'=> 0,
+              'quantity_limit_type'=> nil,
             }
           }],
           'client_secret' => 'client_secret',

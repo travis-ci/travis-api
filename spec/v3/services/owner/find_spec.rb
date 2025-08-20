@@ -442,6 +442,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "vcs_type"       => user.vcs_type,
         "avatar_url"     => nil,
         "is_syncing"     => nil,
+        "memberships"    => [],
         "synced_at"      => nil,
         "education"      => nil,
         "allow_migration"=> false,
@@ -480,6 +481,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"     => nil,
         "education"      => nil,
         "is_syncing"     => nil,
+        "memberships"    => [],
         "synced_at"      => nil,
         "allow_migration"=> false,
         "allowance"      => {
@@ -517,6 +519,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"       => nil,
         "education"        => nil,
         "is_syncing"       => nil,
+        "memberships"      => [],
         "synced_at"        => nil,
         "allow_migration"  => false,
         "allowance"        => {
@@ -561,6 +564,7 @@ describe Travis::API::V3::Services::Owner::Find, set_app: true do
         "avatar_url"       => nil,
         "education"        => nil,
         "is_syncing"       => nil,
+        "memberships"      => [],
         "synced_at"        => nil,
         "allow_migration"  => false,
         "allowance"        => {
