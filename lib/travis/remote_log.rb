@@ -174,7 +174,7 @@ module Travis
           req.params['after'] = after unless after.nil?
           req.params['require_all'] = require_all if require_all
           req.params['content'] = content unless content
-          unless part_numbers.empty?
+          if part_numbers && !part_numbers.empty?
             req.params['part_numbers'] = part_numbers.map(&:to_s).join(',')
           end
         end
