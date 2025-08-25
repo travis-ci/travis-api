@@ -108,7 +108,7 @@ describe Travis::RemoteLog do
     remote = double()
     expect(described_class::Remote).to receive(:new).and_return(remote)
     allow(remote).to receive(:find_parts_by_job_id)
-      .with(5, after: nil, part_numbers: [])
+      .with(5, after: nil, part_numbers: [], content: true, require_all: false)
       .and_return(found_parts)
     expect(subject.parts).to eq found_parts
   end
