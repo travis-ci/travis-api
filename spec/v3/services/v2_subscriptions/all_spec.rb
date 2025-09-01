@@ -197,7 +197,11 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
                 'purchase_date' => '2017-11-28T00:09:59.502Z',
                 'valid_to' => '2017-12-28T00:09:59.502Z',
                 'status' => 'subscribed',
-                'active' => true
+                'active' => true,
+                'total_usage'=> nil,
+                'quantity_limit_charge'=> nil,
+                'quantity_limit_free'=> 0,
+                'quantity_limit_type'=> nil
               }
             },
             {
@@ -220,7 +224,11 @@ describe Travis::API::V3::Services::V2Subscriptions::All, set_app: true, billing
                 'purchase_date' => '2017-11-28T00:09:59.502Z',
                 'valid_to' => '',
                 'status' => 'subscribed',
-                'active' => true
+                'active' => true,
+                'total_usage'=> nil,
+                'quantity_limit_charge'=> nil,
+                'quantity_limit_free'=> 0,
+                'quantity_limit_type'=> nil
               }
             }
           ],
