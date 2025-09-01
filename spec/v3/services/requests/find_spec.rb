@@ -64,4 +64,57 @@ describe Travis::API::V3::Services::Requests::Find, set_app: true do
     }
 
   end
+
+  describe "fetching requests with branch filter and non-existing branch" do
+    before        { get("/v3/repo/#{repo.id}/requests?branch=main")                   }
+    example do
+      expect(last_response).to be_ok
+      expect(JSON.load(body).to_s).to include('requests')
+      expect(JSON.load(body)['requests'].count).to eq(0)
+    end
+  end
+
+  describe "fetching requests with branch filter" do
+    before  do
+      repo.requests.first.update_attribute(:branch_id, repo.default_branch.id)
+      get("/v3/repo/#{repo.id}/requests?branch=master")
+    end
+    example do
+      expect(last_response).to be_ok
+      expect(JSON.load(body).to_s).to include(
+                    "@type",
+                    "requests",
+                    "/v3/repo/#{repo.id}/requests",
+                    "repository",
+                    "commit",
+                    "message",
+                    "the commit message",
+                    "branch_name",
+                    "representation",
+                    "@pagination",
+                    "owner",
+                    "created_at",
+                    "result",
+                    "builds",
+                    "sha",
+                    "svenfuchs/minimal",
+                    "event_type",
+                    "push",
+                    "base_commit",
+                    "head_commit")
+      expect(JSON.load(body)['requests'].count).to eq(1)
+    end
+  end
+
+  describe "fetching requests with request filter" do
+    before do
+      repo.requests.first.update_attribute(:result, 'rejected')
+      get("/v3/repo/#{repo.id}/requests?result=rejected")
+    end
+    example do
+      expect(last_response).to be_ok
+      expect(JSON.load(body).to_s).to include('requests')
+      expect(JSON.load(body)['requests'].count).to eq(1)
+    end
+  end
 end

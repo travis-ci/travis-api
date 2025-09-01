@@ -1,5 +1,6 @@
 module Travis::API::V3
   class Services::Requests::Find < Service
+    params :result, :state, :from, :to, :branch
     paginate
     def run!
       repository = find(:repository)

@@ -6,7 +6,7 @@ module Travis::API::V3
 
     def find(job)
       @job = job
-      remote_log = Travis::RemoteLog::Remote.new(platform: platform).find_by_job_id(platform_job_id)
+      remote_log = remote_log_svc.find_by_job_id(platform_job_id)
       raise EntityMissing, 'log not found'.freeze if remote_log.nil?
 
       log = Travis::API::V3::Models::Log.new(remote_log: remote_log, job: job)
@@ -21,7 +21,7 @@ module Travis::API::V3
 
     def delete(user, job)
       @job = job
-      remote_log = Travis::RemoteLog::Remote.new(platform: platform).find_by_job_id(platform_job_id)
+      remote_log = remote_log_svc.find_by_job_id(platform_job_id)
       raise EntityMissing, 'log not found'.freeze if remote_log.nil?
       raise LogAlreadyRemoved if remote_log.removed_at || remote_log.removed_by
       raise JobUnfinished unless @job.finished_at?
@@ -36,6 +36,10 @@ module Travis::API::V3
     end
 
     private
+
+    def remote_log_svc
+      @remote_log_svc ||= Travis::RemoteLog::Remote.new(platform: platform)
+    end
 
     def prefix
       "jobs/#{platform_job_id}/log.txt"

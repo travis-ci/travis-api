@@ -64,7 +64,7 @@ describe Travis::API::V3::ServiceIndex, set_app: true do
 
         describe "find action" do
           let(:action) { resource.fetch("actions").fetch("find") }
-          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/requests{?include,limit,offset}") }
+          specify { expect(action).to include("@type"=>"template", "request_method"=>"GET", "uri_template"=>"#{path}repo/{repository.id}/requests{?branch,from,include,limit,offset,requests.branch,requests.from,requests.result,requests.state,requests.to,result,state,to}") }
         end
 
         describe "create action" do
