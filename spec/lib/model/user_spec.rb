@@ -201,6 +201,18 @@ describe User do
     end
   end
 
+  describe '#asset_token' do
+    it 'returns the asset token' do
+      expect(user.asset_token).to eq(user.tokens.asset.first.token)
+    end
+  end
+
+  describe '#rss_token' do
+    it 'returns the rss token' do
+      expect(user.rss_token).to eq(user.tokens.rss.first.token)
+    end
+  end
+
   describe '#preferences' do
     it 'keeps them as ruby hash' do
       user.preferences = { 'a' => 'b', 'c' => 'd' }.to_json
