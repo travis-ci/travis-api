@@ -51,11 +51,11 @@ class User < Travis::Model
   end
 
   def asset_token
-    tokens.asset.first.try(:token)
+    tokens.asset.first&.token
   end
 
   def rss_token
-    tokens.rss.first.try(:token)
+    tokens.rss.first&.token
   end
 
   def touch
