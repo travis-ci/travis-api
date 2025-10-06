@@ -50,6 +50,14 @@ class User < Travis::Model
     end
   end
 
+  def asset_token
+    tokens.asset.first&.token
+  end
+
+  def rss_token
+    tokens.rss.first&.token
+  end
+
   def touch
     update(last_activity_at: Time.now) if last_activity_at.nil? || Time.now.utc - last_activity_at > 300
   end
