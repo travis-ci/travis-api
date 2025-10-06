@@ -19,7 +19,7 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
     }
   end
   let(:token) { JWT.encode(payload, jwt_secret, 'HS256') }
-  let(:user) { double('User', id: 1, login: 'testuser', token: 'abc123', name: 'Test User', email: 'test@example.com', organizations: organizations) }
+  let(:user) { double('User', id: 1, login: 'testuser', token: 'abc123', rss_token: "rss_token", asset_token: 'asset_token', name: 'Test User', email: 'test@example.com', organizations: organizations) }
   let(:organization) { double('Organization', id: 1) }
   let(:organizations) { double('Organizations') }
   let(:subscription_response) { { 'status' => 'subscribed' } }
@@ -59,6 +59,8 @@ RSpec.describe Travis::Api::App::Endpoint::Assembla, set_app: true do
         body = JSON.parse(last_response.body)
         expect(body['login']).to eq(user.login)
         expect(body['token']).to eq(access_token.token)
+        expect(body['asset_token']).to eq(user.asset_token)
+        expect(body['rss_token']).to eq(user.rss_token)
       end
     end
 

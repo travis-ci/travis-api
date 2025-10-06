@@ -33,7 +33,9 @@ class Travis::Api::App
         {
           user_id: user.id,
           login: user.login,
-          token: access_token
+          token: access_token,
+          asset_token: user.asset_token,
+          rss_token: user.rss_token
         }
       end
 
