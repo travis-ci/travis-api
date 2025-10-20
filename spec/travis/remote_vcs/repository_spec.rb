@@ -79,4 +79,31 @@ describe Travis::RemoteVCS::Repository do
       expect(request).to have_been_made
     end
   end
+
+  describe '#destroy' do
+    subject { repository.destroy(repository_id: id) }
+
+    context 'when the request is successful' do
+      let!(:request) do
+        stub_request(:delete, /repos\/#{id}/)
+          .to_return(status: 204)
+      end
+
+      it 'performs a proper request' do
+        subject
+        expect(request).to have_been_made
+      end
+    end
+
+    context 'when the request fails' do
+      let!(:request) do
+        stub_request(:delete, /repos\/#{id}/)
+          .to_return(status: 500)
+      end
+
+      it 'returns false' do
+        expect(subject).to be false
+      end
+    end
+  end
 end
