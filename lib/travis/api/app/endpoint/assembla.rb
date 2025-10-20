@@ -6,7 +6,6 @@ require 'travis/api/v3/billing_client'
 require 'travis/services/assembla_user_service'
 require 'travis/services/assembla_notify_service'
 require 'travis/remote_vcs/client'
-require 'pry'
 require_relative '../jwt_utils'
 
 

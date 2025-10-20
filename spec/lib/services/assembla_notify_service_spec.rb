@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'travis/services/assembla_notify_service'
-require 'pry'
 
 RSpec.describe Travis::Services::AssemblaNotifyService do
   let(:payload) { { action: 'destroy', object: 'tool', id: '12345' } }
