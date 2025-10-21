@@ -8,7 +8,6 @@ require 'travis/services/assembla_notify_service'
 require 'travis/remote_vcs/client'
 require_relative '../jwt_utils'
 
-
 class Travis::Api::App
   class Endpoint
     # Assembla integration endpoint for handling user authentication and organization setup
@@ -44,7 +43,6 @@ class Travis::Api::App
       end
 
       post '/notify' do
-        @jwt_payload = {object: 'space', action: 'destroy', id: 120}
         service = Travis::Services::AssemblaNotifyService.new(@jwt_payload)
         if service.run
           {
@@ -67,11 +65,7 @@ class Travis::Api::App
       end
 
       def check_required_fields
-        required_fields = if request.path_info.end_with?('/notify')
-                           REQUIRED_NOTIFY_FIELDS
-                         else
-                           REQUIRED_JWT_FIELDS
-                         end
+        required_fields = request.path_info.end_with?('/notify') ? REQUIRED_NOTIFY_FIELDS : REQUIRED_JWT_FIELDS
         missing = required_fields.select { |f| @jwt_payload[f].nil? || @jwt_payload[f].to_s.strip.empty? }
         unless missing.empty?
           halt 400, { error: 'Missing required fields', missing: missing }

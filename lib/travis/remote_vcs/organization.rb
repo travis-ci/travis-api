@@ -9,7 +9,8 @@ module Travis
         request(:delete, __method__) do |req|
           req.url "organizations/#{org_id}"
         end
-      rescue ResponseError
+      rescue ResponseError => e
+        Travis.logger.error("Failed to destroy organization: #{e.message}")
         false
       end
     end
