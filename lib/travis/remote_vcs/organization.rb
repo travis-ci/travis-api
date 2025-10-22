@@ -6,7 +6,7 @@ module Travis
   class RemoteVCS
     class Organization < Client
       def destroy(org_id:)
-        request(:delete, __method__) do |req|
+        request(:delete, __method__, false) do |req|
           req.url "organizations/#{org_id}"
         end
       rescue ResponseError => e

@@ -75,7 +75,7 @@ module Travis
       end
 
       def destroy(repository_id:)
-        request(:delete, __method__) do |req|
+        request(:delete, __method__, false) do |req|
           req.url "repos/#{repository_id}"
         end
       rescue ResponseError => e

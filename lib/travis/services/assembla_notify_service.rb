@@ -42,15 +42,11 @@ module Travis
       def handle_tool_destruction
         vcs_repository = Travis::RemoteVCS::Repository.new
         vcs_repository.destroy(repository_id: @object_id)
-      rescue => e
-        Travis.logger.error("Failed to process Assembla tool destruction: #{e.message}")
       end
 
       def handle_space_destruction
         vcs_organization = Travis::RemoteVCS::Organization.new
         vcs_organization.destroy(org_id: @object_id)
-      rescue => e
-        Travis.logger.error("Failed to process Assembla organization destruction: #{e.message}")  
       end
     end
   end
