@@ -10,7 +10,7 @@ RSpec.describe Travis::RemoteVCS::Organization do
     it 'sends a delete request to the correct URL' do
       request = double('request')
       expect(request).to receive(:url).with("organizations/#{org_id}")
-      expect(client).to receive(:request).with(:delete, :destroy).and_yield(request)
+      expect(client).to receive(:request).with(:delete, :destroy, false).and_yield(request)
       subject
     end
 
