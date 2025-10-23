@@ -22,7 +22,7 @@ RSpec.describe Travis::RemoteVCS::Organization do
 
     context 'when the request fails' do
       let!(:request) do
-        stub_request(:delete, /organizations\/#{org_id}/)
+        stub_request(:delete, /http.*\/organizations\/#{org_id}/)
           .to_return(status: 500)
       end
 
