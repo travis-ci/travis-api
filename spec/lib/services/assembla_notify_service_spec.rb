@@ -10,15 +10,25 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
   before do
     allow(Travis::RemoteVCS::Repository).to receive(:new).and_return(vcs_repository)
     allow(vcs_repository).to receive(:destroy)
+    allow(vcs_repository).to receive(:restore)
     allow(Travis::RemoteVCS::Organization).to receive(:new).and_return(vcs_organization)
     allow(vcs_organization).to receive(:destroy)
+    allow(vcs_organization).to receive(:restore)
     allow(Travis.logger).to receive(:error)
   end
 
   describe '#run' do
     context 'with a valid payload for tool destruction' do
-      it 'calls handle_tool_destruction' do
-        expect(service).to receive(:handle_tool_destruction)
+      it 'calls destroy on the vcs_repository' do
+        expect(vcs_repository).to receive(:destroy).with(repository_id: '12345')
+        service.run
+      end
+    end
+
+    context 'with a valid payload for tool restoration' do
+      let(:payload) { { action: 'restore', object: 'tool', id: '12345' } }
+      it 'calls restore on the vcs_repository' do
+        expect(vcs_repository).to receive(:restore).with(repository_id: '12345')
         service.run
       end
     end
@@ -26,8 +36,17 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
     context 'with a valid payload for space destruction' do
       let(:payload) { { action: 'destroy', object: 'space', id: '67890' } }
 
-      it 'calls handle_space_destruction' do
-        expect(service).to receive(:handle_space_destruction)
+      it 'calls destroy on the vcs_organization' do
+        expect(vcs_organization).to receive(:destroy).with(org_id: '67890')
+        service.run
+      end
+    end
+
+    context 'with a valid payload for space restoration' do
+      let(:payload) { { action: 'restore', object: 'space', id: '67890' } }
+
+      it 'calls restore on the vcs_organization' do
+        expect(vcs_organization).to receive(:restore).with(org_id: '67890')
         service.run
       end
     end
@@ -35,38 +54,34 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
     context 'with an invalid object type' do
       let(:payload) { { action: 'destroy', object: 'repository', id: '12345' } }
 
-      it 'returns an error' do
-        result = service.run
-        expect(result[:status]).to eq(400)
+      it 'returns false and logs an error' do
+        expect(service.run).to be_falsey
+        expect(Travis.logger).to have_received(:error).with("Invalid object type: repository. Allowed objects: space, tool")
       end
     end
 
-    context 'with an unsupported object type for destruction' do
+    context 'with an invalid action type' do
+      let(:payload) { { action: 'modify', object: 'tool', id: '12345' } }
+
+      it 'returns false and logs an error' do
+        expect(service.run).to be_falsey
+        expect(Travis.logger).to have_received(:error).with("Invalid action: modify. Allowed actions: destroy, restore")
+      end
+    end
+
+    context 'with an unsupported object type for an action' do
       before do
         stub_const("Travis::Services::AssemblaNotifyService::VALID_OBJECTS", %w[space tool unsupported])
       end
       let(:payload) { { action: 'destroy', object: 'unsupported', id: '12345' } }
 
-      it 'returns an error' do
-        result = service.run
-        expect(result[:status]).to eq(400)
+      it 'returns false without logging an error for the action' do
+        expect(service.run).to be_falsey
+        expect(vcs_repository).not_to receive(:destroy)
+        expect(vcs_repository).not_to receive(:restore)
+        expect(vcs_organization).not_to receive(:destroy)
+        expect(vcs_organization).not_to receive(:restore)
       end
-    end
-  end
-
-  describe '#handle_tool_destruction' do
-    it 'destroys the repository using RemoteVCS' do
-      expect(vcs_repository).to receive(:destroy).with(repository_id: '12345')
-      service.send(:handle_tool_destruction)
-    end
-  end
-
-  describe '#handle_space_destruction' do
-    let(:payload) { { action: 'destroy', object: 'space', id: '67890' } }
-
-    it 'destroys the organization using RemoteVCS' do
-      expect(vcs_organization).to receive(:destroy).with(org_id: '67890')
-      service.send(:handle_space_destruction)
     end
   end
 end
