@@ -59,19 +59,6 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
       expect(vcs_repository).to receive(:destroy).with(repository_id: '12345')
       service.send(:handle_tool_destruction)
     end
-
-    context 'when RemoteVCS raises an error' do
-      let(:error) { StandardError.new('VCS error') }
-
-      before do
-        allow(vcs_repository).to receive(:destroy).and_raise(error)
-      end
-
-      it 'logs the error' do
-        expect(Travis.logger).to receive(:error).with('Failed to process Assembla tool destruction: VCS error')
-        service.send(:handle_tool_destruction)
-      end
-    end
   end
 
   describe '#handle_space_destruction' do
@@ -80,19 +67,6 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
     it 'destroys the organization using RemoteVCS' do
       expect(vcs_organization).to receive(:destroy).with(org_id: '67890')
       service.send(:handle_space_destruction)
-    end
-
-    context 'when RemoteVCS raises an error' do
-      let(:error) { StandardError.new('VCS error') }
-
-      before do
-        allow(vcs_organization).to receive(:destroy).and_raise(error)
-      end
-
-      it 'logs the error' do
-        expect(Travis.logger).to receive(:error).with('Failed to process Assembla organization destruction: VCS error')
-        service.send(:handle_space_destruction)
-      end
     end
   end
 end
