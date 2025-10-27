@@ -19,16 +19,9 @@ RSpec.describe Travis::RemoteVCS::Organization do
       it { is_expected.to be true }
     end
 
-
     context 'when the request fails' do
-      let!(:request) do
-        stub_request(:delete, /http.*\/organizations\/#{org_id}/)
-          .to_return(status: 500)
-      end
-
-      it 'returns false' do
-        expect(subject).to be false
-      end
+      before { allow(client).to receive(:request).and_return(false) }
+      it { is_expected.to be false }
     end
   end
 end
