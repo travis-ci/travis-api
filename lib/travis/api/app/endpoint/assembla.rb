@@ -43,7 +43,8 @@ class Travis::Api::App
       end
 
       post '/notify' do
-        Travis.logger.info("============ Processing Assembla notification ============")
+        Travis.logger.info(@jwt_payload.inspect)
+
         service = Travis::Services::AssemblaNotifyService.new(@jwt_payload)
         if service.run
           Travis.logger.info("============ Assembla notification processed successfully ============")

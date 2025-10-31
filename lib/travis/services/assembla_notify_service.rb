@@ -10,6 +10,7 @@ module Travis
       VALID_OBJECTS = %w[space tool].freeze
 
       def initialize(payload)
+        Travis.logger.info(payload.inspect)
         @action = payload[:action]
         @object = payload[:object]
         @object_id = payload[:id]
