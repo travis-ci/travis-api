@@ -43,8 +43,10 @@ class Travis::Api::App
       end
 
       post '/notify' do
+        Travis.logger.info("============ Processing Assembla notification ============")
         service = Travis::Services::AssemblaNotifyService.new(@jwt_payload)
         if service.run
+          Travis.logger.info("============ Assembla notification processed successfully ============")
           {
             status: 200,
             body: { message: 'Assembla notification processed successfully' }
@@ -58,6 +60,7 @@ class Travis::Api::App
       private
 
       def validate_request!
+        Travis.logger.info("============ In validate_request! ============")
         halt 403, { error: 'Deep integration not enabled' } unless deep_integration_enabled?
         halt 403, { error: 'Invalid ASM cluster' } unless valid_asm_cluster?
         @jwt_payload = verify_jwt(request)
@@ -68,6 +71,7 @@ class Travis::Api::App
         required_fields = request.path_info.end_with?('/notify') ? REQUIRED_NOTIFY_FIELDS : REQUIRED_JWT_FIELDS
         missing = required_fields.select { |f| @jwt_payload[f].nil? || @jwt_payload[f].to_s.strip.empty? }
         unless missing.empty?
+          Travis.logger.info("============ missing required fields ============")
           halt 400, { error: 'Missing required fields', missing: missing }
         end
       end
