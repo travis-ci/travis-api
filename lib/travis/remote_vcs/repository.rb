@@ -74,9 +74,10 @@ module Travis
         {}
       end
 
-      def destroy(repository_id:)
+      def destroy(repository_id:, vcs_type:)
         request(:delete, __method__, false) do |req|
           req.url "repos/#{repository_id}"
+          req.params['vcs_type'] = vcs_type
         end
       rescue ResponseError => e
         Travis.logger.error("Failed to destroy repository: #{e.message}")
