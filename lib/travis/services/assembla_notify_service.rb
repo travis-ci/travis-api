@@ -11,9 +11,9 @@ module Travis
 
       def initialize(payload)
         Travis.logger.info(payload.inspect)
-        @action = payload[:action]
-        @object = payload[:object]
-        @object_id = payload[:id]
+        @action = payload['action']
+        @object = payload['object']
+        @object_id = payload['id']
       end
 
       def run
