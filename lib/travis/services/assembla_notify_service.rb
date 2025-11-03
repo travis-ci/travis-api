@@ -6,7 +6,7 @@ require 'travis/remote_vcs/organization'
 module Travis
   module Services
     class AssemblaNotifyService
-      VALID_ACTIONS = %w[destroy].freeze
+      VALID_ACTIONS = %w[restrict].freeze
       VALID_OBJECTS = %w[space tool].freeze
 
       def initialize(payload)
@@ -47,7 +47,7 @@ module Travis
       def handle_tool_destruction
         Travis.logger.info("============ in handle_tool_destruction ============")
         vcs_repository = Travis::RemoteVCS::Repository.new
-        vcs_repository.destroy(repository_id: @object_id)
+        vcs_repository.destroy(repository_id: @object_id, vcs_type: 'AssemblaRepository')
       end
 
       def handle_space_destruction
