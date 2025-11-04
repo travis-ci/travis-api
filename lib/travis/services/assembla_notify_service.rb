@@ -10,9 +10,9 @@ module Travis
       VALID_OBJECTS = %w[space tool].freeze
 
       def initialize(payload)
-        @action = payload[:action]
-        @object = payload[:object]
-        @object_id = payload[:id]
+        @action = payload['action']
+        @object = payload['object']
+        @object_id = payload['id']
       end
 
       def run
