@@ -81,7 +81,7 @@ describe Travis::RemoteVCS::Repository do
   end
 
   describe '#destroy' do
-    subject { repository.destroy(repository_id: id) }
+    subject { repository.destroy(repository_id: id, vcs_type: 'AssemblaRepository') }
 
     context 'when the request is successful' do
       let!(:request) do
