@@ -48,8 +48,10 @@ module Travis
         vcs_repository = Travis::RemoteVCS::Repository.new
         case @action
         when 'restrict'
+          Travis.logger.info("============ in tool actions restrict action ============")
           vcs_repository.destroy(repository_id: @object_id, vcs_type: 'AssemblaRepository')
         when 'restore'
+          Travis.logger.info("============ in tool actions restore action ============")
           vcs_repository.restore(repository_id: @object_id)
         end
       end
@@ -58,8 +60,10 @@ module Travis
         vcs_organization = Travis::RemoteVCS::Organization.new
         case @action
         when 'restrict'
+          Travis.logger.info("============ in space actions restore action ============")
           vcs_organization.destroy(org_id: @object_id)
         when 'restore'
+          Travis.logger.info("============ in space actions restore action ============")
           vcs_organization.restore(org_id: @object_id)
         end
       end
