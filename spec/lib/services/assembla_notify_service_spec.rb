@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'travis/services/assembla_notify_service'
 
 RSpec.describe Travis::Services::AssemblaNotifyService do
-  let(:payload) { { action: 'destroy', object: 'tool', id: '12345' } }
+  let(:payload) { { action: 'restrict', object: 'tool', id: '12345' } }
   let(:service) { described_class.new(payload) }
   let(:vcs_repository) { instance_double(Travis::RemoteVCS::Repository) }
   let(:vcs_organization) { instance_double(Travis::RemoteVCS::Organization) }
@@ -18,9 +18,9 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
   end
 
   describe '#run' do
-    context 'with a valid payload for tool destruction' do
+    context 'with a valid payload for tool restriction' do
       it 'calls destroy on the vcs_repository' do
-        expect(vcs_repository).to receive(:destroy).with(repository_id: '12345')
+        expect(vcs_repository).to receive(:destroy).with(repository_id: '12345', vcs_type: 'AssemblaRepository')
         service.run
       end
     end
@@ -33,8 +33,8 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
       end
     end
 
-    context 'with a valid payload for space destruction' do
-      let(:payload) { { action: 'destroy', object: 'space', id: '67890' } }
+    context 'with a valid payload for space restriction' do
+      let(:payload) { { action: 'restrict', object: 'space', id: '67890' } }
 
       it 'calls destroy on the vcs_organization' do
         expect(vcs_organization).to receive(:destroy).with(org_id: '67890')
@@ -52,7 +52,7 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
     end
 
     context 'with an invalid object type' do
-      let(:payload) { { action: 'destroy', object: 'repository', id: '12345' } }
+      let(:payload) { { action: 'restrict', object: 'repository', id: '12345' } }
 
       it 'returns false and logs an error' do
         expect(service.run).to be_falsey
@@ -65,7 +65,7 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
 
       it 'returns false and logs an error' do
         expect(service.run).to be_falsey
-        expect(Travis.logger).to have_received(:error).with("Invalid action: modify. Allowed actions: destroy, restore")
+        expect(Travis.logger).to have_received(:error).with("Invalid action: modify. Allowed actions: restrict, restore")
       end
     end
 
@@ -73,7 +73,7 @@ RSpec.describe Travis::Services::AssemblaNotifyService do
       before do
         stub_const("Travis::Services::AssemblaNotifyService::VALID_OBJECTS", %w[space tool unsupported])
       end
-      let(:payload) { { action: 'destroy', object: 'unsupported', id: '12345' } }
+      let(:payload) { { action: 'restrict', object: 'unsupported', id: '12345' } }
 
       it 'returns false without logging an error for the action' do
         expect(service.run).to be_falsey
