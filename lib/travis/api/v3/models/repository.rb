@@ -2,6 +2,7 @@ require 'travis/github_apps'
 
 module Travis::API::V3
   class Models::Repository < Model
+    default_scope { where(deleted_at: nil) }
     has_many :commits,     dependent: :delete_all
     has_many :requests,    dependent: :delete_all
     has_many :branches,    -> { order('branches.id DESC'.freeze) }, dependent: :delete_all

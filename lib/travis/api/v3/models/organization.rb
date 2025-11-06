@@ -2,6 +2,7 @@ require 'travis/api/v3/models/organization_preferences'
 
 module Travis::API::V3
   class Models::Organization < Model
+    default_scope { where(deleted_at: nil) }
     has_many :memberships
     has_many :users, through: :memberships
     has_one  :beta_migration_request
