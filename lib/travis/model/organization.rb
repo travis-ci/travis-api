@@ -3,6 +3,8 @@ require 'travis/model'
 
 class Organization < Travis::Model
   self.table_name = 'organizations'
+  default_scope { where(deleted_at: nil) }
+
   has_many :memberships
   has_many :users, :through => :memberships
   has_many :repositories, :as => :owner

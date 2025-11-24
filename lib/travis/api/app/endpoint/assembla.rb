@@ -4,6 +4,8 @@ require 'travis/remote_vcs/user'
 require 'travis/remote_vcs/repository'
 require 'travis/api/v3/billing_client'
 require 'travis/services/assembla_user_service'
+require 'travis/services/assembla_notify_service'
+require 'travis/remote_vcs/client'
 require_relative '../jwt_utils'
 
 class Travis::Api::App
@@ -13,6 +15,7 @@ class Travis::Api::App
       include Travis::Api::App::JWTUtils
 
       REQUIRED_JWT_FIELDS = %w[name email login space_id repository_id id refresh_token].freeze
+      REQUIRED_NOTIFY_FIELDS = %w[action object id].freeze
       CLUSTER_HEADER = 'HTTP_X_ASSEMBLA_CLUSTER'.freeze
 
       set prefix: '/assembla'
@@ -39,6 +42,19 @@ class Travis::Api::App
         }
       end
 
+      post '/notify' do
+        service = Travis::Services::AssemblaNotifyService.new(@jwt_payload)
+        if service.run
+          {
+            status: 200,
+            body: { message: 'Assembla notification processed successfully' }
+          }
+        else
+          Travis.logger.error("Failed to process Assembla notification")
+          halt 500, { error: 'Failed to process notification' }
+        end
+      end
+
       private
 
       def validate_request!
@@ -49,7 +65,8 @@ class Travis::Api::App
       end
 
       def check_required_fields
-        missing = REQUIRED_JWT_FIELDS.select { |f| @jwt_payload[f].nil? || @jwt_payload[f].to_s.strip.empty? }
+        required_fields = request.path_info.end_with?('/notify') ? REQUIRED_NOTIFY_FIELDS : REQUIRED_JWT_FIELDS
+        missing = required_fields.select { |f| @jwt_payload[f].nil? || @jwt_payload[f].to_s.strip.empty? }
         unless missing.empty?
           halt 400, { error: 'Missing required fields', missing: missing }
         end
