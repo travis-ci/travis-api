@@ -12,6 +12,7 @@ require 'travis/model'
 # hooks on Github.
 class Repository < Travis::Model
   self.table_name = 'repositories'
+  default_scope { where(deleted_at: nil) }
   include Travis::ScopeAccess
 
   require 'travis/model/repository/status_image'

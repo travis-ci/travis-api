@@ -73,6 +73,25 @@ module Travis
       rescue ResponseError
         {}
       end
+
+      def destroy(repository_id:, vcs_type:)
+        request(:delete, __method__, false) do |req|
+          req.url "repos/#{repository_id}"
+          req.params['vcs_type'] = vcs_type
+        end
+      rescue ResponseError => e
+        Travis.logger.error("Failed to destroy repository: #{e.message}")
+        false
+      end
+
+      def restore(repository_id:)
+        request(:post, __method__, false) do |req|
+          req.url "repos/#{repository_id}/restore"
+        end
+      rescue ResponseError => e
+        Travis.logger.error("Failed to restore repository: #{e.message}")
+        false
+      end
     end
   end
 end
