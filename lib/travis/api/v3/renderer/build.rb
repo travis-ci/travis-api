@@ -14,7 +14,51 @@ module Travis::API::V3
     end
 
     def request
+      return unless model.request
+
+      return Renderer::Request.render(
+        model.request,
+        :minimal,
+        script_name: script_name,
+        params: params,
+        include: [],
+        included: included,
+        access_control: access_control
+      ) if representation?(:list)
+
       model.request
+    end
+
+    def repository
+      return unless model.repository
+
+      return Renderer::Repository.render(
+        model.repository,
+        :minimal,
+        script_name: script_name,
+        params: params,
+        include: [],
+        included: included,
+        access_control: access_control
+      ) if representation?(:list)
+
+      model.repository
+    end
+
+    def commit
+      return unless model.commit
+
+      return Renderer::Commit.render(
+        model.commit,
+        :minimal,
+        script_name: script_name,
+        params: params,
+        include: [],
+        included: included,
+        access_control: access_control
+      ) if representation?(:list)
+
+      model.commit
     end
 
     def jobs
