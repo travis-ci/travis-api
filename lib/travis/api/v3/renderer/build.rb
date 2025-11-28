@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Renderer::Build < ModelRenderer
     representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at, :private, :priority)
+    representation(:list, *representations[:minimal], :repository, :branch, :tag, :commit, :created_by, :request)
     representation(:standard, *representations[:minimal], :repository, :branch, :tag, :commit, :jobs, :stages, :created_by, :updated_at)
     representation(:active, *representations[:standard])
 
