@@ -13,8 +13,12 @@ module Travis::API::V3
       super + ['request', 'log_complete']
     end
 
+    # def request
+    #   return Renderer.render_model(model.request, mode: :minimal) if representation?(:list)
+    #   model.request
+    # end
+
     def request
-      return Renderer.render_model(model.request, mode: :minimal) if representation?(:list)
       model.request
     end
 
