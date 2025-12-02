@@ -19,7 +19,11 @@ module Travis::API::V3
     # end
 
     def request
-      model.request
+      if representation?(:list)
+        Renderer.render_model(model.request, mode: :minimal)
+      else
+        model.request
+      end
     end
 
     def jobs
