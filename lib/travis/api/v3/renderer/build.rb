@@ -34,6 +34,7 @@ module Travis::API::V3
     end
 
     def created_by
+     return nil if representation?(:list)
      return nil unless creator = model.created_by
      return creator if include?('build.created_by')
      {
