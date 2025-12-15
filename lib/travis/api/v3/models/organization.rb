@@ -10,6 +10,12 @@ module Travis::API::V3
 
     has_preferences Models::OrganizationPreferences
 
+    scope :by_login, ->(login, provider) { where(
+      'lower(login) = ? and lower(vcs_type) = ?'.freeze,
+      login.downcase,
+      provider.downcase + 'organization'
+    ).order("id DESC") }
+
     after_initialize do
       ensure_preferences
     end
