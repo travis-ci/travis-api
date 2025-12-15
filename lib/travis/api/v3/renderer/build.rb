@@ -1,6 +1,7 @@
 module Travis::API::V3
   class Renderer::Build < ModelRenderer
     representation(:minimal,  :id, :number, :state, :duration, :event_type, :previous_state, :pull_request_title, :pull_request_number, :started_at, :finished_at, :private, :priority)
+    representation(:list, *representations[:minimal], :branch, :tag, :commit, :request, :created_by)
     representation(:standard, *representations[:minimal], :repository, :branch, :tag, :commit, :jobs, :stages, :created_by, :updated_at)
     representation(:active, *representations[:standard])
 
@@ -13,7 +14,11 @@ module Travis::API::V3
     end
 
     def request
-      model.request
+      if representation?(:list)
+        Renderer.render_model(model.request, mode: :minimal)
+      else
+        model.request
+      end
     end
 
     def jobs
@@ -25,7 +30,20 @@ module Travis::API::V3
     end
 
     def branch
-      V3::Models::Branch.find_by(repository_id: repository.id, name: model[:branch])
+      return unless model[:branch]
+
+      branch_model = V3::Models::Branch.find_by(
+        repository_id: repository.id,
+        name:          model[:branch]
+      )
+      return unless branch_model
+
+      if representation?(:list)
+        # Pre-render to minimal so include=build.branch can’t force it to standard
+        Renderer.render_model(branch_model, mode: :minimal)
+      else
+        branch_model
+      end
     end
 
     def created_by
