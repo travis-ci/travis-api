@@ -7,12 +7,12 @@ $: << 'lib'
 ENV['RACK_ENV'] = ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 ENV['GDPR_ENABLED'] = 'true'
 
+require 'logger'
 require 'support/coverage' unless ENV['SKIP_COVERAGE']
 
 require 'rspec'
 require 'rspec/its'
 require 'database_cleaner'
-require 'logger'
 require 'gh'
 require 'multi_json'
 require 'pry'
