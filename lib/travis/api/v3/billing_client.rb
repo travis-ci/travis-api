@@ -3,7 +3,7 @@ module Travis::API::V3
     class ConfigurationError < StandardError; end
 
     ALLOWANCE_TIMEOUT = 1 # second
-    EXECUTIONS_TIMEOUT = 60 # seconds
+    EXECUTIONS_TIMEOUT = 120 # seconds
 
     def initialize(user_id)
       @user_id = user_id
@@ -342,7 +342,7 @@ module Travis::API::V3
       end
     end
 
-    def connection(timeout: 10)
+    def connection(timeout: 25)
       @connection ||= Faraday.new(url: billing_url, ssl: { ca_path: '/usr/lib/ssl/certs' }) do |conn|
         conn.request(:authorization, :basic, '_', billing_auth_key)
         conn.headers['X-Travis-User-Id'] = @user_id.to_s
