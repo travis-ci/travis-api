@@ -5,11 +5,7 @@ module Travis::API::V3
     def find
       return Models::Organization.find_by_id(id) if id
       return Models::Organization.find_by(vcs_id: github_id) || Models::Organization.find_by(github_id: github_id) if github_id
-      return Models::Organization.where(
-        'lower(login) = ? and lower(vcs_type) = ?'.freeze,
-        login.downcase,
-        provider.downcase + 'organization'
-      ).order("id DESC").first if login
+      return Models::Organization.by_login(login, provider).first if login
       raise WrongParams, 'missing organization.id or organization.login'.freeze
     end
 
@@ -27,14 +23,14 @@ module Travis::API::V3
 
     def suspend(value)
       if params['vcs_type']
-       raise WrongParams, 'missing user ids'.freeze unless params['vcs_ids']&.size > 0
+        raise_missing_ids_unless('vcs_ids')
 
-      user_ids = Models::User.where("vcs_type = ? and vcs_id in (?)", vcs_type,params['vcs_ids']).all.map(&:id)
-     else
-       raise WrongParams, 'missing user ids'.freeze unless params['user_ids']&.size > 0
+        user_ids = Models::User.where(vcs_type: vcs_type, vcs_id: params['vcs_ids']).pluck(:id)
+      else
+        raise_missing_ids_unless('user_ids')
 
-       user_ids = params['user_ids']
-     end
+        user_ids = params['user_ids']
+      end
 
       filtered_ids = filter_ids(user_ids)
       Models::User.where("id in (?)", filtered_ids).update!(suspended: value, suspended_at: value ? Time.now.utc : nil)
@@ -49,17 +45,21 @@ module Travis::API::V3
     end
 
     def vcs_type
-      @_vcs_type ||=
-        params['vcs_type'] ?
-          (
-            params['vcs_type'].end_with?('User') ?
-              params['vcs_type'] :
-              "#{params['vcs_type'].capitalize}User"
-          )
-        : 'GithubUser'
+      @_vcs_type ||= case
+        when params['vcs_type']&.end_with?('User')
+          params['vcs_type']
+        when params['vcs_type']
+          "#{params['vcs_type'].capitalize}User"
+        else
+          'GithubUser'
+      end
     end
 
     private
+
+    def raise_missing_ids_unless(key)
+      raise WrongParams, 'missing user ids'.freeze unless params[key]&.size > 0
+    end
 
     def provider
       params['provider'] || 'github'
