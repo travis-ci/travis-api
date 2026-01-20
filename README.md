@@ -1,6 +1,6 @@
 # Travis API
 
-[![Build Status](https://travis-ci.com/travis-ci/travis-api.svg?branch=master)](https://travis-ci.com/travis-ci/travis-api)
+[![Build Status](https://app.travis-ci.com/travis-ci/travis-api.svg?token=krxsH3yU4XpWzxuNx4hQ&branch=master)](https://app.travis-ci.com/travis-ci/travis-api)
 
 
 https://api.travis-ci.org
