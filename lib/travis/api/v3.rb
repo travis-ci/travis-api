@@ -42,6 +42,7 @@ module Travis
       LogExpired          = ClientError        .create("We're sorry, but this data is not available anymore. Please check the repository settings in Travis CI.", status: 403)
       LogAccessDenied     = ClientError        .create("We're sorry, but this data is not available. Please check the repository settings in Travis CI.", status: 403)
       LoginRequired       = ClientError        .create('login required', status: 403)
+      InstallationMissing = ClientError        .create('installation required', status: 403)
       MethodNotAllowed    = ClientError        .create('method not allowed', status: 405)
       NotImplemented      = ServerError        .create('request not (yet) implemented', status: 501)
       PrivateRepoFeature  = ClientError        .create('this feature is only available on private repositories and for Travis CI Enterprise customers', status: 403)
