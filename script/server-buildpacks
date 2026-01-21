@@ -4,6 +4,9 @@
 # or if the space-delimited list
 # $PGBOUNCER_ENABLED_FOR_DYNOS contains $DYNO
 
+# for api running in k8s (when PGBOUNCER_SERVICE_HOST is set)
+# it replace the DATABASE_URL with pgbouncer service name
+
 cd "$(dirname "$0")/.."
 
 for d in $PGBOUNCER_ENABLED_FOR_DYNOS; do
@@ -28,6 +31,35 @@ cmd="script/server"
 if [ "$PGBOUNCER_ENABLED" = 'true' ]; then
   export PGBOUNCER_PREPARED_STATEMENTS=false
   cmd="bin/start-pgbouncer $cmd"
+fi
+
+# PGBOUNCER_SERVICE_NAME is from env variables (currently Heroku)
+# service name is used in connection string (DATABASE_URL)
+# PGBOUNCER_SERVICE_HOST is set by k8s
+
+if [[ -n "$PGBOUNCER_SERVICE_HOST" && -n "$PGBOUNCER_SERVICE_NAME" ]]; then
+  export PGBOUNCER_PREPARED_STATEMENTS=false
+  echo "info: using k8s pgbouncer service"
+  echo "service name: $PGBOUNCER_SERVICE_NAME"
+  PROTO="$(echo $DATABASE_URL | grep :// | sed -e's,^\(.*://\).*,\1,g')"
+  DB_URL="$(echo $DATABASE_URL | sed -e s,$PROTO,,g)"
+
+  # extract the user and password (if any)
+  USER_PASS="$(echo $DB_URL | grep @ | cut -d@ -f1)"
+  DB_PASSWORD="$(echo $USER_PASS | grep : | cut -d: -f2)"
+  if [ -n "$DB_PASSWORD" ]; then
+    DB_USER=$(echo $USER_PASS | grep : | cut -d: -f1)
+  else
+    DB_USER=$USER_PASS
+  fi
+
+  DB_NAME="$(echo $DB_URL | grep / | cut -d/ -f2-)"
+  if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
+  then
+    DATABASE_URL=$PROTO$DB_USER:$DB_PASSWORD@$PGBOUNCER_SERVICE_NAME:5432/$DB_NAME?prepared_statements=false
+  else
+    DATABASE_URL=$PROTO$DB_USER:$DB_PASSWORD@$PGBOUNCER_SERVICE_NAME:5432/$DB_NAME
+  fi
 fi
 
 exec $cmd
