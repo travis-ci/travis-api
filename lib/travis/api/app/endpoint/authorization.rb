@@ -468,7 +468,7 @@ class Travis::Api::App
 
         def acceptable?(scopes, lossy = false)
           Travis::Github::Oauth.wanted_scopes.all? do |scope|
-            acceptable_scopes_for(scope, lossy).any? { |s| scopes.include? s }
+            acceptable_scopes_for(scope, lossy).any? { |s| scopes&.include? s }
           end
         end
 
