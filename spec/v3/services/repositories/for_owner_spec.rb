@@ -13,6 +13,7 @@ describe Travis::API::V3::Services::Repositories::ForOwner, set_app: true, billi
   let(:token_collaborator)   { Travis::Api::App::AccessToken.create(user: Travis::API::V3::Models::User.find_by_login('johndoe'), app_id: 1) }
   let(:headers_collaborator) {{ 'HTTP_AUTHORIZATION' => "token #{token_collaborator}"                        }}
   before        { Travis::API::V3::Models::Permission.create(repository: repo, user: repo.owner, pull: true) }
+  before        { Travis::API::V3::Models::Installation.create(owner_type: 'User', owner_id: repo.owner.id, github_id: 789) }
   before        { repo.update_attribute(:private, true)                             }
   before        { repo.update_attribute(:current_build, build)                      }
   after         { repo.update_attribute(:private, false)                            }

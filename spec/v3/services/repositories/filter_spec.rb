@@ -4,6 +4,7 @@ describe Travis::API::V3::Services::Repositories::ForCurrentUser, set_app: true 
   let(:headers) { { 'HTTP_AUTHORIZATION' => "token #{token}" } }
 
   before { ActiveRecord::Base.connection.execute("truncate repositories cascade") }
+  before { Travis::API::V3::Models::Installation.create(owner_type: 'User', owner_id: user.id, github_id: 789) }
 
   let(:authorization) { { 'permissions' => ['repository_state_update', 'repository_build_create', 'repository_settings_create', 'repository_settings_update', 'repository_cache_view', 'repository_cache_delete', 'repository_settings_delete', 'repository_log_view', 'repository_log_delete', 'repository_build_cancel', 'repository_build_debug', 'repository_build_restart', 'repository_settings_read', 'repository_scans_view'] } }
 
