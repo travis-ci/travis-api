@@ -24,8 +24,8 @@ describe Travis::API::V3::Services::EmailSubscription::Resubscribe, set_app: tru
       post("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers)
     end
 
-    it 'responds with 204, empty body' do
-      expect(response.status).to eq 204
+    it 'responds with created, empty body' do
+      expect(response.status).to eq 201
       expect(response.body).to be_empty
     end
 
@@ -40,8 +40,8 @@ describe Travis::API::V3::Services::EmailSubscription::Resubscribe, set_app: tru
         post("/v3/repo/#{repo.id}/email_subscription", {}, auth_headers)
       end
 
-      it 'does not error' do
-        expect(response.status).to eq 204
+      it 'does not raise error' do
+        expect(response.status).to eq 201
       end
 
       it 'keeps user subscribed' do

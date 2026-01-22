@@ -120,6 +120,10 @@ module Travis::API::V3
       head(status: 204)
     end
 
+    def created
+      head(status: 201)
+    end
+
     def run
       check_force_auth
       not_found unless result = run!
