@@ -38,7 +38,7 @@ module Travis::API::V3
     end
 
     def build_count
-      model.builds.where.not(event_type: :pull_request).length
+      model.builds.where.not(event_type: :pull_request).count
     end
 
     def current_build
